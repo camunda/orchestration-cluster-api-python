@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+generated/
+.openapi-cache/
+*.log
+
