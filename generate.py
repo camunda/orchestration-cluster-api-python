@@ -74,7 +74,17 @@ def fetch_spec(cache_dir: Path, ref: str) -> Path:
 def run_openapi_generator(spec: Path, out_dir: Path, config_path: Path, generator: str) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     cmd = None
-    if which("npx"):
+    # This is for testing patches to the upstream generator using a local build
+    if os.environ.get("CAMUNDA_OPENAPI_GEN_LOCAL") == "1":
+        cmd = [
+            "java", "-jar", "/Users/jwulf/workspace/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar", "generate",
+            "-g", generator,
+            "-i", str(spec),
+            "-o", str(out_dir),
+            "-c", str(config_path),
+            "--skip-validate-spec"
+        ]
+    elif which("npx"):
         cmd = [
             "npx", "--yes", "@openapitools/openapi-generator-cli", "generate",
             "-g", generator,

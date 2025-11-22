@@ -14,11 +14,12 @@ def _make_client():
     return camunda_orchestration_sdk.ApiClient(configuration)
 
 
-def test_get_topology_smoke():
+@pytest.mark.asyncio
+async def test_get_topology_smoke():
     import camunda_orchestration_sdk
-    with _make_client() as api_client:
+    async with _make_client() as api_client:
         api = camunda_orchestration_sdk.ClusterApi(api_client)
-        resp = api.get_topology()
+        resp = await api.get_topology()
         print(resp)
         assert resp is not None
         # Basic shape checks if available

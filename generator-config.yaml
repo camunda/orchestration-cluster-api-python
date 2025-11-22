@@ -2,7 +2,7 @@ packageName: camunda_orchestration_sdk
 projectName: camunda-orchestration-sdk
 packageVersion: 0.1.0
 httpUserAgent: camunda-orchestration-sdk/0.1.0 (python)
-library: urllib3
+library: httpx
 pythonAttrNoneIfUnset: true
 generateSourceCodeOnly: true
 enumUnknownDefaultCase: true
