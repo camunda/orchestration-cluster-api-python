@@ -13,7 +13,7 @@ def run(context: Dict[str, Any]) -> None:
         print(f"Warning: {config_file} does not exist, skipping patch.")
         return
 
-    print(f"Patching {config_file} to remove urllib3 dependency...")
+    print(f"Patching {config_file} to remove urllib3 dependency... (Remove when upstream patch is merged.)")
     content = config_file.read_text(encoding="utf-8")
     
     # 1. Remove urllib3 import

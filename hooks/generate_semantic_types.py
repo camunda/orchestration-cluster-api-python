@@ -75,7 +75,7 @@ def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -
         if pattern and isinstance(pattern, str):
             # Use fullmatch to validate the whole value
             func.append(f"\tif re.fullmatch(r{pattern!r}, value) is None:\n")
-            func.append(f"\t\traise ValueError(\"{alias_name} does not match pattern {pattern}\")\n")
+            func.append(f"\t\traise ValueError(\"{alias_name} does not match pattern \" + {pattern!r})\n")
         if "minLength" in constraints:
             func.append(f"\tif len(value) < {int(constraints['minLength'])}:\n")
             func.append(f"\t\traise ValueError(\"{alias_name} shorter than minLength {int(constraints['minLength'])}\")\n")
