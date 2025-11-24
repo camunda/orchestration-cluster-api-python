@@ -8,8 +8,9 @@ import sys
 from pathlib import Path
 
 
-REPO_URL = "https://github.com/camunda/camunda-orchestration-cluster-api.git"
-SPEC_PATH_IN_REPO = "specification/rest-api.yaml"
+REPO_URL = "https://github.com/camunda/camunda.git"
+SPEC_DIR = "zeebe/gateway-protocol/src/main/proto/v2"
+SPEC_FILE = "rest-api.yaml"
 
 
 def log(msg: str) -> None:
@@ -25,29 +26,30 @@ def ensure_cache_dir(cache_dir: Path) -> None:
 
 
 def fetch_spec(cache_dir: Path, ref: str) -> Path:
-    """Clone repo shallowly and return path to the spec; fallback to local copy."""
+    """Clone repo sparsely and return path to the spec."""
     ensure_cache_dir(cache_dir)
-    repo_dir = cache_dir / "camunda-orchestration-cluster-api"
-    spec_path = repo_dir / SPEC_PATH_IN_REPO
+    repo_dir = cache_dir / "camunda"
+    spec_path = repo_dir / SPEC_DIR / SPEC_FILE
 
     try:
-        if repo_dir.exists():
-            # Update existing shallow clone
-            log("Updating existing cached repository...")
-            subprocess.run([
-                "git", "-C", str(repo_dir), "fetch", "--depth", "1", "origin", ref
-            ], check=True)
-            subprocess.run([
-                "git", "-C", str(repo_dir), "checkout", "-f", ref
-            ], check=True)
-            subprocess.run([
-                "git", "-C", str(repo_dir), "reset", "--hard", f"origin/{ref}"
-            ], check=True)
-        else:
-            log("Cloning repository (shallow)...")
-            subprocess.run([
-                "git", "clone", "--depth", "1", "--branch", ref, REPO_URL, str(repo_dir)
-            ], check=True)
+        if not repo_dir.exists():
+            log("Initializing sparse clone...")
+            repo_dir.mkdir(parents=True, exist_ok=True)
+            subprocess.run(["git", "init"], cwd=str(repo_dir), check=True)
+            subprocess.run(["git", "remote", "add", "origin", REPO_URL], cwd=str(repo_dir), check=True)
+            subprocess.run(["git", "config", "core.sparseCheckout", "true"], cwd=str(repo_dir), check=True)
+            
+            sparse_checkout_file = repo_dir / ".git" / "info" / "sparse-checkout"
+            sparse_checkout_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(sparse_checkout_file, "w") as f:
+                f.write(f"{SPEC_DIR}\n")
+
+        log("Updating repository...")
+        # Fetch specific ref
+        subprocess.run(["git", "fetch", "--depth", "1", "origin", ref], cwd=str(repo_dir), check=True)
+        # Checkout FETCH_HEAD
+        subprocess.run(["git", "checkout", "-f", "FETCH_HEAD"], cwd=str(repo_dir), check=True)
+
     except Exception as e:
         log(f"Warning: failed to update/clone remote repo: {e}")
 
@@ -55,20 +57,7 @@ def fetch_spec(cache_dir: Path, ref: str) -> Path:
         log(f"Using spec from cache: {spec_path}")
         return spec_path
 
-    # Fallback to local working copy
-    local_repo = Path(__file__).resolve().parent.parent / "camunda-orchestration-cluster-api"
-    local_spec = local_repo / SPEC_PATH_IN_REPO
-    if local_spec.exists():
-        log(f"Using local fallback spec: {local_spec}")
-        return local_spec
-
-    # As the last resort, allow a workspace-level file
-    workspace_spec = Path(__file__).resolve().parent.parent / SPEC_PATH_IN_REPO
-    if workspace_spec.exists():
-        log(f"Using workspace fallback spec: {workspace_spec}")
-        return workspace_spec
-
-    raise FileNotFoundError("OpenAPI spec not found via network or local fallbacks")
+    raise FileNotFoundError(f"OpenAPI spec not found at {spec_path}")
 
 
 def run_openapi_generator(spec: Path, out_dir: Path, config_path: Path, generator: str) -> None:
@@ -154,6 +143,7 @@ def main():
     parser.add_argument("--skip-generate", action="store_true", help="Skip generation (run hooks only)")
     parser.add_argument("--package-name", default=None, help="Override packageName in config (in-memory)")
     parser.add_argument("--skip-tests", action="store_true", help="Skip acceptance tests")
+    parser.add_argument("--local-spec", help="Path to local OpenAPI spec file (skips git fetch)")
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parent
@@ -162,7 +152,13 @@ def main():
     config_path = (root / args.config).resolve()
     hooks_dir = root / "hooks"
 
-    spec_path = fetch_spec(cache_dir, args.spec_ref)
+    if args.local_spec:
+        spec_path = Path(args.local_spec).resolve()
+        if not spec_path.exists():
+            raise FileNotFoundError(f"Local spec file not found: {spec_path}")
+        log(f"Using local spec: {spec_path}")
+    else:
+        spec_path = fetch_spec(cache_dir, args.spec_ref)
 
     # If package name override is provided, create a temp config copy
     effective_config = config_path
