@@ -1,6 +1,7 @@
 .PHONY: install generate clean test itest
 
 install:
+	mkdir -p generate
 	uv sync
 
 generate: install
