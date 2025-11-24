@@ -143,6 +143,7 @@ def main():
     parser.add_argument("--skip-generate", action="store_true", help="Skip generation (run hooks only)")
     parser.add_argument("--package-name", default=None, help="Override packageName in config (in-memory)")
     parser.add_argument("--skip-tests", action="store_true", help="Skip acceptance tests")
+    parser.add_argument("--local-spec", help="Path to local OpenAPI spec file (skips git fetch)")
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parent
@@ -151,7 +152,13 @@ def main():
     config_path = (root / args.config).resolve()
     hooks_dir = root / "hooks"
 
-    spec_path = fetch_spec(cache_dir, args.spec_ref)
+    if args.local_spec:
+        spec_path = Path(args.local_spec).resolve()
+        if not spec_path.exists():
+            raise FileNotFoundError(f"Local spec file not found: {spec_path}")
+        log(f"Using local spec: {spec_path}")
+    else:
+        spec_path = fetch_spec(cache_dir, args.spec_ref)
 
     # If package name override is provided, create a temp config copy
     effective_config = config_path
