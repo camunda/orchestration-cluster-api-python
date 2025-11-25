@@ -120,12 +120,24 @@ def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -
 def run(context: Dict[str, Any]) -> None:
     spec_path = Path(context["spec_path"]).resolve()
     out_dir = Path(context["out_dir"]).resolve()
+    spec_dir = spec_path.parent
 
-    with open(spec_path, "r", encoding="utf-8") as f:
-        spec = yaml.safe_load(f)
+    schemas = {}
 
-    components = (spec or {}).get("components", {})
-    schemas = components.get("schemas", {})
+    # Iterate over all yaml files in the spec directory to gather all schemas
+    for yaml_file in spec_dir.glob("*.yaml"):
+        try:
+            with open(yaml_file, "r", encoding="utf-8") as f:
+                spec = yaml.safe_load(f)
+                if not spec:
+                    continue
+                components = spec.get("components", {})
+                file_schemas = components.get("schemas", {})
+                if file_schemas:
+                    schemas.update(file_schemas)
+        except Exception as e:
+            print(f"Warning: Failed to load {yaml_file}: {e}")
+
     aliases: Dict[str, Dict[str, Any]] = {}
 
     for name, schema in schemas.items():
