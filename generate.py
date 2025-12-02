@@ -6,24 +6,21 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-
+from hooks import patch_bundled_spec
+from hooks import flatten_client
 
 REPO_URL = "https://github.com/camunda/camunda.git"
 SPEC_DIR = "zeebe/gateway-protocol/src/main/proto/v2"
 SPEC_FILE = "rest-api.yaml"
 
-
 def log(msg: str) -> None:
     print(msg)
-
 
 def which(cmd: str) -> bool:
     return shutil.which(cmd) is not None
 
-
 def ensure_cache_dir(cache_dir: Path) -> None:
     cache_dir.mkdir(parents=True, exist_ok=True)
-
 
 def fetch_spec(cache_dir: Path, ref: str) -> Path:
     """Clone repo sparsely and return path to the spec."""
@@ -58,7 +55,6 @@ def fetch_spec(cache_dir: Path, ref: str) -> Path:
         return spec_path
 
     raise FileNotFoundError(f"OpenAPI spec not found at {spec_path}")
-
 
 def run_openapi_generator(spec: Path, out_dir: Path, config_path: Path, generator: str) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -101,6 +97,59 @@ def run_openapi_generator(spec: Path, out_dir: Path, config_path: Path, generato
     log("Running OpenAPI Generator...")
     subprocess.run(cmd, check=True)
 
+def run_python_client_generator(spec: Path, out_dir: Path, config_path: Path) -> None:
+    """Run openapi-python-client generator."""
+    import yaml
+    from bundle import bundle_spec
+
+    with open(config_path, "r", encoding="utf-8") as f:
+        config = yaml.safe_load(f)
+
+    package_name = config.get("package_name_override", "client")
+    actual_out_dir = out_dir / package_name
+
+    # Ensure parent directory exists because openapi-python-client might not create parents
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Bundle the spec first
+    bundled_spec_path = out_dir / "bundled_spec.yaml"
+    log(f"Bundling spec from {spec} to {bundled_spec_path}...")
+    bundle_spec(spec, bundled_spec_path)
+
+    # Patch the bundled spec
+    try:
+        log("Patching bundled spec...")
+        patch_bundled_spec.patch_bundled_spec(bundled_spec_path)
+    except ImportError as e:
+        log(f"Failed to import patch_bundled_spec hook: {e}")
+    except Exception as e:
+        log(f"Failed to patch bundled spec: {e}")
+
+    # Ensure the output directory exists (or let the tool handle it, but we might need to clear it first if we want a clean slate)
+    # openapi-python-client requires the output directory to NOT exist unless --overwrite is used.
+    # We will use --overwrite.
+    
+    cmd = [
+        "openapi-python-client", "generate",
+        "--path", str(bundled_spec_path),
+        "--config", str(config_path),
+        "--output-path", str(actual_out_dir),
+        "--overwrite",
+        "--meta", "none"
+    ]
+    
+    log(f"Running openapi-python-client with config {config_path}...")
+    subprocess.run(cmd, check=True)
+
+    # Post-processing: Flatten the client
+    sys.path.append(str(Path(__file__).parent / "hooks"))
+    try:
+        log("Flattening client structure...")
+        flatten_client.generate_flat_client(actual_out_dir)
+    except ImportError as e:
+        log(f"Failed to import flatten_client hook: {e}")
+    except Exception as e:
+        log(f"Failed to flatten client: {e}")
 
 def load_hooks(hooks_dir: Path):
     hooks = []
@@ -115,12 +164,10 @@ def load_hooks(hooks_dir: Path):
                 hooks.append(module.run)
     return hooks
 
-
 def run_hooks(hooks, context: dict) -> None:
     for hook in hooks:
         log(f"Running hook: {hook.__module__}")
         hook(context)
-
 
 def run_acceptance_tests(root: Path, out_dir: Path) -> None:
     log("Running acceptance tests...")
@@ -131,7 +178,6 @@ def run_acceptance_tests(root: Path, out_dir: Path) -> None:
     tests_dir = root / "tests" / "acceptance"
     cmd = [sys.executable, "-m", "pytest", "-q", str(tests_dir)]
     subprocess.run(cmd, check=True, env=env, cwd=str(root))
-
 
 def main():
     parser = argparse.ArgumentParser(description="Generate Python SDK for Camunda Orchestration Cluster API")
@@ -175,8 +221,12 @@ def main():
         effective_config = tmp_config
 
     if not args.skip_generate:
-        run_openapi_generator(spec_path, out_dir, effective_config, args.generator)
+        if args.generator == "openapi-python-client":
+            run_python_client_generator(spec_path, out_dir, effective_config)
+        else:
+            run_openapi_generator(spec_path, out_dir, effective_config, args.generator)
 
+    # Run hooks 
     hooks = load_hooks(hooks_dir)
     context = {
         "out_dir": str(out_dir),
@@ -191,7 +241,6 @@ def main():
         run_acceptance_tests(root, out_dir)
 
     log("Done.")
-
 
 if __name__ == "__main__":
     main()
