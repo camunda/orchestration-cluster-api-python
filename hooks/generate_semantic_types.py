@@ -25,8 +25,20 @@ def _is_primitive_alias(name: str, schema: Dict[str, Any]) -> bool:
     return False
 
 
-def _extract_constraints(schema: Dict[str, Any]) -> Dict[str, Any]:
+def _extract_constraints(schema: Dict[str, Any], schemas: Dict[str, Any]) -> Dict[str, Any]:
     constraints: Dict[str, Any] = {}
+
+    if "$ref" in schema:
+        ref = schema["$ref"]
+        if ref.startswith("#/components/schemas/"):
+            ref_name = ref.split("/")[-1]
+            if ref_name in schemas:
+                constraints.update(_extract_constraints(schemas[ref_name], schemas))
+
+    if "allOf" in schema:
+        for sub_schema in schema["allOf"]:
+            constraints.update(_extract_constraints(sub_schema, schemas))
+
     for key in [
         "pattern",
         "minLength",
@@ -146,7 +158,7 @@ def run(context: Dict[str, Any]) -> None:
         if _is_primitive_alias(name, schema):
             alias_info = {
                 "type": schema.get("type", "string"),
-                "constraints": _extract_constraints(schema),
+                "constraints": _extract_constraints(schema, schemas),
             }
             aliases[name] = alias_info
 
