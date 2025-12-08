@@ -4,15 +4,18 @@ install:
 	mkdir -p generated
 	uv sync
 
-generate: install
+generate: clean install
 	uv run generate.py 
 
-generate-v2: install
+generate-v2: clean install
 	uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests
 
 clean:
-	rm -rf generated .openapi-cache .venv
+	rm -rf generated
 
+clean_spec:
+	rm -rf .openapi-cache
+	
 test: generate-v2
 	uv run pytest -q tests/acceptance
 

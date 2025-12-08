@@ -13,7 +13,6 @@ def generate_flat_client(package_path):
         return
 
     methods = []
-    # imports = [] # No global imports to avoid circular dependency
 
     # Walk through the api directory
     for root, dirs, files in os.walk(api_dir):
@@ -31,20 +30,18 @@ def generate_flat_client(package_path):
             # The function name is usually the same as the file name in this generator
             method_name = module_name
             
-            # imports.append(f"from {import_path} import sync as {method_name}_sync, asyncio as {method_name}_asyncio")
-            
             # Add sync method with local import
             methods.append(f"""
     def {method_name}(self, *args, **kwargs):
         from {import_path} import sync as {method_name}_sync
-        return {method_name}_sync(client=self, *args, **kwargs)
+        return {method_name}_sync(client=self.client, *args, **kwargs)
 """)
             
             # Add async method with local import
             methods.append(f"""
     async def {method_name}_async(self, *args, **kwargs):
         from {import_path} import asyncio as {method_name}_asyncio
-        return await {method_name}_asyncio(client=self, *args, **kwargs)
+        return await {method_name}_asyncio(client=self.client, *args, **kwargs)
 """)
 
     # Read the existing client.py
@@ -57,40 +54,63 @@ def generate_flat_client(package_path):
         content = f.read()
 
     # Prepare the new content
-    # new_imports = "\n".join(imports)
     new_methods = "\n".join(methods)
 
-    # Inject imports - No longer needed
-    # content = content.replace("import ssl", f"{new_imports}\nimport ssl")
+    camunda_client_code = f"""
+class CamundaClient:
+    client: Client | AuthenticatedClient
 
-    # Inject methods into Client class
-    # We look for the end of the Client class. It ends before "class AuthenticatedClient"
-    client_split = content.split("class AuthenticatedClient")
-    
-    # Add methods to Client
-    client_part = client_split[0]
-    # Find the last method in Client to append after
-    # A simple heuristic is to append before the class ends. 
-    # But since we are splitting by AuthenticatedClient, the first part is the Client class + imports.
-    
-    # Actually, let's just append a Mixin and make Client inherit from it.
-    # That's safer than regex replacement inside the class.
-    
-    mixin_code = f"""
-class ClientMixin:
+    def __init__(self, base_url: str, token: str | None = None, **kwargs):
+        if token:
+            self.client = AuthenticatedClient(base_url=base_url, token=token, **kwargs)
+        else:
+            self.client = Client(base_url=base_url, **kwargs)
+
+    def __enter__(self):
+        self.client.__enter__()
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        return self.client.__exit__(*args, **kwargs)
+
+    async def __aenter__(self):
+        await self.client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args, **kwargs):
+        await self.client.__aexit__(*args, **kwargs)
+
 {new_methods}
 """
     
-    # Insert Mixin definition before Client
-    content = content.replace("@define\nclass Client:", f"{mixin_code}\n@define\nclass Client(ClientMixin):")
-    
-    # Also update AuthenticatedClient to inherit from Mixin
-    content = content.replace("@define\nclass AuthenticatedClient:", "@define\nclass AuthenticatedClient(ClientMixin):")
+    # Append CamundaClient to the end of the file
+    if "class CamundaClient" not in content:
+        content += f"\n{camunda_client_code}"
 
     with open(client_file, "w") as f:
         f.write(content)
     
-    print(f"Successfully flattened client in {client_file}")
+    print(f"Successfully added CamundaClient to {client_file}")
+
+    # Update __init__.py to export CamundaClient
+    init_file = package_path / "__init__.py"
+    if init_file.exists():
+        with open(init_file, "r") as f:
+            init_content = f.read()
+        
+        if "CamundaClient" not in init_content:
+            init_content = init_content.replace(
+                '"Client",',
+                '"Client",\n    "CamundaClient",'
+            )
+            init_content = init_content.replace(
+                "from .client import AuthenticatedClient, Client",
+                "from .client import AuthenticatedClient, Client, CamundaClient"
+            )
+            
+            with open(init_file, "w") as f:
+                f.write(init_content)
+            print(f"Successfully exported CamundaClient in {init_file}")
 
 # def run(context):
 #     out_dir = Path(context["out_dir"])

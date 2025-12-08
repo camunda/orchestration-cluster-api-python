@@ -1,6 +1,6 @@
 import os
 import pytest
-from camunda_orchestration_sdk import Client
+from camunda_orchestration_sdk import CamundaClient
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("CAMUNDA_INTEGRATION") != "1",
@@ -9,7 +9,7 @@ pytestmark = pytest.mark.skipif(
 
 def _make_client():
     host = os.environ.get("CAMUNDA_BASE_URL", "http://localhost:8080/v2")
-    return Client(base_url=host)
+    return CamundaClient(base_url=host)
 
 
 @pytest.mark.asyncio

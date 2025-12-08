@@ -52,7 +52,7 @@ def flatten_all_of(schema):
                     # Add other merge strategies if needed
             
             # If we merged, we don't include 'allOf' in the result
-            print(f"Flattened allOf for primitive type: {types}")
+            # print(f"Flattened allOf for primitive type: {types}")
         else:
             # If not primitive, keep allOf
             new_schema['allOf'] = flattened_all_of

@@ -25,6 +25,47 @@ make generate
 
 Generated SDK will be placed in `generated/` by default. You can change this with `--out-dir`.
 
+### Using the generated SDK
+
+The generated SDK provides a `CamundaClient` class that wraps the underlying API client and provides a unified interface for both synchronous and asynchronous operations.
+
+#### Initialization
+
+```python
+from camunda_orchestration_sdk import CamundaClient
+
+# Unauthenticated (for local development)
+client = CamundaClient(base_url="http://localhost:8080")
+
+# Authenticated (for production/SaaS)
+client = CamundaClient(
+    base_url="https://...", 
+    token="your-access-token"
+)
+```
+
+#### Synchronous Usage
+
+```python
+with CamundaClient(base_url="http://localhost:8080") as client:
+    topology = client.get_topology()
+    print(topology)
+```
+
+#### Asynchronous Usage
+
+```python
+import asyncio
+from camunda_orchestration_sdk import CamundaClient
+
+async def main():
+    async with CamundaClient(base_url="http://localhost:8080") as client:
+        topology = await client.get_topology_async()
+        print(topology)
+
+asyncio.run(main())
+```
+
 ### Local fallback of the spec
 
 If the network is not available or the remote repository cannot be reached, the generator will use the locally cloned spec at:
