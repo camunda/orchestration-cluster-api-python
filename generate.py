@@ -224,8 +224,10 @@ def main():
             "config_path": str(effective_config),
             "generator": args.generator,
         }
+        # Run shared post-processing hooks
         shared_hooks = load_hooks(shared_hooks_dir)
         run_hooks(shared_hooks, context)
+        # Run generator specific hooks
         hooks = load_hooks(hooks_dir)
         run_hooks(hooks, context)
 
