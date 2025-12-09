@@ -54,11 +54,24 @@ class InlineSchemaExtractor:
     def process_composition(self, node, key, name_hint):
         new_options = []
         for option in node[key]:
-            if isinstance(option, dict) and 'properties' in option and '$ref' not in option:
-                # Found inline object - Extract it
+            # Extract inline schemas that have metadata properties or are complex
+            # We want to extract schemas with: properties, enum, title, description, etc.
+            # But skip simple type-only schemas and existing refs
+            should_extract = (
+                isinstance(option, dict) and
+                '$ref' not in option and
+                (
+                    'properties' in option or  # inline object
+                    ('enum' in option and ('title' in option or 'description' in option)) or  # enum with metadata
+                    ('type' in option and len(option) > 2)  # complex type with multiple constraints
+                )
+            )
+
+            if should_extract:
+                # Found inline schema - Extract it
                 title = option.get('title', 'Object').replace(' ', '')
                 base_name = f"{name_hint}{title}"
-                print(f"Extracting inline object: {base_name}")
+                print(f"Extracting inline schema: {base_name}")
                 
                 # Deduplicate
                 fingerprint = self.get_fingerprint(option)
@@ -227,6 +240,100 @@ class SpecFlattener:
 
         return new_schema
 
+def extract_nested_properties(spec):
+    """
+    Extract nested object properties that have their own 'properties' defined
+    into separate schemas. This fixes issues with openapi-python-client
+    when nested objects appear in schemas used in unions.
+    """
+    schemas = spec.get('components', {}).get('schemas', {})
+    new_schemas = {}
+    schema_fingerprints = {}
+
+    def get_fingerprint(schema):
+        return hashlib.md5(json.dumps(schema, sort_keys=True).encode('utf-8')).hexdigest()
+
+    def extract_object_schema(obj_schema, base_name):
+        """Extract a nested object schema and return a ref to it."""
+        fingerprint = get_fingerprint(obj_schema)
+        if fingerprint in schema_fingerprints:
+            return {'$ref': f"#/components/schemas/{schema_fingerprints[fingerprint]}"}
+
+        schema_name = base_name
+        counter = 1
+        while schema_name in schemas or schema_name in new_schemas:
+            schema_name = f"{base_name}{counter}"
+            counter += 1
+
+        new_schemas[schema_name] = obj_schema.copy()
+        new_schemas[schema_name]['title'] = schema_name
+        schema_fingerprints[fingerprint] = schema_name
+        print(f"Extracting nested property: {schema_name}")
+
+        return {'$ref': f"#/components/schemas/{schema_name}"}
+
+    def process_schema(schema, parent_name):
+        """Recursively process a schema to extract nested objects."""
+        if not isinstance(schema, dict):
+            return schema
+
+        # Handle array items
+        if 'items' in schema and isinstance(schema['items'], dict):
+            items = schema['items']
+            if (items.get('type') == 'object' and
+                ('properties' in items or
+                 ('additionalProperties' in items and items['additionalProperties'] is not False))):
+                # Extract the item schema
+                clean_name = f"{parent_name}Item"
+                schema['items'] = extract_object_schema(items, clean_name)
+            else:
+                # Recursively process items
+                schema['items'] = process_schema(items, f"{parent_name}Item")
+
+        # Handle properties
+        if 'properties' in schema:
+            schema['properties'] = process_properties(schema['properties'], parent_name)
+
+        return schema
+
+    def process_properties(props, parent_name):
+        if not isinstance(props, dict):
+            return props
+
+        new_props = {}
+        for prop_name, prop_schema in props.items():
+            # Extract nested objects that are complex enough to warrant their own schema
+            should_extract = (
+                isinstance(prop_schema, dict) and
+                'type' in prop_schema and
+                prop_schema.get('type') == 'object' and
+                ('properties' in prop_schema or
+                 ('additionalProperties' in prop_schema and prop_schema['additionalProperties'] is not False))
+            )
+
+            if should_extract:
+                # This is a nested object - extract it
+                clean_prop_name = ''.join(x.capitalize() or '_' for x in prop_name.split('_'))
+                base_name = f"{parent_name}{clean_prop_name}"
+                new_props[prop_name] = extract_object_schema(prop_schema, base_name)
+            elif isinstance(prop_schema, dict):
+                # Recursively process the property
+                clean_prop_name = ''.join(x.capitalize() or '_' for x in prop_name.split('_'))
+                new_props[prop_name] = process_schema(prop_schema, f"{parent_name}{clean_prop_name}")
+            else:
+                new_props[prop_name] = prop_schema
+
+        return new_props
+
+    # Process all schemas
+    for schema_name, schema in list(schemas.items()):
+        if isinstance(schema, dict):
+            process_schema(schema, schema_name)
+
+    # Add new schemas
+    schemas.update(new_schemas)
+    return spec
+
 def patch_bundled_spec(spec_path: Path):
     with open(spec_path, 'r') as f:
         spec = yaml.safe_load(f)
@@ -251,6 +358,10 @@ def patch_bundled_spec(spec_path: Path):
     print("Extracting inline objects from compositions...")
     extractor = InlineSchemaExtractor(spec)
     spec = extractor.extract()
+
+    # Extract nested properties to fix union issues
+    print("Extracting nested object properties...")
+    spec = extract_nested_properties(spec)
 
     with open(spec_path, 'w') as f:
         yaml.safe_dump(spec, f, sort_keys=False)
