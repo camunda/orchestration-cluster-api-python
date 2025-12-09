@@ -16,9 +16,9 @@ clean:
 clean_spec:
 	rm -rf .openapi-cache
 	
-test: generate-v2
+test: generate
 	uv run pytest -q tests/acceptance
 
-itest: generate-v2
+itest: generate
 	CAMUNDA_INTEGRATION=1 uv run pytest -q tests/integration
 

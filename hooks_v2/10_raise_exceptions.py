@@ -37,6 +37,12 @@ def modify_api_file(file_path):
                 if "raise errors.UnexpectedStatus" in ast.unparse(node):
                     continue
 
+                # Ensure the function accepts **kwargs if it doesn't already
+                # This is needed for the flattened client which passes extra kwargs
+                if not node.args.kwarg:
+                    node.args.kwarg = ast.arg(arg='kwargs', annotation=None)
+                    modified = True
+
                 # Find the detailed function call
                 detailed_func_name = f"{node.name}_detailed"
                 
@@ -55,13 +61,18 @@ def modify_api_file(file_path):
                     node.returns = success_type
                     modified = True
                 
-                # Rewrite body
+                # Rewrite body - preserve all args but DON'T pass **kwargs to detailed
+                # (detailed functions don't accept **kwargs)
                 func_call = f"{detailed_func_name}(\n"
                 for arg in node.args.args:
                     if arg.arg != 'self': # self is not there for module functions
                         func_call += f"    {arg.arg}={arg.arg},\n"
                 for arg in node.args.kwonlyargs:
                      func_call += f"    {arg.arg}={arg.arg},\n"
+                
+                # Don't include **kwargs in the call to detailed function
+                # (it doesn't accept them)
+                
                 func_call += ")"
                 
                 if isinstance(node, ast.AsyncFunctionDef):
