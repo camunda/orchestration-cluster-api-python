@@ -6,8 +6,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from hooks import patch_bundled_spec
-from hooks import flatten_client
+from hooks_shared import patch_bundled_spec
 
 REPO_URL = "https://github.com/camunda/camunda.git"
 SPEC_DIR = "zeebe/gateway-protocol/src/main/proto/v2"
@@ -141,16 +140,6 @@ def run_python_client_generator(spec: Path, out_dir: Path, config_path: Path) ->
     log(f"Running openapi-python-client with config {config_path}...")
     subprocess.run(cmd, check=True)
 
-    # Post-processing: Flatten the client
-    sys.path.append(str(Path(__file__).parent / "hooks"))
-    try:
-        log("Flattening client structure...")
-        flatten_client.generate_flat_client(actual_out_dir)
-    except ImportError as e:
-        log(f"Failed to import flatten_client hook: {e}")
-    except Exception as e:
-        log(f"Failed to flatten client: {e}")
-
 def load_hooks(hooks_dir: Path):
     hooks = []
     if not hooks_dir.exists():
@@ -196,7 +185,7 @@ def main():
     out_dir = (root / args.out_dir).resolve()
     cache_dir = (root / args.cache_dir).resolve()
     config_path = (root / args.config).resolve()
-    hooks_dir = root / "hooks"
+    shared_hooks_dir = root / "hooks_shared"
 
     if args.local_spec:
         spec_path = Path(args.local_spec).resolve()
@@ -223,18 +212,22 @@ def main():
     if not args.skip_generate:
         if args.generator == "openapi-python-client":
             run_python_client_generator(spec_path, out_dir, effective_config)
+            hooks_dir = root / "hooks_v2"
         else:
             run_openapi_generator(spec_path, out_dir, effective_config, args.generator)
+            hooks_dir = root / "hooks_v1"
 
-    # Run hooks 
-    hooks = load_hooks(hooks_dir)
-    context = {
-        "out_dir": str(out_dir),
-        "spec_path": str(spec_path),
-        "config_path": str(effective_config),
-        "generator": args.generator,
-    }
-    run_hooks(hooks, context)
+        # Run hooks 
+        context = {
+            "out_dir": str(out_dir),
+            "spec_path": str(spec_path),
+            "config_path": str(effective_config),
+            "generator": args.generator,
+        }
+        shared_hooks = load_hooks(shared_hooks_dir)
+        run_hooks(shared_hooks, context)
+        hooks = load_hooks(hooks_dir)
+        run_hooks(hooks, context)
 
     # Run acceptance tests as final stage
     if not args.skip_tests:

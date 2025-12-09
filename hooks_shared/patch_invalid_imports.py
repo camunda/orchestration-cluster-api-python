@@ -25,6 +25,7 @@ def run(context: dict) -> None:
 
         if new != txt:
             path.write_text(new, encoding="utf-8")
+            print(f'Patched {path}')
 
 
 
