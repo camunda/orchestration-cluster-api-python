@@ -1,9 +1,8 @@
 import os
-from camunda_orchestration_sdk.api.process_instance_api import ProcessInstanceSearchQuery
-from camunda_orchestration_sdk.models.process_instance_search_query import ProcessInstanceSearchQuery
-from camunda_orchestration_sdk.models.search_query_page_request import SearchQueryPageRequest
-from camunda_orchestration_sdk.models.offset_pagination import OffsetPagination
 import pytest
+from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk.models.search_process_instances_body import SearchProcessInstancesBody
+from camunda_orchestration_sdk.models.search_process_instances_body_page import SearchProcessInstancesBodyPage
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("CAMUNDA_INTEGRATION") != "1",
@@ -11,28 +10,29 @@ pytestmark = pytest.mark.skipif(
 )
 
 def _make_client():
-    import camunda_orchestration_sdk
-
     host = os.environ.get("CAMUNDA_BASE_URL", "http://localhost:8080/v2")
-    configuration = camunda_orchestration_sdk.Configuration(host=host)
-    return camunda_orchestration_sdk.ApiClient(configuration)
+    return CamundaClient(base_url=host)
 
 
 @pytest.mark.asyncio
 async def test_searchProcessInstances_smoke():
-    import camunda_orchestration_sdk
-    async with _make_client() as api_client:
-        api = camunda_orchestration_sdk.ProcessInstanceApi(api_client)
+    async with _make_client() as camunda:
         # Construct the query
         # Note: 'from' is aliased to 'var_from' in Python because 'from' is a reserved keyword
-        pagination = OffsetPagination(var_from=0, limit=50)
-        query = ProcessInstanceSearchQuery(
-            page=SearchQueryPageRequest(pagination)
+        # But since SearchProcessInstancesBodyPage is a dict wrapper, we use dict assignment.
+        
+        page = SearchProcessInstancesBodyPage()
+        page["from"] = 0
+        page["limit"] = 50
+        
+        query = SearchProcessInstancesBody(
+            page=page
         )        
-        resp = await api.search_process_instances(process_instance_search_query=query)
+        resp = await camunda.search_process_instances_async(body=query)
+
         print(resp)
         assert resp is not None
-        # Check for expected fields in ProcessInstanceSearchQueryResult
+        # Check for expected fields in SearchProcessInstancesResponse200
         assert hasattr(resp, "items")
         assert hasattr(resp, "page")
 

@@ -1,0 +1,3 @@
+project_name_override: camunda-orchestration-sdk
+package_name_override: camunda_orchestration_sdk
+package_version_override: 0.1.0

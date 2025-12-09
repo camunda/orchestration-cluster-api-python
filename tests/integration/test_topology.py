@@ -1,5 +1,6 @@
 import os
 import pytest
+from camunda_orchestration_sdk import CamundaClient
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("CAMUNDA_INTEGRATION") != "1",
@@ -7,19 +8,14 @@ pytestmark = pytest.mark.skipif(
 )
 
 def _make_client():
-    import camunda_orchestration_sdk
-
     host = os.environ.get("CAMUNDA_BASE_URL", "http://localhost:8080/v2")
-    configuration = camunda_orchestration_sdk.Configuration(host=host)
-    return camunda_orchestration_sdk.ApiClient(configuration)
+    return CamundaClient(base_url=host)
 
 
 @pytest.mark.asyncio
 async def test_get_topology_smoke():
-    import camunda_orchestration_sdk
     async with _make_client() as api_client:
-        api = camunda_orchestration_sdk.ClusterApi(api_client)
-        resp = await api.get_topology()
+        resp = await api_client.get_topology_async()
         print(resp)
         assert resp is not None
         # Basic shape checks if available
