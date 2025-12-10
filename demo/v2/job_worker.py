@@ -675,8 +675,9 @@ async def benchmark_workloads(num_instances: int = 20):
         cpu_stats = results["cpu"][strategy]
         io_stats = results["io"][strategy]
 
-        cpu_throughput = cpu_stats.get('jobs_per_second_avg', cpu_stats['jobs_per_second'])
-        io_throughput = io_stats.get('jobs_per_second_avg', io_stats['jobs_per_second'])
+        # Handle both single run (jobs_per_second) and multiple runs (jobs_per_second_avg)
+        cpu_throughput = cpu_stats.get('jobs_per_second_avg') or cpu_stats.get('jobs_per_second', 0)
+        io_throughput = io_stats.get('jobs_per_second_avg') or io_stats.get('jobs_per_second', 0)
 
         # Determine which workload type this strategy is better for
         if cpu_throughput > io_throughput * 1.1:  # 10% threshold
