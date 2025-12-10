@@ -25,9 +25,13 @@ from camunda_orchestration_sdk.models.search_process_instances_data_filter impor
     SearchProcessInstancesDataFilter,
 )
 from camunda_orchestration_sdk import CamundaClient, WorkerConfig
-from camunda_orchestration_sdk.runtime.job_worker import ExecutionHint, EXECUTION_STRATEGY
+from camunda_orchestration_sdk.runtime.job_worker import (
+    ExecutionHint,
+    EXECUTION_STRATEGY,
+)
 
 strategies = [s for arg in get_args(EXECUTION_STRATEGY) for s in get_args(arg)]
+
 
 def make_client(base_url: str | None = None) -> CamundaClient:
     """Create a new Camunda client instance.
@@ -52,11 +56,12 @@ def simulate_io_work(duration: float):
     Performs repeated file read/write operations to simulate I/O blocking.
     """
     import tempfile
+
     end_time = time.time() + duration
     chunk_size = 1024 * 1024  # 1MB chunks
 
-    with tempfile.NamedTemporaryFile(mode='w+b', delete=True) as f:
-        data = b'0' * chunk_size
+    with tempfile.NamedTemporaryFile(mode="w+b", delete=True) as f:
+        data = b"0" * chunk_size
         while time.time() < end_time:
             # Write operation
             f.write(data)
@@ -83,8 +88,8 @@ async def simulate_io_work_async(duration: float):
         end_time = time.time() + duration
         chunk_size = 1024 * 1024  # 1MB chunks
 
-        with tempfile.NamedTemporaryFile(mode='w+b', delete=True) as f:
-            data = b'0' * chunk_size
+        with tempfile.NamedTemporaryFile(mode="w+b", delete=True) as f:
+            data = b"0" * chunk_size
             while time.time() < end_time:
                 # Write operation
                 f.write(data)
@@ -104,14 +109,11 @@ def simulate_subprocess_work(duration: float):
     This tests how subprocess calls behave under different execution strategies.
     Uses 'sleep' command which is available on Unix-like systems.
     """
-    end_time = time.time() + duration
-    iterations = 0
-    while time.time() < end_time:
-        # Call external sleep command for a short duration
-        # This simulates calling an external CLI tool
-        subprocess.call(['sleep', '0.1'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        iterations += 1
-    return iterations
+    # Call external sleep command for a short duration
+    # This simulates calling an external CLI tool
+    subprocess.call(
+        ["sleep", str(duration)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+    )
 
 
 async def simulate_subprocess_work_async(duration: float):
@@ -119,25 +121,21 @@ async def simulate_subprocess_work_async(duration: float):
 
     Uses asyncio.create_subprocess_exec for proper async subprocess handling.
     """
-    end_time = time.time() + duration
-    iterations = 0
-    while time.time() < end_time:
-        # Use async subprocess to avoid blocking the event loop
-        process = await asyncio.create_subprocess_exec(
-            'sleep', '0.1',
-            stdout=asyncio.subprocess.DEVNULL,
-            stderr=asyncio.subprocess.DEVNULL
-        )
-        await process.wait()
-        iterations += 1
-    return iterations
+    # Use async subprocess to avoid blocking the event loop
+    process = await asyncio.create_subprocess_exec(
+        "sleep",
+        str(duration),
+        stdout=asyncio.subprocess.DEVNULL,
+        stderr=asyncio.subprocess.DEVNULL,
+    )
+    await process.wait()
 
 
 def create_default_callback(
     client: CamundaClient,
     job_counter: dict[str, int] | None = None,
     strategy: str = "async",
-    workload_type: Literal["cpu", "io", "subprocess"] = "cpu"
+    workload_type: Literal["cpu", "io", "subprocess"] = "cpu",
 ) -> Callable:
     """Create a default job callback that completes jobs with dummy data.
 
@@ -151,6 +149,7 @@ def create_default_callback(
         A callback function (async or sync depending on strategy).
     """
     if strategy in ["async", "auto"]:
+
         @ExecutionHint.async_safe
         async def async_callback(job: ActivateJobsResponse200JobsItem):
             logger.info(f"Starting {workload_type}-bound work on: {job.job_key}")
@@ -177,7 +176,7 @@ def create_default_callback(
 
             # Track completion if counter provided
             if job_counter is not None:
-                job_counter['completed'] = job_counter.get('completed', 0) + 1
+                job_counter["completed"] = job_counter.get("completed", 0) + 1
                 logger.info(f"Jobs completed: {job_counter['completed']}")
 
         return async_callback
@@ -217,7 +216,7 @@ def create_default_callback(
 
             # Track completion if counter provided
             if job_counter is not None:
-                job_counter['completed'] = job_counter.get('completed', 0) + 1
+                job_counter["completed"] = job_counter.get("completed", 0) + 1
                 logger.info(f"Jobs completed: {job_counter['completed']}")
 
         return sync_callback
@@ -225,7 +224,7 @@ def create_default_callback(
 
 async def deploy_process(
     client: CamundaClient,
-    bpmn_path: str = "./demo/v2/resources/job_worker_load_test_process_1.bpmn"
+    bpmn_path: str = "./demo/v2/resources/job_worker_load_test_process_1.bpmn",
 ) -> ProcessDefinitionKey:
     """Deploy a BPMN process to Camunda.
 
@@ -247,7 +246,9 @@ async def deploy_process(
     return process_definition_key
 
 
-async def cleanup_active_instances(client: CamundaClient, process_definition_key: str) -> None:
+async def cleanup_active_instances(
+    client: CamundaClient, process_definition_key: str
+) -> None:
     """Cancel all active instances of a process.
 
     Args:
@@ -272,7 +273,9 @@ async def cleanup_active_instances(client: CamundaClient, process_definition_key
         except UnexpectedStatus as e:
             # If the instance is already gone (404), that's fine - it completed or was already canceled
             if e.status_code == 404:
-                logger.debug(f"Process instance {process.process_instance_key} already completed or canceled")
+                logger.debug(
+                    f"Process instance {process.process_instance_key} already completed or canceled"
+                )
             else:
                 # Re-raise other unexpected errors
                 raise
@@ -285,7 +288,7 @@ async def run_worker_scenario(
     num_instances: int = 1,
     expected_jobs: int | None = None,
     scenario_timeout_seconds: int | None = 30,
-    workload_type: Literal["cpu", "io", "subprocess"] = "cpu"
+    workload_type: Literal["cpu", "io", "subprocess"] = "cpu",
 ) -> dict[str, float]:
     """Run a worker scenario with configurable settings.
 
@@ -302,7 +305,9 @@ async def run_worker_scenario(
         dict with timing stats: {'total_time', 'jobs_completed', 'jobs_per_second', 'expected_jobs',
                                   'memory_current_mb', 'memory_peak_mb'}
     """
-    logger.debug(f'Running worker with config: {worker_config}, workload: {workload_type}')
+    logger.debug(
+        f"Running worker with config: {worker_config}, workload: {workload_type}"
+    )
     if expected_jobs is None:
         expected_jobs = num_instances
 
@@ -311,10 +316,12 @@ async def run_worker_scenario(
     initial_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
 
     # Job counter to track completions
-    job_counter = {'completed': 0, 'start_time': None}
+    job_counter = {"completed": 0, "start_time": None}
 
     # Create callback with counter (pass strategy and workload type)
-    tracked_callback = create_default_callback(client, job_counter, worker_config.execution_strategy, workload_type)
+    tracked_callback = create_default_callback(
+        client, job_counter, worker_config.execution_strategy, workload_type
+    )
 
     # Start process instances
     logger.info(f"\n=== Starting {num_instances} process instances ===")
@@ -322,18 +329,22 @@ async def run_worker_scenario(
         process_instance = client.create_process_instance(
             data=Processcreationbykey(process_definition_key=process_definition_key)
         )
-        logger.info(f"Started process instance {i+1}/{num_instances}: {process_instance.process_instance_key}")
+        logger.info(
+            f"Started process instance {i+1}/{num_instances}: {process_instance.process_instance_key}"
+        )
 
     # Record start time after all instances are started
-    job_counter['start_time'] = time.time()
-    logger.info(f"\n=== All instances started. Waiting for {expected_jobs} jobs to complete ===")
+    job_counter["start_time"] = time.time()
+    logger.info(
+        f"\n=== All instances started. Waiting for {expected_jobs} jobs to complete ==="
+    )
 
     # Create worker
     client.create_job_worker(config=worker_config, callback=tracked_callback)
 
     # Monitor for completion
     async def wait_for_completion():
-        while job_counter['completed'] < expected_jobs:
+        while job_counter["completed"] < expected_jobs:
             await asyncio.sleep(0.1)  # Check every 100ms
 
     # Run workers and monitor concurrently
@@ -341,7 +352,9 @@ async def run_worker_scenario(
 
     try:
         if scenario_timeout_seconds is not None:
-            await asyncio.wait_for(wait_for_completion(), timeout=scenario_timeout_seconds)
+            await asyncio.wait_for(
+                wait_for_completion(), timeout=scenario_timeout_seconds
+            )
         else:
             await wait_for_completion()
     except asyncio.TimeoutError:
@@ -356,8 +369,8 @@ async def run_worker_scenario(
 
         # Calculate stats
         end_time = time.time()
-        total_time = end_time - job_counter['start_time']
-        jobs_completed = job_counter['completed']
+        total_time = end_time - job_counter["start_time"]
+        jobs_completed = job_counter["completed"]
         jobs_per_second = jobs_completed / total_time if total_time > 0 else 0
 
         # Get memory usage
@@ -369,7 +382,8 @@ async def run_worker_scenario(
         # On macOS, ru_maxrss is in bytes; on Linux it's in KB
         # Detect platform and convert to MB
         import sys
-        if sys.platform == 'darwin':  # macOS
+
+        if sys.platform == "darwin":  # macOS
             rss_mb = (final_rss - initial_rss) / (1024 * 1024)
             max_rss_mb = final_rss / (1024 * 1024)
         else:  # Linux
@@ -390,14 +404,14 @@ async def run_worker_scenario(
         logger.info(f"RSS delta: {rss_mb:.2f} MB")
 
         result = {
-            'total_time': total_time,
-            'jobs_completed': jobs_completed,
-            'jobs_per_second': jobs_per_second,
-            'expected_jobs': expected_jobs,
-            'memory_current_mb': memory_current_mb,
-            'memory_peak_mb': memory_peak_mb,
-            'max_rss_mb': max_rss_mb,
-            'rss_delta_mb': rss_mb
+            "total_time": total_time,
+            "jobs_completed": jobs_completed,
+            "jobs_per_second": jobs_per_second,
+            "expected_jobs": expected_jobs,
+            "memory_current_mb": memory_current_mb,
+            "memory_peak_mb": memory_peak_mb,
+            "max_rss_mb": max_rss_mb,
+            "rss_delta_mb": rss_mb,
         }
         return result
 
@@ -408,7 +422,7 @@ async def run_test(
     workload_type: Literal["cpu", "io", "subprocess"] = "cpu",
     repeats: int = 1,
     max_concurrent_jobs: int = 10,
-    timeout: int = 5000
+    timeout: int = 5000,
 ) -> dict[str, float]:
     """Run a parameterized test with optional averaging over multiple runs.
 
@@ -461,13 +475,13 @@ async def run_test(
             process_definition_key=process_definition_key,
             worker_config=WorkerConfig(
                 job_type="job-worker-load-test-1-task-1",
-                job_timeout_milliseconds=5000,
+                job_timeout_milliseconds=30000,
                 max_concurrent_jobs=max_concurrent_jobs,
                 execution_strategy=strategy,
             ),
             num_instances=num_instances,
             scenario_timeout_seconds=timeout,
-            workload_type=workload_type
+            workload_type=workload_type,
         )
         all_stats.append(stats)
 
@@ -479,33 +493,41 @@ async def run_test(
     # Calculate averages if multiple runs
     if repeats == 1:
         result = all_stats[0]
-        result['repeats'] = 1
+        result["repeats"] = 1
         return result
     else:
-        total_times = [s['total_time'] for s in all_stats]
-        throughputs = [s['jobs_per_second'] for s in all_stats]
-        peak_memories = [s['memory_peak_mb'] for s in all_stats]
-        max_rss_values = [s['max_rss_mb'] for s in all_stats]
+        total_times = [s["total_time"] for s in all_stats]
+        throughputs = [s["jobs_per_second"] for s in all_stats]
+        peak_memories = [s["memory_peak_mb"] for s in all_stats]
+        max_rss_values = [s["max_rss_mb"] for s in all_stats]
 
         result = {
-            'total_time_avg': sum(total_times) / len(total_times),
-            'total_time_min': min(total_times),
-            'total_time_max': max(total_times),
-            'total_time_std': (sum((x - sum(total_times)/len(total_times))**2 for x in total_times) / len(total_times)) ** 0.5,
-            'jobs_per_second_avg': sum(throughputs) / len(throughputs),
-            'jobs_per_second_min': min(throughputs),
-            'jobs_per_second_max': max(throughputs),
-            'jobs_per_second_std': (sum((x - sum(throughputs)/len(throughputs))**2 for x in throughputs) / len(throughputs)) ** 0.5,
-            'memory_peak_mb_avg': sum(peak_memories) / len(peak_memories),
-            'memory_peak_mb_min': min(peak_memories),
-            'memory_peak_mb_max': max(peak_memories),
-            'max_rss_mb_avg': sum(max_rss_values) / len(max_rss_values),
-            'max_rss_mb_min': min(max_rss_values),
-            'max_rss_mb_max': max(max_rss_values),
-            'jobs_completed': all_stats[0]['jobs_completed'],
-            'expected_jobs': all_stats[0]['expected_jobs'],
-            'repeats': repeats,
-            'all_runs': all_stats
+            "total_time_avg": sum(total_times) / len(total_times),
+            "total_time_min": min(total_times),
+            "total_time_max": max(total_times),
+            "total_time_std": (
+                sum((x - sum(total_times) / len(total_times)) ** 2 for x in total_times)
+                / len(total_times)
+            )
+            ** 0.5,
+            "jobs_per_second_avg": sum(throughputs) / len(throughputs),
+            "jobs_per_second_min": min(throughputs),
+            "jobs_per_second_max": max(throughputs),
+            "jobs_per_second_std": (
+                sum((x - sum(throughputs) / len(throughputs)) ** 2 for x in throughputs)
+                / len(throughputs)
+            )
+            ** 0.5,
+            "memory_peak_mb_avg": sum(peak_memories) / len(peak_memories),
+            "memory_peak_mb_min": min(peak_memories),
+            "memory_peak_mb_max": max(peak_memories),
+            "max_rss_mb_avg": sum(max_rss_values) / len(max_rss_values),
+            "max_rss_mb_min": min(max_rss_values),
+            "max_rss_mb_max": max(max_rss_values),
+            "jobs_completed": all_stats[0]["jobs_completed"],
+            "expected_jobs": all_stats[0]["expected_jobs"],
+            "repeats": repeats,
+            "all_runs": all_stats,
         }
 
         logger.info(f"\n{'='*70}")
@@ -551,11 +573,11 @@ async def simple_scenario():
         process_definition_key=process_definition_key,
         worker_config=WorkerConfig(
             job_type="job-worker-load-test-1-task-1",
-            job_timeout_milliseconds=5000,
+            job_timeout_milliseconds=30000,
             max_concurrent_jobs=10,
             execution_strategy="auto",
         ),
-        num_instances=1
+        num_instances=1,
     )
     return stats
 
@@ -576,12 +598,12 @@ async def load_test_scenario():
         process_definition_key=process_definition_key,
         worker_config=WorkerConfig(
             job_type="job-worker-load-test-1-task-1",
-            job_timeout_milliseconds=5000,
+            job_timeout_milliseconds=30000,
             max_concurrent_jobs=50,  # Higher concurrency
             execution_strategy="auto",
         ),
         num_instances=100,  # More instances
-        scenario_timeout_seconds=120  # 2 minute timeout for load test
+        scenario_timeout_seconds=120,  # 2 minute timeout for load test
     )
     return stats
 
@@ -593,7 +615,7 @@ async def multi_strategy_scenario():
     for strategy in strategies:
         logger.info(f"\n{'='*60}")
         logger.info(f"Testing strategy: {strategy}")
-        logger.info('='*60)
+        logger.info("=" * 60)
 
         client = make_client()
         process_definition_key = await deploy_process(client)
@@ -604,21 +626,23 @@ async def multi_strategy_scenario():
             process_definition_key=process_definition_key,
             worker_config=WorkerConfig(
                 job_type="job-worker-load-test-1-task-1",
-                job_timeout_milliseconds=5000,
+                job_timeout_milliseconds=30000,
                 max_concurrent_jobs=10,
                 execution_strategy=strategy,
             ),
             num_instances=10,
-            scenario_timeout_seconds=60
+            scenario_timeout_seconds=60,
         )
         results[strategy] = stats
 
     # Print comparison
     logger.info(f"\n{'='*60}")
     logger.info("STRATEGY COMPARISON")
-    logger.info('='*60)
+    logger.info("=" * 60)
     for strategy, stats in results.items():
-        logger.info(f"{strategy:10} | {stats['jobs_per_second']:6.2f} jobs/sec | {stats['total_time']:6.2f}s total")
+        logger.info(
+            f"{strategy:10} | {stats['jobs_per_second']:6.2f} jobs/sec | {stats['total_time']:6.2f}s total"
+        )
 
     return results
 
@@ -640,23 +664,29 @@ async def benchmark_strategies(num_instances: int = 20):
             workload_type="cpu",
             repeats=3,  # Run 3 times and average
             max_concurrent_jobs=10,
-            timeout=60
+            timeout=60,
         )
 
     # Print final comparison
     logger.info(f"\n{'='*70}")
     logger.info("FINAL STRATEGY COMPARISON (CPU-bound workload)")
     logger.info(f"{'='*70}")
-    logger.info(f"{'Strategy':<12} | {'Avg Time':<10} | {'Avg Throughput':<15} | {'Consistency'}")
+    logger.info(
+        f"{'Strategy':<12} | {'Avg Time':<10} | {'Avg Throughput':<15} | {'Consistency'}"
+    )
     logger.info(f"{'-'*70}")
     for strategy, stats in results.items():
-        if stats['repeats'] > 1:
+        if stats["repeats"] > 1:
             # Show variability using coefficient of variation
-            cv = (stats['total_time_std'] / stats['total_time_avg']) * 100
+            cv = (stats["total_time_std"] / stats["total_time_avg"]) * 100
             consistency = f"±{cv:.1f}%"
-            logger.info(f"{strategy:<12} | {stats['total_time_avg']:>8.2f}s | {stats['jobs_per_second_avg']:>13.2f}/s | {consistency}")
+            logger.info(
+                f"{strategy:<12} | {stats['total_time_avg']:>8.2f}s | {stats['jobs_per_second_avg']:>13.2f}/s | {consistency}"
+            )
         else:
-            logger.info(f"{strategy:<12} | {stats['total_time']:>8.2f}s | {stats['jobs_per_second']:>13.2f}/s | single run")
+            logger.info(
+                f"{strategy:<12} | {stats['total_time']:>8.2f}s | {stats['jobs_per_second']:>13.2f}/s | single run"
+            )
     logger.info(f"{'='*70}\n")
 
     return results
@@ -680,14 +710,16 @@ async def benchmark_workloads(num_instances: int = 20):
         logger.info(f"{'='*70}\n")
 
         for strategy in strategies:
-            logger.info(f"Running {strategy} strategy with {workload}-bound workload...")
+            logger.info(
+                f"Running {strategy} strategy with {workload}-bound workload..."
+            )
             results[workload][strategy] = await run_test(
                 num_instances=num_instances,
                 strategy=strategy,
                 workload_type=workload,
                 repeats=3,
                 max_concurrent_jobs=10,
-                timeout=60
+                timeout=60,
             )
 
     # Print comprehensive comparison
@@ -698,22 +730,30 @@ async def benchmark_workloads(num_instances: int = 20):
     for workload in workload_types:
         logger.info(f"\n{workload.upper()}-BOUND WORKLOAD:")
         logger.info(f"{'-'*80}")
-        logger.info(f"{'Strategy':<12} | {'Avg Time':<10} | {'Avg Throughput':<15} | {'Consistency'}")
+        logger.info(
+            f"{'Strategy':<12} | {'Avg Time':<10} | {'Avg Throughput':<15} | {'Consistency'}"
+        )
         logger.info(f"{'-'*80}")
 
         for strategy, stats in results[workload].items():
-            if stats['repeats'] > 1:
-                cv = (stats['total_time_std'] / stats['total_time_avg']) * 100
+            if stats["repeats"] > 1:
+                cv = (stats["total_time_std"] / stats["total_time_avg"]) * 100
                 consistency = f"±{cv:.1f}%"
-                logger.info(f"{strategy:<12} | {stats['total_time_avg']:>8.2f}s | {stats['jobs_per_second_avg']:>13.2f}/s | {consistency}")
+                logger.info(
+                    f"{strategy:<12} | {stats['total_time_avg']:>8.2f}s | {stats['jobs_per_second_avg']:>13.2f}/s | {consistency}"
+                )
             else:
-                logger.info(f"{strategy:<12} | {stats['total_time']:>8.2f}s | {stats['jobs_per_second']:>13.2f}/s | single run")
+                logger.info(
+                    f"{strategy:<12} | {stats['total_time']:>8.2f}s | {stats['jobs_per_second']:>13.2f}/s | single run"
+                )
 
     # Print side-by-side comparison
     logger.info(f"\n{'='*80}")
     logger.info("SIDE-BY-SIDE COMPARISON")
     logger.info(f"{'='*80}")
-    logger.info(f"{'Strategy':<12} | {'CPU Throughput':<15} | {'I/O Throughput':<15} | {'Best For'}")
+    logger.info(
+        f"{'Strategy':<12} | {'CPU Throughput':<15} | {'I/O Throughput':<15} | {'Best For'}"
+    )
     logger.info(f"{'-'*80}")
 
     for strategy in strategies:
@@ -721,8 +761,12 @@ async def benchmark_workloads(num_instances: int = 20):
         io_stats = results["io"][strategy]
 
         # Handle both single run (jobs_per_second) and multiple runs (jobs_per_second_avg)
-        cpu_throughput = cpu_stats.get('jobs_per_second_avg') or cpu_stats.get('jobs_per_second', 0)
-        io_throughput = io_stats.get('jobs_per_second_avg') or io_stats.get('jobs_per_second', 0)
+        cpu_throughput = cpu_stats.get("jobs_per_second_avg") or cpu_stats.get(
+            "jobs_per_second", 0
+        )
+        io_throughput = io_stats.get("jobs_per_second_avg") or io_stats.get(
+            "jobs_per_second", 0
+        )
 
         # Determine which workload type this strategy is better for
         if cpu_throughput > io_throughput * 1.1:  # 10% threshold
@@ -732,7 +776,9 @@ async def benchmark_workloads(num_instances: int = 20):
         else:
             best_for = "Both"
 
-        logger.info(f"{strategy:<12} | {cpu_throughput:>13.2f}/s | {io_throughput:>13.2f}/s | {best_for}")
+        logger.info(
+            f"{strategy:<12} | {cpu_throughput:>13.2f}/s | {io_throughput:>13.2f}/s | {best_for}"
+        )
 
     logger.info(f"{'='*80}\n")
 
@@ -766,7 +812,7 @@ async def benchmark_subprocess(num_instances: int = 20):
                 workload_type="subprocess",
                 repeats=3,
                 max_concurrent_jobs=10,
-                timeout=120  # Longer timeout for subprocess calls
+                timeout=120,  # Longer timeout for subprocess calls
             )
             logger.info(f"✓ {strategy} strategy completed successfully")
         except Exception as e:
@@ -777,18 +823,26 @@ async def benchmark_subprocess(num_instances: int = 20):
     logger.info(f"\n{'='*70}")
     logger.info("SUBPROCESS BENCHMARK RESULTS")
     logger.info(f"{'='*70}")
-    logger.info(f"{'Strategy':<12} | {'Avg Time':<10} | {'Avg Throughput':<15} | {'Status'}")
+    logger.info(
+        f"{'Strategy':<12} | {'Avg Time':<10} | {'Avg Throughput':<15} | {'Status'}"
+    )
     logger.info(f"{'-'*70}")
 
     for strategy, stats in results.items():
         if "error" in stats:
-            logger.info(f"{strategy:<12} | {'N/A':<10} | {'N/A':<15} | FAILED: {stats['error']}")
-        elif stats['repeats'] > 1:
-            cv = (stats['total_time_std'] / stats['total_time_avg']) * 100
+            logger.info(
+                f"{strategy:<12} | {'N/A':<10} | {'N/A':<15} | FAILED: {stats['error']}"
+            )
+        elif stats["repeats"] > 1:
+            cv = (stats["total_time_std"] / stats["total_time_avg"]) * 100
             consistency = f"±{cv:.1f}%"
-            logger.info(f"{strategy:<12} | {stats['total_time_avg']:>8.2f}s | {stats['jobs_per_second_avg']:>13.2f}/s | OK {consistency}")
+            logger.info(
+                f"{strategy:<12} | {stats['total_time_avg']:>8.2f}s | {stats['jobs_per_second_avg']:>13.2f}/s | OK {consistency}"
+            )
         else:
-            logger.info(f"{strategy:<12} | {stats['total_time']:>8.2f}s | {stats['jobs_per_second']:>13.2f}/s | OK (single run)")
+            logger.info(
+                f"{strategy:<12} | {stats['total_time']:>8.2f}s | {stats['jobs_per_second']:>13.2f}/s | OK (single run)"
+            )
 
     logger.info(f"{'='*70}\n")
 
@@ -803,7 +857,7 @@ async def quick_test():
         workload_type="cpu",
         repeats=1,
         max_concurrent_jobs=5,
-        timeout=30
+        timeout=30,
     )
 
 
@@ -815,7 +869,7 @@ async def stress_test():
         workload_type="cpu",
         repeats=3,
         max_concurrent_jobs=50,
-        timeout=120
+        timeout=120,
     )
 
 
@@ -832,24 +886,30 @@ def main():
             num_instances = int(sys.argv[2]) if len(sys.argv) > 2 else 10
             strategy_arg = sys.argv[3] if len(sys.argv) > 3 else "auto"
             if strategy_arg not in strategies:
-                logger.error(f"Invalid strategy: {strategy_arg}. Valid options: {strategies}")
+                logger.error(
+                    f"Invalid strategy: {strategy_arg}. Valid options: {strategies}"
+                )
                 sys.exit(1)
             strategy: EXECUTION_STRATEGY = strategy_arg  # type: ignore
             workload_arg = sys.argv[4] if len(sys.argv) > 4 else "cpu"
             if workload_arg not in ["cpu", "io", "subprocess"]:
-                logger.error(f"Invalid workload type: {workload_arg}. Valid options: cpu, io, subprocess")
+                logger.error(
+                    f"Invalid workload type: {workload_arg}. Valid options: cpu, io, subprocess"
+                )
                 sys.exit(1)
             workload: Literal["cpu", "io", "subprocess"] = workload_arg  # type: ignore
             repeats = int(sys.argv[5]) if len(sys.argv) > 5 else 1
             max_concurrent = int(sys.argv[6]) if len(sys.argv) > 6 else 10
 
-            asyncio.run(run_test(
-                num_instances=num_instances,
-                strategy=strategy,
-                workload_type=workload,
-                repeats=repeats,
-                max_concurrent_jobs=max_concurrent
-            ))
+            asyncio.run(
+                run_test(
+                    num_instances=num_instances,
+                    strategy=strategy,
+                    workload_type=workload,
+                    repeats=repeats,
+                    max_concurrent_jobs=max_concurrent,
+                )
+            )
         elif scenario == "benchmark":
             # Usage: python job_worker.py benchmark [num_instances]
             num_instances = int(sys.argv[2]) if len(sys.argv) > 2 else 20
@@ -872,7 +932,9 @@ def main():
             asyncio.run(multi_strategy_scenario())
         else:
             logger.error(f"Unknown scenario: {scenario}")
-            logger.info("Available scenarios: test, benchmark, benchmark-workloads, benchmark-subprocess, quick, stress, load, multi")
+            logger.info(
+                "Available scenarios: test, benchmark, benchmark-workloads, benchmark-subprocess, quick, stress, load, multi"
+            )
             sys.exit(1)
     else:
         # Default: run simple scenario
