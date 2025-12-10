@@ -1,6 +1,8 @@
 import asyncio
 import os
 import time
+import tracemalloc
+import resource
 from typing import Callable, Literal, get_args
 from loguru import logger
 from camunda_orchestration_sdk.semantic_types import ProcessDefinitionKey
@@ -171,11 +173,16 @@ async def run_worker_scenario(
         timeout: Timeout in seconds to run the worker. None means run indefinitely.
 
     Returns:
-        dict with timing stats: {'total_time', 'jobs_completed', 'jobs_per_second', 'expected_jobs'}
+        dict with timing stats: {'total_time', 'jobs_completed', 'jobs_per_second', 'expected_jobs',
+                                  'memory_current_mb', 'memory_peak_mb'}
     """
     logger.debug(f'Running worker with config: {worker_config}')
     if expected_jobs is None:
         expected_jobs = num_instances
+
+    # Start memory tracking
+    tracemalloc.start()
+    initial_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
 
     # Job counter to track completions
     job_counter = {'completed': 0, 'start_time': None}
@@ -227,16 +234,44 @@ async def run_worker_scenario(
         jobs_completed = job_counter['completed']
         jobs_per_second = jobs_completed / total_time if total_time > 0 else 0
 
+        # Get memory usage
+        current_memory, peak_memory = tracemalloc.get_traced_memory()
+        tracemalloc.stop()
+
+        # Get RSS memory (in bytes on macOS, KB on Linux)
+        final_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        # On macOS, ru_maxrss is in bytes; on Linux it's in KB
+        # Detect platform and convert to MB
+        import sys
+        if sys.platform == 'darwin':  # macOS
+            rss_mb = (final_rss - initial_rss) / (1024 * 1024)
+            max_rss_mb = final_rss / (1024 * 1024)
+        else:  # Linux
+            rss_mb = (final_rss - initial_rss) / 1024
+            max_rss_mb = final_rss / 1024
+
+        memory_current_mb = current_memory / (1024 * 1024)
+        memory_peak_mb = peak_memory / (1024 * 1024)
+
         logger.info(f"\n=== Test Complete ===")
         logger.info(f"Jobs completed: {jobs_completed}/{expected_jobs}")
         logger.info(f"Total time: {total_time:.2f}s")
         logger.info(f"Throughput: {jobs_per_second:.2f} jobs/second")
+        logger.info(f"\n=== Memory Usage ===")
+        logger.info(f"Current Python memory: {memory_current_mb:.2f} MB")
+        logger.info(f"Peak Python memory: {memory_peak_mb:.2f} MB")
+        logger.info(f"Max RSS (total process): {max_rss_mb:.2f} MB")
+        logger.info(f"RSS delta: {rss_mb:.2f} MB")
 
         result = {
             'total_time': total_time,
             'jobs_completed': jobs_completed,
             'jobs_per_second': jobs_per_second,
-            'expected_jobs': expected_jobs
+            'expected_jobs': expected_jobs,
+            'memory_current_mb': memory_current_mb,
+            'memory_peak_mb': memory_peak_mb,
+            'max_rss_mb': max_rss_mb,
+            'rss_delta_mb': rss_mb
         }
         return result
 
@@ -319,6 +354,8 @@ async def run_test(
     else:
         total_times = [s['total_time'] for s in all_stats]
         throughputs = [s['jobs_per_second'] for s in all_stats]
+        peak_memories = [s['memory_peak_mb'] for s in all_stats]
+        max_rss_values = [s['max_rss_mb'] for s in all_stats]
 
         result = {
             'total_time_avg': sum(total_times) / len(total_times),
@@ -329,6 +366,12 @@ async def run_test(
             'jobs_per_second_min': min(throughputs),
             'jobs_per_second_max': max(throughputs),
             'jobs_per_second_std': (sum((x - sum(throughputs)/len(throughputs))**2 for x in throughputs) / len(throughputs)) ** 0.5,
+            'memory_peak_mb_avg': sum(peak_memories) / len(peak_memories),
+            'memory_peak_mb_min': min(peak_memories),
+            'memory_peak_mb_max': max(peak_memories),
+            'max_rss_mb_avg': sum(max_rss_values) / len(max_rss_values),
+            'max_rss_mb_min': min(max_rss_values),
+            'max_rss_mb_max': max(max_rss_values),
             'jobs_completed': all_stats[0]['jobs_completed'],
             'expected_jobs': all_stats[0]['expected_jobs'],
             'repeats': repeats,
@@ -348,6 +391,15 @@ async def run_test(
         logger.info(f"  Min:     {result['jobs_per_second_min']:.2f} jobs/sec")
         logger.info(f"  Max:     {result['jobs_per_second_max']:.2f} jobs/sec")
         logger.info(f"  Std Dev: {result['jobs_per_second_std']:.2f} jobs/sec")
+        logger.info(f"\nMemory Usage:")
+        logger.info(f"  Peak Python Memory:")
+        logger.info(f"    Average: {result['memory_peak_mb_avg']:.2f} MB")
+        logger.info(f"    Min:     {result['memory_peak_mb_min']:.2f} MB")
+        logger.info(f"    Max:     {result['memory_peak_mb_max']:.2f} MB")
+        logger.info(f"  Max RSS:")
+        logger.info(f"    Average: {result['max_rss_mb_avg']:.2f} MB")
+        logger.info(f"    Min:     {result['max_rss_mb_min']:.2f} MB")
+        logger.info(f"    Max:     {result['max_rss_mb_max']:.2f} MB")
         logger.info(f"{'='*70}\n")
 
         return result
