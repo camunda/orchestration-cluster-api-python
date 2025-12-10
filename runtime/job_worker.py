@@ -6,6 +6,7 @@ from functools import wraps
 from dataclasses import dataclass
 from camunda_orchestration_sdk.models.activate_jobs_data import ActivateJobsData
 from camunda_orchestration_sdk.models.activate_jobs_response_200 import ActivateJobsResponse200
+from camunda_orchestration_sdk.types import Unset, UNSET
 
 if TYPE_CHECKING:
     from camunda_orchestration_sdk import CamundaClient
@@ -22,9 +23,11 @@ class HintedCallable(Protocol):
 class WorkerConfig:
     """User-facing configuration"""
     job_type: str
+    """How long the job is reserved for this worker only"""
     timeout: int
     max_concurrent_jobs: int = 10  # Max jobs executing at once
     execution_strategy: EXECUTION_STRATEGY = "auto"
+    fetch_variables: list[str] | None = None
 
 class ExecutionHint:
     """Decorators for users to hint at their workload characteristics"""
@@ -121,12 +124,14 @@ class JobWorker:
             await asyncio.sleep(1)  # Polling interval
     
     async def _poll_for_jobs(self):
-        """Your SDK's async HTTP polling logic"""
+        """SDK's async HTTP polling logic"""
         jobsResult = await self.client.activate_jobs_async(data=
             ActivateJobsData(
                 type_=self.config.job_type, 
                 timeout=self.config.timeout, 
-                max_jobs_to_activate=self.config.max_concurrent_jobs
+                max_jobs_to_activate=self.config.max_concurrent_jobs,
+                request_timeout=0, # This allows the server to autonegotiate the poll timeout
+                fetch_variable = self.config.fetch_variables if self.config.fetch_variables is not None else UNSET
             )
         )
         if isinstance(jobsResult, ActivateJobsResponse200):
