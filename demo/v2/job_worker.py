@@ -569,7 +569,10 @@ async def multi_strategy_scenario():
 
 
 async def benchmark_strategies():
-    """Compare different strategies with multiple runs for statistical significance."""
+    """Compare different strategies with multiple runs for statistical significance.
+
+    Tests only CPU-bound workload across all strategies.
+    """
     results = {}
 
     for strategy in strategies:
@@ -584,7 +587,7 @@ async def benchmark_strategies():
 
     # Print final comparison
     logger.info(f"\n{'='*70}")
-    logger.info("FINAL STRATEGY COMPARISON")
+    logger.info("FINAL STRATEGY COMPARISON (CPU-bound workload)")
     logger.info(f"{'='*70}")
     logger.info(f"{'Strategy':<12} | {'Avg Time':<10} | {'Avg Throughput':<15} | {'Consistency'}")
     logger.info(f"{'-'*70}")
@@ -597,6 +600,79 @@ async def benchmark_strategies():
         else:
             logger.info(f"{strategy:<12} | {stats['total_time']:>8.2f}s | {stats['jobs_per_second']:>13.2f}/s | single run")
     logger.info(f"{'='*70}\n")
+
+    return results
+
+
+async def benchmark_workloads():
+    """Compare CPU-bound vs I/O-bound workloads across all strategies.
+
+    Tests all combinations of strategies and workload types.
+    """
+    workload_types: list[Literal["cpu", "io"]] = ["cpu", "io"]
+    results = {}
+
+    for workload in workload_types:
+        results[workload] = {}
+        logger.info(f"\n{'='*70}")
+        logger.info(f"TESTING {workload.upper()}-BOUND WORKLOAD")
+        logger.info(f"{'='*70}\n")
+
+        for strategy in strategies:
+            logger.info(f"Running {strategy} strategy with {workload}-bound workload...")
+            results[workload][strategy] = await run_test(
+                num_instances=20,
+                strategy=strategy,
+                workload_type=workload,
+                repeats=3,
+                max_concurrent_jobs=10,
+                timeout=60
+            )
+
+    # Print comprehensive comparison
+    logger.info(f"\n{'='*80}")
+    logger.info("COMPREHENSIVE BENCHMARK: STRATEGIES × WORKLOAD TYPES")
+    logger.info(f"{'='*80}")
+
+    for workload in workload_types:
+        logger.info(f"\n{workload.upper()}-BOUND WORKLOAD:")
+        logger.info(f"{'-'*80}")
+        logger.info(f"{'Strategy':<12} | {'Avg Time':<10} | {'Avg Throughput':<15} | {'Consistency'}")
+        logger.info(f"{'-'*80}")
+
+        for strategy, stats in results[workload].items():
+            if stats['repeats'] > 1:
+                cv = (stats['total_time_std'] / stats['total_time_avg']) * 100
+                consistency = f"±{cv:.1f}%"
+                logger.info(f"{strategy:<12} | {stats['total_time_avg']:>8.2f}s | {stats['jobs_per_second_avg']:>13.2f}/s | {consistency}")
+            else:
+                logger.info(f"{strategy:<12} | {stats['total_time']:>8.2f}s | {stats['jobs_per_second']:>13.2f}/s | single run")
+
+    # Print side-by-side comparison
+    logger.info(f"\n{'='*80}")
+    logger.info("SIDE-BY-SIDE COMPARISON")
+    logger.info(f"{'='*80}")
+    logger.info(f"{'Strategy':<12} | {'CPU Throughput':<15} | {'I/O Throughput':<15} | {'Best For'}")
+    logger.info(f"{'-'*80}")
+
+    for strategy in strategies:
+        cpu_stats = results["cpu"][strategy]
+        io_stats = results["io"][strategy]
+
+        cpu_throughput = cpu_stats.get('jobs_per_second_avg', cpu_stats['jobs_per_second'])
+        io_throughput = io_stats.get('jobs_per_second_avg', io_stats['jobs_per_second'])
+
+        # Determine which workload type this strategy is better for
+        if cpu_throughput > io_throughput * 1.1:  # 10% threshold
+            best_for = "CPU-bound"
+        elif io_throughput > cpu_throughput * 1.1:
+            best_for = "I/O-bound"
+        else:
+            best_for = "Both"
+
+        logger.info(f"{strategy:<12} | {cpu_throughput:>13.2f}/s | {io_throughput:>13.2f}/s | {best_for}")
+
+    logger.info(f"{'='*80}\n")
 
     return results
 
@@ -658,6 +734,8 @@ def main():
             ))
         elif scenario == "benchmark":
             asyncio.run(benchmark_strategies())
+        elif scenario == "benchmark-workloads":
+            asyncio.run(benchmark_workloads())
         elif scenario == "quick":
             asyncio.run(quick_test())
         elif scenario == "stress":
@@ -668,7 +746,7 @@ def main():
             asyncio.run(multi_strategy_scenario())
         else:
             logger.error(f"Unknown scenario: {scenario}")
-            logger.info("Available scenarios: test, benchmark, quick, stress, load, multi")
+            logger.info("Available scenarios: test, benchmark, benchmark-workloads, quick, stress, load, multi")
             sys.exit(1)
     else:
         # Default: run simple scenario
