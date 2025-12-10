@@ -209,6 +209,8 @@ async def cleanup_active_instances(client: CamundaClient, process_definition_key
         client: The Camunda client to use.
         process_definition_key: The process definition key to clean up.
     """
+    from camunda_orchestration_sdk.errors import UnexpectedStatus
+
     search_query = SearchProcessInstancesData(
         filter_=SearchProcessInstancesDataFilter(
             process_definition_key=process_definition_key,
@@ -217,10 +219,18 @@ async def cleanup_active_instances(client: CamundaClient, process_definition_key
     )
     already_running = client.search_process_instances(data=search_query)
     for process in already_running.items:
-        logger.info(f"Canceling process instance: {process.process_instance_key}")
-        await client.cancel_process_instance_async(
-            data=None, process_instance_key=process.process_instance_key
-        )
+        try:
+            logger.info(f"Canceling process instance: {process.process_instance_key}")
+            await client.cancel_process_instance_async(
+                data=None, process_instance_key=process.process_instance_key
+            )
+        except UnexpectedStatus as e:
+            # If the instance is already gone (404), that's fine - it completed or was already canceled
+            if e.status_code == 404:
+                logger.debug(f"Process instance {process.process_instance_key} already completed or canceled")
+            else:
+                # Re-raise other unexpected errors
+                raise
 
 
 async def run_worker_scenario(
@@ -568,16 +578,19 @@ async def multi_strategy_scenario():
     return results
 
 
-async def benchmark_strategies():
+async def benchmark_strategies(num_instances: int = 20):
     """Compare different strategies with multiple runs for statistical significance.
 
     Tests only CPU-bound workload across all strategies.
+
+    Args:
+        num_instances: Number of process instances to start per test run.
     """
     results = {}
 
     for strategy in strategies:
         results[strategy] = await run_test(
-            num_instances=20,
+            num_instances=num_instances,
             strategy=strategy,
             workload_type="cpu",
             repeats=3,  # Run 3 times and average
@@ -604,10 +617,13 @@ async def benchmark_strategies():
     return results
 
 
-async def benchmark_workloads():
+async def benchmark_workloads(num_instances: int = 20):
     """Compare CPU-bound vs I/O-bound workloads across all strategies.
 
     Tests all combinations of strategies and workload types.
+
+    Args:
+        num_instances: Number of process instances to start per test run.
     """
     workload_types: list[Literal["cpu", "io"]] = ["cpu", "io"]
     results = {}
@@ -621,7 +637,7 @@ async def benchmark_workloads():
         for strategy in strategies:
             logger.info(f"Running {strategy} strategy with {workload}-bound workload...")
             results[workload][strategy] = await run_test(
-                num_instances=20,
+                num_instances=num_instances,
                 strategy=strategy,
                 workload_type=workload,
                 repeats=3,
@@ -733,9 +749,13 @@ def main():
                 max_concurrent_jobs=max_concurrent
             ))
         elif scenario == "benchmark":
-            asyncio.run(benchmark_strategies())
+            # Usage: python job_worker.py benchmark [num_instances]
+            num_instances = int(sys.argv[2]) if len(sys.argv) > 2 else 20
+            asyncio.run(benchmark_strategies(num_instances=num_instances))
         elif scenario == "benchmark-workloads":
-            asyncio.run(benchmark_workloads())
+            # Usage: python job_worker.py benchmark-workloads [num_instances]
+            num_instances = int(sys.argv[2]) if len(sys.argv) > 2 else 20
+            asyncio.run(benchmark_workloads(num_instances=num_instances))
         elif scenario == "quick":
             asyncio.run(quick_test())
         elif scenario == "stress":
