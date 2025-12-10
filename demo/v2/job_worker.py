@@ -33,6 +33,13 @@ def make_client(base_url: str | None = None) -> CamundaClient:
     return CamundaClient(base_url=host)
 
 
+def simulate_cpu_work(duration: float):
+    """Simulate CPU-bound work by spinning in a loop."""
+    end_time = time.time() + duration
+    while time.time() < end_time:
+        pass
+
+
 def create_default_callback(
     client: CamundaClient,
     job_counter: dict[str, int] | None = None,
@@ -53,6 +60,7 @@ def create_default_callback(
         async def async_callback(job: ActivateJobsResponse200JobsItem):
             # Simulate some CPU / IO-bound work
             print(f"**** Job Worker **** \nJob Key: {job.job_key}")
+            simulate_cpu_work(3)
             # Example of completing a job
             await client.complete_job_async(
                 job_key=job.job_key,
@@ -75,6 +83,7 @@ def create_default_callback(
         def sync_callback(job: ActivateJobsResponse200JobsItem):
             # Simulate some CPU / IO-bound work
             print(f"**** Job Worker **** \nJob Key: {job.job_key}")
+            simulate_cpu_work(3)
             # Example of completing a job synchronously
             client.complete_job(
                 job_key=job.job_key,
