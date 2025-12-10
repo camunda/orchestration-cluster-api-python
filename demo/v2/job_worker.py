@@ -1,5 +1,6 @@
 import asyncio
 import os
+import subprocess
 import time
 import tracemalloc
 import resource
@@ -97,11 +98,46 @@ async def simulate_io_work_async(duration: float):
     await loop.run_in_executor(None, blocking_io)
 
 
+def simulate_subprocess_work(duration: float):
+    """Simulate work by calling an external CLI tool (subprocess).
+
+    This tests how subprocess calls behave under different execution strategies.
+    Uses 'sleep' command which is available on Unix-like systems.
+    """
+    end_time = time.time() + duration
+    iterations = 0
+    while time.time() < end_time:
+        # Call external sleep command for a short duration
+        # This simulates calling an external CLI tool
+        subprocess.call(['sleep', '0.1'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        iterations += 1
+    return iterations
+
+
+async def simulate_subprocess_work_async(duration: float):
+    """Simulate subprocess work in async context.
+
+    Uses asyncio.create_subprocess_exec for proper async subprocess handling.
+    """
+    end_time = time.time() + duration
+    iterations = 0
+    while time.time() < end_time:
+        # Use async subprocess to avoid blocking the event loop
+        process = await asyncio.create_subprocess_exec(
+            'sleep', '0.1',
+            stdout=asyncio.subprocess.DEVNULL,
+            stderr=asyncio.subprocess.DEVNULL
+        )
+        await process.wait()
+        iterations += 1
+    return iterations
+
+
 def create_default_callback(
     client: CamundaClient,
     job_counter: dict[str, int] | None = None,
     strategy: str = "async",
-    workload_type: Literal["cpu", "io"] = "cpu"
+    workload_type: Literal["cpu", "io", "subprocess"] = "cpu"
 ) -> Callable:
     """Create a default job callback that completes jobs with dummy data.
 
@@ -109,7 +145,7 @@ def create_default_callback(
         client: The Camunda client to use for completing jobs.
         job_counter: Optional dict to track completed jobs. If provided, increments 'completed' key.
         strategy: Execution strategy - determines whether to create async or sync callback.
-        workload_type: Type of workload simulation - "cpu" for CPU-bound or "io" for I/O-bound.
+        workload_type: Type of workload simulation - "cpu", "io", or "subprocess".
 
     Returns:
         A callback function (async or sync depending on strategy).
@@ -122,8 +158,10 @@ def create_default_callback(
             # Simulate workload based on type
             if workload_type == "cpu":
                 simulate_cpu_work(3)
-            else:  # io
+            elif workload_type == "io":
                 await simulate_io_work_async(3)
+            else:  # subprocess
+                await simulate_subprocess_work_async(3)
 
             logger.info(f"Finished work on: {job.job_key}")
 
@@ -146,7 +184,12 @@ def create_default_callback(
     else:
         # For thread/process strategies, create a synchronous callback
         # Apply appropriate execution hint based on workload type
-        hint_decorator = ExecutionHint.cpu_bound if workload_type == "cpu" else ExecutionHint.io_bound
+        if workload_type == "cpu":
+            hint_decorator = ExecutionHint.cpu_bound
+        elif workload_type == "subprocess":
+            hint_decorator = ExecutionHint.io_bound  # subprocess calls are I/O-like
+        else:  # io
+            hint_decorator = ExecutionHint.io_bound
 
         @hint_decorator
         def sync_callback(job: ActivateJobsResponse200JobsItem):
@@ -155,8 +198,10 @@ def create_default_callback(
             # Simulate workload based on type
             if workload_type == "cpu":
                 simulate_cpu_work(3)
-            else:  # io
+            elif workload_type == "io":
                 simulate_io_work(3)
+            else:  # subprocess
+                simulate_subprocess_work(3)
 
             logger.info(f"Finished work on: {job.job_key}")
 
@@ -240,7 +285,7 @@ async def run_worker_scenario(
     num_instances: int = 1,
     expected_jobs: int | None = None,
     scenario_timeout_seconds: int | None = 30,
-    workload_type: Literal["cpu", "io"] = "cpu"
+    workload_type: Literal["cpu", "io", "subprocess"] = "cpu"
 ) -> dict[str, float]:
     """Run a worker scenario with configurable settings.
 
@@ -251,7 +296,7 @@ async def run_worker_scenario(
         num_instances: Number of process instances to start.
         expected_jobs: Number of jobs to wait for before stopping. If None, uses num_instances.
         scenario_timeout_seconds: Timeout in seconds to run the worker. None means run indefinitely.
-        workload_type: Type of workload simulation - "cpu" for CPU-bound or "io" for I/O-bound.
+        workload_type: Type of workload simulation - "cpu", "io", or "subprocess".
 
     Returns:
         dict with timing stats: {'total_time', 'jobs_completed', 'jobs_per_second', 'expected_jobs',
@@ -360,7 +405,7 @@ async def run_worker_scenario(
 async def run_test(
     num_instances: int = 10,
     strategy: EXECUTION_STRATEGY = "auto",
-    workload_type: Literal["cpu", "io"] = "cpu",
+    workload_type: Literal["cpu", "io", "subprocess"] = "cpu",
     repeats: int = 1,
     max_concurrent_jobs: int = 10,
     timeout: int = 5000
@@ -370,7 +415,7 @@ async def run_test(
     Args:
         num_instances: Number of process instances to start per run.
         strategy: Execution strategy ("auto", "async", "thread", "process").
-        workload_type: Type of workload simulation - "cpu" for CPU-bound or "io" for I/O-bound.
+        workload_type: Type of workload simulation - "cpu", "io", or "subprocess".
         repeats: Number of times to repeat the test (results will be averaged).
         max_concurrent_jobs: Maximum concurrent jobs for the worker.
         timeout: Timeout in seconds for each run.
@@ -694,6 +739,62 @@ async def benchmark_workloads(num_instances: int = 20):
     return results
 
 
+async def benchmark_subprocess(num_instances: int = 20):
+    """Test subprocess workload across all strategies.
+
+    This benchmark specifically tests subprocess.call() behavior to see if it crashes
+    or has issues with different execution strategies (especially multi-threaded vs async).
+
+    Args:
+        num_instances: Number of process instances to start per test run.
+    """
+    logger.info(f"\n{'='*70}")
+    logger.info("SUBPROCESS WORKLOAD BENCHMARK")
+    logger.info(f"{'='*70}")
+    logger.info("Testing subprocess.call() behavior across execution strategies")
+    logger.info("This tests for potential crashes or deadlocks with subprocess calls")
+    logger.info(f"{'='*70}\n")
+
+    results = {}
+
+    for strategy in strategies:
+        logger.info(f"Testing {strategy} strategy with subprocess workload...")
+        try:
+            results[strategy] = await run_test(
+                num_instances=num_instances,
+                strategy=strategy,
+                workload_type="subprocess",
+                repeats=3,
+                max_concurrent_jobs=10,
+                timeout=120  # Longer timeout for subprocess calls
+            )
+            logger.info(f"✓ {strategy} strategy completed successfully")
+        except Exception as e:
+            logger.error(f"✗ {strategy} strategy FAILED: {e}")
+            results[strategy] = {"error": str(e)}
+
+    # Print final comparison
+    logger.info(f"\n{'='*70}")
+    logger.info("SUBPROCESS BENCHMARK RESULTS")
+    logger.info(f"{'='*70}")
+    logger.info(f"{'Strategy':<12} | {'Avg Time':<10} | {'Avg Throughput':<15} | {'Status'}")
+    logger.info(f"{'-'*70}")
+
+    for strategy, stats in results.items():
+        if "error" in stats:
+            logger.info(f"{strategy:<12} | {'N/A':<10} | {'N/A':<15} | FAILED: {stats['error']}")
+        elif stats['repeats'] > 1:
+            cv = (stats['total_time_std'] / stats['total_time_avg']) * 100
+            consistency = f"±{cv:.1f}%"
+            logger.info(f"{strategy:<12} | {stats['total_time_avg']:>8.2f}s | {stats['jobs_per_second_avg']:>13.2f}/s | OK {consistency}")
+        else:
+            logger.info(f"{strategy:<12} | {stats['total_time']:>8.2f}s | {stats['jobs_per_second']:>13.2f}/s | OK (single run)")
+
+    logger.info(f"{'='*70}\n")
+
+    return results
+
+
 async def quick_test():
     """Quick single test - useful for development."""
     return await run_test(
@@ -735,10 +836,10 @@ def main():
                 sys.exit(1)
             strategy: EXECUTION_STRATEGY = strategy_arg  # type: ignore
             workload_arg = sys.argv[4] if len(sys.argv) > 4 else "cpu"
-            if workload_arg not in ["cpu", "io"]:
-                logger.error(f"Invalid workload type: {workload_arg}. Valid options: cpu, io")
+            if workload_arg not in ["cpu", "io", "subprocess"]:
+                logger.error(f"Invalid workload type: {workload_arg}. Valid options: cpu, io, subprocess")
                 sys.exit(1)
-            workload: Literal["cpu", "io"] = workload_arg  # type: ignore
+            workload: Literal["cpu", "io", "subprocess"] = workload_arg  # type: ignore
             repeats = int(sys.argv[5]) if len(sys.argv) > 5 else 1
             max_concurrent = int(sys.argv[6]) if len(sys.argv) > 6 else 10
 
@@ -757,6 +858,10 @@ def main():
             # Usage: python job_worker.py benchmark-workloads [num_instances]
             num_instances = int(sys.argv[2]) if len(sys.argv) > 2 else 20
             asyncio.run(benchmark_workloads(num_instances=num_instances))
+        elif scenario == "benchmark-subprocess":
+            # Usage: python job_worker.py benchmark-subprocess [num_instances]
+            num_instances = int(sys.argv[2]) if len(sys.argv) > 2 else 20
+            asyncio.run(benchmark_subprocess(num_instances=num_instances))
         elif scenario == "quick":
             asyncio.run(quick_test())
         elif scenario == "stress":
@@ -767,7 +872,7 @@ def main():
             asyncio.run(multi_strategy_scenario())
         else:
             logger.error(f"Unknown scenario: {scenario}")
-            logger.info("Available scenarios: test, benchmark, benchmark-workloads, quick, stress, load, multi")
+            logger.info("Available scenarios: test, benchmark, benchmark-workloads, benchmark-subprocess, quick, stress, load, multi")
             sys.exit(1)
     else:
         # Default: run simple scenario
