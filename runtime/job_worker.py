@@ -25,7 +25,7 @@ class WorkerConfig:
     """User-facing configuration"""
     job_type: str
     """How long the job is reserved for this worker only"""
-    timeout: int
+    job_timeout_milliseconds: int
     max_concurrent_jobs: int = 10  # Max jobs executing at once
     execution_strategy: EXECUTION_STRATEGY = "auto"
     fetch_variables: list[str] | None = None
@@ -138,7 +138,7 @@ class JobWorker:
         jobsResult = await self.client.activate_jobs_async(data=
             ActivateJobsData(
                 type_=self.config.job_type, 
-                timeout=self.config.timeout, 
+                timeout=self.config.job_timeout_milliseconds, 
                 max_jobs_to_activate=self.config.max_concurrent_jobs,
                 request_timeout=0, # This allows the server to autonegotiate the poll timeout
                 fetch_variable = self.config.fetch_variables if self.config.fetch_variables is not None else UNSET,
@@ -146,6 +146,8 @@ class JobWorker:
             )
         )
         if isinstance(jobsResult, ActivateJobsResponse200):
+            self.logger.trace(f'Received {len(jobsResult.jobs)}')
+            self.logger.trace(f'Jobs received: {[job.job_key for job in jobsResult.jobs]}')
             return jobsResult.jobs  # Return list of jobs
         elif jobsResult == None:
             self.logger.warning('jobsResult is type None')

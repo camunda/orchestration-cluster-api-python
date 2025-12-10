@@ -158,7 +158,7 @@ async def run_worker_scenario(
     worker_config: WorkerConfig,
     num_instances: int = 1,
     expected_jobs: int | None = None,
-    timeout: int | None = 30
+    scenario_timeout_seconds: int | None = 30
 ) -> dict[str, float]:
     """Run a worker scenario with configurable settings.
 
@@ -173,6 +173,7 @@ async def run_worker_scenario(
     Returns:
         dict with timing stats: {'total_time', 'jobs_completed', 'jobs_per_second', 'expected_jobs'}
     """
+    logger.debug(f'Running worker with config: {worker_config}')
     if expected_jobs is None:
         expected_jobs = num_instances
 
@@ -206,12 +207,12 @@ async def run_worker_scenario(
     worker_task = asyncio.create_task(client.run_workers())
 
     try:
-        if timeout is not None:
-            await asyncio.wait_for(wait_for_completion(), timeout=timeout)
+        if scenario_timeout_seconds is not None:
+            await asyncio.wait_for(wait_for_completion(), timeout=scenario_timeout_seconds)
         else:
             await wait_for_completion()
     except asyncio.TimeoutError:
-        logger.warning(f"\n⚠️  Timeout reached after {timeout}s")
+        logger.warning(f"\n⚠️  Timeout reached after {scenario_timeout_seconds}s")
     finally:
         # Stop the worker
         worker_task.cancel()
@@ -296,12 +297,12 @@ async def run_test(
             process_definition_key=process_definition_key,
             worker_config=WorkerConfig(
                 job_type="job-worker-load-test-1-task-1",
-                timeout=5000,
+                job_timeout_milliseconds=5000,
                 max_concurrent_jobs=max_concurrent_jobs,
                 execution_strategy=strategy,
             ),
             num_instances=num_instances,
-            timeout=timeout
+            scenario_timeout_seconds=timeout
         )
         all_stats.append(stats)
 
@@ -368,7 +369,7 @@ async def simple_scenario():
         process_definition_key=process_definition_key,
         worker_config=WorkerConfig(
             job_type="job-worker-load-test-1-task-1",
-            timeout=5000,
+            job_timeout_milliseconds=5000,
             max_concurrent_jobs=10,
             execution_strategy="auto",
         ),
@@ -393,12 +394,12 @@ async def load_test_scenario():
         process_definition_key=process_definition_key,
         worker_config=WorkerConfig(
             job_type="job-worker-load-test-1-task-1",
-            timeout=5000,
+            job_timeout_milliseconds=5000,
             max_concurrent_jobs=50,  # Higher concurrency
             execution_strategy="auto",
         ),
         num_instances=100,  # More instances
-        timeout=120  # 2 minute timeout for load test
+        scenario_timeout_seconds=120  # 2 minute timeout for load test
     )
     return stats
 
@@ -421,12 +422,12 @@ async def multi_strategy_scenario():
             process_definition_key=process_definition_key,
             worker_config=WorkerConfig(
                 job_type="job-worker-load-test-1-task-1",
-                timeout=5000,
+                job_timeout_milliseconds=5000,
                 max_concurrent_jobs=10,
                 execution_strategy=strategy,
             ),
             num_instances=10,
-            timeout=60
+            scenario_timeout_seconds=60
         )
         results[strategy] = stats
 
