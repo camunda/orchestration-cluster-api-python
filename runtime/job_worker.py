@@ -1,12 +1,14 @@
 import asyncio
 import inspect
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-from typing import Callable, Literal, Protocol, Any, runtime_checkable
+from typing import Callable, Literal, Protocol, Any, runtime_checkable, TYPE_CHECKING
 from functools import wraps
 from dataclasses import dataclass
-from camunda_orchestration_sdk import CamundaClient
 from camunda_orchestration_sdk.models.activate_jobs_data import ActivateJobsData
 from camunda_orchestration_sdk.models.activate_jobs_response_200 import ActivateJobsResponse200
+
+if TYPE_CHECKING:
+    from camunda_orchestration_sdk import CamundaClient
 
 _EFFECTIVE_EXECUTION_STRATEGY = Literal["thread", "process", "async"]
 EXECUTION_STRATEGY = _EFFECTIVE_EXECUTION_STRATEGY | Literal["auto"]
@@ -47,7 +49,7 @@ class ExecutionHint:
 
 class JobWorker:
     _strategy: _EFFECTIVE_EXECUTION_STRATEGY = "async"
-    def __init__(self, client: CamundaClient, callback: Callable, config: WorkerConfig):
+    def __init__(self, client: "CamundaClient", callback: Callable, config: WorkerConfig):
         self.callback = callback
         self.config = config
         self.client = client
@@ -61,6 +63,9 @@ class JobWorker:
         
         # Semaphore to limit concurrent executions
         self.semaphore = asyncio.Semaphore(config.max_concurrent_jobs)
+        
+        self.running = False
+        self.polling_task = None
         
         print(f"[{config.job_type}] Using execution strategy: {self._strategy}")
     
@@ -81,9 +86,22 @@ class JobWorker:
         # Default to thread for sync functions (safe for most I/O work)
         return "thread"
     
+    def start(self):
+        if not self.running:
+            self.running = True
+            self.polling_task = asyncio.create_task(self.poll_loop())
+            print(f"[{self.config.job_type}] Worker started")
+
+    def stop(self):
+        if self.running:
+            self.running = False
+            if self.polling_task:
+                self.polling_task.cancel()
+            print(f"[{self.config.job_type}] Worker stopped")
+
     async def poll_loop(self):
         """Background polling loop - always async"""
-        while True:
+        while self.running:
             try:
                 # Non-blocking HTTP poll using httpx
                 jobs = await self._poll_for_jobs()
@@ -95,6 +113,8 @@ class JobWorker:
                     for task in tasks:
                         asyncio.create_task(task)
                 
+            except asyncio.CancelledError:
+                break
             except Exception as e:
                 print(f"Error polling: {e}")
             
@@ -102,6 +122,7 @@ class JobWorker:
     
     async def _poll_for_jobs(self):
         """Your SDK's async HTTP polling logic"""
+        print('***Polling for jobs')
         jobsResult = await self.client.activate_jobs_async(data=
             ActivateJobsData(
                 type_=self.config.job_type, 
@@ -109,6 +130,8 @@ class JobWorker:
                 max_jobs_to_activate=self.config.max_concurrent_jobs
             )
         )
+        print('*** Got')
+        print(jobsResult)
         if isinstance(jobsResult, ActivateJobsResponse200):
             return jobsResult.jobs  # Return list of jobs
         elif jobsResult == None:

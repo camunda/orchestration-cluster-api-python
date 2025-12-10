@@ -255,6 +255,10 @@ def generate_flat_client(package_path):
     if "from typing import TYPE_CHECKING" not in imports_content:
         imports_content += "\nfrom typing import TYPE_CHECKING"
 
+    imports_content += "\nimport asyncio"
+    imports_content += "\nfrom typing import Callable"
+    imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig"
+
     # Prepare TYPE_CHECKING block
     type_checking_block = "\nif TYPE_CHECKING:\n"
     sorted_imports = sorted(list(all_imports))
@@ -266,12 +270,14 @@ def generate_flat_client(package_path):
     camunda_client_code = f"""
 class CamundaClient:
     client: Client | AuthenticatedClient
+    _workers: list[JobWorker]
 
     def __init__(self, base_url: str, token: str | None = None, **kwargs):
         if token:
             self.client = AuthenticatedClient(base_url=base_url, token=token, **kwargs)
         else:
             self.client = Client(base_url=base_url, **kwargs)
+        self._workers = []
 
     def __enter__(self):
         self.client.__enter__()
@@ -286,6 +292,24 @@ class CamundaClient:
 
     async def __aexit__(self, *args, **kwargs):
         await self.client.__aexit__(*args, **kwargs)
+
+    def create_job_worker(self, job_type: str, callback: Callable, timeout: int = 30000, auto_start: bool = True, **kwargs) -> JobWorker:
+        config = WorkerConfig(job_type=job_type, timeout=timeout, **kwargs)
+        worker = JobWorker(self, callback, config)
+        self._workers.append(worker)
+        if auto_start:
+            worker.start()
+        return worker
+
+    async def run_workers(self):
+        stop_event = asyncio.Event()
+        try:
+            await stop_event.wait()
+        except asyncio.CancelledError:
+            pass
+        finally:
+            for worker in self._workers:
+                worker.stop()
 
 {new_methods}
 """
