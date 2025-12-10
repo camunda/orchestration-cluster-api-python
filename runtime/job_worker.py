@@ -5,7 +5,7 @@ from typing import Callable, Literal, Protocol, Any, runtime_checkable
 from functools import wraps
 from dataclasses import dataclass
 from camunda_orchestration_sdk import CamundaClient
-from camunda_orchestration_sdk.models.activate_jobs_body import ActivateJobsBody
+from camunda_orchestration_sdk.models.activate_jobs_data import ActivateJobsData
 from camunda_orchestration_sdk.models.activate_jobs_response_200 import ActivateJobsResponse200
 
 _EFFECTIVE_EXECUTION_STRATEGY = Literal["thread", "process", "async"]
@@ -103,7 +103,7 @@ class JobWorker:
     async def _poll_for_jobs(self):
         """Your SDK's async HTTP polling logic"""
         jobsResult = await self.client.activate_jobs_async(data=
-            ActivateJobsBody(
+            ActivateJobsData(
                 type_=self.config.job_type, 
                 timeout=self.config.timeout, 
                 max_jobs_to_activate=self.config.max_concurrent_jobs

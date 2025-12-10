@@ -4,9 +4,9 @@ from camunda_orchestration_sdk.models.create_deployment_response_200_deployments
 from camunda_orchestration_sdk.models.processcreationbykey import Processcreationbykey
 from camunda_orchestration_sdk.types import File
 from camunda_orchestration_sdk.models.activate_jobs_response_200_jobs_item import ActivateJobsResponse200JobsItem
-from camunda_orchestration_sdk.models.create_deployment_body import CreateDeploymentBody
-from camunda_orchestration_sdk.models.search_process_instances_body import SearchProcessInstancesBody
-from camunda_orchestration_sdk.models.search_process_instances_body_filter import SearchProcessInstancesBodyFilter
+from camunda_orchestration_sdk.models.create_deployment_data import CreateDeploymentData
+from camunda_orchestration_sdk.models.search_process_instances_data import SearchProcessInstancesData
+from camunda_orchestration_sdk.models.search_process_instances_data_filter import SearchProcessInstancesDataFilter
 from camunda_orchestration_sdk.models.state_advancedfilter_6 import StateAdvancedfilter6
 from camunda_orchestration_sdk.models.state_advancedfilter_6_eq import StateAdvancedfilter6Eq
 import pytest
@@ -35,12 +35,12 @@ async def test_job_worker_performance():
     async with _make_client() as camunda:
         with open('./tests/integration/resources/job_worker_load_test_process_1.bpmn', 'rb') as f:
             process_file = File(payload=f, file_name='job_worker_load_test_process_1.bpmn')
-            deployed_resources = await camunda.create_deployment_async(data=CreateDeploymentBody(resources=[process_file]))
+            deployed_resources = await camunda.create_deployment_async(data=CreateDeploymentData(resources=[process_file]))
 
         process_definition: CreateDeploymentResponse200DeploymentsItemProcessDefinition = deployed_resources.deployments[0].process_definition # type: ignore
         # Cancel all running instances of process
-        searchQuery = SearchProcessInstancesBody(
-            filter_=SearchProcessInstancesBodyFilter(
+        searchQuery = SearchProcessInstancesData(
+            filter_=SearchProcessInstancesDataFilter(
                 process_definition_key=process_definition.process_definition_key, 
                 state=StateAdvancedfilter6(eq=StateAdvancedfilter6Eq('ACTIVE'))
                 )

@@ -1,8 +1,8 @@
 import os
 import pytest
 from camunda_orchestration_sdk import CamundaClient
-from camunda_orchestration_sdk.models.search_process_instances_body import SearchProcessInstancesBody
-from camunda_orchestration_sdk.models.search_process_instances_body_page import SearchProcessInstancesBodyPage
+from camunda_orchestration_sdk.models.search_process_instances_data import SearchProcessInstancesData
+from camunda_orchestration_sdk.models.search_process_instances_data_page import SearchProcessInstancesDataPage
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("CAMUNDA_INTEGRATION") != "1",
@@ -19,13 +19,13 @@ async def test_searchProcessInstances_smoke():
     async with _make_client() as camunda:
         # Construct the query
         # Note: 'from' is aliased to 'var_from' in Python because 'from' is a reserved keyword
-        # But since SearchProcessInstancesBodyPage is a dict wrapper, we use dict assignment.
+        # But since SearchProcessInstancesDataPage is a dict wrapper, we use dict assignment.
         
-        page = SearchProcessInstancesBodyPage()
+        page = SearchProcessInstancesDataPage()
         page["from"] = 0
         page["limit"] = 50
         
-        query = SearchProcessInstancesBody(
+        query = SearchProcessInstancesData(
             page=page
         )        
         resp = await camunda.search_process_instances_async(data=query)
