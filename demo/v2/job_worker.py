@@ -1,5 +1,5 @@
+import asyncio
 import os
-from typing import Callable
 from camunda_orchestration_sdk.models.create_deployment_response_200_deployments_item_process_definition import CreateDeploymentResponse200DeploymentsItemProcessDefinition
 from camunda_orchestration_sdk.models.processcreationbykey import Processcreationbykey
 from camunda_orchestration_sdk.types import File
@@ -9,14 +9,8 @@ from camunda_orchestration_sdk.models.search_process_instances_body import Searc
 from camunda_orchestration_sdk.models.search_process_instances_body_filter import SearchProcessInstancesBodyFilter
 from camunda_orchestration_sdk.models.state_advancedfilter_6 import StateAdvancedfilter6
 from camunda_orchestration_sdk.models.state_advancedfilter_6_eq import StateAdvancedfilter6Eq
-import pytest
 from camunda_orchestration_sdk import CamundaClient
 from camunda_orchestration_sdk.runtime.job_worker import JobWorker, WorkerConfig
-
-pytestmark = pytest.mark.skipif(
-    os.environ.get("CAMUNDA_INTEGRATION") != "1",
-    reason="Integration tests are disabled unless CAMUNDA_INTEGRATION=1",
-)
 
 def _make_client():
     host = os.environ.get("CAMUNDA_BASE_URL", "http://localhost:8080/v2")
@@ -30,8 +24,7 @@ def callback(job: ActivateJobsResponse200JobsItem):
     # Simulate some CPU / IO-bound work
     print(f'Job Key: {job.job_key}')
 
-@pytest.mark.asyncio
-async def test_job_worker_performance():
+async def main():
     async with _make_client() as camunda:
         with open('./tests/integration/resources/job_worker_load_test_process_1.bpmn', 'rb') as f:
             process_file = File(payload=f, file_name='job_worker_load_test_process_1.bpmn')
@@ -49,13 +42,16 @@ async def test_job_worker_performance():
         for process in alreadyRunningProcesses.items:
             print(f'Canceling process instance: {process.process_instance_key}')
             await camunda.cancel_process_instance_async(data=None, process_instance_key=process.process_instance_key)
-        # Start 100 instances
 
         config = WorkerConfig(job_type='load-test', execution_strategy="auto", timeout=30_000)
         
         # Single worker starts and starts working on jobs
+
+        # Start 100 instances
+        process_instance = camunda.create_process_instance(data=Processcreationbykey(process_definition_key=process_definition.process_definition_key))
+        print(f'Started process instance: {process_instance.process_instance_key}')
+
         worker = JobWorker(callback=callback, client=camunda, config=config)
 
-        process_instance = camunda.create_process_instance(data=Processcreationbykey(process_definition_key=process_definition.process_definition_key))
-
-        print(f'Started process instance: {process_instance.process_instance_key}')
+if __name__ == "__main__":
+    asyncio.run(main())
