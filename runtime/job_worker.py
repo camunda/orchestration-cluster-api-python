@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from typing import Callable, Literal, Protocol, Any, runtime_checkable, TYPE_CHECKING
 from functools import wraps
 from dataclasses import dataclass
+from loguru import logger
 from camunda_orchestration_sdk.models.activate_jobs_data import ActivateJobsData
 from camunda_orchestration_sdk.models.activate_jobs_response_200 import ActivateJobsResponse200
 from camunda_orchestration_sdk.types import Unset, UNSET
@@ -24,10 +25,11 @@ class WorkerConfig:
     """User-facing configuration"""
     job_type: str
     """How long the job is reserved for this worker only"""
-    timeout: int
+    job_timeout_milliseconds: int
     max_concurrent_jobs: int = 10  # Max jobs executing at once
     execution_strategy: EXECUTION_STRATEGY = "auto"
     fetch_variables: list[str] | None = None
+    worker_name: str = "camunda-python-sdk-worker"
 
 class ExecutionHint:
     """Decorators for users to hint at their workload characteristics"""
@@ -57,6 +59,13 @@ class JobWorker:
         self.config = config
         self.client = client
         
+        # Bind logger with context
+        self.logger = logger.bind(
+            sdk="camunda_orchestration_sdk",
+            worker=config.worker_name,
+            job_type=config.job_type
+        )
+
         # Execution strategy detection
         self._strategy = self._determine_strategy()
         
@@ -70,7 +79,7 @@ class JobWorker:
         self.running = False
         self.polling_task = None
         
-        print(f"[{config.job_type}] Using execution strategy: {self._strategy}")
+        self.logger.info(f"Using execution strategy: {self._strategy}")
     
     def _determine_strategy(self) -> _EFFECTIVE_EXECUTION_STRATEGY:
         """Smart detection of execution strategy"""
@@ -93,14 +102,14 @@ class JobWorker:
         if not self.running:
             self.running = True
             self.polling_task = asyncio.create_task(self.poll_loop())
-            print(f"[{self.config.job_type}] Worker started")
+            self.logger.info("Worker started")
 
     def stop(self):
         if self.running:
             self.running = False
             if self.polling_task:
                 self.polling_task.cancel()
-            print(f"[{self.config.job_type}] Worker stopped")
+            self.logger.info("Worker stopped")
 
     async def poll_loop(self):
         """Background polling loop - always async"""
@@ -119,28 +128,32 @@ class JobWorker:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                print(f"Error polling: {e}")
+                self.logger.error(f"Error polling: {e}")
             
             await asyncio.sleep(1)  # Polling interval
     
     async def _poll_for_jobs(self):
         """SDK's async HTTP polling logic"""
+        self.logger.debug('Polling for jobs...')
         jobsResult = await self.client.activate_jobs_async(data=
             ActivateJobsData(
                 type_=self.config.job_type, 
-                timeout=self.config.timeout, 
+                timeout=self.config.job_timeout_milliseconds, 
                 max_jobs_to_activate=self.config.max_concurrent_jobs,
                 request_timeout=0, # This allows the server to autonegotiate the poll timeout
-                fetch_variable = self.config.fetch_variables if self.config.fetch_variables is not None else UNSET
+                fetch_variable = self.config.fetch_variables if self.config.fetch_variables is not None else UNSET,
+                worker=self.config.worker_name
             )
         )
         if isinstance(jobsResult, ActivateJobsResponse200):
+            self.logger.trace(f'Received {len(jobsResult.jobs)}')
+            self.logger.trace(f'Jobs received: {[job.job_key for job in jobsResult.jobs]}')
             return jobsResult.jobs  # Return list of jobs
         elif jobsResult == None:
-            print('*** Job Worker *** jobsResult is type None')
+            self.logger.warning('jobsResult is type None')
             return []
         else: # Error channel ("isLeft")
-            print(jobsResult.type_)
+            self.logger.error(jobsResult.type_)
             return []
     
     async def _execute_job(self, job):
@@ -166,9 +179,9 @@ class JobWorker:
                         job
                     )
                 
-                print(f"Job completed: {result}") # type: ignore - this is set for auto
+                self.logger.debug(f"Job completed: {job.job_key}") # type: ignore - this is set for auto
                 
             except Exception as e:
-                print(f"Job failed: {e}")
+                self.logger.error(f"Job failed: {e}")
                 # Your error handling/retry logic
 
