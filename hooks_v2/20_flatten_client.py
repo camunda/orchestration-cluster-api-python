@@ -121,8 +121,9 @@ def generate_flat_client(package_path):
                 
                 arg_strs = ["self"]
                 for arg in new_args:
+                    arg_name = "data" if arg.arg == "body" else arg.arg
                     ann = f": {ast.unparse(arg.annotation)}" if arg.annotation else ""
-                    arg_strs.append(f"{arg.arg}{ann}")
+                    arg_strs.append(f"{arg_name}{ann}")
                     
                 if args.vararg:
                     ann = f": {ast.unparse(args.vararg.annotation)}" if args.vararg.annotation else ""
@@ -131,9 +132,10 @@ def generate_flat_client(package_path):
                     arg_strs.append("*")
                     
                 for arg, default in zip(new_kwonlyargs, new_kw_defaults):
+                    arg_name = "data" if arg.arg == "body" else arg.arg
                     ann = f": {ast.unparse(arg.annotation)}" if arg.annotation else ""
                     default_str = f" = {ast.unparse(default)}" if default else ""
-                    arg_strs.append(f"{arg.arg}{ann}{default_str}")
+                    arg_strs.append(f"{arg_name}{ann}{default_str}")
                     
                 if args.kwarg:
                     ann = f": {ast.unparse(args.kwarg.annotation)}" if args.kwarg.annotation else ""
@@ -152,6 +154,8 @@ def generate_flat_client(package_path):
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
         return {method_name}_sync(**_kwargs)
 """)
 
@@ -174,8 +178,9 @@ def generate_flat_client(package_path):
                 
                 arg_strs = ["self"]
                 for arg in new_args:
+                    arg_name = "data" if arg.arg == "body" else arg.arg
                     ann = f": {ast.unparse(arg.annotation)}" if arg.annotation else ""
-                    arg_strs.append(f"{arg.arg}{ann}")
+                    arg_strs.append(f"{arg_name}{ann}")
                     
                 if args.vararg:
                     ann = f": {ast.unparse(args.vararg.annotation)}" if args.vararg.annotation else ""
@@ -184,9 +189,10 @@ def generate_flat_client(package_path):
                     arg_strs.append("*")
                     
                 for arg, default in zip(new_kwonlyargs, new_kw_defaults):
+                    arg_name = "data" if arg.arg == "body" else arg.arg
                     ann = f": {ast.unparse(arg.annotation)}" if arg.annotation else ""
                     default_str = f" = {ast.unparse(default)}" if default else ""
-                    arg_strs.append(f"{arg.arg}{ann}{default_str}")
+                    arg_strs.append(f"{arg_name}{ann}{default_str}")
                     
                 if args.kwarg:
                     ann = f": {ast.unparse(args.kwarg.annotation)}" if args.kwarg.annotation else ""
@@ -205,6 +211,8 @@ def generate_flat_client(package_path):
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
         return await {method_name}_asyncio(**_kwargs)
 """)
 

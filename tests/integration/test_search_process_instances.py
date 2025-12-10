@@ -28,7 +28,7 @@ async def test_searchProcessInstances_smoke():
         query = SearchProcessInstancesBody(
             page=page
         )        
-        resp = await camunda.search_process_instances_async(body=query)
+        resp = await camunda.search_process_instances_async(data=query)
 
         print(resp)
         assert resp is not None
