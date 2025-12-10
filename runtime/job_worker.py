@@ -122,7 +122,6 @@ class JobWorker:
     
     async def _poll_for_jobs(self):
         """Your SDK's async HTTP polling logic"""
-        print('***Polling for jobs')
         jobsResult = await self.client.activate_jobs_async(data=
             ActivateJobsData(
                 type_=self.config.job_type, 
@@ -130,12 +129,10 @@ class JobWorker:
                 max_jobs_to_activate=self.config.max_concurrent_jobs
             )
         )
-        print('*** Got')
-        print(jobsResult)
         if isinstance(jobsResult, ActivateJobsResponse200):
             return jobsResult.jobs  # Return list of jobs
         elif jobsResult == None:
-            print('jobsResult is type None')
+            print('*** Job Worker *** jobsResult is type None')
             return []
         else: # Error channel ("isLeft")
             print(jobsResult.type_)

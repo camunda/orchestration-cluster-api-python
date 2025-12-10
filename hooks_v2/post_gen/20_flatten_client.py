@@ -293,8 +293,7 @@ class CamundaClient:
     async def __aexit__(self, *args, **kwargs):
         await self.client.__aexit__(*args, **kwargs)
 
-    def create_job_worker(self, job_type: str, callback: Callable, timeout: int = 30000, auto_start: bool = True, **kwargs) -> JobWorker:
-        config = WorkerConfig(job_type=job_type, timeout=timeout, **kwargs)
+    def create_job_worker(self, config: WorkerConfig, callback: Callable, auto_start: bool = True) -> JobWorker:
         worker = JobWorker(self, callback, config)
         self._workers.append(worker)
         if auto_start:
@@ -329,16 +328,17 @@ class CamundaClient:
         if "CamundaClient" not in init_content:
             init_content = init_content.replace(
                 '"Client",',
-                '"Client",\n    "CamundaClient",'
+                '"Client",\n    "CamundaClient",\n    "WorkerConfig",'
             )
             init_content = init_content.replace(
                 "from .client import AuthenticatedClient, Client",
                 "from .client import AuthenticatedClient, Client, CamundaClient"
             )
+            init_content += "\nfrom .runtime.job_worker import WorkerConfig"
             
             with open(init_file, "w") as f:
                 f.write(init_content)
-            print(f"Successfully exported CamundaClient in {init_file}")
+            print(f"Successfully exported CamundaClient and WorkerConfig in {init_file}")
 
 def run(context):
     out_dir = Path(context["out_dir"])
