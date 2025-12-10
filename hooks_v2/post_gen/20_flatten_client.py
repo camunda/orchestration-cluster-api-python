@@ -257,7 +257,7 @@ def generate_flat_client(package_path):
 
     imports_content += "\nimport asyncio"
     imports_content += "\nfrom typing import Callable"
-    imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig"
+    imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, JobHandler"
 
     # Prepare TYPE_CHECKING block
     type_checking_block = "\nif TYPE_CHECKING:\n"
@@ -293,7 +293,7 @@ class CamundaClient:
     async def __aexit__(self, *args, **kwargs):
         await self.client.__aexit__(*args, **kwargs)
 
-    def create_job_worker(self, config: WorkerConfig, callback: Callable, auto_start: bool = True) -> JobWorker:
+    def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True) -> JobWorker:
         worker = JobWorker(self, callback, config)
         self._workers.append(worker)
         if auto_start:
