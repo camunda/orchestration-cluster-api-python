@@ -66,6 +66,21 @@ async def main():
 asyncio.run(main())
 ```
 
+### Logging
+
+The SDK uses [loguru](https://github.com/Delgan/loguru) for logging. You can control the log level by setting the `LOGURU_LEVEL` environment variable.
+
+```bash
+# Run with INFO level (default is DEBUG)
+LOGURU_LEVEL=INFO python your_script.py
+
+# Run with WARNING level
+LOGURU_LEVEL=WARNING python your_script.py
+
+# Run with TRACE level (more verbose than DEBUG)
+LOGURU_LEVEL=TRACE python your_script.py
+```
+
 ### Local fallback of the spec
 
 If the network is not available or the remote repository cannot be reached, the generator will use the locally cloned spec at:
