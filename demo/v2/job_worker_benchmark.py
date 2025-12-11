@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 import os
 import subprocess
@@ -26,12 +27,14 @@ from camunda_orchestration_sdk.models.search_process_instances_data_filter impor
 )
 from camunda_orchestration_sdk import CamundaClient, WorkerConfig
 from camunda_orchestration_sdk.runtime.job_worker import (
+    ActivatedJob,
     ExecutionHint,
     EXECUTION_STRATEGY,
+    JobHandler,
 )
 
 strategies = [s for arg in get_args(EXECUTION_STRATEGY) for s in get_args(arg)]
-
+JOB_TIMEOUT_MILLISECONDS=30_000
 
 def make_client(base_url: str | None = None) -> CamundaClient:
     """Create a new Camunda client instance.
@@ -136,7 +139,8 @@ def create_default_callback(
     job_counter: dict[str, int] | None = None,
     strategy: str = "async",
     workload_type: Literal["cpu", "io", "subprocess"] = "cpu",
-) -> Callable:
+    work_duration: float = 3.0,
+) -> JobHandler:
     """Create a default job callback that completes jobs with dummy data.
 
     Args:
@@ -144,6 +148,7 @@ def create_default_callback(
         job_counter: Optional dict to track completed jobs. If provided, increments 'completed' key.
         strategy: Execution strategy - determines whether to create async or sync callback.
         workload_type: Type of workload simulation - "cpu", "io", or "subprocess".
+        work_duration: Duration of simulated work in seconds.
 
     Returns:
         A callback function (async or sync depending on strategy).
@@ -151,33 +156,27 @@ def create_default_callback(
     if strategy in ["async", "auto"]:
 
         @ExecutionHint.async_safe
-        async def async_callback(job: ActivateJobsResponse200JobsItem):
+        async def async_callback(job: ActivatedJob):
             logger.info(f"Starting {workload_type}-bound work on: {job.job_key}")
 
             # Simulate workload based on type
             if workload_type == "cpu":
-                simulate_cpu_work(3)
+                simulate_cpu_work(work_duration)
             elif workload_type == "io":
-                await simulate_io_work_async(3)
+                await simulate_io_work_async(work_duration)
             else:  # subprocess
-                await simulate_subprocess_work_async(3)
+                await simulate_subprocess_work_async(work_duration)
 
             logger.info(f"Finished work on: {job.job_key}")
 
             # Complete the job
-            await client.complete_job_async(
-                job_key=job.job_key,
-                data=CompleteJobData(
-                    variables=CompleteJobDataVariablesType0().from_dict(
-                        {"quoteAmount": 2345432}
-                    )
-                ),
-            )
+            ack = await job.complete({"quoteAmount": 2345432})
 
             # Track completion if counter provided
             if job_counter is not None:
                 job_counter["completed"] = job_counter.get("completed", 0) + 1
                 logger.info(f"Jobs completed: {job_counter['completed']}")
+            return ack
 
         return async_callback
     else:
@@ -191,34 +190,28 @@ def create_default_callback(
             hint_decorator = ExecutionHint.io_bound
 
         @hint_decorator
-        def sync_callback(job: ActivateJobsResponse200JobsItem):
+        def sync_callback(job: ActivatedJob):
             logger.info(f"Starting {workload_type}-bound work on: {job.job_key}")
 
             # Simulate workload based on type
             if workload_type == "cpu":
-                simulate_cpu_work(3)
+                simulate_cpu_work(work_duration)
             elif workload_type == "io":
-                simulate_io_work(3)
+                simulate_io_work(work_duration)
             else:  # subprocess
-                simulate_subprocess_work(3)
+                simulate_subprocess_work(work_duration)
 
             logger.info(f"Finished work on: {job.job_key}")
 
             # Complete the job synchronously
-            client.complete_job(
-                job_key=job.job_key,
-                data=CompleteJobData(
-                    variables=CompleteJobDataVariablesType0().from_dict(
-                        {"quoteAmount": 2345432}
-                    )
-                ),
-            )
+            ack = job.complete({"quoteAmount": 2345432})
 
             # Track completion if counter provided
             if job_counter is not None:
                 job_counter["completed"] = job_counter.get("completed", 0) + 1
                 logger.info(f"Jobs completed: {job_counter['completed']}")
-
+            return ack
+        
         return sync_callback
 
 
@@ -289,6 +282,7 @@ async def run_worker_scenario(
     expected_jobs: int | None = None,
     scenario_timeout_seconds: int | None = 30,
     workload_type: Literal["cpu", "io", "subprocess"] = "cpu",
+    work_duration: float = 3.0,
 ) -> dict[str, float]:
     """Run a worker scenario with configurable settings.
 
@@ -300,6 +294,7 @@ async def run_worker_scenario(
         expected_jobs: Number of jobs to wait for before stopping. If None, uses num_instances.
         scenario_timeout_seconds: Timeout in seconds to run the worker. None means run indefinitely.
         workload_type: Type of workload simulation - "cpu", "io", or "subprocess".
+        work_duration: Duration of simulated work in seconds.
 
     Returns:
         dict with timing stats: {'total_time', 'jobs_completed', 'jobs_per_second', 'expected_jobs',
@@ -320,7 +315,7 @@ async def run_worker_scenario(
 
     # Create callback with counter (pass strategy and workload type)
     tracked_callback = create_default_callback(
-        client, job_counter, worker_config.execution_strategy, workload_type
+        client, job_counter, worker_config.execution_strategy, workload_type, work_duration
     )
 
     # Start process instances
@@ -423,6 +418,8 @@ async def run_test(
     repeats: int = 1,
     max_concurrent_jobs: int = 10,
     timeout: int = 5000,
+    work_duration: float = 3.0,
+    job_timeout_ms: int = JOB_TIMEOUT_MILLISECONDS,
 ) -> dict[str, float]:
     """Run a parameterized test with optional averaging over multiple runs.
 
@@ -433,6 +430,8 @@ async def run_test(
         repeats: Number of times to repeat the test (results will be averaged).
         max_concurrent_jobs: Maximum concurrent jobs for the worker.
         timeout: Timeout in seconds for each run.
+        work_duration: Duration of simulated work in seconds.
+        job_timeout_ms: Job timeout in milliseconds.
 
     Returns:
         dict with averaged timing stats: {
@@ -448,6 +447,8 @@ async def run_test(
     logger.info(f"Strategy:             {strategy}")
     logger.info(f"Max concurrent jobs:  {max_concurrent_jobs}")
     logger.info(f"Workload type:        {workload_type}")
+    logger.info(f"Work duration:        {work_duration}s")
+    logger.info(f"Job timeout:          {job_timeout_ms}ms")
     logger.info(f"Repeats:              {repeats}")
     logger.info(f"Timeout per run:      {timeout}s")
     logger.info(f"{'='*70}\n")
@@ -475,13 +476,14 @@ async def run_test(
             process_definition_key=process_definition_key,
             worker_config=WorkerConfig(
                 job_type="job-worker-load-test-1-task-1",
-                job_timeout_milliseconds=30000,
+                job_timeout_milliseconds=job_timeout_ms,
                 max_concurrent_jobs=max_concurrent_jobs,
                 execution_strategy=strategy,
             ),
             num_instances=num_instances,
             scenario_timeout_seconds=timeout,
             workload_type=workload_type,
+            work_duration=work_duration,
         )
         all_stats.append(stats)
 
@@ -573,7 +575,7 @@ async def simple_scenario():
         process_definition_key=process_definition_key,
         worker_config=WorkerConfig(
             job_type="job-worker-load-test-1-task-1",
-            job_timeout_milliseconds=30000,
+            job_timeout_milliseconds=JOB_TIMEOUT_MILLISECONDS,
             max_concurrent_jobs=10,
             execution_strategy="auto",
         ),
@@ -598,7 +600,7 @@ async def load_test_scenario():
         process_definition_key=process_definition_key,
         worker_config=WorkerConfig(
             job_type="job-worker-load-test-1-task-1",
-            job_timeout_milliseconds=30000,
+            job_timeout_milliseconds=JOB_TIMEOUT_MILLISECONDS,
             max_concurrent_jobs=50,  # Higher concurrency
             execution_strategy="auto",
         ),
@@ -626,7 +628,7 @@ async def multi_strategy_scenario():
             process_definition_key=process_definition_key,
             worker_config=WorkerConfig(
                 job_type="job-worker-load-test-1-task-1",
-                job_timeout_milliseconds=30000,
+                job_timeout_milliseconds=JOB_TIMEOUT_MILLISECONDS,
                 max_concurrent_jobs=10,
                 execution_strategy=strategy,
             ),
@@ -647,13 +649,15 @@ async def multi_strategy_scenario():
     return results
 
 
-async def benchmark_strategies(num_instances: int = 20):
+async def benchmark_strategies(num_instances: int = 20, work_duration: float = 3.0, job_timeout_ms: int = JOB_TIMEOUT_MILLISECONDS):
     """Compare different strategies with multiple runs for statistical significance.
 
     Tests only CPU-bound workload across all strategies.
 
     Args:
         num_instances: Number of process instances to start per test run.
+        work_duration: Duration of simulated work in seconds.
+        job_timeout_ms: Job timeout in milliseconds.
     """
     results = {}
 
@@ -665,6 +669,8 @@ async def benchmark_strategies(num_instances: int = 20):
             repeats=3,  # Run 3 times and average
             max_concurrent_jobs=10,
             timeout=60,
+            work_duration=work_duration,
+            job_timeout_ms=job_timeout_ms,
         )
 
     # Print final comparison
@@ -692,13 +698,15 @@ async def benchmark_strategies(num_instances: int = 20):
     return results
 
 
-async def benchmark_workloads(num_instances: int = 20):
+async def benchmark_workloads(num_instances: int = 20, work_duration: float = 3.0, job_timeout_ms: int = JOB_TIMEOUT_MILLISECONDS):
     """Compare CPU-bound vs I/O-bound workloads across all strategies.
 
     Tests all combinations of strategies and workload types.
 
     Args:
         num_instances: Number of process instances to start per test run.
+        work_duration: Duration of simulated work in seconds.
+        job_timeout_ms: Job timeout in milliseconds.
     """
     workload_types: list[Literal["cpu", "io"]] = ["cpu", "io"]
     results = {}
@@ -720,6 +728,8 @@ async def benchmark_workloads(num_instances: int = 20):
                 repeats=3,
                 max_concurrent_jobs=10,
                 timeout=60,
+                work_duration=work_duration,
+                job_timeout_ms=job_timeout_ms,
             )
 
     # Print comprehensive comparison
@@ -785,7 +795,7 @@ async def benchmark_workloads(num_instances: int = 20):
     return results
 
 
-async def benchmark_subprocess(num_instances: int = 20):
+async def benchmark_subprocess(num_instances: int = 20, work_duration: float = 3.0, job_timeout_ms: int = JOB_TIMEOUT_MILLISECONDS):
     """Test subprocess workload across all strategies.
 
     This benchmark specifically tests subprocess.call() behavior to see if it crashes
@@ -793,6 +803,8 @@ async def benchmark_subprocess(num_instances: int = 20):
 
     Args:
         num_instances: Number of process instances to start per test run.
+        work_duration: Duration of simulated work in seconds.
+        job_timeout_ms: Job timeout in milliseconds.
     """
     logger.info(f"\n{'='*70}")
     logger.info("SUBPROCESS WORKLOAD BENCHMARK")
@@ -813,6 +825,8 @@ async def benchmark_subprocess(num_instances: int = 20):
                 repeats=3,
                 max_concurrent_jobs=10,
                 timeout=120,  # Longer timeout for subprocess calls
+                work_duration=work_duration,
+                job_timeout_ms=job_timeout_ms,
             )
             logger.info(f"✓ {strategy} strategy completed successfully")
         except Exception as e:
@@ -875,69 +889,79 @@ async def stress_test():
 
 def main():
     """Entry point - run the simple scenario by default."""
-    import sys
+    parser = argparse.ArgumentParser(description="Camunda Job Worker Benchmark Tool")
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
-    if len(sys.argv) > 1:
-        scenario = sys.argv[1]
+    # Test command
+    test_parser = subparsers.add_parser("test", help="Run a parameterized test")
+    test_parser.add_argument("--instances", type=int, default=10, help="Number of process instances")
+    test_parser.add_argument("--strategy", type=str, default="auto", choices=strategies, help="Execution strategy")
+    test_parser.add_argument("--workload", type=str, default="cpu", choices=["cpu", "io", "subprocess"], help="Workload type")
+    test_parser.add_argument("--repeats", type=int, default=1, help="Number of repeats")
+    test_parser.add_argument("--concurrent", type=int, default=10, help="Max concurrent jobs")
+    test_parser.add_argument("--duration", type=float, default=3.0, help="Duration of simulated work in seconds")
+    test_parser.add_argument("--timeout", type=int, default=JOB_TIMEOUT_MILLISECONDS, help="Job timeout in milliseconds")
 
-        if scenario == "test":
-            # Parse test parameters from command line
-            # Usage: python job_worker.py test <num_instances> <strategy> <workload_type> <repeats> <max_concurrent>
-            num_instances = int(sys.argv[2]) if len(sys.argv) > 2 else 10
-            strategy_arg = sys.argv[3] if len(sys.argv) > 3 else "auto"
-            if strategy_arg not in strategies:
-                logger.error(
-                    f"Invalid strategy: {strategy_arg}. Valid options: {strategies}"
-                )
-                sys.exit(1)
-            strategy: EXECUTION_STRATEGY = strategy_arg  # type: ignore
-            workload_arg = sys.argv[4] if len(sys.argv) > 4 else "cpu"
-            if workload_arg not in ["cpu", "io", "subprocess"]:
-                logger.error(
-                    f"Invalid workload type: {workload_arg}. Valid options: cpu, io, subprocess"
-                )
-                sys.exit(1)
-            workload: Literal["cpu", "io", "subprocess"] = workload_arg  # type: ignore
-            repeats = int(sys.argv[5]) if len(sys.argv) > 5 else 1
-            max_concurrent = int(sys.argv[6]) if len(sys.argv) > 6 else 10
+    # Benchmark command
+    bench_parser = subparsers.add_parser("benchmark", help="Benchmark strategies")
+    bench_parser.add_argument("--instances", type=int, default=20, help="Number of process instances")
+    bench_parser.add_argument("--duration", type=float, default=3.0, help="Duration of simulated work in seconds")
+    bench_parser.add_argument("--timeout", type=int, default=JOB_TIMEOUT_MILLISECONDS, help="Job timeout in milliseconds")
 
-            asyncio.run(
-                run_test(
-                    num_instances=num_instances,
-                    strategy=strategy,
-                    workload_type=workload,
-                    repeats=repeats,
-                    max_concurrent_jobs=max_concurrent,
-                )
+    # Benchmark workloads command
+    bench_work_parser = subparsers.add_parser("benchmark-workloads", help="Benchmark workloads")
+    bench_work_parser.add_argument("--instances", type=int, default=20, help="Number of process instances")
+    bench_work_parser.add_argument("--duration", type=float, default=3.0, help="Duration of simulated work in seconds")
+    bench_work_parser.add_argument("--timeout", type=int, default=JOB_TIMEOUT_MILLISECONDS, help="Job timeout in milliseconds")
+
+    # Benchmark subprocess command
+    bench_sub_parser = subparsers.add_parser("benchmark-subprocess", help="Benchmark subprocess")
+    bench_sub_parser.add_argument("--instances", type=int, default=20, help="Number of process instances")
+    bench_sub_parser.add_argument("--duration", type=float, default=3.0, help="Duration of simulated work in seconds")
+    bench_sub_parser.add_argument("--timeout", type=int, default=JOB_TIMEOUT_MILLISECONDS, help="Job timeout in milliseconds")
+
+    # Quick command
+    subparsers.add_parser("quick", help="Run a quick test")
+
+    # Stress command
+    subparsers.add_parser("stress", help="Run a stress test")
+
+    # Load command
+    subparsers.add_parser("load", help="Run a load test")
+
+    # Multi command
+    subparsers.add_parser("multi", help="Run multi-strategy scenario")
+
+    args = parser.parse_args()
+
+    if args.command == "test":
+        asyncio.run(
+            run_test(
+                num_instances=args.instances,
+                strategy=args.strategy,
+                workload_type=args.workload,
+                repeats=args.repeats,
+                max_concurrent_jobs=args.concurrent,
+                work_duration=args.duration,
+                job_timeout_ms=args.timeout,
             )
-        elif scenario == "benchmark":
-            # Usage: python job_worker.py benchmark [num_instances]
-            num_instances = int(sys.argv[2]) if len(sys.argv) > 2 else 20
-            asyncio.run(benchmark_strategies(num_instances=num_instances))
-        elif scenario == "benchmark-workloads":
-            # Usage: python job_worker.py benchmark-workloads [num_instances]
-            num_instances = int(sys.argv[2]) if len(sys.argv) > 2 else 20
-            asyncio.run(benchmark_workloads(num_instances=num_instances))
-        elif scenario == "benchmark-subprocess":
-            # Usage: python job_worker.py benchmark-subprocess [num_instances]
-            num_instances = int(sys.argv[2]) if len(sys.argv) > 2 else 20
-            asyncio.run(benchmark_subprocess(num_instances=num_instances))
-        elif scenario == "quick":
-            asyncio.run(quick_test())
-        elif scenario == "stress":
-            asyncio.run(stress_test())
-        elif scenario == "load":
-            asyncio.run(load_test_scenario())
-        elif scenario == "multi":
-            asyncio.run(multi_strategy_scenario())
-        else:
-            logger.error(f"Unknown scenario: {scenario}")
-            logger.info(
-                "Available scenarios: test, benchmark, benchmark-workloads, benchmark-subprocess, quick, stress, load, multi"
-            )
-            sys.exit(1)
+        )
+    elif args.command == "benchmark":
+        asyncio.run(benchmark_strategies(num_instances=args.instances, work_duration=args.duration, job_timeout_ms=args.timeout))
+    elif args.command == "benchmark-workloads":
+        asyncio.run(benchmark_workloads(num_instances=args.instances, work_duration=args.duration, job_timeout_ms=args.timeout))
+    elif args.command == "benchmark-subprocess":
+        asyncio.run(benchmark_subprocess(num_instances=args.instances, work_duration=args.duration, job_timeout_ms=args.timeout))
+    elif args.command == "quick":
+        asyncio.run(quick_test())
+    elif args.command == "stress":
+        asyncio.run(stress_test())
+    elif args.command == "load":
+        asyncio.run(load_test_scenario())
+    elif args.command == "multi":
+        asyncio.run(multi_strategy_scenario())
     else:
-        # Default: run simple scenario
+        # Default: run simple scenario if no command provided
         asyncio.run(simple_scenario())
 
 

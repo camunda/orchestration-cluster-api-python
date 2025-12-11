@@ -210,13 +210,13 @@ class JobWorker:
         
         if self._strategy == "async" and not is_async_callback:
             raise ValueError(
-                f"Execution strategy is 'async' but callback '{self.callback.__name__}' is synchronous. "
+                f"Execution strategy is 'async' but callback '{self.callback.__name__}' is synchronous. " # type:ignore - runtime type guard
                 "Async strategy requires an 'async def' callback."
             )
             
         if self._strategy in ["thread", "process"] and is_async_callback:
             raise ValueError(
-                f"Execution strategy is '{self._strategy}' but callback '{self.callback.__name__}' is asynchronous. "
+                f"Execution strategy is '{self._strategy}' but callback '{self.callback.__name__}' is asynchronous. " # type:ignore -  runtime type guard
                 "Thread/Process strategies require a synchronous 'def' callback."
             )
 
