@@ -6,8 +6,9 @@ import subprocess
 import time
 import tracemalloc
 import resource
+import threading
 from functools import partial
-from typing import Callable, Literal, get_args
+from typing import Callable, Literal, get_args, Any
 from loguru import logger
 from camunda_orchestration_sdk.semantic_types import ProcessDefinitionKey
 from camunda_orchestration_sdk.models.complete_job_data import CompleteJobData
@@ -49,10 +50,16 @@ def make_client(base_url: str | None = None) -> CamundaClient:
 
 
 def simulate_cpu_work(duration: float):
-    """Simulate CPU-bound work by spinning in a loop."""
+    """Simulate CPU-bound work that heavily engages the Python interpreter (GIL-bound).
+    
+    Performs arithmetic operations and list comprehensions to ensure the 
+    Global Interpreter Lock (GIL) is held, preventing multi-threaded parallelism.
+    """
     end_time = time.time() + duration
     while time.time() < end_time:
-        pass
+        # Create and destroy objects, do math
+        # This is pure Python work that cannot be parallelized by threads
+        _ = [x * x for x in range(500_000)]
 
 
 def simulate_io_work(duration: float):
@@ -211,6 +218,7 @@ async def _async_job_callback(
     workload_type: Literal["cpu", "io", "subprocess", "subprocess_threaded"],
     work_duration: float,
     job_counter: dict[str, int] | None,
+    lock: Any | None = None,
 ):
     """Async job callback for async/auto strategies.
 
@@ -237,6 +245,7 @@ async def _async_job_callback(
 
     # Track completion if counter provided
     if job_counter is not None:
+        # Async is single-threaded (per loop), so atomic enough for this
         job_counter["completed"] = job_counter.get("completed", 0) + 1
         logger.info(f"Jobs completed: {job_counter['completed']}")
     return ack
@@ -247,6 +256,7 @@ def _sync_cpu_job_callback(
     job: ActivatedJob,
     work_duration: float,
     job_counter: dict[str, int] | None,
+    lock: Any | None = None,
 ):
     """Synchronous CPU-bound job callback.
 
@@ -261,8 +271,14 @@ def _sync_cpu_job_callback(
 
     # Track completion if counter provided
     if job_counter is not None:
-        job_counter["completed"] = job_counter.get("completed", 0) + 1
-        logger.info(f"Jobs completed: {job_counter['completed']}")
+        if lock:
+            with lock:
+                job_counter["completed"] = job_counter.get("completed", 0) + 1
+                val = job_counter["completed"]
+            logger.info(f"Jobs completed: {val}")
+        else:
+            job_counter["completed"] = job_counter.get("completed", 0) + 1
+            logger.info(f"Jobs completed: {job_counter['completed']}")
     return ack
 
 
@@ -272,6 +288,7 @@ def _sync_io_job_callback(
     workload_type: Literal["io", "subprocess", "subprocess_threaded"],
     work_duration: float,
     job_counter: dict[str, int] | None,
+    lock: Any | None = None,
 ):
     """Synchronous I/O-bound job callback (handles both I/O and subprocess).
 
@@ -294,8 +311,14 @@ def _sync_io_job_callback(
 
     # Track completion if counter provided
     if job_counter is not None:
-        job_counter["completed"] = job_counter.get("completed", 0) + 1
-        logger.info(f"Jobs completed: {job_counter['completed']}")
+        if lock:
+            with lock:
+                job_counter["completed"] = job_counter.get("completed", 0) + 1
+                val = job_counter["completed"]
+            logger.info(f"Jobs completed: {val}")
+        else:
+            job_counter["completed"] = job_counter.get("completed", 0) + 1
+            logger.info(f"Jobs completed: {job_counter['completed']}")
     return ack
 
 
@@ -305,6 +328,7 @@ def create_default_callback(
     strategy: str = "async",
     workload_type: Literal["cpu", "io", "subprocess", "subprocess_threaded"] = "cpu",
     work_duration: float = 3.0,
+    lock: Any | None = None,
 ) -> JobHandler:
     """Create a default job callback that completes jobs with dummy data.
 
@@ -317,6 +341,7 @@ def create_default_callback(
         strategy: Execution strategy - determines whether to create async or sync callback.
         workload_type: Type of workload simulation - "cpu", "io", or "subprocess".
         work_duration: Duration of simulated work in seconds.
+        lock: Optional lock for thread/process safety.
 
     Returns:
         A callback function (async or sync depending on strategy) bound with the necessary parameters.
@@ -328,6 +353,7 @@ def create_default_callback(
             workload_type=workload_type,
             work_duration=work_duration,
             job_counter=job_counter,
+            lock=lock,
         )
     else:
         # For thread/process strategies, use the appropriate sync callback
@@ -337,6 +363,7 @@ def create_default_callback(
                 _sync_cpu_job_callback,
                 work_duration=work_duration,
                 job_counter=job_counter,
+                lock=lock,
             )
         else:
             # I/O-bound or subprocess callback
@@ -345,6 +372,7 @@ def create_default_callback(
                 workload_type=workload_type,
                 work_duration=work_duration,
                 job_counter=job_counter,
+                lock=lock,
             )
 
 
@@ -446,17 +474,23 @@ async def run_worker_scenario(
     # Job counter to track completions
     # For process strategy, use a multiprocessing.Manager dict (picklable and process-safe)
     # For other strategies, use a regular dict
+    lock = None
     if worker_config.execution_strategy == "process":
         manager = multiprocessing.Manager()
         job_counter = manager.dict()
         job_counter["completed"] = 0
         job_counter["start_time"] = None
+        lock = manager.Lock()
+    elif worker_config.execution_strategy == "thread":
+        job_counter = {"completed": 0, "start_time": None}
+        lock = threading.Lock()
     else:
         job_counter = {"completed": 0, "start_time": None}
+        lock = None
 
     # Create callback with counter (pass strategy and workload type)
     tracked_callback = create_default_callback(
-        client, job_counter, worker_config.execution_strategy, workload_type, work_duration
+        client, job_counter, worker_config.execution_strategy, workload_type, work_duration, lock
     )
 
     # Start process instances

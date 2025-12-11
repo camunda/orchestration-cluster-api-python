@@ -1,3 +1,4 @@
+from __future__ import annotations
 import asyncio
 import inspect
 import threading
@@ -66,10 +67,17 @@ class JobFinalized:
     response: Any = None
 
 class _ActivatedJob:
-    def __init__(self, job: ActivateJobsResponse200JobsItem, client: "CamundaClient"):
+    def __init__(self, job: ActivateJobsResponse200JobsItem, client: "CamundaClient" | None):
         self.job = job
         self._client = client
         self._finalized = False
+        self._pending_action: tuple[str, Any] | None = None
+
+    def __getstate__(self):
+        """Custom pickling to exclude the client (which contains locks/sockets)"""
+        state = self.__dict__.copy()
+        state['_client'] = None
+        return state
 
     def __getattr__(self, name):
         return getattr(self.job, name)
@@ -94,45 +102,103 @@ class ActivatedJob(_ActivatedJob):
     async def complete(self, data: CompleteJobData | dict | None = None) -> JobFinalized:
         self._check_finalized()
         complete_data = self._ensure_complete_job_data(data)
-        resp = await self._client.complete_job_async(job_key=self.job.job_key, data=complete_data)
-        self._finalized = True
-        return JobFinalized(response=resp)
+        
+        if self._client:
+            resp = await self._client.complete_job_async(job_key=self.job.job_key, data=complete_data)
+            self._finalized = True
+            return JobFinalized(response=resp)
+        else:
+            # Should not happen in async mode as it doesn't use pickling/subprocesses usually
+            self._pending_action = ("complete", complete_data)
+            self._finalized = True
+            return JobFinalized()
 
     async def fail(self, error_message: str, retries: int, retry_back_off: int = 0) -> JobFinalized:
         self._check_finalized()
         data = FailJobData(error_message=error_message, retries=retries, retry_back_off=retry_back_off)
-        resp = await self._client.fail_job_async(job_key=self.job.job_key, data=data)
-        self._finalized = True
-        return JobFinalized(response=resp)
+        
+        if self._client:
+            resp = await self._client.fail_job_async(job_key=self.job.job_key, data=data)
+            self._finalized = True
+            return JobFinalized(response=resp)
+        else:
+            self._pending_action = ("fail", data)
+            self._finalized = True
+            return JobFinalized()
 
     async def error(self, error_code: str, error_message: str) -> JobFinalized:
         self._check_finalized()
         data = ThrowJobErrorData(error_code=error_code, error_message=error_message)
-        resp = await self._client.throw_job_error_async(job_key=self.job.job_key, data=data)
-        self._finalized = True
-        return JobFinalized(response=resp)
+        
+        if self._client:
+            resp = await self._client.throw_job_error_async(job_key=self.job.job_key, data=data)
+            self._finalized = True
+            return JobFinalized(response=resp)
+        else:
+            self._pending_action = ("error", data)
+            self._finalized = True
+            return JobFinalized()
 
 class SyncActivatedJob(_ActivatedJob):
     def complete(self, data: CompleteJobData | dict | None = None) -> JobFinalized:
         self._check_finalized()
         complete_data = self._ensure_complete_job_data(data)
-        resp = self._client.complete_job(job_key=self.job.job_key, data=complete_data)
-        self._finalized = True
-        return JobFinalized(response=resp)
+        
+        if self._client:
+            resp = self._client.complete_job(job_key=self.job.job_key, data=complete_data)
+            self._finalized = True
+            return JobFinalized(response=resp)
+        else:
+            self._pending_action = ("complete", complete_data)
+            self._finalized = True
+            return JobFinalized()
 
     def fail(self, error_message: str, retries: int, retry_back_off: int = 0) -> JobFinalized:
         self._check_finalized()
         data = FailJobData(error_message=error_message, retries=retries, retry_back_off=retry_back_off)
-        resp = self._client.fail_job(job_key=self.job.job_key, data=data)
-        self._finalized = True
-        return JobFinalized(response=resp)
+        
+        if self._client:
+            resp = self._client.fail_job(job_key=self.job.job_key, data=data)
+            self._finalized = True
+            return JobFinalized(response=resp)
+        else:
+            self._pending_action = ("fail", data)
+            self._finalized = True
+            return JobFinalized()
 
     def error(self, error_code: str, error_message: str) -> JobFinalized:
         self._check_finalized()
         data = ThrowJobErrorData(error_code=error_code, error_message=error_message)
-        resp = self._client.throw_job_error(job_key=self.job.job_key, data=data)
-        self._finalized = True
-        return JobFinalized(response=resp)
+        
+        if self._client:
+            resp = self._client.throw_job_error(job_key=self.job.job_key, data=data)
+            self._finalized = True
+            return JobFinalized(response=resp)
+        else:
+            self._pending_action = ("error", data)
+            self._finalized = True
+            return JobFinalized()
+
+def _execute_task_in_process(callback: Callable, job_item: ActivateJobsResponse200JobsItem) -> tuple[str, Any] | None:
+    """
+    Wrapper function to execute a job in a separate process.
+    Reconstructs the SyncActivatedJob (without client), runs the callback,
+    and returns any pending action recorded by the job object.
+    """
+    try:
+        # Reconstruct job without client
+        job = SyncActivatedJob(job_item, client=None)
+        
+        # Run callback
+        callback(job)
+        
+        # Return the pending action (if any)
+        return job._pending_action
+    except Exception as e:
+        # Catch-all for subprocess errors
+        # We return a special failure signal that is definitely picklable
+        return ("subprocess_error", str(e))
+
 
 class JobWorker:
     _strategy: _EFFECTIVE_EXECUTION_STRATEGY = "async"
@@ -299,11 +365,30 @@ class JobWorker:
                     
                     elif self._strategy == "process":
                         # CPU-intensive work in process pool
-                        result = await asyncio.get_event_loop().run_in_executor(
+                        # We pass the raw job item and the callback to the wrapper
+                        # The wrapper reconstructs the job object (without client) and returns the action
+                        action = await asyncio.get_event_loop().run_in_executor(
                             self.process_pool,
+                            _execute_task_in_process,
                             self.callback,
-                            activated_job
+                            job
                         )
+                        
+                        # Handle the returned action
+                        if action:
+                            action_type, action_data = action
+                            if action_type == "complete":
+                                await self.client.complete_job_async(job_key=job.job_key, data=action_data)
+                            elif action_type == "fail":
+                                await self.client.fail_job_async(job_key=job.job_key, data=action_data)
+                            elif action_type == "error":
+                                await self.client.throw_job_error_async(job_key=job.job_key, data=action_data)
+                            elif action_type == "subprocess_error":
+                                raise RuntimeError(f"Subprocess error: {action_data}")
+                        
+                        # If no action was returned, we assume the user might have returned a value 
+                        # (which we don't support yet in this pattern) or just did nothing.
+                        # If they did nothing, the job remains locked until timeout.
                     
                     self.logger.debug(f"Job completed: {job.job_key}") # type: ignore - this is set for auto
                     
@@ -311,20 +396,25 @@ class JobWorker:
                     self.logger.error(f"Job failed with exception: {e}")
                     # If the job hasn't been finalized by the user, fail it on the broker
                     # Note: For 'process' strategy, activated_job._finalized will always be False 
-                    # in this process, so we might try to fail an already completed job.
-                    # The broker will reject this, which is acceptable.
-                    if not activated_job._finalized:
-                        try:
-                            await self.client.fail_job_async(
-                                job_key=job.job_key,
-                                data=FailJobData(
-                                    error_message=str(e),
-                                    retries=job.retries - 1 if job.retries else 0,
-                                )
+                    # in this process (because we created a new instance in the subprocess), 
+                    # so we rely on the fact that if 'action' was returned, we executed it.
+                    # But if an exception occurred, 'action' wasn't returned.
+                    
+                    # We can't easily check if the job was finalized in the subprocess if an exception occurred 
+                    # (unless we catch it there and return it).
+                    # But if an exception occurred, it probably wasn't finalized successfully.
+                    
+                    try:
+                        await self.client.fail_job_async(
+                            job_key=job.job_key,
+                            data=FailJobData(
+                                error_message=str(e),
+                                retries=job.retries - 1 if job.retries else 0,
                             )
-                            self.logger.info(f"Failed job {job.job_key} due to unhandled exception")
-                        except Exception as fail_err:
-                            self.logger.error(f"Failed to send fail command to broker for job {job.job_key}: {fail_err}")
+                        )
+                        self.logger.info(f"Failed job {job.job_key} due to unhandled exception")
+                    except Exception as fail_err:
+                        self.logger.error(f"Failed to send fail command to broker for job {job.job_key}: {fail_err}")
         finally:
             self._decrement_active_jobs()
 
