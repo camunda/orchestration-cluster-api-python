@@ -894,31 +894,31 @@ def main():
 
     # Test command
     test_parser = subparsers.add_parser("test", help="Run a parameterized test")
-    test_parser.add_argument("--instances", type=int, default=10, help="Number of process instances")
-    test_parser.add_argument("--strategy", type=str, default="auto", choices=strategies, help="Execution strategy")
-    test_parser.add_argument("--workload", type=str, default="cpu", choices=["cpu", "io", "subprocess"], help="Workload type")
-    test_parser.add_argument("--repeats", type=int, default=1, help="Number of repeats")
-    test_parser.add_argument("--concurrent", type=int, default=10, help="Max concurrent jobs")
-    test_parser.add_argument("--duration", type=float, default=3.0, help="Duration of simulated work in seconds")
-    test_parser.add_argument("--timeout", type=int, default=JOB_TIMEOUT_MILLISECONDS, help="Job timeout in milliseconds")
+    test_parser.add_argument("--process_instances", type=int, default=10, help="Number of process instances")
+    test_parser.add_argument("--worker_strategy", type=str, default="auto", choices=strategies, help="Execution strategy")
+    test_parser.add_argument("--workload_type", type=str, default="cpu", choices=["cpu", "io", "subprocess"], help="Workload type")
+    test_parser.add_argument("--repeat_runs", type=int, default=1, help="Number of repeats")
+    test_parser.add_argument("--max_concurrent_jobs", type=int, default=10, help="Max concurrent jobs")
+    test_parser.add_argument("--work_duration_seconds", type=float, default=3.0, help="Duration of simulated work in seconds")
+    test_parser.add_argument("--job_timeout_milliseconds", type=int, default=JOB_TIMEOUT_MILLISECONDS, help="Job timeout in milliseconds")
 
     # Benchmark command
     bench_parser = subparsers.add_parser("benchmark", help="Benchmark strategies")
-    bench_parser.add_argument("--instances", type=int, default=20, help="Number of process instances")
-    bench_parser.add_argument("--duration", type=float, default=3.0, help="Duration of simulated work in seconds")
-    bench_parser.add_argument("--timeout", type=int, default=JOB_TIMEOUT_MILLISECONDS, help="Job timeout in milliseconds")
+    bench_parser.add_argument("--process_instances", type=int, default=20, help="Number of process instances")
+    bench_parser.add_argument("--work_duration_seconds", type=float, default=3.0, help="Duration of simulated work in seconds")
+    bench_parser.add_argument("--job_timeout_milliseconds", type=int, default=JOB_TIMEOUT_MILLISECONDS, help="Job timeout in milliseconds")
 
     # Benchmark workloads command
     bench_work_parser = subparsers.add_parser("benchmark-workloads", help="Benchmark workloads")
-    bench_work_parser.add_argument("--instances", type=int, default=20, help="Number of process instances")
-    bench_work_parser.add_argument("--duration", type=float, default=3.0, help="Duration of simulated work in seconds")
-    bench_work_parser.add_argument("--timeout", type=int, default=JOB_TIMEOUT_MILLISECONDS, help="Job timeout in milliseconds")
+    bench_work_parser.add_argument("--process_instances", type=int, default=20, help="Number of process instances")
+    bench_work_parser.add_argument("--work_duration_seconds", type=float, default=3.0, help="Duration of simulated work in seconds")
+    bench_work_parser.add_argument("--job_timeout_milliseconds", type=int, default=JOB_TIMEOUT_MILLISECONDS, help="Job timeout in milliseconds")
 
     # Benchmark subprocess command
     bench_sub_parser = subparsers.add_parser("benchmark-subprocess", help="Benchmark subprocess")
-    bench_sub_parser.add_argument("--instances", type=int, default=20, help="Number of process instances")
-    bench_sub_parser.add_argument("--duration", type=float, default=3.0, help="Duration of simulated work in seconds")
-    bench_sub_parser.add_argument("--timeout", type=int, default=JOB_TIMEOUT_MILLISECONDS, help="Job timeout in milliseconds")
+    bench_sub_parser.add_argument("--process_instances", type=int, default=20, help="Number of process instances")
+    bench_sub_parser.add_argument("--work_duration_seconds", type=float, default=3.0, help="Duration of simulated work in seconds")
+    bench_sub_parser.add_argument("--job_timeout_milliseconds", type=int, default=JOB_TIMEOUT_MILLISECONDS, help="Job timeout in milliseconds")
 
     # Quick command
     subparsers.add_parser("quick", help="Run a quick test")
@@ -937,21 +937,21 @@ def main():
     if args.command == "test":
         asyncio.run(
             run_test(
-                num_instances=args.instances,
-                strategy=args.strategy,
-                workload_type=args.workload,
-                repeats=args.repeats,
-                max_concurrent_jobs=args.concurrent,
-                work_duration=args.duration,
-                job_timeout_ms=args.timeout,
+                num_instances=args.process_instances,
+                strategy=args.worker_strategy,
+                workload_type=args.workload_type,
+                repeats=args.repeat_runs,
+                max_concurrent_jobs=args.max_concurrent_jobs,
+                work_duration=args.work_duration_seconds,
+                job_timeout_ms=args.job_timeout_milliseconds,
             )
         )
     elif args.command == "benchmark":
-        asyncio.run(benchmark_strategies(num_instances=args.instances, work_duration=args.duration, job_timeout_ms=args.timeout))
+        asyncio.run(benchmark_strategies(num_instances=args.process_instances, work_duration=args.work_duration_seconds, job_timeout_ms=args.job_timeout_milliseconds))
     elif args.command == "benchmark-workloads":
-        asyncio.run(benchmark_workloads(num_instances=args.instances, work_duration=args.duration, job_timeout_ms=args.timeout))
+        asyncio.run(benchmark_workloads(num_instances=args.process_instances, work_duration=args.work_duration_seconds, job_timeout_ms=args.job_timeout_milliseconds))
     elif args.command == "benchmark-subprocess":
-        asyncio.run(benchmark_subprocess(num_instances=args.instances, work_duration=args.duration, job_timeout_ms=args.timeout))
+        asyncio.run(benchmark_subprocess(num_instances=args.process_instances, work_duration=args.work_duration_seconds, job_timeout_ms=args.job_timeout_milliseconds))
     elif args.command == "quick":
         asyncio.run(quick_test())
     elif args.command == "stress":

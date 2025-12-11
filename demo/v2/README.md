@@ -34,52 +34,52 @@ uv run demo/v2/job_worker_benchmark.py quick
 Compares all execution strategies (`async`, `thread`, `process`, `auto`) using a CPU-bound workload.
 
 ```bash
-uv run demo/v2/job_worker_benchmark.py benchmark --instances 50 --duration 3.0 --timeout 30000
+uv run demo/v2/job_worker_benchmark.py benchmark --process_instances 50 --work_duration_seconds 3.0 --job_timeout_milliseconds 30000
 ```
 
-*   `--instances`: Number of process instances to start (default: 20).
-*   `--duration`: Duration of simulated work in seconds (default: 3.0).
-*   `--timeout`: Job timeout in milliseconds (default: 30000).
+*   `--process_instances`: Number of process instances to start (default: 20).
+*   `--work_duration_seconds`: Duration of simulated work in seconds (default: 3.0).
+*   `--job_timeout_milliseconds`: Job timeout in milliseconds (default: 30000).
 
 ### Benchmarking Workloads
 
 Compares strategies across both CPU-bound and I/O-bound workloads.
 
 ```bash
-uv run demo/v2/job_worker_benchmark.py benchmark-workloads --instances 20 --duration 3.0 --timeout 30000
+uv run demo/v2/job_worker_benchmark.py benchmark-workloads --process_instances 20 --work_duration_seconds 3.0 --job_timeout_milliseconds 30000
 ```
 
-*   `--instances`: Number of process instances to start (default: 20).
-*   `--duration`: Duration of simulated work in seconds (default: 3.0).
-*   `--timeout`: Job timeout in milliseconds (default: 30000).
+*   `--process_instances`: Number of process instances to start (default: 20).
+*   `--work_duration_seconds`: Duration of simulated work in seconds (default: 3.0).
+*   `--job_timeout_milliseconds`: Job timeout in milliseconds (default: 30000).
 
 ### Benchmarking Subprocess Calls
 
 Specifically tests `subprocess.call()` behavior across strategies to check for deadlocks or issues.
 
 ```bash
-uv run demo/v2/job_worker_benchmark.py benchmark-subprocess --instances 20 --duration 3.0 --timeout 30000
+uv run demo/v2/job_worker_benchmark.py benchmark-subprocess --process_instances 20 --work_duration_seconds 3.0 --job_timeout_milliseconds 30000
 ```
 
-*   `--instances`: Number of process instances to start (default: 20).
-*   `--duration`: Duration of simulated work in seconds (default: 3.0).
-*   `--timeout`: Job timeout in milliseconds (default: 30000).
+*   `--process_instances`: Number of process instances to start (default: 20).
+*   `--work_duration_seconds`: Duration of simulated work in seconds (default: 3.0).
+*   `--job_timeout_milliseconds`: Job timeout in milliseconds (default: 30000).
 
 ### Custom Test Run
 
 Run a fully customizable test with specific parameters.
 
 ```bash
-uv run demo/v2/job_worker_benchmark.py test --instances 20 --strategy process --workload cpu --repeats 3 --concurrent 10 --duration 3.0 --timeout 30000
+uv run demo/v2/job_worker_benchmark.py test --process_instances 20 --worker_strategy process --workload_type cpu --repeat_runs 3 --max_concurrent_jobs 10 --work_duration_seconds 3.0 --job_timeout_milliseconds 30000
 ```
 
-*   `--instances`: Number of process instances to start (default: 10).
-*   `--strategy`: `auto`, `async`, `thread`, or `process` (default: auto).
-*   `--workload`: `cpu`, `io`, or `subprocess` (default: cpu).
-*   `--repeats`: Number of times to repeat the test (results are averaged) (default: 1).
-*   `--concurrent`: Maximum concurrent jobs for the worker (default: 10).
-*   `--duration`: Duration of simulated work in seconds (default: 3.0).
-*   `--timeout`: Job timeout in milliseconds (default: 30000).
+*   `--process_instances`: Number of process instances to start (default: 10).
+*   `--worker_strategy`: `auto`, `async`, `thread`, or `process` (default: auto).
+*   `--workload_type`: `cpu`, `io`, or `subprocess` (default: cpu).
+*   `--repeat_runs`: Number of times to repeat the test (results are averaged) (default: 1).
+*   `--max_concurrent_jobs`: Maximum concurrent jobs for the worker (default: 10).
+*   `--work_duration_seconds`: Duration of simulated work in seconds (default: 3.0).
+*   `--job_timeout_milliseconds`: Job timeout in milliseconds (default: 30000).
 
 ### Other Scenarios
 
