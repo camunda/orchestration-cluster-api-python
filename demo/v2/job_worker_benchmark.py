@@ -1,10 +1,12 @@
 import argparse
 import asyncio
+import multiprocessing
 import os
 import subprocess
 import time
 import tracemalloc
 import resource
+from functools import partial
 from typing import Callable, Literal, get_args
 from loguru import logger
 from camunda_orchestration_sdk.semantic_types import ProcessDefinitionKey
@@ -119,6 +121,74 @@ def simulate_subprocess_work(duration: float):
     )
 
 
+def simulate_problematic_subprocess_work(duration: float):
+    """Simulate a problematic subprocess that uses threading and locks.
+
+    This demonstrates potential fork-safety issues when calling subprocess.run()
+    from a multi-threaded parent process, where the subprocess itself creates threads
+    and uses synchronization primitives like locks.
+
+    This can expose deadlocks, hangs, or crashes in multi-threaded environments,
+    especially when:
+    - Parent has many threads (ThreadPoolExecutor)
+    - Subprocess uses locks/mutexes
+    - High concurrency increases chance of fork() happening while locks are held
+    """
+    # Create a Python subprocess that uses threading AND locks
+    # This increases the chance of fork-safety issues:
+    # 1. Parent process has multiple threads (ThreadPoolExecutor)
+    # 2. subprocess.run() may use fork() on Unix (depending on Python version)
+    # 3. Child process creates threads AND uses locks
+    # 4. If fork happens while parent thread holds a lock, child inherits locked state = deadlock
+
+    python_code = f"""
+import threading
+import time
+import sys
+
+# Shared lock and counter (simulates more complex threading scenario)
+lock = threading.Lock()
+counter = {{'value': 0}}
+
+def worker(worker_id):
+    '''Thread worker that uses locks - more likely to expose fork issues'''
+    for i in range(3):
+        with lock:
+            counter['value'] += 1
+            current = counter['value']
+        time.sleep({duration} / 10)
+        sys.stderr.write(f"Worker {{worker_id}} iteration {{i}}: count={{current}}\\n")
+        sys.stderr.flush()
+
+# Create multiple threads that compete for locks
+threads = []
+for i in range(5):
+    t = threading.Thread(target=worker, args=(i,))
+    t.start()
+    threads.append(t)
+
+# Wait for all threads
+for t in threads:
+    t.join()
+
+print(f"Subprocess completed: final count={{counter['value']}}")
+"""
+
+    result = subprocess.run(
+        ["python3", "-c", python_code],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        timeout=duration * 5  # Longer timeout since we have more work
+    )
+
+    if result.returncode != 0:
+        logger.warning(f"Problematic subprocess failed with code {result.returncode}: {result.stderr.decode()}")
+    else:
+        logger.debug(f"Problematic subprocess output: {result.stdout.decode().strip()}")
+        if result.stderr:
+            logger.debug(f"Subprocess stderr: {result.stderr.decode().strip()}")
+
+
 async def simulate_subprocess_work_async(duration: float):
     """Simulate subprocess work in async context.
 
@@ -134,14 +204,112 @@ async def simulate_subprocess_work_async(duration: float):
     await process.wait()
 
 
+# Module-level callback functions (picklable for multiprocessing)
+@ExecutionHint.async_safe
+async def _async_job_callback(
+    job: ActivatedJob,
+    workload_type: Literal["cpu", "io", "subprocess", "subprocess_threaded"],
+    work_duration: float,
+    job_counter: dict[str, int] | None,
+):
+    """Async job callback for async/auto strategies.
+
+    This is a module-level function so it can be pickled for multiprocessing.
+    """
+    logger.info(f"Starting {workload_type}-bound work on: {job.job_key}")
+
+    # Simulate workload based on type
+    if workload_type == "cpu":
+        simulate_cpu_work(work_duration)
+    elif workload_type == "io":
+        await simulate_io_work_async(work_duration)
+    elif workload_type == "subprocess_threaded":
+        # Run the problematic subprocess in executor to avoid blocking event loop
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, simulate_problematic_subprocess_work, work_duration)
+    else:  # subprocess
+        await simulate_subprocess_work_async(work_duration)
+
+    logger.info(f"Finished work on: {job.job_key}")
+
+    # Complete the job
+    ack = await job.complete({"quoteAmount": 2345432})
+
+    # Track completion if counter provided
+    if job_counter is not None:
+        job_counter["completed"] = job_counter.get("completed", 0) + 1
+        logger.info(f"Jobs completed: {job_counter['completed']}")
+    return ack
+
+
+@ExecutionHint.cpu_bound
+def _sync_cpu_job_callback(
+    job: ActivatedJob,
+    work_duration: float,
+    job_counter: dict[str, int] | None,
+):
+    """Synchronous CPU-bound job callback.
+
+    This is a module-level function so it can be pickled for multiprocessing.
+    """
+    logger.info(f"Starting cpu-bound work on: {job.job_key}")
+    simulate_cpu_work(work_duration)
+    logger.info(f"Finished work on: {job.job_key}")
+
+    # Complete the job synchronously
+    ack = job.complete({"quoteAmount": 2345432})
+
+    # Track completion if counter provided
+    if job_counter is not None:
+        job_counter["completed"] = job_counter.get("completed", 0) + 1
+        logger.info(f"Jobs completed: {job_counter['completed']}")
+    return ack
+
+
+@ExecutionHint.io_bound
+def _sync_io_job_callback(
+    job: ActivatedJob,
+    workload_type: Literal["io", "subprocess", "subprocess_threaded"],
+    work_duration: float,
+    job_counter: dict[str, int] | None,
+):
+    """Synchronous I/O-bound job callback (handles both I/O and subprocess).
+
+    This is a module-level function so it can be pickled for multiprocessing.
+    """
+    logger.info(f"Starting {workload_type}-bound work on: {job.job_key}")
+
+    # Simulate workload based on type
+    if workload_type == "io":
+        simulate_io_work(work_duration)
+    elif workload_type == "subprocess_threaded":
+        simulate_problematic_subprocess_work(work_duration)
+    else:  # subprocess
+        simulate_subprocess_work(work_duration)
+
+    logger.info(f"Finished work on: {job.job_key}")
+
+    # Complete the job synchronously
+    ack = job.complete({"quoteAmount": 2345432})
+
+    # Track completion if counter provided
+    if job_counter is not None:
+        job_counter["completed"] = job_counter.get("completed", 0) + 1
+        logger.info(f"Jobs completed: {job_counter['completed']}")
+    return ack
+
+
 def create_default_callback(
     client: CamundaClient,
     job_counter: dict[str, int] | None = None,
     strategy: str = "async",
-    workload_type: Literal["cpu", "io", "subprocess"] = "cpu",
+    workload_type: Literal["cpu", "io", "subprocess", "subprocess_threaded"] = "cpu",
     work_duration: float = 3.0,
 ) -> JobHandler:
     """Create a default job callback that completes jobs with dummy data.
+
+    Uses functools.partial to bind parameters to module-level functions,
+    making them picklable for multiprocessing (process strategy).
 
     Args:
         client: The Camunda client to use for completing jobs.
@@ -151,68 +319,33 @@ def create_default_callback(
         work_duration: Duration of simulated work in seconds.
 
     Returns:
-        A callback function (async or sync depending on strategy).
+        A callback function (async or sync depending on strategy) bound with the necessary parameters.
     """
     if strategy in ["async", "auto"]:
-
-        @ExecutionHint.async_safe
-        async def async_callback(job: ActivatedJob):
-            logger.info(f"Starting {workload_type}-bound work on: {job.job_key}")
-
-            # Simulate workload based on type
-            if workload_type == "cpu":
-                simulate_cpu_work(work_duration)
-            elif workload_type == "io":
-                await simulate_io_work_async(work_duration)
-            else:  # subprocess
-                await simulate_subprocess_work_async(work_duration)
-
-            logger.info(f"Finished work on: {job.job_key}")
-
-            # Complete the job
-            ack = await job.complete({"quoteAmount": 2345432})
-
-            # Track completion if counter provided
-            if job_counter is not None:
-                job_counter["completed"] = job_counter.get("completed", 0) + 1
-                logger.info(f"Jobs completed: {job_counter['completed']}")
-            return ack
-
-        return async_callback
+        # Use partial to bind parameters to the async callback
+        return partial(
+            _async_job_callback,
+            workload_type=workload_type,
+            work_duration=work_duration,
+            job_counter=job_counter,
+        )
     else:
-        # For thread/process strategies, create a synchronous callback
-        # Apply appropriate execution hint based on workload type
+        # For thread/process strategies, use the appropriate sync callback
         if workload_type == "cpu":
-            hint_decorator = ExecutionHint.cpu_bound
-        elif workload_type == "subprocess":
-            hint_decorator = ExecutionHint.io_bound  # subprocess calls are I/O-like
-        else:  # io
-            hint_decorator = ExecutionHint.io_bound
-
-        @hint_decorator
-        def sync_callback(job: ActivatedJob):
-            logger.info(f"Starting {workload_type}-bound work on: {job.job_key}")
-
-            # Simulate workload based on type
-            if workload_type == "cpu":
-                simulate_cpu_work(work_duration)
-            elif workload_type == "io":
-                simulate_io_work(work_duration)
-            else:  # subprocess
-                simulate_subprocess_work(work_duration)
-
-            logger.info(f"Finished work on: {job.job_key}")
-
-            # Complete the job synchronously
-            ack = job.complete({"quoteAmount": 2345432})
-
-            # Track completion if counter provided
-            if job_counter is not None:
-                job_counter["completed"] = job_counter.get("completed", 0) + 1
-                logger.info(f"Jobs completed: {job_counter['completed']}")
-            return ack
-        
-        return sync_callback
+            # CPU-bound callback
+            return partial(
+                _sync_cpu_job_callback,
+                work_duration=work_duration,
+                job_counter=job_counter,
+            )
+        else:
+            # I/O-bound or subprocess callback
+            return partial(
+                _sync_io_job_callback,
+                workload_type=workload_type,
+                work_duration=work_duration,
+                job_counter=job_counter,
+            )
 
 
 async def deploy_process(
@@ -281,7 +414,7 @@ async def run_worker_scenario(
     num_instances: int = 1,
     expected_jobs: int | None = None,
     scenario_timeout_seconds: int | None = 30,
-    workload_type: Literal["cpu", "io", "subprocess"] = "cpu",
+    workload_type: Literal["cpu", "io", "subprocess", "subprocess_threaded"] = "cpu",
     work_duration: float = 3.0,
 ) -> dict[str, float]:
     """Run a worker scenario with configurable settings.
@@ -311,7 +444,15 @@ async def run_worker_scenario(
     initial_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
 
     # Job counter to track completions
-    job_counter = {"completed": 0, "start_time": None}
+    # For process strategy, use a multiprocessing.Manager dict (picklable and process-safe)
+    # For other strategies, use a regular dict
+    if worker_config.execution_strategy == "process":
+        manager = multiprocessing.Manager()
+        job_counter = manager.dict()
+        job_counter["completed"] = 0
+        job_counter["start_time"] = None
+    else:
+        job_counter = {"completed": 0, "start_time": None}
 
     # Create callback with counter (pass strategy and workload type)
     tracked_callback = create_default_callback(
@@ -414,7 +555,7 @@ async def run_worker_scenario(
 async def run_test(
     num_instances: int = 10,
     strategy: EXECUTION_STRATEGY = "auto",
-    workload_type: Literal["cpu", "io", "subprocess"] = "cpu",
+    workload_type: Literal["cpu", "io", "subprocess", "subprocess_threaded"] = "cpu",
     repeats: int = 1,
     max_concurrent_jobs: int = 10,
     timeout: int = 5000,
@@ -896,7 +1037,7 @@ def main():
     test_parser = subparsers.add_parser("test", help="Run a parameterized test")
     test_parser.add_argument("--process_instances", type=int, default=10, help="Number of process instances")
     test_parser.add_argument("--worker_strategy", type=str, default="auto", choices=strategies, help="Execution strategy")
-    test_parser.add_argument("--workload_type", type=str, default="cpu", choices=["cpu", "io", "subprocess"], help="Workload type")
+    test_parser.add_argument("--workload_type", type=str, default="cpu", choices=["cpu", "io", "subprocess", "subprocess_threaded"], help="Workload type")
     test_parser.add_argument("--repeat_runs", type=int, default=1, help="Number of repeats")
     test_parser.add_argument("--max_concurrent_jobs", type=int, default=10, help="Max concurrent jobs")
     test_parser.add_argument("--work_duration_seconds", type=float, default=3.0, help="Duration of simulated work in seconds")
