@@ -1,0 +1,6 @@
+# Ignore benchmark results
+results_*.json
+
+# Keep scenario definitions
+!*.json
+!.gitignore

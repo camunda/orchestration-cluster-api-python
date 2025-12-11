@@ -106,6 +106,73 @@ uv run demo/v2/job_worker_benchmark.py stress
     *   `subprocess`: Simulates calling external commands.
 *   **Memory Tracking**: Monitoring memory usage during worker execution.
 
+## Advanced: Systematic Benchmarking
+
+For comprehensive performance analysis, use the scenario generator and runner:
+
+### 1. Generate Benchmark Scenarios
+
+```bash
+# Minimal suite (2 scenarios, ~1 minute) - smoke test
+python demo/v2/generate_benchmark_scenarios.py --suite minimal
+
+# Fast suite (16 scenarios, ~15-20 minutes) - RECOMMENDED for validation
+python demo/v2/generate_benchmark_scenarios.py --suite fast
+
+# Quick suite (10 scenarios, ~5-10 minutes) - rapid iteration
+python demo/v2/generate_benchmark_scenarios.py --suite quick
+
+# Full suite (60 scenarios, ~2-4 hours) - comprehensive analysis
+python demo/v2/generate_benchmark_scenarios.py --suite full
+
+# Custom output location
+python demo/v2/generate_benchmark_scenarios.py --suite fast --output custom_path.json
+```
+
+Scenarios are saved to `demo/v2/scenarios/<suite>.json` by default.
+
+**First time?** Use the **fast** suite to validate everything works! See [QUICK_START.md](QUICK_START.md).
+
+### 2. Run Benchmark Suite
+
+```bash
+# Run all scenarios (results saved to demo/v2/scenarios/results_<suite>.json)
+uv run demo/v2/run_benchmark_scenarios.py demo/v2/scenarios/fast.json
+
+# Custom output location
+uv run demo/v2/run_benchmark_scenarios.py demo/v2/scenarios/fast.json --output custom_results.json
+
+# Run specific phase only
+uv run demo/v2/run_benchmark_scenarios.py demo/v2/scenarios/full.json --phase 3_concurrency_scaling
+
+# Continue on errors
+uv run demo/v2/run_benchmark_scenarios.py demo/v2/scenarios/fast.json --continue-on-error
+```
+
+See [BENCHMARK_GUIDE.md](BENCHMARK_GUIDE.md) for complete documentation on systematic benchmarking.
+
+### Benchmark Suite Structure
+
+The scenario generator creates 8 phases of tests:
+
+| Phase | Scenarios | Purpose |
+|-------|-----------|---------|
+| Baseline | 3 | Establish baseline performance |
+| Workload Types | 6 | Best strategy for each workload |
+| Concurrency Scaling | 15 | How strategies scale |
+| Load Scaling | 15 | Breaking points under load |
+| Work Duration | 10 | Duration sensitivity |
+| Interactions | 12 | Combined effects |
+| Edge Cases | 6 | Extreme conditions |
+| Subprocess Threading | 4 | Fork-safety testing |
+
+### Files
+
+- `job_worker_benchmark.py` - Core benchmark tool
+- `generate_benchmark_scenarios.py` - Scenario generator (**Strategy 4: Hybrid Approach**)
+- `run_benchmark_scenarios.py` - Scenario execution runner
+- `BENCHMARK_GUIDE.md` - Detailed benchmarking documentation
+
 ## Performance Notes
 
 Recent benchmarks (Python 3.11 on macOS) comparing `process` vs `thread` strategies for CPU-bound workloads (3s duration, 50 instances) showed:

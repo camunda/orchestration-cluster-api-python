@@ -1,0 +1,28 @@
+[
+  {
+    "name": "smoke_async",
+    "num_instances": 5,
+    "strategy": "async",
+    "workload_type": "cpu",
+    "work_duration": 0.5,
+    "max_concurrent_jobs": 5,
+    "repeats": 1,
+    "timeout": 30,
+    "job_timeout_ms": 30000,
+    "description": "Smoke test for async",
+    "phase": "smoke_test"
+  },
+  {
+    "name": "smoke_thread",
+    "num_instances": 5,
+    "strategy": "thread",
+    "workload_type": "cpu",
+    "work_duration": 0.5,
+    "max_concurrent_jobs": 5,
+    "repeats": 1,
+    "timeout": 30,
+    "job_timeout_ms": 30000,
+    "description": "Smoke test for thread",
+    "phase": "smoke_test"
+  }
+]
