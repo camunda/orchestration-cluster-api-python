@@ -96,9 +96,21 @@ uv run demo/v2/job_worker_benchmark.py stress
 *   **`JobWorker`**: The core class for processing jobs.
 *   **Execution Strategies**:
     *   `async`: Uses Python's `asyncio` event loop. Best for I/O-bound tasks that use `async/await`.
-    *   `thread`: Uses a `ThreadPoolExecutor`. Good for blocking I/O operations.
-    *   `process`: Uses a `ProcessPoolExecutor`. Essential for CPU-bound tasks to bypass the GIL.
+    *   `thread`: Uses a `ThreadPoolExecutor`. Good for blocking I/O operations. **Note**: Subject to the Global Interpreter Lock (GIL), so not suitable for heavy CPU tasks.
+    *   **`process`**: Uses a `ProcessPoolExecutor`. Essential for CPU-bound tasks to bypass the GIL. This benchmark demonstrates the "detached execution" pattern where the subprocess returns a result tuple instead of calling the client directly (which isn't picklable).
     *   `auto`: Automatically selects the best strategy based on the callback signature and hints.
 *   **`ExecutionHint`**: Decorators (`@ExecutionHint.cpu_bound`, `@ExecutionHint.io_bound`) to guide the `auto` strategy.
-*   **Workload Simulation**: How to simulate different types of work to test worker performance.
+*   **Workload Simulation**:
+    *   `cpu`: Performs heavy arithmetic operations (list comprehensions) to hold the GIL and simulate real CPU-bound work.
+    *   `io`: Simulates blocking file I/O.
+    *   `subprocess`: Simulates calling external commands.
 *   **Memory Tracking**: Monitoring memory usage during worker execution.
+
+## Performance Notes
+
+Recent benchmarks (Python 3.11 on macOS) comparing `process` vs `thread` strategies for CPU-bound workloads (3s duration, 50 instances) showed:
+
+*   **Process Strategy**: ~30% faster throughput (2.35 jobs/s) and significantly lower memory usage (~96 MB). It successfully bypasses the GIL, allowing true parallelism across cores.
+*   **Thread Strategy**: Slower throughput (1.79 jobs/s) and much higher memory usage (~1.3 GB). The GIL forces threads to execute sequentially for CPU tasks, and high object churn on a shared heap can lead to memory fragmentation.
+
+**Recommendation**: Use `execution_strategy="process"` for any CPU-intensive job workers in Python.
