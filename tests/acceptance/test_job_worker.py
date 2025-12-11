@@ -40,7 +40,7 @@ def mock_job_item():
 
 @pytest.mark.asyncio
 async def test_activated_job_complete_async(mock_client, mock_worker, mock_job_item):
-    activated_job = ActivatedJob(mock_job_item, mock_client, mock_worker)
+    activated_job = ActivatedJob(mock_job_item, mock_client)
     
     # Test complete
     variables = CompleteJobDataVariablesType0.from_dict({})
@@ -48,11 +48,10 @@ async def test_activated_job_complete_async(mock_client, mock_worker, mock_job_i
     
     assert isinstance(result, JobFinalized)
     mock_client.complete_job_async.assert_called_once()
-    mock_worker._decrement_active_jobs.assert_called_once()
 
 @pytest.mark.asyncio
 async def test_activated_job_complete_with_dict(mock_client, mock_worker, mock_job_item):
-    activated_job = ActivatedJob(mock_job_item, mock_client, mock_worker)
+    activated_job = ActivatedJob(mock_job_item, mock_client)
     
     # Test complete with dict
     result = await activated_job.complete({"foo": "bar"})
@@ -65,12 +64,10 @@ async def test_activated_job_complete_with_dict(mock_client, mock_worker, mock_j
     assert isinstance(call_args.kwargs['data'], CompleteJobData)
     # Note: checking the inner variables structure depends on how CompleteJobDataVariablesType0 works,
     # but we verified it was converted to the correct model type.
-    
-    mock_worker._decrement_active_jobs.assert_called_once()
 
 @pytest.mark.asyncio
 async def test_activated_job_complete_no_args(mock_client, mock_worker, mock_job_item):
-    activated_job = ActivatedJob(mock_job_item, mock_client, mock_worker)
+    activated_job = ActivatedJob(mock_job_item, mock_client)
     
     # Test complete with no args
     result = await activated_job.complete()
@@ -81,12 +78,10 @@ async def test_activated_job_complete_no_args(mock_client, mock_worker, mock_job
     # Verify data is CompleteJobData (empty)
     call_args = mock_client.complete_job_async.call_args
     assert isinstance(call_args.kwargs['data'], CompleteJobData)
-    
-    mock_worker._decrement_active_jobs.assert_called_once()
 
 @pytest.mark.asyncio
 async def test_activated_job_ignore(mock_client, mock_worker, mock_job_item):
-    activated_job = ActivatedJob(mock_job_item, mock_client, mock_worker)
+    activated_job = ActivatedJob(mock_job_item, mock_client)
     
     # Test ignore
     result = activated_job.ignore()
@@ -94,20 +89,16 @@ async def test_activated_job_ignore(mock_client, mock_worker, mock_job_item):
     assert isinstance(result, JobFinalized)
     mock_client.complete_job_async.assert_not_called()
     mock_client.fail_job_async.assert_not_called()
-    mock_worker._decrement_active_jobs.assert_called_once()
 
 @pytest.mark.asyncio
 async def test_activated_job_double_finalization(mock_client, mock_worker, mock_job_item):
-    activated_job = ActivatedJob(mock_job_item, mock_client, mock_worker)
+    activated_job = ActivatedJob(mock_job_item, mock_client)
     
     variables = CompleteJobDataVariablesType0.from_dict({})
     await activated_job.complete(CompleteJobData(variables=variables))
     
     with pytest.raises(RuntimeError, match="has already been finalized"):
         await activated_job.fail("oops", 0)
-        
-    # Ensure decrement was only called once
-    mock_worker._decrement_active_jobs.assert_called_once()
 
 def test_strategy_detection_async():
     async def async_callback(job: ActivatedJob) -> JobFinalized: 
