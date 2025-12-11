@@ -66,21 +66,13 @@ class JobFinalized:
     response: Any = None
 
 class _ActivatedJob:
-    def __init__(self, job: ActivateJobsResponse200JobsItem, client: "CamundaClient", worker: "JobWorker"):
+    def __init__(self, job: ActivateJobsResponse200JobsItem, client: "CamundaClient"):
         self.job = job
         self._client = client
-        self._worker = worker
         self._finalized = False
-        self._lock = threading.Lock()
 
     def __getattr__(self, name):
         return getattr(self.job, name)
-
-    def _decrement_if_needed(self):
-        with self._lock:
-            if not self._finalized:
-                self._finalized = True
-                self._worker._decrement_active_jobs()
 
     def _check_finalized(self):
         if self._finalized:
@@ -95,64 +87,52 @@ class _ActivatedJob:
 
     def ignore(self) -> JobFinalized:
         self._check_finalized()
-        self._decrement_if_needed()
+        self._finalized = True
         return JobFinalized()
 
 class ActivatedJob(_ActivatedJob):
     async def complete(self, data: CompleteJobData | dict | None = None) -> JobFinalized:
         self._check_finalized()
         complete_data = self._ensure_complete_job_data(data)
-        try:
-            resp = await self._client.complete_job_async(job_key=self.job.job_key, data=complete_data)
-            return JobFinalized(response=resp)
-        finally:
-            self._decrement_if_needed()
+        resp = await self._client.complete_job_async(job_key=self.job.job_key, data=complete_data)
+        self._finalized = True
+        return JobFinalized(response=resp)
 
     async def fail(self, error_message: str, retries: int, retry_back_off: int = 0) -> JobFinalized:
         self._check_finalized()
         data = FailJobData(error_message=error_message, retries=retries, retry_back_off=retry_back_off)
-        try:
-            resp = await self._client.fail_job_async(job_key=self.job.job_key, data=data)
-            return JobFinalized(response=resp)
-        finally:
-            self._decrement_if_needed()
+        resp = await self._client.fail_job_async(job_key=self.job.job_key, data=data)
+        self._finalized = True
+        return JobFinalized(response=resp)
 
     async def error(self, error_code: str, error_message: str) -> JobFinalized:
         self._check_finalized()
         data = ThrowJobErrorData(error_code=error_code, error_message=error_message)
-        try:
-            resp = await self._client.throw_job_error_async(job_key=self.job.job_key, data=data)
-            return JobFinalized(response=resp)
-        finally:
-            self._decrement_if_needed()
+        resp = await self._client.throw_job_error_async(job_key=self.job.job_key, data=data)
+        self._finalized = True
+        return JobFinalized(response=resp)
 
 class SyncActivatedJob(_ActivatedJob):
     def complete(self, data: CompleteJobData | dict | None = None) -> JobFinalized:
         self._check_finalized()
         complete_data = self._ensure_complete_job_data(data)
-        try:
-            resp = self._client.complete_job(job_key=self.job.job_key, data=complete_data)
-            return JobFinalized(response=resp)
-        finally:
-            self._decrement_if_needed()
+        resp = self._client.complete_job(job_key=self.job.job_key, data=complete_data)
+        self._finalized = True
+        return JobFinalized(response=resp)
 
     def fail(self, error_message: str, retries: int, retry_back_off: int = 0) -> JobFinalized:
         self._check_finalized()
         data = FailJobData(error_message=error_message, retries=retries, retry_back_off=retry_back_off)
-        try:
-            resp = self._client.fail_job(job_key=self.job.job_key, data=data)
-            return JobFinalized(response=resp)
-        finally:
-            self._decrement_if_needed()
+        resp = self._client.fail_job(job_key=self.job.job_key, data=data)
+        self._finalized = True
+        return JobFinalized(response=resp)
 
     def error(self, error_code: str, error_message: str) -> JobFinalized:
         self._check_finalized()
         data = ThrowJobErrorData(error_code=error_code, error_message=error_message)
-        try:
-            resp = self._client.throw_job_error(job_key=self.job.job_key, data=data)
-            return JobFinalized(response=resp)
-        finally:
-            self._decrement_if_needed()
+        resp = self._client.throw_job_error(job_key=self.job.job_key, data=data)
+        self._finalized = True
+        return JobFinalized(response=resp)
 
 class JobWorker:
     _strategy: _EFFECTIVE_EXECUTION_STRATEGY = "async"
@@ -299,9 +279,9 @@ class JobWorker:
         
         # Instantiate the correct job wrapper based on strategy
         if self._strategy == "async":
-            activated_job = ActivatedJob(job, self.client, self)
+            activated_job = ActivatedJob(job, self.client)
         else:
-            activated_job = SyncActivatedJob(job, self.client, self)
+            activated_job = SyncActivatedJob(job, self.client)
 
         try:
             async with self.semaphore:  # Limit concurrent executions
@@ -328,9 +308,24 @@ class JobWorker:
                     self.logger.debug(f"Job completed: {job.job_key}") # type: ignore - this is set for auto
                     
                 except Exception as e:
-                    self.logger.error(f"Job failed: {e}")
-                    # Your error handling/retry logic
+                    self.logger.error(f"Job failed with exception: {e}")
+                    # If the job hasn't been finalized by the user, fail it on the broker
+                    # Note: For 'process' strategy, activated_job._finalized will always be False 
+                    # in this process, so we might try to fail an already completed job.
+                    # The broker will reject this, which is acceptable.
+                    if not activated_job._finalized:
+                        try:
+                            await self.client.fail_job_async(
+                                job_key=job.job_key,
+                                data=FailJobData(
+                                    error_message=str(e),
+                                    retries=job.retries - 1 if job.retries else 0,
+                                )
+                            )
+                            self.logger.info(f"Failed job {job.job_key} due to unhandled exception")
+                        except Exception as fail_err:
+                            self.logger.error(f"Failed to send fail command to broker for job {job.job_key}: {fail_err}")
         finally:
-            activated_job._decrement_if_needed()
+            self._decrement_active_jobs()
 
 
