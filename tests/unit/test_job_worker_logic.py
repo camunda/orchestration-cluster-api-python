@@ -1,6 +1,5 @@
-import asyncio
 import pytest
-from unittest.mock import MagicMock, AsyncMock, patch
+from unittest.mock import MagicMock, AsyncMock
 from camunda_orchestration_sdk.runtime.job_worker import JobWorker, WorkerConfig, ActivatedJob, SyncActivatedJob
 from camunda_orchestration_sdk.models.activate_jobs_response_200_jobs_item import ActivateJobsResponse200JobsItem
 
@@ -39,7 +38,7 @@ async def test_worker_decrements_active_jobs_on_success():
     assert worker.active_jobs == 1
 
     # 2. Execute the job
-    await worker._execute_job(mock_job_item)
+    await worker._execute_job(mock_job_item) # pyright: ignore[reportPrivateUsage]
 
     # 3. Verify counter is decremented
     assert worker.active_jobs == 0
@@ -81,7 +80,7 @@ async def test_worker_handles_exception_and_decrements_counter():
     assert worker.active_jobs == 1
 
     # 2. Execute the job
-    await worker._execute_job(mock_job_item)
+    await worker._execute_job(mock_job_item) # pyright: ignore[reportPrivateUsage]
 
     # 3. Verify counter is decremented
     assert worker.active_jobs == 0
@@ -124,7 +123,7 @@ async def test_worker_thread_strategy_exception_handling():
         worker.active_jobs += 1
     
     # 2. Execute the job
-    await worker._execute_job(mock_job_item)
+    await worker._execute_job(mock_job_item) # pyright: ignore[reportPrivateUsage]
 
     # 3. Verify counter is decremented
     assert worker.active_jobs == 0

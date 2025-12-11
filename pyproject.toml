@@ -16,6 +16,10 @@ dependencies = [
     "loguru>=0.7.2",
 ]
 
+[tool.pyright]
+typeCheckingMode="strict"
+reportMissingTypeStubs=true
+
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
@@ -34,4 +38,5 @@ dev = [
     "openapi-python-client>=0.21.0",
     "jsonref>=1.1.0",
     "black>=25.12.0",
+    "pyright>=1.1.407",
 ]

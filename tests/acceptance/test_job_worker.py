@@ -1,7 +1,7 @@
 from camunda_orchestration_sdk.models.complete_job_data_variables_type_0 import CompleteJobDataVariablesType0
 import pytest
 import asyncio
-from unittest.mock import MagicMock, AsyncMock, patch
+from unittest.mock import MagicMock, AsyncMock
 from camunda_orchestration_sdk.runtime.job_worker import (
     JobWorker, 
     WorkerConfig, 
@@ -107,7 +107,7 @@ def test_strategy_detection_async():
     config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
     worker = JobWorker(MagicMock(), async_callback, config) # type: ignore
     
-    assert worker._strategy == "async"
+    assert worker._strategy == "async" # pyright: ignore[reportPrivateUsage]
 
 def test_strategy_detection_sync():
     def sync_callback(job: ActivatedJob) -> JobFinalized: 
@@ -116,7 +116,7 @@ def test_strategy_detection_sync():
     config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
     worker = JobWorker(MagicMock(), sync_callback, config)
     
-    assert worker._strategy == "thread"
+    assert worker._strategy == "thread" # pyright: ignore[reportPrivateUsage]
 
 def test_strategy_detection_hint():
     @ExecutionHint.cpu_bound
@@ -125,7 +125,7 @@ def test_strategy_detection_hint():
     config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
     worker = JobWorker(MagicMock(), cpu_callback, config)
     
-    assert worker._strategy == "process"
+    assert worker._strategy == "process" # pyright: ignore[reportPrivateUsage]
 
 def test_strategy_validation_async_mismatch():
     # Strategy is async, but callback is sync
@@ -196,23 +196,23 @@ async def test_worker_concurrency_limit(mock_client):
     worker.active_jobs = 0
     mock_client.activate_jobs_async.return_value = ActivateJobsResponse200(jobs=[job1, job2])
     
-    jobs = await worker._poll_for_jobs()
+    jobs = await worker._poll_for_jobs() # pyright: ignore[reportPrivateUsage]
     assert len(jobs) == 2
     assert worker.active_jobs == 2
     
     # 2. Capacity full: should skip poll
     mock_client.activate_jobs_async.reset_mock()
-    jobs = await worker._poll_for_jobs()
+    jobs = await worker._poll_for_jobs() # pyright: ignore[reportPrivateUsage]
     assert len(jobs) == 0
     mock_client.activate_jobs_async.assert_not_called()
     
     # 3. One job finishes
-    worker._decrement_active_jobs()
+    worker._decrement_active_jobs() # pyright: ignore[reportPrivateUsage]
     assert worker.active_jobs == 1
     
     # 4. Capacity available: should poll again
     mock_client.activate_jobs_async.return_value = ActivateJobsResponse200(jobs=[job3])
-    jobs = await worker._poll_for_jobs()
+    jobs = await worker._poll_for_jobs() # pyright: ignore[reportPrivateUsage]
     assert len(jobs) == 1
     assert worker.active_jobs == 2
     mock_client.activate_jobs_async.assert_called_once()

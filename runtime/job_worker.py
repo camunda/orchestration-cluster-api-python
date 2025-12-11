@@ -67,7 +67,7 @@ class JobFinalized:
     response: Any = None
 
 class _ActivatedJob:
-    def __init__(self, job: ActivateJobsResponse200JobsItem, client: "CamundaClient" | None):
+    def __init__(self, job: ActivateJobsResponse200JobsItem, client: "CamundaClient | None"):
         self.job = job
         self._client = client
         self._finalized = False
