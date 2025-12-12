@@ -5,7 +5,7 @@ import threading
 import functools
 import attrs
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-from typing import Callable, Literal, Protocol, Any, runtime_checkable, TYPE_CHECKING, Awaitable, cast, Coroutine
+from typing import Callable, Literal, Protocol, Any, runtime_checkable, TYPE_CHECKING, Awaitable, cast, Coroutine, Union, Tuple
 from dataclasses import dataclass
 from loguru import logger
 from camunda_orchestration_sdk.models.activate_jobs_data import ActivateJobsData
@@ -22,6 +22,13 @@ if TYPE_CHECKING:
 _EFFECTIVE_EXECUTION_STRATEGY = Literal["thread", "process", "async"]
 EXECUTION_STRATEGY = _EFFECTIVE_EXECUTION_STRATEGY | Literal["auto"]
 
+# Define action types for type narrowing
+ActionComplete = Tuple[Literal["complete"], Union[dict[str, Any], CompleteJobData, None]]
+ActionFail = Tuple[Literal["fail"], Tuple[str, int | None, int]]
+ActionError = Tuple[Literal["error"], Tuple[str, str]]
+ActionSubprocessError = Tuple[Literal["subprocess_error"], str]
+
+JobAction = Union[ActionComplete, ActionFail, ActionError, ActionSubprocessError]
 
 @runtime_checkable
 class HintedCallable(Protocol):
@@ -95,7 +102,7 @@ class JobFailure(Exception):
         self.retry_back_off = retry_back_off
         super().__init__(f"JobFailure: {message}")
 
-def _execute_task_isolated(callback: JobHandler, job_context: JobContext) -> tuple[str, Any] | None:
+def _execute_task_isolated(callback: JobHandler, job_context: JobContext) -> JobAction | None:
     """
     Universal wrapper to execute a job in an isolated context (Thread or Process).
     Handles both sync and async callbacks by creating a fresh event loop for async code.
@@ -288,7 +295,7 @@ class JobWorker:
 
         try:
             async with self.semaphore:  # Limit concurrent executions
-                action = None
+                action: JobAction | None = None
                 
                 if self._strategy == "async":
                     # Run on dedicated worker loop
@@ -305,7 +312,7 @@ class JobWorker:
                         else:
                             # Warning: Sync callback on Async strategy blocks the loop!
                             result = self.callback(job_context)
-                        action = ("complete", result)
+                        action = cast(ActionComplete, ("complete", result))
                     except JobError as e:
                         action = ("error", (e.error_code, e.message))
                     except JobFailure as e:
@@ -326,9 +333,8 @@ class JobWorker:
                 
                 # Handle the returned action
                 if action:
-                    action_type, action_data = action
-                    
-                    if action_type == "complete":
+                    if action[0] == "complete":
+                        _, action_data = action
                         # Ensure data is in correct format
                         complete_data = CompleteJobData()
                         if isinstance(action_data, dict):
@@ -339,8 +345,8 @@ class JobWorker:
                         await self.client.complete_job_async(job_key=job_context.job_key, data=complete_data)
                         self.logger.debug(f"Job completed: {job_context.job_key}")
                         
-                    elif action_type == "fail":
-                        error_message, retries, retry_back_off = action_data
+                    elif action[0] == "fail":
+                        _, (error_message, retries, retry_back_off) = action
                         # Calculate retries if not provided
                         if retries is None:
                             retries = job_context.retries - 1 if job_context.retries > 0 else 0
@@ -355,8 +361,8 @@ class JobWorker:
                         )
                         self.logger.info(f"Job failed: {job_context.job_key} - {error_message}")
                         
-                    elif action_type == "error":
-                        error_code, error_message = action_data
+                    elif action[0] == "error":
+                        _, (error_code, error_message) = action
                         await self.client.throw_job_error_async(
                             job_key=job_context.job_key, 
                             data=ThrowJobErrorData(
@@ -366,9 +372,10 @@ class JobWorker:
                         )
                         self.logger.info(f"Job error thrown: {job_context.job_key} - {error_code}")
                     
-                    elif action_type == "subprocess_error":
+                    elif action[0] == "subprocess_error":
+                        _, error_details = action
                         # This is a system error in the worker infrastructure, not the job logic
-                        raise RuntimeError(f"Worker execution error: {action_data}")
+                        raise RuntimeError(f"Worker execution error: {error_details}")
                 
         except Exception as e:
             self.logger.error(f"System error executing job {job_item.job_key}: {e}")

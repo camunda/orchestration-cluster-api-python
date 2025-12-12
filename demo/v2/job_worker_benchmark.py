@@ -8,6 +8,7 @@ import tracemalloc
 import resource
 import threading
 import random
+import psutil
 from functools import partial
 from typing import Literal, get_args, Any
 from loguru import logger
@@ -43,6 +44,36 @@ def make_client(base_url: str | None = None) -> CamundaClient:
     """
     host = base_url or os.environ.get("CAMUNDA_BASE_URL", "http://localhost:8080/v2")
     return CamundaClient(base_url=host)
+
+
+def get_process_memory_mb() -> tuple[float, float]:
+    """Get the current memory usage of the process and all its children.
+    
+    Returns:
+        Tuple of (total_rss_mb, children_rss_mb)
+    """
+    try:
+        current_process = psutil.Process(os.getpid())
+        
+        # Get memory of current process
+        total_rss = current_process.memory_info().rss
+        children_rss = 0
+        
+        # Get memory of all children recursively
+        children = current_process.children(recursive=True)
+        for child in children:
+            try:
+                child_rss = child.memory_info().rss
+                total_rss += child_rss
+                children_rss += child_rss
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                # Process might have died or we can't access it
+                pass
+                
+        return total_rss / (1024 * 1024), children_rss / (1024 * 1024)
+    except Exception as e:
+        logger.warning(f"Failed to get process memory: {e}")
+        return 0.0, 0.0
 
 
 def generate_balanced_durations(count: int, mean: float, jitter_pct: float) -> list[float]:
@@ -600,8 +631,19 @@ async def run_worker_scenario(
     client.create_job_worker(config=worker_config, callback=tracked_callback)
 
     # Monitor for completion
+    # Track peak memory during execution
+    memory_stats = {
+        "peak_total_rss_mb": 0.0,
+        "peak_children_rss_mb": 0.0
+    }
+
     async def wait_for_completion():
         while job_counter["completed"] < expected_jobs:
+            # Poll memory usage
+            total_rss, children_rss = get_process_memory_mb()
+            memory_stats["peak_total_rss_mb"] = max(memory_stats["peak_total_rss_mb"], total_rss)
+            memory_stats["peak_children_rss_mb"] = max(memory_stats["peak_children_rss_mb"], children_rss)
+            
             await asyncio.sleep(0.1)  # Check every 100ms
 
     # Run workers and monitor concurrently
@@ -659,6 +701,8 @@ async def run_worker_scenario(
         logger.info(f"Peak Python memory: {memory_peak_mb:.2f} MB")
         logger.info(f"Max RSS (total process): {max_rss_mb:.2f} MB")
         logger.info(f"RSS delta: {rss_mb:.2f} MB")
+        logger.info(f"Peak Total RSS (incl children): {memory_stats['peak_total_rss_mb']:.2f} MB")
+        logger.info(f"Peak Children RSS: {memory_stats['peak_children_rss_mb']:.2f} MB")
 
         result = {
             "total_time": total_time,
@@ -669,6 +713,8 @@ async def run_worker_scenario(
             "memory_peak_mb": memory_peak_mb,
             "max_rss_mb": max_rss_mb,
             "rss_delta_mb": rss_mb,
+            "peak_total_rss_mb": memory_stats["peak_total_rss_mb"],
+            "peak_children_rss_mb": memory_stats["peak_children_rss_mb"],
         }
         return result
 
@@ -768,6 +814,8 @@ async def run_test(
         throughputs = [s["jobs_per_second"] for s in all_stats]
         peak_memories = [s["memory_peak_mb"] for s in all_stats]
         max_rss_values = [s["max_rss_mb"] for s in all_stats]
+        peak_total_rss_values = [s["peak_total_rss_mb"] for s in all_stats]
+        peak_children_rss_values = [s["peak_children_rss_mb"] for s in all_stats]
 
         result = {
             "total_time_avg": sum(total_times) / len(total_times),
@@ -792,6 +840,12 @@ async def run_test(
             "max_rss_mb_avg": sum(max_rss_values) / len(max_rss_values),
             "max_rss_mb_min": min(max_rss_values),
             "max_rss_mb_max": max(max_rss_values),
+            "peak_total_rss_mb_avg": sum(peak_total_rss_values) / len(peak_total_rss_values),
+            "peak_total_rss_mb_min": min(peak_total_rss_values),
+            "peak_total_rss_mb_max": max(peak_total_rss_values),
+            "peak_children_rss_mb_avg": sum(peak_children_rss_values) / len(peak_children_rss_values),
+            "peak_children_rss_mb_min": min(peak_children_rss_values),
+            "peak_children_rss_mb_max": max(peak_children_rss_values),
             "jobs_completed": all_stats[0]["jobs_completed"],
             "expected_jobs": all_stats[0]["expected_jobs"],
             "repeats": repeats,
@@ -820,6 +874,14 @@ async def run_test(
         logger.info(f"    Average: {result['max_rss_mb_avg']:.2f} MB")
         logger.info(f"    Min:     {result['max_rss_mb_min']:.2f} MB")
         logger.info(f"    Max:     {result['max_rss_mb_max']:.2f} MB")
+        logger.info(f"  Peak Total RSS (incl children):")
+        logger.info(f"    Average: {result['peak_total_rss_mb_avg']:.2f} MB")
+        logger.info(f"    Min:     {result['peak_total_rss_mb_min']:.2f} MB")
+        logger.info(f"    Max:     {result['peak_total_rss_mb_max']:.2f} MB")
+        logger.info(f"  Peak Children RSS:")
+        logger.info(f"    Average: {result['peak_children_rss_mb_avg']:.2f} MB")
+        logger.info(f"    Min:     {result['peak_children_rss_mb_min']:.2f} MB")
+        logger.info(f"    Max:     {result['peak_children_rss_mb_max']:.2f} MB")
         logger.info(f"{'='*70}\n")
 
         return result

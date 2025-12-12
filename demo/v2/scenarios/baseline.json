@@ -1,0 +1,41 @@
+[
+  {
+    "name": "baseline_async_cpu",
+    "num_instances": 50,
+    "strategy": "async",
+    "workload_type": "cpu",
+    "work_duration": 0.5,
+    "max_concurrent_jobs": 20,
+    "repeats": 5,
+    "timeout": 120,
+    "job_timeout_ms": 30000,
+    "description": "Baseline: Async strategy with CPU workload",
+    "phase": "1_baseline"
+  },
+  {
+    "name": "baseline_thread_io",
+    "num_instances": 50,
+    "strategy": "thread",
+    "workload_type": "io",
+    "work_duration": 0.5,
+    "max_concurrent_jobs": 20,
+    "repeats": 5,
+    "timeout": 120,
+    "job_timeout_ms": 30000,
+    "description": "Baseline: Thread strategy with IO workload",
+    "phase": "1_baseline"
+  },
+  {
+    "name": "baseline_process_cpu",
+    "num_instances": 50,
+    "strategy": "process",
+    "workload_type": "cpu",
+    "work_duration": 0.5,
+    "max_concurrent_jobs": 10,
+    "repeats": 5,
+    "timeout": 120,
+    "job_timeout_ms": 30000,
+    "description": "Baseline: Process strategy with CPU workload",
+    "phase": "1_baseline"
+  }
+]
