@@ -138,10 +138,10 @@ def generate_flat_client(package_path):
                     arg_strs.append(f"{arg_name}{ann}{default_str}")
                     
                 if args.kwarg:
-                    ann = f": {ast.unparse(args.kwarg.annotation)}" if args.kwarg.annotation else ""
+                    ann = f": {ast.unparse(args.kwarg.annotation)}" if args.kwarg.annotation else ": Any"
                     arg_strs.append(f"**{args.kwarg.arg}{ann}")
                 else:
-                    arg_strs.append("**kwargs")
+                    arg_strs.append("**kwargs: Any")
                 
                 sig_str = ", ".join(arg_strs)
                 return_ann = f" -> {ast.unparse(sync_func.returns)}" if sync_func.returns else ""
@@ -195,10 +195,10 @@ def generate_flat_client(package_path):
                     arg_strs.append(f"{arg_name}{ann}{default_str}")
                     
                 if args.kwarg:
-                    ann = f": {ast.unparse(args.kwarg.annotation)}" if args.kwarg.annotation else ""
+                    ann = f": {ast.unparse(args.kwarg.annotation)}" if args.kwarg.annotation else ": Any"
                     arg_strs.append(f"**{args.kwarg.arg}{ann}")
                 else:
-                    arg_strs.append("**kwargs")
+                    arg_strs.append("**kwargs: Any")
 
                 sig_str = ", ".join(arg_strs)
                 return_ann = f" -> {ast.unparse(async_func.returns)}" if async_func.returns else ""
@@ -349,6 +349,6 @@ def run(context):
     generate_flat_client(package_dir)
 
 if __name__ == "__main__":
-    base_dir = Path(__file__).parent.parent
+    base_dir = Path(__file__).parent.parent.parent
     package_dir = base_dir / "generated" / "camunda_orchestration_sdk"
     generate_flat_client(package_dir)

@@ -1,13 +1,10 @@
 import os
-from typing import Callable
 from camunda_orchestration_sdk.models.create_deployment_response_200_deployments_item_process_definition import (
     CreateDeploymentResponse200DeploymentsItemProcessDefinition,
 )
 from camunda_orchestration_sdk.models.processcreationbykey import Processcreationbykey
 from camunda_orchestration_sdk.types import File
-from camunda_orchestration_sdk.models.activate_jobs_response_200_jobs_item import (
-    ActivateJobsResponse200JobsItem,
-)
+
 from camunda_orchestration_sdk.models.create_deployment_data import CreateDeploymentData
 from camunda_orchestration_sdk.models.search_process_instances_data import (
     SearchProcessInstancesData,
@@ -22,7 +19,7 @@ from camunda_orchestration_sdk.models.state_advancedfilter_6_eq import (
 from loguru import logger
 import pytest
 from camunda_orchestration_sdk import CamundaClient
-from camunda_orchestration_sdk.runtime.job_worker import JobWorker, WorkerConfig, SyncActivatedJob, JobFinalized
+from camunda_orchestration_sdk.runtime.job_worker import WorkerConfig, JobContext
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("CAMUNDA_INTEGRATION") != "1",
@@ -40,10 +37,10 @@ def _make_client():
 
 
 # Worker callback function
-def callback(job: SyncActivatedJob) -> JobFinalized:
+def callback(job: JobContext):
     # Simulate some CPU / IO-bound work
     logger.info(f"Job Key: {job.job_key}")
-    return job.complete()
+    return
 
 
 @pytest.mark.asyncio
@@ -82,7 +79,7 @@ async def test_job_worker_performance():
         )
 
         # Single worker starts and starts working on jobs
-        worker = camunda.create_job_worker(config=config, callback=callback)
+        worker = camunda.create_job_worker(config=config, callback=callback) # pyright: ignore[reportUnusedVariable]
 
         process_instance = camunda.create_process_instance(
             data=Processcreationbykey(

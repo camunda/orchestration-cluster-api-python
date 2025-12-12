@@ -7,6 +7,7 @@ import time
 import tracemalloc
 import resource
 import threading
+import random
 from functools import partial
 from typing import Literal, get_args, Any
 from loguru import logger
@@ -25,8 +26,7 @@ from camunda_orchestration_sdk.models.search_process_instances_data_filter impor
 )
 from camunda_orchestration_sdk import CamundaClient, WorkerConfig
 from camunda_orchestration_sdk.runtime.job_worker import (
-    ActivatedJob,
-    ExecutionHint,
+    JobContext,
     EXECUTION_STRATEGY,
     JobHandler,
 )
@@ -43,6 +43,33 @@ def make_client(base_url: str | None = None) -> CamundaClient:
     """
     host = base_url or os.environ.get("CAMUNDA_BASE_URL", "http://localhost:8080/v2")
     return CamundaClient(base_url=host)
+
+
+def generate_balanced_durations(count: int, mean: float, jitter_pct: float) -> list[float]:
+    """Generate a list of durations with jitter, ensuring the total sum is exactly count * mean.
+    
+    Uses a balanced pair approach: for every (mean + offset), there is a (mean - offset).
+    """
+    if jitter_pct <= 0:
+        return [mean] * count
+    
+    durations: list[float] = []
+    num_pairs = count // 2
+    
+    # Use a fixed seed for reproducibility of the sequence
+    rng = random.Random(42) 
+    
+    for _ in range(num_pairs):
+        # Random offset within jitter range
+        offset = rng.uniform(0, mean * jitter_pct)
+        durations.append(mean - offset)
+        durations.append(mean + offset)
+        
+    if count % 2 != 0:
+        durations.append(mean)
+        
+    rng.shuffle(durations)
+    return durations
 
 
 def simulate_cpu_work(duration: float):
@@ -209,10 +236,43 @@ async def simulate_subprocess_work_async(duration: float):
     await process.wait()
 
 
+def _get_job_duration(job_counter: Any | None, default_duration: float, lock: Any | None) -> float:
+    """Get the duration for the next job from the pre-calculated list, or use default."""
+    if job_counter is None:
+        return default_duration
+        
+    # Check if durations are available (might not be if jitter=0 or old version)
+    # For Manager dicts, we need to be careful with 'in' operator sometimes, but it should work.
+    try:
+        if "durations" not in job_counter:
+            return default_duration
+    except Exception:
+        return default_duration
+
+    if lock:
+        with lock:
+            idx = job_counter.get("duration_idx", 0)
+            # Check bounds
+            durations = job_counter["durations"]
+            if idx < len(durations):
+                duration = durations[idx]
+                job_counter["duration_idx"] = idx + 1
+                return duration
+    else:
+        # Async case (single threaded loop) or no lock needed
+        idx = job_counter.get("duration_idx", 0)
+        durations = job_counter["durations"]
+        if idx < len(durations):
+            duration = durations[idx]
+            job_counter["duration_idx"] = idx + 1
+            return duration
+            
+    return default_duration
+
+
 # Module-level callback functions (picklable for multiprocessing)
-@ExecutionHint.async_safe
 async def _async_job_callback(
-    job: ActivatedJob,
+    job: JobContext,
     workload_type: Literal["cpu", "io", "subprocess", "subprocess_threaded"],
     work_duration: float,
     job_counter: dict[str, int] | None,
@@ -222,38 +282,39 @@ async def _async_job_callback(
 
     This is a module-level function so it can be pickled for multiprocessing.
     """
-    logger.info(f"Starting {workload_type}-bound work on: {job.job_key}")
+    # Determine duration (with jitter if configured)
+    actual_duration = _get_job_duration(job_counter, work_duration, lock)
+    
+    logger.info(f"Starting {workload_type}-bound work on: {job.job_key} (duration: {actual_duration:.3f}s)")
 
     # Simulate workload based on type
     if workload_type == "cpu":
-        simulate_cpu_work(work_duration)
+        simulate_cpu_work(actual_duration)
     elif workload_type == "io":
-        await simulate_io_work_async(work_duration)
+        await simulate_io_work_async(actual_duration)
     elif workload_type == "subprocess_threaded":
         # Run the problematic subprocess in executor to avoid blocking event loop
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(
-            None, simulate_problematic_subprocess_work, work_duration
+            None, simulate_problematic_subprocess_work, actual_duration
         )
     else:  # subprocess
-        await simulate_subprocess_work_async(work_duration)
+        await simulate_subprocess_work_async(actual_duration)
 
     logger.info(f"Finished work on: {job.job_key}")
-
-    # Complete the job
-    ack = await job.complete({"quoteAmount": 2345432})
 
     # Track completion if counter provided
     if job_counter is not None:
         # Async is single-threaded (per loop), so atomic enough for this
         job_counter["completed"] = job_counter.get("completed", 0) + 1
         logger.info(f"Jobs completed: {job_counter['completed']}")
-    return ack
+    
+    # Complete the job by returning variables
+    return {"quoteAmount": 2345432}
 
 
-@ExecutionHint.cpu_bound
 def _sync_cpu_job_callback(
-    job: ActivatedJob,
+    job: JobContext,
     work_duration: float,
     job_counter: dict[str, int] | None,
     lock: Any | None = None,
@@ -262,12 +323,12 @@ def _sync_cpu_job_callback(
 
     This is a module-level function so it can be pickled for multiprocessing.
     """
-    logger.info(f"Starting cpu-bound work on: {job.job_key}")
-    simulate_cpu_work(work_duration)
+    # Determine duration (with jitter if configured)
+    actual_duration = _get_job_duration(job_counter, work_duration, lock)
+    
+    logger.info(f"Starting cpu-bound work on: {job.job_key} (duration: {actual_duration:.3f}s)")
+    simulate_cpu_work(actual_duration)
     logger.info(f"Finished work on: {job.job_key}")
-
-    # Complete the job synchronously
-    ack = job.complete({"quoteAmount": 2345432})
 
     # Track completion if counter provided
     if job_counter is not None:
@@ -279,12 +340,13 @@ def _sync_cpu_job_callback(
         else:
             job_counter["completed"] = job_counter.get("completed", 0) + 1
             logger.info(f"Jobs completed: {job_counter['completed']}")
-    return ack
+    
+    # Complete the job by returning variables
+    return {"quoteAmount": 2345432}
 
 
-@ExecutionHint.io_bound
 def _sync_io_job_callback(
-    job: ActivatedJob,
+    job: JobContext,
     workload_type: Literal["io", "subprocess", "subprocess_threaded"],
     work_duration: float,
     job_counter: dict[str, int] | None,
@@ -294,20 +356,20 @@ def _sync_io_job_callback(
 
     This is a module-level function so it can be pickled for multiprocessing.
     """
-    logger.info(f"Starting {workload_type}-bound work on: {job.job_key}")
+    # Determine duration (with jitter if configured)
+    actual_duration = _get_job_duration(job_counter, work_duration, lock)
+    
+    logger.info(f"Starting {workload_type}-bound work on: {job.job_key} (duration: {actual_duration:.3f}s)")
 
     # Simulate workload based on type
     if workload_type == "io":
-        simulate_io_work(work_duration)
+        simulate_io_work(actual_duration)
     elif workload_type == "subprocess_threaded":
-        simulate_problematic_subprocess_work(work_duration)
+        simulate_problematic_subprocess_work(actual_duration)
     else:  # subprocess
-        simulate_subprocess_work(work_duration)
+        simulate_subprocess_work(actual_duration)
 
     logger.info(f"Finished work on: {job.job_key}")
-
-    # Complete the job synchronously
-    ack = job.complete({"quoteAmount": 2345432})
 
     # Track completion if counter provided
     if job_counter is not None:
@@ -319,7 +381,9 @@ def _sync_io_job_callback(
         else:
             job_counter["completed"] = job_counter.get("completed", 0) + 1
             logger.info(f"Jobs completed: {job_counter['completed']}")
-    return ack
+    
+    # Complete the job by returning variables
+    return {"quoteAmount": 2345432}
 
 
 def create_default_callback(
@@ -444,6 +508,7 @@ async def run_worker_scenario(
     scenario_timeout_seconds: int | None = 30,
     workload_type: Literal["cpu", "io", "subprocess", "subprocess_threaded"] = "cpu",
     work_duration: float = 3.0,
+    jitter_pct: float = 0.0,
 ) -> dict[str, float]:
     """Run a worker scenario with configurable settings.
 
@@ -456,16 +521,20 @@ async def run_worker_scenario(
         scenario_timeout_seconds: Timeout in seconds to run the worker. None means run indefinitely.
         workload_type: Type of workload simulation - "cpu", "io", or "subprocess".
         work_duration: Duration of simulated work in seconds.
+        jitter_pct: Percentage of jitter to apply to work duration (0.0 to 1.0).
 
     Returns:
         dict with timing stats: {'total_time', 'jobs_completed', 'jobs_per_second', 'expected_jobs',
                                   'memory_current_mb', 'memory_peak_mb'}
     """
     logger.debug(
-        f"Running worker with config: {worker_config}, workload: {workload_type}"
+        f"Running worker with config: {worker_config}, workload: {workload_type}, jitter: {jitter_pct}"
     )
     if expected_jobs is None:
         expected_jobs = num_instances
+
+    # Generate balanced durations
+    durations = generate_balanced_durations(expected_jobs, work_duration, jitter_pct)
 
     # Start memory tracking
     tracemalloc.start()
@@ -480,12 +549,25 @@ async def run_worker_scenario(
         job_counter = manager.dict()
         job_counter["completed"] = 0
         job_counter["start_time"] = None
+        # Store durations in shared list
+        job_counter["durations"] = manager.list(durations)
+        job_counter["duration_idx"] = 0
         lock = manager.Lock()
     elif worker_config.execution_strategy == "thread":
-        job_counter = {"completed": 0, "start_time": None}
+        job_counter = {
+            "completed": 0, 
+            "start_time": None,
+            "durations": durations,
+            "duration_idx": 0
+        }
         lock = threading.Lock()
     else:
-        job_counter = {"completed": 0, "start_time": None}
+        job_counter = {
+            "completed": 0, 
+            "start_time": None,
+            "durations": durations,
+            "duration_idx": 0
+        }
         lock = None
 
     # Create callback with counter (pass strategy and workload type)
@@ -600,6 +682,7 @@ async def run_test(
     timeout: int = 5000,
     work_duration: float = 3.0,
     job_timeout_ms: int = JOB_TIMEOUT_MILLISECONDS,
+    jitter_pct: float = 0.0,
 ) -> dict[str, float]:
     """Run a parameterized test with optional averaging over multiple runs.
 
@@ -612,6 +695,7 @@ async def run_test(
         timeout: Timeout in seconds for each run.
         work_duration: Duration of simulated work in seconds.
         job_timeout_ms: Job timeout in milliseconds.
+        jitter_pct: Percentage of jitter to apply to work duration (0.0 to 1.0).
 
     Returns:
         dict with averaged timing stats: {
@@ -628,6 +712,7 @@ async def run_test(
     logger.info(f"Max concurrent jobs:  {max_concurrent_jobs}")
     logger.info(f"Workload type:        {workload_type}")
     logger.info(f"Work duration:        {work_duration}s")
+    logger.info(f"Jitter:               {jitter_pct*100:.1f}%")
     logger.info(f"Job timeout:          {job_timeout_ms}ms")
     logger.info(f"Repeats:              {repeats}")
     logger.info(f"Timeout per run:      {timeout}s")
@@ -664,6 +749,7 @@ async def run_test(
             scenario_timeout_seconds=timeout,
             workload_type=workload_type,
             work_duration=work_duration,
+            jitter_pct=jitter_pct,
         )
         all_stats.append(stats)
 
@@ -833,6 +919,7 @@ async def benchmark_strategies(
     num_instances: int = 20,
     work_duration: float = 3.0,
     job_timeout_ms: int = JOB_TIMEOUT_MILLISECONDS,
+    jitter_pct: float = 0.0,
 ):
     """Compare different strategies with multiple runs for statistical significance.
 
@@ -842,6 +929,7 @@ async def benchmark_strategies(
         num_instances: Number of process instances to start per test run.
         work_duration: Duration of simulated work in seconds.
         job_timeout_ms: Job timeout in milliseconds.
+        jitter_pct: Percentage of jitter to apply to work duration.
     """
     results = {}
 
@@ -855,6 +943,7 @@ async def benchmark_strategies(
             timeout=60,
             work_duration=work_duration,
             job_timeout_ms=job_timeout_ms,
+            jitter_pct=jitter_pct,
         )
 
     # Print final comparison
@@ -886,6 +975,7 @@ async def benchmark_workloads(
     num_instances: int = 20,
     work_duration: float = 3.0,
     job_timeout_ms: int = JOB_TIMEOUT_MILLISECONDS,
+    jitter_pct: float = 0.0,
 ):
     """Compare CPU-bound vs I/O-bound workloads across all strategies.
 
@@ -895,6 +985,7 @@ async def benchmark_workloads(
         num_instances: Number of process instances to start per test run.
         work_duration: Duration of simulated work in seconds.
         job_timeout_ms: Job timeout in milliseconds.
+        jitter_pct: Percentage of jitter to apply to work duration.
     """
     workload_types: list[Literal["cpu", "io"]] = ["cpu", "io"]
     results = {}
@@ -918,6 +1009,7 @@ async def benchmark_workloads(
                 timeout=60,
                 work_duration=work_duration,
                 job_timeout_ms=job_timeout_ms,
+                jitter_pct=jitter_pct,
             )
 
     # Print comprehensive comparison
@@ -987,6 +1079,7 @@ async def benchmark_subprocess(
     num_instances: int = 20,
     work_duration: float = 3.0,
     job_timeout_ms: int = JOB_TIMEOUT_MILLISECONDS,
+    jitter_pct: float = 0.0,
 ):
     """Test subprocess workload across all strategies.
 
@@ -997,6 +1090,7 @@ async def benchmark_subprocess(
         num_instances: Number of process instances to start per test run.
         work_duration: Duration of simulated work in seconds.
         job_timeout_ms: Job timeout in milliseconds.
+        jitter_pct: Percentage of jitter to apply to work duration.
     """
     logger.info(f"\n{'='*70}")
     logger.info("SUBPROCESS WORKLOAD BENCHMARK")
@@ -1019,6 +1113,7 @@ async def benchmark_subprocess(
                 timeout=120,  # Longer timeout for subprocess calls
                 work_duration=work_duration,
                 job_timeout_ms=job_timeout_ms,
+                jitter_pct=jitter_pct,
             )
             logger.info(f"✓ {strategy} strategy completed successfully")
         except Exception as e:
@@ -1121,6 +1216,12 @@ def main():
         default=JOB_TIMEOUT_MILLISECONDS,
         help="Job timeout in milliseconds",
     )
+    test_parser.add_argument(
+        "--jitter_pct",
+        type=float,
+        default=0.25,
+        help="Percentage of jitter to apply to work duration (0.0 to 1.0)",
+    )
 
     # Benchmark command
     bench_parser = subparsers.add_parser("benchmark", help="Benchmark strategies")
@@ -1138,6 +1239,12 @@ def main():
         type=int,
         default=JOB_TIMEOUT_MILLISECONDS,
         help="Job timeout in milliseconds",
+    )
+    bench_parser.add_argument(
+        "--jitter_pct",
+        type=float,
+        default=0.25,
+        help="Percentage of jitter to apply to work duration (0.0 to 1.0)",
     )
 
     # Benchmark workloads command
@@ -1159,6 +1266,12 @@ def main():
         default=JOB_TIMEOUT_MILLISECONDS,
         help="Job timeout in milliseconds",
     )
+    bench_work_parser.add_argument(
+        "--jitter_pct",
+        type=float,
+        default=0.0,
+        help="Percentage of jitter to apply to work duration (0.0 to 1.0)",
+    )
 
     # Benchmark subprocess command
     bench_sub_parser = subparsers.add_parser(
@@ -1178,6 +1291,12 @@ def main():
         type=int,
         default=JOB_TIMEOUT_MILLISECONDS,
         help="Job timeout in milliseconds",
+    )
+    bench_sub_parser.add_argument(
+        "--jitter_pct",
+        type=float,
+        default=0.25,
+        help="Percentage of jitter to apply to work duration (0.0 to 1.0)",
     )
 
     # Quick command
@@ -1204,6 +1323,7 @@ def main():
                 max_concurrent_jobs=args.max_concurrent_jobs,
                 work_duration=args.work_duration_seconds,
                 job_timeout_ms=args.job_timeout_milliseconds,
+                jitter_pct=args.jitter_pct,
             )
         )
     elif args.command == "benchmark":
@@ -1212,6 +1332,7 @@ def main():
                 num_instances=args.process_instances,
                 work_duration=args.work_duration_seconds,
                 job_timeout_ms=args.job_timeout_milliseconds,
+                jitter_pct=args.jitter_pct,
             )
         )
     elif args.command == "benchmark-workloads":
@@ -1220,6 +1341,7 @@ def main():
                 num_instances=args.process_instances,
                 work_duration=args.work_duration_seconds,
                 job_timeout_ms=args.job_timeout_milliseconds,
+                jitter_pct=args.jitter_pct,
             )
         )
     elif args.command == "benchmark-subprocess":
@@ -1228,6 +1350,7 @@ def main():
                 num_instances=args.process_instances,
                 work_duration=args.work_duration_seconds,
                 job_timeout_ms=args.job_timeout_milliseconds,
+                jitter_pct=args.jitter_pct,
             )
         )
     elif args.command == "quick":

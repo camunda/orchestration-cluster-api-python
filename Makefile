@@ -20,6 +20,9 @@ clean_spec:
 itest: generate
 	CAMUNDA_INTEGRATION=1 uv run pytest -q tests/integration
 
+test:
+	uv run pytest -q tests/acceptance
+
 lint:
 	uv run ruff
 

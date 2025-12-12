@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import MagicMock, AsyncMock
-from camunda_orchestration_sdk.runtime.job_worker import JobWorker, WorkerConfig, ActivatedJob, SyncActivatedJob
+from camunda_orchestration_sdk.runtime.job_worker import JobWorker, WorkerConfig, JobContext
 from camunda_orchestration_sdk.models.activate_jobs_response_200_jobs_item import ActivateJobsResponse200JobsItem
 
 @pytest.mark.asyncio
@@ -13,6 +13,18 @@ async def test_worker_decrements_active_jobs_on_success():
     # Mock job
     mock_job_item = MagicMock(spec=ActivateJobsResponse200JobsItem)
     mock_job_item.job_key = 123
+    mock_job_item.type_ = "test-job"
+    mock_job_item.process_instance_key = 1
+    mock_job_item.bpmn_process_id = "process"
+    mock_job_item.process_definition_version = 1
+    mock_job_item.process_definition_key = 2
+    mock_job_item.element_id = "element"
+    mock_job_item.element_instance_key = 3
+    mock_job_item.custom_headers = {}
+    mock_job_item.worker = "worker"
+    mock_job_item.retries = 3
+    mock_job_item.deadline = 1234567890
+    mock_job_item.variables = None
     
     # Config
     config = WorkerConfig(
@@ -23,8 +35,8 @@ async def test_worker_decrements_active_jobs_on_success():
     )
 
     # Callback
-    async def success_callback(job: ActivatedJob):
-        return await job.complete()
+    async def success_callback(job: JobContext):
+        return {}
 
     worker = JobWorker(client=mock_client, callback=success_callback, config=config)
     
@@ -57,7 +69,18 @@ async def test_worker_handles_exception_and_decrements_counter():
     # Mock job
     mock_job_item = MagicMock(spec=ActivateJobsResponse200JobsItem)
     mock_job_item.job_key = 456
+    mock_job_item.type_ = "test-job"
+    mock_job_item.process_instance_key = 1
+    mock_job_item.bpmn_process_id = "process"
+    mock_job_item.process_definition_version = 1
+    mock_job_item.process_definition_key = 2
+    mock_job_item.element_id = "element"
+    mock_job_item.element_instance_key = 3
+    mock_job_item.custom_headers = {}
+    mock_job_item.worker = "worker"
     mock_job_item.retries = 3
+    mock_job_item.deadline = 1234567890
+    mock_job_item.variables = None
     
     # Config
     config = WorkerConfig(
@@ -68,7 +91,7 @@ async def test_worker_handles_exception_and_decrements_counter():
     )
 
     # Callback that raises exception
-    async def failing_callback(job: ActivatedJob):
+    async def failing_callback(job: JobContext):
         raise ValueError("Something went wrong!")
 
     worker = JobWorker(client=mock_client, callback=failing_callback, config=config)
@@ -102,7 +125,18 @@ async def test_worker_thread_strategy_exception_handling():
     # Mock job
     mock_job_item = MagicMock(spec=ActivateJobsResponse200JobsItem)
     mock_job_item.job_key = 789
+    mock_job_item.type_ = "test-job"
+    mock_job_item.process_instance_key = 1
+    mock_job_item.bpmn_process_id = "process"
+    mock_job_item.process_definition_version = 1
+    mock_job_item.process_definition_key = 2
+    mock_job_item.element_id = "element"
+    mock_job_item.element_instance_key = 3
+    mock_job_item.custom_headers = {}
+    mock_job_item.worker = "worker"
     mock_job_item.retries = 3
+    mock_job_item.deadline = 1234567890
+    mock_job_item.variables = None
     
     # Config
     config = WorkerConfig(
@@ -113,7 +147,7 @@ async def test_worker_thread_strategy_exception_handling():
     )
 
     # Sync Callback that raises exception
-    def failing_sync_callback(job: SyncActivatedJob):
+    def failing_sync_callback(job: JobContext):
         raise RuntimeError("Thread failure!")
 
     worker = JobWorker(client=mock_client, callback=failing_sync_callback, config=config)
