@@ -539,7 +539,7 @@ async def run_worker_scenario(
     scenario_timeout_seconds: int | None = 30,
     workload_type: Literal["cpu", "io", "subprocess", "subprocess_threaded"] = "cpu",
     work_duration: float = 3.0,
-    jitter_pct: float = 0.0,
+    jitter_pct: float = 0.25,
 ) -> dict[str, float]:
     """Run a worker scenario with configurable settings.
 
@@ -728,7 +728,7 @@ async def run_test(
     timeout: int = 5000,
     work_duration: float = 3.0,
     job_timeout_ms: int = JOB_TIMEOUT_MILLISECONDS,
-    jitter_pct: float = 0.0,
+    jitter_pct: float = 0.25,
 ) -> dict[str, float]:
     """Run a parameterized test with optional averaging over multiple runs.
 
@@ -981,7 +981,7 @@ async def benchmark_strategies(
     num_instances: int = 20,
     work_duration: float = 3.0,
     job_timeout_ms: int = JOB_TIMEOUT_MILLISECONDS,
-    jitter_pct: float = 0.0,
+    jitter_pct: float = 0.25,
 ):
     """Compare different strategies with multiple runs for statistical significance.
 
@@ -1037,7 +1037,7 @@ async def benchmark_workloads(
     num_instances: int = 20,
     work_duration: float = 3.0,
     job_timeout_ms: int = JOB_TIMEOUT_MILLISECONDS,
-    jitter_pct: float = 0.0,
+    jitter_pct: float = 0.25,
 ):
     """Compare CPU-bound vs I/O-bound workloads across all strategies.
 
@@ -1141,7 +1141,7 @@ async def benchmark_subprocess(
     num_instances: int = 20,
     work_duration: float = 3.0,
     job_timeout_ms: int = JOB_TIMEOUT_MILLISECONDS,
-    jitter_pct: float = 0.0,
+    jitter_pct: float = 0.25,
 ):
     """Test subprocess workload across all strategies.
 
@@ -1331,7 +1331,7 @@ def main():
     bench_work_parser.add_argument(
         "--jitter_pct",
         type=float,
-        default=0.0,
+        default=0.25,
         help="Percentage of jitter to apply to work duration (0.0 to 1.0)",
     )
 
