@@ -38,12 +38,22 @@ class BenchmarkRunner:
         if output_file:
             self.output_file = output_file
         else:
-            # If input is scenarios/<suite>.json, output to scenarios/results_<suite>.json
+            # Generate timestamped output file in results directory
+            from datetime import datetime
             scenarios_path = Path(scenarios_file)
-            if scenarios_path.parent.name == "scenarios":
-                self.output_file = str(scenarios_path.parent / f"results_{scenarios_path.name}")
-            else:
-                self.output_file = "benchmark_results.json"
+
+            # Extract suite name (e.g., "fast" from "fast.json" or "scenarios/fast.json")
+            suite_name = scenarios_path.stem
+
+            # Create results directory
+            script_dir = Path(__file__).parent
+            results_dir = script_dir / "results"
+            results_dir.mkdir(exist_ok=True)
+
+            # Create timestamped filename
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            self.output_file = str(results_dir / f"{suite_name}_{timestamp}.json")
+
         self.continue_on_error = continue_on_error
         self.results = []
         self.failed_scenarios = []
@@ -278,8 +288,8 @@ async def main():
     parser.add_argument(
         "--output",
         "-o",
-        default="benchmark_results.json",
-        help="Output file for results (default: benchmark_results.json)"
+        default=None,
+        help="Output file for results (default: demo/v2/results/<suite>_<timestamp>.json)"
     )
     parser.add_argument(
         "--continue-on-error",

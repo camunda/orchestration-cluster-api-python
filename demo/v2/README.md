@@ -136,17 +136,21 @@ Scenarios are saved to `demo/v2/scenarios/<suite>.json` by default.
 ### 2. Run Benchmark Suite
 
 ```bash
-# Run all scenarios (results saved to demo/v2/scenarios/results_<suite>.json)
+# Run scenarios (results saved to demo/v2/results/<suite>_<timestamp>.json)
 uv run demo/v2/run_benchmark_scenarios.py demo/v2/scenarios/fast.json
 
 # Custom output location
 uv run demo/v2/run_benchmark_scenarios.py demo/v2/scenarios/fast.json --output custom_results.json
 
-# Run specific phase only
-uv run demo/v2/run_benchmark_scenarios.py demo/v2/scenarios/full.json --phase 3_concurrency_scaling
-
-# Continue on errors
+# Continue on errors (recommended for full suite)
 uv run demo/v2/run_benchmark_scenarios.py demo/v2/scenarios/fast.json --continue-on-error
+
+# Prevent sleep during long runs
+# macOS:
+caffeinate -i uv run demo/v2/run_benchmark_scenarios.py demo/v2/scenarios/full.json
+
+# Linux:
+systemd-inhibit uv run demo/v2/run_benchmark_scenarios.py demo/v2/scenarios/full.json
 ```
 
 See [BENCHMARK_GUIDE.md](BENCHMARK_GUIDE.md) for complete documentation on systematic benchmarking.

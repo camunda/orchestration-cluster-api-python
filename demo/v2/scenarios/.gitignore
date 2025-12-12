@@ -1,6 +1,3 @@
-# Ignore benchmark results
-results_*.json
+# All scenario definition files are tracked
+# Results are stored in ../results/ instead
 
-# Keep scenario definitions
-!*.json
-!.gitignore

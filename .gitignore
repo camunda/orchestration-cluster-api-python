@@ -5,3 +5,8 @@ generated/
 .openapi-cache/
 *.log
 
+# Benchmark results (old location - now stored in demo/v2/results/)
+benchmark_results.json
+scenarios_*.json
+results_*.json
+
