@@ -159,8 +159,18 @@ class JobWorker:
         
         self.active_jobs = 0
         self.lock = threading.Lock()
+
+        # Dedicated event loop for async user code
+        self.worker_loop = asyncio.new_event_loop()
+        self.worker_thread = threading.Thread(target=self._run_worker_loop, daemon=True)
+        self.worker_thread.start()
         
         self.logger.info(f"Using execution strategy: {self._strategy}")
+    
+    def _run_worker_loop(self):
+        """Runs the dedicated event loop for async user code"""
+        asyncio.set_event_loop(self.worker_loop)
+        self.worker_loop.run_forever()
     
     def _determine_strategy(self) -> _EFFECTIVE_EXECUTION_STRATEGY:
         """Smart detection of execution strategy"""
@@ -205,6 +215,13 @@ class JobWorker:
             self.running = False
             if self.polling_task:
                 self.polling_task.cancel()
+            
+            # Stop the worker loop
+            if self.worker_loop.is_running():
+                self.worker_loop.call_soon_threadsafe(self.worker_loop.stop)
+            if self.worker_thread.is_alive():
+                self.worker_thread.join(timeout=1.0)
+
             self.logger.info("Worker stopped")
 
     async def poll_loop(self):
@@ -274,12 +291,17 @@ class JobWorker:
                 action = None
                 
                 if self._strategy == "async":
-                    # Run on main event loop
+                    # Run on dedicated worker loop
                     try:
                         result = None
                         if is_async_callback:
                             async_callback = cast(AsyncJobHandler, self.callback)
-                            result = await async_callback(job_context)
+                            # Schedule on worker loop and wait for result in main loop
+                            future = asyncio.run_coroutine_threadsafe(
+                                async_callback(job_context), 
+                                self.worker_loop
+                            )
+                            result = await asyncio.wrap_future(future)
                         else:
                             # Warning: Sync callback on Async strategy blocks the loop!
                             result = self.callback(job_context)
