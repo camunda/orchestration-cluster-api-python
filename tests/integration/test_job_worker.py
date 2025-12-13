@@ -20,6 +20,7 @@ from loguru import logger
 import pytest
 from camunda_orchestration_sdk import CamundaClient
 from camunda_orchestration_sdk.runtime.job_worker import WorkerConfig, JobContext
+from typing import cast
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("CAMUNDA_INTEGRATION") != "1",
@@ -56,11 +57,15 @@ async def test_job_worker_performance():
                 data=CreateDeploymentData(resources=[process_file])
             )
 
-        process_definition: CreateDeploymentResponse200DeploymentsItemProcessDefinition = deployed_resources.deployments[0].process_definition  # type: ignore
+        process_definition = cast(CreateDeploymentResponse200DeploymentsItemProcessDefinition, deployed_resources.deployments[0].process_definition)  
+
+        process_definition_key = process_definition.process_definition_key
+        process_definition_id = process_definition.process_definition_id # pyright: ignore[reportUnusedVariable]
+
         # Cancel all running instances of process
         searchQuery = SearchProcessInstancesData(
             filter_=SearchProcessInstancesDataFilter(
-                process_definition_key=process_definition.process_definition_key,
+                process_definition_key=process_definition_key,
                 state=StateAdvancedfilter6(eq=StateAdvancedfilter6Eq("ACTIVE")),
             )
         )
@@ -83,7 +88,7 @@ async def test_job_worker_performance():
 
         process_instance = camunda.create_process_instance(
             data=Processcreationbykey(
-                process_definition_key=process_definition.process_definition_key
+                process_definition_key=process_definition_key
             )
         )
 
