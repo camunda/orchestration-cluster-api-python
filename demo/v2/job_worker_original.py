@@ -18,7 +18,7 @@ from camunda_orchestration_sdk.models.search_process_instances_data_filter impor
     SearchProcessInstancesDataFilter,
 )
 from camunda_orchestration_sdk import CamundaClient, WorkerConfig
-from camunda_orchestration_sdk.runtime.job_worker import ExecutionHint
+from camunda_orchestration_sdk.runtime.job_worker import ExecutionHint, JobContext
 
 
 def _make_client():
@@ -34,18 +34,11 @@ camunda = _make_client()
 
 # Worker callback function
 @ExecutionHint.async_safe
-async def callback(job: ActivateJobsResponse200JobsItem):
+async def callback(job: JobContext):
     # Simulate some CPU / IO-bound work
     print(f"**** Job Worker **** \nJob Key: {job.job_key}")
     # Example of completing a job
-    await camunda.complete_job_async(
-        job_key=job.job_key,
-        data=CompleteJobData(
-            variables=CompleteJobDataVariablesType0().from_dict(
-                {"quoteAmount": 2345432}
-            )
-        ),
-    )
+    return {"quoteAmount": 2345432}
 
 
 async def main():

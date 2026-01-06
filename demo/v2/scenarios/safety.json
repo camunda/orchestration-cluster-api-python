@@ -1,0 +1,54 @@
+[
+  {
+    "name": "safety_deadlock_thread_subprocess_threaded",
+    "num_instances": 50,
+    "strategy": "thread",
+    "workload_type": "subprocess_threaded",
+    "work_duration": 0.5,
+    "max_concurrent_jobs": 20,
+    "repeats": 3,
+    "timeout": 60,
+    "job_timeout_ms": 30000,
+    "description": "Safety: thread worker spawning threaded subprocesses (Deadlock Risk)",
+    "phase": "3_safety"
+  },
+  {
+    "name": "safety_deadlock_process_subprocess_threaded",
+    "num_instances": 50,
+    "strategy": "process",
+    "workload_type": "subprocess_threaded",
+    "work_duration": 0.5,
+    "max_concurrent_jobs": 20,
+    "repeats": 3,
+    "timeout": 60,
+    "job_timeout_ms": 30000,
+    "description": "Safety: process worker spawning threaded subprocesses (Deadlock Risk)",
+    "phase": "3_safety"
+  },
+  {
+    "name": "safety_async_blocking_cpu",
+    "num_instances": 10,
+    "strategy": "async",
+    "workload_type": "cpu",
+    "work_duration": 5.0,
+    "max_concurrent_jobs": 1,
+    "repeats": 1,
+    "timeout": 120,
+    "job_timeout_ms": 2000,
+    "description": "Safety: Async worker with heavy CPU load (Loop Blocking Risk)",
+    "phase": "3_safety"
+  },
+  {
+    "name": "safety_process_exhaustion",
+    "num_instances": 100,
+    "strategy": "process",
+    "workload_type": "cpu",
+    "work_duration": 1.0,
+    "max_concurrent_jobs": 50,
+    "repeats": 1,
+    "timeout": 300,
+    "job_timeout_ms": 30000,
+    "description": "Safety: Process strategy with high concurrency (Memory Risk)",
+    "phase": "3_safety"
+  }
+]

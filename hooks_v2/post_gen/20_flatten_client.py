@@ -3,17 +3,17 @@ import os
 from pathlib import Path
 import re
 
-def to_camel_case(snake_str):
+def to_camel_case(snake_str: str) -> str:
     components = snake_str.split('_')
     return components[0] + ''.join(x.title() for x in components[1:])
 
-def get_imports_and_signature(file_path, package_root):
+def get_imports_and_signature(file_path: Path, package_root: str):
     with open(file_path, "r") as f:
         code = f.read()
     
     tree = ast.parse(code)
     
-    imports = []
+    imports: list[ast.stmt] = []
     sync_func = None
     async_func = None
     
@@ -31,7 +31,7 @@ def get_imports_and_signature(file_path, package_root):
     # e.g. api/group/module.py -> api/group -> depth=2
     depth = len(rel_path.parent.parts)
     
-    adjusted_imports = []
+    adjusted_imports: list[ast.stmt] = []
     for node in imports:
         if isinstance(node, ast.ImportFrom):
             if node.level > 0:
@@ -68,14 +68,14 @@ def get_imports_and_signature(file_path, package_root):
             
     return adjusted_imports, sync_func, async_func
 
-def generate_flat_client(package_path):
+def generate_flat_client(package_path: str):
     api_dir = package_path / "api"
     if not api_dir.exists():
         print(f"API directory not found at {api_dir}")
         return
 
     methods = []
-    all_imports = set()
+    all_imports: set[ast.stmt] = set()
 
     for root, dirs, files in os.walk(api_dir):
         for file in files:
@@ -138,10 +138,10 @@ def generate_flat_client(package_path):
                     arg_strs.append(f"{arg_name}{ann}{default_str}")
                     
                 if args.kwarg:
-                    ann = f": {ast.unparse(args.kwarg.annotation)}" if args.kwarg.annotation else ""
+                    ann = f": {ast.unparse(args.kwarg.annotation)}" if args.kwarg.annotation else ": Any"
                     arg_strs.append(f"**{args.kwarg.arg}{ann}")
                 else:
-                    arg_strs.append("**kwargs")
+                    arg_strs.append("**kwargs: Any")
                 
                 sig_str = ", ".join(arg_strs)
                 return_ann = f" -> {ast.unparse(sync_func.returns)}" if sync_func.returns else ""
@@ -195,10 +195,10 @@ def generate_flat_client(package_path):
                     arg_strs.append(f"{arg_name}{ann}{default_str}")
                     
                 if args.kwarg:
-                    ann = f": {ast.unparse(args.kwarg.annotation)}" if args.kwarg.annotation else ""
+                    ann = f": {ast.unparse(args.kwarg.annotation)}" if args.kwarg.annotation else ": Any"
                     arg_strs.append(f"**{args.kwarg.arg}{ann}")
                 else:
-                    arg_strs.append("**kwargs")
+                    arg_strs.append("**kwargs: Any")
 
                 sig_str = ", ".join(arg_strs)
                 return_ann = f" -> {ast.unparse(async_func.returns)}" if async_func.returns else ""
@@ -257,7 +257,13 @@ def generate_flat_client(package_path):
 
     imports_content += "\nimport asyncio"
     imports_content += "\nfrom typing import Callable"
-    imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig"
+    imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, JobHandler"
+    imports_content += "\nfrom pathlib import Path"
+    imports_content += "\nfrom .models.create_deployment_response_200 import CreateDeploymentResponse200"
+    imports_content += "\nfrom .models.create_deployment_response_200_deployments_item_process_definition import CreateDeploymentResponse200DeploymentsItemProcessDefinition"
+    imports_content += "\nfrom .models.create_deployment_response_200_deployments_item_decision_definition import CreateDeploymentResponse200DeploymentsItemDecisionDefinition"
+    imports_content += "\nfrom .models.create_deployment_response_200_deployments_item_decision_requirements import CreateDeploymentResponse200DeploymentsItemDecisionRequirements"
+    imports_content += "\nfrom .models.create_deployment_response_200_deployments_item_form import CreateDeploymentResponse200DeploymentsItemForm"
 
     # Prepare TYPE_CHECKING block
     type_checking_block = "\nif TYPE_CHECKING:\n"
@@ -267,12 +273,31 @@ def generate_flat_client(package_path):
 
     new_methods = "\n".join(methods)
 
+    extended_result_code = """
+class ExtendedDeploymentResult(CreateDeploymentResponse200):
+    processes: list[CreateDeploymentResponse200DeploymentsItemProcessDefinition]
+    decisions: list[CreateDeploymentResponse200DeploymentsItemDecisionDefinition]
+    decision_requirements: list[CreateDeploymentResponse200DeploymentsItemDecisionRequirements]
+    forms: list[CreateDeploymentResponse200DeploymentsItemForm]
+    
+    def __init__(self, response: CreateDeploymentResponse200):
+        self.deployment_key = response.deployment_key
+        self.tenant_id = response.tenant_id
+        self.deployments = response.deployments
+        self.additional_properties = response.additional_properties
+        
+        self.processes = [d.process_definition for d in self.deployments if not isinstance(d.process_definition, Unset)]
+        self.decisions = [d.decision_definition for d in self.deployments if not isinstance(d.decision_definition, Unset)]
+        self.decision_requirements = [d.decision_requirements for d in self.deployments if not isinstance(d.decision_requirements, Unset)]
+        self.forms = [d.form for d in self.deployments if not isinstance(d.form, Unset)]
+"""
+
     camunda_client_code = f"""
 class CamundaClient:
     client: Client | AuthenticatedClient
     _workers: list[JobWorker]
 
-    def __init__(self, base_url: str, token: str | None = None, **kwargs):
+    def __init__(self, base_url: str = "http://localhost:8080/v2", token: str | None = None, **kwargs):
         if token:
             self.client = AuthenticatedClient(base_url=base_url, token=token, **kwargs)
         else:
@@ -293,7 +318,7 @@ class CamundaClient:
     async def __aexit__(self, *args, **kwargs):
         await self.client.__aexit__(*args, **kwargs)
 
-    def create_job_worker(self, config: WorkerConfig, callback: Callable, auto_start: bool = True) -> JobWorker:
+    def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True) -> JobWorker:
         worker = JobWorker(self, callback, config)
         self._workers.append(worker)
         if auto_start:
@@ -310,10 +335,40 @@ class CamundaClient:
             for worker in self._workers:
                 worker.stop()
 
+    def deploy_resources_from_files(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
+        from .models.create_deployment_data import CreateDeploymentData
+        from .types import File, UNSET
+        import os
+
+        resources = []
+        for file_path in files:
+            file_path = str(file_path)
+            with open(file_path, "rb") as f:
+                content = f.read()
+            resources.append(File(payload=content, file_name=os.path.basename(file_path)))
+        
+        data = CreateDeploymentData(resources=resources, tenant_id=tenant_id if tenant_id is not None else UNSET)
+        return ExtendedDeploymentResult(self.create_deployment(data=data))
+
+    async def deploy_resources_from_files_async(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
+        from .models.create_deployment_data import CreateDeploymentData
+        from .types import File, UNSET
+        import os
+
+        resources = []
+        for file_path in files:
+            file_path = str(file_path)
+            with open(file_path, "rb") as f:
+                content = f.read()
+            resources.append(File(payload=content, file_name=os.path.basename(file_path)))
+        
+        data = CreateDeploymentData(resources=resources, tenant_id=tenant_id if tenant_id is not None else UNSET)
+        return ExtendedDeploymentResult(await self.create_deployment_async(data=data))
+
 {new_methods}
 """
     
-    final_content = f"{imports_content}\n{type_checking_block}\n{class_content}\n{camunda_client_code}"
+    final_content = f"{imports_content}\n{type_checking_block}\n{class_content}\n{extended_result_code}\n{camunda_client_code}"
 
     with open(client_file, "w") as f:
         f.write(final_content)
@@ -349,6 +404,6 @@ def run(context):
     generate_flat_client(package_dir)
 
 if __name__ == "__main__":
-    base_dir = Path(__file__).parent.parent
+    base_dir = Path(__file__).parent.parent.parent
     package_dir = base_dir / "generated" / "camunda_orchestration_sdk"
     generate_flat_client(package_dir)
