@@ -1,7 +1,7 @@
 from __future__ import annotations
 import re
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List
 
 import yaml
 
@@ -13,7 +13,7 @@ def _snake(name: str) -> str:
 
 
 def _is_primitive_alias(name: str, schema: Dict[str, Any]) -> bool:
-    if not isinstance(schema, dict):
+    if not isinstance(schema, dict): # type: ignore
         return False
     t = schema.get("type")
     if t in {"string", "integer", "number", "boolean"}:
@@ -60,7 +60,7 @@ def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -
     pkg_dir.mkdir(parents=True, exist_ok=True)
     target = pkg_dir / "semantic_types.py"
 
-    lines = []
+    lines: List[str] = []
     lines.append("from __future__ import annotations\n")
     lines.append("from typing import NewType, Any, Tuple\n")
     lines.append("import re\n\n")
@@ -78,33 +78,33 @@ def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -
         lines.append(f"{alias_name} = NewType('{alias_name}', {py_base})\n")
 
         # lifter with validation
-        func = []
+        func: List[str] = []
         func_name = _snake(f"lift_{alias_name}")
         func.append(f"def {func_name}(value: Any) -> {alias_name}:\n")
         func.append(f"\tif not isinstance(value, {py_base}):\n")
-        func.append(f"\t\traise TypeError(\"{alias_name} must be {py_base}\")\n")
+        func.append(f"\t\traise TypeError(f\"{alias_name} must be {py_base}, got {{type(value).__name__}}: {{value!r}}\")\n")
         pattern = constraints.get("pattern")
         if pattern and isinstance(pattern, str):
             # Use fullmatch to validate the whole value
             func.append(f"\tif re.fullmatch(r{pattern!r}, value) is None:\n")
-            func.append(f"\t\traise ValueError(\"{alias_name} does not match pattern \" + {pattern!r})\n")
+            func.append(f"\t\traise ValueError(f\"{alias_name} does not match pattern {pattern!r}, got {{value!r}}\")\n")
         if "minLength" in constraints:
             func.append(f"\tif len(value) < {int(constraints['minLength'])}:\n")
-            func.append(f"\t\traise ValueError(\"{alias_name} shorter than minLength {int(constraints['minLength'])}\")\n")
+            func.append(f"\t\traise ValueError(f\"{alias_name} shorter than minLength {int(constraints['minLength'])}, got {{value!r}}\")\n")
         if "maxLength" in constraints:
             func.append(f"\tif len(value) > {int(constraints['maxLength'])}:\n")
-            func.append(f"\t\traise ValueError(\"{alias_name} longer than maxLength {int(constraints['maxLength'])}\")\n")
+            func.append(f"\t\traise ValueError(f\"{alias_name} longer than maxLength {int(constraints['maxLength'])}, got {{value!r}}\")\n")
         if base in {"integer", "number"}:
             if "minimum" in constraints:
                 func.append(f"\tif value < {constraints['minimum']}:\n")
-                func.append(f"\t\traise ValueError(\"{alias_name} smaller than minimum {constraints['minimum']}\")\n")
+                func.append(f"\t\traise ValueError(f\"{alias_name} smaller than minimum {constraints['minimum']}, got {{value!r}}\")\n")
             if "maximum" in constraints:
                 func.append(f"\tif value > {constraints['maximum']}:\n")
-                func.append(f"\t\traise ValueError(\"{alias_name} larger than maximum {constraints['maximum']}\")\n")
+                func.append(f"\t\traise ValueError(f\"{alias_name} larger than maximum {constraints['maximum']}, got {{value!r}}\")\n")
         if "enum" in constraints and isinstance(constraints["enum"], list):
             enum_vals = constraints["enum"]
             func.append(f"\tif value not in {enum_vals!r}:\n")
-            func.append(f"\t\traise ValueError(\"{alias_name} must be one of {enum_vals}\")\n")
+            func.append(f"\t\traise ValueError(f\"{alias_name} must be one of {enum_vals}, got {{value!r}}\")\n")
         func.append(f"\treturn {alias_name}(value)\n\n")
 
         # try_lift variant returning (ok, value_or_error)
