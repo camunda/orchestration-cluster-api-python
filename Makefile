@@ -4,21 +4,27 @@ install:
 	mkdir -p generated
 	uv sync
 
-generate: clean install
+generate-v1: clean install
 	uv run generate.py 
 
-generate-v2: clean install
+generate: clean install
 	uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests
+	uv run pytest -q tests/acceptance
 
 clean:
 	rm -rf generated
 
 clean_spec:
 	rm -rf .openapi-cache
-	
-test: generate-v2
-	uv run pytest -q tests/acceptance
 
-itest: generate-v2
+itest: generate
 	CAMUNDA_INTEGRATION=1 uv run pytest -q tests/integration
 
+test:
+	uv run pytest -q tests/acceptance
+
+lint:
+	uv run ruff
+
+typecheck:
+	uv run pyright

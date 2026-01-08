@@ -6,8 +6,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from hooks import patch_bundled_spec
-from hooks import flatten_client
+from hooks_shared import patch_bundled_spec
 
 REPO_URL = "https://github.com/camunda/camunda.git"
 SPEC_DIR = "zeebe/gateway-protocol/src/main/proto/v2"
@@ -141,16 +140,6 @@ def run_python_client_generator(spec: Path, out_dir: Path, config_path: Path) ->
     log(f"Running openapi-python-client with config {config_path}...")
     subprocess.run(cmd, check=True)
 
-    # Post-processing: Flatten the client
-    sys.path.append(str(Path(__file__).parent / "hooks"))
-    try:
-        log("Flattening client structure...")
-        flatten_client.generate_flat_client(actual_out_dir)
-    except ImportError as e:
-        log(f"Failed to import flatten_client hook: {e}")
-    except Exception as e:
-        log(f"Failed to flatten client: {e}")
-
 def load_hooks(hooks_dir: Path):
     hooks = []
     if not hooks_dir.exists():
@@ -196,7 +185,7 @@ def main():
     out_dir = (root / args.out_dir).resolve()
     cache_dir = (root / args.cache_dir).resolve()
     config_path = (root / args.config).resolve()
-    hooks_dir = root / "hooks"
+    shared_hooks_dir = root / "hooks_shared"
 
     if args.local_spec:
         spec_path = Path(args.local_spec).resolve()
@@ -222,19 +211,87 @@ def main():
 
     if not args.skip_generate:
         if args.generator == "openapi-python-client":
-            run_python_client_generator(spec_path, out_dir, effective_config)
-        else:
-            run_openapi_generator(spec_path, out_dir, effective_config, args.generator)
+            # For v2, we have pre-gen and post-gen hooks
+            hooks_root = root / "hooks_v2"
+            pre_gen_hooks_dir = hooks_root / "pre_gen"
+            post_gen_hooks_dir = hooks_root / "post_gen"
+            
+            # We need to bundle the spec first to run pre-gen hooks on it
+            # But run_python_client_generator does bundling internally.
+            # We should refactor run_python_client_generator to allow us to intervene.
+            
+            # Let's modify run_python_client_generator to take an optional pre-gen hook callback
+            # Or better, let's just split the logic here.
+            
+            import yaml
+            from bundle import bundle_spec
+            
+            # 1. Bundle
+            bundled_spec_path = out_dir / "bundled_spec.yaml"
+            out_dir.mkdir(parents=True, exist_ok=True)
+            log(f"Bundling spec from {spec_path} to {bundled_spec_path}...")
+            bundle_spec(spec_path, bundled_spec_path)
+            
+            # 2. Patch bundled spec (Shared hook)
+            try:
+                log("Patching bundled spec...")
+                patch_bundled_spec.patch_bundled_spec(bundled_spec_path)
+            except Exception as e:
+                log(f"Failed to patch bundled spec: {e}")
 
-    # Run hooks 
-    hooks = load_hooks(hooks_dir)
-    context = {
-        "out_dir": str(out_dir),
-        "spec_path": str(spec_path),
-        "config_path": str(effective_config),
-        "generator": args.generator,
-    }
-    run_hooks(hooks, context)
+            # 3. Run v2 Pre-Gen Hooks
+            context = {
+                "out_dir": str(out_dir),
+                "spec_path": str(spec_path),
+                "bundled_spec_path": str(bundled_spec_path),
+                "config_path": str(effective_config),
+                "generator": args.generator,
+            }
+            pre_hooks = load_hooks(pre_gen_hooks_dir)
+            run_hooks(pre_hooks, context)
+            
+            # 4. Generate
+            with open(effective_config, "r", encoding="utf-8") as f:
+                config = yaml.safe_load(f)
+            package_name = config.get("package_name_override", "client")
+            actual_out_dir = out_dir / package_name
+            
+            cmd = [
+                "openapi-python-client", "generate",
+                "--path", str(bundled_spec_path),
+                "--config", str(effective_config),
+                "--output-path", str(actual_out_dir),
+                "--overwrite",
+                "--meta", "none"
+            ]
+            log(f"Running openapi-python-client with config {effective_config}...")
+            subprocess.run(cmd, check=True)
+            
+            # 5. Run v2 Post-Gen Hooks
+            post_hooks = load_hooks(post_gen_hooks_dir)
+            run_hooks(post_hooks, context)
+            
+            # Run shared hooks (e.g. semantic types)
+            shared_hooks = load_hooks(shared_hooks_dir)
+            run_hooks(shared_hooks, context)
+
+        else:
+            # Legacy v1 flow
+            run_openapi_generator(spec_path, out_dir, effective_config, args.generator)
+            hooks_dir = root / "hooks_v1"
+            
+            context = {
+                "out_dir": str(out_dir),
+                "spec_path": str(spec_path),
+                "config_path": str(effective_config),
+                "generator": args.generator,
+            }
+            # Run shared post-processing hooks
+            shared_hooks = load_hooks(shared_hooks_dir)
+            run_hooks(shared_hooks, context)
+            # Run generator specific hooks
+            hooks = load_hooks(hooks_dir)
+            run_hooks(hooks, context)
 
     # Run acceptance tests as final stage
     if not args.skip_tests:
