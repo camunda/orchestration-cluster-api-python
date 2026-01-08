@@ -14,6 +14,9 @@ if TYPE_CHECKING:
     from ..models.ancestorscopeinstruction_object_1 import (
         AncestorscopeinstructionObject1,
     )
+    from ..models.ancestorscopeinstruction_object_2 import (
+        AncestorscopeinstructionObject2,
+    )
     from ..models.modify_process_instance_data_move_instructions_item_variable_instructions_item import (
         ModifyProcessInstanceDataMoveInstructionsItemVariableInstructionsItem,
     )
@@ -38,8 +41,9 @@ class ModifyProcessInstanceDataMoveInstructionsItem:
                 source element identifier for the move instruction. It can either be a sourceElementId, or
                 sourceElementInstanceKey.
             target_element_id (str): The target element id. Example: Activity_106kosb.
-            ancestor_scope_instruction (AncestorscopeinstructionObject | AncestorscopeinstructionObject1 | Unset): Defines
-                the ancestor scope for the created element instances. The default behavior resembles
+            ancestor_scope_instruction (AncestorscopeinstructionObject | AncestorscopeinstructionObject1 |
+                AncestorscopeinstructionObject2 | Unset): Defines the ancestor scope for the created element instances. The
+                default behavior resembles
                 a "direct" scope instruction with an `ancestorElementInstanceKey` of `"-1"`.
             variable_instructions (list[ModifyProcessInstanceDataMoveInstructionsItemVariableInstructionsItem] | Unset):
                 Instructions describing which variables to create or update.
@@ -50,7 +54,10 @@ class ModifyProcessInstanceDataMoveInstructionsItem:
     )
     target_element_id: ElementId
     ancestor_scope_instruction: (
-        AncestorscopeinstructionObject | AncestorscopeinstructionObject1 | Unset
+        AncestorscopeinstructionObject
+        | AncestorscopeinstructionObject1
+        | AncestorscopeinstructionObject2
+        | Unset
     ) = UNSET
     variable_instructions: (
         list[ModifyProcessInstanceDataMoveInstructionsItemVariableInstructionsItem]
@@ -61,6 +68,9 @@ class ModifyProcessInstanceDataMoveInstructionsItem:
     def to_dict(self) -> dict[str, Any]:
         from ..models.ancestorscopeinstruction_object import (
             AncestorscopeinstructionObject,
+        )
+        from ..models.ancestorscopeinstruction_object_1 import (
+            AncestorscopeinstructionObject1,
         )
         from ..models.sourceelementinstruction_object import (
             SourceelementinstructionObject,
@@ -79,6 +89,10 @@ class ModifyProcessInstanceDataMoveInstructionsItem:
             ancestor_scope_instruction = UNSET
         elif isinstance(
             self.ancestor_scope_instruction, AncestorscopeinstructionObject
+        ):
+            ancestor_scope_instruction = self.ancestor_scope_instruction.to_dict()
+        elif isinstance(
+            self.ancestor_scope_instruction, AncestorscopeinstructionObject1
         ):
             ancestor_scope_instruction = self.ancestor_scope_instruction.to_dict()
         else:
@@ -113,6 +127,9 @@ class ModifyProcessInstanceDataMoveInstructionsItem:
         )
         from ..models.ancestorscopeinstruction_object_1 import (
             AncestorscopeinstructionObject1,
+        )
+        from ..models.ancestorscopeinstruction_object_2 import (
+            AncestorscopeinstructionObject2,
         )
         from ..models.modify_process_instance_data_move_instructions_item_variable_instructions_item import (
             ModifyProcessInstanceDataMoveInstructionsItemVariableInstructionsItem,
@@ -155,7 +172,12 @@ class ModifyProcessInstanceDataMoveInstructionsItem:
 
         def _parse_ancestor_scope_instruction(
             data: object,
-        ) -> AncestorscopeinstructionObject | AncestorscopeinstructionObject1 | Unset:
+        ) -> (
+            AncestorscopeinstructionObject
+            | AncestorscopeinstructionObject1
+            | AncestorscopeinstructionObject2
+            | Unset
+        ):
             if isinstance(data, Unset):
                 return data
             try:
@@ -168,13 +190,23 @@ class ModifyProcessInstanceDataMoveInstructionsItem:
                 return ancestor_scope_instruction_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                ancestor_scope_instruction_type_1 = (
+                    AncestorscopeinstructionObject1.from_dict(data)
+                )
+
+                return ancestor_scope_instruction_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
             if not isinstance(data, dict):
                 raise TypeError()
-            ancestor_scope_instruction_type_1 = (
-                AncestorscopeinstructionObject1.from_dict(data)
+            ancestor_scope_instruction_type_2 = (
+                AncestorscopeinstructionObject2.from_dict(data)
             )
 
-            return ancestor_scope_instruction_type_1
+            return ancestor_scope_instruction_type_2
 
         ancestor_scope_instruction = _parse_ancestor_scope_instruction(
             d.pop("ancestorScopeInstruction", UNSET)

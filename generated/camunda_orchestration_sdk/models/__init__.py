@@ -52,6 +52,7 @@ from .activate_jobs_response_503 import ActivateJobsResponse503
 from .actorid_advancedfilter import ActoridAdvancedfilter
 from .ancestorscopeinstruction_object import AncestorscopeinstructionObject
 from .ancestorscopeinstruction_object_1 import AncestorscopeinstructionObject1
+from .ancestorscopeinstruction_object_2 import AncestorscopeinstructionObject2
 from .assign_client_to_group_response_400 import AssignClientToGroupResponse400
 from .assign_client_to_group_response_403 import AssignClientToGroupResponse403
 from .assign_client_to_group_response_404 import AssignClientToGroupResponse404
@@ -2216,6 +2217,44 @@ from .search_tenants_response_400 import SearchTenantsResponse400
 from .search_tenants_response_401 import SearchTenantsResponse401
 from .search_tenants_response_403 import SearchTenantsResponse403
 from .search_tenants_response_500 import SearchTenantsResponse500
+from .search_user_task_audit_logs_data import SearchUserTaskAuditLogsData
+from .search_user_task_audit_logs_data_page import SearchUserTaskAuditLogsDataPage
+from .search_user_task_audit_logs_data_sort_item import (
+    SearchUserTaskAuditLogsDataSortItem,
+)
+from .search_user_task_audit_logs_data_sort_item_field import (
+    SearchUserTaskAuditLogsDataSortItemField,
+)
+from .search_user_task_audit_logs_data_sort_item_order import (
+    SearchUserTaskAuditLogsDataSortItemOrder,
+)
+from .search_user_task_audit_logs_response_200 import SearchUserTaskAuditLogsResponse200
+from .search_user_task_audit_logs_response_200_items_item import (
+    SearchUserTaskAuditLogsResponse200ItemsItem,
+)
+from .search_user_task_audit_logs_response_200_items_item_actor_type import (
+    SearchUserTaskAuditLogsResponse200ItemsItemActorType,
+)
+from .search_user_task_audit_logs_response_200_items_item_batch_operation_type import (
+    SearchUserTaskAuditLogsResponse200ItemsItemBatchOperationType,
+)
+from .search_user_task_audit_logs_response_200_items_item_category import (
+    SearchUserTaskAuditLogsResponse200ItemsItemCategory,
+)
+from .search_user_task_audit_logs_response_200_items_item_entity_type import (
+    SearchUserTaskAuditLogsResponse200ItemsItemEntityType,
+)
+from .search_user_task_audit_logs_response_200_items_item_operation_type import (
+    SearchUserTaskAuditLogsResponse200ItemsItemOperationType,
+)
+from .search_user_task_audit_logs_response_200_items_item_result import (
+    SearchUserTaskAuditLogsResponse200ItemsItemResult,
+)
+from .search_user_task_audit_logs_response_200_page import (
+    SearchUserTaskAuditLogsResponse200Page,
+)
+from .search_user_task_audit_logs_response_400 import SearchUserTaskAuditLogsResponse400
+from .search_user_task_audit_logs_response_500 import SearchUserTaskAuditLogsResponse500
 from .search_user_task_variables_data import SearchUserTaskVariablesData
 from .search_user_task_variables_data_filter import SearchUserTaskVariablesDataFilter
 from .search_user_task_variables_data_page import SearchUserTaskVariablesDataPage
@@ -2590,6 +2629,7 @@ __all__ = (
     "ActoridAdvancedfilter",
     "AncestorscopeinstructionObject",
     "AncestorscopeinstructionObject1",
+    "AncestorscopeinstructionObject2",
     "AssignClientToGroupResponse400",
     "AssignClientToGroupResponse403",
     "AssignClientToGroupResponse404",
@@ -3829,6 +3869,22 @@ __all__ = (
     "SearchUsersResponse401",
     "SearchUsersResponse403",
     "SearchUsersResponse500",
+    "SearchUserTaskAuditLogsData",
+    "SearchUserTaskAuditLogsDataPage",
+    "SearchUserTaskAuditLogsDataSortItem",
+    "SearchUserTaskAuditLogsDataSortItemField",
+    "SearchUserTaskAuditLogsDataSortItemOrder",
+    "SearchUserTaskAuditLogsResponse200",
+    "SearchUserTaskAuditLogsResponse200ItemsItem",
+    "SearchUserTaskAuditLogsResponse200ItemsItemActorType",
+    "SearchUserTaskAuditLogsResponse200ItemsItemBatchOperationType",
+    "SearchUserTaskAuditLogsResponse200ItemsItemCategory",
+    "SearchUserTaskAuditLogsResponse200ItemsItemEntityType",
+    "SearchUserTaskAuditLogsResponse200ItemsItemOperationType",
+    "SearchUserTaskAuditLogsResponse200ItemsItemResult",
+    "SearchUserTaskAuditLogsResponse200Page",
+    "SearchUserTaskAuditLogsResponse400",
+    "SearchUserTaskAuditLogsResponse500",
     "SearchUserTasksData",
     "SearchUserTasksDataFilter",
     "SearchUserTasksDataFilterLocalVariablesItem",

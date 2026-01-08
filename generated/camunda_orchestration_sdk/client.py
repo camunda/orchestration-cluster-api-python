@@ -746,6 +746,10 @@ if TYPE_CHECKING:
     from .models.search_tenants_response_401 import SearchTenantsResponse401
     from .models.search_tenants_response_403 import SearchTenantsResponse403
     from .models.search_tenants_response_500 import SearchTenantsResponse500
+    from .models.search_user_task_audit_logs_data import SearchUserTaskAuditLogsData
+    from .models.search_user_task_audit_logs_response_200 import SearchUserTaskAuditLogsResponse200
+    from .models.search_user_task_audit_logs_response_400 import SearchUserTaskAuditLogsResponse400
+    from .models.search_user_task_audit_logs_response_500 import SearchUserTaskAuditLogsResponse500
     from .models.search_user_task_variables_data import SearchUserTaskVariablesData
     from .models.search_user_task_variables_response_200 import SearchUserTaskVariablesResponse200
     from .models.search_user_task_variables_response_400 import SearchUserTaskVariablesResponse400
@@ -1289,50 +1293,3150 @@ class CamundaClient:
         return ExtendedDeploymentResult(await self.create_deployment_async(data=data))
 
 
-    def delete_tenant(self, tenant_id: str, **kwargs: Any) -> Any:
-        """Delete tenant
+    def get_audit_log(self, audit_log_key: str, **kwargs: Any) -> GetAuditLogResponse200:
+        """Get audit log
 
- Deletes an existing tenant.
+ Get an audit log entry by auditLogKey.
 
 Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    audit_log_key (str): System-generated key for an audit log entry. Example:
+        22517998136843567.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | DeleteTenantResponse400 | DeleteTenantResponse403 | DeleteTenantResponse404 | DeleteTenantResponse500 | DeleteTenantResponse503]"""
-        from .api.tenant.delete_tenant import sync as delete_tenant_sync
+    Response[GetAuditLogResponse200 | GetAuditLogResponse401 | GetAuditLogResponse403 | GetAuditLogResponse404 | GetAuditLogResponse500]"""
+        from .api.audit_log.get_audit_log import sync as get_audit_log_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return delete_tenant_sync(**_kwargs)
+        return get_audit_log_sync(**_kwargs)
 
 
-    async def delete_tenant_async(self, tenant_id: str, **kwargs: Any) -> Any:
-        """Delete tenant
+    async def get_audit_log_async(self, audit_log_key: str, **kwargs: Any) -> GetAuditLogResponse200:
+        """Get audit log
 
- Deletes an existing tenant.
+ Get an audit log entry by auditLogKey.
 
 Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    audit_log_key (str): System-generated key for an audit log entry. Example:
+        22517998136843567.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | DeleteTenantResponse400 | DeleteTenantResponse403 | DeleteTenantResponse404 | DeleteTenantResponse500 | DeleteTenantResponse503]"""
-        from .api.tenant.delete_tenant import asyncio as delete_tenant_asyncio
+    Response[GetAuditLogResponse200 | GetAuditLogResponse401 | GetAuditLogResponse403 | GetAuditLogResponse404 | GetAuditLogResponse500]"""
+        from .api.audit_log.get_audit_log import asyncio as get_audit_log_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await delete_tenant_asyncio(**_kwargs)
+        return await get_audit_log_asyncio(**_kwargs)
+
+
+    def search_audit_logs(self, *, data: SearchAuditLogsData, **kwargs: Any) -> Any:
+        """Search audit logs
+
+ Search for audit logs based on given criteria.
+
+Args:
+    body (SearchAuditLogsData): Audit log search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | SearchAuditLogsResponse200 | SearchAuditLogsResponse400 | SearchAuditLogsResponse401 | SearchAuditLogsResponse403]"""
+        from .api.audit_log.search_audit_logs import sync as search_audit_logs_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_audit_logs_sync(**_kwargs)
+
+
+    async def search_audit_logs_async(self, *, data: SearchAuditLogsData, **kwargs: Any) -> Any:
+        """Search audit logs
+
+ Search for audit logs based on given criteria.
+
+Args:
+    body (SearchAuditLogsData): Audit log search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | SearchAuditLogsResponse200 | SearchAuditLogsResponse400 | SearchAuditLogsResponse401 | SearchAuditLogsResponse403]"""
+        from .api.audit_log.search_audit_logs import asyncio as search_audit_logs_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_audit_logs_asyncio(**_kwargs)
+
+
+    def cancel_batch_operation(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
+        """Cancel Batch operation
+
+ Cancels a running batch operation.
+This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+(/batch-operations/{batchOperationKey}).
+
+Args:
+    batch_operation_key (str): System-generated key for an batch operation. Example:
+        2251799813684321.
+    body (Any):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | CancelBatchOperationResponse400 | CancelBatchOperationResponse403 | CancelBatchOperationResponse404 | CancelBatchOperationResponse500]"""
+        from .api.batch_operation.cancel_batch_operation import sync as cancel_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return cancel_batch_operation_sync(**_kwargs)
+
+
+    async def cancel_batch_operation_async(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
+        """Cancel Batch operation
+
+ Cancels a running batch operation.
+This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+(/batch-operations/{batchOperationKey}).
+
+Args:
+    batch_operation_key (str): System-generated key for an batch operation. Example:
+        2251799813684321.
+    body (Any):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | CancelBatchOperationResponse400 | CancelBatchOperationResponse403 | CancelBatchOperationResponse404 | CancelBatchOperationResponse500]"""
+        from .api.batch_operation.cancel_batch_operation import asyncio as cancel_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await cancel_batch_operation_asyncio(**_kwargs)
+
+
+    def suspend_batch_operation(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
+        """Suspend Batch operation
+
+ Suspends a running batch operation.
+This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+(/batch-operations/{batchOperationKey}).
+
+Args:
+    batch_operation_key (str): System-generated key for an batch operation. Example:
+        2251799813684321.
+    body (Any):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | SuspendBatchOperationResponse400 | SuspendBatchOperationResponse403 | SuspendBatchOperationResponse404 | SuspendBatchOperationResponse500 | SuspendBatchOperationResponse503]"""
+        from .api.batch_operation.suspend_batch_operation import sync as suspend_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return suspend_batch_operation_sync(**_kwargs)
+
+
+    async def suspend_batch_operation_async(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
+        """Suspend Batch operation
+
+ Suspends a running batch operation.
+This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+(/batch-operations/{batchOperationKey}).
+
+Args:
+    batch_operation_key (str): System-generated key for an batch operation. Example:
+        2251799813684321.
+    body (Any):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | SuspendBatchOperationResponse400 | SuspendBatchOperationResponse403 | SuspendBatchOperationResponse404 | SuspendBatchOperationResponse500 | SuspendBatchOperationResponse503]"""
+        from .api.batch_operation.suspend_batch_operation import asyncio as suspend_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await suspend_batch_operation_asyncio(**_kwargs)
+
+
+    def search_batch_operations(self, *, data: SearchBatchOperationsData, **kwargs: Any) -> SearchBatchOperationsResponse200:
+        """Search batch operations
+
+ Search for batch operations based on given criteria.
+
+Args:
+    body (SearchBatchOperationsData): Batch operation search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchBatchOperationsResponse200 | SearchBatchOperationsResponse400 | SearchBatchOperationsResponse500]"""
+        from .api.batch_operation.search_batch_operations import sync as search_batch_operations_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_batch_operations_sync(**_kwargs)
+
+
+    async def search_batch_operations_async(self, *, data: SearchBatchOperationsData, **kwargs: Any) -> SearchBatchOperationsResponse200:
+        """Search batch operations
+
+ Search for batch operations based on given criteria.
+
+Args:
+    body (SearchBatchOperationsData): Batch operation search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchBatchOperationsResponse200 | SearchBatchOperationsResponse400 | SearchBatchOperationsResponse500]"""
+        from .api.batch_operation.search_batch_operations import asyncio as search_batch_operations_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_batch_operations_asyncio(**_kwargs)
+
+
+    def resume_batch_operation(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
+        """Resume Batch operation
+
+ Resumes a suspended batch operation.
+This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+(/batch-operations/{batchOperationKey}).
+
+Args:
+    batch_operation_key (str): System-generated key for an batch operation. Example:
+        2251799813684321.
+    body (Any):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | ResumeBatchOperationResponse400 | ResumeBatchOperationResponse403 | ResumeBatchOperationResponse404 | ResumeBatchOperationResponse500 | ResumeBatchOperationResponse503]"""
+        from .api.batch_operation.resume_batch_operation import sync as resume_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return resume_batch_operation_sync(**_kwargs)
+
+
+    async def resume_batch_operation_async(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
+        """Resume Batch operation
+
+ Resumes a suspended batch operation.
+This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+(/batch-operations/{batchOperationKey}).
+
+Args:
+    batch_operation_key (str): System-generated key for an batch operation. Example:
+        2251799813684321.
+    body (Any):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | ResumeBatchOperationResponse400 | ResumeBatchOperationResponse403 | ResumeBatchOperationResponse404 | ResumeBatchOperationResponse500 | ResumeBatchOperationResponse503]"""
+        from .api.batch_operation.resume_batch_operation import asyncio as resume_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await resume_batch_operation_asyncio(**_kwargs)
+
+
+    def get_batch_operation(self, batch_operation_key: str, **kwargs: Any) -> GetBatchOperationResponse200:
+        """Get batch operation
+
+ Get batch operation by key.
+
+Args:
+    batch_operation_key (str): System-generated key for an batch operation. Example:
+        2251799813684321.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetBatchOperationResponse200 | GetBatchOperationResponse400 | GetBatchOperationResponse404 | GetBatchOperationResponse500]"""
+        from .api.batch_operation.get_batch_operation import sync as get_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_batch_operation_sync(**_kwargs)
+
+
+    async def get_batch_operation_async(self, batch_operation_key: str, **kwargs: Any) -> GetBatchOperationResponse200:
+        """Get batch operation
+
+ Get batch operation by key.
+
+Args:
+    batch_operation_key (str): System-generated key for an batch operation. Example:
+        2251799813684321.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetBatchOperationResponse200 | GetBatchOperationResponse400 | GetBatchOperationResponse404 | GetBatchOperationResponse500]"""
+        from .api.batch_operation.get_batch_operation import asyncio as get_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_batch_operation_asyncio(**_kwargs)
+
+
+    def search_batch_operation_items(self, *, data: SearchBatchOperationItemsData, **kwargs: Any) -> SearchBatchOperationItemsResponse200:
+        """Search batch operation items
+
+ Search for batch operation items based on given criteria.
+
+Args:
+    body (SearchBatchOperationItemsData): Batch operation item search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchBatchOperationItemsResponse200 | SearchBatchOperationItemsResponse400 | SearchBatchOperationItemsResponse500]"""
+        from .api.batch_operation.search_batch_operation_items import sync as search_batch_operation_items_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_batch_operation_items_sync(**_kwargs)
+
+
+    async def search_batch_operation_items_async(self, *, data: SearchBatchOperationItemsData, **kwargs: Any) -> SearchBatchOperationItemsResponse200:
+        """Search batch operation items
+
+ Search for batch operation items based on given criteria.
+
+Args:
+    body (SearchBatchOperationItemsData): Batch operation item search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchBatchOperationItemsResponse200 | SearchBatchOperationItemsResponse400 | SearchBatchOperationItemsResponse500]"""
+        from .api.batch_operation.search_batch_operation_items import asyncio as search_batch_operation_items_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_batch_operation_items_asyncio(**_kwargs)
+
+
+    def get_start_process_form(self, process_definition_key: str, **kwargs: Any) -> Any:
+        """Get process start form
+
+ Get the start form of a process.
+Note that this endpoint will only return linked forms. This endpoint does not support embedded
+forms.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | GetStartProcessFormResponse200 | GetStartProcessFormResponse400 | GetStartProcessFormResponse401 | GetStartProcessFormResponse403 | GetStartProcessFormResponse404 | GetStartProcessFormResponse500]"""
+        from .api.process_definition.get_start_process_form import sync as get_start_process_form_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_start_process_form_sync(**_kwargs)
+
+
+    async def get_start_process_form_async(self, process_definition_key: str, **kwargs: Any) -> Any:
+        """Get process start form
+
+ Get the start form of a process.
+Note that this endpoint will only return linked forms. This endpoint does not support embedded
+forms.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | GetStartProcessFormResponse200 | GetStartProcessFormResponse400 | GetStartProcessFormResponse401 | GetStartProcessFormResponse403 | GetStartProcessFormResponse404 | GetStartProcessFormResponse500]"""
+        from .api.process_definition.get_start_process_form import asyncio as get_start_process_form_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_start_process_form_asyncio(**_kwargs)
+
+
+    def search_process_definitions(self, *, data: SearchProcessDefinitionsData, **kwargs: Any) -> SearchProcessDefinitionsResponse200:
+        """Search process definitions
+
+ Search for process definitions based on given criteria.
+
+Args:
+    body (SearchProcessDefinitionsData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchProcessDefinitionsResponse200 | SearchProcessDefinitionsResponse400 | SearchProcessDefinitionsResponse401 | SearchProcessDefinitionsResponse403 | SearchProcessDefinitionsResponse500]"""
+        from .api.process_definition.search_process_definitions import sync as search_process_definitions_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_process_definitions_sync(**_kwargs)
+
+
+    async def search_process_definitions_async(self, *, data: SearchProcessDefinitionsData, **kwargs: Any) -> SearchProcessDefinitionsResponse200:
+        """Search process definitions
+
+ Search for process definitions based on given criteria.
+
+Args:
+    body (SearchProcessDefinitionsData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchProcessDefinitionsResponse200 | SearchProcessDefinitionsResponse400 | SearchProcessDefinitionsResponse401 | SearchProcessDefinitionsResponse403 | SearchProcessDefinitionsResponse500]"""
+        from .api.process_definition.search_process_definitions import asyncio as search_process_definitions_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_process_definitions_asyncio(**_kwargs)
+
+
+    def get_process_definition_statistics(self, process_definition_key: str, *, data: GetProcessDefinitionStatisticsData, **kwargs: Any) -> GetProcessDefinitionStatisticsResponse200:
+        """Get process definition statistics
+
+ Get statistics about elements in currently running process instances by process definition key and
+search filter.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+    body (GetProcessDefinitionStatisticsData): Process definition element statistics request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessDefinitionStatisticsResponse200 | GetProcessDefinitionStatisticsResponse400 | GetProcessDefinitionStatisticsResponse401 | GetProcessDefinitionStatisticsResponse403 | GetProcessDefinitionStatisticsResponse500]"""
+        from .api.process_definition.get_process_definition_statistics import sync as get_process_definition_statistics_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_definition_statistics_sync(**_kwargs)
+
+
+    async def get_process_definition_statistics_async(self, process_definition_key: str, *, data: GetProcessDefinitionStatisticsData, **kwargs: Any) -> GetProcessDefinitionStatisticsResponse200:
+        """Get process definition statistics
+
+ Get statistics about elements in currently running process instances by process definition key and
+search filter.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+    body (GetProcessDefinitionStatisticsData): Process definition element statistics request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessDefinitionStatisticsResponse200 | GetProcessDefinitionStatisticsResponse400 | GetProcessDefinitionStatisticsResponse401 | GetProcessDefinitionStatisticsResponse403 | GetProcessDefinitionStatisticsResponse500]"""
+        from .api.process_definition.get_process_definition_statistics import asyncio as get_process_definition_statistics_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_definition_statistics_asyncio(**_kwargs)
+
+
+    def get_process_definition_message_subscription_statistics(self, *, data: GetProcessDefinitionMessageSubscriptionStatisticsData, **kwargs: Any) -> GetProcessDefinitionMessageSubscriptionStatisticsResponse200:
+        """Get message subscription statistics
+
+ Get message subscription statistics, grouped by process definition.
+
+Args:
+    body (GetProcessDefinitionMessageSubscriptionStatisticsData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessDefinitionMessageSubscriptionStatisticsResponse200 | GetProcessDefinitionMessageSubscriptionStatisticsResponse400 | GetProcessDefinitionMessageSubscriptionStatisticsResponse401 | GetProcessDefinitionMessageSubscriptionStatisticsResponse403 | GetProcessDefinitionMessageSubscriptionStatisticsResponse500]"""
+        from .api.process_definition.get_process_definition_message_subscription_statistics import sync as get_process_definition_message_subscription_statistics_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_definition_message_subscription_statistics_sync(**_kwargs)
+
+
+    async def get_process_definition_message_subscription_statistics_async(self, *, data: GetProcessDefinitionMessageSubscriptionStatisticsData, **kwargs: Any) -> GetProcessDefinitionMessageSubscriptionStatisticsResponse200:
+        """Get message subscription statistics
+
+ Get message subscription statistics, grouped by process definition.
+
+Args:
+    body (GetProcessDefinitionMessageSubscriptionStatisticsData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessDefinitionMessageSubscriptionStatisticsResponse200 | GetProcessDefinitionMessageSubscriptionStatisticsResponse400 | GetProcessDefinitionMessageSubscriptionStatisticsResponse401 | GetProcessDefinitionMessageSubscriptionStatisticsResponse403 | GetProcessDefinitionMessageSubscriptionStatisticsResponse500]"""
+        from .api.process_definition.get_process_definition_message_subscription_statistics import asyncio as get_process_definition_message_subscription_statistics_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_definition_message_subscription_statistics_asyncio(**_kwargs)
+
+
+    def get_process_definition_instance_statistics(self, *, data: GetProcessDefinitionInstanceStatisticsData, **kwargs: Any) -> GetProcessDefinitionInstanceStatisticsResponse200:
+        """Get process instance statistics
+
+ Get statistics about process instances, grouped by process definition and tenant.
+
+Args:
+    body (GetProcessDefinitionInstanceStatisticsData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessDefinitionInstanceStatisticsResponse200 | GetProcessDefinitionInstanceStatisticsResponse400 | GetProcessDefinitionInstanceStatisticsResponse401 | GetProcessDefinitionInstanceStatisticsResponse403 | GetProcessDefinitionInstanceStatisticsResponse500]"""
+        from .api.process_definition.get_process_definition_instance_statistics import sync as get_process_definition_instance_statistics_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_definition_instance_statistics_sync(**_kwargs)
+
+
+    async def get_process_definition_instance_statistics_async(self, *, data: GetProcessDefinitionInstanceStatisticsData, **kwargs: Any) -> GetProcessDefinitionInstanceStatisticsResponse200:
+        """Get process instance statistics
+
+ Get statistics about process instances, grouped by process definition and tenant.
+
+Args:
+    body (GetProcessDefinitionInstanceStatisticsData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessDefinitionInstanceStatisticsResponse200 | GetProcessDefinitionInstanceStatisticsResponse400 | GetProcessDefinitionInstanceStatisticsResponse401 | GetProcessDefinitionInstanceStatisticsResponse403 | GetProcessDefinitionInstanceStatisticsResponse500]"""
+        from .api.process_definition.get_process_definition_instance_statistics import asyncio as get_process_definition_instance_statistics_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_definition_instance_statistics_asyncio(**_kwargs)
+
+
+    def get_process_definition(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionResponse200:
+        """Get process definition
+
+ Returns process definition as JSON.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessDefinitionResponse200 | GetProcessDefinitionResponse400 | GetProcessDefinitionResponse401 | GetProcessDefinitionResponse403 | GetProcessDefinitionResponse404 | GetProcessDefinitionResponse500]"""
+        from .api.process_definition.get_process_definition import sync as get_process_definition_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_definition_sync(**_kwargs)
+
+
+    async def get_process_definition_async(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionResponse200:
+        """Get process definition
+
+ Returns process definition as JSON.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessDefinitionResponse200 | GetProcessDefinitionResponse400 | GetProcessDefinitionResponse401 | GetProcessDefinitionResponse403 | GetProcessDefinitionResponse404 | GetProcessDefinitionResponse500]"""
+        from .api.process_definition.get_process_definition import asyncio as get_process_definition_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_definition_asyncio(**_kwargs)
+
+
+    def get_process_definition_instance_version_statistics(self, process_definition_id: str, *, data: GetProcessDefinitionInstanceVersionStatisticsData, **kwargs: Any) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
+        """Get process instance statistics by version
+
+ Get statistics about process instances, grouped by version for a given process definition.
+
+Args:
+    process_definition_id (str): Id of a process definition, from the model. Only ids of
+        process definitions that are deployed are useful. Example: new-account-onboarding-
+        workflow.
+    body (GetProcessDefinitionInstanceVersionStatisticsData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessDefinitionInstanceVersionStatisticsResponse200 | GetProcessDefinitionInstanceVersionStatisticsResponse400 | GetProcessDefinitionInstanceVersionStatisticsResponse401 | GetProcessDefinitionInstanceVersionStatisticsResponse403 | GetProcessDefinitionInstanceVersionStatisticsResponse500]"""
+        from .api.process_definition.get_process_definition_instance_version_statistics import sync as get_process_definition_instance_version_statistics_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_definition_instance_version_statistics_sync(**_kwargs)
+
+
+    async def get_process_definition_instance_version_statistics_async(self, process_definition_id: str, *, data: GetProcessDefinitionInstanceVersionStatisticsData, **kwargs: Any) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
+        """Get process instance statistics by version
+
+ Get statistics about process instances, grouped by version for a given process definition.
+
+Args:
+    process_definition_id (str): Id of a process definition, from the model. Only ids of
+        process definitions that are deployed are useful. Example: new-account-onboarding-
+        workflow.
+    body (GetProcessDefinitionInstanceVersionStatisticsData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessDefinitionInstanceVersionStatisticsResponse200 | GetProcessDefinitionInstanceVersionStatisticsResponse400 | GetProcessDefinitionInstanceVersionStatisticsResponse401 | GetProcessDefinitionInstanceVersionStatisticsResponse403 | GetProcessDefinitionInstanceVersionStatisticsResponse500]"""
+        from .api.process_definition.get_process_definition_instance_version_statistics import asyncio as get_process_definition_instance_version_statistics_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_definition_instance_version_statistics_asyncio(**_kwargs)
+
+
+    def get_process_definition_xml(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionXMLResponse400:
+        """Get process definition XML
+
+ Returns process definition as XML.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessDefinitionXMLResponse400 | GetProcessDefinitionXMLResponse401 | GetProcessDefinitionXMLResponse403 | GetProcessDefinitionXMLResponse404 | GetProcessDefinitionXMLResponse500 | str]"""
+        from .api.process_definition.get_process_definition_xml import sync as get_process_definition_xml_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_definition_xml_sync(**_kwargs)
+
+
+    async def get_process_definition_xml_async(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionXMLResponse400:
+        """Get process definition XML
+
+ Returns process definition as XML.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessDefinitionXMLResponse400 | GetProcessDefinitionXMLResponse401 | GetProcessDefinitionXMLResponse403 | GetProcessDefinitionXMLResponse404 | GetProcessDefinitionXMLResponse500 | str]"""
+        from .api.process_definition.get_process_definition_xml import asyncio as get_process_definition_xml_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_definition_xml_asyncio(**_kwargs)
+
+
+    def search_roles_for_group(self, group_id: str, *, data: SearchRolesForGroupData, **kwargs: Any) -> SearchRolesForGroupResponse200:
+        """Search group roles
+
+ Search roles assigned to a group.
+
+Args:
+    group_id (str):
+    body (SearchRolesForGroupData): Role search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchRolesForGroupResponse200 | SearchRolesForGroupResponse400 | SearchRolesForGroupResponse401 | SearchRolesForGroupResponse403 | SearchRolesForGroupResponse404 | SearchRolesForGroupResponse500]"""
+        from .api.group.search_roles_for_group import sync as search_roles_for_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_roles_for_group_sync(**_kwargs)
+
+
+    async def search_roles_for_group_async(self, group_id: str, *, data: SearchRolesForGroupData, **kwargs: Any) -> SearchRolesForGroupResponse200:
+        """Search group roles
+
+ Search roles assigned to a group.
+
+Args:
+    group_id (str):
+    body (SearchRolesForGroupData): Role search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchRolesForGroupResponse200 | SearchRolesForGroupResponse400 | SearchRolesForGroupResponse401 | SearchRolesForGroupResponse403 | SearchRolesForGroupResponse404 | SearchRolesForGroupResponse500]"""
+        from .api.group.search_roles_for_group import asyncio as search_roles_for_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_roles_for_group_asyncio(**_kwargs)
+
+
+    def unassign_user_from_group(self, group_id: str, username: str, **kwargs: Any) -> Any:
+        """Unassign a user from a group
+
+ Unassigns a user from a group.
+The user is removed as a group member, with associated authorizations, roles, and tenant assignments
+no longer applied.
+
+Args:
+    group_id (str):
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignUserFromGroupResponse400 | UnassignUserFromGroupResponse403 | UnassignUserFromGroupResponse404 | UnassignUserFromGroupResponse500 | UnassignUserFromGroupResponse503]"""
+        from .api.group.unassign_user_from_group import sync as unassign_user_from_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_user_from_group_sync(**_kwargs)
+
+
+    async def unassign_user_from_group_async(self, group_id: str, username: str, **kwargs: Any) -> Any:
+        """Unassign a user from a group
+
+ Unassigns a user from a group.
+The user is removed as a group member, with associated authorizations, roles, and tenant assignments
+no longer applied.
+
+Args:
+    group_id (str):
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignUserFromGroupResponse400 | UnassignUserFromGroupResponse403 | UnassignUserFromGroupResponse404 | UnassignUserFromGroupResponse500 | UnassignUserFromGroupResponse503]"""
+        from .api.group.unassign_user_from_group import asyncio as unassign_user_from_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_user_from_group_asyncio(**_kwargs)
+
+
+    def search_users_for_group(self, group_id: str, *, data: SearchUsersForGroupData, **kwargs: Any) -> SearchUsersForGroupResponse200:
+        """Search group users
+
+ Search users assigned to a group.
+
+Args:
+    group_id (str):
+    body (SearchUsersForGroupData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchUsersForGroupResponse200 | SearchUsersForGroupResponse400 | SearchUsersForGroupResponse401 | SearchUsersForGroupResponse403 | SearchUsersForGroupResponse404 | SearchUsersForGroupResponse500]"""
+        from .api.group.search_users_for_group import sync as search_users_for_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_users_for_group_sync(**_kwargs)
+
+
+    async def search_users_for_group_async(self, group_id: str, *, data: SearchUsersForGroupData, **kwargs: Any) -> SearchUsersForGroupResponse200:
+        """Search group users
+
+ Search users assigned to a group.
+
+Args:
+    group_id (str):
+    body (SearchUsersForGroupData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchUsersForGroupResponse200 | SearchUsersForGroupResponse400 | SearchUsersForGroupResponse401 | SearchUsersForGroupResponse403 | SearchUsersForGroupResponse404 | SearchUsersForGroupResponse500]"""
+        from .api.group.search_users_for_group import asyncio as search_users_for_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_users_for_group_asyncio(**_kwargs)
+
+
+    def unassign_client_from_group(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Unassign a client from a group
+
+ Unassigns a client from a group.
+The client is removed as a group member, with associated authorizations, roles, and tenant
+assignments no longer applied.
+
+Args:
+    group_id (str):
+    client_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignClientFromGroupResponse400 | UnassignClientFromGroupResponse403 | UnassignClientFromGroupResponse404 | UnassignClientFromGroupResponse500 | UnassignClientFromGroupResponse503]"""
+        from .api.group.unassign_client_from_group import sync as unassign_client_from_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_client_from_group_sync(**_kwargs)
+
+
+    async def unassign_client_from_group_async(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Unassign a client from a group
+
+ Unassigns a client from a group.
+The client is removed as a group member, with associated authorizations, roles, and tenant
+assignments no longer applied.
+
+Args:
+    group_id (str):
+    client_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignClientFromGroupResponse400 | UnassignClientFromGroupResponse403 | UnassignClientFromGroupResponse404 | UnassignClientFromGroupResponse500 | UnassignClientFromGroupResponse503]"""
+        from .api.group.unassign_client_from_group import asyncio as unassign_client_from_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_client_from_group_asyncio(**_kwargs)
+
+
+    def assign_user_to_group(self, group_id: str, username: str, **kwargs: Any) -> Any:
+        """Assign a user to a group
+
+ Assigns a user to a group, making the user a member of the group.
+Group members inherit the group authorizations, roles, and tenant assignments.
+
+Args:
+    group_id (str):
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignUserToGroupResponse400 | AssignUserToGroupResponse403 | AssignUserToGroupResponse404 | AssignUserToGroupResponse409 | AssignUserToGroupResponse500 | AssignUserToGroupResponse503]"""
+        from .api.group.assign_user_to_group import sync as assign_user_to_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_user_to_group_sync(**_kwargs)
+
+
+    async def assign_user_to_group_async(self, group_id: str, username: str, **kwargs: Any) -> Any:
+        """Assign a user to a group
+
+ Assigns a user to a group, making the user a member of the group.
+Group members inherit the group authorizations, roles, and tenant assignments.
+
+Args:
+    group_id (str):
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignUserToGroupResponse400 | AssignUserToGroupResponse403 | AssignUserToGroupResponse404 | AssignUserToGroupResponse409 | AssignUserToGroupResponse500 | AssignUserToGroupResponse503]"""
+        from .api.group.assign_user_to_group import asyncio as assign_user_to_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_user_to_group_asyncio(**_kwargs)
+
+
+    def search_clients_for_group(self, group_id: str, *, data: SearchClientsForGroupData, **kwargs: Any) -> SearchClientsForGroupResponse200:
+        """Search group clients
+
+ Search clients assigned to a group.
+
+Args:
+    group_id (str):
+    body (SearchClientsForGroupData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchClientsForGroupResponse200 | SearchClientsForGroupResponse400 | SearchClientsForGroupResponse401 | SearchClientsForGroupResponse403 | SearchClientsForGroupResponse404 | SearchClientsForGroupResponse500]"""
+        from .api.group.search_clients_for_group import sync as search_clients_for_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_clients_for_group_sync(**_kwargs)
+
+
+    async def search_clients_for_group_async(self, group_id: str, *, data: SearchClientsForGroupData, **kwargs: Any) -> SearchClientsForGroupResponse200:
+        """Search group clients
+
+ Search clients assigned to a group.
+
+Args:
+    group_id (str):
+    body (SearchClientsForGroupData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchClientsForGroupResponse200 | SearchClientsForGroupResponse400 | SearchClientsForGroupResponse401 | SearchClientsForGroupResponse403 | SearchClientsForGroupResponse404 | SearchClientsForGroupResponse500]"""
+        from .api.group.search_clients_for_group import asyncio as search_clients_for_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_clients_for_group_asyncio(**_kwargs)
+
+
+    def assign_mapping_rule_to_group(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Assign a mapping rule to a group
+
+ Assigns a mapping rule to a group.
+
+Args:
+    group_id (str):
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignMappingRuleToGroupResponse400 | AssignMappingRuleToGroupResponse403 | AssignMappingRuleToGroupResponse404 | AssignMappingRuleToGroupResponse409 | AssignMappingRuleToGroupResponse500 | AssignMappingRuleToGroupResponse503]"""
+        from .api.group.assign_mapping_rule_to_group import sync as assign_mapping_rule_to_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_mapping_rule_to_group_sync(**_kwargs)
+
+
+    async def assign_mapping_rule_to_group_async(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Assign a mapping rule to a group
+
+ Assigns a mapping rule to a group.
+
+Args:
+    group_id (str):
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignMappingRuleToGroupResponse400 | AssignMappingRuleToGroupResponse403 | AssignMappingRuleToGroupResponse404 | AssignMappingRuleToGroupResponse409 | AssignMappingRuleToGroupResponse500 | AssignMappingRuleToGroupResponse503]"""
+        from .api.group.assign_mapping_rule_to_group import asyncio as assign_mapping_rule_to_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_mapping_rule_to_group_asyncio(**_kwargs)
+
+
+    def search_mapping_rules_for_group(self, group_id: str, *, data: SearchMappingRulesForGroupData, **kwargs: Any) -> SearchMappingRulesForGroupResponse200:
+        """Search group mapping rules
+
+ Search mapping rules assigned to a group.
+
+Args:
+    group_id (str):
+    body (SearchMappingRulesForGroupData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchMappingRulesForGroupResponse200 | SearchMappingRulesForGroupResponse400 | SearchMappingRulesForGroupResponse401 | SearchMappingRulesForGroupResponse403 | SearchMappingRulesForGroupResponse404 | SearchMappingRulesForGroupResponse500]"""
+        from .api.group.search_mapping_rules_for_group import sync as search_mapping_rules_for_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_mapping_rules_for_group_sync(**_kwargs)
+
+
+    async def search_mapping_rules_for_group_async(self, group_id: str, *, data: SearchMappingRulesForGroupData, **kwargs: Any) -> SearchMappingRulesForGroupResponse200:
+        """Search group mapping rules
+
+ Search mapping rules assigned to a group.
+
+Args:
+    group_id (str):
+    body (SearchMappingRulesForGroupData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchMappingRulesForGroupResponse200 | SearchMappingRulesForGroupResponse400 | SearchMappingRulesForGroupResponse401 | SearchMappingRulesForGroupResponse403 | SearchMappingRulesForGroupResponse404 | SearchMappingRulesForGroupResponse500]"""
+        from .api.group.search_mapping_rules_for_group import asyncio as search_mapping_rules_for_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_mapping_rules_for_group_asyncio(**_kwargs)
+
+
+    def search_groups(self, *, data: SearchGroupsData, **kwargs: Any) -> Any:
+        """Search groups
+
+ Search for groups based on given criteria.
+
+Args:
+    body (SearchGroupsData): Group search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | SearchGroupsResponse200 | SearchGroupsResponse400 | SearchGroupsResponse401 | SearchGroupsResponse403]"""
+        from .api.group.search_groups import sync as search_groups_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_groups_sync(**_kwargs)
+
+
+    async def search_groups_async(self, *, data: SearchGroupsData, **kwargs: Any) -> Any:
+        """Search groups
+
+ Search for groups based on given criteria.
+
+Args:
+    body (SearchGroupsData): Group search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | SearchGroupsResponse200 | SearchGroupsResponse400 | SearchGroupsResponse401 | SearchGroupsResponse403]"""
+        from .api.group.search_groups import asyncio as search_groups_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_groups_asyncio(**_kwargs)
+
+
+    def get_group(self, group_id: str, **kwargs: Any) -> GetGroupResponse200:
+        """Get group
+
+ Get a group by its ID.
+
+Args:
+    group_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetGroupResponse200 | GetGroupResponse401 | GetGroupResponse403 | GetGroupResponse404 | GetGroupResponse500]"""
+        from .api.group.get_group import sync as get_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_group_sync(**_kwargs)
+
+
+    async def get_group_async(self, group_id: str, **kwargs: Any) -> GetGroupResponse200:
+        """Get group
+
+ Get a group by its ID.
+
+Args:
+    group_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetGroupResponse200 | GetGroupResponse401 | GetGroupResponse403 | GetGroupResponse404 | GetGroupResponse500]"""
+        from .api.group.get_group import asyncio as get_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_group_asyncio(**_kwargs)
+
+
+    def delete_group(self, group_id: str, **kwargs: Any) -> Any:
+        """Delete group
+
+ Deletes the group with the given ID.
+
+Args:
+    group_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | DeleteGroupResponse401 | DeleteGroupResponse404 | DeleteGroupResponse500 | DeleteGroupResponse503]"""
+        from .api.group.delete_group import sync as delete_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_group_sync(**_kwargs)
+
+
+    async def delete_group_async(self, group_id: str, **kwargs: Any) -> Any:
+        """Delete group
+
+ Deletes the group with the given ID.
+
+Args:
+    group_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | DeleteGroupResponse401 | DeleteGroupResponse404 | DeleteGroupResponse500 | DeleteGroupResponse503]"""
+        from .api.group.delete_group import asyncio as delete_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_group_asyncio(**_kwargs)
+
+
+    def assign_client_to_group(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Assign a client to a group
+
+ Assigns a client to a group, making it a member of the group.
+Members of the group inherit the group authorizations, roles, and tenant assignments.
+
+Args:
+    group_id (str):
+    client_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignClientToGroupResponse400 | AssignClientToGroupResponse403 | AssignClientToGroupResponse404 | AssignClientToGroupResponse409 | AssignClientToGroupResponse500 | AssignClientToGroupResponse503]"""
+        from .api.group.assign_client_to_group import sync as assign_client_to_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_client_to_group_sync(**_kwargs)
+
+
+    async def assign_client_to_group_async(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Assign a client to a group
+
+ Assigns a client to a group, making it a member of the group.
+Members of the group inherit the group authorizations, roles, and tenant assignments.
+
+Args:
+    group_id (str):
+    client_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignClientToGroupResponse400 | AssignClientToGroupResponse403 | AssignClientToGroupResponse404 | AssignClientToGroupResponse409 | AssignClientToGroupResponse500 | AssignClientToGroupResponse503]"""
+        from .api.group.assign_client_to_group import asyncio as assign_client_to_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_client_to_group_asyncio(**_kwargs)
+
+
+    def update_group(self, group_id: str, *, data: UpdateGroupData, **kwargs: Any) -> UpdateGroupResponse200:
+        """Update group
+
+ Update a group with the given ID.
+
+Args:
+    group_id (str):
+    body (UpdateGroupData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[UpdateGroupResponse200 | UpdateGroupResponse400 | UpdateGroupResponse401 | UpdateGroupResponse404 | UpdateGroupResponse500 | UpdateGroupResponse503]"""
+        from .api.group.update_group import sync as update_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return update_group_sync(**_kwargs)
+
+
+    async def update_group_async(self, group_id: str, *, data: UpdateGroupData, **kwargs: Any) -> UpdateGroupResponse200:
+        """Update group
+
+ Update a group with the given ID.
+
+Args:
+    group_id (str):
+    body (UpdateGroupData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[UpdateGroupResponse200 | UpdateGroupResponse400 | UpdateGroupResponse401 | UpdateGroupResponse404 | UpdateGroupResponse500 | UpdateGroupResponse503]"""
+        from .api.group.update_group import asyncio as update_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await update_group_asyncio(**_kwargs)
+
+
+    def unassign_mapping_rule_from_group(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Unassign a mapping rule from a group
+
+ Unassigns a mapping rule from a group.
+
+Args:
+    group_id (str):
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignMappingRuleFromGroupResponse400 | UnassignMappingRuleFromGroupResponse403 | UnassignMappingRuleFromGroupResponse404 | UnassignMappingRuleFromGroupResponse500 | UnassignMappingRuleFromGroupResponse503]"""
+        from .api.group.unassign_mapping_rule_from_group import sync as unassign_mapping_rule_from_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_mapping_rule_from_group_sync(**_kwargs)
+
+
+    async def unassign_mapping_rule_from_group_async(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Unassign a mapping rule from a group
+
+ Unassigns a mapping rule from a group.
+
+Args:
+    group_id (str):
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignMappingRuleFromGroupResponse400 | UnassignMappingRuleFromGroupResponse403 | UnassignMappingRuleFromGroupResponse404 | UnassignMappingRuleFromGroupResponse500 | UnassignMappingRuleFromGroupResponse503]"""
+        from .api.group.unassign_mapping_rule_from_group import asyncio as unassign_mapping_rule_from_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_mapping_rule_from_group_asyncio(**_kwargs)
+
+
+    def create_group(self, *, data: CreateGroupData, **kwargs: Any) -> CreateGroupResponse201:
+        """Create group
+
+ Create a new group.
+
+Args:
+    body (CreateGroupData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CreateGroupResponse201 | CreateGroupResponse400 | CreateGroupResponse401 | CreateGroupResponse403 | CreateGroupResponse500 | CreateGroupResponse503]"""
+        from .api.group.create_group import sync as create_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_group_sync(**_kwargs)
+
+
+    async def create_group_async(self, *, data: CreateGroupData, **kwargs: Any) -> CreateGroupResponse201:
+        """Create group
+
+ Create a new group.
+
+Args:
+    body (CreateGroupData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CreateGroupResponse201 | CreateGroupResponse400 | CreateGroupResponse401 | CreateGroupResponse403 | CreateGroupResponse500 | CreateGroupResponse503]"""
+        from .api.group.create_group import asyncio as create_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_group_asyncio(**_kwargs)
+
+
+    def get_variable(self, variable_key: str, **kwargs: Any) -> GetVariableResponse200:
+        """Get variable
+
+ Get the variable by the variable key.
+
+Args:
+    variable_key (str): System-generated key for a variable. Example: 2251799813683287.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetVariableResponse200 | GetVariableResponse400 | GetVariableResponse401 | GetVariableResponse403 | GetVariableResponse404 | GetVariableResponse500]"""
+        from .api.variable.get_variable import sync as get_variable_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_variable_sync(**_kwargs)
+
+
+    async def get_variable_async(self, variable_key: str, **kwargs: Any) -> GetVariableResponse200:
+        """Get variable
+
+ Get the variable by the variable key.
+
+Args:
+    variable_key (str): System-generated key for a variable. Example: 2251799813683287.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetVariableResponse200 | GetVariableResponse400 | GetVariableResponse401 | GetVariableResponse403 | GetVariableResponse404 | GetVariableResponse500]"""
+        from .api.variable.get_variable import asyncio as get_variable_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_variable_asyncio(**_kwargs)
+
+
+    def search_variables(self, *, data: SearchVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchVariablesResponse200:
+        """Search variables
+
+ Search for process and local variables based on given criteria. By default, long variable values in
+the response are truncated.
+
+Args:
+    truncate_values (bool | Unset):
+    body (SearchVariablesData): Variable search query request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchVariablesResponse200 | SearchVariablesResponse400 | SearchVariablesResponse401 | SearchVariablesResponse403 | SearchVariablesResponse500]"""
+        from .api.variable.search_variables import sync as search_variables_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_variables_sync(**_kwargs)
+
+
+    async def search_variables_async(self, *, data: SearchVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchVariablesResponse200:
+        """Search variables
+
+ Search for process and local variables based on given criteria. By default, long variable values in
+the response are truncated.
+
+Args:
+    truncate_values (bool | Unset):
+    body (SearchVariablesData): Variable search query request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchVariablesResponse200 | SearchVariablesResponse400 | SearchVariablesResponse401 | SearchVariablesResponse403 | SearchVariablesResponse500]"""
+        from .api.variable.search_variables import asyncio as search_variables_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_variables_asyncio(**_kwargs)
+
+
+    def create_admin_user(self, *, data: CreateAdminUserData, **kwargs: Any) -> Any:
+        """Create admin user
+
+ Creates a new user and assigns the admin role to it. This endpoint is only usable when users are
+managed in the Orchestration Cluster and while no user is assigned to the admin role.
+
+Args:
+    body (CreateAdminUserData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | CreateAdminUserResponse400 | CreateAdminUserResponse403 | CreateAdminUserResponse500 | CreateAdminUserResponse503]"""
+        from .api.setup.create_admin_user import sync as create_admin_user_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_admin_user_sync(**_kwargs)
+
+
+    async def create_admin_user_async(self, *, data: CreateAdminUserData, **kwargs: Any) -> Any:
+        """Create admin user
+
+ Creates a new user and assigns the admin role to it. This endpoint is only usable when users are
+managed in the Orchestration Cluster and while no user is assigned to the admin role.
+
+Args:
+    body (CreateAdminUserData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | CreateAdminUserResponse400 | CreateAdminUserResponse403 | CreateAdminUserResponse500 | CreateAdminUserResponse503]"""
+        from .api.setup.create_admin_user import asyncio as create_admin_user_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_admin_user_asyncio(**_kwargs)
+
+
+    def get_decision_instance(self, decision_evaluation_instance_key: str, **kwargs: Any) -> GetDecisionInstanceResponse200:
+        """Get decision instance
+
+ Returns a decision instance.
+
+Args:
+    decision_evaluation_instance_key (str): System-generated key for a deployed decision
+        instance. Example: 22517998136843567.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetDecisionInstanceResponse200 | GetDecisionInstanceResponse400 | GetDecisionInstanceResponse401 | GetDecisionInstanceResponse403 | GetDecisionInstanceResponse404 | GetDecisionInstanceResponse500]"""
+        from .api.decision_instance.get_decision_instance import sync as get_decision_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_decision_instance_sync(**_kwargs)
+
+
+    async def get_decision_instance_async(self, decision_evaluation_instance_key: str, **kwargs: Any) -> GetDecisionInstanceResponse200:
+        """Get decision instance
+
+ Returns a decision instance.
+
+Args:
+    decision_evaluation_instance_key (str): System-generated key for a deployed decision
+        instance. Example: 22517998136843567.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetDecisionInstanceResponse200 | GetDecisionInstanceResponse400 | GetDecisionInstanceResponse401 | GetDecisionInstanceResponse403 | GetDecisionInstanceResponse404 | GetDecisionInstanceResponse500]"""
+        from .api.decision_instance.get_decision_instance import asyncio as get_decision_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_decision_instance_asyncio(**_kwargs)
+
+
+    def search_decision_instances(self, *, data: SearchDecisionInstancesData, **kwargs: Any) -> SearchDecisionInstancesResponse200:
+        """Search decision instances
+
+ Search for decision instances based on given criteria.
+
+Args:
+    body (SearchDecisionInstancesData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchDecisionInstancesResponse200 | SearchDecisionInstancesResponse400 | SearchDecisionInstancesResponse401 | SearchDecisionInstancesResponse403 | SearchDecisionInstancesResponse500]"""
+        from .api.decision_instance.search_decision_instances import sync as search_decision_instances_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_decision_instances_sync(**_kwargs)
+
+
+    async def search_decision_instances_async(self, *, data: SearchDecisionInstancesData, **kwargs: Any) -> SearchDecisionInstancesResponse200:
+        """Search decision instances
+
+ Search for decision instances based on given criteria.
+
+Args:
+    body (SearchDecisionInstancesData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchDecisionInstancesResponse200 | SearchDecisionInstancesResponse400 | SearchDecisionInstancesResponse401 | SearchDecisionInstancesResponse403 | SearchDecisionInstancesResponse500]"""
+        from .api.decision_instance.search_decision_instances import asyncio as search_decision_instances_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_decision_instances_asyncio(**_kwargs)
+
+
+    def activate_jobs(self, *, data: ActivateJobsData, **kwargs: Any) -> ActivateJobsResponse200:
+        """Activate jobs
+
+ Iterate through all known partitions and activate jobs up to the requested maximum.
+
+Args:
+    body (ActivateJobsData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[ActivateJobsResponse200 | ActivateJobsResponse400 | ActivateJobsResponse401 | ActivateJobsResponse500 | ActivateJobsResponse503]"""
+        from .api.job.activate_jobs import sync as activate_jobs_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return activate_jobs_sync(**_kwargs)
+
+
+    async def activate_jobs_async(self, *, data: ActivateJobsData, **kwargs: Any) -> ActivateJobsResponse200:
+        """Activate jobs
+
+ Iterate through all known partitions and activate jobs up to the requested maximum.
+
+Args:
+    body (ActivateJobsData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[ActivateJobsResponse200 | ActivateJobsResponse400 | ActivateJobsResponse401 | ActivateJobsResponse500 | ActivateJobsResponse503]"""
+        from .api.job.activate_jobs import asyncio as activate_jobs_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await activate_jobs_asyncio(**_kwargs)
+
+
+    def complete_job(self, job_key: str, *, data: CompleteJobData, **kwargs: Any) -> Any:
+        """Complete job
+
+ Complete a job with the given payload, which allows completing the associated service task.
+
+Args:
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (CompleteJobData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | CompleteJobResponse400 | CompleteJobResponse404 | CompleteJobResponse409 | CompleteJobResponse500 | CompleteJobResponse503]"""
+        from .api.job.complete_job import sync as complete_job_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return complete_job_sync(**_kwargs)
+
+
+    async def complete_job_async(self, job_key: str, *, data: CompleteJobData, **kwargs: Any) -> Any:
+        """Complete job
+
+ Complete a job with the given payload, which allows completing the associated service task.
+
+Args:
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (CompleteJobData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | CompleteJobResponse400 | CompleteJobResponse404 | CompleteJobResponse409 | CompleteJobResponse500 | CompleteJobResponse503]"""
+        from .api.job.complete_job import asyncio as complete_job_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await complete_job_asyncio(**_kwargs)
+
+
+    def fail_job(self, job_key: str, *, data: FailJobData, **kwargs: Any) -> Any:
+        """Fail job
+
+ Mark the job as failed.
+
+Args:
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (FailJobData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | FailJobResponse400 | FailJobResponse404 | FailJobResponse409 | FailJobResponse500 | FailJobResponse503]"""
+        from .api.job.fail_job import sync as fail_job_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return fail_job_sync(**_kwargs)
+
+
+    async def fail_job_async(self, job_key: str, *, data: FailJobData, **kwargs: Any) -> Any:
+        """Fail job
+
+ Mark the job as failed.
+
+Args:
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (FailJobData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | FailJobResponse400 | FailJobResponse404 | FailJobResponse409 | FailJobResponse500 | FailJobResponse503]"""
+        from .api.job.fail_job import asyncio as fail_job_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await fail_job_asyncio(**_kwargs)
+
+
+    def throw_job_error(self, job_key: str, *, data: ThrowJobErrorData, **kwargs: Any) -> Any:
+        """Throw error for job
+
+ Reports a business error (i.e. non-technical) that occurs while processing a job.
+
+Args:
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (ThrowJobErrorData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | ThrowJobErrorResponse400 | ThrowJobErrorResponse404 | ThrowJobErrorResponse409 | ThrowJobErrorResponse500 | ThrowJobErrorResponse503]"""
+        from .api.job.throw_job_error import sync as throw_job_error_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return throw_job_error_sync(**_kwargs)
+
+
+    async def throw_job_error_async(self, job_key: str, *, data: ThrowJobErrorData, **kwargs: Any) -> Any:
+        """Throw error for job
+
+ Reports a business error (i.e. non-technical) that occurs while processing a job.
+
+Args:
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (ThrowJobErrorData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | ThrowJobErrorResponse400 | ThrowJobErrorResponse404 | ThrowJobErrorResponse409 | ThrowJobErrorResponse500 | ThrowJobErrorResponse503]"""
+        from .api.job.throw_job_error import asyncio as throw_job_error_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await throw_job_error_asyncio(**_kwargs)
+
+
+    def update_job(self, job_key: str, *, data: UpdateJobData, **kwargs: Any) -> Any:
+        """Update job
+
+ Update a job with the given key.
+
+Args:
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (UpdateJobData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UpdateJobResponse400 | UpdateJobResponse404 | UpdateJobResponse409 | UpdateJobResponse500 | UpdateJobResponse503]"""
+        from .api.job.update_job import sync as update_job_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return update_job_sync(**_kwargs)
+
+
+    async def update_job_async(self, job_key: str, *, data: UpdateJobData, **kwargs: Any) -> Any:
+        """Update job
+
+ Update a job with the given key.
+
+Args:
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (UpdateJobData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UpdateJobResponse400 | UpdateJobResponse404 | UpdateJobResponse409 | UpdateJobResponse500 | UpdateJobResponse503]"""
+        from .api.job.update_job import asyncio as update_job_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await update_job_asyncio(**_kwargs)
+
+
+    def search_jobs(self, *, data: SearchJobsData, **kwargs: Any) -> SearchJobsResponse200:
+        """Search jobs
+
+ Search for jobs based on given criteria.
+
+Args:
+    body (SearchJobsData): Job search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchJobsResponse200 | SearchJobsResponse400 | SearchJobsResponse401 | SearchJobsResponse403 | SearchJobsResponse500]"""
+        from .api.job.search_jobs import sync as search_jobs_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_jobs_sync(**_kwargs)
+
+
+    async def search_jobs_async(self, *, data: SearchJobsData, **kwargs: Any) -> SearchJobsResponse200:
+        """Search jobs
+
+ Search for jobs based on given criteria.
+
+Args:
+    body (SearchJobsData): Job search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchJobsResponse200 | SearchJobsResponse400 | SearchJobsResponse401 | SearchJobsResponse403 | SearchJobsResponse500]"""
+        from .api.job.search_jobs import asyncio as search_jobs_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_jobs_asyncio(**_kwargs)
+
+
+    def get_topology(self, **kwargs: Any) -> GetTopologyResponse200:
+        """Get cluster topology
+
+ Obtains the current topology of the cluster the gateway is part of.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]"""
+        from .api.cluster.get_topology import sync as get_topology_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_topology_sync(**_kwargs)
+
+
+    async def get_topology_async(self, **kwargs: Any) -> GetTopologyResponse200:
+        """Get cluster topology
+
+ Obtains the current topology of the cluster the gateway is part of.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]"""
+        from .api.cluster.get_topology import asyncio as get_topology_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_topology_asyncio(**_kwargs)
+
+
+    def correlate_message(self, *, data: CorrelateMessageData, **kwargs: Any) -> CorrelateMessageResponse200:
+        """Correlate message
+
+ Publishes a message and correlates it to a subscription.
+If correlation is successful it will return the first process instance key the message correlated
+with.
+The message is not buffered.
+Use the publish message endpoint to send messages that can be buffered.
+
+Args:
+    body (CorrelateMessageData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CorrelateMessageResponse200 | CorrelateMessageResponse400 | CorrelateMessageResponse403 | CorrelateMessageResponse404 | CorrelateMessageResponse500 | CorrelateMessageResponse503]"""
+        from .api.message.correlate_message import sync as correlate_message_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return correlate_message_sync(**_kwargs)
+
+
+    async def correlate_message_async(self, *, data: CorrelateMessageData, **kwargs: Any) -> CorrelateMessageResponse200:
+        """Correlate message
+
+ Publishes a message and correlates it to a subscription.
+If correlation is successful it will return the first process instance key the message correlated
+with.
+The message is not buffered.
+Use the publish message endpoint to send messages that can be buffered.
+
+Args:
+    body (CorrelateMessageData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CorrelateMessageResponse200 | CorrelateMessageResponse400 | CorrelateMessageResponse403 | CorrelateMessageResponse404 | CorrelateMessageResponse500 | CorrelateMessageResponse503]"""
+        from .api.message.correlate_message import asyncio as correlate_message_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await correlate_message_asyncio(**_kwargs)
+
+
+    def publish_message(self, *, data: PublishMessageData, **kwargs: Any) -> PublishMessageResponse200:
+        """Publish message
+
+ Publishes a single message.
+Messages are published to specific partitions computed from their correlation keys.
+Messages can be buffered.
+The endpoint does not wait for a correlation result.
+Use the message correlation endpoint for such use cases.
+
+Args:
+    body (PublishMessageData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[PublishMessageResponse200 | PublishMessageResponse400 | PublishMessageResponse500 | PublishMessageResponse503]"""
+        from .api.message.publish_message import sync as publish_message_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return publish_message_sync(**_kwargs)
+
+
+    async def publish_message_async(self, *, data: PublishMessageData, **kwargs: Any) -> PublishMessageResponse200:
+        """Publish message
+
+ Publishes a single message.
+Messages are published to specific partitions computed from their correlation keys.
+Messages can be buffered.
+The endpoint does not wait for a correlation result.
+Use the message correlation endpoint for such use cases.
+
+Args:
+    body (PublishMessageData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[PublishMessageResponse200 | PublishMessageResponse400 | PublishMessageResponse500 | PublishMessageResponse503]"""
+        from .api.message.publish_message import asyncio as publish_message_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await publish_message_asyncio(**_kwargs)
+
+
+    def delete_process_instances_batch_operation(self, *, data: DeleteProcessInstancesBatchOperationData, **kwargs: Any) -> DeleteProcessInstancesBatchOperationResponse200:
+        """Delete process instances (batch)
+
+ Delete multiple process instances. This will delete the historic data from secondary storage.
+Only process instances in a final state (COMPLETED or TERMINATED) can be deleted.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (DeleteProcessInstancesBatchOperationData): The process instance filter that defines
+        which process instances should be deleted.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[DeleteProcessInstancesBatchOperationResponse200 | DeleteProcessInstancesBatchOperationResponse400 | DeleteProcessInstancesBatchOperationResponse401 | DeleteProcessInstancesBatchOperationResponse403 | DeleteProcessInstancesBatchOperationResponse500]"""
+        from .api.process_instance.delete_process_instances_batch_operation import sync as delete_process_instances_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_process_instances_batch_operation_sync(**_kwargs)
+
+
+    async def delete_process_instances_batch_operation_async(self, *, data: DeleteProcessInstancesBatchOperationData, **kwargs: Any) -> DeleteProcessInstancesBatchOperationResponse200:
+        """Delete process instances (batch)
+
+ Delete multiple process instances. This will delete the historic data from secondary storage.
+Only process instances in a final state (COMPLETED or TERMINATED) can be deleted.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (DeleteProcessInstancesBatchOperationData): The process instance filter that defines
+        which process instances should be deleted.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[DeleteProcessInstancesBatchOperationResponse200 | DeleteProcessInstancesBatchOperationResponse400 | DeleteProcessInstancesBatchOperationResponse401 | DeleteProcessInstancesBatchOperationResponse403 | DeleteProcessInstancesBatchOperationResponse500]"""
+        from .api.process_instance.delete_process_instances_batch_operation import asyncio as delete_process_instances_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_process_instances_batch_operation_asyncio(**_kwargs)
+
+
+    def migrate_process_instances_batch_operation(self, *, data: MigrateProcessInstancesBatchOperationData, **kwargs: Any) -> MigrateProcessInstancesBatchOperationResponse200:
+        """Migrate process instances (batch)
+
+ Migrate multiple process instances.
+Since only process instances with ACTIVE state can be migrated, any given
+filters for state are ignored and overridden during this batch operation.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (MigrateProcessInstancesBatchOperationData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[MigrateProcessInstancesBatchOperationResponse200 | MigrateProcessInstancesBatchOperationResponse400 | MigrateProcessInstancesBatchOperationResponse401 | MigrateProcessInstancesBatchOperationResponse403 | MigrateProcessInstancesBatchOperationResponse500]"""
+        from .api.process_instance.migrate_process_instances_batch_operation import sync as migrate_process_instances_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return migrate_process_instances_batch_operation_sync(**_kwargs)
+
+
+    async def migrate_process_instances_batch_operation_async(self, *, data: MigrateProcessInstancesBatchOperationData, **kwargs: Any) -> MigrateProcessInstancesBatchOperationResponse200:
+        """Migrate process instances (batch)
+
+ Migrate multiple process instances.
+Since only process instances with ACTIVE state can be migrated, any given
+filters for state are ignored and overridden during this batch operation.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (MigrateProcessInstancesBatchOperationData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[MigrateProcessInstancesBatchOperationResponse200 | MigrateProcessInstancesBatchOperationResponse400 | MigrateProcessInstancesBatchOperationResponse401 | MigrateProcessInstancesBatchOperationResponse403 | MigrateProcessInstancesBatchOperationResponse500]"""
+        from .api.process_instance.migrate_process_instances_batch_operation import asyncio as migrate_process_instances_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await migrate_process_instances_batch_operation_asyncio(**_kwargs)
+
+
+    def modify_process_instances_batch_operation(self, *, data: ModifyProcessInstancesBatchOperationData, **kwargs: Any) -> ModifyProcessInstancesBatchOperationResponse200:
+        """Modify process instances (batch)
+
+ Modify multiple process instances.
+Since only process instances with ACTIVE state can be modified, any given
+filters for state are ignored and overridden during this batch operation.
+In contrast to single modification operation, it is not possible to add variable instructions or
+modify by element key.
+It is only possible to use the element id of the source and target.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (ModifyProcessInstancesBatchOperationData): The process instance filter to define on
+        which process instances tokens should be moved,
+        and new element instances should be activated or terminated.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[ModifyProcessInstancesBatchOperationResponse200 | ModifyProcessInstancesBatchOperationResponse400 | ModifyProcessInstancesBatchOperationResponse401 | ModifyProcessInstancesBatchOperationResponse403 | ModifyProcessInstancesBatchOperationResponse500]"""
+        from .api.process_instance.modify_process_instances_batch_operation import sync as modify_process_instances_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return modify_process_instances_batch_operation_sync(**_kwargs)
+
+
+    async def modify_process_instances_batch_operation_async(self, *, data: ModifyProcessInstancesBatchOperationData, **kwargs: Any) -> ModifyProcessInstancesBatchOperationResponse200:
+        """Modify process instances (batch)
+
+ Modify multiple process instances.
+Since only process instances with ACTIVE state can be modified, any given
+filters for state are ignored and overridden during this batch operation.
+In contrast to single modification operation, it is not possible to add variable instructions or
+modify by element key.
+It is only possible to use the element id of the source and target.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (ModifyProcessInstancesBatchOperationData): The process instance filter to define on
+        which process instances tokens should be moved,
+        and new element instances should be activated or terminated.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[ModifyProcessInstancesBatchOperationResponse200 | ModifyProcessInstancesBatchOperationResponse400 | ModifyProcessInstancesBatchOperationResponse401 | ModifyProcessInstancesBatchOperationResponse403 | ModifyProcessInstancesBatchOperationResponse500]"""
+        from .api.process_instance.modify_process_instances_batch_operation import asyncio as modify_process_instances_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await modify_process_instances_batch_operation_asyncio(**_kwargs)
+
+
+    def migrate_process_instance(self, process_instance_key: str, *, data: MigrateProcessInstanceData, **kwargs: Any) -> Any:
+        """Migrate process instance
+
+ Migrates a process instance to a new process definition.
+This request can contain multiple mapping instructions to define mapping between the active
+process instance's elements and target process definition elements.
+
+Use this to upgrade a process instance to a new version of a process or to
+a different process definition, e.g. to keep your running instances up-to-date with the
+latest process improvements.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (MigrateProcessInstanceData): The migration instructions describe how to migrate a
+        process instance from one process definition to another.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | MigrateProcessInstanceResponse400 | MigrateProcessInstanceResponse404 | MigrateProcessInstanceResponse409 | MigrateProcessInstanceResponse500 | MigrateProcessInstanceResponse503]"""
+        from .api.process_instance.migrate_process_instance import sync as migrate_process_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return migrate_process_instance_sync(**_kwargs)
+
+
+    async def migrate_process_instance_async(self, process_instance_key: str, *, data: MigrateProcessInstanceData, **kwargs: Any) -> Any:
+        """Migrate process instance
+
+ Migrates a process instance to a new process definition.
+This request can contain multiple mapping instructions to define mapping between the active
+process instance's elements and target process definition elements.
+
+Use this to upgrade a process instance to a new version of a process or to
+a different process definition, e.g. to keep your running instances up-to-date with the
+latest process improvements.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (MigrateProcessInstanceData): The migration instructions describe how to migrate a
+        process instance from one process definition to another.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | MigrateProcessInstanceResponse400 | MigrateProcessInstanceResponse404 | MigrateProcessInstanceResponse409 | MigrateProcessInstanceResponse500 | MigrateProcessInstanceResponse503]"""
+        from .api.process_instance.migrate_process_instance import asyncio as migrate_process_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await migrate_process_instance_asyncio(**_kwargs)
+
+
+    def resolve_process_instance_incidents(self, process_instance_key: str, **kwargs: Any) -> ResolveProcessInstanceIncidentsResponse200:
+        """Resolve related incidents
+
+ Creates a batch operation to resolve multiple incidents of a process instance.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[ResolveProcessInstanceIncidentsResponse200 | ResolveProcessInstanceIncidentsResponse400 | ResolveProcessInstanceIncidentsResponse401 | ResolveProcessInstanceIncidentsResponse404 | ResolveProcessInstanceIncidentsResponse500 | ResolveProcessInstanceIncidentsResponse503]"""
+        from .api.process_instance.resolve_process_instance_incidents import sync as resolve_process_instance_incidents_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return resolve_process_instance_incidents_sync(**_kwargs)
+
+
+    async def resolve_process_instance_incidents_async(self, process_instance_key: str, **kwargs: Any) -> ResolveProcessInstanceIncidentsResponse200:
+        """Resolve related incidents
+
+ Creates a batch operation to resolve multiple incidents of a process instance.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[ResolveProcessInstanceIncidentsResponse200 | ResolveProcessInstanceIncidentsResponse400 | ResolveProcessInstanceIncidentsResponse401 | ResolveProcessInstanceIncidentsResponse404 | ResolveProcessInstanceIncidentsResponse500 | ResolveProcessInstanceIncidentsResponse503]"""
+        from .api.process_instance.resolve_process_instance_incidents import asyncio as resolve_process_instance_incidents_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await resolve_process_instance_incidents_asyncio(**_kwargs)
+
+
+    def resolve_incidents_batch_operation(self, *, data: ResolveIncidentsBatchOperationData, **kwargs: Any) -> ResolveIncidentsBatchOperationResponse200:
+        """Resolve related incidents (batch)
+
+ Resolves multiple instances of process instances.
+Since only process instances with ACTIVE state can have unresolved incidents, any given
+filters for state are ignored and overridden during this batch operation.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (ResolveIncidentsBatchOperationData): The process instance filter that defines which
+        process instances should have their incidents resolved.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[ResolveIncidentsBatchOperationResponse200 | ResolveIncidentsBatchOperationResponse400 | ResolveIncidentsBatchOperationResponse401 | ResolveIncidentsBatchOperationResponse403 | ResolveIncidentsBatchOperationResponse500]"""
+        from .api.process_instance.resolve_incidents_batch_operation import sync as resolve_incidents_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return resolve_incidents_batch_operation_sync(**_kwargs)
+
+
+    async def resolve_incidents_batch_operation_async(self, *, data: ResolveIncidentsBatchOperationData, **kwargs: Any) -> ResolveIncidentsBatchOperationResponse200:
+        """Resolve related incidents (batch)
+
+ Resolves multiple instances of process instances.
+Since only process instances with ACTIVE state can have unresolved incidents, any given
+filters for state are ignored and overridden during this batch operation.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (ResolveIncidentsBatchOperationData): The process instance filter that defines which
+        process instances should have their incidents resolved.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[ResolveIncidentsBatchOperationResponse200 | ResolveIncidentsBatchOperationResponse400 | ResolveIncidentsBatchOperationResponse401 | ResolveIncidentsBatchOperationResponse403 | ResolveIncidentsBatchOperationResponse500]"""
+        from .api.process_instance.resolve_incidents_batch_operation import asyncio as resolve_incidents_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await resolve_incidents_batch_operation_asyncio(**_kwargs)
+
+
+    def create_process_instance(self, *, data: Processcreationbyid | Processcreationbykey, **kwargs: Any) -> CreateProcessInstanceResponse200:
+        """Create process instance
+
+ Creates and starts an instance of the specified process.
+The process definition to use to create the instance can be specified either using its unique key
+(as returned by Deploy resources), or using the BPMN process id and a version.
+
+Waits for the completion of the process instance before returning a result
+when awaitCompletion is enabled.
+
+Args:
+    body (Processcreationbyid | Processcreationbykey): Instructions for creating a process
+        instance. The process definition can be specified
+        either by id or by key.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CreateProcessInstanceResponse200 | CreateProcessInstanceResponse400 | CreateProcessInstanceResponse500 | CreateProcessInstanceResponse503 | CreateProcessInstanceResponse504]"""
+        from .api.process_instance.create_process_instance import sync as create_process_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_process_instance_sync(**_kwargs)
+
+
+    async def create_process_instance_async(self, *, data: Processcreationbyid | Processcreationbykey, **kwargs: Any) -> CreateProcessInstanceResponse200:
+        """Create process instance
+
+ Creates and starts an instance of the specified process.
+The process definition to use to create the instance can be specified either using its unique key
+(as returned by Deploy resources), or using the BPMN process id and a version.
+
+Waits for the completion of the process instance before returning a result
+when awaitCompletion is enabled.
+
+Args:
+    body (Processcreationbyid | Processcreationbykey): Instructions for creating a process
+        instance. The process definition can be specified
+        either by id or by key.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CreateProcessInstanceResponse200 | CreateProcessInstanceResponse400 | CreateProcessInstanceResponse500 | CreateProcessInstanceResponse503 | CreateProcessInstanceResponse504]"""
+        from .api.process_instance.create_process_instance import asyncio as create_process_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_process_instance_asyncio(**_kwargs)
+
+
+    def cancel_process_instance(self, process_instance_key: str, *, data: CancelProcessInstanceDataType0 | None, **kwargs: Any) -> Any:
+        """Cancel process instance
+
+ Cancels a running process instance. As a cancellation includes more than just the removal of the
+process instance resource, the cancellation resource must be posted.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (CancelProcessInstanceDataType0 | None):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]"""
+        from .api.process_instance.cancel_process_instance import sync as cancel_process_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return cancel_process_instance_sync(**_kwargs)
+
+
+    async def cancel_process_instance_async(self, process_instance_key: str, *, data: CancelProcessInstanceDataType0 | None, **kwargs: Any) -> Any:
+        """Cancel process instance
+
+ Cancels a running process instance. As a cancellation includes more than just the removal of the
+process instance resource, the cancellation resource must be posted.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (CancelProcessInstanceDataType0 | None):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]"""
+        from .api.process_instance.cancel_process_instance import asyncio as cancel_process_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await cancel_process_instance_asyncio(**_kwargs)
+
+
+    def get_process_instance_sequence_flows(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceSequenceFlowsResponse200:
+        """Get sequence flows
+
+ Get sequence flows taken by the process instance.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessInstanceSequenceFlowsResponse200 | GetProcessInstanceSequenceFlowsResponse400 | GetProcessInstanceSequenceFlowsResponse401 | GetProcessInstanceSequenceFlowsResponse403 | GetProcessInstanceSequenceFlowsResponse500]"""
+        from .api.process_instance.get_process_instance_sequence_flows import sync as get_process_instance_sequence_flows_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_instance_sequence_flows_sync(**_kwargs)
+
+
+    async def get_process_instance_sequence_flows_async(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceSequenceFlowsResponse200:
+        """Get sequence flows
+
+ Get sequence flows taken by the process instance.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessInstanceSequenceFlowsResponse200 | GetProcessInstanceSequenceFlowsResponse400 | GetProcessInstanceSequenceFlowsResponse401 | GetProcessInstanceSequenceFlowsResponse403 | GetProcessInstanceSequenceFlowsResponse500]"""
+        from .api.process_instance.get_process_instance_sequence_flows import asyncio as get_process_instance_sequence_flows_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_instance_sequence_flows_asyncio(**_kwargs)
+
+
+    def delete_process_instance(self, process_instance_key: str, *, data: DeleteProcessInstanceDataType0 | None, **kwargs: Any) -> Any:
+        """Delete process instance
+
+ Deletes a process instance. Only instances that are completed or terminated can be deleted.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (DeleteProcessInstanceDataType0 | None):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | DeleteProcessInstanceResponse401 | DeleteProcessInstanceResponse403 | DeleteProcessInstanceResponse404 | DeleteProcessInstanceResponse409 | DeleteProcessInstanceResponse500 | DeleteProcessInstanceResponse503]"""
+        from .api.process_instance.delete_process_instance import sync as delete_process_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_process_instance_sync(**_kwargs)
+
+
+    async def delete_process_instance_async(self, process_instance_key: str, *, data: DeleteProcessInstanceDataType0 | None, **kwargs: Any) -> Any:
+        """Delete process instance
+
+ Deletes a process instance. Only instances that are completed or terminated can be deleted.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (DeleteProcessInstanceDataType0 | None):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | DeleteProcessInstanceResponse401 | DeleteProcessInstanceResponse403 | DeleteProcessInstanceResponse404 | DeleteProcessInstanceResponse409 | DeleteProcessInstanceResponse500 | DeleteProcessInstanceResponse503]"""
+        from .api.process_instance.delete_process_instance import asyncio as delete_process_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_process_instance_asyncio(**_kwargs)
+
+
+    def search_process_instance_incidents(self, process_instance_key: str, *, data: SearchProcessInstanceIncidentsData, **kwargs: Any) -> SearchProcessInstanceIncidentsResponse200:
+        """Search related incidents
+
+ Search for incidents caused by the process instance or any of its called process or decision
+instances.
+
+Although the `processInstanceKey` is provided as a path parameter to indicate the root process
+instance,
+you may also include a `processInstanceKey` within the filter object to narrow results to specific
+child process instances. This is useful, for example, if you want to isolate incidents associated
+with
+subprocesses or called processes under the root instance while excluding incidents directly tied to
+the root.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (SearchProcessInstanceIncidentsData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchProcessInstanceIncidentsResponse200 | SearchProcessInstanceIncidentsResponse400 | SearchProcessInstanceIncidentsResponse401 | SearchProcessInstanceIncidentsResponse403 | SearchProcessInstanceIncidentsResponse404 | SearchProcessInstanceIncidentsResponse500]"""
+        from .api.process_instance.search_process_instance_incidents import sync as search_process_instance_incidents_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_process_instance_incidents_sync(**_kwargs)
+
+
+    async def search_process_instance_incidents_async(self, process_instance_key: str, *, data: SearchProcessInstanceIncidentsData, **kwargs: Any) -> SearchProcessInstanceIncidentsResponse200:
+        """Search related incidents
+
+ Search for incidents caused by the process instance or any of its called process or decision
+instances.
+
+Although the `processInstanceKey` is provided as a path parameter to indicate the root process
+instance,
+you may also include a `processInstanceKey` within the filter object to narrow results to specific
+child process instances. This is useful, for example, if you want to isolate incidents associated
+with
+subprocesses or called processes under the root instance while excluding incidents directly tied to
+the root.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (SearchProcessInstanceIncidentsData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchProcessInstanceIncidentsResponse200 | SearchProcessInstanceIncidentsResponse400 | SearchProcessInstanceIncidentsResponse401 | SearchProcessInstanceIncidentsResponse403 | SearchProcessInstanceIncidentsResponse404 | SearchProcessInstanceIncidentsResponse500]"""
+        from .api.process_instance.search_process_instance_incidents import asyncio as search_process_instance_incidents_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_process_instance_incidents_asyncio(**_kwargs)
+
+
+    def get_process_instance_statistics(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceStatisticsResponse200:
+        """Get element instance statistics
+
+ Get statistics about elements by the process instance key.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessInstanceStatisticsResponse200 | GetProcessInstanceStatisticsResponse400 | GetProcessInstanceStatisticsResponse401 | GetProcessInstanceStatisticsResponse403 | GetProcessInstanceStatisticsResponse500]"""
+        from .api.process_instance.get_process_instance_statistics import sync as get_process_instance_statistics_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_instance_statistics_sync(**_kwargs)
+
+
+    async def get_process_instance_statistics_async(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceStatisticsResponse200:
+        """Get element instance statistics
+
+ Get statistics about elements by the process instance key.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessInstanceStatisticsResponse200 | GetProcessInstanceStatisticsResponse400 | GetProcessInstanceStatisticsResponse401 | GetProcessInstanceStatisticsResponse403 | GetProcessInstanceStatisticsResponse500]"""
+        from .api.process_instance.get_process_instance_statistics import asyncio as get_process_instance_statistics_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_instance_statistics_asyncio(**_kwargs)
+
+
+    def search_process_instances(self, *, data: SearchProcessInstancesData, **kwargs: Any) -> SearchProcessInstancesResponse200:
+        """Search process instances
+
+ Search for process instances based on given criteria.
+
+Args:
+    body (SearchProcessInstancesData): Process instance search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchProcessInstancesResponse200 | SearchProcessInstancesResponse400 | SearchProcessInstancesResponse401 | SearchProcessInstancesResponse403 | SearchProcessInstancesResponse500]"""
+        from .api.process_instance.search_process_instances import sync as search_process_instances_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_process_instances_sync(**_kwargs)
+
+
+    async def search_process_instances_async(self, *, data: SearchProcessInstancesData, **kwargs: Any) -> SearchProcessInstancesResponse200:
+        """Search process instances
+
+ Search for process instances based on given criteria.
+
+Args:
+    body (SearchProcessInstancesData): Process instance search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchProcessInstancesResponse200 | SearchProcessInstancesResponse400 | SearchProcessInstancesResponse401 | SearchProcessInstancesResponse403 | SearchProcessInstancesResponse500]"""
+        from .api.process_instance.search_process_instances import asyncio as search_process_instances_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_process_instances_asyncio(**_kwargs)
+
+
+    def cancel_process_instances_batch_operation(self, *, data: CancelProcessInstancesBatchOperationData, **kwargs: Any) -> CancelProcessInstancesBatchOperationResponse200:
+        """Cancel process instances (batch)
+
+ Cancels multiple running process instances.
+Since only ACTIVE root instances can be cancelled, any given filters for state and
+parentProcessInstanceKey are ignored and overridden during this batch operation.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (CancelProcessInstancesBatchOperationData): The process instance filter that defines
+        which process instances should be canceled.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CancelProcessInstancesBatchOperationResponse200 | CancelProcessInstancesBatchOperationResponse400 | CancelProcessInstancesBatchOperationResponse401 | CancelProcessInstancesBatchOperationResponse403 | CancelProcessInstancesBatchOperationResponse500]"""
+        from .api.process_instance.cancel_process_instances_batch_operation import sync as cancel_process_instances_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return cancel_process_instances_batch_operation_sync(**_kwargs)
+
+
+    async def cancel_process_instances_batch_operation_async(self, *, data: CancelProcessInstancesBatchOperationData, **kwargs: Any) -> CancelProcessInstancesBatchOperationResponse200:
+        """Cancel process instances (batch)
+
+ Cancels multiple running process instances.
+Since only ACTIVE root instances can be cancelled, any given filters for state and
+parentProcessInstanceKey are ignored and overridden during this batch operation.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (CancelProcessInstancesBatchOperationData): The process instance filter that defines
+        which process instances should be canceled.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CancelProcessInstancesBatchOperationResponse200 | CancelProcessInstancesBatchOperationResponse400 | CancelProcessInstancesBatchOperationResponse401 | CancelProcessInstancesBatchOperationResponse403 | CancelProcessInstancesBatchOperationResponse500]"""
+        from .api.process_instance.cancel_process_instances_batch_operation import asyncio as cancel_process_instances_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await cancel_process_instances_batch_operation_asyncio(**_kwargs)
+
+
+    def get_process_instance(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceResponse200:
+        """Get process instance
+
+ Get the process instance by the process instance key.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessInstanceResponse200 | GetProcessInstanceResponse400 | GetProcessInstanceResponse401 | GetProcessInstanceResponse403 | GetProcessInstanceResponse404 | GetProcessInstanceResponse500]"""
+        from .api.process_instance.get_process_instance import sync as get_process_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_instance_sync(**_kwargs)
+
+
+    async def get_process_instance_async(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceResponse200:
+        """Get process instance
+
+ Get the process instance by the process instance key.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessInstanceResponse200 | GetProcessInstanceResponse400 | GetProcessInstanceResponse401 | GetProcessInstanceResponse403 | GetProcessInstanceResponse404 | GetProcessInstanceResponse500]"""
+        from .api.process_instance.get_process_instance import asyncio as get_process_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_instance_asyncio(**_kwargs)
+
+
+    def get_process_instance_call_hierarchy(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceCallHierarchyResponse400:
+        """Get call hierarchy
+
+ Returns the call hierarchy for a given process instance, showing its ancestry up to the root
+instance.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessInstanceCallHierarchyResponse400 | GetProcessInstanceCallHierarchyResponse401 | GetProcessInstanceCallHierarchyResponse403 | GetProcessInstanceCallHierarchyResponse404 | GetProcessInstanceCallHierarchyResponse500 | list[GetProcessInstanceCallHierarchyResponse200Item]]"""
+        from .api.process_instance.get_process_instance_call_hierarchy import sync as get_process_instance_call_hierarchy_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_instance_call_hierarchy_sync(**_kwargs)
+
+
+    async def get_process_instance_call_hierarchy_async(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceCallHierarchyResponse400:
+        """Get call hierarchy
+
+ Returns the call hierarchy for a given process instance, showing its ancestry up to the root
+instance.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessInstanceCallHierarchyResponse400 | GetProcessInstanceCallHierarchyResponse401 | GetProcessInstanceCallHierarchyResponse403 | GetProcessInstanceCallHierarchyResponse404 | GetProcessInstanceCallHierarchyResponse500 | list[GetProcessInstanceCallHierarchyResponse200Item]]"""
+        from .api.process_instance.get_process_instance_call_hierarchy import asyncio as get_process_instance_call_hierarchy_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_instance_call_hierarchy_asyncio(**_kwargs)
+
+
+    def modify_process_instance(self, process_instance_key: str, *, data: ModifyProcessInstanceData, **kwargs: Any) -> Any:
+        """Modify process instance
+
+ Modifies a running process instance.
+This request can contain multiple instructions to activate an element of the process or
+to terminate an active instance of an element.
+
+Use this to repair a process instance that is stuck on an element or took an unintended path.
+For example, because an external system is not available or doesn't respond as expected.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (ModifyProcessInstanceData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | ModifyProcessInstanceResponse400 | ModifyProcessInstanceResponse404 | ModifyProcessInstanceResponse500 | ModifyProcessInstanceResponse503]"""
+        from .api.process_instance.modify_process_instance import sync as modify_process_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return modify_process_instance_sync(**_kwargs)
+
+
+    async def modify_process_instance_async(self, process_instance_key: str, *, data: ModifyProcessInstanceData, **kwargs: Any) -> Any:
+        """Modify process instance
+
+ Modifies a running process instance.
+This request can contain multiple instructions to activate an element of the process or
+to terminate an active instance of an element.
+
+Use this to repair a process instance that is stuck on an element or took an unintended path.
+For example, because an external system is not available or doesn't respond as expected.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (ModifyProcessInstanceData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | ModifyProcessInstanceResponse400 | ModifyProcessInstanceResponse404 | ModifyProcessInstanceResponse500 | ModifyProcessInstanceResponse503]"""
+        from .api.process_instance.modify_process_instance import asyncio as modify_process_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await modify_process_instance_asyncio(**_kwargs)
+
+
+    def get_authentication(self, **kwargs: Any) -> GetAuthenticationResponse200:
+        """Get current user
+
+ Retrieves the current authenticated user.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetAuthenticationResponse200 | GetAuthenticationResponse401 | GetAuthenticationResponse403 | GetAuthenticationResponse500]"""
+        from .api.authentication.get_authentication import sync as get_authentication_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_authentication_sync(**_kwargs)
+
+
+    async def get_authentication_async(self, **kwargs: Any) -> GetAuthenticationResponse200:
+        """Get current user
+
+ Retrieves the current authenticated user.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetAuthenticationResponse200 | GetAuthenticationResponse401 | GetAuthenticationResponse403 | GetAuthenticationResponse500]"""
+        from .api.authentication.get_authentication import asyncio as get_authentication_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_authentication_asyncio(**_kwargs)
 
 
     def assign_group_to_tenant(self, tenant_id: str, group_id: str, **kwargs: Any) -> Any:
@@ -1383,6 +4487,388 @@ Returns:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return await assign_group_to_tenant_asyncio(**_kwargs)
+
+
+    def search_group_ids_for_tenant(self, tenant_id: str, *, data: SearchGroupIdsForTenantData, **kwargs: Any) -> SearchGroupIdsForTenantResponse200:
+        """Search groups for tenant
+
+ Retrieves a filtered and sorted list of groups for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchGroupIdsForTenantData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchGroupIdsForTenantResponse200]"""
+        from .api.tenant.search_group_ids_for_tenant import sync as search_group_ids_for_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_group_ids_for_tenant_sync(**_kwargs)
+
+
+    async def search_group_ids_for_tenant_async(self, tenant_id: str, *, data: SearchGroupIdsForTenantData, **kwargs: Any) -> SearchGroupIdsForTenantResponse200:
+        """Search groups for tenant
+
+ Retrieves a filtered and sorted list of groups for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchGroupIdsForTenantData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchGroupIdsForTenantResponse200]"""
+        from .api.tenant.search_group_ids_for_tenant import asyncio as search_group_ids_for_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_group_ids_for_tenant_asyncio(**_kwargs)
+
+
+    def unassign_client_from_tenant(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Unassign a client from a tenant
+
+ Unassigns the client from the specified tenant.
+The client can no longer access tenant data.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    client_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignClientFromTenantResponse400 | UnassignClientFromTenantResponse403 | UnassignClientFromTenantResponse404 | UnassignClientFromTenantResponse500 | UnassignClientFromTenantResponse503]"""
+        from .api.tenant.unassign_client_from_tenant import sync as unassign_client_from_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_client_from_tenant_sync(**_kwargs)
+
+
+    async def unassign_client_from_tenant_async(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Unassign a client from a tenant
+
+ Unassigns the client from the specified tenant.
+The client can no longer access tenant data.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    client_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignClientFromTenantResponse400 | UnassignClientFromTenantResponse403 | UnassignClientFromTenantResponse404 | UnassignClientFromTenantResponse500 | UnassignClientFromTenantResponse503]"""
+        from .api.tenant.unassign_client_from_tenant import asyncio as unassign_client_from_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_client_from_tenant_asyncio(**_kwargs)
+
+
+    def get_tenant(self, tenant_id: str, **kwargs: Any) -> GetTenantResponse200:
+        """Get tenant
+
+ Retrieves a single tenant by tenant ID.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetTenantResponse200 | GetTenantResponse400 | GetTenantResponse401 | GetTenantResponse403 | GetTenantResponse404 | GetTenantResponse500]"""
+        from .api.tenant.get_tenant import sync as get_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_tenant_sync(**_kwargs)
+
+
+    async def get_tenant_async(self, tenant_id: str, **kwargs: Any) -> GetTenantResponse200:
+        """Get tenant
+
+ Retrieves a single tenant by tenant ID.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetTenantResponse200 | GetTenantResponse400 | GetTenantResponse401 | GetTenantResponse403 | GetTenantResponse404 | GetTenantResponse500]"""
+        from .api.tenant.get_tenant import asyncio as get_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_tenant_asyncio(**_kwargs)
+
+
+    def assign_mapping_rule_to_tenant(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Assign a mapping rule to a tenant
+
+ Assign a single mapping rule to a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignMappingRuleToTenantResponse400 | AssignMappingRuleToTenantResponse403 | AssignMappingRuleToTenantResponse404 | AssignMappingRuleToTenantResponse500 | AssignMappingRuleToTenantResponse503]"""
+        from .api.tenant.assign_mapping_rule_to_tenant import sync as assign_mapping_rule_to_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_mapping_rule_to_tenant_sync(**_kwargs)
+
+
+    async def assign_mapping_rule_to_tenant_async(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Assign a mapping rule to a tenant
+
+ Assign a single mapping rule to a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignMappingRuleToTenantResponse400 | AssignMappingRuleToTenantResponse403 | AssignMappingRuleToTenantResponse404 | AssignMappingRuleToTenantResponse500 | AssignMappingRuleToTenantResponse503]"""
+        from .api.tenant.assign_mapping_rule_to_tenant import asyncio as assign_mapping_rule_to_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_mapping_rule_to_tenant_asyncio(**_kwargs)
+
+
+    def search_tenants(self, *, data: SearchTenantsData, **kwargs: Any) -> Any:
+        """Search tenants
+
+ Retrieves a filtered and sorted list of tenants.
+
+Args:
+    body (SearchTenantsData): Tenant search request
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | SearchTenantsResponse200 | SearchTenantsResponse400 | SearchTenantsResponse401 | SearchTenantsResponse403 | SearchTenantsResponse500]"""
+        from .api.tenant.search_tenants import sync as search_tenants_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_tenants_sync(**_kwargs)
+
+
+    async def search_tenants_async(self, *, data: SearchTenantsData, **kwargs: Any) -> Any:
+        """Search tenants
+
+ Retrieves a filtered and sorted list of tenants.
+
+Args:
+    body (SearchTenantsData): Tenant search request
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | SearchTenantsResponse200 | SearchTenantsResponse400 | SearchTenantsResponse401 | SearchTenantsResponse403 | SearchTenantsResponse500]"""
+        from .api.tenant.search_tenants import asyncio as search_tenants_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_tenants_asyncio(**_kwargs)
+
+
+    def delete_tenant(self, tenant_id: str, **kwargs: Any) -> Any:
+        """Delete tenant
+
+ Deletes an existing tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | DeleteTenantResponse400 | DeleteTenantResponse403 | DeleteTenantResponse404 | DeleteTenantResponse500 | DeleteTenantResponse503]"""
+        from .api.tenant.delete_tenant import sync as delete_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_tenant_sync(**_kwargs)
+
+
+    async def delete_tenant_async(self, tenant_id: str, **kwargs: Any) -> Any:
+        """Delete tenant
+
+ Deletes an existing tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | DeleteTenantResponse400 | DeleteTenantResponse403 | DeleteTenantResponse404 | DeleteTenantResponse500 | DeleteTenantResponse503]"""
+        from .api.tenant.delete_tenant import asyncio as delete_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_tenant_asyncio(**_kwargs)
+
+
+    def assign_client_to_tenant(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Assign a client to a tenant
+
+ Assign the client to the specified tenant.
+The client can then access tenant data and perform authorized actions.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    client_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignClientToTenantResponse400 | AssignClientToTenantResponse403 | AssignClientToTenantResponse404 | AssignClientToTenantResponse500 | AssignClientToTenantResponse503]"""
+        from .api.tenant.assign_client_to_tenant import sync as assign_client_to_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_client_to_tenant_sync(**_kwargs)
+
+
+    async def assign_client_to_tenant_async(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Assign a client to a tenant
+
+ Assign the client to the specified tenant.
+The client can then access tenant data and perform authorized actions.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    client_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignClientToTenantResponse400 | AssignClientToTenantResponse403 | AssignClientToTenantResponse404 | AssignClientToTenantResponse500 | AssignClientToTenantResponse503]"""
+        from .api.tenant.assign_client_to_tenant import asyncio as assign_client_to_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_client_to_tenant_asyncio(**_kwargs)
+
+
+    def search_roles_for_tenant(self, tenant_id: str, *, data: SearchRolesForTenantData, **kwargs: Any) -> SearchRolesForTenantResponse200:
+        """Search roles for tenant
+
+ Retrieves a filtered and sorted list of roles for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchRolesForTenantData): Role search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchRolesForTenantResponse200]"""
+        from .api.tenant.search_roles_for_tenant import sync as search_roles_for_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_roles_for_tenant_sync(**_kwargs)
+
+
+    async def search_roles_for_tenant_async(self, tenant_id: str, *, data: SearchRolesForTenantData, **kwargs: Any) -> SearchRolesForTenantResponse200:
+        """Search roles for tenant
+
+ Retrieves a filtered and sorted list of roles for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchRolesForTenantData): Role search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchRolesForTenantResponse200]"""
+        from .api.tenant.search_roles_for_tenant import asyncio as search_roles_for_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_roles_for_tenant_asyncio(**_kwargs)
 
 
     def unassign_role_from_tenant(self, tenant_id: str, role_id: str, **kwargs: Any) -> Any:
@@ -1437,52 +4923,52 @@ Returns:
         return await unassign_role_from_tenant_asyncio(**_kwargs)
 
 
-    def search_group_ids_for_tenant(self, tenant_id: str, *, data: SearchGroupIdsForTenantData, **kwargs: Any) -> SearchGroupIdsForTenantResponse200:
-        """Search groups for tenant
+    def unassign_mapping_rule_from_tenant(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Unassign a mapping rule from a tenant
 
- Retrieves a filtered and sorted list of groups for a specified tenant.
+ Unassigns a single mapping rule from a specified tenant without deleting the rule.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchGroupIdsForTenantData):
+    mapping_rule_id (str):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[SearchGroupIdsForTenantResponse200]"""
-        from .api.tenant.search_group_ids_for_tenant import sync as search_group_ids_for_tenant_sync
+    Response[Any | UnassignMappingRuleFromTenantResponse400 | UnassignMappingRuleFromTenantResponse403 | UnassignMappingRuleFromTenantResponse404 | UnassignMappingRuleFromTenantResponse500 | UnassignMappingRuleFromTenantResponse503]"""
+        from .api.tenant.unassign_mapping_rule_from_tenant import sync as unassign_mapping_rule_from_tenant_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return search_group_ids_for_tenant_sync(**_kwargs)
+        return unassign_mapping_rule_from_tenant_sync(**_kwargs)
 
 
-    async def search_group_ids_for_tenant_async(self, tenant_id: str, *, data: SearchGroupIdsForTenantData, **kwargs: Any) -> SearchGroupIdsForTenantResponse200:
-        """Search groups for tenant
+    async def unassign_mapping_rule_from_tenant_async(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Unassign a mapping rule from a tenant
 
- Retrieves a filtered and sorted list of groups for a specified tenant.
+ Unassigns a single mapping rule from a specified tenant without deleting the rule.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchGroupIdsForTenantData):
+    mapping_rule_id (str):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[SearchGroupIdsForTenantResponse200]"""
-        from .api.tenant.search_group_ids_for_tenant import asyncio as search_group_ids_for_tenant_asyncio
+    Response[Any | UnassignMappingRuleFromTenantResponse400 | UnassignMappingRuleFromTenantResponse403 | UnassignMappingRuleFromTenantResponse404 | UnassignMappingRuleFromTenantResponse500 | UnassignMappingRuleFromTenantResponse503]"""
+        from .api.tenant.unassign_mapping_rule_from_tenant import asyncio as unassign_mapping_rule_from_tenant_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_group_ids_for_tenant_asyncio(**_kwargs)
+        return await unassign_mapping_rule_from_tenant_asyncio(**_kwargs)
 
 
     def search_users_for_tenant(self, tenant_id: str, *, data: SearchUsersForTenantData, **kwargs: Any) -> SearchUsersForTenantResponse200:
@@ -1531,300 +5017,6 @@ Returns:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return await search_users_for_tenant_asyncio(**_kwargs)
-
-
-    def unassign_client_from_tenant(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Unassign a client from a tenant
-
- Unassigns the client from the specified tenant.
-The client can no longer access tenant data.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignClientFromTenantResponse400 | UnassignClientFromTenantResponse403 | UnassignClientFromTenantResponse404 | UnassignClientFromTenantResponse500 | UnassignClientFromTenantResponse503]"""
-        from .api.tenant.unassign_client_from_tenant import sync as unassign_client_from_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_client_from_tenant_sync(**_kwargs)
-
-
-    async def unassign_client_from_tenant_async(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Unassign a client from a tenant
-
- Unassigns the client from the specified tenant.
-The client can no longer access tenant data.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignClientFromTenantResponse400 | UnassignClientFromTenantResponse403 | UnassignClientFromTenantResponse404 | UnassignClientFromTenantResponse500 | UnassignClientFromTenantResponse503]"""
-        from .api.tenant.unassign_client_from_tenant import asyncio as unassign_client_from_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_client_from_tenant_asyncio(**_kwargs)
-
-
-    def unassign_user_from_tenant(self, tenant_id: str, username: str, **kwargs: Any) -> Any:
-        """Unassign a user from a tenant
-
- Unassigns the user from the specified tenant.
-The user can no longer access tenant data.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignUserFromTenantResponse400 | UnassignUserFromTenantResponse403 | UnassignUserFromTenantResponse404 | UnassignUserFromTenantResponse500 | UnassignUserFromTenantResponse503]"""
-        from .api.tenant.unassign_user_from_tenant import sync as unassign_user_from_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_user_from_tenant_sync(**_kwargs)
-
-
-    async def unassign_user_from_tenant_async(self, tenant_id: str, username: str, **kwargs: Any) -> Any:
-        """Unassign a user from a tenant
-
- Unassigns the user from the specified tenant.
-The user can no longer access tenant data.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignUserFromTenantResponse400 | UnassignUserFromTenantResponse403 | UnassignUserFromTenantResponse404 | UnassignUserFromTenantResponse500 | UnassignUserFromTenantResponse503]"""
-        from .api.tenant.unassign_user_from_tenant import asyncio as unassign_user_from_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_user_from_tenant_asyncio(**_kwargs)
-
-
-    def search_roles_for_tenant(self, tenant_id: str, *, data: SearchRolesForTenantData, **kwargs: Any) -> SearchRolesForTenantResponse200:
-        """Search roles for tenant
-
- Retrieves a filtered and sorted list of roles for a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchRolesForTenantData): Role search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchRolesForTenantResponse200]"""
-        from .api.tenant.search_roles_for_tenant import sync as search_roles_for_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_roles_for_tenant_sync(**_kwargs)
-
-
-    async def search_roles_for_tenant_async(self, tenant_id: str, *, data: SearchRolesForTenantData, **kwargs: Any) -> SearchRolesForTenantResponse200:
-        """Search roles for tenant
-
- Retrieves a filtered and sorted list of roles for a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchRolesForTenantData): Role search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchRolesForTenantResponse200]"""
-        from .api.tenant.search_roles_for_tenant import asyncio as search_roles_for_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_roles_for_tenant_asyncio(**_kwargs)
-
-
-    def unassign_group_from_tenant(self, tenant_id: str, group_id: str, **kwargs: Any) -> Any:
-        """Unassign a group from a tenant
-
- Unassigns a group from a specified tenant.
-Members of the group (users, clients) will no longer have access to the tenant's data - except they
-are assigned directly to the tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignGroupFromTenantResponse400 | UnassignGroupFromTenantResponse403 | UnassignGroupFromTenantResponse404 | UnassignGroupFromTenantResponse500 | UnassignGroupFromTenantResponse503]"""
-        from .api.tenant.unassign_group_from_tenant import sync as unassign_group_from_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_group_from_tenant_sync(**_kwargs)
-
-
-    async def unassign_group_from_tenant_async(self, tenant_id: str, group_id: str, **kwargs: Any) -> Any:
-        """Unassign a group from a tenant
-
- Unassigns a group from a specified tenant.
-Members of the group (users, clients) will no longer have access to the tenant's data - except they
-are assigned directly to the tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignGroupFromTenantResponse400 | UnassignGroupFromTenantResponse403 | UnassignGroupFromTenantResponse404 | UnassignGroupFromTenantResponse500 | UnassignGroupFromTenantResponse503]"""
-        from .api.tenant.unassign_group_from_tenant import asyncio as unassign_group_from_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_group_from_tenant_asyncio(**_kwargs)
-
-
-    def search_clients_for_tenant(self, tenant_id: str, *, data: SearchClientsForTenantData, **kwargs: Any) -> SearchClientsForTenantResponse200:
-        """Search clients for tenant
-
- Retrieves a filtered and sorted list of clients for a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchClientsForTenantData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchClientsForTenantResponse200]"""
-        from .api.tenant.search_clients_for_tenant import sync as search_clients_for_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_clients_for_tenant_sync(**_kwargs)
-
-
-    async def search_clients_for_tenant_async(self, tenant_id: str, *, data: SearchClientsForTenantData, **kwargs: Any) -> SearchClientsForTenantResponse200:
-        """Search clients for tenant
-
- Retrieves a filtered and sorted list of clients for a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchClientsForTenantData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchClientsForTenantResponse200]"""
-        from .api.tenant.search_clients_for_tenant import asyncio as search_clients_for_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_clients_for_tenant_asyncio(**_kwargs)
-
-
-    def search_tenants(self, *, data: SearchTenantsData, **kwargs: Any) -> Any:
-        """Search tenants
-
- Retrieves a filtered and sorted list of tenants.
-
-Args:
-    body (SearchTenantsData): Tenant search request
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | SearchTenantsResponse200 | SearchTenantsResponse400 | SearchTenantsResponse401 | SearchTenantsResponse403 | SearchTenantsResponse500]"""
-        from .api.tenant.search_tenants import sync as search_tenants_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_tenants_sync(**_kwargs)
-
-
-    async def search_tenants_async(self, *, data: SearchTenantsData, **kwargs: Any) -> Any:
-        """Search tenants
-
- Retrieves a filtered and sorted list of tenants.
-
-Args:
-    body (SearchTenantsData): Tenant search request
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | SearchTenantsResponse200 | SearchTenantsResponse400 | SearchTenantsResponse401 | SearchTenantsResponse403 | SearchTenantsResponse500]"""
-        from .api.tenant.search_tenants import asyncio as search_tenants_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_tenants_asyncio(**_kwargs)
 
 
     def assign_user_to_tenant(self, tenant_id: str, username: str, **kwargs: Any) -> Any:
@@ -1929,100 +5121,200 @@ Returns:
         return await assign_role_to_tenant_asyncio(**_kwargs)
 
 
-    def search_mapping_rules_for_tenant(self, tenant_id: str, *, data: SearchMappingRulesForTenantData, **kwargs: Any) -> SearchMappingRulesForTenantResponse200:
-        """Search mapping rules for tenant
+    def create_tenant(self, *, data: CreateTenantData, **kwargs: Any) -> Any:
+        """Create tenant
 
- Retrieves a filtered and sorted list of MappingRules for a specified tenant.
+ Creates a new tenant.
 
 Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchMappingRulesForTenantData):
+    body (CreateTenantData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[SearchMappingRulesForTenantResponse200]"""
-        from .api.tenant.search_mapping_rules_for_tenant import sync as search_mapping_rules_for_tenant_sync
+    Response[Any | CreateTenantResponse201 | CreateTenantResponse400 | CreateTenantResponse403 | CreateTenantResponse404 | CreateTenantResponse500 | CreateTenantResponse503]"""
+        from .api.tenant.create_tenant import sync as create_tenant_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return search_mapping_rules_for_tenant_sync(**_kwargs)
+        return create_tenant_sync(**_kwargs)
 
 
-    async def search_mapping_rules_for_tenant_async(self, tenant_id: str, *, data: SearchMappingRulesForTenantData, **kwargs: Any) -> SearchMappingRulesForTenantResponse200:
-        """Search mapping rules for tenant
+    async def create_tenant_async(self, *, data: CreateTenantData, **kwargs: Any) -> Any:
+        """Create tenant
 
- Retrieves a filtered and sorted list of MappingRules for a specified tenant.
+ Creates a new tenant.
 
 Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchMappingRulesForTenantData):
+    body (CreateTenantData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[SearchMappingRulesForTenantResponse200]"""
-        from .api.tenant.search_mapping_rules_for_tenant import asyncio as search_mapping_rules_for_tenant_asyncio
+    Response[Any | CreateTenantResponse201 | CreateTenantResponse400 | CreateTenantResponse403 | CreateTenantResponse404 | CreateTenantResponse500 | CreateTenantResponse503]"""
+        from .api.tenant.create_tenant import asyncio as create_tenant_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_mapping_rules_for_tenant_asyncio(**_kwargs)
+        return await create_tenant_asyncio(**_kwargs)
 
 
-    def assign_mapping_rule_to_tenant(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Assign a mapping rule to a tenant
+    def unassign_group_from_tenant(self, tenant_id: str, group_id: str, **kwargs: Any) -> Any:
+        """Unassign a group from a tenant
 
- Assign a single mapping rule to a specified tenant.
+ Unassigns a group from a specified tenant.
+Members of the group (users, clients) will no longer have access to the tenant's data - except they
+are assigned directly to the tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    mapping_rule_id (str):
+    group_id (str):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | AssignMappingRuleToTenantResponse400 | AssignMappingRuleToTenantResponse403 | AssignMappingRuleToTenantResponse404 | AssignMappingRuleToTenantResponse500 | AssignMappingRuleToTenantResponse503]"""
-        from .api.tenant.assign_mapping_rule_to_tenant import sync as assign_mapping_rule_to_tenant_sync
+    Response[Any | UnassignGroupFromTenantResponse400 | UnassignGroupFromTenantResponse403 | UnassignGroupFromTenantResponse404 | UnassignGroupFromTenantResponse500 | UnassignGroupFromTenantResponse503]"""
+        from .api.tenant.unassign_group_from_tenant import sync as unassign_group_from_tenant_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return assign_mapping_rule_to_tenant_sync(**_kwargs)
+        return unassign_group_from_tenant_sync(**_kwargs)
 
 
-    async def assign_mapping_rule_to_tenant_async(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Assign a mapping rule to a tenant
+    async def unassign_group_from_tenant_async(self, tenant_id: str, group_id: str, **kwargs: Any) -> Any:
+        """Unassign a group from a tenant
 
- Assign a single mapping rule to a specified tenant.
+ Unassigns a group from a specified tenant.
+Members of the group (users, clients) will no longer have access to the tenant's data - except they
+are assigned directly to the tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    mapping_rule_id (str):
+    group_id (str):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | AssignMappingRuleToTenantResponse400 | AssignMappingRuleToTenantResponse403 | AssignMappingRuleToTenantResponse404 | AssignMappingRuleToTenantResponse500 | AssignMappingRuleToTenantResponse503]"""
-        from .api.tenant.assign_mapping_rule_to_tenant import asyncio as assign_mapping_rule_to_tenant_asyncio
+    Response[Any | UnassignGroupFromTenantResponse400 | UnassignGroupFromTenantResponse403 | UnassignGroupFromTenantResponse404 | UnassignGroupFromTenantResponse500 | UnassignGroupFromTenantResponse503]"""
+        from .api.tenant.unassign_group_from_tenant import asyncio as unassign_group_from_tenant_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await assign_mapping_rule_to_tenant_asyncio(**_kwargs)
+        return await unassign_group_from_tenant_asyncio(**_kwargs)
+
+
+    def search_clients_for_tenant(self, tenant_id: str, *, data: SearchClientsForTenantData, **kwargs: Any) -> SearchClientsForTenantResponse200:
+        """Search clients for tenant
+
+ Retrieves a filtered and sorted list of clients for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchClientsForTenantData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchClientsForTenantResponse200]"""
+        from .api.tenant.search_clients_for_tenant import sync as search_clients_for_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_clients_for_tenant_sync(**_kwargs)
+
+
+    async def search_clients_for_tenant_async(self, tenant_id: str, *, data: SearchClientsForTenantData, **kwargs: Any) -> SearchClientsForTenantResponse200:
+        """Search clients for tenant
+
+ Retrieves a filtered and sorted list of clients for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchClientsForTenantData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchClientsForTenantResponse200]"""
+        from .api.tenant.search_clients_for_tenant import asyncio as search_clients_for_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_clients_for_tenant_asyncio(**_kwargs)
+
+
+    def unassign_user_from_tenant(self, tenant_id: str, username: str, **kwargs: Any) -> Any:
+        """Unassign a user from a tenant
+
+ Unassigns the user from the specified tenant.
+The user can no longer access tenant data.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignUserFromTenantResponse400 | UnassignUserFromTenantResponse403 | UnassignUserFromTenantResponse404 | UnassignUserFromTenantResponse500 | UnassignUserFromTenantResponse503]"""
+        from .api.tenant.unassign_user_from_tenant import sync as unassign_user_from_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_user_from_tenant_sync(**_kwargs)
+
+
+    async def unassign_user_from_tenant_async(self, tenant_id: str, username: str, **kwargs: Any) -> Any:
+        """Unassign a user from a tenant
+
+ Unassigns the user from the specified tenant.
+The user can no longer access tenant data.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignUserFromTenantResponse400 | UnassignUserFromTenantResponse403 | UnassignUserFromTenantResponse404 | UnassignUserFromTenantResponse500 | UnassignUserFromTenantResponse503]"""
+        from .api.tenant.unassign_user_from_tenant import asyncio as unassign_user_from_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_user_from_tenant_asyncio(**_kwargs)
 
 
     def update_tenant(self, tenant_id: str, *, data: UpdateTenantData, **kwargs: Any) -> UpdateTenantResponse200:
@@ -2073,1640 +5365,136 @@ Returns:
         return await update_tenant_asyncio(**_kwargs)
 
 
-    def assign_client_to_tenant(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Assign a client to a tenant
+    def search_mapping_rules_for_tenant(self, tenant_id: str, *, data: SearchMappingRulesForTenantData, **kwargs: Any) -> SearchMappingRulesForTenantResponse200:
+        """Search mapping rules for tenant
 
- Assign the client to the specified tenant.
-The client can then access tenant data and perform authorized actions.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignClientToTenantResponse400 | AssignClientToTenantResponse403 | AssignClientToTenantResponse404 | AssignClientToTenantResponse500 | AssignClientToTenantResponse503]"""
-        from .api.tenant.assign_client_to_tenant import sync as assign_client_to_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_client_to_tenant_sync(**_kwargs)
-
-
-    async def assign_client_to_tenant_async(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Assign a client to a tenant
-
- Assign the client to the specified tenant.
-The client can then access tenant data and perform authorized actions.
+ Retrieves a filtered and sorted list of MappingRules for a specified tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    client_id (str):
+    body (SearchMappingRulesForTenantData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | AssignClientToTenantResponse400 | AssignClientToTenantResponse403 | AssignClientToTenantResponse404 | AssignClientToTenantResponse500 | AssignClientToTenantResponse503]"""
-        from .api.tenant.assign_client_to_tenant import asyncio as assign_client_to_tenant_asyncio
+    Response[SearchMappingRulesForTenantResponse200]"""
+        from .api.tenant.search_mapping_rules_for_tenant import sync as search_mapping_rules_for_tenant_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await assign_client_to_tenant_asyncio(**_kwargs)
+        return search_mapping_rules_for_tenant_sync(**_kwargs)
 
 
-    def get_tenant(self, tenant_id: str, **kwargs: Any) -> GetTenantResponse200:
-        """Get tenant
+    async def search_mapping_rules_for_tenant_async(self, tenant_id: str, *, data: SearchMappingRulesForTenantData, **kwargs: Any) -> SearchMappingRulesForTenantResponse200:
+        """Search mapping rules for tenant
 
- Retrieves a single tenant by tenant ID.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetTenantResponse200 | GetTenantResponse400 | GetTenantResponse401 | GetTenantResponse403 | GetTenantResponse404 | GetTenantResponse500]"""
-        from .api.tenant.get_tenant import sync as get_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_tenant_sync(**_kwargs)
-
-
-    async def get_tenant_async(self, tenant_id: str, **kwargs: Any) -> GetTenantResponse200:
-        """Get tenant
-
- Retrieves a single tenant by tenant ID.
+ Retrieves a filtered and sorted list of MappingRules for a specified tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchMappingRulesForTenantData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetTenantResponse200 | GetTenantResponse400 | GetTenantResponse401 | GetTenantResponse403 | GetTenantResponse404 | GetTenantResponse500]"""
-        from .api.tenant.get_tenant import asyncio as get_tenant_asyncio
+    Response[SearchMappingRulesForTenantResponse200]"""
+        from .api.tenant.search_mapping_rules_for_tenant import asyncio as search_mapping_rules_for_tenant_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_tenant_asyncio(**_kwargs)
+        return await search_mapping_rules_for_tenant_asyncio(**_kwargs)
 
 
-    def create_tenant(self, *, data: CreateTenantData, **kwargs: Any) -> Any:
-        """Create tenant
-
- Creates a new tenant.
-
-Args:
-    body (CreateTenantData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CreateTenantResponse201 | CreateTenantResponse400 | CreateTenantResponse403 | CreateTenantResponse404 | CreateTenantResponse500 | CreateTenantResponse503]"""
-        from .api.tenant.create_tenant import sync as create_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_tenant_sync(**_kwargs)
-
-
-    async def create_tenant_async(self, *, data: CreateTenantData, **kwargs: Any) -> Any:
-        """Create tenant
-
- Creates a new tenant.
+    def get_global_cluster_variable(self, name: str, **kwargs: Any) -> GetGlobalClusterVariableResponse200:
+        """Get a global-scoped cluster variable
 
 Args:
-    body (CreateTenantData):
+    name (str):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | CreateTenantResponse201 | CreateTenantResponse400 | CreateTenantResponse403 | CreateTenantResponse404 | CreateTenantResponse500 | CreateTenantResponse503]"""
-        from .api.tenant.create_tenant import asyncio as create_tenant_asyncio
+    Response[GetGlobalClusterVariableResponse200 | GetGlobalClusterVariableResponse400 | GetGlobalClusterVariableResponse401 | GetGlobalClusterVariableResponse403 | GetGlobalClusterVariableResponse404 | GetGlobalClusterVariableResponse500]"""
+        from .api.cluster_variable.get_global_cluster_variable import sync as get_global_cluster_variable_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await create_tenant_asyncio(**_kwargs)
+        return get_global_cluster_variable_sync(**_kwargs)
 
 
-    def unassign_mapping_rule_from_tenant(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Unassign a mapping rule from a tenant
-
- Unassigns a single mapping rule from a specified tenant without deleting the rule.
+    async def get_global_cluster_variable_async(self, name: str, **kwargs: Any) -> GetGlobalClusterVariableResponse200:
+        """Get a global-scoped cluster variable
 
 Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    mapping_rule_id (str):
+    name (str):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | UnassignMappingRuleFromTenantResponse400 | UnassignMappingRuleFromTenantResponse403 | UnassignMappingRuleFromTenantResponse404 | UnassignMappingRuleFromTenantResponse500 | UnassignMappingRuleFromTenantResponse503]"""
-        from .api.tenant.unassign_mapping_rule_from_tenant import sync as unassign_mapping_rule_from_tenant_sync
+    Response[GetGlobalClusterVariableResponse200 | GetGlobalClusterVariableResponse400 | GetGlobalClusterVariableResponse401 | GetGlobalClusterVariableResponse403 | GetGlobalClusterVariableResponse404 | GetGlobalClusterVariableResponse500]"""
+        from .api.cluster_variable.get_global_cluster_variable import asyncio as get_global_cluster_variable_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return unassign_mapping_rule_from_tenant_sync(**_kwargs)
+        return await get_global_cluster_variable_asyncio(**_kwargs)
 
 
-    async def unassign_mapping_rule_from_tenant_async(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Unassign a mapping rule from a tenant
-
- Unassigns a single mapping rule from a specified tenant without deleting the rule.
+    def delete_global_cluster_variable(self, name: str, **kwargs: Any) -> Any:
+        """Delete a global-scoped cluster variable
 
 Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    mapping_rule_id (str):
+    name (str):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | UnassignMappingRuleFromTenantResponse400 | UnassignMappingRuleFromTenantResponse403 | UnassignMappingRuleFromTenantResponse404 | UnassignMappingRuleFromTenantResponse500 | UnassignMappingRuleFromTenantResponse503]"""
-        from .api.tenant.unassign_mapping_rule_from_tenant import asyncio as unassign_mapping_rule_from_tenant_asyncio
+    Response[Any | DeleteGlobalClusterVariableResponse400 | DeleteGlobalClusterVariableResponse401 | DeleteGlobalClusterVariableResponse403 | DeleteGlobalClusterVariableResponse404 | DeleteGlobalClusterVariableResponse500]"""
+        from .api.cluster_variable.delete_global_cluster_variable import sync as delete_global_cluster_variable_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_mapping_rule_from_tenant_asyncio(**_kwargs)
+        return delete_global_cluster_variable_sync(**_kwargs)
 
 
-    def cancel_batch_operation(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
-        """Cancel Batch operation
-
- Cancels a running batch operation.
-This is done asynchronously, the progress can be tracked using the batch operation status endpoint
-(/batch-operations/{batchOperationKey}).
+    async def delete_global_cluster_variable_async(self, name: str, **kwargs: Any) -> Any:
+        """Delete a global-scoped cluster variable
 
 Args:
-    batch_operation_key (str): System-generated key for an batch operation. Example:
-        2251799813684321.
-    body (Any):
+    name (str):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | CancelBatchOperationResponse400 | CancelBatchOperationResponse403 | CancelBatchOperationResponse404 | CancelBatchOperationResponse500]"""
-        from .api.batch_operation.cancel_batch_operation import sync as cancel_batch_operation_sync
+    Response[Any | DeleteGlobalClusterVariableResponse400 | DeleteGlobalClusterVariableResponse401 | DeleteGlobalClusterVariableResponse403 | DeleteGlobalClusterVariableResponse404 | DeleteGlobalClusterVariableResponse500]"""
+        from .api.cluster_variable.delete_global_cluster_variable import asyncio as delete_global_cluster_variable_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return cancel_batch_operation_sync(**_kwargs)
-
-
-    async def cancel_batch_operation_async(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
-        """Cancel Batch operation
-
- Cancels a running batch operation.
-This is done asynchronously, the progress can be tracked using the batch operation status endpoint
-(/batch-operations/{batchOperationKey}).
-
-Args:
-    batch_operation_key (str): System-generated key for an batch operation. Example:
-        2251799813684321.
-    body (Any):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CancelBatchOperationResponse400 | CancelBatchOperationResponse403 | CancelBatchOperationResponse404 | CancelBatchOperationResponse500]"""
-        from .api.batch_operation.cancel_batch_operation import asyncio as cancel_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await cancel_batch_operation_asyncio(**_kwargs)
-
-
-    def resume_batch_operation(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
-        """Resume Batch operation
-
- Resumes a suspended batch operation.
-This is done asynchronously, the progress can be tracked using the batch operation status endpoint
-(/batch-operations/{batchOperationKey}).
-
-Args:
-    batch_operation_key (str): System-generated key for an batch operation. Example:
-        2251799813684321.
-    body (Any):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ResumeBatchOperationResponse400 | ResumeBatchOperationResponse403 | ResumeBatchOperationResponse404 | ResumeBatchOperationResponse500 | ResumeBatchOperationResponse503]"""
-        from .api.batch_operation.resume_batch_operation import sync as resume_batch_operation_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return resume_batch_operation_sync(**_kwargs)
-
-
-    async def resume_batch_operation_async(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
-        """Resume Batch operation
-
- Resumes a suspended batch operation.
-This is done asynchronously, the progress can be tracked using the batch operation status endpoint
-(/batch-operations/{batchOperationKey}).
-
-Args:
-    batch_operation_key (str): System-generated key for an batch operation. Example:
-        2251799813684321.
-    body (Any):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ResumeBatchOperationResponse400 | ResumeBatchOperationResponse403 | ResumeBatchOperationResponse404 | ResumeBatchOperationResponse500 | ResumeBatchOperationResponse503]"""
-        from .api.batch_operation.resume_batch_operation import asyncio as resume_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await resume_batch_operation_asyncio(**_kwargs)
-
-
-    def suspend_batch_operation(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
-        """Suspend Batch operation
-
- Suspends a running batch operation.
-This is done asynchronously, the progress can be tracked using the batch operation status endpoint
-(/batch-operations/{batchOperationKey}).
-
-Args:
-    batch_operation_key (str): System-generated key for an batch operation. Example:
-        2251799813684321.
-    body (Any):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | SuspendBatchOperationResponse400 | SuspendBatchOperationResponse403 | SuspendBatchOperationResponse404 | SuspendBatchOperationResponse500 | SuspendBatchOperationResponse503]"""
-        from .api.batch_operation.suspend_batch_operation import sync as suspend_batch_operation_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return suspend_batch_operation_sync(**_kwargs)
-
-
-    async def suspend_batch_operation_async(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
-        """Suspend Batch operation
-
- Suspends a running batch operation.
-This is done asynchronously, the progress can be tracked using the batch operation status endpoint
-(/batch-operations/{batchOperationKey}).
-
-Args:
-    batch_operation_key (str): System-generated key for an batch operation. Example:
-        2251799813684321.
-    body (Any):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | SuspendBatchOperationResponse400 | SuspendBatchOperationResponse403 | SuspendBatchOperationResponse404 | SuspendBatchOperationResponse500 | SuspendBatchOperationResponse503]"""
-        from .api.batch_operation.suspend_batch_operation import asyncio as suspend_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await suspend_batch_operation_asyncio(**_kwargs)
-
-
-    def search_batch_operations(self, *, data: SearchBatchOperationsData, **kwargs: Any) -> SearchBatchOperationsResponse200:
-        """Search batch operations
-
- Search for batch operations based on given criteria.
-
-Args:
-    body (SearchBatchOperationsData): Batch operation search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchBatchOperationsResponse200 | SearchBatchOperationsResponse400 | SearchBatchOperationsResponse500]"""
-        from .api.batch_operation.search_batch_operations import sync as search_batch_operations_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_batch_operations_sync(**_kwargs)
-
-
-    async def search_batch_operations_async(self, *, data: SearchBatchOperationsData, **kwargs: Any) -> SearchBatchOperationsResponse200:
-        """Search batch operations
-
- Search for batch operations based on given criteria.
-
-Args:
-    body (SearchBatchOperationsData): Batch operation search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchBatchOperationsResponse200 | SearchBatchOperationsResponse400 | SearchBatchOperationsResponse500]"""
-        from .api.batch_operation.search_batch_operations import asyncio as search_batch_operations_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_batch_operations_asyncio(**_kwargs)
-
-
-    def get_batch_operation(self, batch_operation_key: str, **kwargs: Any) -> GetBatchOperationResponse200:
-        """Get batch operation
-
- Get batch operation by key.
-
-Args:
-    batch_operation_key (str): System-generated key for an batch operation. Example:
-        2251799813684321.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetBatchOperationResponse200 | GetBatchOperationResponse400 | GetBatchOperationResponse404 | GetBatchOperationResponse500]"""
-        from .api.batch_operation.get_batch_operation import sync as get_batch_operation_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_batch_operation_sync(**_kwargs)
-
-
-    async def get_batch_operation_async(self, batch_operation_key: str, **kwargs: Any) -> GetBatchOperationResponse200:
-        """Get batch operation
-
- Get batch operation by key.
-
-Args:
-    batch_operation_key (str): System-generated key for an batch operation. Example:
-        2251799813684321.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetBatchOperationResponse200 | GetBatchOperationResponse400 | GetBatchOperationResponse404 | GetBatchOperationResponse500]"""
-        from .api.batch_operation.get_batch_operation import asyncio as get_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_batch_operation_asyncio(**_kwargs)
-
-
-    def search_batch_operation_items(self, *, data: SearchBatchOperationItemsData, **kwargs: Any) -> SearchBatchOperationItemsResponse200:
-        """Search batch operation items
-
- Search for batch operation items based on given criteria.
-
-Args:
-    body (SearchBatchOperationItemsData): Batch operation item search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchBatchOperationItemsResponse200 | SearchBatchOperationItemsResponse400 | SearchBatchOperationItemsResponse500]"""
-        from .api.batch_operation.search_batch_operation_items import sync as search_batch_operation_items_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_batch_operation_items_sync(**_kwargs)
-
-
-    async def search_batch_operation_items_async(self, *, data: SearchBatchOperationItemsData, **kwargs: Any) -> SearchBatchOperationItemsResponse200:
-        """Search batch operation items
-
- Search for batch operation items based on given criteria.
-
-Args:
-    body (SearchBatchOperationItemsData): Batch operation item search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchBatchOperationItemsResponse200 | SearchBatchOperationItemsResponse400 | SearchBatchOperationItemsResponse500]"""
-        from .api.batch_operation.search_batch_operation_items import asyncio as search_batch_operation_items_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_batch_operation_items_asyncio(**_kwargs)
-
-
-    def get_topology(self, **kwargs: Any) -> GetTopologyResponse200:
-        """Get cluster topology
-
- Obtains the current topology of the cluster the gateway is part of.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]"""
-        from .api.cluster.get_topology import sync as get_topology_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_topology_sync(**_kwargs)
-
-
-    async def get_topology_async(self, **kwargs: Any) -> GetTopologyResponse200:
-        """Get cluster topology
-
- Obtains the current topology of the cluster the gateway is part of.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]"""
-        from .api.cluster.get_topology import asyncio as get_topology_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_topology_asyncio(**_kwargs)
-
-
-    def unassign_role_from_group(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
-        """Unassign a role from a group
-
- Unassigns the specified role from the group. All group members (user or client) no longer inherit
-the authorizations associated with this role.
-
-Args:
-    role_id (str):
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignRoleFromGroupResponse400 | UnassignRoleFromGroupResponse403 | UnassignRoleFromGroupResponse404 | UnassignRoleFromGroupResponse500 | UnassignRoleFromGroupResponse503]"""
-        from .api.role.unassign_role_from_group import sync as unassign_role_from_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_role_from_group_sync(**_kwargs)
-
-
-    async def unassign_role_from_group_async(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
-        """Unassign a role from a group
-
- Unassigns the specified role from the group. All group members (user or client) no longer inherit
-the authorizations associated with this role.
-
-Args:
-    role_id (str):
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignRoleFromGroupResponse400 | UnassignRoleFromGroupResponse403 | UnassignRoleFromGroupResponse404 | UnassignRoleFromGroupResponse500 | UnassignRoleFromGroupResponse503]"""
-        from .api.role.unassign_role_from_group import asyncio as unassign_role_from_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_role_from_group_asyncio(**_kwargs)
-
-
-    def search_users_for_role(self, role_id: str, *, data: SearchUsersForRoleData, **kwargs: Any) -> SearchUsersForRoleResponse200:
-        """Search role users
-
- Search users with assigned role.
-
-Args:
-    role_id (str):
-    body (SearchUsersForRoleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUsersForRoleResponse200 | SearchUsersForRoleResponse400 | SearchUsersForRoleResponse401 | SearchUsersForRoleResponse403 | SearchUsersForRoleResponse404 | SearchUsersForRoleResponse500]"""
-        from .api.role.search_users_for_role import sync as search_users_for_role_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_users_for_role_sync(**_kwargs)
-
-
-    async def search_users_for_role_async(self, role_id: str, *, data: SearchUsersForRoleData, **kwargs: Any) -> SearchUsersForRoleResponse200:
-        """Search role users
-
- Search users with assigned role.
-
-Args:
-    role_id (str):
-    body (SearchUsersForRoleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUsersForRoleResponse200 | SearchUsersForRoleResponse400 | SearchUsersForRoleResponse401 | SearchUsersForRoleResponse403 | SearchUsersForRoleResponse404 | SearchUsersForRoleResponse500]"""
-        from .api.role.search_users_for_role import asyncio as search_users_for_role_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_users_for_role_asyncio(**_kwargs)
-
-
-    def unassign_role_from_mapping_rule(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Unassign a role from a mapping rule
-
- Unassigns a role from a mapping rule.
-
-Args:
-    role_id (str):
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignRoleFromMappingRuleResponse400 | UnassignRoleFromMappingRuleResponse403 | UnassignRoleFromMappingRuleResponse404 | UnassignRoleFromMappingRuleResponse500 | UnassignRoleFromMappingRuleResponse503]"""
-        from .api.role.unassign_role_from_mapping_rule import sync as unassign_role_from_mapping_rule_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_role_from_mapping_rule_sync(**_kwargs)
-
-
-    async def unassign_role_from_mapping_rule_async(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Unassign a role from a mapping rule
-
- Unassigns a role from a mapping rule.
-
-Args:
-    role_id (str):
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignRoleFromMappingRuleResponse400 | UnassignRoleFromMappingRuleResponse403 | UnassignRoleFromMappingRuleResponse404 | UnassignRoleFromMappingRuleResponse500 | UnassignRoleFromMappingRuleResponse503]"""
-        from .api.role.unassign_role_from_mapping_rule import asyncio as unassign_role_from_mapping_rule_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_role_from_mapping_rule_asyncio(**_kwargs)
-
-
-    def search_roles(self, *, data: SearchRolesData, **kwargs: Any) -> Any:
-        """Search roles
-
- Search for roles based on given criteria.
-
-Args:
-    body (SearchRolesData): Role search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | SearchRolesResponse200 | SearchRolesResponse400 | SearchRolesResponse401 | SearchRolesResponse403]"""
-        from .api.role.search_roles import sync as search_roles_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_roles_sync(**_kwargs)
-
-
-    async def search_roles_async(self, *, data: SearchRolesData, **kwargs: Any) -> Any:
-        """Search roles
-
- Search for roles based on given criteria.
-
-Args:
-    body (SearchRolesData): Role search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | SearchRolesResponse200 | SearchRolesResponse400 | SearchRolesResponse401 | SearchRolesResponse403]"""
-        from .api.role.search_roles import asyncio as search_roles_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_roles_asyncio(**_kwargs)
-
-
-    def unassign_role_from_client(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Unassign a role from a client
-
- Unassigns the specified role from the client. The client will no longer inherit the authorizations
-associated with this role.
-
-Args:
-    role_id (str):
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignRoleFromClientResponse400 | UnassignRoleFromClientResponse403 | UnassignRoleFromClientResponse404 | UnassignRoleFromClientResponse500 | UnassignRoleFromClientResponse503]"""
-        from .api.role.unassign_role_from_client import sync as unassign_role_from_client_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_role_from_client_sync(**_kwargs)
-
-
-    async def unassign_role_from_client_async(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Unassign a role from a client
-
- Unassigns the specified role from the client. The client will no longer inherit the authorizations
-associated with this role.
-
-Args:
-    role_id (str):
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignRoleFromClientResponse400 | UnassignRoleFromClientResponse403 | UnassignRoleFromClientResponse404 | UnassignRoleFromClientResponse500 | UnassignRoleFromClientResponse503]"""
-        from .api.role.unassign_role_from_client import asyncio as unassign_role_from_client_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_role_from_client_asyncio(**_kwargs)
-
-
-    def unassign_role_from_user(self, role_id: str, username: str, **kwargs: Any) -> Any:
-        """Unassign a role from a user
-
- Unassigns a role from a user. The user will no longer inherit the authorizations associated with
-this role.
-
-Args:
-    role_id (str):
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignRoleFromUserResponse400 | UnassignRoleFromUserResponse403 | UnassignRoleFromUserResponse404 | UnassignRoleFromUserResponse500 | UnassignRoleFromUserResponse503]"""
-        from .api.role.unassign_role_from_user import sync as unassign_role_from_user_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_role_from_user_sync(**_kwargs)
-
-
-    async def unassign_role_from_user_async(self, role_id: str, username: str, **kwargs: Any) -> Any:
-        """Unassign a role from a user
-
- Unassigns a role from a user. The user will no longer inherit the authorizations associated with
-this role.
-
-Args:
-    role_id (str):
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignRoleFromUserResponse400 | UnassignRoleFromUserResponse403 | UnassignRoleFromUserResponse404 | UnassignRoleFromUserResponse500 | UnassignRoleFromUserResponse503]"""
-        from .api.role.unassign_role_from_user import asyncio as unassign_role_from_user_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_role_from_user_asyncio(**_kwargs)
-
-
-    def create_role(self, *, data: CreateRoleData, **kwargs: Any) -> CreateRoleResponse201:
-        """Create role
-
- Create a new role.
-
-Args:
-    body (CreateRoleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateRoleResponse201 | CreateRoleResponse400 | CreateRoleResponse401 | CreateRoleResponse403 | CreateRoleResponse500 | CreateRoleResponse503]"""
-        from .api.role.create_role import sync as create_role_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_role_sync(**_kwargs)
-
-
-    async def create_role_async(self, *, data: CreateRoleData, **kwargs: Any) -> CreateRoleResponse201:
-        """Create role
-
- Create a new role.
-
-Args:
-    body (CreateRoleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateRoleResponse201 | CreateRoleResponse400 | CreateRoleResponse401 | CreateRoleResponse403 | CreateRoleResponse500 | CreateRoleResponse503]"""
-        from .api.role.create_role import asyncio as create_role_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_role_asyncio(**_kwargs)
-
-
-    def search_clients_for_role(self, role_id: str, *, data: SearchClientsForRoleData, **kwargs: Any) -> SearchClientsForRoleResponse200:
-        """Search role clients
-
- Search clients with assigned role.
-
-Args:
-    role_id (str):
-    body (SearchClientsForRoleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchClientsForRoleResponse200 | SearchClientsForRoleResponse400 | SearchClientsForRoleResponse401 | SearchClientsForRoleResponse403 | SearchClientsForRoleResponse404 | SearchClientsForRoleResponse500]"""
-        from .api.role.search_clients_for_role import sync as search_clients_for_role_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_clients_for_role_sync(**_kwargs)
-
-
-    async def search_clients_for_role_async(self, role_id: str, *, data: SearchClientsForRoleData, **kwargs: Any) -> SearchClientsForRoleResponse200:
-        """Search role clients
-
- Search clients with assigned role.
-
-Args:
-    role_id (str):
-    body (SearchClientsForRoleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchClientsForRoleResponse200 | SearchClientsForRoleResponse400 | SearchClientsForRoleResponse401 | SearchClientsForRoleResponse403 | SearchClientsForRoleResponse404 | SearchClientsForRoleResponse500]"""
-        from .api.role.search_clients_for_role import asyncio as search_clients_for_role_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_clients_for_role_asyncio(**_kwargs)
-
-
-    def assign_role_to_user(self, role_id: str, username: str, **kwargs: Any) -> Any:
-        """Assign a role to a user
-
- Assigns the specified role to the user. The user will inherit the authorizations associated with
-this role.
-
-Args:
-    role_id (str):
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignRoleToUserResponse400 | AssignRoleToUserResponse403 | AssignRoleToUserResponse404 | AssignRoleToUserResponse409 | AssignRoleToUserResponse500 | AssignRoleToUserResponse503]"""
-        from .api.role.assign_role_to_user import sync as assign_role_to_user_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_role_to_user_sync(**_kwargs)
-
-
-    async def assign_role_to_user_async(self, role_id: str, username: str, **kwargs: Any) -> Any:
-        """Assign a role to a user
-
- Assigns the specified role to the user. The user will inherit the authorizations associated with
-this role.
-
-Args:
-    role_id (str):
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignRoleToUserResponse400 | AssignRoleToUserResponse403 | AssignRoleToUserResponse404 | AssignRoleToUserResponse409 | AssignRoleToUserResponse500 | AssignRoleToUserResponse503]"""
-        from .api.role.assign_role_to_user import asyncio as assign_role_to_user_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_role_to_user_asyncio(**_kwargs)
-
-
-    def search_groups_for_role(self, role_id: str, *, data: SearchGroupsForRoleData, **kwargs: Any) -> SearchGroupsForRoleResponse200:
-        """Search role groups
-
- Search groups with assigned role.
-
-Args:
-    role_id (str):
-    body (SearchGroupsForRoleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchGroupsForRoleResponse200 | SearchGroupsForRoleResponse400 | SearchGroupsForRoleResponse401 | SearchGroupsForRoleResponse403 | SearchGroupsForRoleResponse404 | SearchGroupsForRoleResponse500]"""
-        from .api.role.search_groups_for_role import sync as search_groups_for_role_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_groups_for_role_sync(**_kwargs)
-
-
-    async def search_groups_for_role_async(self, role_id: str, *, data: SearchGroupsForRoleData, **kwargs: Any) -> SearchGroupsForRoleResponse200:
-        """Search role groups
-
- Search groups with assigned role.
-
-Args:
-    role_id (str):
-    body (SearchGroupsForRoleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchGroupsForRoleResponse200 | SearchGroupsForRoleResponse400 | SearchGroupsForRoleResponse401 | SearchGroupsForRoleResponse403 | SearchGroupsForRoleResponse404 | SearchGroupsForRoleResponse500]"""
-        from .api.role.search_groups_for_role import asyncio as search_groups_for_role_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_groups_for_role_asyncio(**_kwargs)
-
-
-    def update_role(self, role_id: str, *, data: UpdateRoleData, **kwargs: Any) -> UpdateRoleResponse200:
-        """Update role
-
- Update a role with the given ID.
-
-Args:
-    role_id (str):
-    body (UpdateRoleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[UpdateRoleResponse200 | UpdateRoleResponse400 | UpdateRoleResponse401 | UpdateRoleResponse404 | UpdateRoleResponse500 | UpdateRoleResponse503]"""
-        from .api.role.update_role import sync as update_role_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return update_role_sync(**_kwargs)
-
-
-    async def update_role_async(self, role_id: str, *, data: UpdateRoleData, **kwargs: Any) -> UpdateRoleResponse200:
-        """Update role
-
- Update a role with the given ID.
-
-Args:
-    role_id (str):
-    body (UpdateRoleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[UpdateRoleResponse200 | UpdateRoleResponse400 | UpdateRoleResponse401 | UpdateRoleResponse404 | UpdateRoleResponse500 | UpdateRoleResponse503]"""
-        from .api.role.update_role import asyncio as update_role_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await update_role_asyncio(**_kwargs)
-
-
-    def assign_role_to_group(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
-        """Assign a role to a group
-
- Assigns the specified role to the group. Every member of the group (user or client) will inherit the
-authorizations associated with this role.
-
-Args:
-    role_id (str):
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignRoleToGroupResponse400 | AssignRoleToGroupResponse403 | AssignRoleToGroupResponse404 | AssignRoleToGroupResponse409 | AssignRoleToGroupResponse500 | AssignRoleToGroupResponse503]"""
-        from .api.role.assign_role_to_group import sync as assign_role_to_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_role_to_group_sync(**_kwargs)
-
-
-    async def assign_role_to_group_async(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
-        """Assign a role to a group
-
- Assigns the specified role to the group. Every member of the group (user or client) will inherit the
-authorizations associated with this role.
-
-Args:
-    role_id (str):
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignRoleToGroupResponse400 | AssignRoleToGroupResponse403 | AssignRoleToGroupResponse404 | AssignRoleToGroupResponse409 | AssignRoleToGroupResponse500 | AssignRoleToGroupResponse503]"""
-        from .api.role.assign_role_to_group import asyncio as assign_role_to_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_role_to_group_asyncio(**_kwargs)
-
-
-    def search_mapping_rules_for_role(self, role_id: str, *, data: SearchMappingRulesForRoleData, **kwargs: Any) -> SearchMappingRulesForRoleResponse200:
-        """Search role mapping rules
-
- Search mapping rules with assigned role.
-
-Args:
-    role_id (str):
-    body (SearchMappingRulesForRoleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMappingRulesForRoleResponse200 | SearchMappingRulesForRoleResponse400 | SearchMappingRulesForRoleResponse401 | SearchMappingRulesForRoleResponse403 | SearchMappingRulesForRoleResponse404 | SearchMappingRulesForRoleResponse500]"""
-        from .api.role.search_mapping_rules_for_role import sync as search_mapping_rules_for_role_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_mapping_rules_for_role_sync(**_kwargs)
-
-
-    async def search_mapping_rules_for_role_async(self, role_id: str, *, data: SearchMappingRulesForRoleData, **kwargs: Any) -> SearchMappingRulesForRoleResponse200:
-        """Search role mapping rules
-
- Search mapping rules with assigned role.
-
-Args:
-    role_id (str):
-    body (SearchMappingRulesForRoleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMappingRulesForRoleResponse200 | SearchMappingRulesForRoleResponse400 | SearchMappingRulesForRoleResponse401 | SearchMappingRulesForRoleResponse403 | SearchMappingRulesForRoleResponse404 | SearchMappingRulesForRoleResponse500]"""
-        from .api.role.search_mapping_rules_for_role import asyncio as search_mapping_rules_for_role_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_mapping_rules_for_role_asyncio(**_kwargs)
-
-
-    def assign_role_to_client(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Assign a role to a client
-
- Assigns the specified role to the client. The client will inherit the authorizations associated with
-this role.
-
-Args:
-    role_id (str):
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignRoleToClientResponse400 | AssignRoleToClientResponse403 | AssignRoleToClientResponse404 | AssignRoleToClientResponse409 | AssignRoleToClientResponse500 | AssignRoleToClientResponse503]"""
-        from .api.role.assign_role_to_client import sync as assign_role_to_client_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_role_to_client_sync(**_kwargs)
-
-
-    async def assign_role_to_client_async(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Assign a role to a client
-
- Assigns the specified role to the client. The client will inherit the authorizations associated with
-this role.
-
-Args:
-    role_id (str):
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignRoleToClientResponse400 | AssignRoleToClientResponse403 | AssignRoleToClientResponse404 | AssignRoleToClientResponse409 | AssignRoleToClientResponse500 | AssignRoleToClientResponse503]"""
-        from .api.role.assign_role_to_client import asyncio as assign_role_to_client_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_role_to_client_asyncio(**_kwargs)
-
-
-    def delete_role(self, role_id: str, **kwargs: Any) -> Any:
-        """Delete role
-
- Deletes the role with the given ID.
-
-Args:
-    role_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteRoleResponse401 | DeleteRoleResponse404 | DeleteRoleResponse500 | DeleteRoleResponse503]"""
-        from .api.role.delete_role import sync as delete_role_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_role_sync(**_kwargs)
-
-
-    async def delete_role_async(self, role_id: str, **kwargs: Any) -> Any:
-        """Delete role
-
- Deletes the role with the given ID.
-
-Args:
-    role_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteRoleResponse401 | DeleteRoleResponse404 | DeleteRoleResponse500 | DeleteRoleResponse503]"""
-        from .api.role.delete_role import asyncio as delete_role_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_role_asyncio(**_kwargs)
-
-
-    def assign_role_to_mapping_rule(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Assign a role to a mapping rule
-
- Assigns a role to a mapping rule.
-
-Args:
-    role_id (str):
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignRoleToMappingRuleResponse400 | AssignRoleToMappingRuleResponse403 | AssignRoleToMappingRuleResponse404 | AssignRoleToMappingRuleResponse409 | AssignRoleToMappingRuleResponse500 | AssignRoleToMappingRuleResponse503]"""
-        from .api.role.assign_role_to_mapping_rule import sync as assign_role_to_mapping_rule_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_role_to_mapping_rule_sync(**_kwargs)
-
-
-    async def assign_role_to_mapping_rule_async(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Assign a role to a mapping rule
-
- Assigns a role to a mapping rule.
-
-Args:
-    role_id (str):
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignRoleToMappingRuleResponse400 | AssignRoleToMappingRuleResponse403 | AssignRoleToMappingRuleResponse404 | AssignRoleToMappingRuleResponse409 | AssignRoleToMappingRuleResponse500 | AssignRoleToMappingRuleResponse503]"""
-        from .api.role.assign_role_to_mapping_rule import asyncio as assign_role_to_mapping_rule_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_role_to_mapping_rule_asyncio(**_kwargs)
-
-
-    def get_role(self, role_id: str, **kwargs: Any) -> GetRoleResponse200:
-        """Get role
-
- Get a role by its ID.
-
-Args:
-    role_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetRoleResponse200 | GetRoleResponse401 | GetRoleResponse403 | GetRoleResponse404 | GetRoleResponse500]"""
-        from .api.role.get_role import sync as get_role_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_role_sync(**_kwargs)
-
-
-    async def get_role_async(self, role_id: str, **kwargs: Any) -> GetRoleResponse200:
-        """Get role
-
- Get a role by its ID.
-
-Args:
-    role_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetRoleResponse200 | GetRoleResponse401 | GetRoleResponse403 | GetRoleResponse404 | GetRoleResponse500]"""
-        from .api.role.get_role import asyncio as get_role_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_role_asyncio(**_kwargs)
-
-
-    def evaluate_conditionals(self, *, data: EvaluateConditionalsData, **kwargs: Any) -> EvaluateConditionalsResponse200:
-        """Evaluate root level conditional start events
-
- Evaluates root-level conditional start events for process definitions.
-If the evaluation is successful, it will return the keys of all created process instances, along
-with their associated process definition key.
-Multiple root-level conditional start events of the same process definition can trigger if their
-conditions evaluate to true.
-
-Args:
-    body (EvaluateConditionalsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[EvaluateConditionalsResponse200 | EvaluateConditionalsResponse400 | EvaluateConditionalsResponse403 | EvaluateConditionalsResponse404 | EvaluateConditionalsResponse500 | EvaluateConditionalsResponse503]"""
-        from .api.conditional.evaluate_conditionals import sync as evaluate_conditionals_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return evaluate_conditionals_sync(**_kwargs)
-
-
-    async def evaluate_conditionals_async(self, *, data: EvaluateConditionalsData, **kwargs: Any) -> EvaluateConditionalsResponse200:
-        """Evaluate root level conditional start events
-
- Evaluates root-level conditional start events for process definitions.
-If the evaluation is successful, it will return the keys of all created process instances, along
-with their associated process definition key.
-Multiple root-level conditional start events of the same process definition can trigger if their
-conditions evaluate to true.
-
-Args:
-    body (EvaluateConditionalsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[EvaluateConditionalsResponse200 | EvaluateConditionalsResponse400 | EvaluateConditionalsResponse403 | EvaluateConditionalsResponse404 | EvaluateConditionalsResponse500 | EvaluateConditionalsResponse503]"""
-        from .api.conditional.evaluate_conditionals import asyncio as evaluate_conditionals_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await evaluate_conditionals_asyncio(**_kwargs)
-
-
-    def get_license(self, **kwargs: Any) -> GetLicenseResponse200:
-        """Get license status
-
- Obtains the status of the current Camunda license.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetLicenseResponse200 | GetLicenseResponse500]"""
-        from .api.license_.get_license import sync as get_license_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_license_sync(**_kwargs)
-
-
-    async def get_license_async(self, **kwargs: Any) -> GetLicenseResponse200:
-        """Get license status
-
- Obtains the status of the current Camunda license.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetLicenseResponse200 | GetLicenseResponse500]"""
-        from .api.license_.get_license import asyncio as get_license_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_license_asyncio(**_kwargs)
-
-
-    def search_decision_instances(self, *, data: SearchDecisionInstancesData, **kwargs: Any) -> SearchDecisionInstancesResponse200:
-        """Search decision instances
-
- Search for decision instances based on given criteria.
-
-Args:
-    body (SearchDecisionInstancesData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchDecisionInstancesResponse200 | SearchDecisionInstancesResponse400 | SearchDecisionInstancesResponse401 | SearchDecisionInstancesResponse403 | SearchDecisionInstancesResponse500]"""
-        from .api.decision_instance.search_decision_instances import sync as search_decision_instances_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_decision_instances_sync(**_kwargs)
-
-
-    async def search_decision_instances_async(self, *, data: SearchDecisionInstancesData, **kwargs: Any) -> SearchDecisionInstancesResponse200:
-        """Search decision instances
-
- Search for decision instances based on given criteria.
-
-Args:
-    body (SearchDecisionInstancesData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchDecisionInstancesResponse200 | SearchDecisionInstancesResponse400 | SearchDecisionInstancesResponse401 | SearchDecisionInstancesResponse403 | SearchDecisionInstancesResponse500]"""
-        from .api.decision_instance.search_decision_instances import asyncio as search_decision_instances_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_decision_instances_asyncio(**_kwargs)
-
-
-    def get_decision_instance(self, decision_evaluation_instance_key: str, **kwargs: Any) -> GetDecisionInstanceResponse200:
-        """Get decision instance
-
- Returns a decision instance.
-
-Args:
-    decision_evaluation_instance_key (str): System-generated key for a deployed decision
-        instance. Example: 22517998136843567.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetDecisionInstanceResponse200 | GetDecisionInstanceResponse400 | GetDecisionInstanceResponse401 | GetDecisionInstanceResponse403 | GetDecisionInstanceResponse404 | GetDecisionInstanceResponse500]"""
-        from .api.decision_instance.get_decision_instance import sync as get_decision_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_decision_instance_sync(**_kwargs)
-
-
-    async def get_decision_instance_async(self, decision_evaluation_instance_key: str, **kwargs: Any) -> GetDecisionInstanceResponse200:
-        """Get decision instance
-
- Returns a decision instance.
-
-Args:
-    decision_evaluation_instance_key (str): System-generated key for a deployed decision
-        instance. Example: 22517998136843567.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetDecisionInstanceResponse200 | GetDecisionInstanceResponse400 | GetDecisionInstanceResponse401 | GetDecisionInstanceResponse403 | GetDecisionInstanceResponse404 | GetDecisionInstanceResponse500]"""
-        from .api.decision_instance.get_decision_instance import asyncio as get_decision_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_decision_instance_asyncio(**_kwargs)
-
-
-    def get_variable(self, variable_key: str, **kwargs: Any) -> GetVariableResponse200:
-        """Get variable
-
- Get the variable by the variable key.
-
-Args:
-    variable_key (str): System-generated key for a variable. Example: 2251799813683287.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetVariableResponse200 | GetVariableResponse400 | GetVariableResponse401 | GetVariableResponse403 | GetVariableResponse404 | GetVariableResponse500]"""
-        from .api.variable.get_variable import sync as get_variable_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_variable_sync(**_kwargs)
-
-
-    async def get_variable_async(self, variable_key: str, **kwargs: Any) -> GetVariableResponse200:
-        """Get variable
-
- Get the variable by the variable key.
-
-Args:
-    variable_key (str): System-generated key for a variable. Example: 2251799813683287.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetVariableResponse200 | GetVariableResponse400 | GetVariableResponse401 | GetVariableResponse403 | GetVariableResponse404 | GetVariableResponse500]"""
-        from .api.variable.get_variable import asyncio as get_variable_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_variable_asyncio(**_kwargs)
-
-
-    def search_variables(self, *, data: SearchVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchVariablesResponse200:
-        """Search variables
-
- Search for process and local variables based on given criteria. By default, long variable values in
-the response are truncated.
-
-Args:
-    truncate_values (bool | Unset):
-    body (SearchVariablesData): Variable search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchVariablesResponse200 | SearchVariablesResponse400 | SearchVariablesResponse401 | SearchVariablesResponse403 | SearchVariablesResponse500]"""
-        from .api.variable.search_variables import sync as search_variables_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_variables_sync(**_kwargs)
-
-
-    async def search_variables_async(self, *, data: SearchVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchVariablesResponse200:
-        """Search variables
-
- Search for process and local variables based on given criteria. By default, long variable values in
-the response are truncated.
-
-Args:
-    truncate_values (bool | Unset):
-    body (SearchVariablesData): Variable search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchVariablesResponse200 | SearchVariablesResponse400 | SearchVariablesResponse401 | SearchVariablesResponse403 | SearchVariablesResponse500]"""
-        from .api.variable.search_variables import asyncio as search_variables_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_variables_asyncio(**_kwargs)
+        return await delete_global_cluster_variable_asyncio(**_kwargs)
 
 
     def get_tenant_cluster_variable(self, tenant_id: str, name: str, **kwargs: Any) -> GetTenantClusterVariableResponse200:
@@ -3751,6 +5539,94 @@ Returns:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return await get_tenant_cluster_variable_asyncio(**_kwargs)
+
+
+    def create_tenant_cluster_variable(self, tenant_id: str, *, data: CreateTenantClusterVariableData, **kwargs: Any) -> CreateTenantClusterVariableResponse200:
+        """Create a tenant-scoped cluster variable
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (CreateTenantClusterVariableData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CreateTenantClusterVariableResponse200 | CreateTenantClusterVariableResponse400 | CreateTenantClusterVariableResponse401 | CreateTenantClusterVariableResponse403 | CreateTenantClusterVariableResponse500]"""
+        from .api.cluster_variable.create_tenant_cluster_variable import sync as create_tenant_cluster_variable_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_tenant_cluster_variable_sync(**_kwargs)
+
+
+    async def create_tenant_cluster_variable_async(self, tenant_id: str, *, data: CreateTenantClusterVariableData, **kwargs: Any) -> CreateTenantClusterVariableResponse200:
+        """Create a tenant-scoped cluster variable
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (CreateTenantClusterVariableData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CreateTenantClusterVariableResponse200 | CreateTenantClusterVariableResponse400 | CreateTenantClusterVariableResponse401 | CreateTenantClusterVariableResponse403 | CreateTenantClusterVariableResponse500]"""
+        from .api.cluster_variable.create_tenant_cluster_variable import asyncio as create_tenant_cluster_variable_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_tenant_cluster_variable_asyncio(**_kwargs)
+
+
+    def delete_tenant_cluster_variable(self, tenant_id: str, name: str, **kwargs: Any) -> Any:
+        """Delete a tenant-scoped cluster variable
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    name (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | DeleteTenantClusterVariableResponse400 | DeleteTenantClusterVariableResponse401 | DeleteTenantClusterVariableResponse403 | DeleteTenantClusterVariableResponse404 | DeleteTenantClusterVariableResponse500]"""
+        from .api.cluster_variable.delete_tenant_cluster_variable import sync as delete_tenant_cluster_variable_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_tenant_cluster_variable_sync(**_kwargs)
+
+
+    async def delete_tenant_cluster_variable_async(self, tenant_id: str, name: str, **kwargs: Any) -> Any:
+        """Delete a tenant-scoped cluster variable
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    name (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | DeleteTenantClusterVariableResponse400 | DeleteTenantClusterVariableResponse401 | DeleteTenantClusterVariableResponse403 | DeleteTenantClusterVariableResponse404 | DeleteTenantClusterVariableResponse500]"""
+        from .api.cluster_variable.delete_tenant_cluster_variable import asyncio as delete_tenant_cluster_variable_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_tenant_cluster_variable_asyncio(**_kwargs)
 
 
     def search_cluster_variables(self, *, data: SearchClusterVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchClusterVariablesResponse200:
@@ -3839,1382 +5715,6 @@ Returns:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return await create_global_cluster_variable_asyncio(**_kwargs)
-
-
-    def delete_global_cluster_variable(self, name: str, **kwargs: Any) -> Any:
-        """Delete a global-scoped cluster variable
-
-Args:
-    name (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteGlobalClusterVariableResponse400 | DeleteGlobalClusterVariableResponse401 | DeleteGlobalClusterVariableResponse403 | DeleteGlobalClusterVariableResponse404 | DeleteGlobalClusterVariableResponse500]"""
-        from .api.cluster_variable.delete_global_cluster_variable import sync as delete_global_cluster_variable_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_global_cluster_variable_sync(**_kwargs)
-
-
-    async def delete_global_cluster_variable_async(self, name: str, **kwargs: Any) -> Any:
-        """Delete a global-scoped cluster variable
-
-Args:
-    name (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteGlobalClusterVariableResponse400 | DeleteGlobalClusterVariableResponse401 | DeleteGlobalClusterVariableResponse403 | DeleteGlobalClusterVariableResponse404 | DeleteGlobalClusterVariableResponse500]"""
-        from .api.cluster_variable.delete_global_cluster_variable import asyncio as delete_global_cluster_variable_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_global_cluster_variable_asyncio(**_kwargs)
-
-
-    def delete_tenant_cluster_variable(self, tenant_id: str, name: str, **kwargs: Any) -> Any:
-        """Delete a tenant-scoped cluster variable
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    name (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteTenantClusterVariableResponse400 | DeleteTenantClusterVariableResponse401 | DeleteTenantClusterVariableResponse403 | DeleteTenantClusterVariableResponse404 | DeleteTenantClusterVariableResponse500]"""
-        from .api.cluster_variable.delete_tenant_cluster_variable import sync as delete_tenant_cluster_variable_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_tenant_cluster_variable_sync(**_kwargs)
-
-
-    async def delete_tenant_cluster_variable_async(self, tenant_id: str, name: str, **kwargs: Any) -> Any:
-        """Delete a tenant-scoped cluster variable
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    name (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteTenantClusterVariableResponse400 | DeleteTenantClusterVariableResponse401 | DeleteTenantClusterVariableResponse403 | DeleteTenantClusterVariableResponse404 | DeleteTenantClusterVariableResponse500]"""
-        from .api.cluster_variable.delete_tenant_cluster_variable import asyncio as delete_tenant_cluster_variable_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_tenant_cluster_variable_asyncio(**_kwargs)
-
-
-    def create_tenant_cluster_variable(self, tenant_id: str, *, data: CreateTenantClusterVariableData, **kwargs: Any) -> CreateTenantClusterVariableResponse200:
-        """Create a tenant-scoped cluster variable
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (CreateTenantClusterVariableData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateTenantClusterVariableResponse200 | CreateTenantClusterVariableResponse400 | CreateTenantClusterVariableResponse401 | CreateTenantClusterVariableResponse403 | CreateTenantClusterVariableResponse500]"""
-        from .api.cluster_variable.create_tenant_cluster_variable import sync as create_tenant_cluster_variable_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_tenant_cluster_variable_sync(**_kwargs)
-
-
-    async def create_tenant_cluster_variable_async(self, tenant_id: str, *, data: CreateTenantClusterVariableData, **kwargs: Any) -> CreateTenantClusterVariableResponse200:
-        """Create a tenant-scoped cluster variable
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (CreateTenantClusterVariableData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateTenantClusterVariableResponse200 | CreateTenantClusterVariableResponse400 | CreateTenantClusterVariableResponse401 | CreateTenantClusterVariableResponse403 | CreateTenantClusterVariableResponse500]"""
-        from .api.cluster_variable.create_tenant_cluster_variable import asyncio as create_tenant_cluster_variable_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_tenant_cluster_variable_asyncio(**_kwargs)
-
-
-    def get_global_cluster_variable(self, name: str, **kwargs: Any) -> GetGlobalClusterVariableResponse200:
-        """Get a global-scoped cluster variable
-
-Args:
-    name (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetGlobalClusterVariableResponse200 | GetGlobalClusterVariableResponse400 | GetGlobalClusterVariableResponse401 | GetGlobalClusterVariableResponse403 | GetGlobalClusterVariableResponse404 | GetGlobalClusterVariableResponse500]"""
-        from .api.cluster_variable.get_global_cluster_variable import sync as get_global_cluster_variable_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_global_cluster_variable_sync(**_kwargs)
-
-
-    async def get_global_cluster_variable_async(self, name: str, **kwargs: Any) -> GetGlobalClusterVariableResponse200:
-        """Get a global-scoped cluster variable
-
-Args:
-    name (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetGlobalClusterVariableResponse200 | GetGlobalClusterVariableResponse400 | GetGlobalClusterVariableResponse401 | GetGlobalClusterVariableResponse403 | GetGlobalClusterVariableResponse404 | GetGlobalClusterVariableResponse500]"""
-        from .api.cluster_variable.get_global_cluster_variable import asyncio as get_global_cluster_variable_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_global_cluster_variable_asyncio(**_kwargs)
-
-
-    def unassign_mapping_rule_from_group(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Unassign a mapping rule from a group
-
- Unassigns a mapping rule from a group.
-
-Args:
-    group_id (str):
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignMappingRuleFromGroupResponse400 | UnassignMappingRuleFromGroupResponse403 | UnassignMappingRuleFromGroupResponse404 | UnassignMappingRuleFromGroupResponse500 | UnassignMappingRuleFromGroupResponse503]"""
-        from .api.group.unassign_mapping_rule_from_group import sync as unassign_mapping_rule_from_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_mapping_rule_from_group_sync(**_kwargs)
-
-
-    async def unassign_mapping_rule_from_group_async(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Unassign a mapping rule from a group
-
- Unassigns a mapping rule from a group.
-
-Args:
-    group_id (str):
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignMappingRuleFromGroupResponse400 | UnassignMappingRuleFromGroupResponse403 | UnassignMappingRuleFromGroupResponse404 | UnassignMappingRuleFromGroupResponse500 | UnassignMappingRuleFromGroupResponse503]"""
-        from .api.group.unassign_mapping_rule_from_group import asyncio as unassign_mapping_rule_from_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_mapping_rule_from_group_asyncio(**_kwargs)
-
-
-    def search_roles_for_group(self, group_id: str, *, data: SearchRolesForGroupData, **kwargs: Any) -> SearchRolesForGroupResponse200:
-        """Search group roles
-
- Search roles assigned to a group.
-
-Args:
-    group_id (str):
-    body (SearchRolesForGroupData): Role search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchRolesForGroupResponse200 | SearchRolesForGroupResponse400 | SearchRolesForGroupResponse401 | SearchRolesForGroupResponse403 | SearchRolesForGroupResponse404 | SearchRolesForGroupResponse500]"""
-        from .api.group.search_roles_for_group import sync as search_roles_for_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_roles_for_group_sync(**_kwargs)
-
-
-    async def search_roles_for_group_async(self, group_id: str, *, data: SearchRolesForGroupData, **kwargs: Any) -> SearchRolesForGroupResponse200:
-        """Search group roles
-
- Search roles assigned to a group.
-
-Args:
-    group_id (str):
-    body (SearchRolesForGroupData): Role search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchRolesForGroupResponse200 | SearchRolesForGroupResponse400 | SearchRolesForGroupResponse401 | SearchRolesForGroupResponse403 | SearchRolesForGroupResponse404 | SearchRolesForGroupResponse500]"""
-        from .api.group.search_roles_for_group import asyncio as search_roles_for_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_roles_for_group_asyncio(**_kwargs)
-
-
-    def assign_client_to_group(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Assign a client to a group
-
- Assigns a client to a group, making it a member of the group.
-Members of the group inherit the group authorizations, roles, and tenant assignments.
-
-Args:
-    group_id (str):
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignClientToGroupResponse400 | AssignClientToGroupResponse403 | AssignClientToGroupResponse404 | AssignClientToGroupResponse409 | AssignClientToGroupResponse500 | AssignClientToGroupResponse503]"""
-        from .api.group.assign_client_to_group import sync as assign_client_to_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_client_to_group_sync(**_kwargs)
-
-
-    async def assign_client_to_group_async(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Assign a client to a group
-
- Assigns a client to a group, making it a member of the group.
-Members of the group inherit the group authorizations, roles, and tenant assignments.
-
-Args:
-    group_id (str):
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignClientToGroupResponse400 | AssignClientToGroupResponse403 | AssignClientToGroupResponse404 | AssignClientToGroupResponse409 | AssignClientToGroupResponse500 | AssignClientToGroupResponse503]"""
-        from .api.group.assign_client_to_group import asyncio as assign_client_to_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_client_to_group_asyncio(**_kwargs)
-
-
-    def unassign_user_from_group(self, group_id: str, username: str, **kwargs: Any) -> Any:
-        """Unassign a user from a group
-
- Unassigns a user from a group.
-The user is removed as a group member, with associated authorizations, roles, and tenant assignments
-no longer applied.
-
-Args:
-    group_id (str):
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignUserFromGroupResponse400 | UnassignUserFromGroupResponse403 | UnassignUserFromGroupResponse404 | UnassignUserFromGroupResponse500 | UnassignUserFromGroupResponse503]"""
-        from .api.group.unassign_user_from_group import sync as unassign_user_from_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_user_from_group_sync(**_kwargs)
-
-
-    async def unassign_user_from_group_async(self, group_id: str, username: str, **kwargs: Any) -> Any:
-        """Unassign a user from a group
-
- Unassigns a user from a group.
-The user is removed as a group member, with associated authorizations, roles, and tenant assignments
-no longer applied.
-
-Args:
-    group_id (str):
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignUserFromGroupResponse400 | UnassignUserFromGroupResponse403 | UnassignUserFromGroupResponse404 | UnassignUserFromGroupResponse500 | UnassignUserFromGroupResponse503]"""
-        from .api.group.unassign_user_from_group import asyncio as unassign_user_from_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_user_from_group_asyncio(**_kwargs)
-
-
-    def search_users_for_group(self, group_id: str, *, data: SearchUsersForGroupData, **kwargs: Any) -> SearchUsersForGroupResponse200:
-        """Search group users
-
- Search users assigned to a group.
-
-Args:
-    group_id (str):
-    body (SearchUsersForGroupData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUsersForGroupResponse200 | SearchUsersForGroupResponse400 | SearchUsersForGroupResponse401 | SearchUsersForGroupResponse403 | SearchUsersForGroupResponse404 | SearchUsersForGroupResponse500]"""
-        from .api.group.search_users_for_group import sync as search_users_for_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_users_for_group_sync(**_kwargs)
-
-
-    async def search_users_for_group_async(self, group_id: str, *, data: SearchUsersForGroupData, **kwargs: Any) -> SearchUsersForGroupResponse200:
-        """Search group users
-
- Search users assigned to a group.
-
-Args:
-    group_id (str):
-    body (SearchUsersForGroupData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUsersForGroupResponse200 | SearchUsersForGroupResponse400 | SearchUsersForGroupResponse401 | SearchUsersForGroupResponse403 | SearchUsersForGroupResponse404 | SearchUsersForGroupResponse500]"""
-        from .api.group.search_users_for_group import asyncio as search_users_for_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_users_for_group_asyncio(**_kwargs)
-
-
-    def get_group(self, group_id: str, **kwargs: Any) -> GetGroupResponse200:
-        """Get group
-
- Get a group by its ID.
-
-Args:
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetGroupResponse200 | GetGroupResponse401 | GetGroupResponse403 | GetGroupResponse404 | GetGroupResponse500]"""
-        from .api.group.get_group import sync as get_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_group_sync(**_kwargs)
-
-
-    async def get_group_async(self, group_id: str, **kwargs: Any) -> GetGroupResponse200:
-        """Get group
-
- Get a group by its ID.
-
-Args:
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetGroupResponse200 | GetGroupResponse401 | GetGroupResponse403 | GetGroupResponse404 | GetGroupResponse500]"""
-        from .api.group.get_group import asyncio as get_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_group_asyncio(**_kwargs)
-
-
-    def unassign_client_from_group(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Unassign a client from a group
-
- Unassigns a client from a group.
-The client is removed as a group member, with associated authorizations, roles, and tenant
-assignments no longer applied.
-
-Args:
-    group_id (str):
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignClientFromGroupResponse400 | UnassignClientFromGroupResponse403 | UnassignClientFromGroupResponse404 | UnassignClientFromGroupResponse500 | UnassignClientFromGroupResponse503]"""
-        from .api.group.unassign_client_from_group import sync as unassign_client_from_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_client_from_group_sync(**_kwargs)
-
-
-    async def unassign_client_from_group_async(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Unassign a client from a group
-
- Unassigns a client from a group.
-The client is removed as a group member, with associated authorizations, roles, and tenant
-assignments no longer applied.
-
-Args:
-    group_id (str):
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignClientFromGroupResponse400 | UnassignClientFromGroupResponse403 | UnassignClientFromGroupResponse404 | UnassignClientFromGroupResponse500 | UnassignClientFromGroupResponse503]"""
-        from .api.group.unassign_client_from_group import asyncio as unassign_client_from_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_client_from_group_asyncio(**_kwargs)
-
-
-    def update_group(self, group_id: str, *, data: UpdateGroupData, **kwargs: Any) -> UpdateGroupResponse200:
-        """Update group
-
- Update a group with the given ID.
-
-Args:
-    group_id (str):
-    body (UpdateGroupData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[UpdateGroupResponse200 | UpdateGroupResponse400 | UpdateGroupResponse401 | UpdateGroupResponse404 | UpdateGroupResponse500 | UpdateGroupResponse503]"""
-        from .api.group.update_group import sync as update_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return update_group_sync(**_kwargs)
-
-
-    async def update_group_async(self, group_id: str, *, data: UpdateGroupData, **kwargs: Any) -> UpdateGroupResponse200:
-        """Update group
-
- Update a group with the given ID.
-
-Args:
-    group_id (str):
-    body (UpdateGroupData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[UpdateGroupResponse200 | UpdateGroupResponse400 | UpdateGroupResponse401 | UpdateGroupResponse404 | UpdateGroupResponse500 | UpdateGroupResponse503]"""
-        from .api.group.update_group import asyncio as update_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await update_group_asyncio(**_kwargs)
-
-
-    def search_groups(self, *, data: SearchGroupsData, **kwargs: Any) -> Any:
-        """Search groups
-
- Search for groups based on given criteria.
-
-Args:
-    body (SearchGroupsData): Group search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | SearchGroupsResponse200 | SearchGroupsResponse400 | SearchGroupsResponse401 | SearchGroupsResponse403]"""
-        from .api.group.search_groups import sync as search_groups_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_groups_sync(**_kwargs)
-
-
-    async def search_groups_async(self, *, data: SearchGroupsData, **kwargs: Any) -> Any:
-        """Search groups
-
- Search for groups based on given criteria.
-
-Args:
-    body (SearchGroupsData): Group search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | SearchGroupsResponse200 | SearchGroupsResponse400 | SearchGroupsResponse401 | SearchGroupsResponse403]"""
-        from .api.group.search_groups import asyncio as search_groups_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_groups_asyncio(**_kwargs)
-
-
-    def assign_mapping_rule_to_group(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Assign a mapping rule to a group
-
- Assigns a mapping rule to a group.
-
-Args:
-    group_id (str):
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignMappingRuleToGroupResponse400 | AssignMappingRuleToGroupResponse403 | AssignMappingRuleToGroupResponse404 | AssignMappingRuleToGroupResponse409 | AssignMappingRuleToGroupResponse500 | AssignMappingRuleToGroupResponse503]"""
-        from .api.group.assign_mapping_rule_to_group import sync as assign_mapping_rule_to_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_mapping_rule_to_group_sync(**_kwargs)
-
-
-    async def assign_mapping_rule_to_group_async(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Assign a mapping rule to a group
-
- Assigns a mapping rule to a group.
-
-Args:
-    group_id (str):
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignMappingRuleToGroupResponse400 | AssignMappingRuleToGroupResponse403 | AssignMappingRuleToGroupResponse404 | AssignMappingRuleToGroupResponse409 | AssignMappingRuleToGroupResponse500 | AssignMappingRuleToGroupResponse503]"""
-        from .api.group.assign_mapping_rule_to_group import asyncio as assign_mapping_rule_to_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_mapping_rule_to_group_asyncio(**_kwargs)
-
-
-    def search_mapping_rules_for_group(self, group_id: str, *, data: SearchMappingRulesForGroupData, **kwargs: Any) -> SearchMappingRulesForGroupResponse200:
-        """Search group mapping rules
-
- Search mapping rules assigned to a group.
-
-Args:
-    group_id (str):
-    body (SearchMappingRulesForGroupData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMappingRulesForGroupResponse200 | SearchMappingRulesForGroupResponse400 | SearchMappingRulesForGroupResponse401 | SearchMappingRulesForGroupResponse403 | SearchMappingRulesForGroupResponse404 | SearchMappingRulesForGroupResponse500]"""
-        from .api.group.search_mapping_rules_for_group import sync as search_mapping_rules_for_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_mapping_rules_for_group_sync(**_kwargs)
-
-
-    async def search_mapping_rules_for_group_async(self, group_id: str, *, data: SearchMappingRulesForGroupData, **kwargs: Any) -> SearchMappingRulesForGroupResponse200:
-        """Search group mapping rules
-
- Search mapping rules assigned to a group.
-
-Args:
-    group_id (str):
-    body (SearchMappingRulesForGroupData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMappingRulesForGroupResponse200 | SearchMappingRulesForGroupResponse400 | SearchMappingRulesForGroupResponse401 | SearchMappingRulesForGroupResponse403 | SearchMappingRulesForGroupResponse404 | SearchMappingRulesForGroupResponse500]"""
-        from .api.group.search_mapping_rules_for_group import asyncio as search_mapping_rules_for_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_mapping_rules_for_group_asyncio(**_kwargs)
-
-
-    def create_group(self, *, data: CreateGroupData, **kwargs: Any) -> CreateGroupResponse201:
-        """Create group
-
- Create a new group.
-
-Args:
-    body (CreateGroupData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateGroupResponse201 | CreateGroupResponse400 | CreateGroupResponse401 | CreateGroupResponse403 | CreateGroupResponse500 | CreateGroupResponse503]"""
-        from .api.group.create_group import sync as create_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_group_sync(**_kwargs)
-
-
-    async def create_group_async(self, *, data: CreateGroupData, **kwargs: Any) -> CreateGroupResponse201:
-        """Create group
-
- Create a new group.
-
-Args:
-    body (CreateGroupData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateGroupResponse201 | CreateGroupResponse400 | CreateGroupResponse401 | CreateGroupResponse403 | CreateGroupResponse500 | CreateGroupResponse503]"""
-        from .api.group.create_group import asyncio as create_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_group_asyncio(**_kwargs)
-
-
-    def delete_group(self, group_id: str, **kwargs: Any) -> Any:
-        """Delete group
-
- Deletes the group with the given ID.
-
-Args:
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteGroupResponse401 | DeleteGroupResponse404 | DeleteGroupResponse500 | DeleteGroupResponse503]"""
-        from .api.group.delete_group import sync as delete_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_group_sync(**_kwargs)
-
-
-    async def delete_group_async(self, group_id: str, **kwargs: Any) -> Any:
-        """Delete group
-
- Deletes the group with the given ID.
-
-Args:
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteGroupResponse401 | DeleteGroupResponse404 | DeleteGroupResponse500 | DeleteGroupResponse503]"""
-        from .api.group.delete_group import asyncio as delete_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_group_asyncio(**_kwargs)
-
-
-    def assign_user_to_group(self, group_id: str, username: str, **kwargs: Any) -> Any:
-        """Assign a user to a group
-
- Assigns a user to a group, making the user a member of the group.
-Group members inherit the group authorizations, roles, and tenant assignments.
-
-Args:
-    group_id (str):
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignUserToGroupResponse400 | AssignUserToGroupResponse403 | AssignUserToGroupResponse404 | AssignUserToGroupResponse409 | AssignUserToGroupResponse500 | AssignUserToGroupResponse503]"""
-        from .api.group.assign_user_to_group import sync as assign_user_to_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_user_to_group_sync(**_kwargs)
-
-
-    async def assign_user_to_group_async(self, group_id: str, username: str, **kwargs: Any) -> Any:
-        """Assign a user to a group
-
- Assigns a user to a group, making the user a member of the group.
-Group members inherit the group authorizations, roles, and tenant assignments.
-
-Args:
-    group_id (str):
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignUserToGroupResponse400 | AssignUserToGroupResponse403 | AssignUserToGroupResponse404 | AssignUserToGroupResponse409 | AssignUserToGroupResponse500 | AssignUserToGroupResponse503]"""
-        from .api.group.assign_user_to_group import asyncio as assign_user_to_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_user_to_group_asyncio(**_kwargs)
-
-
-    def search_clients_for_group(self, group_id: str, *, data: SearchClientsForGroupData, **kwargs: Any) -> SearchClientsForGroupResponse200:
-        """Search group clients
-
- Search clients assigned to a group.
-
-Args:
-    group_id (str):
-    body (SearchClientsForGroupData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchClientsForGroupResponse200 | SearchClientsForGroupResponse400 | SearchClientsForGroupResponse401 | SearchClientsForGroupResponse403 | SearchClientsForGroupResponse404 | SearchClientsForGroupResponse500]"""
-        from .api.group.search_clients_for_group import sync as search_clients_for_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_clients_for_group_sync(**_kwargs)
-
-
-    async def search_clients_for_group_async(self, group_id: str, *, data: SearchClientsForGroupData, **kwargs: Any) -> SearchClientsForGroupResponse200:
-        """Search group clients
-
- Search clients assigned to a group.
-
-Args:
-    group_id (str):
-    body (SearchClientsForGroupData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchClientsForGroupResponse200 | SearchClientsForGroupResponse400 | SearchClientsForGroupResponse401 | SearchClientsForGroupResponse403 | SearchClientsForGroupResponse404 | SearchClientsForGroupResponse500]"""
-        from .api.group.search_clients_for_group import asyncio as search_clients_for_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_clients_for_group_asyncio(**_kwargs)
-
-
-    def search_correlated_message_subscriptions(self, *, data: SearchCorrelatedMessageSubscriptionsData, **kwargs: Any) -> SearchCorrelatedMessageSubscriptionsResponse200:
-        """Search correlated message subscriptions
-
- Search correlated message subscriptions based on given criteria.
-
-Args:
-    body (SearchCorrelatedMessageSubscriptionsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchCorrelatedMessageSubscriptionsResponse200 | SearchCorrelatedMessageSubscriptionsResponse400 | SearchCorrelatedMessageSubscriptionsResponse401 | SearchCorrelatedMessageSubscriptionsResponse403 | SearchCorrelatedMessageSubscriptionsResponse500]"""
-        from .api.message_subscription.search_correlated_message_subscriptions import sync as search_correlated_message_subscriptions_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_correlated_message_subscriptions_sync(**_kwargs)
-
-
-    async def search_correlated_message_subscriptions_async(self, *, data: SearchCorrelatedMessageSubscriptionsData, **kwargs: Any) -> SearchCorrelatedMessageSubscriptionsResponse200:
-        """Search correlated message subscriptions
-
- Search correlated message subscriptions based on given criteria.
-
-Args:
-    body (SearchCorrelatedMessageSubscriptionsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchCorrelatedMessageSubscriptionsResponse200 | SearchCorrelatedMessageSubscriptionsResponse400 | SearchCorrelatedMessageSubscriptionsResponse401 | SearchCorrelatedMessageSubscriptionsResponse403 | SearchCorrelatedMessageSubscriptionsResponse500]"""
-        from .api.message_subscription.search_correlated_message_subscriptions import asyncio as search_correlated_message_subscriptions_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_correlated_message_subscriptions_asyncio(**_kwargs)
-
-
-    def search_message_subscriptions(self, *, data: SearchMessageSubscriptionsData, **kwargs: Any) -> SearchMessageSubscriptionsResponse200:
-        """Search message subscriptions
-
- Search for message subscriptions based on given criteria.
-
-Args:
-    body (SearchMessageSubscriptionsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMessageSubscriptionsResponse200 | SearchMessageSubscriptionsResponse400 | SearchMessageSubscriptionsResponse401 | SearchMessageSubscriptionsResponse403 | SearchMessageSubscriptionsResponse500]"""
-        from .api.message_subscription.search_message_subscriptions import sync as search_message_subscriptions_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_message_subscriptions_sync(**_kwargs)
-
-
-    async def search_message_subscriptions_async(self, *, data: SearchMessageSubscriptionsData, **kwargs: Any) -> SearchMessageSubscriptionsResponse200:
-        """Search message subscriptions
-
- Search for message subscriptions based on given criteria.
-
-Args:
-    body (SearchMessageSubscriptionsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMessageSubscriptionsResponse200 | SearchMessageSubscriptionsResponse400 | SearchMessageSubscriptionsResponse401 | SearchMessageSubscriptionsResponse403 | SearchMessageSubscriptionsResponse500]"""
-        from .api.message_subscription.search_message_subscriptions import asyncio as search_message_subscriptions_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_message_subscriptions_asyncio(**_kwargs)
-
-
-    def create_admin_user(self, *, data: CreateAdminUserData, **kwargs: Any) -> Any:
-        """Create admin user
-
- Creates a new user and assigns the admin role to it. This endpoint is only usable when users are
-managed in the Orchestration Cluster and while no user is assigned to the admin role.
-
-Args:
-    body (CreateAdminUserData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CreateAdminUserResponse400 | CreateAdminUserResponse403 | CreateAdminUserResponse500 | CreateAdminUserResponse503]"""
-        from .api.setup.create_admin_user import sync as create_admin_user_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_admin_user_sync(**_kwargs)
-
-
-    async def create_admin_user_async(self, *, data: CreateAdminUserData, **kwargs: Any) -> Any:
-        """Create admin user
-
- Creates a new user and assigns the admin role to it. This endpoint is only usable when users are
-managed in the Orchestration Cluster and while no user is assigned to the admin role.
-
-Args:
-    body (CreateAdminUserData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CreateAdminUserResponse400 | CreateAdminUserResponse403 | CreateAdminUserResponse500 | CreateAdminUserResponse503]"""
-        from .api.setup.create_admin_user import asyncio as create_admin_user_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_admin_user_asyncio(**_kwargs)
-
-
-    def publish_message(self, *, data: PublishMessageData, **kwargs: Any) -> PublishMessageResponse200:
-        """Publish message
-
- Publishes a single message.
-Messages are published to specific partitions computed from their correlation keys.
-Messages can be buffered.
-The endpoint does not wait for a correlation result.
-Use the message correlation endpoint for such use cases.
-
-Args:
-    body (PublishMessageData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[PublishMessageResponse200 | PublishMessageResponse400 | PublishMessageResponse500 | PublishMessageResponse503]"""
-        from .api.message.publish_message import sync as publish_message_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return publish_message_sync(**_kwargs)
-
-
-    async def publish_message_async(self, *, data: PublishMessageData, **kwargs: Any) -> PublishMessageResponse200:
-        """Publish message
-
- Publishes a single message.
-Messages are published to specific partitions computed from their correlation keys.
-Messages can be buffered.
-The endpoint does not wait for a correlation result.
-Use the message correlation endpoint for such use cases.
-
-Args:
-    body (PublishMessageData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[PublishMessageResponse200 | PublishMessageResponse400 | PublishMessageResponse500 | PublishMessageResponse503]"""
-        from .api.message.publish_message import asyncio as publish_message_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await publish_message_asyncio(**_kwargs)
-
-
-    def correlate_message(self, *, data: CorrelateMessageData, **kwargs: Any) -> CorrelateMessageResponse200:
-        """Correlate message
-
- Publishes a message and correlates it to a subscription.
-If correlation is successful it will return the first process instance key the message correlated
-with.
-The message is not buffered.
-Use the publish message endpoint to send messages that can be buffered.
-
-Args:
-    body (CorrelateMessageData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CorrelateMessageResponse200 | CorrelateMessageResponse400 | CorrelateMessageResponse403 | CorrelateMessageResponse404 | CorrelateMessageResponse500 | CorrelateMessageResponse503]"""
-        from .api.message.correlate_message import sync as correlate_message_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return correlate_message_sync(**_kwargs)
-
-
-    async def correlate_message_async(self, *, data: CorrelateMessageData, **kwargs: Any) -> CorrelateMessageResponse200:
-        """Correlate message
-
- Publishes a message and correlates it to a subscription.
-If correlation is successful it will return the first process instance key the message correlated
-with.
-The message is not buffered.
-Use the publish message endpoint to send messages that can be buffered.
-
-Args:
-    body (CorrelateMessageData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CorrelateMessageResponse200 | CorrelateMessageResponse400 | CorrelateMessageResponse403 | CorrelateMessageResponse404 | CorrelateMessageResponse500 | CorrelateMessageResponse503]"""
-        from .api.message.correlate_message import asyncio as correlate_message_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await correlate_message_asyncio(**_kwargs)
-
-
-    def create_user(self, *, data: CreateUserData, **kwargs: Any) -> CreateUserResponse201:
-        """Create user
-
- Create a new user.
-
-Args:
-    body (CreateUserData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateUserResponse201 | CreateUserResponse400 | CreateUserResponse401 | CreateUserResponse403 | CreateUserResponse409 | CreateUserResponse500 | CreateUserResponse503]"""
-        from .api.user.create_user import sync as create_user_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_user_sync(**_kwargs)
-
-
-    async def create_user_async(self, *, data: CreateUserData, **kwargs: Any) -> CreateUserResponse201:
-        """Create user
-
- Create a new user.
-
-Args:
-    body (CreateUserData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateUserResponse201 | CreateUserResponse400 | CreateUserResponse401 | CreateUserResponse403 | CreateUserResponse409 | CreateUserResponse500 | CreateUserResponse503]"""
-        from .api.user.create_user import asyncio as create_user_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_user_asyncio(**_kwargs)
-
-
-    def search_users(self, *, data: SearchUsersData, **kwargs: Any) -> SearchUsersResponse200:
-        """Search users
-
- Search for users based on given criteria.
-
-Args:
-    body (SearchUsersData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]"""
-        from .api.user.search_users import sync as search_users_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_users_sync(**_kwargs)
-
-
-    async def search_users_async(self, *, data: SearchUsersData, **kwargs: Any) -> SearchUsersResponse200:
-        """Search users
-
- Search for users based on given criteria.
-
-Args:
-    body (SearchUsersData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]"""
-        from .api.user.search_users import asyncio as search_users_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_users_asyncio(**_kwargs)
-
-
-    def delete_user(self, username: str, **kwargs: Any) -> Any:
-        """Delete user
-
- Deletes a user.
-
-Args:
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteUserResponse400 | DeleteUserResponse404 | DeleteUserResponse500 | DeleteUserResponse503]"""
-        from .api.user.delete_user import sync as delete_user_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_user_sync(**_kwargs)
-
-
-    async def delete_user_async(self, username: str, **kwargs: Any) -> Any:
-        """Delete user
-
- Deletes a user.
-
-Args:
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteUserResponse400 | DeleteUserResponse404 | DeleteUserResponse500 | DeleteUserResponse503]"""
-        from .api.user.delete_user import asyncio as delete_user_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_user_asyncio(**_kwargs)
-
-
-    def get_user(self, username: str, **kwargs: Any) -> GetUserResponse200:
-        """Get user
-
- Get a user by its username.
-
-Args:
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetUserResponse200 | GetUserResponse401 | GetUserResponse403 | GetUserResponse404 | GetUserResponse500]"""
-        from .api.user.get_user import sync as get_user_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_user_sync(**_kwargs)
-
-
-    async def get_user_async(self, username: str, **kwargs: Any) -> GetUserResponse200:
-        """Get user
-
- Get a user by its username.
-
-Args:
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetUserResponse200 | GetUserResponse401 | GetUserResponse403 | GetUserResponse404 | GetUserResponse500]"""
-        from .api.user.get_user import asyncio as get_user_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_user_asyncio(**_kwargs)
-
-
-    def update_user(self, username: str, *, data: UpdateUserData, **kwargs: Any) -> UpdateUserResponse200:
-        """Update user
-
- Updates a user.
-
-Args:
-    username (str): The unique name of a user. Example: swillis.
-    body (UpdateUserData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[UpdateUserResponse200 | UpdateUserResponse400 | UpdateUserResponse403 | UpdateUserResponse404 | UpdateUserResponse500 | UpdateUserResponse503]"""
-        from .api.user.update_user import sync as update_user_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return update_user_sync(**_kwargs)
-
-
-    async def update_user_async(self, username: str, *, data: UpdateUserData, **kwargs: Any) -> UpdateUserResponse200:
-        """Update user
-
- Updates a user.
-
-Args:
-    username (str): The unique name of a user. Example: swillis.
-    body (UpdateUserData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[UpdateUserResponse200 | UpdateUserResponse400 | UpdateUserResponse403 | UpdateUserResponse404 | UpdateUserResponse500 | UpdateUserResponse503]"""
-        from .api.user.update_user import asyncio as update_user_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await update_user_asyncio(**_kwargs)
 
 
     def get_document(self, document_id: str, *, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> File:
@@ -5419,60 +5919,6 @@ Returns:
         return await create_document_link_asyncio(**_kwargs)
 
 
-    def delete_document(self, document_id: str, *, store_id: str | Unset = UNSET, **kwargs: Any) -> Any:
-        """Delete document
-
- Delete a document from the Camunda 8 cluster.
-
-Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
-production), local (non-production)
-
-Args:
-    document_id (str): Document Id that uniquely identifies a document.
-    store_id (str | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]"""
-        from .api.document.delete_document import sync as delete_document_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_document_sync(**_kwargs)
-
-
-    async def delete_document_async(self, document_id: str, *, store_id: str | Unset = UNSET, **kwargs: Any) -> Any:
-        """Delete document
-
- Delete a document from the Camunda 8 cluster.
-
-Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
-production), local (non-production)
-
-Args:
-    document_id (str): Document Id that uniquely identifies a document.
-    store_id (str | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]"""
-        from .api.document.delete_document import asyncio as delete_document_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_document_asyncio(**_kwargs)
-
-
     def create_document(self, *, data: CreateDocumentData, store_id: str | Unset = UNSET, document_id: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentResponse201:
         """Upload document
 
@@ -5529,150 +5975,996 @@ Returns:
         return await create_document_asyncio(**_kwargs)
 
 
-    def get_audit_log(self, audit_log_key: str, **kwargs: Any) -> GetAuditLogResponse200:
-        """Get audit log
+    def delete_document(self, document_id: str, *, store_id: str | Unset = UNSET, **kwargs: Any) -> Any:
+        """Delete document
 
- Get an audit log entry by auditLogKey.
+ Delete a document from the Camunda 8 cluster.
+
+Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+production), local (non-production)
 
 Args:
-    audit_log_key (str): System-generated key for an audit log entry. Example:
-        22517998136843567.
+    document_id (str): Document Id that uniquely identifies a document.
+    store_id (str | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetAuditLogResponse200 | GetAuditLogResponse401 | GetAuditLogResponse403 | GetAuditLogResponse404 | GetAuditLogResponse500]"""
-        from .api.audit_log.get_audit_log import sync as get_audit_log_sync
+    Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]"""
+        from .api.document.delete_document import sync as delete_document_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_audit_log_sync(**_kwargs)
+        return delete_document_sync(**_kwargs)
 
 
-    async def get_audit_log_async(self, audit_log_key: str, **kwargs: Any) -> GetAuditLogResponse200:
-        """Get audit log
+    async def delete_document_async(self, document_id: str, *, store_id: str | Unset = UNSET, **kwargs: Any) -> Any:
+        """Delete document
 
- Get an audit log entry by auditLogKey.
+ Delete a document from the Camunda 8 cluster.
+
+Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+production), local (non-production)
 
 Args:
-    audit_log_key (str): System-generated key for an audit log entry. Example:
-        22517998136843567.
+    document_id (str): Document Id that uniquely identifies a document.
+    store_id (str | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetAuditLogResponse200 | GetAuditLogResponse401 | GetAuditLogResponse403 | GetAuditLogResponse404 | GetAuditLogResponse500]"""
-        from .api.audit_log.get_audit_log import asyncio as get_audit_log_asyncio
+    Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]"""
+        from .api.document.delete_document import asyncio as delete_document_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_audit_log_asyncio(**_kwargs)
+        return await delete_document_asyncio(**_kwargs)
 
 
-    def search_audit_logs(self, *, data: SearchAuditLogsData, **kwargs: Any) -> Any:
-        """Search audit logs
+    def delete_resource(self, resource_key: str, *, data: DeleteResourceDataType0 | None, **kwargs: Any) -> Any:
+        """Delete resource
 
- Search for audit logs based on given criteria.
+ Deletes a deployed resource.
+This can be a process definition, decision requirements definition, or form definition
+deployed using the deploy resources endpoint. Specify the resource you want to delete in the
+`resourceKey` parameter.
 
 Args:
-    body (SearchAuditLogsData): Audit log search request.
+    resource_key (str): The system-assigned key for this resource.
+    body (DeleteResourceDataType0 | None):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | SearchAuditLogsResponse200 | SearchAuditLogsResponse400 | SearchAuditLogsResponse401 | SearchAuditLogsResponse403]"""
-        from .api.audit_log.search_audit_logs import sync as search_audit_logs_sync
+    Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]"""
+        from .api.resource.delete_resource import sync as delete_resource_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return search_audit_logs_sync(**_kwargs)
+        return delete_resource_sync(**_kwargs)
 
 
-    async def search_audit_logs_async(self, *, data: SearchAuditLogsData, **kwargs: Any) -> Any:
-        """Search audit logs
+    async def delete_resource_async(self, resource_key: str, *, data: DeleteResourceDataType0 | None, **kwargs: Any) -> Any:
+        """Delete resource
 
- Search for audit logs based on given criteria.
+ Deletes a deployed resource.
+This can be a process definition, decision requirements definition, or form definition
+deployed using the deploy resources endpoint. Specify the resource you want to delete in the
+`resourceKey` parameter.
 
 Args:
-    body (SearchAuditLogsData): Audit log search request.
+    resource_key (str): The system-assigned key for this resource.
+    body (DeleteResourceDataType0 | None):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | SearchAuditLogsResponse200 | SearchAuditLogsResponse400 | SearchAuditLogsResponse401 | SearchAuditLogsResponse403]"""
-        from .api.audit_log.search_audit_logs import asyncio as search_audit_logs_asyncio
+    Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]"""
+        from .api.resource.delete_resource import asyncio as delete_resource_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_audit_logs_asyncio(**_kwargs)
+        return await delete_resource_asyncio(**_kwargs)
 
 
-    def get_usage_metrics(self, *, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = False, **kwargs: Any) -> GetUsageMetricsResponse200:
-        """Get usage metrics
+    def create_deployment(self, *, data: CreateDeploymentData, **kwargs: Any) -> CreateDeploymentResponse200:
+        """Deploy resources
 
- Retrieve the usage metrics based on given criteria.
+ Deploys one or more resources (e.g. processes, decision models, or forms).
+This is an atomic call, i.e. either all resources are deployed or none of them are.
 
 Args:
-    start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
-    end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
-    tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
-    with_tenants (bool | Unset):  Default: False.
+    body (CreateDeploymentData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetUsageMetricsResponse200 | GetUsageMetricsResponse400 | GetUsageMetricsResponse401 | GetUsageMetricsResponse403 | GetUsageMetricsResponse500]"""
-        from .api.system.get_usage_metrics import sync as get_usage_metrics_sync
+    Response[CreateDeploymentResponse200 | CreateDeploymentResponse400 | CreateDeploymentResponse503]"""
+        from .api.resource.create_deployment import sync as create_deployment_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_usage_metrics_sync(**_kwargs)
+        return create_deployment_sync(**_kwargs)
 
 
-    async def get_usage_metrics_async(self, *, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = False, **kwargs: Any) -> GetUsageMetricsResponse200:
-        """Get usage metrics
+    async def create_deployment_async(self, *, data: CreateDeploymentData, **kwargs: Any) -> CreateDeploymentResponse200:
+        """Deploy resources
 
- Retrieve the usage metrics based on given criteria.
+ Deploys one or more resources (e.g. processes, decision models, or forms).
+This is an atomic call, i.e. either all resources are deployed or none of them are.
 
 Args:
-    start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
-    end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
-    tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
-    with_tenants (bool | Unset):  Default: False.
+    body (CreateDeploymentData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetUsageMetricsResponse200 | GetUsageMetricsResponse400 | GetUsageMetricsResponse401 | GetUsageMetricsResponse403 | GetUsageMetricsResponse500]"""
-        from .api.system.get_usage_metrics import asyncio as get_usage_metrics_asyncio
+    Response[CreateDeploymentResponse200 | CreateDeploymentResponse400 | CreateDeploymentResponse503]"""
+        from .api.resource.create_deployment import asyncio as create_deployment_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_usage_metrics_asyncio(**_kwargs)
+        return await create_deployment_asyncio(**_kwargs)
+
+
+    def get_resource(self, resource_key: str, **kwargs: Any) -> GetResourceResponse200:
+        """Get resource
+
+ Returns a deployed resource.
+:::info
+Currently, this endpoint only supports RPA resources.
+:::
+
+Args:
+    resource_key (str): The system-assigned key for this resource.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetResourceResponse200 | GetResourceResponse404 | GetResourceResponse500]"""
+        from .api.resource.get_resource import sync as get_resource_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_resource_sync(**_kwargs)
+
+
+    async def get_resource_async(self, resource_key: str, **kwargs: Any) -> GetResourceResponse200:
+        """Get resource
+
+ Returns a deployed resource.
+:::info
+Currently, this endpoint only supports RPA resources.
+:::
+
+Args:
+    resource_key (str): The system-assigned key for this resource.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetResourceResponse200 | GetResourceResponse404 | GetResourceResponse500]"""
+        from .api.resource.get_resource import asyncio as get_resource_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_resource_asyncio(**_kwargs)
+
+
+    def get_resource_content(self, resource_key: str, **kwargs: Any) -> File:
+        """Get resource content
+
+ Returns the content of a deployed resource.
+:::info
+Currently, this endpoint only supports RPA resources.
+:::
+
+Args:
+    resource_key (str): The system-assigned key for this resource.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[File | GetResourceContentResponse404 | GetResourceContentResponse500]"""
+        from .api.resource.get_resource_content import sync as get_resource_content_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_resource_content_sync(**_kwargs)
+
+
+    async def get_resource_content_async(self, resource_key: str, **kwargs: Any) -> File:
+        """Get resource content
+
+ Returns the content of a deployed resource.
+:::info
+Currently, this endpoint only supports RPA resources.
+:::
+
+Args:
+    resource_key (str): The system-assigned key for this resource.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[File | GetResourceContentResponse404 | GetResourceContentResponse500]"""
+        from .api.resource.get_resource_content import asyncio as get_resource_content_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_resource_content_asyncio(**_kwargs)
+
+
+    def pin_clock(self, *, data: PinClockData, **kwargs: Any) -> Any:
+        """Pin internal clock (alpha)
+
+ Set a precise, static time for the Zeebe engine's internal clock.
+When the clock is pinned, it remains at the specified time and does not advance.
+To change the time, the clock must be pinned again with a new timestamp.
+
+This endpoint is an alpha feature and may be subject to change
+in future releases.
+
+Args:
+    body (PinClockData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | PinClockResponse400 | PinClockResponse500 | PinClockResponse503]"""
+        from .api.clock.pin_clock import sync as pin_clock_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return pin_clock_sync(**_kwargs)
+
+
+    async def pin_clock_async(self, *, data: PinClockData, **kwargs: Any) -> Any:
+        """Pin internal clock (alpha)
+
+ Set a precise, static time for the Zeebe engine's internal clock.
+When the clock is pinned, it remains at the specified time and does not advance.
+To change the time, the clock must be pinned again with a new timestamp.
+
+This endpoint is an alpha feature and may be subject to change
+in future releases.
+
+Args:
+    body (PinClockData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | PinClockResponse400 | PinClockResponse500 | PinClockResponse503]"""
+        from .api.clock.pin_clock import asyncio as pin_clock_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await pin_clock_asyncio(**_kwargs)
+
+
+    def reset_clock(self, **kwargs: Any) -> Any:
+        """Reset internal clock (alpha)
+
+ Resets the Zeebe engine's internal clock to the current system time, enabling it to tick in real-
+time.
+This operation is useful for returning the clock to
+normal behavior after it has been pinned to a specific time.
+
+This endpoint is an alpha feature and may be subject to change
+in future releases.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | ResetClockResponse500 | ResetClockResponse503]"""
+        from .api.clock.reset_clock import sync as reset_clock_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return reset_clock_sync(**_kwargs)
+
+
+    async def reset_clock_async(self, **kwargs: Any) -> Any:
+        """Reset internal clock (alpha)
+
+ Resets the Zeebe engine's internal clock to the current system time, enabling it to tick in real-
+time.
+This operation is useful for returning the clock to
+normal behavior after it has been pinned to a specific time.
+
+This endpoint is an alpha feature and may be subject to change
+in future releases.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | ResetClockResponse500 | ResetClockResponse503]"""
+        from .api.clock.reset_clock import asyncio as reset_clock_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await reset_clock_asyncio(**_kwargs)
+
+
+    def activate_ad_hoc_sub_process_activities(self, ad_hoc_sub_process_instance_key: str, *, data: ActivateAdHocSubProcessActivitiesData, **kwargs: Any) -> ActivateAdHocSubProcessActivitiesResponse400:
+        """Activate activities within an ad-hoc sub-process
+
+ Activates selected activities within an ad-hoc sub-process identified by element ID.
+The provided element IDs must exist within the ad-hoc sub-process instance identified by the
+provided adHocSubProcessInstanceKey.
+
+Args:
+    ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
+        Example: 2251799813686789.
+    body (ActivateAdHocSubProcessActivitiesData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[ActivateAdHocSubProcessActivitiesResponse400 | ActivateAdHocSubProcessActivitiesResponse401 | ActivateAdHocSubProcessActivitiesResponse403 | ActivateAdHocSubProcessActivitiesResponse404 | ActivateAdHocSubProcessActivitiesResponse500 | ActivateAdHocSubProcessActivitiesResponse503 | Any]"""
+        from .api.ad_hoc_sub_process.activate_ad_hoc_sub_process_activities import sync as activate_ad_hoc_sub_process_activities_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return activate_ad_hoc_sub_process_activities_sync(**_kwargs)
+
+
+    async def activate_ad_hoc_sub_process_activities_async(self, ad_hoc_sub_process_instance_key: str, *, data: ActivateAdHocSubProcessActivitiesData, **kwargs: Any) -> ActivateAdHocSubProcessActivitiesResponse400:
+        """Activate activities within an ad-hoc sub-process
+
+ Activates selected activities within an ad-hoc sub-process identified by element ID.
+The provided element IDs must exist within the ad-hoc sub-process instance identified by the
+provided adHocSubProcessInstanceKey.
+
+Args:
+    ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
+        Example: 2251799813686789.
+    body (ActivateAdHocSubProcessActivitiesData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[ActivateAdHocSubProcessActivitiesResponse400 | ActivateAdHocSubProcessActivitiesResponse401 | ActivateAdHocSubProcessActivitiesResponse403 | ActivateAdHocSubProcessActivitiesResponse404 | ActivateAdHocSubProcessActivitiesResponse500 | ActivateAdHocSubProcessActivitiesResponse503 | Any]"""
+        from .api.ad_hoc_sub_process.activate_ad_hoc_sub_process_activities import asyncio as activate_ad_hoc_sub_process_activities_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await activate_ad_hoc_sub_process_activities_asyncio(**_kwargs)
+
+
+    def get_decision_requirements_xml(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsXMLResponse400:
+        """Get decision requirements XML
+
+ Returns decision requirements as XML.
+
+Args:
+    decision_requirements_key (str): System-generated key for a deployed decision requirements
+        definition. Example: 2251799813683346.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetDecisionRequirementsXMLResponse400 | GetDecisionRequirementsXMLResponse401 | GetDecisionRequirementsXMLResponse403 | GetDecisionRequirementsXMLResponse404 | GetDecisionRequirementsXMLResponse500 | str]"""
+        from .api.decision_requirements.get_decision_requirements_xml import sync as get_decision_requirements_xml_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_decision_requirements_xml_sync(**_kwargs)
+
+
+    async def get_decision_requirements_xml_async(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsXMLResponse400:
+        """Get decision requirements XML
+
+ Returns decision requirements as XML.
+
+Args:
+    decision_requirements_key (str): System-generated key for a deployed decision requirements
+        definition. Example: 2251799813683346.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetDecisionRequirementsXMLResponse400 | GetDecisionRequirementsXMLResponse401 | GetDecisionRequirementsXMLResponse403 | GetDecisionRequirementsXMLResponse404 | GetDecisionRequirementsXMLResponse500 | str]"""
+        from .api.decision_requirements.get_decision_requirements_xml import asyncio as get_decision_requirements_xml_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_decision_requirements_xml_asyncio(**_kwargs)
+
+
+    def search_decision_requirements(self, *, data: SearchDecisionRequirementsData, **kwargs: Any) -> SearchDecisionRequirementsResponse200:
+        """Search decision requirements
+
+ Search for decision requirements based on given criteria.
+
+Args:
+    body (SearchDecisionRequirementsData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchDecisionRequirementsResponse200 | SearchDecisionRequirementsResponse400 | SearchDecisionRequirementsResponse401 | SearchDecisionRequirementsResponse403 | SearchDecisionRequirementsResponse500]"""
+        from .api.decision_requirements.search_decision_requirements import sync as search_decision_requirements_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_decision_requirements_sync(**_kwargs)
+
+
+    async def search_decision_requirements_async(self, *, data: SearchDecisionRequirementsData, **kwargs: Any) -> SearchDecisionRequirementsResponse200:
+        """Search decision requirements
+
+ Search for decision requirements based on given criteria.
+
+Args:
+    body (SearchDecisionRequirementsData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchDecisionRequirementsResponse200 | SearchDecisionRequirementsResponse400 | SearchDecisionRequirementsResponse401 | SearchDecisionRequirementsResponse403 | SearchDecisionRequirementsResponse500]"""
+        from .api.decision_requirements.search_decision_requirements import asyncio as search_decision_requirements_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_decision_requirements_asyncio(**_kwargs)
+
+
+    def get_decision_requirements(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsResponse200:
+        """Get decision requirements
+
+ Returns Decision Requirements as JSON.
+
+Args:
+    decision_requirements_key (str): System-generated key for a deployed decision requirements
+        definition. Example: 2251799813683346.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetDecisionRequirementsResponse200 | GetDecisionRequirementsResponse400 | GetDecisionRequirementsResponse401 | GetDecisionRequirementsResponse403 | GetDecisionRequirementsResponse404 | GetDecisionRequirementsResponse500]"""
+        from .api.decision_requirements.get_decision_requirements import sync as get_decision_requirements_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_decision_requirements_sync(**_kwargs)
+
+
+    async def get_decision_requirements_async(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsResponse200:
+        """Get decision requirements
+
+ Returns Decision Requirements as JSON.
+
+Args:
+    decision_requirements_key (str): System-generated key for a deployed decision requirements
+        definition. Example: 2251799813683346.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetDecisionRequirementsResponse200 | GetDecisionRequirementsResponse400 | GetDecisionRequirementsResponse401 | GetDecisionRequirementsResponse403 | GetDecisionRequirementsResponse404 | GetDecisionRequirementsResponse500]"""
+        from .api.decision_requirements.get_decision_requirements import asyncio as get_decision_requirements_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_decision_requirements_asyncio(**_kwargs)
+
+
+    def create_mapping_rule(self, *, data: CreateMappingRuleData, **kwargs: Any) -> CreateMappingRuleResponse201:
+        """Create mapping rule
+
+ Create a new mapping rule
+
+Args:
+    body (CreateMappingRuleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CreateMappingRuleResponse201 | CreateMappingRuleResponse400 | CreateMappingRuleResponse403 | CreateMappingRuleResponse404 | CreateMappingRuleResponse500]"""
+        from .api.mapping_rule.create_mapping_rule import sync as create_mapping_rule_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_mapping_rule_sync(**_kwargs)
+
+
+    async def create_mapping_rule_async(self, *, data: CreateMappingRuleData, **kwargs: Any) -> CreateMappingRuleResponse201:
+        """Create mapping rule
+
+ Create a new mapping rule
+
+Args:
+    body (CreateMappingRuleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CreateMappingRuleResponse201 | CreateMappingRuleResponse400 | CreateMappingRuleResponse403 | CreateMappingRuleResponse404 | CreateMappingRuleResponse500]"""
+        from .api.mapping_rule.create_mapping_rule import asyncio as create_mapping_rule_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_mapping_rule_asyncio(**_kwargs)
+
+
+    def search_mapping_rule(self, *, data: SearchMappingRuleData, **kwargs: Any) -> SearchMappingRuleResponse200:
+        """Search mapping rules
+
+ Search for mapping rules based on given criteria.
+
+Args:
+    body (SearchMappingRuleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchMappingRuleResponse200 | SearchMappingRuleResponse400 | SearchMappingRuleResponse401 | SearchMappingRuleResponse403 | SearchMappingRuleResponse500]"""
+        from .api.mapping_rule.search_mapping_rule import sync as search_mapping_rule_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_mapping_rule_sync(**_kwargs)
+
+
+    async def search_mapping_rule_async(self, *, data: SearchMappingRuleData, **kwargs: Any) -> SearchMappingRuleResponse200:
+        """Search mapping rules
+
+ Search for mapping rules based on given criteria.
+
+Args:
+    body (SearchMappingRuleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchMappingRuleResponse200 | SearchMappingRuleResponse400 | SearchMappingRuleResponse401 | SearchMappingRuleResponse403 | SearchMappingRuleResponse500]"""
+        from .api.mapping_rule.search_mapping_rule import asyncio as search_mapping_rule_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_mapping_rule_asyncio(**_kwargs)
+
+
+    def delete_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Delete a mapping rule
+
+ Deletes the mapping rule with the given ID.
+
+Args:
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | DeleteMappingRuleResponse401 | DeleteMappingRuleResponse404 | DeleteMappingRuleResponse500 | DeleteMappingRuleResponse503]"""
+        from .api.mapping_rule.delete_mapping_rule import sync as delete_mapping_rule_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_mapping_rule_sync(**_kwargs)
+
+
+    async def delete_mapping_rule_async(self, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Delete a mapping rule
+
+ Deletes the mapping rule with the given ID.
+
+Args:
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | DeleteMappingRuleResponse401 | DeleteMappingRuleResponse404 | DeleteMappingRuleResponse500 | DeleteMappingRuleResponse503]"""
+        from .api.mapping_rule.delete_mapping_rule import asyncio as delete_mapping_rule_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_mapping_rule_asyncio(**_kwargs)
+
+
+    def get_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> GetMappingRuleResponse200:
+        """Get a mapping rule
+
+ Gets the mapping rule with the given ID.
+
+Args:
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetMappingRuleResponse200 | GetMappingRuleResponse401 | GetMappingRuleResponse404 | GetMappingRuleResponse500]"""
+        from .api.mapping_rule.get_mapping_rule import sync as get_mapping_rule_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_mapping_rule_sync(**_kwargs)
+
+
+    async def get_mapping_rule_async(self, mapping_rule_id: str, **kwargs: Any) -> GetMappingRuleResponse200:
+        """Get a mapping rule
+
+ Gets the mapping rule with the given ID.
+
+Args:
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetMappingRuleResponse200 | GetMappingRuleResponse401 | GetMappingRuleResponse404 | GetMappingRuleResponse500]"""
+        from .api.mapping_rule.get_mapping_rule import asyncio as get_mapping_rule_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_mapping_rule_asyncio(**_kwargs)
+
+
+    def update_mapping_rule(self, mapping_rule_id: str, *, data: UpdateMappingRuleData, **kwargs: Any) -> UpdateMappingRuleResponse200:
+        """Update mapping rule
+
+ Update a mapping rule.
+
+Args:
+    mapping_rule_id (str):
+    body (UpdateMappingRuleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]"""
+        from .api.mapping_rule.update_mapping_rule import sync as update_mapping_rule_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return update_mapping_rule_sync(**_kwargs)
+
+
+    async def update_mapping_rule_async(self, mapping_rule_id: str, *, data: UpdateMappingRuleData, **kwargs: Any) -> UpdateMappingRuleResponse200:
+        """Update mapping rule
+
+ Update a mapping rule.
+
+Args:
+    mapping_rule_id (str):
+    body (UpdateMappingRuleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]"""
+        from .api.mapping_rule.update_mapping_rule import asyncio as update_mapping_rule_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await update_mapping_rule_asyncio(**_kwargs)
+
+
+    def evaluate_expression(self, *, data: EvaluateExpressionData, **kwargs: Any) -> EvaluateExpressionResponse200:
+        """Evaluate an expression
+
+ Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
+variables when a tenant ID is provided.
+
+Args:
+    body (EvaluateExpressionData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[EvaluateExpressionResponse200 | EvaluateExpressionResponse400 | EvaluateExpressionResponse401 | EvaluateExpressionResponse403 | EvaluateExpressionResponse500]"""
+        from .api.expression.evaluate_expression import sync as evaluate_expression_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return evaluate_expression_sync(**_kwargs)
+
+
+    async def evaluate_expression_async(self, *, data: EvaluateExpressionData, **kwargs: Any) -> EvaluateExpressionResponse200:
+        """Evaluate an expression
+
+ Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
+variables when a tenant ID is provided.
+
+Args:
+    body (EvaluateExpressionData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[EvaluateExpressionResponse200 | EvaluateExpressionResponse400 | EvaluateExpressionResponse401 | EvaluateExpressionResponse403 | EvaluateExpressionResponse500]"""
+        from .api.expression.evaluate_expression import asyncio as evaluate_expression_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await evaluate_expression_asyncio(**_kwargs)
+
+
+    def get_element_instance(self, element_instance_key: str, **kwargs: Any) -> GetElementInstanceResponse200:
+        """Get element instance
+
+ Returns element instance as JSON.
+
+Args:
+    element_instance_key (str): System-generated key for a element instance. Example:
+        2251799813686789.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]"""
+        from .api.element_instance.get_element_instance import sync as get_element_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_element_instance_sync(**_kwargs)
+
+
+    async def get_element_instance_async(self, element_instance_key: str, **kwargs: Any) -> GetElementInstanceResponse200:
+        """Get element instance
+
+ Returns element instance as JSON.
+
+Args:
+    element_instance_key (str): System-generated key for a element instance. Example:
+        2251799813686789.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]"""
+        from .api.element_instance.get_element_instance import asyncio as get_element_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_element_instance_asyncio(**_kwargs)
+
+
+    def search_element_instances(self, *, data: SearchElementInstancesData, **kwargs: Any) -> SearchElementInstancesResponse200:
+        """Search element instances
+
+ Search for element instances based on given criteria.
+
+Args:
+    body (SearchElementInstancesData): Element instance search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchElementInstancesResponse200 | SearchElementInstancesResponse400 | SearchElementInstancesResponse401 | SearchElementInstancesResponse403 | SearchElementInstancesResponse500]"""
+        from .api.element_instance.search_element_instances import sync as search_element_instances_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_element_instances_sync(**_kwargs)
+
+
+    async def search_element_instances_async(self, *, data: SearchElementInstancesData, **kwargs: Any) -> SearchElementInstancesResponse200:
+        """Search element instances
+
+ Search for element instances based on given criteria.
+
+Args:
+    body (SearchElementInstancesData): Element instance search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchElementInstancesResponse200 | SearchElementInstancesResponse400 | SearchElementInstancesResponse401 | SearchElementInstancesResponse403 | SearchElementInstancesResponse500]"""
+        from .api.element_instance.search_element_instances import asyncio as search_element_instances_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_element_instances_asyncio(**_kwargs)
+
+
+    def create_element_instance_variables(self, element_instance_key: str, *, data: CreateElementInstanceVariablesData, **kwargs: Any) -> Any:
+        """Update element instance variables
+
+ Updates all the variables of a particular scope (for example, process instance, element instance)
+with the given variable data.
+Specify the element instance in the `elementInstanceKey` parameter.
+
+Args:
+    element_instance_key (str): System-generated key for a element instance. Example:
+        2251799813686789.
+    body (CreateElementInstanceVariablesData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | CreateElementInstanceVariablesResponse400 | CreateElementInstanceVariablesResponse500 | CreateElementInstanceVariablesResponse503]"""
+        from .api.element_instance.create_element_instance_variables import sync as create_element_instance_variables_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_element_instance_variables_sync(**_kwargs)
+
+
+    async def create_element_instance_variables_async(self, element_instance_key: str, *, data: CreateElementInstanceVariablesData, **kwargs: Any) -> Any:
+        """Update element instance variables
+
+ Updates all the variables of a particular scope (for example, process instance, element instance)
+with the given variable data.
+Specify the element instance in the `elementInstanceKey` parameter.
+
+Args:
+    element_instance_key (str): System-generated key for a element instance. Example:
+        2251799813686789.
+    body (CreateElementInstanceVariablesData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | CreateElementInstanceVariablesResponse400 | CreateElementInstanceVariablesResponse500 | CreateElementInstanceVariablesResponse503]"""
+        from .api.element_instance.create_element_instance_variables import asyncio as create_element_instance_variables_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_element_instance_variables_asyncio(**_kwargs)
 
 
     def search_element_instance_incidents(self, element_instance_key: str, *, data: SearchElementInstanceIncidentsData, **kwargs: Any) -> SearchElementInstanceIncidentsResponse200:
@@ -5745,730 +7037,528 @@ Returns:
         return await search_element_instance_incidents_asyncio(**_kwargs)
 
 
-    def get_element_instance(self, element_instance_key: str, **kwargs: Any) -> GetElementInstanceResponse200:
-        """Get element instance
+    def unassign_user_task(self, user_task_key: str, **kwargs: Any) -> Any:
+        """Unassign user task
 
- Returns element instance as JSON.
+ Removes the assignee of a task with the given key.
 
 Args:
-    element_instance_key (str): System-generated key for a element instance. Example:
-        2251799813686789.
+    user_task_key (str): System-generated key for a user task.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]"""
-        from .api.element_instance.get_element_instance import sync as get_element_instance_sync
+    Response[Any | UnassignUserTaskResponse400 | UnassignUserTaskResponse404 | UnassignUserTaskResponse409 | UnassignUserTaskResponse500 | UnassignUserTaskResponse503]"""
+        from .api.user_task.unassign_user_task import sync as unassign_user_task_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_element_instance_sync(**_kwargs)
+        return unassign_user_task_sync(**_kwargs)
 
 
-    async def get_element_instance_async(self, element_instance_key: str, **kwargs: Any) -> GetElementInstanceResponse200:
-        """Get element instance
+    async def unassign_user_task_async(self, user_task_key: str, **kwargs: Any) -> Any:
+        """Unassign user task
 
- Returns element instance as JSON.
+ Removes the assignee of a task with the given key.
 
 Args:
-    element_instance_key (str): System-generated key for a element instance. Example:
-        2251799813686789.
+    user_task_key (str): System-generated key for a user task.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]"""
-        from .api.element_instance.get_element_instance import asyncio as get_element_instance_asyncio
+    Response[Any | UnassignUserTaskResponse400 | UnassignUserTaskResponse404 | UnassignUserTaskResponse409 | UnassignUserTaskResponse500 | UnassignUserTaskResponse503]"""
+        from .api.user_task.unassign_user_task import asyncio as unassign_user_task_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_element_instance_asyncio(**_kwargs)
+        return await unassign_user_task_asyncio(**_kwargs)
 
 
-    def create_element_instance_variables(self, element_instance_key: str, *, data: CreateElementInstanceVariablesData, **kwargs: Any) -> Any:
-        """Update element instance variables
+    def search_user_task_variables(self, user_task_key: str, *, data: SearchUserTaskVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchUserTaskVariablesResponse200:
+        """Search user task variables
 
- Updates all the variables of a particular scope (for example, process instance, element instance)
-with the given variable data.
-Specify the element instance in the `elementInstanceKey` parameter.
+ Search for user task variables based on given criteria. By default, long variable values in the
+response are truncated.
 
 Args:
-    element_instance_key (str): System-generated key for a element instance. Example:
-        2251799813686789.
-    body (CreateElementInstanceVariablesData):
+    user_task_key (str): System-generated key for a user task.
+    truncate_values (bool | Unset):
+    body (SearchUserTaskVariablesData): User task search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | CreateElementInstanceVariablesResponse400 | CreateElementInstanceVariablesResponse500 | CreateElementInstanceVariablesResponse503]"""
-        from .api.element_instance.create_element_instance_variables import sync as create_element_instance_variables_sync
+    Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]"""
+        from .api.user_task.search_user_task_variables import sync as search_user_task_variables_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return create_element_instance_variables_sync(**_kwargs)
+        return search_user_task_variables_sync(**_kwargs)
 
 
-    async def create_element_instance_variables_async(self, element_instance_key: str, *, data: CreateElementInstanceVariablesData, **kwargs: Any) -> Any:
-        """Update element instance variables
+    async def search_user_task_variables_async(self, user_task_key: str, *, data: SearchUserTaskVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchUserTaskVariablesResponse200:
+        """Search user task variables
 
- Updates all the variables of a particular scope (for example, process instance, element instance)
-with the given variable data.
-Specify the element instance in the `elementInstanceKey` parameter.
+ Search for user task variables based on given criteria. By default, long variable values in the
+response are truncated.
 
 Args:
-    element_instance_key (str): System-generated key for a element instance. Example:
-        2251799813686789.
-    body (CreateElementInstanceVariablesData):
+    user_task_key (str): System-generated key for a user task.
+    truncate_values (bool | Unset):
+    body (SearchUserTaskVariablesData): User task search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | CreateElementInstanceVariablesResponse400 | CreateElementInstanceVariablesResponse500 | CreateElementInstanceVariablesResponse503]"""
-        from .api.element_instance.create_element_instance_variables import asyncio as create_element_instance_variables_asyncio
+    Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]"""
+        from .api.user_task.search_user_task_variables import asyncio as search_user_task_variables_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await create_element_instance_variables_asyncio(**_kwargs)
+        return await search_user_task_variables_asyncio(**_kwargs)
 
 
-    def search_element_instances(self, *, data: SearchElementInstancesData, **kwargs: Any) -> SearchElementInstancesResponse200:
-        """Search element instances
+    def update_user_task(self, user_task_key: str, *, data: UpdateUserTaskData, **kwargs: Any) -> Any:
+        """Update user task
 
- Search for element instances based on given criteria.
+ Update a user task with the given key.
 
 Args:
-    body (SearchElementInstancesData): Element instance search request.
+    user_task_key (str): System-generated key for a user task.
+    body (UpdateUserTaskData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[SearchElementInstancesResponse200 | SearchElementInstancesResponse400 | SearchElementInstancesResponse401 | SearchElementInstancesResponse403 | SearchElementInstancesResponse500]"""
-        from .api.element_instance.search_element_instances import sync as search_element_instances_sync
+    Response[Any | UpdateUserTaskResponse400 | UpdateUserTaskResponse404 | UpdateUserTaskResponse409 | UpdateUserTaskResponse500 | UpdateUserTaskResponse503]"""
+        from .api.user_task.update_user_task import sync as update_user_task_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return search_element_instances_sync(**_kwargs)
+        return update_user_task_sync(**_kwargs)
 
 
-    async def search_element_instances_async(self, *, data: SearchElementInstancesData, **kwargs: Any) -> SearchElementInstancesResponse200:
-        """Search element instances
+    async def update_user_task_async(self, user_task_key: str, *, data: UpdateUserTaskData, **kwargs: Any) -> Any:
+        """Update user task
 
- Search for element instances based on given criteria.
+ Update a user task with the given key.
 
 Args:
-    body (SearchElementInstancesData): Element instance search request.
+    user_task_key (str): System-generated key for a user task.
+    body (UpdateUserTaskData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[SearchElementInstancesResponse200 | SearchElementInstancesResponse400 | SearchElementInstancesResponse401 | SearchElementInstancesResponse403 | SearchElementInstancesResponse500]"""
-        from .api.element_instance.search_element_instances import asyncio as search_element_instances_asyncio
+    Response[Any | UpdateUserTaskResponse400 | UpdateUserTaskResponse404 | UpdateUserTaskResponse409 | UpdateUserTaskResponse500 | UpdateUserTaskResponse503]"""
+        from .api.user_task.update_user_task import asyncio as update_user_task_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_element_instances_asyncio(**_kwargs)
+        return await update_user_task_asyncio(**_kwargs)
 
 
-    def activate_ad_hoc_sub_process_activities(self, ad_hoc_sub_process_instance_key: str, *, data: ActivateAdHocSubProcessActivitiesData, **kwargs: Any) -> ActivateAdHocSubProcessActivitiesResponse400:
-        """Activate activities within an ad-hoc sub-process
+    def get_user_task_form(self, user_task_key: str, **kwargs: Any) -> Any:
+        """Get user task form
 
- Activates selected activities within an ad-hoc sub-process identified by element ID.
-The provided element IDs must exist within the ad-hoc sub-process instance identified by the
-provided adHocSubProcessInstanceKey.
+ Get the form of a user task.
+Note that this endpoint will only return linked forms. This endpoint does not support embedded
+forms.
 
 Args:
-    ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
-        Example: 2251799813686789.
-    body (ActivateAdHocSubProcessActivitiesData):
+    user_task_key (str): System-generated key for a user task.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[ActivateAdHocSubProcessActivitiesResponse400 | ActivateAdHocSubProcessActivitiesResponse401 | ActivateAdHocSubProcessActivitiesResponse403 | ActivateAdHocSubProcessActivitiesResponse404 | ActivateAdHocSubProcessActivitiesResponse500 | ActivateAdHocSubProcessActivitiesResponse503 | Any]"""
-        from .api.ad_hoc_sub_process.activate_ad_hoc_sub_process_activities import sync as activate_ad_hoc_sub_process_activities_sync
+    Response[Any | GetUserTaskFormResponse200 | GetUserTaskFormResponse400 | GetUserTaskFormResponse401 | GetUserTaskFormResponse403 | GetUserTaskFormResponse404 | GetUserTaskFormResponse500]"""
+        from .api.user_task.get_user_task_form import sync as get_user_task_form_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return activate_ad_hoc_sub_process_activities_sync(**_kwargs)
+        return get_user_task_form_sync(**_kwargs)
 
 
-    async def activate_ad_hoc_sub_process_activities_async(self, ad_hoc_sub_process_instance_key: str, *, data: ActivateAdHocSubProcessActivitiesData, **kwargs: Any) -> ActivateAdHocSubProcessActivitiesResponse400:
-        """Activate activities within an ad-hoc sub-process
+    async def get_user_task_form_async(self, user_task_key: str, **kwargs: Any) -> Any:
+        """Get user task form
 
- Activates selected activities within an ad-hoc sub-process identified by element ID.
-The provided element IDs must exist within the ad-hoc sub-process instance identified by the
-provided adHocSubProcessInstanceKey.
+ Get the form of a user task.
+Note that this endpoint will only return linked forms. This endpoint does not support embedded
+forms.
 
 Args:
-    ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
-        Example: 2251799813686789.
-    body (ActivateAdHocSubProcessActivitiesData):
+    user_task_key (str): System-generated key for a user task.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[ActivateAdHocSubProcessActivitiesResponse400 | ActivateAdHocSubProcessActivitiesResponse401 | ActivateAdHocSubProcessActivitiesResponse403 | ActivateAdHocSubProcessActivitiesResponse404 | ActivateAdHocSubProcessActivitiesResponse500 | ActivateAdHocSubProcessActivitiesResponse503 | Any]"""
-        from .api.ad_hoc_sub_process.activate_ad_hoc_sub_process_activities import asyncio as activate_ad_hoc_sub_process_activities_asyncio
+    Response[Any | GetUserTaskFormResponse200 | GetUserTaskFormResponse400 | GetUserTaskFormResponse401 | GetUserTaskFormResponse403 | GetUserTaskFormResponse404 | GetUserTaskFormResponse500]"""
+        from .api.user_task.get_user_task_form import asyncio as get_user_task_form_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await activate_ad_hoc_sub_process_activities_asyncio(**_kwargs)
+        return await get_user_task_form_asyncio(**_kwargs)
 
 
-    def fail_job(self, job_key: str, *, data: FailJobData, **kwargs: Any) -> Any:
-        """Fail job
+    def get_user_task(self, user_task_key: str, **kwargs: Any) -> GetUserTaskResponse200:
+        """Get user task
 
- Mark the job as failed.
+ Get the user task by the user task key.
 
 Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (FailJobData):
+    user_task_key (str): System-generated key for a user task.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | FailJobResponse400 | FailJobResponse404 | FailJobResponse409 | FailJobResponse500 | FailJobResponse503]"""
-        from .api.job.fail_job import sync as fail_job_sync
+    Response[GetUserTaskResponse200 | GetUserTaskResponse400 | GetUserTaskResponse401 | GetUserTaskResponse403 | GetUserTaskResponse404 | GetUserTaskResponse500]"""
+        from .api.user_task.get_user_task import sync as get_user_task_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return fail_job_sync(**_kwargs)
+        return get_user_task_sync(**_kwargs)
 
 
-    async def fail_job_async(self, job_key: str, *, data: FailJobData, **kwargs: Any) -> Any:
-        """Fail job
+    async def get_user_task_async(self, user_task_key: str, **kwargs: Any) -> GetUserTaskResponse200:
+        """Get user task
 
- Mark the job as failed.
+ Get the user task by the user task key.
 
 Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (FailJobData):
+    user_task_key (str): System-generated key for a user task.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | FailJobResponse400 | FailJobResponse404 | FailJobResponse409 | FailJobResponse500 | FailJobResponse503]"""
-        from .api.job.fail_job import asyncio as fail_job_asyncio
+    Response[GetUserTaskResponse200 | GetUserTaskResponse400 | GetUserTaskResponse401 | GetUserTaskResponse403 | GetUserTaskResponse404 | GetUserTaskResponse500]"""
+        from .api.user_task.get_user_task import asyncio as get_user_task_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await fail_job_asyncio(**_kwargs)
+        return await get_user_task_asyncio(**_kwargs)
 
 
-    def search_jobs(self, *, data: SearchJobsData, **kwargs: Any) -> SearchJobsResponse200:
-        """Search jobs
+    def complete_user_task(self, user_task_key: str, *, data: CompleteUserTaskData, **kwargs: Any) -> Any:
+        """Complete user task
 
- Search for jobs based on given criteria.
+ Completes a user task with the given key.
 
 Args:
-    body (SearchJobsData): Job search request.
+    user_task_key (str): System-generated key for a user task.
+    body (CompleteUserTaskData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[SearchJobsResponse200 | SearchJobsResponse400 | SearchJobsResponse401 | SearchJobsResponse403 | SearchJobsResponse500]"""
-        from .api.job.search_jobs import sync as search_jobs_sync
+    Response[Any | CompleteUserTaskResponse400 | CompleteUserTaskResponse404 | CompleteUserTaskResponse409 | CompleteUserTaskResponse500 | CompleteUserTaskResponse503]"""
+        from .api.user_task.complete_user_task import sync as complete_user_task_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return search_jobs_sync(**_kwargs)
+        return complete_user_task_sync(**_kwargs)
 
 
-    async def search_jobs_async(self, *, data: SearchJobsData, **kwargs: Any) -> SearchJobsResponse200:
-        """Search jobs
+    async def complete_user_task_async(self, user_task_key: str, *, data: CompleteUserTaskData, **kwargs: Any) -> Any:
+        """Complete user task
 
- Search for jobs based on given criteria.
+ Completes a user task with the given key.
 
 Args:
-    body (SearchJobsData): Job search request.
+    user_task_key (str): System-generated key for a user task.
+    body (CompleteUserTaskData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[SearchJobsResponse200 | SearchJobsResponse400 | SearchJobsResponse401 | SearchJobsResponse403 | SearchJobsResponse500]"""
-        from .api.job.search_jobs import asyncio as search_jobs_asyncio
+    Response[Any | CompleteUserTaskResponse400 | CompleteUserTaskResponse404 | CompleteUserTaskResponse409 | CompleteUserTaskResponse500 | CompleteUserTaskResponse503]"""
+        from .api.user_task.complete_user_task import asyncio as complete_user_task_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_jobs_asyncio(**_kwargs)
+        return await complete_user_task_asyncio(**_kwargs)
 
 
-    def activate_jobs(self, *, data: ActivateJobsData, **kwargs: Any) -> ActivateJobsResponse200:
-        """Activate jobs
+    def search_user_task_audit_logs(self, user_task_key: str, *, data: SearchUserTaskAuditLogsData, **kwargs: Any) -> SearchUserTaskAuditLogsResponse200:
+        """Search user task audit logs
 
- Iterate through all known partitions and activate jobs up to the requested maximum.
+ Search for user task audit logs based on given criteria.
 
 Args:
-    body (ActivateJobsData):
+    user_task_key (str): System-generated key for a user task.
+    body (SearchUserTaskAuditLogsData): User task search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[ActivateJobsResponse200 | ActivateJobsResponse400 | ActivateJobsResponse401 | ActivateJobsResponse500 | ActivateJobsResponse503]"""
-        from .api.job.activate_jobs import sync as activate_jobs_sync
+    Response[SearchUserTaskAuditLogsResponse200 | SearchUserTaskAuditLogsResponse400 | SearchUserTaskAuditLogsResponse500]"""
+        from .api.user_task.search_user_task_audit_logs import sync as search_user_task_audit_logs_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return activate_jobs_sync(**_kwargs)
+        return search_user_task_audit_logs_sync(**_kwargs)
 
 
-    async def activate_jobs_async(self, *, data: ActivateJobsData, **kwargs: Any) -> ActivateJobsResponse200:
-        """Activate jobs
+    async def search_user_task_audit_logs_async(self, user_task_key: str, *, data: SearchUserTaskAuditLogsData, **kwargs: Any) -> SearchUserTaskAuditLogsResponse200:
+        """Search user task audit logs
 
- Iterate through all known partitions and activate jobs up to the requested maximum.
+ Search for user task audit logs based on given criteria.
 
 Args:
-    body (ActivateJobsData):
+    user_task_key (str): System-generated key for a user task.
+    body (SearchUserTaskAuditLogsData): User task search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[ActivateJobsResponse200 | ActivateJobsResponse400 | ActivateJobsResponse401 | ActivateJobsResponse500 | ActivateJobsResponse503]"""
-        from .api.job.activate_jobs import asyncio as activate_jobs_asyncio
+    Response[SearchUserTaskAuditLogsResponse200 | SearchUserTaskAuditLogsResponse400 | SearchUserTaskAuditLogsResponse500]"""
+        from .api.user_task.search_user_task_audit_logs import asyncio as search_user_task_audit_logs_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await activate_jobs_asyncio(**_kwargs)
+        return await search_user_task_audit_logs_asyncio(**_kwargs)
 
 
-    def throw_job_error(self, job_key: str, *, data: ThrowJobErrorData, **kwargs: Any) -> Any:
-        """Throw error for job
+    def search_user_tasks(self, *, data: SearchUserTasksData, **kwargs: Any) -> SearchUserTasksResponse200:
+        """Search user tasks
 
- Reports a business error (i.e. non-technical) that occurs while processing a job.
+ Search for user tasks based on given criteria.
 
 Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (ThrowJobErrorData):
+    body (SearchUserTasksData): User task search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | ThrowJobErrorResponse400 | ThrowJobErrorResponse404 | ThrowJobErrorResponse409 | ThrowJobErrorResponse500 | ThrowJobErrorResponse503]"""
-        from .api.job.throw_job_error import sync as throw_job_error_sync
+    Response[SearchUserTasksResponse200 | SearchUserTasksResponse400 | SearchUserTasksResponse401 | SearchUserTasksResponse403 | SearchUserTasksResponse500]"""
+        from .api.user_task.search_user_tasks import sync as search_user_tasks_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return throw_job_error_sync(**_kwargs)
+        return search_user_tasks_sync(**_kwargs)
 
 
-    async def throw_job_error_async(self, job_key: str, *, data: ThrowJobErrorData, **kwargs: Any) -> Any:
-        """Throw error for job
+    async def search_user_tasks_async(self, *, data: SearchUserTasksData, **kwargs: Any) -> SearchUserTasksResponse200:
+        """Search user tasks
 
- Reports a business error (i.e. non-technical) that occurs while processing a job.
+ Search for user tasks based on given criteria.
 
 Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (ThrowJobErrorData):
+    body (SearchUserTasksData): User task search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | ThrowJobErrorResponse400 | ThrowJobErrorResponse404 | ThrowJobErrorResponse409 | ThrowJobErrorResponse500 | ThrowJobErrorResponse503]"""
-        from .api.job.throw_job_error import asyncio as throw_job_error_asyncio
+    Response[SearchUserTasksResponse200 | SearchUserTasksResponse400 | SearchUserTasksResponse401 | SearchUserTasksResponse403 | SearchUserTasksResponse500]"""
+        from .api.user_task.search_user_tasks import asyncio as search_user_tasks_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await throw_job_error_asyncio(**_kwargs)
+        return await search_user_tasks_asyncio(**_kwargs)
 
 
-    def complete_job(self, job_key: str, *, data: CompleteJobData, **kwargs: Any) -> Any:
-        """Complete job
+    def assign_user_task(self, user_task_key: str, *, data: AssignUserTaskData, **kwargs: Any) -> Any:
+        """Assign user task
 
- Complete a job with the given payload, which allows completing the associated service task.
+ Assigns a user task with the given key to the given assignee.
 
 Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (CompleteJobData):
+    user_task_key (str): System-generated key for a user task.
+    body (AssignUserTaskData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | CompleteJobResponse400 | CompleteJobResponse404 | CompleteJobResponse409 | CompleteJobResponse500 | CompleteJobResponse503]"""
-        from .api.job.complete_job import sync as complete_job_sync
+    Response[Any | AssignUserTaskResponse400 | AssignUserTaskResponse404 | AssignUserTaskResponse409 | AssignUserTaskResponse500 | AssignUserTaskResponse503]"""
+        from .api.user_task.assign_user_task import sync as assign_user_task_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return complete_job_sync(**_kwargs)
+        return assign_user_task_sync(**_kwargs)
 
 
-    async def complete_job_async(self, job_key: str, *, data: CompleteJobData, **kwargs: Any) -> Any:
-        """Complete job
+    async def assign_user_task_async(self, user_task_key: str, *, data: AssignUserTaskData, **kwargs: Any) -> Any:
+        """Assign user task
 
- Complete a job with the given payload, which allows completing the associated service task.
+ Assigns a user task with the given key to the given assignee.
 
 Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (CompleteJobData):
+    user_task_key (str): System-generated key for a user task.
+    body (AssignUserTaskData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | CompleteJobResponse400 | CompleteJobResponse404 | CompleteJobResponse409 | CompleteJobResponse500 | CompleteJobResponse503]"""
-        from .api.job.complete_job import asyncio as complete_job_asyncio
+    Response[Any | AssignUserTaskResponse400 | AssignUserTaskResponse404 | AssignUserTaskResponse409 | AssignUserTaskResponse500 | AssignUserTaskResponse503]"""
+        from .api.user_task.assign_user_task import asyncio as assign_user_task_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await complete_job_asyncio(**_kwargs)
+        return await assign_user_task_asyncio(**_kwargs)
 
 
-    def update_job(self, job_key: str, *, data: UpdateJobData, **kwargs: Any) -> Any:
-        """Update job
+    def search_correlated_message_subscriptions(self, *, data: SearchCorrelatedMessageSubscriptionsData, **kwargs: Any) -> SearchCorrelatedMessageSubscriptionsResponse200:
+        """Search correlated message subscriptions
 
- Update a job with the given key.
+ Search correlated message subscriptions based on given criteria.
 
 Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (UpdateJobData):
+    body (SearchCorrelatedMessageSubscriptionsData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | UpdateJobResponse400 | UpdateJobResponse404 | UpdateJobResponse409 | UpdateJobResponse500 | UpdateJobResponse503]"""
-        from .api.job.update_job import sync as update_job_sync
+    Response[SearchCorrelatedMessageSubscriptionsResponse200 | SearchCorrelatedMessageSubscriptionsResponse400 | SearchCorrelatedMessageSubscriptionsResponse401 | SearchCorrelatedMessageSubscriptionsResponse403 | SearchCorrelatedMessageSubscriptionsResponse500]"""
+        from .api.message_subscription.search_correlated_message_subscriptions import sync as search_correlated_message_subscriptions_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return update_job_sync(**_kwargs)
+        return search_correlated_message_subscriptions_sync(**_kwargs)
 
 
-    async def update_job_async(self, job_key: str, *, data: UpdateJobData, **kwargs: Any) -> Any:
-        """Update job
+    async def search_correlated_message_subscriptions_async(self, *, data: SearchCorrelatedMessageSubscriptionsData, **kwargs: Any) -> SearchCorrelatedMessageSubscriptionsResponse200:
+        """Search correlated message subscriptions
 
- Update a job with the given key.
+ Search correlated message subscriptions based on given criteria.
 
 Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (UpdateJobData):
+    body (SearchCorrelatedMessageSubscriptionsData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | UpdateJobResponse400 | UpdateJobResponse404 | UpdateJobResponse409 | UpdateJobResponse500 | UpdateJobResponse503]"""
-        from .api.job.update_job import asyncio as update_job_asyncio
+    Response[SearchCorrelatedMessageSubscriptionsResponse200 | SearchCorrelatedMessageSubscriptionsResponse400 | SearchCorrelatedMessageSubscriptionsResponse401 | SearchCorrelatedMessageSubscriptionsResponse403 | SearchCorrelatedMessageSubscriptionsResponse500]"""
+        from .api.message_subscription.search_correlated_message_subscriptions import asyncio as search_correlated_message_subscriptions_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await update_job_asyncio(**_kwargs)
+        return await search_correlated_message_subscriptions_asyncio(**_kwargs)
 
 
-    def get_process_instance_statistics_by_definition(self, *, data: GetProcessInstanceStatisticsByDefinitionData, **kwargs: Any) -> GetProcessInstanceStatisticsByDefinitionResponse200:
-        """Get process instance statistics by definition
+    def search_message_subscriptions(self, *, data: SearchMessageSubscriptionsData, **kwargs: Any) -> SearchMessageSubscriptionsResponse200:
+        """Search message subscriptions
 
- Returns statistics for active process instances with incidents, grouped by process
-definition. The result set is scoped to a specific incident error hash code, which must be
-provided as a filter in the request body.
+ Search for message subscriptions based on given criteria.
 
 Args:
-    body (GetProcessInstanceStatisticsByDefinitionData):
+    body (SearchMessageSubscriptionsData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetProcessInstanceStatisticsByDefinitionResponse200 | GetProcessInstanceStatisticsByDefinitionResponse400 | GetProcessInstanceStatisticsByDefinitionResponse401 | GetProcessInstanceStatisticsByDefinitionResponse403 | GetProcessInstanceStatisticsByDefinitionResponse500]"""
-        from .api.incident.get_process_instance_statistics_by_definition import sync as get_process_instance_statistics_by_definition_sync
+    Response[SearchMessageSubscriptionsResponse200 | SearchMessageSubscriptionsResponse400 | SearchMessageSubscriptionsResponse401 | SearchMessageSubscriptionsResponse403 | SearchMessageSubscriptionsResponse500]"""
+        from .api.message_subscription.search_message_subscriptions import sync as search_message_subscriptions_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_process_instance_statistics_by_definition_sync(**_kwargs)
+        return search_message_subscriptions_sync(**_kwargs)
 
 
-    async def get_process_instance_statistics_by_definition_async(self, *, data: GetProcessInstanceStatisticsByDefinitionData, **kwargs: Any) -> GetProcessInstanceStatisticsByDefinitionResponse200:
-        """Get process instance statistics by definition
+    async def search_message_subscriptions_async(self, *, data: SearchMessageSubscriptionsData, **kwargs: Any) -> SearchMessageSubscriptionsResponse200:
+        """Search message subscriptions
 
- Returns statistics for active process instances with incidents, grouped by process
-definition. The result set is scoped to a specific incident error hash code, which must be
-provided as a filter in the request body.
+ Search for message subscriptions based on given criteria.
 
 Args:
-    body (GetProcessInstanceStatisticsByDefinitionData):
+    body (SearchMessageSubscriptionsData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetProcessInstanceStatisticsByDefinitionResponse200 | GetProcessInstanceStatisticsByDefinitionResponse400 | GetProcessInstanceStatisticsByDefinitionResponse401 | GetProcessInstanceStatisticsByDefinitionResponse403 | GetProcessInstanceStatisticsByDefinitionResponse500]"""
-        from .api.incident.get_process_instance_statistics_by_definition import asyncio as get_process_instance_statistics_by_definition_asyncio
+    Response[SearchMessageSubscriptionsResponse200 | SearchMessageSubscriptionsResponse400 | SearchMessageSubscriptionsResponse401 | SearchMessageSubscriptionsResponse403 | SearchMessageSubscriptionsResponse500]"""
+        from .api.message_subscription.search_message_subscriptions import asyncio as search_message_subscriptions_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_instance_statistics_by_definition_asyncio(**_kwargs)
-
-
-    def resolve_incident(self, incident_key: str, *, data: ResolveIncidentData, **kwargs: Any) -> Any:
-        """Resolve incident
-
- Marks the incident as resolved; most likely a call to Update job will be necessary
-to reset the job's retries, followed by this call.
-
-Args:
-    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-    body (ResolveIncidentData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]"""
-        from .api.incident.resolve_incident import sync as resolve_incident_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return resolve_incident_sync(**_kwargs)
-
-
-    async def resolve_incident_async(self, incident_key: str, *, data: ResolveIncidentData, **kwargs: Any) -> Any:
-        """Resolve incident
-
- Marks the incident as resolved; most likely a call to Update job will be necessary
-to reset the job's retries, followed by this call.
-
-Args:
-    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-    body (ResolveIncidentData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]"""
-        from .api.incident.resolve_incident import asyncio as resolve_incident_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await resolve_incident_asyncio(**_kwargs)
-
-
-    def search_incidents(self, *, data: SearchIncidentsData, **kwargs: Any) -> SearchIncidentsResponse200:
-        """Search incidents
-
- Search for incidents based on given criteria.
-
-Args:
-    body (SearchIncidentsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchIncidentsResponse200 | SearchIncidentsResponse400 | SearchIncidentsResponse401 | SearchIncidentsResponse403 | SearchIncidentsResponse500]"""
-        from .api.incident.search_incidents import sync as search_incidents_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_incidents_sync(**_kwargs)
-
-
-    async def search_incidents_async(self, *, data: SearchIncidentsData, **kwargs: Any) -> SearchIncidentsResponse200:
-        """Search incidents
-
- Search for incidents based on given criteria.
-
-Args:
-    body (SearchIncidentsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchIncidentsResponse200 | SearchIncidentsResponse400 | SearchIncidentsResponse401 | SearchIncidentsResponse403 | SearchIncidentsResponse500]"""
-        from .api.incident.search_incidents import asyncio as search_incidents_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_incidents_asyncio(**_kwargs)
-
-
-    def get_process_instance_statistics_by_error(self, *, data: GetProcessInstanceStatisticsByErrorData, **kwargs: Any) -> GetProcessInstanceStatisticsByErrorResponse200:
-        """Get process instance statistics by error
-
- Returns statistics for active process instances that currently have active incidents,
-grouped by incident error hash code.
-
-Args:
-    body (GetProcessInstanceStatisticsByErrorData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceStatisticsByErrorResponse200 | GetProcessInstanceStatisticsByErrorResponse400 | GetProcessInstanceStatisticsByErrorResponse401 | GetProcessInstanceStatisticsByErrorResponse403 | GetProcessInstanceStatisticsByErrorResponse500]"""
-        from .api.incident.get_process_instance_statistics_by_error import sync as get_process_instance_statistics_by_error_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_instance_statistics_by_error_sync(**_kwargs)
-
-
-    async def get_process_instance_statistics_by_error_async(self, *, data: GetProcessInstanceStatisticsByErrorData, **kwargs: Any) -> GetProcessInstanceStatisticsByErrorResponse200:
-        """Get process instance statistics by error
-
- Returns statistics for active process instances that currently have active incidents,
-grouped by incident error hash code.
-
-Args:
-    body (GetProcessInstanceStatisticsByErrorData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceStatisticsByErrorResponse200 | GetProcessInstanceStatisticsByErrorResponse400 | GetProcessInstanceStatisticsByErrorResponse401 | GetProcessInstanceStatisticsByErrorResponse403 | GetProcessInstanceStatisticsByErrorResponse500]"""
-        from .api.incident.get_process_instance_statistics_by_error import asyncio as get_process_instance_statistics_by_error_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_instance_statistics_by_error_asyncio(**_kwargs)
-
-
-    def get_incident(self, incident_key: str, **kwargs: Any) -> GetIncidentResponse200:
-        """Get incident
-
- Returns incident as JSON.
-
-Args:
-    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetIncidentResponse200 | GetIncidentResponse400 | GetIncidentResponse401 | GetIncidentResponse403 | GetIncidentResponse404 | GetIncidentResponse500]"""
-        from .api.incident.get_incident import sync as get_incident_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_incident_sync(**_kwargs)
-
-
-    async def get_incident_async(self, incident_key: str, **kwargs: Any) -> GetIncidentResponse200:
-        """Get incident
-
- Returns incident as JSON.
-
-Args:
-    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetIncidentResponse200 | GetIncidentResponse400 | GetIncidentResponse401 | GetIncidentResponse403 | GetIncidentResponse404 | GetIncidentResponse500]"""
-        from .api.incident.get_incident import asyncio as get_incident_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_incident_asyncio(**_kwargs)
+        return await search_message_subscriptions_asyncio(**_kwargs)
 
 
     def get_decision_definition(self, decision_definition_key: str, **kwargs: Any) -> GetDecisionDefinitionResponse200:
@@ -6665,642 +7755,100 @@ Returns:
         return await get_decision_definition_xml_asyncio(**_kwargs)
 
 
-    def evaluate_expression(self, *, data: EvaluateExpressionData, **kwargs: Any) -> EvaluateExpressionResponse200:
-        """Evaluate an expression
+    def create_authorization(self, *, data: Object | Object1, **kwargs: Any) -> CreateAuthorizationResponse201:
+        """Create authorization
 
- Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
-variables when a tenant ID is provided.
+ Create the authorization.
 
 Args:
-    body (EvaluateExpressionData):
+    body (Object | Object1): Defines an authorization request.
+        Either an id-based or a property-based authorization can be provided.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[EvaluateExpressionResponse200 | EvaluateExpressionResponse400 | EvaluateExpressionResponse401 | EvaluateExpressionResponse403 | EvaluateExpressionResponse500]"""
-        from .api.expression.evaluate_expression import sync as evaluate_expression_sync
+    Response[CreateAuthorizationResponse201 | CreateAuthorizationResponse400 | CreateAuthorizationResponse401 | CreateAuthorizationResponse403 | CreateAuthorizationResponse404 | CreateAuthorizationResponse500 | CreateAuthorizationResponse503]"""
+        from .api.authorization.create_authorization import sync as create_authorization_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return evaluate_expression_sync(**_kwargs)
+        return create_authorization_sync(**_kwargs)
 
 
-    async def evaluate_expression_async(self, *, data: EvaluateExpressionData, **kwargs: Any) -> EvaluateExpressionResponse200:
-        """Evaluate an expression
+    async def create_authorization_async(self, *, data: Object | Object1, **kwargs: Any) -> CreateAuthorizationResponse201:
+        """Create authorization
 
- Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
-variables when a tenant ID is provided.
+ Create the authorization.
 
 Args:
-    body (EvaluateExpressionData):
+    body (Object | Object1): Defines an authorization request.
+        Either an id-based or a property-based authorization can be provided.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[EvaluateExpressionResponse200 | EvaluateExpressionResponse400 | EvaluateExpressionResponse401 | EvaluateExpressionResponse403 | EvaluateExpressionResponse500]"""
-        from .api.expression.evaluate_expression import asyncio as evaluate_expression_asyncio
+    Response[CreateAuthorizationResponse201 | CreateAuthorizationResponse400 | CreateAuthorizationResponse401 | CreateAuthorizationResponse403 | CreateAuthorizationResponse404 | CreateAuthorizationResponse500 | CreateAuthorizationResponse503]"""
+        from .api.authorization.create_authorization import asyncio as create_authorization_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await evaluate_expression_asyncio(**_kwargs)
+        return await create_authorization_asyncio(**_kwargs)
 
 
-    def unassign_user_task(self, user_task_key: str, **kwargs: Any) -> Any:
-        """Unassign user task
+    def get_authorization(self, authorization_key: str, **kwargs: Any) -> GetAuthorizationResponse200:
+        """Get authorization
 
- Removes the assignee of a task with the given key.
+ Get authorization by the given key.
 
 Args:
-    user_task_key (str): System-generated key for a user task.
+    authorization_key (str): System-generated key for an authorization. Example:
+        2251799813684332.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | UnassignUserTaskResponse400 | UnassignUserTaskResponse404 | UnassignUserTaskResponse409 | UnassignUserTaskResponse500 | UnassignUserTaskResponse503]"""
-        from .api.user_task.unassign_user_task import sync as unassign_user_task_sync
+    Response[GetAuthorizationResponse200 | GetAuthorizationResponse401 | GetAuthorizationResponse403 | GetAuthorizationResponse404 | GetAuthorizationResponse500]"""
+        from .api.authorization.get_authorization import sync as get_authorization_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return unassign_user_task_sync(**_kwargs)
+        return get_authorization_sync(**_kwargs)
 
 
-    async def unassign_user_task_async(self, user_task_key: str, **kwargs: Any) -> Any:
-        """Unassign user task
+    async def get_authorization_async(self, authorization_key: str, **kwargs: Any) -> GetAuthorizationResponse200:
+        """Get authorization
 
- Removes the assignee of a task with the given key.
+ Get authorization by the given key.
 
 Args:
-    user_task_key (str): System-generated key for a user task.
+    authorization_key (str): System-generated key for an authorization. Example:
+        2251799813684332.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | UnassignUserTaskResponse400 | UnassignUserTaskResponse404 | UnassignUserTaskResponse409 | UnassignUserTaskResponse500 | UnassignUserTaskResponse503]"""
-        from .api.user_task.unassign_user_task import asyncio as unassign_user_task_asyncio
+    Response[GetAuthorizationResponse200 | GetAuthorizationResponse401 | GetAuthorizationResponse403 | GetAuthorizationResponse404 | GetAuthorizationResponse500]"""
+        from .api.authorization.get_authorization import asyncio as get_authorization_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_user_task_asyncio(**_kwargs)
-
-
-    def search_user_task_variables(self, user_task_key: str, *, data: SearchUserTaskVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchUserTaskVariablesResponse200:
-        """Search user task variables
-
- Search for user task variables based on given criteria. By default, long variable values in the
-response are truncated.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    truncate_values (bool | Unset):
-    body (SearchUserTaskVariablesData): User task search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]"""
-        from .api.user_task.search_user_task_variables import sync as search_user_task_variables_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_user_task_variables_sync(**_kwargs)
-
-
-    async def search_user_task_variables_async(self, user_task_key: str, *, data: SearchUserTaskVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchUserTaskVariablesResponse200:
-        """Search user task variables
-
- Search for user task variables based on given criteria. By default, long variable values in the
-response are truncated.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    truncate_values (bool | Unset):
-    body (SearchUserTaskVariablesData): User task search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]"""
-        from .api.user_task.search_user_task_variables import asyncio as search_user_task_variables_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_user_task_variables_asyncio(**_kwargs)
-
-
-    def assign_user_task(self, user_task_key: str, *, data: AssignUserTaskData, **kwargs: Any) -> Any:
-        """Assign user task
-
- Assigns a user task with the given key to the given assignee.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    body (AssignUserTaskData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignUserTaskResponse400 | AssignUserTaskResponse404 | AssignUserTaskResponse409 | AssignUserTaskResponse500 | AssignUserTaskResponse503]"""
-        from .api.user_task.assign_user_task import sync as assign_user_task_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_user_task_sync(**_kwargs)
-
-
-    async def assign_user_task_async(self, user_task_key: str, *, data: AssignUserTaskData, **kwargs: Any) -> Any:
-        """Assign user task
-
- Assigns a user task with the given key to the given assignee.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    body (AssignUserTaskData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignUserTaskResponse400 | AssignUserTaskResponse404 | AssignUserTaskResponse409 | AssignUserTaskResponse500 | AssignUserTaskResponse503]"""
-        from .api.user_task.assign_user_task import asyncio as assign_user_task_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_user_task_asyncio(**_kwargs)
-
-
-    def update_user_task(self, user_task_key: str, *, data: UpdateUserTaskData, **kwargs: Any) -> Any:
-        """Update user task
-
- Update a user task with the given key.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    body (UpdateUserTaskData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UpdateUserTaskResponse400 | UpdateUserTaskResponse404 | UpdateUserTaskResponse409 | UpdateUserTaskResponse500 | UpdateUserTaskResponse503]"""
-        from .api.user_task.update_user_task import sync as update_user_task_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return update_user_task_sync(**_kwargs)
-
-
-    async def update_user_task_async(self, user_task_key: str, *, data: UpdateUserTaskData, **kwargs: Any) -> Any:
-        """Update user task
-
- Update a user task with the given key.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    body (UpdateUserTaskData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UpdateUserTaskResponse400 | UpdateUserTaskResponse404 | UpdateUserTaskResponse409 | UpdateUserTaskResponse500 | UpdateUserTaskResponse503]"""
-        from .api.user_task.update_user_task import asyncio as update_user_task_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await update_user_task_asyncio(**_kwargs)
-
-
-    def get_user_task_form(self, user_task_key: str, **kwargs: Any) -> Any:
-        """Get user task form
-
- Get the form of a user task.
-Note that this endpoint will only return linked forms. This endpoint does not support embedded
-forms.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | GetUserTaskFormResponse200 | GetUserTaskFormResponse400 | GetUserTaskFormResponse401 | GetUserTaskFormResponse403 | GetUserTaskFormResponse404 | GetUserTaskFormResponse500]"""
-        from .api.user_task.get_user_task_form import sync as get_user_task_form_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_user_task_form_sync(**_kwargs)
-
-
-    async def get_user_task_form_async(self, user_task_key: str, **kwargs: Any) -> Any:
-        """Get user task form
-
- Get the form of a user task.
-Note that this endpoint will only return linked forms. This endpoint does not support embedded
-forms.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | GetUserTaskFormResponse200 | GetUserTaskFormResponse400 | GetUserTaskFormResponse401 | GetUserTaskFormResponse403 | GetUserTaskFormResponse404 | GetUserTaskFormResponse500]"""
-        from .api.user_task.get_user_task_form import asyncio as get_user_task_form_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_user_task_form_asyncio(**_kwargs)
-
-
-    def get_user_task(self, user_task_key: str, **kwargs: Any) -> GetUserTaskResponse200:
-        """Get user task
-
- Get the user task by the user task key.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetUserTaskResponse200 | GetUserTaskResponse400 | GetUserTaskResponse401 | GetUserTaskResponse403 | GetUserTaskResponse404 | GetUserTaskResponse500]"""
-        from .api.user_task.get_user_task import sync as get_user_task_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_user_task_sync(**_kwargs)
-
-
-    async def get_user_task_async(self, user_task_key: str, **kwargs: Any) -> GetUserTaskResponse200:
-        """Get user task
-
- Get the user task by the user task key.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetUserTaskResponse200 | GetUserTaskResponse400 | GetUserTaskResponse401 | GetUserTaskResponse403 | GetUserTaskResponse404 | GetUserTaskResponse500]"""
-        from .api.user_task.get_user_task import asyncio as get_user_task_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_user_task_asyncio(**_kwargs)
-
-
-    def search_user_tasks(self, *, data: SearchUserTasksData, **kwargs: Any) -> SearchUserTasksResponse200:
-        """Search user tasks
-
- Search for user tasks based on given criteria.
-
-Args:
-    body (SearchUserTasksData): User task search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUserTasksResponse200 | SearchUserTasksResponse400 | SearchUserTasksResponse401 | SearchUserTasksResponse403 | SearchUserTasksResponse500]"""
-        from .api.user_task.search_user_tasks import sync as search_user_tasks_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_user_tasks_sync(**_kwargs)
-
-
-    async def search_user_tasks_async(self, *, data: SearchUserTasksData, **kwargs: Any) -> SearchUserTasksResponse200:
-        """Search user tasks
-
- Search for user tasks based on given criteria.
-
-Args:
-    body (SearchUserTasksData): User task search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUserTasksResponse200 | SearchUserTasksResponse400 | SearchUserTasksResponse401 | SearchUserTasksResponse403 | SearchUserTasksResponse500]"""
-        from .api.user_task.search_user_tasks import asyncio as search_user_tasks_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_user_tasks_asyncio(**_kwargs)
-
-
-    def complete_user_task(self, user_task_key: str, *, data: CompleteUserTaskData, **kwargs: Any) -> Any:
-        """Complete user task
-
- Completes a user task with the given key.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    body (CompleteUserTaskData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CompleteUserTaskResponse400 | CompleteUserTaskResponse404 | CompleteUserTaskResponse409 | CompleteUserTaskResponse500 | CompleteUserTaskResponse503]"""
-        from .api.user_task.complete_user_task import sync as complete_user_task_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return complete_user_task_sync(**_kwargs)
-
-
-    async def complete_user_task_async(self, user_task_key: str, *, data: CompleteUserTaskData, **kwargs: Any) -> Any:
-        """Complete user task
-
- Completes a user task with the given key.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    body (CompleteUserTaskData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CompleteUserTaskResponse400 | CompleteUserTaskResponse404 | CompleteUserTaskResponse409 | CompleteUserTaskResponse500 | CompleteUserTaskResponse503]"""
-        from .api.user_task.complete_user_task import asyncio as complete_user_task_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await complete_user_task_asyncio(**_kwargs)
-
-
-    def delete_resource(self, resource_key: str, *, data: DeleteResourceDataType0 | None, **kwargs: Any) -> Any:
-        """Delete resource
-
- Deletes a deployed resource.
-This can be a process definition, decision requirements definition, or form definition
-deployed using the deploy resources endpoint. Specify the resource you want to delete in the
-`resourceKey` parameter.
-
-Args:
-    resource_key (str): The system-assigned key for this resource.
-    body (DeleteResourceDataType0 | None):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]"""
-        from .api.resource.delete_resource import sync as delete_resource_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_resource_sync(**_kwargs)
-
-
-    async def delete_resource_async(self, resource_key: str, *, data: DeleteResourceDataType0 | None, **kwargs: Any) -> Any:
-        """Delete resource
-
- Deletes a deployed resource.
-This can be a process definition, decision requirements definition, or form definition
-deployed using the deploy resources endpoint. Specify the resource you want to delete in the
-`resourceKey` parameter.
-
-Args:
-    resource_key (str): The system-assigned key for this resource.
-    body (DeleteResourceDataType0 | None):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]"""
-        from .api.resource.delete_resource import asyncio as delete_resource_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_resource_asyncio(**_kwargs)
-
-
-    def get_resource_content(self, resource_key: str, **kwargs: Any) -> File:
-        """Get resource content
-
- Returns the content of a deployed resource.
-:::info
-Currently, this endpoint only supports RPA resources.
-:::
-
-Args:
-    resource_key (str): The system-assigned key for this resource.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[File | GetResourceContentResponse404 | GetResourceContentResponse500]"""
-        from .api.resource.get_resource_content import sync as get_resource_content_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_resource_content_sync(**_kwargs)
-
-
-    async def get_resource_content_async(self, resource_key: str, **kwargs: Any) -> File:
-        """Get resource content
-
- Returns the content of a deployed resource.
-:::info
-Currently, this endpoint only supports RPA resources.
-:::
-
-Args:
-    resource_key (str): The system-assigned key for this resource.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[File | GetResourceContentResponse404 | GetResourceContentResponse500]"""
-        from .api.resource.get_resource_content import asyncio as get_resource_content_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_resource_content_asyncio(**_kwargs)
-
-
-    def create_deployment(self, *, data: CreateDeploymentData, **kwargs: Any) -> CreateDeploymentResponse200:
-        """Deploy resources
-
- Deploys one or more resources (e.g. processes, decision models, or forms).
-This is an atomic call, i.e. either all resources are deployed or none of them are.
-
-Args:
-    body (CreateDeploymentData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateDeploymentResponse200 | CreateDeploymentResponse400 | CreateDeploymentResponse503]"""
-        from .api.resource.create_deployment import sync as create_deployment_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_deployment_sync(**_kwargs)
-
-
-    async def create_deployment_async(self, *, data: CreateDeploymentData, **kwargs: Any) -> CreateDeploymentResponse200:
-        """Deploy resources
-
- Deploys one or more resources (e.g. processes, decision models, or forms).
-This is an atomic call, i.e. either all resources are deployed or none of them are.
-
-Args:
-    body (CreateDeploymentData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateDeploymentResponse200 | CreateDeploymentResponse400 | CreateDeploymentResponse503]"""
-        from .api.resource.create_deployment import asyncio as create_deployment_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_deployment_asyncio(**_kwargs)
-
-
-    def get_resource(self, resource_key: str, **kwargs: Any) -> GetResourceResponse200:
-        """Get resource
-
- Returns a deployed resource.
-:::info
-Currently, this endpoint only supports RPA resources.
-:::
-
-Args:
-    resource_key (str): The system-assigned key for this resource.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetResourceResponse200 | GetResourceResponse404 | GetResourceResponse500]"""
-        from .api.resource.get_resource import sync as get_resource_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_resource_sync(**_kwargs)
-
-
-    async def get_resource_async(self, resource_key: str, **kwargs: Any) -> GetResourceResponse200:
-        """Get resource
-
- Returns a deployed resource.
-:::info
-Currently, this endpoint only supports RPA resources.
-:::
-
-Args:
-    resource_key (str): The system-assigned key for this resource.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetResourceResponse200 | GetResourceResponse404 | GetResourceResponse500]"""
-        from .api.resource.get_resource import asyncio as get_resource_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_resource_asyncio(**_kwargs)
+        return await get_authorization_asyncio(**_kwargs)
 
 
     def update_authorization(self, authorization_key: str, *, data: Object | Object1, **kwargs: Any) -> Any:
@@ -7355,54 +7903,6 @@ Returns:
         return await update_authorization_asyncio(**_kwargs)
 
 
-    def create_authorization(self, *, data: Object | Object1, **kwargs: Any) -> CreateAuthorizationResponse201:
-        """Create authorization
-
- Create the authorization.
-
-Args:
-    body (Object | Object1): Defines an authorization request.
-        Either an id-based or a property-based authorization can be provided.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateAuthorizationResponse201 | CreateAuthorizationResponse400 | CreateAuthorizationResponse401 | CreateAuthorizationResponse403 | CreateAuthorizationResponse404 | CreateAuthorizationResponse500 | CreateAuthorizationResponse503]"""
-        from .api.authorization.create_authorization import sync as create_authorization_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_authorization_sync(**_kwargs)
-
-
-    async def create_authorization_async(self, *, data: Object | Object1, **kwargs: Any) -> CreateAuthorizationResponse201:
-        """Create authorization
-
- Create the authorization.
-
-Args:
-    body (Object | Object1): Defines an authorization request.
-        Either an id-based or a property-based authorization can be provided.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateAuthorizationResponse201 | CreateAuthorizationResponse400 | CreateAuthorizationResponse401 | CreateAuthorizationResponse403 | CreateAuthorizationResponse404 | CreateAuthorizationResponse500 | CreateAuthorizationResponse503]"""
-        from .api.authorization.create_authorization import asyncio as create_authorization_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_authorization_asyncio(**_kwargs)
-
-
     def search_authorizations(self, *, data: SearchAuthorizationsData, **kwargs: Any) -> SearchAuthorizationsResponse200:
         """Search authorizations
 
@@ -7447,54 +7947,6 @@ Returns:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return await search_authorizations_asyncio(**_kwargs)
-
-
-    def get_authorization(self, authorization_key: str, **kwargs: Any) -> GetAuthorizationResponse200:
-        """Get authorization
-
- Get authorization by the given key.
-
-Args:
-    authorization_key (str): System-generated key for an authorization. Example:
-        2251799813684332.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetAuthorizationResponse200 | GetAuthorizationResponse401 | GetAuthorizationResponse403 | GetAuthorizationResponse404 | GetAuthorizationResponse500]"""
-        from .api.authorization.get_authorization import sync as get_authorization_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_authorization_sync(**_kwargs)
-
-
-    async def get_authorization_async(self, authorization_key: str, **kwargs: Any) -> GetAuthorizationResponse200:
-        """Get authorization
-
- Get authorization by the given key.
-
-Args:
-    authorization_key (str): System-generated key for an authorization. Example:
-        2251799813684332.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetAuthorizationResponse200 | GetAuthorizationResponse401 | GetAuthorizationResponse403 | GetAuthorizationResponse404 | GetAuthorizationResponse500]"""
-        from .api.authorization.get_authorization import asyncio as get_authorization_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_authorization_asyncio(**_kwargs)
 
 
     def delete_authorization(self, authorization_key: str, **kwargs: Any) -> Any:
@@ -7545,186 +7997,1388 @@ Returns:
         return await delete_authorization_asyncio(**_kwargs)
 
 
-    def get_decision_requirements_xml(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsXMLResponse400:
-        """Get decision requirements XML
+    def search_incidents(self, *, data: SearchIncidentsData, **kwargs: Any) -> SearchIncidentsResponse200:
+        """Search incidents
 
- Returns decision requirements as XML.
-
-Args:
-    decision_requirements_key (str): System-generated key for a deployed decision requirements
-        definition. Example: 2251799813683346.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetDecisionRequirementsXMLResponse400 | GetDecisionRequirementsXMLResponse401 | GetDecisionRequirementsXMLResponse403 | GetDecisionRequirementsXMLResponse404 | GetDecisionRequirementsXMLResponse500 | str]"""
-        from .api.decision_requirements.get_decision_requirements_xml import sync as get_decision_requirements_xml_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_decision_requirements_xml_sync(**_kwargs)
-
-
-    async def get_decision_requirements_xml_async(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsXMLResponse400:
-        """Get decision requirements XML
-
- Returns decision requirements as XML.
+ Search for incidents based on given criteria.
 
 Args:
-    decision_requirements_key (str): System-generated key for a deployed decision requirements
-        definition. Example: 2251799813683346.
+    body (SearchIncidentsData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetDecisionRequirementsXMLResponse400 | GetDecisionRequirementsXMLResponse401 | GetDecisionRequirementsXMLResponse403 | GetDecisionRequirementsXMLResponse404 | GetDecisionRequirementsXMLResponse500 | str]"""
-        from .api.decision_requirements.get_decision_requirements_xml import asyncio as get_decision_requirements_xml_asyncio
+    Response[SearchIncidentsResponse200 | SearchIncidentsResponse400 | SearchIncidentsResponse401 | SearchIncidentsResponse403 | SearchIncidentsResponse500]"""
+        from .api.incident.search_incidents import sync as search_incidents_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_decision_requirements_xml_asyncio(**_kwargs)
+        return search_incidents_sync(**_kwargs)
 
 
-    def search_decision_requirements(self, *, data: SearchDecisionRequirementsData, **kwargs: Any) -> SearchDecisionRequirementsResponse200:
-        """Search decision requirements
+    async def search_incidents_async(self, *, data: SearchIncidentsData, **kwargs: Any) -> SearchIncidentsResponse200:
+        """Search incidents
 
- Search for decision requirements based on given criteria.
+ Search for incidents based on given criteria.
 
 Args:
-    body (SearchDecisionRequirementsData):
+    body (SearchIncidentsData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[SearchDecisionRequirementsResponse200 | SearchDecisionRequirementsResponse400 | SearchDecisionRequirementsResponse401 | SearchDecisionRequirementsResponse403 | SearchDecisionRequirementsResponse500]"""
-        from .api.decision_requirements.search_decision_requirements import sync as search_decision_requirements_sync
+    Response[SearchIncidentsResponse200 | SearchIncidentsResponse400 | SearchIncidentsResponse401 | SearchIncidentsResponse403 | SearchIncidentsResponse500]"""
+        from .api.incident.search_incidents import asyncio as search_incidents_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return search_decision_requirements_sync(**_kwargs)
+        return await search_incidents_asyncio(**_kwargs)
 
 
-    async def search_decision_requirements_async(self, *, data: SearchDecisionRequirementsData, **kwargs: Any) -> SearchDecisionRequirementsResponse200:
-        """Search decision requirements
+    def get_process_instance_statistics_by_definition(self, *, data: GetProcessInstanceStatisticsByDefinitionData, **kwargs: Any) -> GetProcessInstanceStatisticsByDefinitionResponse200:
+        """Get process instance statistics by definition
 
- Search for decision requirements based on given criteria.
+ Returns statistics for active process instances with incidents, grouped by process
+definition. The result set is scoped to a specific incident error hash code, which must be
+provided as a filter in the request body.
 
 Args:
-    body (SearchDecisionRequirementsData):
+    body (GetProcessInstanceStatisticsByDefinitionData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[SearchDecisionRequirementsResponse200 | SearchDecisionRequirementsResponse400 | SearchDecisionRequirementsResponse401 | SearchDecisionRequirementsResponse403 | SearchDecisionRequirementsResponse500]"""
-        from .api.decision_requirements.search_decision_requirements import asyncio as search_decision_requirements_asyncio
+    Response[GetProcessInstanceStatisticsByDefinitionResponse200 | GetProcessInstanceStatisticsByDefinitionResponse400 | GetProcessInstanceStatisticsByDefinitionResponse401 | GetProcessInstanceStatisticsByDefinitionResponse403 | GetProcessInstanceStatisticsByDefinitionResponse500]"""
+        from .api.incident.get_process_instance_statistics_by_definition import sync as get_process_instance_statistics_by_definition_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_decision_requirements_asyncio(**_kwargs)
+        return get_process_instance_statistics_by_definition_sync(**_kwargs)
 
 
-    def get_decision_requirements(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsResponse200:
-        """Get decision requirements
+    async def get_process_instance_statistics_by_definition_async(self, *, data: GetProcessInstanceStatisticsByDefinitionData, **kwargs: Any) -> GetProcessInstanceStatisticsByDefinitionResponse200:
+        """Get process instance statistics by definition
 
- Returns Decision Requirements as JSON.
+ Returns statistics for active process instances with incidents, grouped by process
+definition. The result set is scoped to a specific incident error hash code, which must be
+provided as a filter in the request body.
 
 Args:
-    decision_requirements_key (str): System-generated key for a deployed decision requirements
-        definition. Example: 2251799813683346.
+    body (GetProcessInstanceStatisticsByDefinitionData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetDecisionRequirementsResponse200 | GetDecisionRequirementsResponse400 | GetDecisionRequirementsResponse401 | GetDecisionRequirementsResponse403 | GetDecisionRequirementsResponse404 | GetDecisionRequirementsResponse500]"""
-        from .api.decision_requirements.get_decision_requirements import sync as get_decision_requirements_sync
+    Response[GetProcessInstanceStatisticsByDefinitionResponse200 | GetProcessInstanceStatisticsByDefinitionResponse400 | GetProcessInstanceStatisticsByDefinitionResponse401 | GetProcessInstanceStatisticsByDefinitionResponse403 | GetProcessInstanceStatisticsByDefinitionResponse500]"""
+        from .api.incident.get_process_instance_statistics_by_definition import asyncio as get_process_instance_statistics_by_definition_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_decision_requirements_sync(**_kwargs)
+        return await get_process_instance_statistics_by_definition_asyncio(**_kwargs)
 
 
-    async def get_decision_requirements_async(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsResponse200:
-        """Get decision requirements
+    def get_incident(self, incident_key: str, **kwargs: Any) -> GetIncidentResponse200:
+        """Get incident
 
- Returns Decision Requirements as JSON.
+ Returns incident as JSON.
 
 Args:
-    decision_requirements_key (str): System-generated key for a deployed decision requirements
-        definition. Example: 2251799813683346.
+    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetDecisionRequirementsResponse200 | GetDecisionRequirementsResponse400 | GetDecisionRequirementsResponse401 | GetDecisionRequirementsResponse403 | GetDecisionRequirementsResponse404 | GetDecisionRequirementsResponse500]"""
-        from .api.decision_requirements.get_decision_requirements import asyncio as get_decision_requirements_asyncio
+    Response[GetIncidentResponse200 | GetIncidentResponse400 | GetIncidentResponse401 | GetIncidentResponse403 | GetIncidentResponse404 | GetIncidentResponse500]"""
+        from .api.incident.get_incident import sync as get_incident_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_decision_requirements_asyncio(**_kwargs)
+        return get_incident_sync(**_kwargs)
 
 
-    def get_authentication(self, **kwargs: Any) -> GetAuthenticationResponse200:
-        """Get current user
+    async def get_incident_async(self, incident_key: str, **kwargs: Any) -> GetIncidentResponse200:
+        """Get incident
 
- Retrieves the current authenticated user.
+ Returns incident as JSON.
+
+Args:
+    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetAuthenticationResponse200 | GetAuthenticationResponse401 | GetAuthenticationResponse403 | GetAuthenticationResponse500]"""
-        from .api.authentication.get_authentication import sync as get_authentication_sync
+    Response[GetIncidentResponse200 | GetIncidentResponse400 | GetIncidentResponse401 | GetIncidentResponse403 | GetIncidentResponse404 | GetIncidentResponse500]"""
+        from .api.incident.get_incident import asyncio as get_incident_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_authentication_sync(**_kwargs)
+        return await get_incident_asyncio(**_kwargs)
 
 
-    async def get_authentication_async(self, **kwargs: Any) -> GetAuthenticationResponse200:
-        """Get current user
+    def resolve_incident(self, incident_key: str, *, data: ResolveIncidentData, **kwargs: Any) -> Any:
+        """Resolve incident
 
- Retrieves the current authenticated user.
+ Marks the incident as resolved; most likely a call to Update job will be necessary
+to reset the job's retries, followed by this call.
+
+Args:
+    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
+    body (ResolveIncidentData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetAuthenticationResponse200 | GetAuthenticationResponse401 | GetAuthenticationResponse403 | GetAuthenticationResponse500]"""
-        from .api.authentication.get_authentication import asyncio as get_authentication_asyncio
+    Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]"""
+        from .api.incident.resolve_incident import sync as resolve_incident_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_authentication_asyncio(**_kwargs)
+        return resolve_incident_sync(**_kwargs)
+
+
+    async def resolve_incident_async(self, incident_key: str, *, data: ResolveIncidentData, **kwargs: Any) -> Any:
+        """Resolve incident
+
+ Marks the incident as resolved; most likely a call to Update job will be necessary
+to reset the job's retries, followed by this call.
+
+Args:
+    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
+    body (ResolveIncidentData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]"""
+        from .api.incident.resolve_incident import asyncio as resolve_incident_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await resolve_incident_asyncio(**_kwargs)
+
+
+    def get_process_instance_statistics_by_error(self, *, data: GetProcessInstanceStatisticsByErrorData, **kwargs: Any) -> GetProcessInstanceStatisticsByErrorResponse200:
+        """Get process instance statistics by error
+
+ Returns statistics for active process instances that currently have active incidents,
+grouped by incident error hash code.
+
+Args:
+    body (GetProcessInstanceStatisticsByErrorData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessInstanceStatisticsByErrorResponse200 | GetProcessInstanceStatisticsByErrorResponse400 | GetProcessInstanceStatisticsByErrorResponse401 | GetProcessInstanceStatisticsByErrorResponse403 | GetProcessInstanceStatisticsByErrorResponse500]"""
+        from .api.incident.get_process_instance_statistics_by_error import sync as get_process_instance_statistics_by_error_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_instance_statistics_by_error_sync(**_kwargs)
+
+
+    async def get_process_instance_statistics_by_error_async(self, *, data: GetProcessInstanceStatisticsByErrorData, **kwargs: Any) -> GetProcessInstanceStatisticsByErrorResponse200:
+        """Get process instance statistics by error
+
+ Returns statistics for active process instances that currently have active incidents,
+grouped by incident error hash code.
+
+Args:
+    body (GetProcessInstanceStatisticsByErrorData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetProcessInstanceStatisticsByErrorResponse200 | GetProcessInstanceStatisticsByErrorResponse400 | GetProcessInstanceStatisticsByErrorResponse401 | GetProcessInstanceStatisticsByErrorResponse403 | GetProcessInstanceStatisticsByErrorResponse500]"""
+        from .api.incident.get_process_instance_statistics_by_error import asyncio as get_process_instance_statistics_by_error_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_instance_statistics_by_error_asyncio(**_kwargs)
+
+
+    def get_user(self, username: str, **kwargs: Any) -> GetUserResponse200:
+        """Get user
+
+ Get a user by its username.
+
+Args:
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetUserResponse200 | GetUserResponse401 | GetUserResponse403 | GetUserResponse404 | GetUserResponse500]"""
+        from .api.user.get_user import sync as get_user_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_user_sync(**_kwargs)
+
+
+    async def get_user_async(self, username: str, **kwargs: Any) -> GetUserResponse200:
+        """Get user
+
+ Get a user by its username.
+
+Args:
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetUserResponse200 | GetUserResponse401 | GetUserResponse403 | GetUserResponse404 | GetUserResponse500]"""
+        from .api.user.get_user import asyncio as get_user_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_user_asyncio(**_kwargs)
+
+
+    def delete_user(self, username: str, **kwargs: Any) -> Any:
+        """Delete user
+
+ Deletes a user.
+
+Args:
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | DeleteUserResponse400 | DeleteUserResponse404 | DeleteUserResponse500 | DeleteUserResponse503]"""
+        from .api.user.delete_user import sync as delete_user_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_user_sync(**_kwargs)
+
+
+    async def delete_user_async(self, username: str, **kwargs: Any) -> Any:
+        """Delete user
+
+ Deletes a user.
+
+Args:
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | DeleteUserResponse400 | DeleteUserResponse404 | DeleteUserResponse500 | DeleteUserResponse503]"""
+        from .api.user.delete_user import asyncio as delete_user_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_user_asyncio(**_kwargs)
+
+
+    def create_user(self, *, data: CreateUserData, **kwargs: Any) -> CreateUserResponse201:
+        """Create user
+
+ Create a new user.
+
+Args:
+    body (CreateUserData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CreateUserResponse201 | CreateUserResponse400 | CreateUserResponse401 | CreateUserResponse403 | CreateUserResponse409 | CreateUserResponse500 | CreateUserResponse503]"""
+        from .api.user.create_user import sync as create_user_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_user_sync(**_kwargs)
+
+
+    async def create_user_async(self, *, data: CreateUserData, **kwargs: Any) -> CreateUserResponse201:
+        """Create user
+
+ Create a new user.
+
+Args:
+    body (CreateUserData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CreateUserResponse201 | CreateUserResponse400 | CreateUserResponse401 | CreateUserResponse403 | CreateUserResponse409 | CreateUserResponse500 | CreateUserResponse503]"""
+        from .api.user.create_user import asyncio as create_user_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_user_asyncio(**_kwargs)
+
+
+    def search_users(self, *, data: SearchUsersData, **kwargs: Any) -> SearchUsersResponse200:
+        """Search users
+
+ Search for users based on given criteria.
+
+Args:
+    body (SearchUsersData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]"""
+        from .api.user.search_users import sync as search_users_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_users_sync(**_kwargs)
+
+
+    async def search_users_async(self, *, data: SearchUsersData, **kwargs: Any) -> SearchUsersResponse200:
+        """Search users
+
+ Search for users based on given criteria.
+
+Args:
+    body (SearchUsersData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]"""
+        from .api.user.search_users import asyncio as search_users_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_users_asyncio(**_kwargs)
+
+
+    def update_user(self, username: str, *, data: UpdateUserData, **kwargs: Any) -> UpdateUserResponse200:
+        """Update user
+
+ Updates a user.
+
+Args:
+    username (str): The unique name of a user. Example: swillis.
+    body (UpdateUserData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[UpdateUserResponse200 | UpdateUserResponse400 | UpdateUserResponse403 | UpdateUserResponse404 | UpdateUserResponse500 | UpdateUserResponse503]"""
+        from .api.user.update_user import sync as update_user_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return update_user_sync(**_kwargs)
+
+
+    async def update_user_async(self, username: str, *, data: UpdateUserData, **kwargs: Any) -> UpdateUserResponse200:
+        """Update user
+
+ Updates a user.
+
+Args:
+    username (str): The unique name of a user. Example: swillis.
+    body (UpdateUserData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[UpdateUserResponse200 | UpdateUserResponse400 | UpdateUserResponse403 | UpdateUserResponse404 | UpdateUserResponse500 | UpdateUserResponse503]"""
+        from .api.user.update_user import asyncio as update_user_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await update_user_asyncio(**_kwargs)
+
+
+    def get_usage_metrics(self, *, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = False, **kwargs: Any) -> GetUsageMetricsResponse200:
+        """Get usage metrics
+
+ Retrieve the usage metrics based on given criteria.
+
+Args:
+    start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
+    end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
+    tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
+    with_tenants (bool | Unset):  Default: False.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetUsageMetricsResponse200 | GetUsageMetricsResponse400 | GetUsageMetricsResponse401 | GetUsageMetricsResponse403 | GetUsageMetricsResponse500]"""
+        from .api.system.get_usage_metrics import sync as get_usage_metrics_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_usage_metrics_sync(**_kwargs)
+
+
+    async def get_usage_metrics_async(self, *, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = False, **kwargs: Any) -> GetUsageMetricsResponse200:
+        """Get usage metrics
+
+ Retrieve the usage metrics based on given criteria.
+
+Args:
+    start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
+    end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
+    tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
+    with_tenants (bool | Unset):  Default: False.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetUsageMetricsResponse200 | GetUsageMetricsResponse400 | GetUsageMetricsResponse401 | GetUsageMetricsResponse403 | GetUsageMetricsResponse500]"""
+        from .api.system.get_usage_metrics import asyncio as get_usage_metrics_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_usage_metrics_asyncio(**_kwargs)
+
+
+    def update_role(self, role_id: str, *, data: UpdateRoleData, **kwargs: Any) -> UpdateRoleResponse200:
+        """Update role
+
+ Update a role with the given ID.
+
+Args:
+    role_id (str):
+    body (UpdateRoleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[UpdateRoleResponse200 | UpdateRoleResponse400 | UpdateRoleResponse401 | UpdateRoleResponse404 | UpdateRoleResponse500 | UpdateRoleResponse503]"""
+        from .api.role.update_role import sync as update_role_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return update_role_sync(**_kwargs)
+
+
+    async def update_role_async(self, role_id: str, *, data: UpdateRoleData, **kwargs: Any) -> UpdateRoleResponse200:
+        """Update role
+
+ Update a role with the given ID.
+
+Args:
+    role_id (str):
+    body (UpdateRoleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[UpdateRoleResponse200 | UpdateRoleResponse400 | UpdateRoleResponse401 | UpdateRoleResponse404 | UpdateRoleResponse500 | UpdateRoleResponse503]"""
+        from .api.role.update_role import asyncio as update_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await update_role_asyncio(**_kwargs)
+
+
+    def assign_role_to_client(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Assign a role to a client
+
+ Assigns the specified role to the client. The client will inherit the authorizations associated with
+this role.
+
+Args:
+    role_id (str):
+    client_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignRoleToClientResponse400 | AssignRoleToClientResponse403 | AssignRoleToClientResponse404 | AssignRoleToClientResponse409 | AssignRoleToClientResponse500 | AssignRoleToClientResponse503]"""
+        from .api.role.assign_role_to_client import sync as assign_role_to_client_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_role_to_client_sync(**_kwargs)
+
+
+    async def assign_role_to_client_async(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Assign a role to a client
+
+ Assigns the specified role to the client. The client will inherit the authorizations associated with
+this role.
+
+Args:
+    role_id (str):
+    client_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignRoleToClientResponse400 | AssignRoleToClientResponse403 | AssignRoleToClientResponse404 | AssignRoleToClientResponse409 | AssignRoleToClientResponse500 | AssignRoleToClientResponse503]"""
+        from .api.role.assign_role_to_client import asyncio as assign_role_to_client_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_role_to_client_asyncio(**_kwargs)
+
+
+    def get_role(self, role_id: str, **kwargs: Any) -> GetRoleResponse200:
+        """Get role
+
+ Get a role by its ID.
+
+Args:
+    role_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetRoleResponse200 | GetRoleResponse401 | GetRoleResponse403 | GetRoleResponse404 | GetRoleResponse500]"""
+        from .api.role.get_role import sync as get_role_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_role_sync(**_kwargs)
+
+
+    async def get_role_async(self, role_id: str, **kwargs: Any) -> GetRoleResponse200:
+        """Get role
+
+ Get a role by its ID.
+
+Args:
+    role_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetRoleResponse200 | GetRoleResponse401 | GetRoleResponse403 | GetRoleResponse404 | GetRoleResponse500]"""
+        from .api.role.get_role import asyncio as get_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_role_asyncio(**_kwargs)
+
+
+    def unassign_role_from_mapping_rule(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Unassign a role from a mapping rule
+
+ Unassigns a role from a mapping rule.
+
+Args:
+    role_id (str):
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignRoleFromMappingRuleResponse400 | UnassignRoleFromMappingRuleResponse403 | UnassignRoleFromMappingRuleResponse404 | UnassignRoleFromMappingRuleResponse500 | UnassignRoleFromMappingRuleResponse503]"""
+        from .api.role.unassign_role_from_mapping_rule import sync as unassign_role_from_mapping_rule_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_role_from_mapping_rule_sync(**_kwargs)
+
+
+    async def unassign_role_from_mapping_rule_async(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Unassign a role from a mapping rule
+
+ Unassigns a role from a mapping rule.
+
+Args:
+    role_id (str):
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignRoleFromMappingRuleResponse400 | UnassignRoleFromMappingRuleResponse403 | UnassignRoleFromMappingRuleResponse404 | UnassignRoleFromMappingRuleResponse500 | UnassignRoleFromMappingRuleResponse503]"""
+        from .api.role.unassign_role_from_mapping_rule import asyncio as unassign_role_from_mapping_rule_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_role_from_mapping_rule_asyncio(**_kwargs)
+
+
+    def search_users_for_role(self, role_id: str, *, data: SearchUsersForRoleData, **kwargs: Any) -> SearchUsersForRoleResponse200:
+        """Search role users
+
+ Search users with assigned role.
+
+Args:
+    role_id (str):
+    body (SearchUsersForRoleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchUsersForRoleResponse200 | SearchUsersForRoleResponse400 | SearchUsersForRoleResponse401 | SearchUsersForRoleResponse403 | SearchUsersForRoleResponse404 | SearchUsersForRoleResponse500]"""
+        from .api.role.search_users_for_role import sync as search_users_for_role_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_users_for_role_sync(**_kwargs)
+
+
+    async def search_users_for_role_async(self, role_id: str, *, data: SearchUsersForRoleData, **kwargs: Any) -> SearchUsersForRoleResponse200:
+        """Search role users
+
+ Search users with assigned role.
+
+Args:
+    role_id (str):
+    body (SearchUsersForRoleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchUsersForRoleResponse200 | SearchUsersForRoleResponse400 | SearchUsersForRoleResponse401 | SearchUsersForRoleResponse403 | SearchUsersForRoleResponse404 | SearchUsersForRoleResponse500]"""
+        from .api.role.search_users_for_role import asyncio as search_users_for_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_users_for_role_asyncio(**_kwargs)
+
+
+    def search_mapping_rules_for_role(self, role_id: str, *, data: SearchMappingRulesForRoleData, **kwargs: Any) -> SearchMappingRulesForRoleResponse200:
+        """Search role mapping rules
+
+ Search mapping rules with assigned role.
+
+Args:
+    role_id (str):
+    body (SearchMappingRulesForRoleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchMappingRulesForRoleResponse200 | SearchMappingRulesForRoleResponse400 | SearchMappingRulesForRoleResponse401 | SearchMappingRulesForRoleResponse403 | SearchMappingRulesForRoleResponse404 | SearchMappingRulesForRoleResponse500]"""
+        from .api.role.search_mapping_rules_for_role import sync as search_mapping_rules_for_role_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_mapping_rules_for_role_sync(**_kwargs)
+
+
+    async def search_mapping_rules_for_role_async(self, role_id: str, *, data: SearchMappingRulesForRoleData, **kwargs: Any) -> SearchMappingRulesForRoleResponse200:
+        """Search role mapping rules
+
+ Search mapping rules with assigned role.
+
+Args:
+    role_id (str):
+    body (SearchMappingRulesForRoleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchMappingRulesForRoleResponse200 | SearchMappingRulesForRoleResponse400 | SearchMappingRulesForRoleResponse401 | SearchMappingRulesForRoleResponse403 | SearchMappingRulesForRoleResponse404 | SearchMappingRulesForRoleResponse500]"""
+        from .api.role.search_mapping_rules_for_role import asyncio as search_mapping_rules_for_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_mapping_rules_for_role_asyncio(**_kwargs)
+
+
+    def search_groups_for_role(self, role_id: str, *, data: SearchGroupsForRoleData, **kwargs: Any) -> SearchGroupsForRoleResponse200:
+        """Search role groups
+
+ Search groups with assigned role.
+
+Args:
+    role_id (str):
+    body (SearchGroupsForRoleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchGroupsForRoleResponse200 | SearchGroupsForRoleResponse400 | SearchGroupsForRoleResponse401 | SearchGroupsForRoleResponse403 | SearchGroupsForRoleResponse404 | SearchGroupsForRoleResponse500]"""
+        from .api.role.search_groups_for_role import sync as search_groups_for_role_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_groups_for_role_sync(**_kwargs)
+
+
+    async def search_groups_for_role_async(self, role_id: str, *, data: SearchGroupsForRoleData, **kwargs: Any) -> SearchGroupsForRoleResponse200:
+        """Search role groups
+
+ Search groups with assigned role.
+
+Args:
+    role_id (str):
+    body (SearchGroupsForRoleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchGroupsForRoleResponse200 | SearchGroupsForRoleResponse400 | SearchGroupsForRoleResponse401 | SearchGroupsForRoleResponse403 | SearchGroupsForRoleResponse404 | SearchGroupsForRoleResponse500]"""
+        from .api.role.search_groups_for_role import asyncio as search_groups_for_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_groups_for_role_asyncio(**_kwargs)
+
+
+    def search_roles(self, *, data: SearchRolesData, **kwargs: Any) -> Any:
+        """Search roles
+
+ Search for roles based on given criteria.
+
+Args:
+    body (SearchRolesData): Role search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | SearchRolesResponse200 | SearchRolesResponse400 | SearchRolesResponse401 | SearchRolesResponse403]"""
+        from .api.role.search_roles import sync as search_roles_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_roles_sync(**_kwargs)
+
+
+    async def search_roles_async(self, *, data: SearchRolesData, **kwargs: Any) -> Any:
+        """Search roles
+
+ Search for roles based on given criteria.
+
+Args:
+    body (SearchRolesData): Role search request.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | SearchRolesResponse200 | SearchRolesResponse400 | SearchRolesResponse401 | SearchRolesResponse403]"""
+        from .api.role.search_roles import asyncio as search_roles_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_roles_asyncio(**_kwargs)
+
+
+    def search_clients_for_role(self, role_id: str, *, data: SearchClientsForRoleData, **kwargs: Any) -> SearchClientsForRoleResponse200:
+        """Search role clients
+
+ Search clients with assigned role.
+
+Args:
+    role_id (str):
+    body (SearchClientsForRoleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchClientsForRoleResponse200 | SearchClientsForRoleResponse400 | SearchClientsForRoleResponse401 | SearchClientsForRoleResponse403 | SearchClientsForRoleResponse404 | SearchClientsForRoleResponse500]"""
+        from .api.role.search_clients_for_role import sync as search_clients_for_role_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_clients_for_role_sync(**_kwargs)
+
+
+    async def search_clients_for_role_async(self, role_id: str, *, data: SearchClientsForRoleData, **kwargs: Any) -> SearchClientsForRoleResponse200:
+        """Search role clients
+
+ Search clients with assigned role.
+
+Args:
+    role_id (str):
+    body (SearchClientsForRoleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[SearchClientsForRoleResponse200 | SearchClientsForRoleResponse400 | SearchClientsForRoleResponse401 | SearchClientsForRoleResponse403 | SearchClientsForRoleResponse404 | SearchClientsForRoleResponse500]"""
+        from .api.role.search_clients_for_role import asyncio as search_clients_for_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_clients_for_role_asyncio(**_kwargs)
+
+
+    def create_role(self, *, data: CreateRoleData, **kwargs: Any) -> CreateRoleResponse201:
+        """Create role
+
+ Create a new role.
+
+Args:
+    body (CreateRoleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CreateRoleResponse201 | CreateRoleResponse400 | CreateRoleResponse401 | CreateRoleResponse403 | CreateRoleResponse500 | CreateRoleResponse503]"""
+        from .api.role.create_role import sync as create_role_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_role_sync(**_kwargs)
+
+
+    async def create_role_async(self, *, data: CreateRoleData, **kwargs: Any) -> CreateRoleResponse201:
+        """Create role
+
+ Create a new role.
+
+Args:
+    body (CreateRoleData):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[CreateRoleResponse201 | CreateRoleResponse400 | CreateRoleResponse401 | CreateRoleResponse403 | CreateRoleResponse500 | CreateRoleResponse503]"""
+        from .api.role.create_role import asyncio as create_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_role_asyncio(**_kwargs)
+
+
+    def assign_role_to_group(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
+        """Assign a role to a group
+
+ Assigns the specified role to the group. Every member of the group (user or client) will inherit the
+authorizations associated with this role.
+
+Args:
+    role_id (str):
+    group_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignRoleToGroupResponse400 | AssignRoleToGroupResponse403 | AssignRoleToGroupResponse404 | AssignRoleToGroupResponse409 | AssignRoleToGroupResponse500 | AssignRoleToGroupResponse503]"""
+        from .api.role.assign_role_to_group import sync as assign_role_to_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_role_to_group_sync(**_kwargs)
+
+
+    async def assign_role_to_group_async(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
+        """Assign a role to a group
+
+ Assigns the specified role to the group. Every member of the group (user or client) will inherit the
+authorizations associated with this role.
+
+Args:
+    role_id (str):
+    group_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignRoleToGroupResponse400 | AssignRoleToGroupResponse403 | AssignRoleToGroupResponse404 | AssignRoleToGroupResponse409 | AssignRoleToGroupResponse500 | AssignRoleToGroupResponse503]"""
+        from .api.role.assign_role_to_group import asyncio as assign_role_to_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_role_to_group_asyncio(**_kwargs)
+
+
+    def assign_role_to_mapping_rule(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Assign a role to a mapping rule
+
+ Assigns a role to a mapping rule.
+
+Args:
+    role_id (str):
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignRoleToMappingRuleResponse400 | AssignRoleToMappingRuleResponse403 | AssignRoleToMappingRuleResponse404 | AssignRoleToMappingRuleResponse409 | AssignRoleToMappingRuleResponse500 | AssignRoleToMappingRuleResponse503]"""
+        from .api.role.assign_role_to_mapping_rule import sync as assign_role_to_mapping_rule_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_role_to_mapping_rule_sync(**_kwargs)
+
+
+    async def assign_role_to_mapping_rule_async(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Assign a role to a mapping rule
+
+ Assigns a role to a mapping rule.
+
+Args:
+    role_id (str):
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignRoleToMappingRuleResponse400 | AssignRoleToMappingRuleResponse403 | AssignRoleToMappingRuleResponse404 | AssignRoleToMappingRuleResponse409 | AssignRoleToMappingRuleResponse500 | AssignRoleToMappingRuleResponse503]"""
+        from .api.role.assign_role_to_mapping_rule import asyncio as assign_role_to_mapping_rule_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_role_to_mapping_rule_asyncio(**_kwargs)
+
+
+    def unassign_role_from_client(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Unassign a role from a client
+
+ Unassigns the specified role from the client. The client will no longer inherit the authorizations
+associated with this role.
+
+Args:
+    role_id (str):
+    client_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignRoleFromClientResponse400 | UnassignRoleFromClientResponse403 | UnassignRoleFromClientResponse404 | UnassignRoleFromClientResponse500 | UnassignRoleFromClientResponse503]"""
+        from .api.role.unassign_role_from_client import sync as unassign_role_from_client_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_role_from_client_sync(**_kwargs)
+
+
+    async def unassign_role_from_client_async(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Unassign a role from a client
+
+ Unassigns the specified role from the client. The client will no longer inherit the authorizations
+associated with this role.
+
+Args:
+    role_id (str):
+    client_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignRoleFromClientResponse400 | UnassignRoleFromClientResponse403 | UnassignRoleFromClientResponse404 | UnassignRoleFromClientResponse500 | UnassignRoleFromClientResponse503]"""
+        from .api.role.unassign_role_from_client import asyncio as unassign_role_from_client_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_role_from_client_asyncio(**_kwargs)
+
+
+    def delete_role(self, role_id: str, **kwargs: Any) -> Any:
+        """Delete role
+
+ Deletes the role with the given ID.
+
+Args:
+    role_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | DeleteRoleResponse401 | DeleteRoleResponse404 | DeleteRoleResponse500 | DeleteRoleResponse503]"""
+        from .api.role.delete_role import sync as delete_role_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_role_sync(**_kwargs)
+
+
+    async def delete_role_async(self, role_id: str, **kwargs: Any) -> Any:
+        """Delete role
+
+ Deletes the role with the given ID.
+
+Args:
+    role_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | DeleteRoleResponse401 | DeleteRoleResponse404 | DeleteRoleResponse500 | DeleteRoleResponse503]"""
+        from .api.role.delete_role import asyncio as delete_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_role_asyncio(**_kwargs)
+
+
+    def assign_role_to_user(self, role_id: str, username: str, **kwargs: Any) -> Any:
+        """Assign a role to a user
+
+ Assigns the specified role to the user. The user will inherit the authorizations associated with
+this role.
+
+Args:
+    role_id (str):
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignRoleToUserResponse400 | AssignRoleToUserResponse403 | AssignRoleToUserResponse404 | AssignRoleToUserResponse409 | AssignRoleToUserResponse500 | AssignRoleToUserResponse503]"""
+        from .api.role.assign_role_to_user import sync as assign_role_to_user_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_role_to_user_sync(**_kwargs)
+
+
+    async def assign_role_to_user_async(self, role_id: str, username: str, **kwargs: Any) -> Any:
+        """Assign a role to a user
+
+ Assigns the specified role to the user. The user will inherit the authorizations associated with
+this role.
+
+Args:
+    role_id (str):
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | AssignRoleToUserResponse400 | AssignRoleToUserResponse403 | AssignRoleToUserResponse404 | AssignRoleToUserResponse409 | AssignRoleToUserResponse500 | AssignRoleToUserResponse503]"""
+        from .api.role.assign_role_to_user import asyncio as assign_role_to_user_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_role_to_user_asyncio(**_kwargs)
+
+
+    def unassign_role_from_group(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
+        """Unassign a role from a group
+
+ Unassigns the specified role from the group. All group members (user or client) no longer inherit
+the authorizations associated with this role.
+
+Args:
+    role_id (str):
+    group_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignRoleFromGroupResponse400 | UnassignRoleFromGroupResponse403 | UnassignRoleFromGroupResponse404 | UnassignRoleFromGroupResponse500 | UnassignRoleFromGroupResponse503]"""
+        from .api.role.unassign_role_from_group import sync as unassign_role_from_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_role_from_group_sync(**_kwargs)
+
+
+    async def unassign_role_from_group_async(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
+        """Unassign a role from a group
+
+ Unassigns the specified role from the group. All group members (user or client) no longer inherit
+the authorizations associated with this role.
+
+Args:
+    role_id (str):
+    group_id (str):
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignRoleFromGroupResponse400 | UnassignRoleFromGroupResponse403 | UnassignRoleFromGroupResponse404 | UnassignRoleFromGroupResponse500 | UnassignRoleFromGroupResponse503]"""
+        from .api.role.unassign_role_from_group import asyncio as unassign_role_from_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_role_from_group_asyncio(**_kwargs)
+
+
+    def unassign_role_from_user(self, role_id: str, username: str, **kwargs: Any) -> Any:
+        """Unassign a role from a user
+
+ Unassigns a role from a user. The user will no longer inherit the authorizations associated with
+this role.
+
+Args:
+    role_id (str):
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignRoleFromUserResponse400 | UnassignRoleFromUserResponse403 | UnassignRoleFromUserResponse404 | UnassignRoleFromUserResponse500 | UnassignRoleFromUserResponse503]"""
+        from .api.role.unassign_role_from_user import sync as unassign_role_from_user_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_role_from_user_sync(**_kwargs)
+
+
+    async def unassign_role_from_user_async(self, role_id: str, username: str, **kwargs: Any) -> Any:
+        """Unassign a role from a user
+
+ Unassigns a role from a user. The user will no longer inherit the authorizations associated with
+this role.
+
+Args:
+    role_id (str):
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[Any | UnassignRoleFromUserResponse400 | UnassignRoleFromUserResponse403 | UnassignRoleFromUserResponse404 | UnassignRoleFromUserResponse500 | UnassignRoleFromUserResponse503]"""
+        from .api.role.unassign_role_from_user import asyncio as unassign_role_from_user_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_role_from_user_asyncio(**_kwargs)
+
+
+    def get_license(self, **kwargs: Any) -> GetLicenseResponse200:
+        """Get license status
+
+ Obtains the status of the current Camunda license.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetLicenseResponse200 | GetLicenseResponse500]"""
+        from .api.license_.get_license import sync as get_license_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_license_sync(**_kwargs)
+
+
+    async def get_license_async(self, **kwargs: Any) -> GetLicenseResponse200:
+        """Get license status
+
+ Obtains the status of the current Camunda license.
+
+Raises:
+    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+
+Returns:
+    Response[GetLicenseResponse200 | GetLicenseResponse500]"""
+        from .api.license_.get_license import asyncio as get_license_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_license_asyncio(**_kwargs)
 
 
     def broadcast_signal(self, *, data: BroadcastSignalData, **kwargs: Any) -> BroadcastSignalResponse200:
@@ -7773,1658 +9427,56 @@ Returns:
         return await broadcast_signal_asyncio(**_kwargs)
 
 
-    def update_mapping_rule(self, mapping_rule_id: str, *, data: UpdateMappingRuleData, **kwargs: Any) -> UpdateMappingRuleResponse200:
-        """Update mapping rule
+    def evaluate_conditionals(self, *, data: EvaluateConditionalsData, **kwargs: Any) -> EvaluateConditionalsResponse200:
+        """Evaluate root level conditional start events
 
- Update a mapping rule.
-
-Args:
-    mapping_rule_id (str):
-    body (UpdateMappingRuleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]"""
-        from .api.mapping_rule.update_mapping_rule import sync as update_mapping_rule_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return update_mapping_rule_sync(**_kwargs)
-
-
-    async def update_mapping_rule_async(self, mapping_rule_id: str, *, data: UpdateMappingRuleData, **kwargs: Any) -> UpdateMappingRuleResponse200:
-        """Update mapping rule
-
- Update a mapping rule.
+ Evaluates root-level conditional start events for process definitions.
+If the evaluation is successful, it will return the keys of all created process instances, along
+with their associated process definition key.
+Multiple root-level conditional start events of the same process definition can trigger if their
+conditions evaluate to true.
 
 Args:
-    mapping_rule_id (str):
-    body (UpdateMappingRuleData):
+    body (EvaluateConditionalsData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]"""
-        from .api.mapping_rule.update_mapping_rule import asyncio as update_mapping_rule_asyncio
+    Response[EvaluateConditionalsResponse200 | EvaluateConditionalsResponse400 | EvaluateConditionalsResponse403 | EvaluateConditionalsResponse404 | EvaluateConditionalsResponse500 | EvaluateConditionalsResponse503]"""
+        from .api.conditional.evaluate_conditionals import sync as evaluate_conditionals_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await update_mapping_rule_asyncio(**_kwargs)
+        return evaluate_conditionals_sync(**_kwargs)
 
 
-    def delete_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Delete a mapping rule
+    async def evaluate_conditionals_async(self, *, data: EvaluateConditionalsData, **kwargs: Any) -> EvaluateConditionalsResponse200:
+        """Evaluate root level conditional start events
 
- Deletes the mapping rule with the given ID.
+ Evaluates root-level conditional start events for process definitions.
+If the evaluation is successful, it will return the keys of all created process instances, along
+with their associated process definition key.
+Multiple root-level conditional start events of the same process definition can trigger if their
+conditions evaluate to true.
 
 Args:
-    mapping_rule_id (str):
+    body (EvaluateConditionalsData):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | DeleteMappingRuleResponse401 | DeleteMappingRuleResponse404 | DeleteMappingRuleResponse500 | DeleteMappingRuleResponse503]"""
-        from .api.mapping_rule.delete_mapping_rule import sync as delete_mapping_rule_sync
+    Response[EvaluateConditionalsResponse200 | EvaluateConditionalsResponse400 | EvaluateConditionalsResponse403 | EvaluateConditionalsResponse404 | EvaluateConditionalsResponse500 | EvaluateConditionalsResponse503]"""
+        from .api.conditional.evaluate_conditionals import asyncio as evaluate_conditionals_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return delete_mapping_rule_sync(**_kwargs)
-
-
-    async def delete_mapping_rule_async(self, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Delete a mapping rule
-
- Deletes the mapping rule with the given ID.
-
-Args:
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteMappingRuleResponse401 | DeleteMappingRuleResponse404 | DeleteMappingRuleResponse500 | DeleteMappingRuleResponse503]"""
-        from .api.mapping_rule.delete_mapping_rule import asyncio as delete_mapping_rule_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_mapping_rule_asyncio(**_kwargs)
-
-
-    def create_mapping_rule(self, *, data: CreateMappingRuleData, **kwargs: Any) -> CreateMappingRuleResponse201:
-        """Create mapping rule
-
- Create a new mapping rule
-
-Args:
-    body (CreateMappingRuleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateMappingRuleResponse201 | CreateMappingRuleResponse400 | CreateMappingRuleResponse403 | CreateMappingRuleResponse404 | CreateMappingRuleResponse500]"""
-        from .api.mapping_rule.create_mapping_rule import sync as create_mapping_rule_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_mapping_rule_sync(**_kwargs)
-
-
-    async def create_mapping_rule_async(self, *, data: CreateMappingRuleData, **kwargs: Any) -> CreateMappingRuleResponse201:
-        """Create mapping rule
-
- Create a new mapping rule
-
-Args:
-    body (CreateMappingRuleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateMappingRuleResponse201 | CreateMappingRuleResponse400 | CreateMappingRuleResponse403 | CreateMappingRuleResponse404 | CreateMappingRuleResponse500]"""
-        from .api.mapping_rule.create_mapping_rule import asyncio as create_mapping_rule_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_mapping_rule_asyncio(**_kwargs)
-
-
-    def search_mapping_rule(self, *, data: SearchMappingRuleData, **kwargs: Any) -> SearchMappingRuleResponse200:
-        """Search mapping rules
-
- Search for mapping rules based on given criteria.
-
-Args:
-    body (SearchMappingRuleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMappingRuleResponse200 | SearchMappingRuleResponse400 | SearchMappingRuleResponse401 | SearchMappingRuleResponse403 | SearchMappingRuleResponse500]"""
-        from .api.mapping_rule.search_mapping_rule import sync as search_mapping_rule_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_mapping_rule_sync(**_kwargs)
-
-
-    async def search_mapping_rule_async(self, *, data: SearchMappingRuleData, **kwargs: Any) -> SearchMappingRuleResponse200:
-        """Search mapping rules
-
- Search for mapping rules based on given criteria.
-
-Args:
-    body (SearchMappingRuleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMappingRuleResponse200 | SearchMappingRuleResponse400 | SearchMappingRuleResponse401 | SearchMappingRuleResponse403 | SearchMappingRuleResponse500]"""
-        from .api.mapping_rule.search_mapping_rule import asyncio as search_mapping_rule_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_mapping_rule_asyncio(**_kwargs)
-
-
-    def get_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> GetMappingRuleResponse200:
-        """Get a mapping rule
-
- Gets the mapping rule with the given ID.
-
-Args:
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetMappingRuleResponse200 | GetMappingRuleResponse401 | GetMappingRuleResponse404 | GetMappingRuleResponse500]"""
-        from .api.mapping_rule.get_mapping_rule import sync as get_mapping_rule_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_mapping_rule_sync(**_kwargs)
-
-
-    async def get_mapping_rule_async(self, mapping_rule_id: str, **kwargs: Any) -> GetMappingRuleResponse200:
-        """Get a mapping rule
-
- Gets the mapping rule with the given ID.
-
-Args:
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetMappingRuleResponse200 | GetMappingRuleResponse401 | GetMappingRuleResponse404 | GetMappingRuleResponse500]"""
-        from .api.mapping_rule.get_mapping_rule import asyncio as get_mapping_rule_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_mapping_rule_asyncio(**_kwargs)
-
-
-    def get_process_instance_sequence_flows(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceSequenceFlowsResponse200:
-        """Get sequence flows
-
- Get sequence flows taken by the process instance.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceSequenceFlowsResponse200 | GetProcessInstanceSequenceFlowsResponse400 | GetProcessInstanceSequenceFlowsResponse401 | GetProcessInstanceSequenceFlowsResponse403 | GetProcessInstanceSequenceFlowsResponse500]"""
-        from .api.process_instance.get_process_instance_sequence_flows import sync as get_process_instance_sequence_flows_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_instance_sequence_flows_sync(**_kwargs)
-
-
-    async def get_process_instance_sequence_flows_async(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceSequenceFlowsResponse200:
-        """Get sequence flows
-
- Get sequence flows taken by the process instance.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceSequenceFlowsResponse200 | GetProcessInstanceSequenceFlowsResponse400 | GetProcessInstanceSequenceFlowsResponse401 | GetProcessInstanceSequenceFlowsResponse403 | GetProcessInstanceSequenceFlowsResponse500]"""
-        from .api.process_instance.get_process_instance_sequence_flows import asyncio as get_process_instance_sequence_flows_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_instance_sequence_flows_asyncio(**_kwargs)
-
-
-    def get_process_instance_call_hierarchy(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceCallHierarchyResponse400:
-        """Get call hierarchy
-
- Returns the call hierarchy for a given process instance, showing its ancestry up to the root
-instance.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceCallHierarchyResponse400 | GetProcessInstanceCallHierarchyResponse401 | GetProcessInstanceCallHierarchyResponse403 | GetProcessInstanceCallHierarchyResponse404 | GetProcessInstanceCallHierarchyResponse500 | list[GetProcessInstanceCallHierarchyResponse200Item]]"""
-        from .api.process_instance.get_process_instance_call_hierarchy import sync as get_process_instance_call_hierarchy_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_instance_call_hierarchy_sync(**_kwargs)
-
-
-    async def get_process_instance_call_hierarchy_async(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceCallHierarchyResponse400:
-        """Get call hierarchy
-
- Returns the call hierarchy for a given process instance, showing its ancestry up to the root
-instance.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceCallHierarchyResponse400 | GetProcessInstanceCallHierarchyResponse401 | GetProcessInstanceCallHierarchyResponse403 | GetProcessInstanceCallHierarchyResponse404 | GetProcessInstanceCallHierarchyResponse500 | list[GetProcessInstanceCallHierarchyResponse200Item]]"""
-        from .api.process_instance.get_process_instance_call_hierarchy import asyncio as get_process_instance_call_hierarchy_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_instance_call_hierarchy_asyncio(**_kwargs)
-
-
-    def modify_process_instance(self, process_instance_key: str, *, data: ModifyProcessInstanceData, **kwargs: Any) -> Any:
-        """Modify process instance
-
- Modifies a running process instance.
-This request can contain multiple instructions to activate an element of the process or
-to terminate an active instance of an element.
-
-Use this to repair a process instance that is stuck on an element or took an unintended path.
-For example, because an external system is not available or doesn't respond as expected.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (ModifyProcessInstanceData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ModifyProcessInstanceResponse400 | ModifyProcessInstanceResponse404 | ModifyProcessInstanceResponse500 | ModifyProcessInstanceResponse503]"""
-        from .api.process_instance.modify_process_instance import sync as modify_process_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return modify_process_instance_sync(**_kwargs)
-
-
-    async def modify_process_instance_async(self, process_instance_key: str, *, data: ModifyProcessInstanceData, **kwargs: Any) -> Any:
-        """Modify process instance
-
- Modifies a running process instance.
-This request can contain multiple instructions to activate an element of the process or
-to terminate an active instance of an element.
-
-Use this to repair a process instance that is stuck on an element or took an unintended path.
-For example, because an external system is not available or doesn't respond as expected.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (ModifyProcessInstanceData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ModifyProcessInstanceResponse400 | ModifyProcessInstanceResponse404 | ModifyProcessInstanceResponse500 | ModifyProcessInstanceResponse503]"""
-        from .api.process_instance.modify_process_instance import asyncio as modify_process_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await modify_process_instance_asyncio(**_kwargs)
-
-
-    def get_process_instance_statistics(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceStatisticsResponse200:
-        """Get element instance statistics
-
- Get statistics about elements by the process instance key.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceStatisticsResponse200 | GetProcessInstanceStatisticsResponse400 | GetProcessInstanceStatisticsResponse401 | GetProcessInstanceStatisticsResponse403 | GetProcessInstanceStatisticsResponse500]"""
-        from .api.process_instance.get_process_instance_statistics import sync as get_process_instance_statistics_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_instance_statistics_sync(**_kwargs)
-
-
-    async def get_process_instance_statistics_async(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceStatisticsResponse200:
-        """Get element instance statistics
-
- Get statistics about elements by the process instance key.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceStatisticsResponse200 | GetProcessInstanceStatisticsResponse400 | GetProcessInstanceStatisticsResponse401 | GetProcessInstanceStatisticsResponse403 | GetProcessInstanceStatisticsResponse500]"""
-        from .api.process_instance.get_process_instance_statistics import asyncio as get_process_instance_statistics_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_instance_statistics_asyncio(**_kwargs)
-
-
-    def migrate_process_instances_batch_operation(self, *, data: MigrateProcessInstancesBatchOperationData, **kwargs: Any) -> MigrateProcessInstancesBatchOperationResponse200:
-        """Migrate process instances (batch)
-
- Migrate multiple process instances.
-Since only process instances with ACTIVE state can be migrated, any given
-filters for state are ignored and overridden during this batch operation.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (MigrateProcessInstancesBatchOperationData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[MigrateProcessInstancesBatchOperationResponse200 | MigrateProcessInstancesBatchOperationResponse400 | MigrateProcessInstancesBatchOperationResponse401 | MigrateProcessInstancesBatchOperationResponse403 | MigrateProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.migrate_process_instances_batch_operation import sync as migrate_process_instances_batch_operation_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return migrate_process_instances_batch_operation_sync(**_kwargs)
-
-
-    async def migrate_process_instances_batch_operation_async(self, *, data: MigrateProcessInstancesBatchOperationData, **kwargs: Any) -> MigrateProcessInstancesBatchOperationResponse200:
-        """Migrate process instances (batch)
-
- Migrate multiple process instances.
-Since only process instances with ACTIVE state can be migrated, any given
-filters for state are ignored and overridden during this batch operation.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (MigrateProcessInstancesBatchOperationData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[MigrateProcessInstancesBatchOperationResponse200 | MigrateProcessInstancesBatchOperationResponse400 | MigrateProcessInstancesBatchOperationResponse401 | MigrateProcessInstancesBatchOperationResponse403 | MigrateProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.migrate_process_instances_batch_operation import asyncio as migrate_process_instances_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await migrate_process_instances_batch_operation_asyncio(**_kwargs)
-
-
-    def get_process_instance(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceResponse200:
-        """Get process instance
-
- Get the process instance by the process instance key.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceResponse200 | GetProcessInstanceResponse400 | GetProcessInstanceResponse401 | GetProcessInstanceResponse403 | GetProcessInstanceResponse404 | GetProcessInstanceResponse500]"""
-        from .api.process_instance.get_process_instance import sync as get_process_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_instance_sync(**_kwargs)
-
-
-    async def get_process_instance_async(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceResponse200:
-        """Get process instance
-
- Get the process instance by the process instance key.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceResponse200 | GetProcessInstanceResponse400 | GetProcessInstanceResponse401 | GetProcessInstanceResponse403 | GetProcessInstanceResponse404 | GetProcessInstanceResponse500]"""
-        from .api.process_instance.get_process_instance import asyncio as get_process_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_instance_asyncio(**_kwargs)
-
-
-    def resolve_incidents_batch_operation(self, *, data: ResolveIncidentsBatchOperationData, **kwargs: Any) -> ResolveIncidentsBatchOperationResponse200:
-        """Resolve related incidents (batch)
-
- Resolves multiple instances of process instances.
-Since only process instances with ACTIVE state can have unresolved incidents, any given
-filters for state are ignored and overridden during this batch operation.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (ResolveIncidentsBatchOperationData): The process instance filter that defines which
-        process instances should have their incidents resolved.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ResolveIncidentsBatchOperationResponse200 | ResolveIncidentsBatchOperationResponse400 | ResolveIncidentsBatchOperationResponse401 | ResolveIncidentsBatchOperationResponse403 | ResolveIncidentsBatchOperationResponse500]"""
-        from .api.process_instance.resolve_incidents_batch_operation import sync as resolve_incidents_batch_operation_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return resolve_incidents_batch_operation_sync(**_kwargs)
-
-
-    async def resolve_incidents_batch_operation_async(self, *, data: ResolveIncidentsBatchOperationData, **kwargs: Any) -> ResolveIncidentsBatchOperationResponse200:
-        """Resolve related incidents (batch)
-
- Resolves multiple instances of process instances.
-Since only process instances with ACTIVE state can have unresolved incidents, any given
-filters for state are ignored and overridden during this batch operation.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (ResolveIncidentsBatchOperationData): The process instance filter that defines which
-        process instances should have their incidents resolved.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ResolveIncidentsBatchOperationResponse200 | ResolveIncidentsBatchOperationResponse400 | ResolveIncidentsBatchOperationResponse401 | ResolveIncidentsBatchOperationResponse403 | ResolveIncidentsBatchOperationResponse500]"""
-        from .api.process_instance.resolve_incidents_batch_operation import asyncio as resolve_incidents_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await resolve_incidents_batch_operation_asyncio(**_kwargs)
-
-
-    def modify_process_instances_batch_operation(self, *, data: ModifyProcessInstancesBatchOperationData, **kwargs: Any) -> ModifyProcessInstancesBatchOperationResponse200:
-        """Modify process instances (batch)
-
- Modify multiple process instances.
-Since only process instances with ACTIVE state can be modified, any given
-filters for state are ignored and overridden during this batch operation.
-In contrast to single modification operation, it is not possible to add variable instructions or
-modify by element key.
-It is only possible to use the element id of the source and target.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (ModifyProcessInstancesBatchOperationData): The process instance filter to define on
-        which process instances tokens should be moved,
-        and new element instances should be activated or terminated.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ModifyProcessInstancesBatchOperationResponse200 | ModifyProcessInstancesBatchOperationResponse400 | ModifyProcessInstancesBatchOperationResponse401 | ModifyProcessInstancesBatchOperationResponse403 | ModifyProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.modify_process_instances_batch_operation import sync as modify_process_instances_batch_operation_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return modify_process_instances_batch_operation_sync(**_kwargs)
-
-
-    async def modify_process_instances_batch_operation_async(self, *, data: ModifyProcessInstancesBatchOperationData, **kwargs: Any) -> ModifyProcessInstancesBatchOperationResponse200:
-        """Modify process instances (batch)
-
- Modify multiple process instances.
-Since only process instances with ACTIVE state can be modified, any given
-filters for state are ignored and overridden during this batch operation.
-In contrast to single modification operation, it is not possible to add variable instructions or
-modify by element key.
-It is only possible to use the element id of the source and target.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (ModifyProcessInstancesBatchOperationData): The process instance filter to define on
-        which process instances tokens should be moved,
-        and new element instances should be activated or terminated.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ModifyProcessInstancesBatchOperationResponse200 | ModifyProcessInstancesBatchOperationResponse400 | ModifyProcessInstancesBatchOperationResponse401 | ModifyProcessInstancesBatchOperationResponse403 | ModifyProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.modify_process_instances_batch_operation import asyncio as modify_process_instances_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await modify_process_instances_batch_operation_asyncio(**_kwargs)
-
-
-    def delete_process_instance(self, process_instance_key: str, *, data: DeleteProcessInstanceDataType0 | None, **kwargs: Any) -> Any:
-        """Delete process instance
-
- Deletes a process instance. Only instances that are completed or terminated can be deleted.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (DeleteProcessInstanceDataType0 | None):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteProcessInstanceResponse401 | DeleteProcessInstanceResponse403 | DeleteProcessInstanceResponse404 | DeleteProcessInstanceResponse409 | DeleteProcessInstanceResponse500 | DeleteProcessInstanceResponse503]"""
-        from .api.process_instance.delete_process_instance import sync as delete_process_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_process_instance_sync(**_kwargs)
-
-
-    async def delete_process_instance_async(self, process_instance_key: str, *, data: DeleteProcessInstanceDataType0 | None, **kwargs: Any) -> Any:
-        """Delete process instance
-
- Deletes a process instance. Only instances that are completed or terminated can be deleted.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (DeleteProcessInstanceDataType0 | None):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteProcessInstanceResponse401 | DeleteProcessInstanceResponse403 | DeleteProcessInstanceResponse404 | DeleteProcessInstanceResponse409 | DeleteProcessInstanceResponse500 | DeleteProcessInstanceResponse503]"""
-        from .api.process_instance.delete_process_instance import asyncio as delete_process_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_process_instance_asyncio(**_kwargs)
-
-
-    def delete_process_instances_batch_operation(self, *, data: DeleteProcessInstancesBatchOperationData, **kwargs: Any) -> DeleteProcessInstancesBatchOperationResponse200:
-        """Delete process instances (batch)
-
- Delete multiple process instances. This will delete the historic data from secondary storage.
-Only process instances in a final state (COMPLETED or TERMINATED) can be deleted.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (DeleteProcessInstancesBatchOperationData): The process instance filter that defines
-        which process instances should be deleted.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[DeleteProcessInstancesBatchOperationResponse200 | DeleteProcessInstancesBatchOperationResponse400 | DeleteProcessInstancesBatchOperationResponse401 | DeleteProcessInstancesBatchOperationResponse403 | DeleteProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.delete_process_instances_batch_operation import sync as delete_process_instances_batch_operation_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_process_instances_batch_operation_sync(**_kwargs)
-
-
-    async def delete_process_instances_batch_operation_async(self, *, data: DeleteProcessInstancesBatchOperationData, **kwargs: Any) -> DeleteProcessInstancesBatchOperationResponse200:
-        """Delete process instances (batch)
-
- Delete multiple process instances. This will delete the historic data from secondary storage.
-Only process instances in a final state (COMPLETED or TERMINATED) can be deleted.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (DeleteProcessInstancesBatchOperationData): The process instance filter that defines
-        which process instances should be deleted.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[DeleteProcessInstancesBatchOperationResponse200 | DeleteProcessInstancesBatchOperationResponse400 | DeleteProcessInstancesBatchOperationResponse401 | DeleteProcessInstancesBatchOperationResponse403 | DeleteProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.delete_process_instances_batch_operation import asyncio as delete_process_instances_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_process_instances_batch_operation_asyncio(**_kwargs)
-
-
-    def cancel_process_instances_batch_operation(self, *, data: CancelProcessInstancesBatchOperationData, **kwargs: Any) -> CancelProcessInstancesBatchOperationResponse200:
-        """Cancel process instances (batch)
-
- Cancels multiple running process instances.
-Since only ACTIVE root instances can be cancelled, any given filters for state and
-parentProcessInstanceKey are ignored and overridden during this batch operation.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (CancelProcessInstancesBatchOperationData): The process instance filter that defines
-        which process instances should be canceled.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CancelProcessInstancesBatchOperationResponse200 | CancelProcessInstancesBatchOperationResponse400 | CancelProcessInstancesBatchOperationResponse401 | CancelProcessInstancesBatchOperationResponse403 | CancelProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.cancel_process_instances_batch_operation import sync as cancel_process_instances_batch_operation_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return cancel_process_instances_batch_operation_sync(**_kwargs)
-
-
-    async def cancel_process_instances_batch_operation_async(self, *, data: CancelProcessInstancesBatchOperationData, **kwargs: Any) -> CancelProcessInstancesBatchOperationResponse200:
-        """Cancel process instances (batch)
-
- Cancels multiple running process instances.
-Since only ACTIVE root instances can be cancelled, any given filters for state and
-parentProcessInstanceKey are ignored and overridden during this batch operation.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (CancelProcessInstancesBatchOperationData): The process instance filter that defines
-        which process instances should be canceled.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CancelProcessInstancesBatchOperationResponse200 | CancelProcessInstancesBatchOperationResponse400 | CancelProcessInstancesBatchOperationResponse401 | CancelProcessInstancesBatchOperationResponse403 | CancelProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.cancel_process_instances_batch_operation import asyncio as cancel_process_instances_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await cancel_process_instances_batch_operation_asyncio(**_kwargs)
-
-
-    def create_process_instance(self, *, data: Processcreationbyid | Processcreationbykey, **kwargs: Any) -> CreateProcessInstanceResponse200:
-        """Create process instance
-
- Creates and starts an instance of the specified process.
-The process definition to use to create the instance can be specified either using its unique key
-(as returned by Deploy resources), or using the BPMN process id and a version.
-
-Waits for the completion of the process instance before returning a result
-when awaitCompletion is enabled.
-
-Args:
-    body (Processcreationbyid | Processcreationbykey): Instructions for creating a process
-        instance. The process definition can be specified
-        either by id or by key.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateProcessInstanceResponse200 | CreateProcessInstanceResponse400 | CreateProcessInstanceResponse500 | CreateProcessInstanceResponse503 | CreateProcessInstanceResponse504]"""
-        from .api.process_instance.create_process_instance import sync as create_process_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_process_instance_sync(**_kwargs)
-
-
-    async def create_process_instance_async(self, *, data: Processcreationbyid | Processcreationbykey, **kwargs: Any) -> CreateProcessInstanceResponse200:
-        """Create process instance
-
- Creates and starts an instance of the specified process.
-The process definition to use to create the instance can be specified either using its unique key
-(as returned by Deploy resources), or using the BPMN process id and a version.
-
-Waits for the completion of the process instance before returning a result
-when awaitCompletion is enabled.
-
-Args:
-    body (Processcreationbyid | Processcreationbykey): Instructions for creating a process
-        instance. The process definition can be specified
-        either by id or by key.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateProcessInstanceResponse200 | CreateProcessInstanceResponse400 | CreateProcessInstanceResponse500 | CreateProcessInstanceResponse503 | CreateProcessInstanceResponse504]"""
-        from .api.process_instance.create_process_instance import asyncio as create_process_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_process_instance_asyncio(**_kwargs)
-
-
-    def cancel_process_instance(self, process_instance_key: str, *, data: CancelProcessInstanceDataType0 | None, **kwargs: Any) -> Any:
-        """Cancel process instance
-
- Cancels a running process instance. As a cancellation includes more than just the removal of the
-process instance resource, the cancellation resource must be posted.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (CancelProcessInstanceDataType0 | None):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]"""
-        from .api.process_instance.cancel_process_instance import sync as cancel_process_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return cancel_process_instance_sync(**_kwargs)
-
-
-    async def cancel_process_instance_async(self, process_instance_key: str, *, data: CancelProcessInstanceDataType0 | None, **kwargs: Any) -> Any:
-        """Cancel process instance
-
- Cancels a running process instance. As a cancellation includes more than just the removal of the
-process instance resource, the cancellation resource must be posted.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (CancelProcessInstanceDataType0 | None):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]"""
-        from .api.process_instance.cancel_process_instance import asyncio as cancel_process_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await cancel_process_instance_asyncio(**_kwargs)
-
-
-    def search_process_instance_incidents(self, process_instance_key: str, *, data: SearchProcessInstanceIncidentsData, **kwargs: Any) -> SearchProcessInstanceIncidentsResponse200:
-        """Search related incidents
-
- Search for incidents caused by the process instance or any of its called process or decision
-instances.
-
-Although the `processInstanceKey` is provided as a path parameter to indicate the root process
-instance,
-you may also include a `processInstanceKey` within the filter object to narrow results to specific
-child process instances. This is useful, for example, if you want to isolate incidents associated
-with
-subprocesses or called processes under the root instance while excluding incidents directly tied to
-the root.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (SearchProcessInstanceIncidentsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchProcessInstanceIncidentsResponse200 | SearchProcessInstanceIncidentsResponse400 | SearchProcessInstanceIncidentsResponse401 | SearchProcessInstanceIncidentsResponse403 | SearchProcessInstanceIncidentsResponse404 | SearchProcessInstanceIncidentsResponse500]"""
-        from .api.process_instance.search_process_instance_incidents import sync as search_process_instance_incidents_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_process_instance_incidents_sync(**_kwargs)
-
-
-    async def search_process_instance_incidents_async(self, process_instance_key: str, *, data: SearchProcessInstanceIncidentsData, **kwargs: Any) -> SearchProcessInstanceIncidentsResponse200:
-        """Search related incidents
-
- Search for incidents caused by the process instance or any of its called process or decision
-instances.
-
-Although the `processInstanceKey` is provided as a path parameter to indicate the root process
-instance,
-you may also include a `processInstanceKey` within the filter object to narrow results to specific
-child process instances. This is useful, for example, if you want to isolate incidents associated
-with
-subprocesses or called processes under the root instance while excluding incidents directly tied to
-the root.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (SearchProcessInstanceIncidentsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchProcessInstanceIncidentsResponse200 | SearchProcessInstanceIncidentsResponse400 | SearchProcessInstanceIncidentsResponse401 | SearchProcessInstanceIncidentsResponse403 | SearchProcessInstanceIncidentsResponse404 | SearchProcessInstanceIncidentsResponse500]"""
-        from .api.process_instance.search_process_instance_incidents import asyncio as search_process_instance_incidents_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_process_instance_incidents_asyncio(**_kwargs)
-
-
-    def migrate_process_instance(self, process_instance_key: str, *, data: MigrateProcessInstanceData, **kwargs: Any) -> Any:
-        """Migrate process instance
-
- Migrates a process instance to a new process definition.
-This request can contain multiple mapping instructions to define mapping between the active
-process instance's elements and target process definition elements.
-
-Use this to upgrade a process instance to a new version of a process or to
-a different process definition, e.g. to keep your running instances up-to-date with the
-latest process improvements.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (MigrateProcessInstanceData): The migration instructions describe how to migrate a
-        process instance from one process definition to another.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | MigrateProcessInstanceResponse400 | MigrateProcessInstanceResponse404 | MigrateProcessInstanceResponse409 | MigrateProcessInstanceResponse500 | MigrateProcessInstanceResponse503]"""
-        from .api.process_instance.migrate_process_instance import sync as migrate_process_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return migrate_process_instance_sync(**_kwargs)
-
-
-    async def migrate_process_instance_async(self, process_instance_key: str, *, data: MigrateProcessInstanceData, **kwargs: Any) -> Any:
-        """Migrate process instance
-
- Migrates a process instance to a new process definition.
-This request can contain multiple mapping instructions to define mapping between the active
-process instance's elements and target process definition elements.
-
-Use this to upgrade a process instance to a new version of a process or to
-a different process definition, e.g. to keep your running instances up-to-date with the
-latest process improvements.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (MigrateProcessInstanceData): The migration instructions describe how to migrate a
-        process instance from one process definition to another.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | MigrateProcessInstanceResponse400 | MigrateProcessInstanceResponse404 | MigrateProcessInstanceResponse409 | MigrateProcessInstanceResponse500 | MigrateProcessInstanceResponse503]"""
-        from .api.process_instance.migrate_process_instance import asyncio as migrate_process_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await migrate_process_instance_asyncio(**_kwargs)
-
-
-    def search_process_instances(self, *, data: SearchProcessInstancesData, **kwargs: Any) -> SearchProcessInstancesResponse200:
-        """Search process instances
-
- Search for process instances based on given criteria.
-
-Args:
-    body (SearchProcessInstancesData): Process instance search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchProcessInstancesResponse200 | SearchProcessInstancesResponse400 | SearchProcessInstancesResponse401 | SearchProcessInstancesResponse403 | SearchProcessInstancesResponse500]"""
-        from .api.process_instance.search_process_instances import sync as search_process_instances_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_process_instances_sync(**_kwargs)
-
-
-    async def search_process_instances_async(self, *, data: SearchProcessInstancesData, **kwargs: Any) -> SearchProcessInstancesResponse200:
-        """Search process instances
-
- Search for process instances based on given criteria.
-
-Args:
-    body (SearchProcessInstancesData): Process instance search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchProcessInstancesResponse200 | SearchProcessInstancesResponse400 | SearchProcessInstancesResponse401 | SearchProcessInstancesResponse403 | SearchProcessInstancesResponse500]"""
-        from .api.process_instance.search_process_instances import asyncio as search_process_instances_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_process_instances_asyncio(**_kwargs)
-
-
-    def resolve_process_instance_incidents(self, process_instance_key: str, **kwargs: Any) -> ResolveProcessInstanceIncidentsResponse200:
-        """Resolve related incidents
-
- Creates a batch operation to resolve multiple incidents of a process instance.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ResolveProcessInstanceIncidentsResponse200 | ResolveProcessInstanceIncidentsResponse400 | ResolveProcessInstanceIncidentsResponse401 | ResolveProcessInstanceIncidentsResponse404 | ResolveProcessInstanceIncidentsResponse500 | ResolveProcessInstanceIncidentsResponse503]"""
-        from .api.process_instance.resolve_process_instance_incidents import sync as resolve_process_instance_incidents_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return resolve_process_instance_incidents_sync(**_kwargs)
-
-
-    async def resolve_process_instance_incidents_async(self, process_instance_key: str, **kwargs: Any) -> ResolveProcessInstanceIncidentsResponse200:
-        """Resolve related incidents
-
- Creates a batch operation to resolve multiple incidents of a process instance.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ResolveProcessInstanceIncidentsResponse200 | ResolveProcessInstanceIncidentsResponse400 | ResolveProcessInstanceIncidentsResponse401 | ResolveProcessInstanceIncidentsResponse404 | ResolveProcessInstanceIncidentsResponse500 | ResolveProcessInstanceIncidentsResponse503]"""
-        from .api.process_instance.resolve_process_instance_incidents import asyncio as resolve_process_instance_incidents_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await resolve_process_instance_incidents_asyncio(**_kwargs)
-
-
-    def pin_clock(self, *, data: PinClockData, **kwargs: Any) -> Any:
-        """Pin internal clock (alpha)
-
- Set a precise, static time for the Zeebe engine's internal clock.
-When the clock is pinned, it remains at the specified time and does not advance.
-To change the time, the clock must be pinned again with a new timestamp.
-
-This endpoint is an alpha feature and may be subject to change
-in future releases.
-
-Args:
-    body (PinClockData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | PinClockResponse400 | PinClockResponse500 | PinClockResponse503]"""
-        from .api.clock.pin_clock import sync as pin_clock_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return pin_clock_sync(**_kwargs)
-
-
-    async def pin_clock_async(self, *, data: PinClockData, **kwargs: Any) -> Any:
-        """Pin internal clock (alpha)
-
- Set a precise, static time for the Zeebe engine's internal clock.
-When the clock is pinned, it remains at the specified time and does not advance.
-To change the time, the clock must be pinned again with a new timestamp.
-
-This endpoint is an alpha feature and may be subject to change
-in future releases.
-
-Args:
-    body (PinClockData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | PinClockResponse400 | PinClockResponse500 | PinClockResponse503]"""
-        from .api.clock.pin_clock import asyncio as pin_clock_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await pin_clock_asyncio(**_kwargs)
-
-
-    def reset_clock(self, **kwargs: Any) -> Any:
-        """Reset internal clock (alpha)
-
- Resets the Zeebe engine's internal clock to the current system time, enabling it to tick in real-
-time.
-This operation is useful for returning the clock to
-normal behavior after it has been pinned to a specific time.
-
-This endpoint is an alpha feature and may be subject to change
-in future releases.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ResetClockResponse500 | ResetClockResponse503]"""
-        from .api.clock.reset_clock import sync as reset_clock_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return reset_clock_sync(**_kwargs)
-
-
-    async def reset_clock_async(self, **kwargs: Any) -> Any:
-        """Reset internal clock (alpha)
-
- Resets the Zeebe engine's internal clock to the current system time, enabling it to tick in real-
-time.
-This operation is useful for returning the clock to
-normal behavior after it has been pinned to a specific time.
-
-This endpoint is an alpha feature and may be subject to change
-in future releases.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ResetClockResponse500 | ResetClockResponse503]"""
-        from .api.clock.reset_clock import asyncio as reset_clock_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await reset_clock_asyncio(**_kwargs)
-
-
-    def get_process_definition_instance_version_statistics(self, process_definition_id: str, *, data: GetProcessDefinitionInstanceVersionStatisticsData, **kwargs: Any) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
-        """Get process instance statistics by version
-
- Get statistics about process instances, grouped by version for a given process definition.
-
-Args:
-    process_definition_id (str): Id of a process definition, from the model. Only ids of
-        process definitions that are deployed are useful. Example: new-account-onboarding-
-        workflow.
-    body (GetProcessDefinitionInstanceVersionStatisticsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessDefinitionInstanceVersionStatisticsResponse200 | GetProcessDefinitionInstanceVersionStatisticsResponse400 | GetProcessDefinitionInstanceVersionStatisticsResponse401 | GetProcessDefinitionInstanceVersionStatisticsResponse403 | GetProcessDefinitionInstanceVersionStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_instance_version_statistics import sync as get_process_definition_instance_version_statistics_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_definition_instance_version_statistics_sync(**_kwargs)
-
-
-    async def get_process_definition_instance_version_statistics_async(self, process_definition_id: str, *, data: GetProcessDefinitionInstanceVersionStatisticsData, **kwargs: Any) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
-        """Get process instance statistics by version
-
- Get statistics about process instances, grouped by version for a given process definition.
-
-Args:
-    process_definition_id (str): Id of a process definition, from the model. Only ids of
-        process definitions that are deployed are useful. Example: new-account-onboarding-
-        workflow.
-    body (GetProcessDefinitionInstanceVersionStatisticsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessDefinitionInstanceVersionStatisticsResponse200 | GetProcessDefinitionInstanceVersionStatisticsResponse400 | GetProcessDefinitionInstanceVersionStatisticsResponse401 | GetProcessDefinitionInstanceVersionStatisticsResponse403 | GetProcessDefinitionInstanceVersionStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_instance_version_statistics import asyncio as get_process_definition_instance_version_statistics_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_definition_instance_version_statistics_asyncio(**_kwargs)
-
-
-    def get_process_definition_instance_statistics(self, *, data: GetProcessDefinitionInstanceStatisticsData, **kwargs: Any) -> GetProcessDefinitionInstanceStatisticsResponse200:
-        """Get process instance statistics
-
- Get statistics about process instances, grouped by process definition and tenant.
-
-Args:
-    body (GetProcessDefinitionInstanceStatisticsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessDefinitionInstanceStatisticsResponse200 | GetProcessDefinitionInstanceStatisticsResponse400 | GetProcessDefinitionInstanceStatisticsResponse401 | GetProcessDefinitionInstanceStatisticsResponse403 | GetProcessDefinitionInstanceStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_instance_statistics import sync as get_process_definition_instance_statistics_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_definition_instance_statistics_sync(**_kwargs)
-
-
-    async def get_process_definition_instance_statistics_async(self, *, data: GetProcessDefinitionInstanceStatisticsData, **kwargs: Any) -> GetProcessDefinitionInstanceStatisticsResponse200:
-        """Get process instance statistics
-
- Get statistics about process instances, grouped by process definition and tenant.
-
-Args:
-    body (GetProcessDefinitionInstanceStatisticsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessDefinitionInstanceStatisticsResponse200 | GetProcessDefinitionInstanceStatisticsResponse400 | GetProcessDefinitionInstanceStatisticsResponse401 | GetProcessDefinitionInstanceStatisticsResponse403 | GetProcessDefinitionInstanceStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_instance_statistics import asyncio as get_process_definition_instance_statistics_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_definition_instance_statistics_asyncio(**_kwargs)
-
-
-    def search_process_definitions(self, *, data: SearchProcessDefinitionsData, **kwargs: Any) -> SearchProcessDefinitionsResponse200:
-        """Search process definitions
-
- Search for process definitions based on given criteria.
-
-Args:
-    body (SearchProcessDefinitionsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchProcessDefinitionsResponse200 | SearchProcessDefinitionsResponse400 | SearchProcessDefinitionsResponse401 | SearchProcessDefinitionsResponse403 | SearchProcessDefinitionsResponse500]"""
-        from .api.process_definition.search_process_definitions import sync as search_process_definitions_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_process_definitions_sync(**_kwargs)
-
-
-    async def search_process_definitions_async(self, *, data: SearchProcessDefinitionsData, **kwargs: Any) -> SearchProcessDefinitionsResponse200:
-        """Search process definitions
-
- Search for process definitions based on given criteria.
-
-Args:
-    body (SearchProcessDefinitionsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchProcessDefinitionsResponse200 | SearchProcessDefinitionsResponse400 | SearchProcessDefinitionsResponse401 | SearchProcessDefinitionsResponse403 | SearchProcessDefinitionsResponse500]"""
-        from .api.process_definition.search_process_definitions import asyncio as search_process_definitions_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_process_definitions_asyncio(**_kwargs)
-
-
-    def get_process_definition_message_subscription_statistics(self, *, data: GetProcessDefinitionMessageSubscriptionStatisticsData, **kwargs: Any) -> GetProcessDefinitionMessageSubscriptionStatisticsResponse200:
-        """Get message subscription statistics
-
- Get message subscription statistics, grouped by process definition.
-
-Args:
-    body (GetProcessDefinitionMessageSubscriptionStatisticsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessDefinitionMessageSubscriptionStatisticsResponse200 | GetProcessDefinitionMessageSubscriptionStatisticsResponse400 | GetProcessDefinitionMessageSubscriptionStatisticsResponse401 | GetProcessDefinitionMessageSubscriptionStatisticsResponse403 | GetProcessDefinitionMessageSubscriptionStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_message_subscription_statistics import sync as get_process_definition_message_subscription_statistics_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_definition_message_subscription_statistics_sync(**_kwargs)
-
-
-    async def get_process_definition_message_subscription_statistics_async(self, *, data: GetProcessDefinitionMessageSubscriptionStatisticsData, **kwargs: Any) -> GetProcessDefinitionMessageSubscriptionStatisticsResponse200:
-        """Get message subscription statistics
-
- Get message subscription statistics, grouped by process definition.
-
-Args:
-    body (GetProcessDefinitionMessageSubscriptionStatisticsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessDefinitionMessageSubscriptionStatisticsResponse200 | GetProcessDefinitionMessageSubscriptionStatisticsResponse400 | GetProcessDefinitionMessageSubscriptionStatisticsResponse401 | GetProcessDefinitionMessageSubscriptionStatisticsResponse403 | GetProcessDefinitionMessageSubscriptionStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_message_subscription_statistics import asyncio as get_process_definition_message_subscription_statistics_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_definition_message_subscription_statistics_asyncio(**_kwargs)
-
-
-    def get_start_process_form(self, process_definition_key: str, **kwargs: Any) -> Any:
-        """Get process start form
-
- Get the start form of a process.
-Note that this endpoint will only return linked forms. This endpoint does not support embedded
-forms.
-
-Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | GetStartProcessFormResponse200 | GetStartProcessFormResponse400 | GetStartProcessFormResponse401 | GetStartProcessFormResponse403 | GetStartProcessFormResponse404 | GetStartProcessFormResponse500]"""
-        from .api.process_definition.get_start_process_form import sync as get_start_process_form_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_start_process_form_sync(**_kwargs)
-
-
-    async def get_start_process_form_async(self, process_definition_key: str, **kwargs: Any) -> Any:
-        """Get process start form
-
- Get the start form of a process.
-Note that this endpoint will only return linked forms. This endpoint does not support embedded
-forms.
-
-Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | GetStartProcessFormResponse200 | GetStartProcessFormResponse400 | GetStartProcessFormResponse401 | GetStartProcessFormResponse403 | GetStartProcessFormResponse404 | GetStartProcessFormResponse500]"""
-        from .api.process_definition.get_start_process_form import asyncio as get_start_process_form_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_start_process_form_asyncio(**_kwargs)
-
-
-    def get_process_definition_xml(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionXMLResponse400:
-        """Get process definition XML
-
- Returns process definition as XML.
-
-Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessDefinitionXMLResponse400 | GetProcessDefinitionXMLResponse401 | GetProcessDefinitionXMLResponse403 | GetProcessDefinitionXMLResponse404 | GetProcessDefinitionXMLResponse500 | str]"""
-        from .api.process_definition.get_process_definition_xml import sync as get_process_definition_xml_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_definition_xml_sync(**_kwargs)
-
-
-    async def get_process_definition_xml_async(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionXMLResponse400:
-        """Get process definition XML
-
- Returns process definition as XML.
-
-Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessDefinitionXMLResponse400 | GetProcessDefinitionXMLResponse401 | GetProcessDefinitionXMLResponse403 | GetProcessDefinitionXMLResponse404 | GetProcessDefinitionXMLResponse500 | str]"""
-        from .api.process_definition.get_process_definition_xml import asyncio as get_process_definition_xml_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_definition_xml_asyncio(**_kwargs)
-
-
-    def get_process_definition(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionResponse200:
-        """Get process definition
-
- Returns process definition as JSON.
-
-Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessDefinitionResponse200 | GetProcessDefinitionResponse400 | GetProcessDefinitionResponse401 | GetProcessDefinitionResponse403 | GetProcessDefinitionResponse404 | GetProcessDefinitionResponse500]"""
-        from .api.process_definition.get_process_definition import sync as get_process_definition_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_definition_sync(**_kwargs)
-
-
-    async def get_process_definition_async(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionResponse200:
-        """Get process definition
-
- Returns process definition as JSON.
-
-Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessDefinitionResponse200 | GetProcessDefinitionResponse400 | GetProcessDefinitionResponse401 | GetProcessDefinitionResponse403 | GetProcessDefinitionResponse404 | GetProcessDefinitionResponse500]"""
-        from .api.process_definition.get_process_definition import asyncio as get_process_definition_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_definition_asyncio(**_kwargs)
-
-
-    def get_process_definition_statistics(self, process_definition_key: str, *, data: GetProcessDefinitionStatisticsData, **kwargs: Any) -> GetProcessDefinitionStatisticsResponse200:
-        """Get process definition statistics
-
- Get statistics about elements in currently running process instances by process definition key and
-search filter.
-
-Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
-    body (GetProcessDefinitionStatisticsData): Process definition element statistics request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessDefinitionStatisticsResponse200 | GetProcessDefinitionStatisticsResponse400 | GetProcessDefinitionStatisticsResponse401 | GetProcessDefinitionStatisticsResponse403 | GetProcessDefinitionStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_statistics import sync as get_process_definition_statistics_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_definition_statistics_sync(**_kwargs)
-
-
-    async def get_process_definition_statistics_async(self, process_definition_key: str, *, data: GetProcessDefinitionStatisticsData, **kwargs: Any) -> GetProcessDefinitionStatisticsResponse200:
-        """Get process definition statistics
-
- Get statistics about elements in currently running process instances by process definition key and
-search filter.
-
-Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
-    body (GetProcessDefinitionStatisticsData): Process definition element statistics request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessDefinitionStatisticsResponse200 | GetProcessDefinitionStatisticsResponse400 | GetProcessDefinitionStatisticsResponse401 | GetProcessDefinitionStatisticsResponse403 | GetProcessDefinitionStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_statistics import asyncio as get_process_definition_statistics_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_definition_statistics_asyncio(**_kwargs)
+        return await evaluate_conditionals_asyncio(**_kwargs)
 
