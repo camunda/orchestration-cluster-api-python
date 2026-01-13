@@ -11,3 +11,6 @@ scenarios_*.json
 results_*.json
 
 demo/.DS_Store
+
+# Generated documentation
+public/

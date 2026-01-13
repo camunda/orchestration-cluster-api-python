@@ -30,5 +30,13 @@ typecheck:
 	uv run pyright
 
 docs-api:
-	uv pip install pdoc
-	pdoc ./generated/camunda_orchestration_sdk -o ./docs-api-html --docformat google
+	uv pip install pdoc --system
+	pdoc ./generated/camunda_orchestration_sdk -o ./public --docformat google
+
+clean-docs:
+	rm -rf ./public
+
+preview-docs:
+	@echo "Starting pdoc server at http://localhost:8080..."
+	# We don't use -o here because pdoc serves from memory in dev mode
+	PYTHONPATH=./generated pdoc camunda_orchestration_sdk --docformat google
