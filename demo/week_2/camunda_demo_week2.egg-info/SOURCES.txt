@@ -1,0 +1,8 @@
+README.md
+main.py
+pyproject.toml
+camunda_demo_week2.egg-info/PKG-INFO
+camunda_demo_week2.egg-info/SOURCES.txt
+camunda_demo_week2.egg-info/dependency_links.txt
+camunda_demo_week2.egg-info/requires.txt
+camunda_demo_week2.egg-info/top_level.txt
