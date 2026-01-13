@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -11,7 +12,7 @@ from ...models.get_user_response_500 import GetUserResponse500
 from ...types import Response
 
 def _get_kwargs(username: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/users/{username}'.format(username=username)}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/users/{username}'.format(username=quote(str(username), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetUserResponse200 | GetUserResponse401 | GetUserResponse403 | GetUserResponse404 | GetUserResponse500 | None:

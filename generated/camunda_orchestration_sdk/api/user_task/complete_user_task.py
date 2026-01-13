@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -9,12 +10,13 @@ from ...models.complete_user_task_response_404 import CompleteUserTaskResponse40
 from ...models.complete_user_task_response_409 import CompleteUserTaskResponse409
 from ...models.complete_user_task_response_500 import CompleteUserTaskResponse500
 from ...models.complete_user_task_response_503 import CompleteUserTaskResponse503
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(user_task_key: str, *, body: CompleteUserTaskData) -> dict[str, Any]:
+def _get_kwargs(user_task_key: str, *, body: CompleteUserTaskData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/user-tasks/{user_task_key}/completion'.format(user_task_key=user_task_key)}
-    _kwargs['json'] = body.to_dict()
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/user-tasks/{user_task_key}/completion'.format(user_task_key=quote(str(user_task_key), safe=''))}
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -46,14 +48,14 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | CompleteUserTaskResponse400 | CompleteUserTaskResponse404 | CompleteUserTaskResponse409 | CompleteUserTaskResponse500 | CompleteUserTaskResponse503]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, body: CompleteUserTaskData) -> Response[Any | CompleteUserTaskResponse400 | CompleteUserTaskResponse404 | CompleteUserTaskResponse409 | CompleteUserTaskResponse500 | CompleteUserTaskResponse503]:
+def sync_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, body: CompleteUserTaskData | Unset=UNSET) -> Response[Any | CompleteUserTaskResponse400 | CompleteUserTaskResponse404 | CompleteUserTaskResponse409 | CompleteUserTaskResponse500 | CompleteUserTaskResponse503]:
     """Complete user task
 
      Completes a user task with the given key.
 
     Args:
         user_task_key (str): System-generated key for a user task.
-        body (CompleteUserTaskData):
+        body (CompleteUserTaskData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -66,14 +68,14 @@ def sync_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, b
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(user_task_key: str, *, client: AuthenticatedClient | Client, body: CompleteUserTaskData, **kwargs) -> Any:
+def sync(user_task_key: str, *, client: AuthenticatedClient | Client, body: CompleteUserTaskData | Unset=UNSET, **kwargs) -> Any:
     """Complete user task
 
  Completes a user task with the given key.
 
 Args:
     user_task_key (str): System-generated key for a user task.
-    body (CompleteUserTaskData):
+    body (CompleteUserTaskData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -86,14 +88,14 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, body: CompleteUserTaskData) -> Response[Any | CompleteUserTaskResponse400 | CompleteUserTaskResponse404 | CompleteUserTaskResponse409 | CompleteUserTaskResponse500 | CompleteUserTaskResponse503]:
+async def asyncio_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, body: CompleteUserTaskData | Unset=UNSET) -> Response[Any | CompleteUserTaskResponse400 | CompleteUserTaskResponse404 | CompleteUserTaskResponse409 | CompleteUserTaskResponse500 | CompleteUserTaskResponse503]:
     """Complete user task
 
      Completes a user task with the given key.
 
     Args:
         user_task_key (str): System-generated key for a user task.
-        body (CompleteUserTaskData):
+        body (CompleteUserTaskData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -106,14 +108,14 @@ async def asyncio_detailed(user_task_key: str, *, client: AuthenticatedClient | 
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(user_task_key: str, *, client: AuthenticatedClient | Client, body: CompleteUserTaskData, **kwargs) -> Any:
+async def asyncio(user_task_key: str, *, client: AuthenticatedClient | Client, body: CompleteUserTaskData | Unset=UNSET, **kwargs) -> Any:
     """Complete user task
 
  Completes a user task with the given key.
 
 Args:
     user_task_key (str): System-generated key for a user task.
-    body (CompleteUserTaskData):
+    body (CompleteUserTaskData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

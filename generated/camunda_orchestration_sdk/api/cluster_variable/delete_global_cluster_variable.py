@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -11,7 +12,7 @@ from ...models.delete_global_cluster_variable_response_500 import DeleteGlobalCl
 from ...types import Response
 
 def _get_kwargs(name: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/cluster-variables/global/{name}'.format(name=name)}
+    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/cluster-variables/global/{name}'.format(name=quote(str(name), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | DeleteGlobalClusterVariableResponse400 | DeleteGlobalClusterVariableResponse401 | DeleteGlobalClusterVariableResponse403 | DeleteGlobalClusterVariableResponse404 | DeleteGlobalClusterVariableResponse500 | None:

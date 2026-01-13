@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -8,12 +9,11 @@ from ...models.cancel_process_instance_response_400 import CancelProcessInstance
 from ...models.cancel_process_instance_response_404 import CancelProcessInstanceResponse404
 from ...models.cancel_process_instance_response_500 import CancelProcessInstanceResponse500
 from ...models.cancel_process_instance_response_503 import CancelProcessInstanceResponse503
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(process_instance_key: str, *, body: CancelProcessInstanceDataType0 | None) -> dict[str, Any]:
+def _get_kwargs(process_instance_key: str, *, body: CancelProcessInstanceDataType0 | None | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-instances/{process_instance_key}/cancellation'.format(process_instance_key=process_instance_key)}
-    _kwargs['json']: dict[str, Any] | None
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-instances/{process_instance_key}/cancellation'.format(process_instance_key=quote(str(process_instance_key), safe=''))}
     if isinstance(body, CancelProcessInstanceDataType0):
         _kwargs['json'] = body.to_dict()
     else:
@@ -46,7 +46,7 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceDataType0 | None) -> Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]:
+def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceDataType0 | None | Unset=UNSET) -> Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]:
     """Cancel process instance
 
      Cancels a running process instance. As a cancellation includes more than just the removal of the
@@ -55,7 +55,7 @@ def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient | Cl
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (CancelProcessInstanceDataType0 | None):
+        body (CancelProcessInstanceDataType0 | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -68,7 +68,7 @@ def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient | Cl
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceDataType0 | None, **kwargs) -> Any:
+def sync(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceDataType0 | None | Unset=UNSET, **kwargs) -> Any:
     """Cancel process instance
 
  Cancels a running process instance. As a cancellation includes more than just the removal of the
@@ -77,7 +77,7 @@ process instance resource, the cancellation resource must be posted.
 Args:
     process_instance_key (str): System-generated key for a process instance. Example:
         2251799813690746.
-    body (CancelProcessInstanceDataType0 | None):
+    body (CancelProcessInstanceDataType0 | None | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -90,7 +90,7 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceDataType0 | None) -> Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]:
+async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceDataType0 | None | Unset=UNSET) -> Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]:
     """Cancel process instance
 
      Cancels a running process instance. As a cancellation includes more than just the removal of the
@@ -99,7 +99,7 @@ async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedCl
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (CancelProcessInstanceDataType0 | None):
+        body (CancelProcessInstanceDataType0 | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -112,7 +112,7 @@ async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedCl
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceDataType0 | None, **kwargs) -> Any:
+async def asyncio(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceDataType0 | None | Unset=UNSET, **kwargs) -> Any:
     """Cancel process instance
 
  Cancels a running process instance. As a cancellation includes more than just the removal of the
@@ -121,7 +121,7 @@ process instance resource, the cancellation resource must be posted.
 Args:
     process_instance_key (str): System-generated key for a process instance. Example:
         2251799813690746.
-    body (CancelProcessInstanceDataType0 | None):
+    body (CancelProcessInstanceDataType0 | None | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

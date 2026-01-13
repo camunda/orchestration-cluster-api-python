@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -10,7 +11,7 @@ from ...models.delete_authorization_response_503 import DeleteAuthorizationRespo
 from ...types import Response
 
 def _get_kwargs(authorization_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/authorizations/{authorization_key}'.format(authorization_key=authorization_key)}
+    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/authorizations/{authorization_key}'.format(authorization_key=quote(str(authorization_key), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | DeleteAuthorizationResponse401 | DeleteAuthorizationResponse404 | DeleteAuthorizationResponse500 | DeleteAuthorizationResponse503 | None:

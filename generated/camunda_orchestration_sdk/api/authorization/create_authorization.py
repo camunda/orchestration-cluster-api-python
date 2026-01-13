@@ -17,7 +17,6 @@ from ...types import Response
 def _get_kwargs(*, body: Object | Object1) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/authorizations'}
-    _kwargs['json']: dict[str, Any]
     if isinstance(body, Object):
         _kwargs['json'] = body.to_dict()
     else:

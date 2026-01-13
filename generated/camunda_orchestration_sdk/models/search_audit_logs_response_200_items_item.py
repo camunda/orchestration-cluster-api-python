@@ -3,7 +3,7 @@ from camunda_orchestration_sdk.semantic_types import *
 
 import datetime
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -65,6 +65,9 @@ class SearchAuditLogsResponse200ItemsItem:
         decision_definition_id (str | Unset): The decision definition ID. Example: new-hire-onboarding-workflow.
         decision_definition_key (str | Unset): The key of the decision definition. Example: 2251799813326547.
         decision_evaluation_key (str | Unset): The key of the decision evaluation. Example: 2251792362345323.
+        deployment_key (str | Unset): The key of the deployment.
+        form_key (str | Unset): The key of the form. Example: 2251799813684365.
+        resource_key (str | Unset): The system-assigned key for this resource.
     """
 
     audit_log_key: AuditLogKey | Unset = UNSET
@@ -93,6 +96,9 @@ class SearchAuditLogsResponse200ItemsItem:
     decision_definition_id: DecisionDefinitionId | Unset = UNSET
     decision_definition_key: DecisionDefinitionKey | Unset = UNSET
     decision_evaluation_key: DecisionEvaluationKey | Unset = UNSET
+    deployment_key: DeploymentKey | Unset = UNSET
+    form_key: FormKey | Unset = UNSET
+    resource_key: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -158,6 +164,16 @@ class SearchAuditLogsResponse200ItemsItem:
 
         decision_evaluation_key = self.decision_evaluation_key
 
+        deployment_key = self.deployment_key
+
+        form_key = self.form_key
+
+        resource_key: str | Unset
+        if isinstance(self.resource_key, Unset):
+            resource_key = UNSET
+        else:
+            resource_key = self.resource_key
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -209,6 +225,12 @@ class SearchAuditLogsResponse200ItemsItem:
             field_dict["decisionDefinitionKey"] = decision_definition_key
         if decision_evaluation_key is not UNSET:
             field_dict["decisionEvaluationKey"] = decision_evaluation_key
+        if deployment_key is not UNSET:
+            field_dict["deploymentKey"] = deployment_key
+        if form_key is not UNSET:
+            field_dict["formKey"] = form_key
+        if resource_key is not UNSET:
+            field_dict["resourceKey"] = resource_key
 
         return field_dict
 
@@ -306,6 +328,17 @@ class SearchAuditLogsResponse200ItemsItem:
 
         decision_evaluation_key = lift_decision_evaluation_key(_val) if (_val := d.pop("decisionEvaluationKey", UNSET)) is not UNSET else UNSET
 
+        deployment_key = lift_deployment_key(_val) if (_val := d.pop("deploymentKey", UNSET)) is not UNSET else UNSET
+
+        form_key = lift_form_key(_val) if (_val := d.pop("formKey", UNSET)) is not UNSET else UNSET
+
+        def _parse_resource_key(data: object) -> str | Unset:
+            if isinstance(data, Unset):
+                return data
+            return cast(str | Unset, data)
+
+        resource_key = _parse_resource_key(d.pop("resourceKey", UNSET))
+
         search_audit_logs_response_200_items_item = cls(
             audit_log_key=audit_log_key,
             entity_key=entity_key,
@@ -331,6 +364,9 @@ class SearchAuditLogsResponse200ItemsItem:
             decision_definition_id=decision_definition_id,
             decision_definition_key=decision_definition_key,
             decision_evaluation_key=decision_evaluation_key,
+            deployment_key=deployment_key,
+            form_key=form_key,
+            resource_key=resource_key,
         )
 
         search_audit_logs_response_200_items_item.additional_properties = d

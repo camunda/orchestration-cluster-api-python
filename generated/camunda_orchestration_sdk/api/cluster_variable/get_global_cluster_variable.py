@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -12,7 +13,7 @@ from ...models.get_global_cluster_variable_response_500 import GetGlobalClusterV
 from ...types import Response
 
 def _get_kwargs(name: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/cluster-variables/global/{name}'.format(name=name)}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/cluster-variables/global/{name}'.format(name=quote(str(name), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetGlobalClusterVariableResponse200 | GetGlobalClusterVariableResponse400 | GetGlobalClusterVariableResponse401 | GetGlobalClusterVariableResponse403 | GetGlobalClusterVariableResponse404 | GetGlobalClusterVariableResponse500 | None:

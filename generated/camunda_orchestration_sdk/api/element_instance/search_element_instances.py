@@ -9,12 +9,13 @@ from ...models.search_element_instances_response_400 import SearchElementInstanc
 from ...models.search_element_instances_response_401 import SearchElementInstancesResponse401
 from ...models.search_element_instances_response_403 import SearchElementInstancesResponse403
 from ...models.search_element_instances_response_500 import SearchElementInstancesResponse500
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: SearchElementInstancesData) -> dict[str, Any]:
+def _get_kwargs(*, body: SearchElementInstancesData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/element-instances/search'}
-    _kwargs['json'] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -43,13 +44,13 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchElementInstancesResponse200 | SearchElementInstancesResponse400 | SearchElementInstancesResponse401 | SearchElementInstancesResponse403 | SearchElementInstancesResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchElementInstancesData) -> Response[SearchElementInstancesResponse200 | SearchElementInstancesResponse400 | SearchElementInstancesResponse401 | SearchElementInstancesResponse403 | SearchElementInstancesResponse500]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchElementInstancesData | Unset=UNSET) -> Response[SearchElementInstancesResponse200 | SearchElementInstancesResponse400 | SearchElementInstancesResponse401 | SearchElementInstancesResponse403 | SearchElementInstancesResponse500]:
     """Search element instances
 
      Search for element instances based on given criteria.
 
     Args:
-        body (SearchElementInstancesData): Element instance search request.
+        body (SearchElementInstancesData | Unset): Element instance search request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -62,13 +63,13 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchElementIn
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: SearchElementInstancesData, **kwargs) -> SearchElementInstancesResponse200:
+def sync(*, client: AuthenticatedClient | Client, body: SearchElementInstancesData | Unset=UNSET, **kwargs) -> SearchElementInstancesResponse200:
     """Search element instances
 
  Search for element instances based on given criteria.
 
 Args:
-    body (SearchElementInstancesData): Element instance search request.
+    body (SearchElementInstancesData | Unset): Element instance search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -81,13 +82,13 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchElementInstancesData) -> Response[SearchElementInstancesResponse200 | SearchElementInstancesResponse400 | SearchElementInstancesResponse401 | SearchElementInstancesResponse403 | SearchElementInstancesResponse500]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchElementInstancesData | Unset=UNSET) -> Response[SearchElementInstancesResponse200 | SearchElementInstancesResponse400 | SearchElementInstancesResponse401 | SearchElementInstancesResponse403 | SearchElementInstancesResponse500]:
     """Search element instances
 
      Search for element instances based on given criteria.
 
     Args:
-        body (SearchElementInstancesData): Element instance search request.
+        body (SearchElementInstancesData | Unset): Element instance search request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -100,13 +101,13 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Search
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: SearchElementInstancesData, **kwargs) -> SearchElementInstancesResponse200:
+async def asyncio(*, client: AuthenticatedClient | Client, body: SearchElementInstancesData | Unset=UNSET, **kwargs) -> SearchElementInstancesResponse200:
     """Search element instances
 
  Search for element instances based on given criteria.
 
 Args:
-    body (SearchElementInstancesData): Element instance search request.
+    body (SearchElementInstancesData | Unset): Element instance search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -12,7 +13,7 @@ from ...models.assign_role_to_mapping_rule_response_503 import AssignRoleToMappi
 from ...types import Response
 
 def _get_kwargs(role_id: str, mapping_rule_id: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/roles/{role_id}/mapping-rules/{mapping_rule_id}'.format(role_id=role_id, mapping_rule_id=mapping_rule_id)}
+    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/roles/{role_id}/mapping-rules/{mapping_rule_id}'.format(role_id=quote(str(role_id), safe=''), mapping_rule_id=quote(str(mapping_rule_id), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | AssignRoleToMappingRuleResponse400 | AssignRoleToMappingRuleResponse403 | AssignRoleToMappingRuleResponse404 | AssignRoleToMappingRuleResponse409 | AssignRoleToMappingRuleResponse500 | AssignRoleToMappingRuleResponse503 | None:

@@ -9,12 +9,13 @@ from ...models.search_tenants_response_400 import SearchTenantsResponse400
 from ...models.search_tenants_response_401 import SearchTenantsResponse401
 from ...models.search_tenants_response_403 import SearchTenantsResponse403
 from ...models.search_tenants_response_500 import SearchTenantsResponse500
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: SearchTenantsData) -> dict[str, Any]:
+def _get_kwargs(*, body: SearchTenantsData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/tenants/search'}
-    _kwargs['json'] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -46,13 +47,13 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | SearchTenantsResponse200 | SearchTenantsResponse400 | SearchTenantsResponse401 | SearchTenantsResponse403 | SearchTenantsResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchTenantsData) -> Response[Any | SearchTenantsResponse200 | SearchTenantsResponse400 | SearchTenantsResponse401 | SearchTenantsResponse403 | SearchTenantsResponse500]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchTenantsData | Unset=UNSET) -> Response[Any | SearchTenantsResponse200 | SearchTenantsResponse400 | SearchTenantsResponse401 | SearchTenantsResponse403 | SearchTenantsResponse500]:
     """Search tenants
 
      Retrieves a filtered and sorted list of tenants.
 
     Args:
-        body (SearchTenantsData): Tenant search request
+        body (SearchTenantsData | Unset): Tenant search request
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -65,13 +66,13 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchTenantsDa
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: SearchTenantsData, **kwargs) -> Any:
+def sync(*, client: AuthenticatedClient | Client, body: SearchTenantsData | Unset=UNSET, **kwargs) -> Any:
     """Search tenants
 
  Retrieves a filtered and sorted list of tenants.
 
 Args:
-    body (SearchTenantsData): Tenant search request
+    body (SearchTenantsData | Unset): Tenant search request
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -84,13 +85,13 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchTenantsData) -> Response[Any | SearchTenantsResponse200 | SearchTenantsResponse400 | SearchTenantsResponse401 | SearchTenantsResponse403 | SearchTenantsResponse500]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchTenantsData | Unset=UNSET) -> Response[Any | SearchTenantsResponse200 | SearchTenantsResponse400 | SearchTenantsResponse401 | SearchTenantsResponse403 | SearchTenantsResponse500]:
     """Search tenants
 
      Retrieves a filtered and sorted list of tenants.
 
     Args:
-        body (SearchTenantsData): Tenant search request
+        body (SearchTenantsData | Unset): Tenant search request
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -103,13 +104,13 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Search
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: SearchTenantsData, **kwargs) -> Any:
+async def asyncio(*, client: AuthenticatedClient | Client, body: SearchTenantsData | Unset=UNSET, **kwargs) -> Any:
     """Search tenants
 
  Retrieves a filtered and sorted list of tenants.
 
 Args:
-    body (SearchTenantsData): Tenant search request
+    body (SearchTenantsData | Unset): Tenant search request
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

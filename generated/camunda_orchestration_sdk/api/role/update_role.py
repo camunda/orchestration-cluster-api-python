@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -14,7 +15,7 @@ from ...types import Response
 
 def _get_kwargs(role_id: str, *, body: UpdateRoleData) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/roles/{role_id}'.format(role_id=role_id)}
+    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/roles/{role_id}'.format(role_id=quote(str(role_id), safe=''))}
     _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers

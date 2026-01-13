@@ -9,12 +9,13 @@ from ...models.search_authorizations_response_400 import SearchAuthorizationsRes
 from ...models.search_authorizations_response_401 import SearchAuthorizationsResponse401
 from ...models.search_authorizations_response_403 import SearchAuthorizationsResponse403
 from ...models.search_authorizations_response_500 import SearchAuthorizationsResponse500
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: SearchAuthorizationsData) -> dict[str, Any]:
+def _get_kwargs(*, body: SearchAuthorizationsData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/authorizations/search'}
-    _kwargs['json'] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -43,13 +44,13 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchAuthorizationsResponse200 | SearchAuthorizationsResponse400 | SearchAuthorizationsResponse401 | SearchAuthorizationsResponse403 | SearchAuthorizationsResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchAuthorizationsData) -> Response[SearchAuthorizationsResponse200 | SearchAuthorizationsResponse400 | SearchAuthorizationsResponse401 | SearchAuthorizationsResponse403 | SearchAuthorizationsResponse500]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchAuthorizationsData | Unset=UNSET) -> Response[SearchAuthorizationsResponse200 | SearchAuthorizationsResponse400 | SearchAuthorizationsResponse401 | SearchAuthorizationsResponse403 | SearchAuthorizationsResponse500]:
     """Search authorizations
 
      Search for authorizations based on given criteria.
 
     Args:
-        body (SearchAuthorizationsData):
+        body (SearchAuthorizationsData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -62,13 +63,13 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchAuthoriza
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: SearchAuthorizationsData, **kwargs) -> SearchAuthorizationsResponse200:
+def sync(*, client: AuthenticatedClient | Client, body: SearchAuthorizationsData | Unset=UNSET, **kwargs) -> SearchAuthorizationsResponse200:
     """Search authorizations
 
  Search for authorizations based on given criteria.
 
 Args:
-    body (SearchAuthorizationsData):
+    body (SearchAuthorizationsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -81,13 +82,13 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchAuthorizationsData) -> Response[SearchAuthorizationsResponse200 | SearchAuthorizationsResponse400 | SearchAuthorizationsResponse401 | SearchAuthorizationsResponse403 | SearchAuthorizationsResponse500]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchAuthorizationsData | Unset=UNSET) -> Response[SearchAuthorizationsResponse200 | SearchAuthorizationsResponse400 | SearchAuthorizationsResponse401 | SearchAuthorizationsResponse403 | SearchAuthorizationsResponse500]:
     """Search authorizations
 
      Search for authorizations based on given criteria.
 
     Args:
-        body (SearchAuthorizationsData):
+        body (SearchAuthorizationsData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -100,13 +101,13 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Search
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: SearchAuthorizationsData, **kwargs) -> SearchAuthorizationsResponse200:
+async def asyncio(*, client: AuthenticatedClient | Client, body: SearchAuthorizationsData | Unset=UNSET, **kwargs) -> SearchAuthorizationsResponse200:
     """Search authorizations
 
  Search for authorizations based on given criteria.
 
 Args:
-    body (SearchAuthorizationsData):
+    body (SearchAuthorizationsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

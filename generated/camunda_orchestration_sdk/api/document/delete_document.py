@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -11,7 +12,7 @@ def _get_kwargs(document_id: str, *, store_id: str | Unset=UNSET) -> dict[str, A
     params: dict[str, Any] = {}
     params['storeId'] = store_id
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
-    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/documents/{document_id}'.format(document_id=document_id), 'params': params}
+    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/documents/{document_id}'.format(document_id=quote(str(document_id), safe='')), 'params': params}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | DeleteDocumentResponse404 | DeleteDocumentResponse500 | None:

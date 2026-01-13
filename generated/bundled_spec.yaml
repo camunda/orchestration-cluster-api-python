@@ -288,6 +288,32 @@ paths:
                           pattern: ^-?[0-9]+$
                           minLength: 1
                           maxLength: 25
+                        deploymentKey:
+                          description: The key of the deployment.
+                          format: DeploymentKey
+                          x-semantic-type: DeploymentKey
+                          type: string
+                          pattern: ^-?[0-9]+$
+                          minLength: 1
+                          maxLength: 25
+                        formKey:
+                          description: The key of the form.
+                          format: FormKey
+                          x-semantic-type: FormKey
+                          example: '2251799813684365'
+                          type: string
+                          pattern: ^-?[0-9]+$
+                          minLength: 1
+                          maxLength: 25
+                        resourceKey:
+                          description: The system-assigned key for this resource.
+                          type: string
+                          oneOf:
+                          - $ref: '#/components/schemas/ResourcekeyObject'
+                          - $ref: '#/components/schemas/ResourcekeyObject1'
+                          - $ref: '#/components/schemas/ResourcekeyObject2'
+                          - $ref: '#/components/schemas/ResourcekeyObject3'
+                          format: ResourceKey
                   page:
                     description: Pagination information about the search results.
                     type: object
@@ -682,6 +708,32 @@ paths:
                     pattern: ^-?[0-9]+$
                     minLength: 1
                     maxLength: 25
+                  deploymentKey:
+                    description: The key of the deployment.
+                    format: DeploymentKey
+                    x-semantic-type: DeploymentKey
+                    type: string
+                    pattern: ^-?[0-9]+$
+                    minLength: 1
+                    maxLength: 25
+                  formKey:
+                    description: The key of the form.
+                    format: FormKey
+                    x-semantic-type: FormKey
+                    example: '2251799813684365'
+                    type: string
+                    pattern: ^-?[0-9]+$
+                    minLength: 1
+                    maxLength: 25
+                  resourceKey:
+                    description: The system-assigned key for this resource.
+                    type: string
+                    oneOf:
+                    - $ref: '#/components/schemas/ResourcekeyObject'
+                    - $ref: '#/components/schemas/ResourcekeyObject1'
+                    - $ref: '#/components/schemas/ResourcekeyObject2'
+                    - $ref: '#/components/schemas/ResourcekeyObject3'
+                    format: ResourceKey
         '401':
           description: The request lacks valid authentication credentials.
           headers:
@@ -3875,9 +3927,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - value
-                - name
                 - scope
+                - name
+                - value
         '400':
           description: The provided data is not valid.
           content:
@@ -4069,9 +4121,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - value
-                - name
                 - scope
+                - name
+                - value
         '400':
           description: The provided data is not valid.
           content:
@@ -4525,9 +4577,9 @@ paths:
                           description: Only provided if the cluster variable scope
                             is TENANT.
                       required:
-                      - value
-                      - name
                       - scope
+                      - name
+                      - value
                   page:
                     description: Pagination information about the search results.
                     type: object
@@ -4780,9 +4832,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - value
-                - name
                 - scope
+                - name
+                - value
         '400':
           description: The provided data is not valid.
           content:
@@ -4987,9 +5039,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - value
-                - name
                 - scope
+                - name
+                - value
         '400':
           description: The provided data is not valid.
           content:
@@ -23616,8 +23668,8 @@ paths:
                 description: Process instance search response.
                 type: object
                 required:
-                - items
                 - page
+                - items
                 properties:
                   items:
                     description: The matching process instances.
@@ -24734,8 +24786,33 @@ paths:
             schema:
               $ref: '#/components/schemas/DeleteProcessInstanceData'
       responses:
-        '204':
-          description: The process instance will be deleted.
+        '200':
+          description: The operation to delete the process instance was created.
+          content:
+            application/json:
+              schema:
+                description: The created batch operation.
+                type: object
+                properties:
+                  batchOperationKey:
+                    description: Key of the batch operation.
+                    x-semantic-type: BatchOperationKey
+                    format: BatchOperationKey | uuid
+                    type: string
+                    example: '2251799813684321'
+                  batchOperationType:
+                    description: The type of the batch operation.
+                    type: string
+                    enum:
+                    - ADD_VARIABLE
+                    - CANCEL_PROCESS_INSTANCE
+                    - DELETE_DECISION_DEFINITION
+                    - DELETE_PROCESS_DEFINITION
+                    - DELETE_PROCESS_INSTANCE
+                    - MIGRATE_PROCESS_INSTANCE
+                    - MODIFY_PROCESS_INSTANCE
+                    - RESOLVE_INCIDENT
+                    - UPDATE_VARIABLE
         '401':
           description: The request lacks valid authentication credentials.
           headers:
@@ -36167,8 +36244,8 @@ paths:
               schema:
                 type: object
                 required:
-                - items
                 - page
+                - items
                 properties:
                   items:
                     description: The matching users.
@@ -38679,6 +38756,32 @@ paths:
                           pattern: ^-?[0-9]+$
                           minLength: 1
                           maxLength: 25
+                        deploymentKey:
+                          description: The key of the deployment.
+                          format: DeploymentKey
+                          x-semantic-type: DeploymentKey
+                          type: string
+                          pattern: ^-?[0-9]+$
+                          minLength: 1
+                          maxLength: 25
+                        formKey:
+                          description: The key of the form.
+                          format: FormKey
+                          x-semantic-type: FormKey
+                          example: '2251799813684365'
+                          type: string
+                          pattern: ^-?[0-9]+$
+                          minLength: 1
+                          maxLength: 25
+                        resourceKey:
+                          description: The system-assigned key for this resource.
+                          type: string
+                          oneOf:
+                          - $ref: '#/components/schemas/ResourcekeyObject'
+                          - $ref: '#/components/schemas/ResourcekeyObject1'
+                          - $ref: '#/components/schemas/ResourcekeyObject2'
+                          - $ref: '#/components/schemas/ResourcekeyObject3'
+                          format: ResourceKey
                   page:
                     description: Pagination information about the search results.
                     type: object
@@ -40640,6 +40743,325 @@ components:
             Wildcard characters can be escaped with backslash, for instance: `\*`.
 
             '
+    DeploymentkeyExactmatch:
+      type: string
+      title: DeploymentkeyExactmatch
+      description: Matches the value exactly.
+      format: DeploymentKey
+      x-semantic-type: DeploymentKey
+      pattern: ^-?[0-9]+$
+      minLength: 1
+      maxLength: 25
+    DeploymentkeyAdvancedfilter:
+      title: DeploymentkeyAdvancedfilter
+      description: Advanced DeploymentKey filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          format: DeploymentKey
+          x-semantic-type: DeploymentKey
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        $neq:
+          description: Checks for inequality with the provided value.
+          format: DeploymentKey
+          x-semantic-type: DeploymentKey
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            description: Key for a deployment.
+            format: DeploymentKey
+            x-semantic-type: DeploymentKey
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+        $notIn:
+          description: Checks if the property matches none of the provided values.
+          type: array
+          items:
+            description: Key for a deployment.
+            format: DeploymentKey
+            x-semantic-type: DeploymentKey
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+    FormkeyExactmatch:
+      type: string
+      title: FormkeyExactmatch
+      description: Matches the value exactly.
+      format: FormKey
+      x-semantic-type: FormKey
+      example: '2251799813684365'
+      pattern: ^-?[0-9]+$
+      minLength: 1
+      maxLength: 25
+    FormkeyAdvancedfilter:
+      title: FormkeyAdvancedfilter
+      description: Advanced FormKey filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          format: FormKey
+          x-semantic-type: FormKey
+          example: '2251799813684365'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        $neq:
+          description: Checks for inequality with the provided value.
+          format: FormKey
+          x-semantic-type: FormKey
+          example: '2251799813684365'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            description: System-generated key for a deployed form.
+            format: FormKey
+            x-semantic-type: FormKey
+            example: '2251799813684365'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+        $notIn:
+          description: Checks if the property matches none of the provided values.
+          type: array
+          items:
+            description: System-generated key for a deployed form.
+            format: FormKey
+            x-semantic-type: FormKey
+            example: '2251799813684365'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+    ResourcekeyExactmatch:
+      type: string
+      title: ResourcekeyExactmatch
+      description: Matches the value exactly.
+      oneOf:
+      - description: System-generated key for a deployed process definition.
+        format: ProcessDefinitionKey
+        x-semantic-type: ProcessDefinitionKey
+        example: '2251799813686749'
+        type: string
+        pattern: ^-?[0-9]+$
+        minLength: 1
+        maxLength: 25
+      - description: System-generated key for a deployed decision requirements definition.
+        format: DecisionRequirementsKey
+        x-semantic-type: DecisionRequirementsKey
+        example: '2251799813683346'
+        type: string
+        pattern: ^-?[0-9]+$
+        minLength: 1
+        maxLength: 25
+      - description: System-generated key for a deployed form.
+        format: FormKey
+        x-semantic-type: FormKey
+        example: '2251799813684365'
+        type: string
+        pattern: ^-?[0-9]+$
+        minLength: 1
+        maxLength: 25
+      - description: System-generated key for a decision definition.
+        format: DecisionDefinitionKey
+        x-semantic-type: DecisionDefinitionKey
+        example: '2251799813326547'
+        type: string
+        pattern: ^-?[0-9]+$
+        minLength: 1
+        maxLength: 25
+      format: ResourceKey
+    ResourcekeyAdvancedfilter:
+      title: ResourcekeyAdvancedfilter
+      description: Advanced ResourceKey filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          type: string
+          oneOf:
+          - description: System-generated key for a deployed process definition.
+            format: ProcessDefinitionKey
+            x-semantic-type: ProcessDefinitionKey
+            example: '2251799813686749'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+          - description: System-generated key for a deployed decision requirements
+              definition.
+            format: DecisionRequirementsKey
+            x-semantic-type: DecisionRequirementsKey
+            example: '2251799813683346'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+          - description: System-generated key for a deployed form.
+            format: FormKey
+            x-semantic-type: FormKey
+            example: '2251799813684365'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+          - description: System-generated key for a decision definition.
+            format: DecisionDefinitionKey
+            x-semantic-type: DecisionDefinitionKey
+            example: '2251799813326547'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+          format: ResourceKey
+        $neq:
+          description: Checks for inequality with the provided value.
+          type: string
+          oneOf:
+          - description: System-generated key for a deployed process definition.
+            format: ProcessDefinitionKey
+            x-semantic-type: ProcessDefinitionKey
+            example: '2251799813686749'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+          - description: System-generated key for a deployed decision requirements
+              definition.
+            format: DecisionRequirementsKey
+            x-semantic-type: DecisionRequirementsKey
+            example: '2251799813683346'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+          - description: System-generated key for a deployed form.
+            format: FormKey
+            x-semantic-type: FormKey
+            example: '2251799813684365'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+          - description: System-generated key for a decision definition.
+            format: DecisionDefinitionKey
+            x-semantic-type: DecisionDefinitionKey
+            example: '2251799813326547'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+          format: ResourceKey
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            type: string
+            oneOf:
+            - description: System-generated key for a deployed process definition.
+              format: ProcessDefinitionKey
+              x-semantic-type: ProcessDefinitionKey
+              example: '2251799813686749'
+              type: string
+              pattern: ^-?[0-9]+$
+              minLength: 1
+              maxLength: 25
+            - description: System-generated key for a deployed decision requirements
+                definition.
+              format: DecisionRequirementsKey
+              x-semantic-type: DecisionRequirementsKey
+              example: '2251799813683346'
+              type: string
+              pattern: ^-?[0-9]+$
+              minLength: 1
+              maxLength: 25
+            - description: System-generated key for a deployed form.
+              format: FormKey
+              x-semantic-type: FormKey
+              example: '2251799813684365'
+              type: string
+              pattern: ^-?[0-9]+$
+              minLength: 1
+              maxLength: 25
+            - description: System-generated key for a decision definition.
+              format: DecisionDefinitionKey
+              x-semantic-type: DecisionDefinitionKey
+              example: '2251799813326547'
+              type: string
+              pattern: ^-?[0-9]+$
+              minLength: 1
+              maxLength: 25
+            description: The system-assigned key for this resource.
+            format: ResourceKey
+        $notIn:
+          description: Checks if the property matches none of the provided values.
+          type: array
+          items:
+            type: string
+            oneOf:
+            - description: System-generated key for a deployed process definition.
+              format: ProcessDefinitionKey
+              x-semantic-type: ProcessDefinitionKey
+              example: '2251799813686749'
+              type: string
+              pattern: ^-?[0-9]+$
+              minLength: 1
+              maxLength: 25
+            - description: System-generated key for a deployed decision requirements
+                definition.
+              format: DecisionRequirementsKey
+              x-semantic-type: DecisionRequirementsKey
+              example: '2251799813683346'
+              type: string
+              pattern: ^-?[0-9]+$
+              minLength: 1
+              maxLength: 25
+            - description: System-generated key for a deployed form.
+              format: FormKey
+              x-semantic-type: FormKey
+              example: '2251799813684365'
+              type: string
+              pattern: ^-?[0-9]+$
+              minLength: 1
+              maxLength: 25
+            - description: System-generated key for a decision definition.
+              format: DecisionDefinitionKey
+              x-semantic-type: DecisionDefinitionKey
+              example: '2251799813326547'
+              type: string
+              pattern: ^-?[0-9]+$
+              minLength: 1
+              maxLength: 25
+            description: The system-assigned key for this resource.
+            format: ResourceKey
     PageLimit-basedpagination:
       type: object
       title: PageLimit-basedpagination
@@ -40712,6 +41134,46 @@ components:
           default: 100
           minimum: 1
           maximum: 10000
+    ResourcekeyObject:
+      description: System-generated key for a deployed process definition.
+      format: ProcessDefinitionKey
+      x-semantic-type: ProcessDefinitionKey
+      example: '2251799813686749'
+      type: string
+      pattern: ^-?[0-9]+$
+      minLength: 1
+      maxLength: 25
+      title: ResourcekeyObject
+    ResourcekeyObject1:
+      description: System-generated key for a deployed decision requirements definition.
+      format: DecisionRequirementsKey
+      x-semantic-type: DecisionRequirementsKey
+      example: '2251799813683346'
+      type: string
+      pattern: ^-?[0-9]+$
+      minLength: 1
+      maxLength: 25
+      title: ResourcekeyObject1
+    ResourcekeyObject2:
+      description: System-generated key for a deployed form.
+      format: FormKey
+      x-semantic-type: FormKey
+      example: '2251799813684365'
+      type: string
+      pattern: ^-?[0-9]+$
+      minLength: 1
+      maxLength: 25
+      title: ResourcekeyObject2
+    ResourcekeyObject3:
+      description: System-generated key for a decision definition.
+      format: DecisionDefinitionKey
+      x-semantic-type: DecisionDefinitionKey
+      example: '2251799813326547'
+      type: string
+      pattern: ^-?[0-9]+$
+      minLength: 1
+      maxLength: 25
+      title: ResourcekeyObject3
     Object:
       type: object
       additionalProperties: false
@@ -41532,46 +41994,6 @@ components:
             pattern: ^-?[0-9]+$
             minLength: 1
             maxLength: 25
-    ResourcekeyObject:
-      description: System-generated key for a deployed process definition.
-      format: ProcessDefinitionKey
-      x-semantic-type: ProcessDefinitionKey
-      example: '2251799813686749'
-      type: string
-      pattern: ^-?[0-9]+$
-      minLength: 1
-      maxLength: 25
-      title: ResourcekeyObject
-    ResourcekeyObject1:
-      description: System-generated key for a deployed decision requirements definition.
-      format: DecisionRequirementsKey
-      x-semantic-type: DecisionRequirementsKey
-      example: '2251799813683346'
-      type: string
-      pattern: ^-?[0-9]+$
-      minLength: 1
-      maxLength: 25
-      title: ResourcekeyObject1
-    ResourcekeyObject2:
-      description: System-generated key for a deployed form.
-      format: FormKey
-      x-semantic-type: FormKey
-      example: '2251799813684365'
-      type: string
-      pattern: ^-?[0-9]+$
-      minLength: 1
-      maxLength: 25
-      title: ResourcekeyObject2
-    ResourcekeyObject3:
-      description: System-generated key for a decision definition.
-      format: DecisionDefinitionKey
-      x-semantic-type: DecisionDefinitionKey
-      example: '2251799813326547'
-      type: string
-      pattern: ^-?[0-9]+$
-      minLength: 1
-      maxLength: 25
-      title: ResourcekeyObject3
     StateExactmatch3:
       type: string
       title: StateExactmatch3
@@ -43179,6 +43601,18 @@ components:
               oneOf:
               - $ref: '#/components/schemas/CategoryExactmatch'
               - $ref: '#/components/schemas/CategoryAdvancedfilter'
+            deploymentKey:
+              oneOf:
+              - $ref: '#/components/schemas/DeploymentkeyExactmatch'
+              - $ref: '#/components/schemas/DeploymentkeyAdvancedfilter'
+            formKey:
+              oneOf:
+              - $ref: '#/components/schemas/FormkeyExactmatch'
+              - $ref: '#/components/schemas/FormkeyAdvancedfilter'
+            resourceKey:
+              oneOf:
+              - $ref: '#/components/schemas/ResourcekeyExactmatch'
+              - $ref: '#/components/schemas/ResourcekeyAdvancedfilter'
         page:
           description: Pagination criteria.
           allOf:
@@ -44906,10 +45340,7 @@ components:
                 type: string
                 enum:
                 - activeInstancesWithErrorCount
-                - processDefinitionId
                 - processDefinitionKey
-                - processDefinitionName
-                - processDefinitionVersion
                 - tenantId
               order:
                 description: The order in which to sort the related field.
@@ -45300,10 +45731,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - name
-      - claimName
       - claimValue
       - mappingRuleId
+      - name
+      - claimName
     SearchMappingRuleData:
       additionalProperties: false
       type: object
@@ -45371,9 +45802,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
+      - claimValue
       - name
       - claimName
-      - claimValue
     SearchMessageSubscriptionsData:
       type: object
       additionalProperties: false

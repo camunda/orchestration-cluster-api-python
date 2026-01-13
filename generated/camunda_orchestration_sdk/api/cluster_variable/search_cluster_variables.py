@@ -11,13 +11,14 @@ from ...models.search_cluster_variables_response_403 import SearchClusterVariabl
 from ...models.search_cluster_variables_response_500 import SearchClusterVariablesResponse500
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: SearchClusterVariablesData, truncate_values: bool | Unset=UNSET) -> dict[str, Any]:
+def _get_kwargs(*, body: SearchClusterVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     params: dict[str, Any] = {}
     params['truncateValues'] = truncate_values
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/cluster-variables/search', 'params': params}
-    _kwargs['json'] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -46,13 +47,13 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchClusterVariablesResponse200 | SearchClusterVariablesResponse400 | SearchClusterVariablesResponse401 | SearchClusterVariablesResponse403 | SearchClusterVariablesResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchClusterVariablesData, truncate_values: bool | Unset=UNSET) -> Response[SearchClusterVariablesResponse200 | SearchClusterVariablesResponse400 | SearchClusterVariablesResponse401 | SearchClusterVariablesResponse403 | SearchClusterVariablesResponse500]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchClusterVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> Response[SearchClusterVariablesResponse200 | SearchClusterVariablesResponse400 | SearchClusterVariablesResponse401 | SearchClusterVariablesResponse403 | SearchClusterVariablesResponse500]:
     """Search for cluster variables based on given criteria. By default, long variable values in the
     response are truncated.
 
     Args:
         truncate_values (bool | Unset):
-        body (SearchClusterVariablesData): Cluster variable search query request.
+        body (SearchClusterVariablesData | Unset): Cluster variable search query request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -65,13 +66,13 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchClusterVa
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: SearchClusterVariablesData, truncate_values: bool | Unset=UNSET, **kwargs) -> SearchClusterVariablesResponse200:
+def sync(*, client: AuthenticatedClient | Client, body: SearchClusterVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET, **kwargs) -> SearchClusterVariablesResponse200:
     """Search for cluster variables based on given criteria. By default, long variable values in the
 response are truncated.
 
 Args:
     truncate_values (bool | Unset):
-    body (SearchClusterVariablesData): Cluster variable search query request.
+    body (SearchClusterVariablesData | Unset): Cluster variable search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -84,13 +85,13 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchClusterVariablesData, truncate_values: bool | Unset=UNSET) -> Response[SearchClusterVariablesResponse200 | SearchClusterVariablesResponse400 | SearchClusterVariablesResponse401 | SearchClusterVariablesResponse403 | SearchClusterVariablesResponse500]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchClusterVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> Response[SearchClusterVariablesResponse200 | SearchClusterVariablesResponse400 | SearchClusterVariablesResponse401 | SearchClusterVariablesResponse403 | SearchClusterVariablesResponse500]:
     """Search for cluster variables based on given criteria. By default, long variable values in the
     response are truncated.
 
     Args:
         truncate_values (bool | Unset):
-        body (SearchClusterVariablesData): Cluster variable search query request.
+        body (SearchClusterVariablesData | Unset): Cluster variable search query request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -103,13 +104,13 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Search
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: SearchClusterVariablesData, truncate_values: bool | Unset=UNSET, **kwargs) -> SearchClusterVariablesResponse200:
+async def asyncio(*, client: AuthenticatedClient | Client, body: SearchClusterVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET, **kwargs) -> SearchClusterVariablesResponse200:
     """Search for cluster variables based on given criteria. By default, long variable values in the
 response are truncated.
 
 Args:
     truncate_values (bool | Unset):
-    body (SearchClusterVariablesData): Cluster variable search query request.
+    body (SearchClusterVariablesData | Unset): Cluster variable search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

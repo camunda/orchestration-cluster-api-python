@@ -9,12 +9,13 @@ from ...models.resolve_incidents_batch_operation_response_400 import ResolveInci
 from ...models.resolve_incidents_batch_operation_response_401 import ResolveIncidentsBatchOperationResponse401
 from ...models.resolve_incidents_batch_operation_response_403 import ResolveIncidentsBatchOperationResponse403
 from ...models.resolve_incidents_batch_operation_response_500 import ResolveIncidentsBatchOperationResponse500
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: ResolveIncidentsBatchOperationData) -> dict[str, Any]:
+def _get_kwargs(*, body: ResolveIncidentsBatchOperationData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-instances/incident-resolution'}
-    _kwargs['json'] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -43,7 +44,7 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ResolveIncidentsBatchOperationResponse200 | ResolveIncidentsBatchOperationResponse400 | ResolveIncidentsBatchOperationResponse401 | ResolveIncidentsBatchOperationResponse403 | ResolveIncidentsBatchOperationResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: ResolveIncidentsBatchOperationData) -> Response[ResolveIncidentsBatchOperationResponse200 | ResolveIncidentsBatchOperationResponse400 | ResolveIncidentsBatchOperationResponse401 | ResolveIncidentsBatchOperationResponse403 | ResolveIncidentsBatchOperationResponse500]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: ResolveIncidentsBatchOperationData | Unset=UNSET) -> Response[ResolveIncidentsBatchOperationResponse200 | ResolveIncidentsBatchOperationResponse400 | ResolveIncidentsBatchOperationResponse401 | ResolveIncidentsBatchOperationResponse403 | ResolveIncidentsBatchOperationResponse500]:
     """Resolve related incidents (batch)
 
      Resolves multiple instances of process instances.
@@ -53,8 +54,8 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: ResolveIncident
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (ResolveIncidentsBatchOperationData): The process instance filter that defines which
-            process instances should have their incidents resolved.
+        body (ResolveIncidentsBatchOperationData | Unset): The process instance filter that
+            defines which process instances should have their incidents resolved.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -67,7 +68,7 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: ResolveIncident
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: ResolveIncidentsBatchOperationData, **kwargs) -> ResolveIncidentsBatchOperationResponse200:
+def sync(*, client: AuthenticatedClient | Client, body: ResolveIncidentsBatchOperationData | Unset=UNSET, **kwargs) -> ResolveIncidentsBatchOperationResponse200:
     """Resolve related incidents (batch)
 
  Resolves multiple instances of process instances.
@@ -77,8 +78,8 @@ This is done asynchronously, the progress can be tracked using the batchOperatio
 response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
 Args:
-    body (ResolveIncidentsBatchOperationData): The process instance filter that defines which
-        process instances should have their incidents resolved.
+    body (ResolveIncidentsBatchOperationData | Unset): The process instance filter that
+        defines which process instances should have their incidents resolved.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -91,7 +92,7 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: ResolveIncidentsBatchOperationData) -> Response[ResolveIncidentsBatchOperationResponse200 | ResolveIncidentsBatchOperationResponse400 | ResolveIncidentsBatchOperationResponse401 | ResolveIncidentsBatchOperationResponse403 | ResolveIncidentsBatchOperationResponse500]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: ResolveIncidentsBatchOperationData | Unset=UNSET) -> Response[ResolveIncidentsBatchOperationResponse200 | ResolveIncidentsBatchOperationResponse400 | ResolveIncidentsBatchOperationResponse401 | ResolveIncidentsBatchOperationResponse403 | ResolveIncidentsBatchOperationResponse500]:
     """Resolve related incidents (batch)
 
      Resolves multiple instances of process instances.
@@ -101,8 +102,8 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Resolv
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (ResolveIncidentsBatchOperationData): The process instance filter that defines which
-            process instances should have their incidents resolved.
+        body (ResolveIncidentsBatchOperationData | Unset): The process instance filter that
+            defines which process instances should have their incidents resolved.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -115,7 +116,7 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Resolv
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: ResolveIncidentsBatchOperationData, **kwargs) -> ResolveIncidentsBatchOperationResponse200:
+async def asyncio(*, client: AuthenticatedClient | Client, body: ResolveIncidentsBatchOperationData | Unset=UNSET, **kwargs) -> ResolveIncidentsBatchOperationResponse200:
     """Resolve related incidents (batch)
 
  Resolves multiple instances of process instances.
@@ -125,8 +126,8 @@ This is done asynchronously, the progress can be tracked using the batchOperatio
 response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
 Args:
-    body (ResolveIncidentsBatchOperationData): The process instance filter that defines which
-        process instances should have their incidents resolved.
+    body (ResolveIncidentsBatchOperationData | Unset): The process instance filter that
+        defines which process instances should have their incidents resolved.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

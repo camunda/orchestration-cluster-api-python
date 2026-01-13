@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -9,12 +10,13 @@ from ...models.get_process_definition_statistics_response_400 import GetProcessD
 from ...models.get_process_definition_statistics_response_401 import GetProcessDefinitionStatisticsResponse401
 from ...models.get_process_definition_statistics_response_403 import GetProcessDefinitionStatisticsResponse403
 from ...models.get_process_definition_statistics_response_500 import GetProcessDefinitionStatisticsResponse500
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(process_definition_key: str, *, body: GetProcessDefinitionStatisticsData) -> dict[str, Any]:
+def _get_kwargs(process_definition_key: str, *, body: GetProcessDefinitionStatisticsData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-definitions/{process_definition_key}/statistics/element-instances'.format(process_definition_key=process_definition_key)}
-    _kwargs['json'] = body.to_dict()
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-definitions/{process_definition_key}/statistics/element-instances'.format(process_definition_key=quote(str(process_definition_key), safe=''))}
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -43,7 +45,7 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[GetProcessDefinitionStatisticsResponse200 | GetProcessDefinitionStatisticsResponse400 | GetProcessDefinitionStatisticsResponse401 | GetProcessDefinitionStatisticsResponse403 | GetProcessDefinitionStatisticsResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(process_definition_key: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionStatisticsData) -> Response[GetProcessDefinitionStatisticsResponse200 | GetProcessDefinitionStatisticsResponse400 | GetProcessDefinitionStatisticsResponse401 | GetProcessDefinitionStatisticsResponse403 | GetProcessDefinitionStatisticsResponse500]:
+def sync_detailed(process_definition_key: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionStatisticsData | Unset=UNSET) -> Response[GetProcessDefinitionStatisticsResponse200 | GetProcessDefinitionStatisticsResponse400 | GetProcessDefinitionStatisticsResponse401 | GetProcessDefinitionStatisticsResponse403 | GetProcessDefinitionStatisticsResponse500]:
     """Get process definition statistics
 
      Get statistics about elements in currently running process instances by process definition key and
@@ -52,7 +54,8 @@ def sync_detailed(process_definition_key: str, *, client: AuthenticatedClient | 
     Args:
         process_definition_key (str): System-generated key for a deployed process definition.
             Example: 2251799813686749.
-        body (GetProcessDefinitionStatisticsData): Process definition element statistics request.
+        body (GetProcessDefinitionStatisticsData | Unset): Process definition element statistics
+            request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -65,7 +68,7 @@ def sync_detailed(process_definition_key: str, *, client: AuthenticatedClient | 
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(process_definition_key: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionStatisticsData, **kwargs) -> GetProcessDefinitionStatisticsResponse200:
+def sync(process_definition_key: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionStatisticsData | Unset=UNSET, **kwargs) -> GetProcessDefinitionStatisticsResponse200:
     """Get process definition statistics
 
  Get statistics about elements in currently running process instances by process definition key and
@@ -74,7 +77,8 @@ search filter.
 Args:
     process_definition_key (str): System-generated key for a deployed process definition.
         Example: 2251799813686749.
-    body (GetProcessDefinitionStatisticsData): Process definition element statistics request.
+    body (GetProcessDefinitionStatisticsData | Unset): Process definition element statistics
+        request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -87,7 +91,7 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(process_definition_key: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionStatisticsData) -> Response[GetProcessDefinitionStatisticsResponse200 | GetProcessDefinitionStatisticsResponse400 | GetProcessDefinitionStatisticsResponse401 | GetProcessDefinitionStatisticsResponse403 | GetProcessDefinitionStatisticsResponse500]:
+async def asyncio_detailed(process_definition_key: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionStatisticsData | Unset=UNSET) -> Response[GetProcessDefinitionStatisticsResponse200 | GetProcessDefinitionStatisticsResponse400 | GetProcessDefinitionStatisticsResponse401 | GetProcessDefinitionStatisticsResponse403 | GetProcessDefinitionStatisticsResponse500]:
     """Get process definition statistics
 
      Get statistics about elements in currently running process instances by process definition key and
@@ -96,7 +100,8 @@ async def asyncio_detailed(process_definition_key: str, *, client: Authenticated
     Args:
         process_definition_key (str): System-generated key for a deployed process definition.
             Example: 2251799813686749.
-        body (GetProcessDefinitionStatisticsData): Process definition element statistics request.
+        body (GetProcessDefinitionStatisticsData | Unset): Process definition element statistics
+            request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -109,7 +114,7 @@ async def asyncio_detailed(process_definition_key: str, *, client: Authenticated
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(process_definition_key: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionStatisticsData, **kwargs) -> GetProcessDefinitionStatisticsResponse200:
+async def asyncio(process_definition_key: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionStatisticsData | Unset=UNSET, **kwargs) -> GetProcessDefinitionStatisticsResponse200:
     """Get process definition statistics
 
  Get statistics about elements in currently running process instances by process definition key and
@@ -118,7 +123,8 @@ search filter.
 Args:
     process_definition_key (str): System-generated key for a deployed process definition.
         Example: 2251799813686749.
-    body (GetProcessDefinitionStatisticsData): Process definition element statistics request.
+    body (GetProcessDefinitionStatisticsData | Unset): Process definition element statistics
+        request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

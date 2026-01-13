@@ -9,12 +9,13 @@ from ...models.get_process_definition_instance_statistics_response_400 import Ge
 from ...models.get_process_definition_instance_statistics_response_401 import GetProcessDefinitionInstanceStatisticsResponse401
 from ...models.get_process_definition_instance_statistics_response_403 import GetProcessDefinitionInstanceStatisticsResponse403
 from ...models.get_process_definition_instance_statistics_response_500 import GetProcessDefinitionInstanceStatisticsResponse500
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: GetProcessDefinitionInstanceStatisticsData) -> dict[str, Any]:
+def _get_kwargs(*, body: GetProcessDefinitionInstanceStatisticsData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-definitions/statistics/process-instances'}
-    _kwargs['json'] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -43,13 +44,13 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[GetProcessDefinitionInstanceStatisticsResponse200 | GetProcessDefinitionInstanceStatisticsResponse400 | GetProcessDefinitionInstanceStatisticsResponse401 | GetProcessDefinitionInstanceStatisticsResponse403 | GetProcessDefinitionInstanceStatisticsResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceStatisticsData) -> Response[GetProcessDefinitionInstanceStatisticsResponse200 | GetProcessDefinitionInstanceStatisticsResponse400 | GetProcessDefinitionInstanceStatisticsResponse401 | GetProcessDefinitionInstanceStatisticsResponse403 | GetProcessDefinitionInstanceStatisticsResponse500]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceStatisticsData | Unset=UNSET) -> Response[GetProcessDefinitionInstanceStatisticsResponse200 | GetProcessDefinitionInstanceStatisticsResponse400 | GetProcessDefinitionInstanceStatisticsResponse401 | GetProcessDefinitionInstanceStatisticsResponse403 | GetProcessDefinitionInstanceStatisticsResponse500]:
     """Get process instance statistics
 
      Get statistics about process instances, grouped by process definition and tenant.
 
     Args:
-        body (GetProcessDefinitionInstanceStatisticsData):
+        body (GetProcessDefinitionInstanceStatisticsData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -62,13 +63,13 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: GetProcessDefin
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceStatisticsData, **kwargs) -> GetProcessDefinitionInstanceStatisticsResponse200:
+def sync(*, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceStatisticsData | Unset=UNSET, **kwargs) -> GetProcessDefinitionInstanceStatisticsResponse200:
     """Get process instance statistics
 
  Get statistics about process instances, grouped by process definition and tenant.
 
 Args:
-    body (GetProcessDefinitionInstanceStatisticsData):
+    body (GetProcessDefinitionInstanceStatisticsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -81,13 +82,13 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceStatisticsData) -> Response[GetProcessDefinitionInstanceStatisticsResponse200 | GetProcessDefinitionInstanceStatisticsResponse400 | GetProcessDefinitionInstanceStatisticsResponse401 | GetProcessDefinitionInstanceStatisticsResponse403 | GetProcessDefinitionInstanceStatisticsResponse500]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceStatisticsData | Unset=UNSET) -> Response[GetProcessDefinitionInstanceStatisticsResponse200 | GetProcessDefinitionInstanceStatisticsResponse400 | GetProcessDefinitionInstanceStatisticsResponse401 | GetProcessDefinitionInstanceStatisticsResponse403 | GetProcessDefinitionInstanceStatisticsResponse500]:
     """Get process instance statistics
 
      Get statistics about process instances, grouped by process definition and tenant.
 
     Args:
-        body (GetProcessDefinitionInstanceStatisticsData):
+        body (GetProcessDefinitionInstanceStatisticsData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -100,13 +101,13 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: GetPro
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceStatisticsData, **kwargs) -> GetProcessDefinitionInstanceStatisticsResponse200:
+async def asyncio(*, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceStatisticsData | Unset=UNSET, **kwargs) -> GetProcessDefinitionInstanceStatisticsResponse200:
     """Get process instance statistics
 
  Get statistics about process instances, grouped by process definition and tenant.
 
 Args:
-    body (GetProcessDefinitionInstanceStatisticsData):
+    body (GetProcessDefinitionInstanceStatisticsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

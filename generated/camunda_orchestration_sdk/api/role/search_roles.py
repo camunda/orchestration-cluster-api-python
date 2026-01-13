@@ -8,12 +8,13 @@ from ...models.search_roles_response_200 import SearchRolesResponse200
 from ...models.search_roles_response_400 import SearchRolesResponse400
 from ...models.search_roles_response_401 import SearchRolesResponse401
 from ...models.search_roles_response_403 import SearchRolesResponse403
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: SearchRolesData) -> dict[str, Any]:
+def _get_kwargs(*, body: SearchRolesData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/roles/search'}
-    _kwargs['json'] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -42,13 +43,13 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | SearchRolesResponse200 | SearchRolesResponse400 | SearchRolesResponse401 | SearchRolesResponse403]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchRolesData) -> Response[Any | SearchRolesResponse200 | SearchRolesResponse400 | SearchRolesResponse401 | SearchRolesResponse403]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchRolesData | Unset=UNSET) -> Response[Any | SearchRolesResponse200 | SearchRolesResponse400 | SearchRolesResponse401 | SearchRolesResponse403]:
     """Search roles
 
      Search for roles based on given criteria.
 
     Args:
-        body (SearchRolesData): Role search request.
+        body (SearchRolesData | Unset): Role search request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -61,13 +62,13 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchRolesData
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: SearchRolesData, **kwargs) -> Any:
+def sync(*, client: AuthenticatedClient | Client, body: SearchRolesData | Unset=UNSET, **kwargs) -> Any:
     """Search roles
 
  Search for roles based on given criteria.
 
 Args:
-    body (SearchRolesData): Role search request.
+    body (SearchRolesData | Unset): Role search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -80,13 +81,13 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchRolesData) -> Response[Any | SearchRolesResponse200 | SearchRolesResponse400 | SearchRolesResponse401 | SearchRolesResponse403]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchRolesData | Unset=UNSET) -> Response[Any | SearchRolesResponse200 | SearchRolesResponse400 | SearchRolesResponse401 | SearchRolesResponse403]:
     """Search roles
 
      Search for roles based on given criteria.
 
     Args:
-        body (SearchRolesData): Role search request.
+        body (SearchRolesData | Unset): Role search request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -99,13 +100,13 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Search
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: SearchRolesData, **kwargs) -> Any:
+async def asyncio(*, client: AuthenticatedClient | Client, body: SearchRolesData | Unset=UNSET, **kwargs) -> Any:
     """Search roles
 
  Search for roles based on given criteria.
 
 Args:
-    body (SearchRolesData): Role search request.
+    body (SearchRolesData | Unset): Role search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

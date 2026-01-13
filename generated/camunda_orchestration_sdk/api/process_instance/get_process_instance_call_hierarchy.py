@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -12,7 +13,7 @@ from ...models.get_process_instance_call_hierarchy_response_500 import GetProces
 from ...types import Response
 
 def _get_kwargs(process_instance_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/process-instances/{process_instance_key}/call-hierarchy'.format(process_instance_key=process_instance_key)}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/process-instances/{process_instance_key}/call-hierarchy'.format(process_instance_key=quote(str(process_instance_key), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetProcessInstanceCallHierarchyResponse400 | GetProcessInstanceCallHierarchyResponse401 | GetProcessInstanceCallHierarchyResponse403 | GetProcessInstanceCallHierarchyResponse404 | GetProcessInstanceCallHierarchyResponse500 | list[GetProcessInstanceCallHierarchyResponse200Item] | None:

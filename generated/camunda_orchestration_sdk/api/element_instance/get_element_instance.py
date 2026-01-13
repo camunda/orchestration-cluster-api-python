@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -12,7 +13,7 @@ from ...models.get_element_instance_response_500 import GetElementInstanceRespon
 from ...types import Response
 
 def _get_kwargs(element_instance_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/element-instances/{element_instance_key}'.format(element_instance_key=element_instance_key)}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/element-instances/{element_instance_key}'.format(element_instance_key=quote(str(element_instance_key), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500 | None:

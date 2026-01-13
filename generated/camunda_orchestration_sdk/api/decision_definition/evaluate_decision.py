@@ -14,7 +14,6 @@ from ...types import Response
 def _get_kwargs(*, body: DecisionevaluationbyID | Decisionevaluationbykey) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/decision-definitions/evaluation'}
-    _kwargs['json']: dict[str, Any]
     if isinstance(body, DecisionevaluationbyID):
         _kwargs['json'] = body.to_dict()
     else:

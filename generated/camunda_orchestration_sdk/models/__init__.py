@@ -456,6 +456,10 @@ from .delete_mapping_rule_response_404 import DeleteMappingRuleResponse404
 from .delete_mapping_rule_response_500 import DeleteMappingRuleResponse500
 from .delete_mapping_rule_response_503 import DeleteMappingRuleResponse503
 from .delete_process_instance_data_type_0 import DeleteProcessInstanceDataType0
+from .delete_process_instance_response_200 import DeleteProcessInstanceResponse200
+from .delete_process_instance_response_200_batch_operation_type import (
+    DeleteProcessInstanceResponse200BatchOperationType,
+)
 from .delete_process_instance_response_401 import DeleteProcessInstanceResponse401
 from .delete_process_instance_response_403 import DeleteProcessInstanceResponse403
 from .delete_process_instance_response_404 import DeleteProcessInstanceResponse404
@@ -528,6 +532,7 @@ from .delete_user_response_400 import DeleteUserResponse400
 from .delete_user_response_404 import DeleteUserResponse404
 from .delete_user_response_500 import DeleteUserResponse500
 from .delete_user_response_503 import DeleteUserResponse503
+from .deploymentkey_advancedfilter import DeploymentkeyAdvancedfilter
 from .elementinstancekey_advancedfilter import ElementinstancekeyAdvancedfilter
 from .entitytype_advancedfilter import EntitytypeAdvancedfilter
 from .entitytype_advancedfilter_eq import EntitytypeAdvancedfilterEq
@@ -581,6 +586,7 @@ from .fail_job_response_404 import FailJobResponse404
 from .fail_job_response_409 import FailJobResponse409
 from .fail_job_response_500 import FailJobResponse500
 from .fail_job_response_503 import FailJobResponse503
+from .formkey_advancedfilter import FormkeyAdvancedfilter
 from .get_audit_log_response_200 import GetAuditLogResponse200
 from .get_audit_log_response_200_actor_type import GetAuditLogResponse200ActorType
 from .get_audit_log_response_200_batch_operation_type import (
@@ -1366,6 +1372,7 @@ from .resolve_process_instance_incidents_response_500 import (
 from .resolve_process_instance_incidents_response_503 import (
     ResolveProcessInstanceIncidentsResponse503,
 )
+from .resourcekey_advancedfilter import ResourcekeyAdvancedfilter
 from .result_object import ResultObject
 from .result_object_1 import ResultObject1
 from .result_object_1_activateelements_item import ResultObject1ActivateelementsItem
@@ -2897,6 +2904,8 @@ __all__ = (
     "DeleteMappingRuleResponse500",
     "DeleteMappingRuleResponse503",
     "DeleteProcessInstanceDataType0",
+    "DeleteProcessInstanceResponse200",
+    "DeleteProcessInstanceResponse200BatchOperationType",
     "DeleteProcessInstanceResponse401",
     "DeleteProcessInstanceResponse403",
     "DeleteProcessInstanceResponse404",
@@ -2937,6 +2946,7 @@ __all__ = (
     "DeleteUserResponse404",
     "DeleteUserResponse500",
     "DeleteUserResponse503",
+    "DeploymentkeyAdvancedfilter",
     "ElementinstancekeyAdvancedfilter",
     "EntitytypeAdvancedfilter",
     "EntitytypeAdvancedfilterEq",
@@ -2980,6 +2990,7 @@ __all__ = (
     "FailJobResponse409",
     "FailJobResponse500",
     "FailJobResponse503",
+    "FormkeyAdvancedfilter",
     "GetAuditLogResponse200",
     "GetAuditLogResponse200ActorType",
     "GetAuditLogResponse200BatchOperationType",
@@ -3385,6 +3396,7 @@ __all__ = (
     "ResolveProcessInstanceIncidentsResponse404",
     "ResolveProcessInstanceIncidentsResponse500",
     "ResolveProcessInstanceIncidentsResponse503",
+    "ResourcekeyAdvancedfilter",
     "ResultObject",
     "ResultObject1",
     "ResultObject1ActivateelementsItem",

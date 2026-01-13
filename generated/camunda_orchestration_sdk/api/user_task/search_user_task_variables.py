@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -9,13 +10,14 @@ from ...models.search_user_task_variables_response_400 import SearchUserTaskVari
 from ...models.search_user_task_variables_response_500 import SearchUserTaskVariablesResponse500
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(user_task_key: str, *, body: SearchUserTaskVariablesData, truncate_values: bool | Unset=UNSET) -> dict[str, Any]:
+def _get_kwargs(user_task_key: str, *, body: SearchUserTaskVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     params: dict[str, Any] = {}
     params['truncateValues'] = truncate_values
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/user-tasks/{user_task_key}/variables/search'.format(user_task_key=user_task_key), 'params': params}
-    _kwargs['json'] = body.to_dict()
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/user-tasks/{user_task_key}/variables/search'.format(user_task_key=quote(str(user_task_key), safe='')), 'params': params}
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -38,7 +40,7 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskVariablesData, truncate_values: bool | Unset=UNSET) -> Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]:
+def sync_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]:
     """Search user task variables
 
      Search for user task variables based on given criteria. By default, long variable values in the
@@ -47,7 +49,7 @@ def sync_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, b
     Args:
         user_task_key (str): System-generated key for a user task.
         truncate_values (bool | Unset):
-        body (SearchUserTaskVariablesData): User task search query request.
+        body (SearchUserTaskVariablesData | Unset): User task search query request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -60,7 +62,7 @@ def sync_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, b
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskVariablesData, truncate_values: bool | Unset=UNSET, **kwargs) -> SearchUserTaskVariablesResponse200:
+def sync(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET, **kwargs) -> SearchUserTaskVariablesResponse200:
     """Search user task variables
 
  Search for user task variables based on given criteria. By default, long variable values in the
@@ -69,7 +71,7 @@ response are truncated.
 Args:
     user_task_key (str): System-generated key for a user task.
     truncate_values (bool | Unset):
-    body (SearchUserTaskVariablesData): User task search query request.
+    body (SearchUserTaskVariablesData | Unset): User task search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -82,7 +84,7 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskVariablesData, truncate_values: bool | Unset=UNSET) -> Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]:
+async def asyncio_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]:
     """Search user task variables
 
      Search for user task variables based on given criteria. By default, long variable values in the
@@ -91,7 +93,7 @@ async def asyncio_detailed(user_task_key: str, *, client: AuthenticatedClient | 
     Args:
         user_task_key (str): System-generated key for a user task.
         truncate_values (bool | Unset):
-        body (SearchUserTaskVariablesData): User task search query request.
+        body (SearchUserTaskVariablesData | Unset): User task search query request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -104,7 +106,7 @@ async def asyncio_detailed(user_task_key: str, *, client: AuthenticatedClient | 
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskVariablesData, truncate_values: bool | Unset=UNSET, **kwargs) -> SearchUserTaskVariablesResponse200:
+async def asyncio(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET, **kwargs) -> SearchUserTaskVariablesResponse200:
     """Search user task variables
 
  Search for user task variables based on given criteria. By default, long variable values in the
@@ -113,7 +115,7 @@ response are truncated.
 Args:
     user_task_key (str): System-generated key for a user task.
     truncate_values (bool | Unset):
-    body (SearchUserTaskVariablesData): User task search query request.
+    body (SearchUserTaskVariablesData | Unset): User task search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -10,12 +11,13 @@ from ...models.search_mapping_rules_for_role_response_401 import SearchMappingRu
 from ...models.search_mapping_rules_for_role_response_403 import SearchMappingRulesForRoleResponse403
 from ...models.search_mapping_rules_for_role_response_404 import SearchMappingRulesForRoleResponse404
 from ...models.search_mapping_rules_for_role_response_500 import SearchMappingRulesForRoleResponse500
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(role_id: str, *, body: SearchMappingRulesForRoleData) -> dict[str, Any]:
+def _get_kwargs(role_id: str, *, body: SearchMappingRulesForRoleData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/roles/{role_id}/mapping-rules/search'.format(role_id=role_id)}
-    _kwargs['json'] = body.to_dict()
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/roles/{role_id}/mapping-rules/search'.format(role_id=quote(str(role_id), safe=''))}
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -47,14 +49,14 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchMappingRulesForRoleResponse200 | SearchMappingRulesForRoleResponse400 | SearchMappingRulesForRoleResponse401 | SearchMappingRulesForRoleResponse403 | SearchMappingRulesForRoleResponse404 | SearchMappingRulesForRoleResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(role_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForRoleData) -> Response[SearchMappingRulesForRoleResponse200 | SearchMappingRulesForRoleResponse400 | SearchMappingRulesForRoleResponse401 | SearchMappingRulesForRoleResponse403 | SearchMappingRulesForRoleResponse404 | SearchMappingRulesForRoleResponse500]:
+def sync_detailed(role_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForRoleData | Unset=UNSET) -> Response[SearchMappingRulesForRoleResponse200 | SearchMappingRulesForRoleResponse400 | SearchMappingRulesForRoleResponse401 | SearchMappingRulesForRoleResponse403 | SearchMappingRulesForRoleResponse404 | SearchMappingRulesForRoleResponse500]:
     """Search role mapping rules
 
      Search mapping rules with assigned role.
 
     Args:
         role_id (str):
-        body (SearchMappingRulesForRoleData):
+        body (SearchMappingRulesForRoleData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -67,14 +69,14 @@ def sync_detailed(role_id: str, *, client: AuthenticatedClient | Client, body: S
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(role_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForRoleData, **kwargs) -> SearchMappingRulesForRoleResponse200:
+def sync(role_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForRoleData | Unset=UNSET, **kwargs) -> SearchMappingRulesForRoleResponse200:
     """Search role mapping rules
 
  Search mapping rules with assigned role.
 
 Args:
     role_id (str):
-    body (SearchMappingRulesForRoleData):
+    body (SearchMappingRulesForRoleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -87,14 +89,14 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(role_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForRoleData) -> Response[SearchMappingRulesForRoleResponse200 | SearchMappingRulesForRoleResponse400 | SearchMappingRulesForRoleResponse401 | SearchMappingRulesForRoleResponse403 | SearchMappingRulesForRoleResponse404 | SearchMappingRulesForRoleResponse500]:
+async def asyncio_detailed(role_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForRoleData | Unset=UNSET) -> Response[SearchMappingRulesForRoleResponse200 | SearchMappingRulesForRoleResponse400 | SearchMappingRulesForRoleResponse401 | SearchMappingRulesForRoleResponse403 | SearchMappingRulesForRoleResponse404 | SearchMappingRulesForRoleResponse500]:
     """Search role mapping rules
 
      Search mapping rules with assigned role.
 
     Args:
         role_id (str):
-        body (SearchMappingRulesForRoleData):
+        body (SearchMappingRulesForRoleData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -107,14 +109,14 @@ async def asyncio_detailed(role_id: str, *, client: AuthenticatedClient | Client
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(role_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForRoleData, **kwargs) -> SearchMappingRulesForRoleResponse200:
+async def asyncio(role_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForRoleData | Unset=UNSET, **kwargs) -> SearchMappingRulesForRoleResponse200:
     """Search role mapping rules
 
  Search mapping rules with assigned role.
 
 Args:
     role_id (str):
-    body (SearchMappingRulesForRoleData):
+    body (SearchMappingRulesForRoleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

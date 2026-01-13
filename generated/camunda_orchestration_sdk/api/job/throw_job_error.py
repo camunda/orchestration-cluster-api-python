@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -13,7 +14,7 @@ from ...types import Response
 
 def _get_kwargs(job_key: str, *, body: ThrowJobErrorData) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/jobs/{job_key}/error'.format(job_key=job_key)}
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/jobs/{job_key}/error'.format(job_key=quote(str(job_key), safe=''))}
     _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers

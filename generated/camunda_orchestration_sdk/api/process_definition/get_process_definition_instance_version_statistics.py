@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -9,12 +10,13 @@ from ...models.get_process_definition_instance_version_statistics_response_400 i
 from ...models.get_process_definition_instance_version_statistics_response_401 import GetProcessDefinitionInstanceVersionStatisticsResponse401
 from ...models.get_process_definition_instance_version_statistics_response_403 import GetProcessDefinitionInstanceVersionStatisticsResponse403
 from ...models.get_process_definition_instance_version_statistics_response_500 import GetProcessDefinitionInstanceVersionStatisticsResponse500
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(process_definition_id: str, *, body: GetProcessDefinitionInstanceVersionStatisticsData) -> dict[str, Any]:
+def _get_kwargs(process_definition_id: str, *, body: GetProcessDefinitionInstanceVersionStatisticsData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-definitions/{process_definition_id}/statistics/process-instances'.format(process_definition_id=process_definition_id)}
-    _kwargs['json'] = body.to_dict()
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-definitions/{process_definition_id}/statistics/process-instances'.format(process_definition_id=quote(str(process_definition_id), safe=''))}
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -43,7 +45,7 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[GetProcessDefinitionInstanceVersionStatisticsResponse200 | GetProcessDefinitionInstanceVersionStatisticsResponse400 | GetProcessDefinitionInstanceVersionStatisticsResponse401 | GetProcessDefinitionInstanceVersionStatisticsResponse403 | GetProcessDefinitionInstanceVersionStatisticsResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(process_definition_id: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceVersionStatisticsData) -> Response[GetProcessDefinitionInstanceVersionStatisticsResponse200 | GetProcessDefinitionInstanceVersionStatisticsResponse400 | GetProcessDefinitionInstanceVersionStatisticsResponse401 | GetProcessDefinitionInstanceVersionStatisticsResponse403 | GetProcessDefinitionInstanceVersionStatisticsResponse500]:
+def sync_detailed(process_definition_id: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceVersionStatisticsData | Unset=UNSET) -> Response[GetProcessDefinitionInstanceVersionStatisticsResponse200 | GetProcessDefinitionInstanceVersionStatisticsResponse400 | GetProcessDefinitionInstanceVersionStatisticsResponse401 | GetProcessDefinitionInstanceVersionStatisticsResponse403 | GetProcessDefinitionInstanceVersionStatisticsResponse500]:
     """Get process instance statistics by version
 
      Get statistics about process instances, grouped by version for a given process definition.
@@ -52,7 +54,7 @@ def sync_detailed(process_definition_id: str, *, client: AuthenticatedClient | C
         process_definition_id (str): Id of a process definition, from the model. Only ids of
             process definitions that are deployed are useful. Example: new-account-onboarding-
             workflow.
-        body (GetProcessDefinitionInstanceVersionStatisticsData):
+        body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -65,7 +67,7 @@ def sync_detailed(process_definition_id: str, *, client: AuthenticatedClient | C
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(process_definition_id: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceVersionStatisticsData, **kwargs) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
+def sync(process_definition_id: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceVersionStatisticsData | Unset=UNSET, **kwargs) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
     """Get process instance statistics by version
 
  Get statistics about process instances, grouped by version for a given process definition.
@@ -74,7 +76,7 @@ Args:
     process_definition_id (str): Id of a process definition, from the model. Only ids of
         process definitions that are deployed are useful. Example: new-account-onboarding-
         workflow.
-    body (GetProcessDefinitionInstanceVersionStatisticsData):
+    body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -87,7 +89,7 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(process_definition_id: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceVersionStatisticsData) -> Response[GetProcessDefinitionInstanceVersionStatisticsResponse200 | GetProcessDefinitionInstanceVersionStatisticsResponse400 | GetProcessDefinitionInstanceVersionStatisticsResponse401 | GetProcessDefinitionInstanceVersionStatisticsResponse403 | GetProcessDefinitionInstanceVersionStatisticsResponse500]:
+async def asyncio_detailed(process_definition_id: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceVersionStatisticsData | Unset=UNSET) -> Response[GetProcessDefinitionInstanceVersionStatisticsResponse200 | GetProcessDefinitionInstanceVersionStatisticsResponse400 | GetProcessDefinitionInstanceVersionStatisticsResponse401 | GetProcessDefinitionInstanceVersionStatisticsResponse403 | GetProcessDefinitionInstanceVersionStatisticsResponse500]:
     """Get process instance statistics by version
 
      Get statistics about process instances, grouped by version for a given process definition.
@@ -96,7 +98,7 @@ async def asyncio_detailed(process_definition_id: str, *, client: AuthenticatedC
         process_definition_id (str): Id of a process definition, from the model. Only ids of
             process definitions that are deployed are useful. Example: new-account-onboarding-
             workflow.
-        body (GetProcessDefinitionInstanceVersionStatisticsData):
+        body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -109,7 +111,7 @@ async def asyncio_detailed(process_definition_id: str, *, client: AuthenticatedC
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(process_definition_id: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceVersionStatisticsData, **kwargs) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
+async def asyncio(process_definition_id: str, *, client: AuthenticatedClient | Client, body: GetProcessDefinitionInstanceVersionStatisticsData | Unset=UNSET, **kwargs) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
     """Get process instance statistics by version
 
  Get statistics about process instances, grouped by version for a given process definition.
@@ -118,7 +120,7 @@ Args:
     process_definition_id (str): Id of a process definition, from the model. Only ids of
         process definitions that are deployed are useful. Example: new-account-onboarding-
         workflow.
-    body (GetProcessDefinitionInstanceVersionStatisticsData):
+    body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

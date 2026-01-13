@@ -9,12 +9,13 @@ from ...models.search_users_response_400 import SearchUsersResponse400
 from ...models.search_users_response_401 import SearchUsersResponse401
 from ...models.search_users_response_403 import SearchUsersResponse403
 from ...models.search_users_response_500 import SearchUsersResponse500
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: SearchUsersData) -> dict[str, Any]:
+def _get_kwargs(*, body: SearchUsersData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/users/search'}
-    _kwargs['json'] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -43,13 +44,13 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchUsersData) -> Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchUsersData | Unset=UNSET) -> Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]:
     """Search users
 
      Search for users based on given criteria.
 
     Args:
-        body (SearchUsersData):
+        body (SearchUsersData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -62,13 +63,13 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchUsersData
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: SearchUsersData, **kwargs) -> SearchUsersResponse200:
+def sync(*, client: AuthenticatedClient | Client, body: SearchUsersData | Unset=UNSET, **kwargs) -> SearchUsersResponse200:
     """Search users
 
  Search for users based on given criteria.
 
 Args:
-    body (SearchUsersData):
+    body (SearchUsersData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -81,13 +82,13 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchUsersData) -> Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchUsersData | Unset=UNSET) -> Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]:
     """Search users
 
      Search for users based on given criteria.
 
     Args:
-        body (SearchUsersData):
+        body (SearchUsersData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -100,13 +101,13 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Search
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: SearchUsersData, **kwargs) -> SearchUsersResponse200:
+async def asyncio(*, client: AuthenticatedClient | Client, body: SearchUsersData | Unset=UNSET, **kwargs) -> SearchUsersResponse200:
     """Search users
 
  Search for users based on given criteria.
 
 Args:
-    body (SearchUsersData):
+    body (SearchUsersData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

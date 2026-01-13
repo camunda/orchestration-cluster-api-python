@@ -11,13 +11,14 @@ from ...models.search_variables_response_403 import SearchVariablesResponse403
 from ...models.search_variables_response_500 import SearchVariablesResponse500
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: SearchVariablesData, truncate_values: bool | Unset=UNSET) -> dict[str, Any]:
+def _get_kwargs(*, body: SearchVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     params: dict[str, Any] = {}
     params['truncateValues'] = truncate_values
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/variables/search', 'params': params}
-    _kwargs['json'] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -46,7 +47,7 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchVariablesResponse200 | SearchVariablesResponse400 | SearchVariablesResponse401 | SearchVariablesResponse403 | SearchVariablesResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchVariablesData, truncate_values: bool | Unset=UNSET) -> Response[SearchVariablesResponse200 | SearchVariablesResponse400 | SearchVariablesResponse401 | SearchVariablesResponse403 | SearchVariablesResponse500]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> Response[SearchVariablesResponse200 | SearchVariablesResponse400 | SearchVariablesResponse401 | SearchVariablesResponse403 | SearchVariablesResponse500]:
     """Search variables
 
      Search for process and local variables based on given criteria. By default, long variable values in
@@ -54,7 +55,7 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchVariables
 
     Args:
         truncate_values (bool | Unset):
-        body (SearchVariablesData): Variable search query request.
+        body (SearchVariablesData | Unset): Variable search query request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -67,7 +68,7 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchVariables
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: SearchVariablesData, truncate_values: bool | Unset=UNSET, **kwargs) -> SearchVariablesResponse200:
+def sync(*, client: AuthenticatedClient | Client, body: SearchVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET, **kwargs) -> SearchVariablesResponse200:
     """Search variables
 
  Search for process and local variables based on given criteria. By default, long variable values in
@@ -75,7 +76,7 @@ the response are truncated.
 
 Args:
     truncate_values (bool | Unset):
-    body (SearchVariablesData): Variable search query request.
+    body (SearchVariablesData | Unset): Variable search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -88,7 +89,7 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchVariablesData, truncate_values: bool | Unset=UNSET) -> Response[SearchVariablesResponse200 | SearchVariablesResponse400 | SearchVariablesResponse401 | SearchVariablesResponse403 | SearchVariablesResponse500]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> Response[SearchVariablesResponse200 | SearchVariablesResponse400 | SearchVariablesResponse401 | SearchVariablesResponse403 | SearchVariablesResponse500]:
     """Search variables
 
      Search for process and local variables based on given criteria. By default, long variable values in
@@ -96,7 +97,7 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Search
 
     Args:
         truncate_values (bool | Unset):
-        body (SearchVariablesData): Variable search query request.
+        body (SearchVariablesData | Unset): Variable search query request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -109,7 +110,7 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Search
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: SearchVariablesData, truncate_values: bool | Unset=UNSET, **kwargs) -> SearchVariablesResponse200:
+async def asyncio(*, client: AuthenticatedClient | Client, body: SearchVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET, **kwargs) -> SearchVariablesResponse200:
     """Search variables
 
  Search for process and local variables based on given criteria. By default, long variable values in
@@ -117,7 +118,7 @@ the response are truncated.
 
 Args:
     truncate_values (bool | Unset):
-    body (SearchVariablesData): Variable search query request.
+    body (SearchVariablesData | Unset): Variable search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

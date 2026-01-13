@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -14,7 +15,7 @@ from ...types import Response
 
 def _get_kwargs(ad_hoc_sub_process_instance_key: str, *, body: ActivateAdHocSubProcessActivitiesData) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/element-instances/ad-hoc-activities/{ad_hoc_sub_process_instance_key}/activation'.format(ad_hoc_sub_process_instance_key=ad_hoc_sub_process_instance_key)}
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/element-instances/ad-hoc-activities/{ad_hoc_sub_process_instance_key}/activation'.format(ad_hoc_sub_process_instance_key=quote(str(ad_hoc_sub_process_instance_key), safe=''))}
     _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers

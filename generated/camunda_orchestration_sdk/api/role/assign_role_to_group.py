@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -12,7 +13,7 @@ from ...models.assign_role_to_group_response_503 import AssignRoleToGroupRespons
 from ...types import Response
 
 def _get_kwargs(role_id: str, group_id: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/roles/{role_id}/groups/{group_id}'.format(role_id=role_id, group_id=group_id)}
+    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/roles/{role_id}/groups/{group_id}'.format(role_id=quote(str(role_id), safe=''), group_id=quote(str(group_id), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | AssignRoleToGroupResponse400 | AssignRoleToGroupResponse403 | AssignRoleToGroupResponse404 | AssignRoleToGroupResponse409 | AssignRoleToGroupResponse500 | AssignRoleToGroupResponse503 | None:

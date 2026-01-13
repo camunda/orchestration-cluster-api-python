@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -12,7 +13,7 @@ from ...models.get_tenant_cluster_variable_response_500 import GetTenantClusterV
 from ...types import Response
 
 def _get_kwargs(tenant_id: str, name: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/cluster-variables/tenants/{tenant_id}/{name}'.format(tenant_id=tenant_id, name=name)}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/cluster-variables/tenants/{tenant_id}/{name}'.format(tenant_id=quote(str(tenant_id), safe=''), name=quote(str(name), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetTenantClusterVariableResponse200 | GetTenantClusterVariableResponse400 | GetTenantClusterVariableResponse401 | GetTenantClusterVariableResponse403 | GetTenantClusterVariableResponse404 | GetTenantClusterVariableResponse500 | None:

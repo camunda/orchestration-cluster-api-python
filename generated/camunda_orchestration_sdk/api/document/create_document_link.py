@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -8,14 +9,15 @@ from ...models.create_document_link_response_201 import CreateDocumentLinkRespon
 from ...models.create_document_link_response_400 import CreateDocumentLinkResponse400
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(document_id: str, *, body: CreateDocumentLinkData, store_id: str | Unset=UNSET, content_hash: str | Unset=UNSET) -> dict[str, Any]:
+def _get_kwargs(document_id: str, *, body: CreateDocumentLinkData | Unset=UNSET, store_id: str | Unset=UNSET, content_hash: str | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     params: dict[str, Any] = {}
     params['storeId'] = store_id
     params['contentHash'] = content_hash
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/documents/{document_id}/links'.format(document_id=document_id), 'params': params}
-    _kwargs['json'] = body.to_dict()
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/documents/{document_id}/links'.format(document_id=quote(str(document_id), safe='')), 'params': params}
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -35,7 +37,7 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[CreateDocumentLinkResponse201 | CreateDocumentLinkResponse400]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(document_id: str, *, client: AuthenticatedClient | Client, body: CreateDocumentLinkData, store_id: str | Unset=UNSET, content_hash: str | Unset=UNSET) -> Response[CreateDocumentLinkResponse201 | CreateDocumentLinkResponse400]:
+def sync_detailed(document_id: str, *, client: AuthenticatedClient | Client, body: CreateDocumentLinkData | Unset=UNSET, store_id: str | Unset=UNSET, content_hash: str | Unset=UNSET) -> Response[CreateDocumentLinkResponse201 | CreateDocumentLinkResponse400]:
     """Create document link
 
      Create a link to a document in the Camunda 8 cluster.
@@ -46,7 +48,7 @@ def sync_detailed(document_id: str, *, client: AuthenticatedClient | Client, bod
         document_id (str): Document Id that uniquely identifies a document.
         store_id (str | Unset):
         content_hash (str | Unset):
-        body (CreateDocumentLinkData):
+        body (CreateDocumentLinkData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -59,7 +61,7 @@ def sync_detailed(document_id: str, *, client: AuthenticatedClient | Client, bod
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(document_id: str, *, client: AuthenticatedClient | Client, body: CreateDocumentLinkData, store_id: str | Unset=UNSET, content_hash: str | Unset=UNSET, **kwargs) -> CreateDocumentLinkResponse201:
+def sync(document_id: str, *, client: AuthenticatedClient | Client, body: CreateDocumentLinkData | Unset=UNSET, store_id: str | Unset=UNSET, content_hash: str | Unset=UNSET, **kwargs) -> CreateDocumentLinkResponse201:
     """Create document link
 
  Create a link to a document in the Camunda 8 cluster.
@@ -70,7 +72,7 @@ Args:
     document_id (str): Document Id that uniquely identifies a document.
     store_id (str | Unset):
     content_hash (str | Unset):
-    body (CreateDocumentLinkData):
+    body (CreateDocumentLinkData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -83,7 +85,7 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(document_id: str, *, client: AuthenticatedClient | Client, body: CreateDocumentLinkData, store_id: str | Unset=UNSET, content_hash: str | Unset=UNSET) -> Response[CreateDocumentLinkResponse201 | CreateDocumentLinkResponse400]:
+async def asyncio_detailed(document_id: str, *, client: AuthenticatedClient | Client, body: CreateDocumentLinkData | Unset=UNSET, store_id: str | Unset=UNSET, content_hash: str | Unset=UNSET) -> Response[CreateDocumentLinkResponse201 | CreateDocumentLinkResponse400]:
     """Create document link
 
      Create a link to a document in the Camunda 8 cluster.
@@ -94,7 +96,7 @@ async def asyncio_detailed(document_id: str, *, client: AuthenticatedClient | Cl
         document_id (str): Document Id that uniquely identifies a document.
         store_id (str | Unset):
         content_hash (str | Unset):
-        body (CreateDocumentLinkData):
+        body (CreateDocumentLinkData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -107,7 +109,7 @@ async def asyncio_detailed(document_id: str, *, client: AuthenticatedClient | Cl
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(document_id: str, *, client: AuthenticatedClient | Client, body: CreateDocumentLinkData, store_id: str | Unset=UNSET, content_hash: str | Unset=UNSET, **kwargs) -> CreateDocumentLinkResponse201:
+async def asyncio(document_id: str, *, client: AuthenticatedClient | Client, body: CreateDocumentLinkData | Unset=UNSET, store_id: str | Unset=UNSET, content_hash: str | Unset=UNSET, **kwargs) -> CreateDocumentLinkResponse201:
     """Create document link
 
  Create a link to a document in the Camunda 8 cluster.
@@ -118,7 +120,7 @@ Args:
     document_id (str): Document Id that uniquely identifies a document.
     store_id (str | Unset):
     content_hash (str | Unset):
-    body (CreateDocumentLinkData):
+    body (CreateDocumentLinkData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

@@ -9,12 +9,13 @@ from ...models.search_correlated_message_subscriptions_response_400 import Searc
 from ...models.search_correlated_message_subscriptions_response_401 import SearchCorrelatedMessageSubscriptionsResponse401
 from ...models.search_correlated_message_subscriptions_response_403 import SearchCorrelatedMessageSubscriptionsResponse403
 from ...models.search_correlated_message_subscriptions_response_500 import SearchCorrelatedMessageSubscriptionsResponse500
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: SearchCorrelatedMessageSubscriptionsData) -> dict[str, Any]:
+def _get_kwargs(*, body: SearchCorrelatedMessageSubscriptionsData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/correlated-message-subscriptions/search'}
-    _kwargs['json'] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -43,13 +44,13 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchCorrelatedMessageSubscriptionsResponse200 | SearchCorrelatedMessageSubscriptionsResponse400 | SearchCorrelatedMessageSubscriptionsResponse401 | SearchCorrelatedMessageSubscriptionsResponse403 | SearchCorrelatedMessageSubscriptionsResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchCorrelatedMessageSubscriptionsData) -> Response[SearchCorrelatedMessageSubscriptionsResponse200 | SearchCorrelatedMessageSubscriptionsResponse400 | SearchCorrelatedMessageSubscriptionsResponse401 | SearchCorrelatedMessageSubscriptionsResponse403 | SearchCorrelatedMessageSubscriptionsResponse500]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchCorrelatedMessageSubscriptionsData | Unset=UNSET) -> Response[SearchCorrelatedMessageSubscriptionsResponse200 | SearchCorrelatedMessageSubscriptionsResponse400 | SearchCorrelatedMessageSubscriptionsResponse401 | SearchCorrelatedMessageSubscriptionsResponse403 | SearchCorrelatedMessageSubscriptionsResponse500]:
     """Search correlated message subscriptions
 
      Search correlated message subscriptions based on given criteria.
 
     Args:
-        body (SearchCorrelatedMessageSubscriptionsData):
+        body (SearchCorrelatedMessageSubscriptionsData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -62,13 +63,13 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchCorrelate
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: SearchCorrelatedMessageSubscriptionsData, **kwargs) -> SearchCorrelatedMessageSubscriptionsResponse200:
+def sync(*, client: AuthenticatedClient | Client, body: SearchCorrelatedMessageSubscriptionsData | Unset=UNSET, **kwargs) -> SearchCorrelatedMessageSubscriptionsResponse200:
     """Search correlated message subscriptions
 
  Search correlated message subscriptions based on given criteria.
 
 Args:
-    body (SearchCorrelatedMessageSubscriptionsData):
+    body (SearchCorrelatedMessageSubscriptionsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -81,13 +82,13 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchCorrelatedMessageSubscriptionsData) -> Response[SearchCorrelatedMessageSubscriptionsResponse200 | SearchCorrelatedMessageSubscriptionsResponse400 | SearchCorrelatedMessageSubscriptionsResponse401 | SearchCorrelatedMessageSubscriptionsResponse403 | SearchCorrelatedMessageSubscriptionsResponse500]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchCorrelatedMessageSubscriptionsData | Unset=UNSET) -> Response[SearchCorrelatedMessageSubscriptionsResponse200 | SearchCorrelatedMessageSubscriptionsResponse400 | SearchCorrelatedMessageSubscriptionsResponse401 | SearchCorrelatedMessageSubscriptionsResponse403 | SearchCorrelatedMessageSubscriptionsResponse500]:
     """Search correlated message subscriptions
 
      Search correlated message subscriptions based on given criteria.
 
     Args:
-        body (SearchCorrelatedMessageSubscriptionsData):
+        body (SearchCorrelatedMessageSubscriptionsData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -100,13 +101,13 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Search
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: SearchCorrelatedMessageSubscriptionsData, **kwargs) -> SearchCorrelatedMessageSubscriptionsResponse200:
+async def asyncio(*, client: AuthenticatedClient | Client, body: SearchCorrelatedMessageSubscriptionsData | Unset=UNSET, **kwargs) -> SearchCorrelatedMessageSubscriptionsResponse200:
     """Search correlated message subscriptions
 
  Search correlated message subscriptions based on given criteria.
 
 Args:
-    body (SearchCorrelatedMessageSubscriptionsData):
+    body (SearchCorrelatedMessageSubscriptionsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

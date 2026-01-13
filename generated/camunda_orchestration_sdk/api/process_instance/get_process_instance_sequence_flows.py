@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -11,7 +12,7 @@ from ...models.get_process_instance_sequence_flows_response_500 import GetProces
 from ...types import Response
 
 def _get_kwargs(process_instance_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/process-instances/{process_instance_key}/sequence-flows'.format(process_instance_key=process_instance_key)}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/process-instances/{process_instance_key}/sequence-flows'.format(process_instance_key=quote(str(process_instance_key), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetProcessInstanceSequenceFlowsResponse200 | GetProcessInstanceSequenceFlowsResponse400 | GetProcessInstanceSequenceFlowsResponse401 | GetProcessInstanceSequenceFlowsResponse403 | GetProcessInstanceSequenceFlowsResponse500 | None:

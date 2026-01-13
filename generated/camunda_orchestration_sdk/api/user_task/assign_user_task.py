@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -13,7 +14,7 @@ from ...types import Response
 
 def _get_kwargs(user_task_key: str, *, body: AssignUserTaskData) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/user-tasks/{user_task_key}/assignment'.format(user_task_key=user_task_key)}
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/user-tasks/{user_task_key}/assignment'.format(user_task_key=quote(str(user_task_key), safe=''))}
     _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers

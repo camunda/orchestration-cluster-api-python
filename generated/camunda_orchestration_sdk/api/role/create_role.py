@@ -10,12 +10,13 @@ from ...models.create_role_response_401 import CreateRoleResponse401
 from ...models.create_role_response_403 import CreateRoleResponse403
 from ...models.create_role_response_500 import CreateRoleResponse500
 from ...models.create_role_response_503 import CreateRoleResponse503
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: CreateRoleData) -> dict[str, Any]:
+def _get_kwargs(*, body: CreateRoleData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/roles'}
-    _kwargs['json'] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -47,13 +48,13 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[CreateRoleResponse201 | CreateRoleResponse400 | CreateRoleResponse401 | CreateRoleResponse403 | CreateRoleResponse500 | CreateRoleResponse503]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: CreateRoleData) -> Response[CreateRoleResponse201 | CreateRoleResponse400 | CreateRoleResponse401 | CreateRoleResponse403 | CreateRoleResponse500 | CreateRoleResponse503]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: CreateRoleData | Unset=UNSET) -> Response[CreateRoleResponse201 | CreateRoleResponse400 | CreateRoleResponse401 | CreateRoleResponse403 | CreateRoleResponse500 | CreateRoleResponse503]:
     """Create role
 
      Create a new role.
 
     Args:
-        body (CreateRoleData):
+        body (CreateRoleData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -66,13 +67,13 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: CreateRoleData)
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: CreateRoleData, **kwargs) -> CreateRoleResponse201:
+def sync(*, client: AuthenticatedClient | Client, body: CreateRoleData | Unset=UNSET, **kwargs) -> CreateRoleResponse201:
     """Create role
 
  Create a new role.
 
 Args:
-    body (CreateRoleData):
+    body (CreateRoleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -85,13 +86,13 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: CreateRoleData) -> Response[CreateRoleResponse201 | CreateRoleResponse400 | CreateRoleResponse401 | CreateRoleResponse403 | CreateRoleResponse500 | CreateRoleResponse503]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: CreateRoleData | Unset=UNSET) -> Response[CreateRoleResponse201 | CreateRoleResponse400 | CreateRoleResponse401 | CreateRoleResponse403 | CreateRoleResponse500 | CreateRoleResponse503]:
     """Create role
 
      Create a new role.
 
     Args:
-        body (CreateRoleData):
+        body (CreateRoleData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -104,13 +105,13 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Create
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: CreateRoleData, **kwargs) -> CreateRoleResponse201:
+async def asyncio(*, client: AuthenticatedClient | Client, body: CreateRoleData | Unset=UNSET, **kwargs) -> CreateRoleResponse201:
     """Create role
 
  Create a new role.
 
 Args:
-    body (CreateRoleData):
+    body (CreateRoleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

@@ -23,10 +23,12 @@ if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
     from ..models.auditlogkey_advancedfilter import AuditlogkeyAdvancedfilter
     from ..models.category_advancedfilter import CategoryAdvancedfilter
+    from ..models.deploymentkey_advancedfilter import DeploymentkeyAdvancedfilter
     from ..models.elementinstancekey_advancedfilter import (
         ElementinstancekeyAdvancedfilter,
     )
     from ..models.entitytype_advancedfilter import EntitytypeAdvancedfilter
+    from ..models.formkey_advancedfilter import FormkeyAdvancedfilter
     from ..models.operationtype_advancedfilter import OperationtypeAdvancedfilter
     from ..models.processdefinitionkey_advancedfilter import (
         ProcessdefinitionkeyAdvancedfilter,
@@ -34,6 +36,7 @@ if TYPE_CHECKING:
     from ..models.processinstancekey_advancedfilter import (
         ProcessinstancekeyAdvancedfilter,
     )
+    from ..models.resourcekey_advancedfilter import ResourcekeyAdvancedfilter
     from ..models.timestamp_advancedfilter import TimestampAdvancedfilter
 
 
@@ -57,6 +60,9 @@ class SearchAuditLogsDataFilter:
         entity_type (EntitytypeAdvancedfilter | EntitytypeExactmatch | Unset):
         tenant_id (ActoridAdvancedfilter | str | Unset):
         category (CategoryAdvancedfilter | CategoryExactmatch | Unset):
+        deployment_key (DeploymentkeyAdvancedfilter | str | Unset):
+        form_key (FormkeyAdvancedfilter | str | Unset):
+        resource_key (ResourcekeyAdvancedfilter | str | Unset):
     """
 
     audit_log_key: AuditlogkeyAdvancedfilter | str | Unset = UNSET
@@ -73,20 +79,26 @@ class SearchAuditLogsDataFilter:
     entity_type: EntitytypeAdvancedfilter | EntitytypeExactmatch | Unset = UNSET
     tenant_id: ActoridAdvancedfilter | str | Unset = UNSET
     category: CategoryAdvancedfilter | CategoryExactmatch | Unset = UNSET
+    deployment_key: DeploymentkeyAdvancedfilter | str | Unset = UNSET
+    form_key: FormkeyAdvancedfilter | str | Unset = UNSET
+    resource_key: ResourcekeyAdvancedfilter | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
         from ..models.auditlogkey_advancedfilter import AuditlogkeyAdvancedfilter
+        from ..models.deploymentkey_advancedfilter import DeploymentkeyAdvancedfilter
         from ..models.elementinstancekey_advancedfilter import (
             ElementinstancekeyAdvancedfilter,
         )
+        from ..models.formkey_advancedfilter import FormkeyAdvancedfilter
         from ..models.processdefinitionkey_advancedfilter import (
             ProcessdefinitionkeyAdvancedfilter,
         )
         from ..models.processinstancekey_advancedfilter import (
             ProcessinstancekeyAdvancedfilter,
         )
+        from ..models.resourcekey_advancedfilter import ResourcekeyAdvancedfilter
 
         audit_log_key: dict[str, Any] | str | Unset
         if isinstance(self.audit_log_key, Unset):
@@ -178,6 +190,30 @@ class SearchAuditLogsDataFilter:
         else:
             category = self.category.to_dict()
 
+        deployment_key: dict[str, Any] | str | Unset
+        if isinstance(self.deployment_key, Unset):
+            deployment_key = UNSET
+        elif isinstance(self.deployment_key, DeploymentkeyAdvancedfilter):
+            deployment_key = self.deployment_key.to_dict()
+        else:
+            deployment_key = self.deployment_key
+
+        form_key: dict[str, Any] | str | Unset
+        if isinstance(self.form_key, Unset):
+            form_key = UNSET
+        elif isinstance(self.form_key, FormkeyAdvancedfilter):
+            form_key = self.form_key.to_dict()
+        else:
+            form_key = self.form_key
+
+        resource_key: dict[str, Any] | str | Unset
+        if isinstance(self.resource_key, Unset):
+            resource_key = UNSET
+        elif isinstance(self.resource_key, ResourcekeyAdvancedfilter):
+            resource_key = self.resource_key.to_dict()
+        else:
+            resource_key = self.resource_key
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -205,6 +241,12 @@ class SearchAuditLogsDataFilter:
             field_dict["tenantId"] = tenant_id
         if category is not UNSET:
             field_dict["category"] = category
+        if deployment_key is not UNSET:
+            field_dict["deploymentKey"] = deployment_key
+        if form_key is not UNSET:
+            field_dict["formKey"] = form_key
+        if resource_key is not UNSET:
+            field_dict["resourceKey"] = resource_key
 
         return field_dict
 
@@ -213,10 +255,12 @@ class SearchAuditLogsDataFilter:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
         from ..models.auditlogkey_advancedfilter import AuditlogkeyAdvancedfilter
         from ..models.category_advancedfilter import CategoryAdvancedfilter
+        from ..models.deploymentkey_advancedfilter import DeploymentkeyAdvancedfilter
         from ..models.elementinstancekey_advancedfilter import (
             ElementinstancekeyAdvancedfilter,
         )
         from ..models.entitytype_advancedfilter import EntitytypeAdvancedfilter
+        from ..models.formkey_advancedfilter import FormkeyAdvancedfilter
         from ..models.operationtype_advancedfilter import OperationtypeAdvancedfilter
         from ..models.processdefinitionkey_advancedfilter import (
             ProcessdefinitionkeyAdvancedfilter,
@@ -224,6 +268,7 @@ class SearchAuditLogsDataFilter:
         from ..models.processinstancekey_advancedfilter import (
             ProcessinstancekeyAdvancedfilter,
         )
+        from ..models.resourcekey_advancedfilter import ResourcekeyAdvancedfilter
         from ..models.timestamp_advancedfilter import TimestampAdvancedfilter
 
         d = dict(src_dict)
@@ -436,6 +481,55 @@ class SearchAuditLogsDataFilter:
 
         category = _parse_category(d.pop("category", UNSET))
 
+        def _parse_deployment_key(
+            data: object,
+        ) -> DeploymentkeyAdvancedfilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                deployment_key_type_1 = DeploymentkeyAdvancedfilter.from_dict(data)
+
+                return deployment_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(DeploymentkeyAdvancedfilter | str | Unset, data)
+
+        deployment_key = _parse_deployment_key(d.pop("deploymentKey", UNSET))
+
+        def _parse_form_key(data: object) -> FormkeyAdvancedfilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                form_key_type_1 = FormkeyAdvancedfilter.from_dict(data)
+
+                return form_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(FormkeyAdvancedfilter | str | Unset, data)
+
+        form_key = _parse_form_key(d.pop("formKey", UNSET))
+
+        def _parse_resource_key(
+            data: object,
+        ) -> ResourcekeyAdvancedfilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                resource_key_type_1 = ResourcekeyAdvancedfilter.from_dict(data)
+
+                return resource_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(ResourcekeyAdvancedfilter | str | Unset, data)
+
+        resource_key = _parse_resource_key(d.pop("resourceKey", UNSET))
+
         search_audit_logs_data_filter = cls(
             audit_log_key=audit_log_key,
             process_definition_key=process_definition_key,
@@ -449,6 +543,9 @@ class SearchAuditLogsDataFilter:
             entity_type=entity_type,
             tenant_id=tenant_id,
             category=category,
+            deployment_key=deployment_key,
+            form_key=form_key,
+            resource_key=resource_key,
         )
 
         search_audit_logs_data_filter.additional_properties = d

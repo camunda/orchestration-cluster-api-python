@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -11,7 +12,7 @@ from ...models.unassign_role_from_user_response_503 import UnassignRoleFromUserR
 from ...types import Response
 
 def _get_kwargs(role_id: str, username: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/roles/{role_id}/users/{username}'.format(role_id=role_id, username=username)}
+    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/roles/{role_id}/users/{username}'.format(role_id=quote(str(role_id), safe=''), username=quote(str(username), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | UnassignRoleFromUserResponse400 | UnassignRoleFromUserResponse403 | UnassignRoleFromUserResponse404 | UnassignRoleFromUserResponse500 | UnassignRoleFromUserResponse503 | None:

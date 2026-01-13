@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -10,12 +11,13 @@ from ...models.search_mapping_rules_for_group_response_401 import SearchMappingR
 from ...models.search_mapping_rules_for_group_response_403 import SearchMappingRulesForGroupResponse403
 from ...models.search_mapping_rules_for_group_response_404 import SearchMappingRulesForGroupResponse404
 from ...models.search_mapping_rules_for_group_response_500 import SearchMappingRulesForGroupResponse500
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(group_id: str, *, body: SearchMappingRulesForGroupData) -> dict[str, Any]:
+def _get_kwargs(group_id: str, *, body: SearchMappingRulesForGroupData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/groups/{group_id}/mapping-rules/search'.format(group_id=group_id)}
-    _kwargs['json'] = body.to_dict()
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/groups/{group_id}/mapping-rules/search'.format(group_id=quote(str(group_id), safe=''))}
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -47,14 +49,14 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchMappingRulesForGroupResponse200 | SearchMappingRulesForGroupResponse400 | SearchMappingRulesForGroupResponse401 | SearchMappingRulesForGroupResponse403 | SearchMappingRulesForGroupResponse404 | SearchMappingRulesForGroupResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(group_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForGroupData) -> Response[SearchMappingRulesForGroupResponse200 | SearchMappingRulesForGroupResponse400 | SearchMappingRulesForGroupResponse401 | SearchMappingRulesForGroupResponse403 | SearchMappingRulesForGroupResponse404 | SearchMappingRulesForGroupResponse500]:
+def sync_detailed(group_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForGroupData | Unset=UNSET) -> Response[SearchMappingRulesForGroupResponse200 | SearchMappingRulesForGroupResponse400 | SearchMappingRulesForGroupResponse401 | SearchMappingRulesForGroupResponse403 | SearchMappingRulesForGroupResponse404 | SearchMappingRulesForGroupResponse500]:
     """Search group mapping rules
 
      Search mapping rules assigned to a group.
 
     Args:
         group_id (str):
-        body (SearchMappingRulesForGroupData):
+        body (SearchMappingRulesForGroupData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -67,14 +69,14 @@ def sync_detailed(group_id: str, *, client: AuthenticatedClient | Client, body: 
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(group_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForGroupData, **kwargs) -> SearchMappingRulesForGroupResponse200:
+def sync(group_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForGroupData | Unset=UNSET, **kwargs) -> SearchMappingRulesForGroupResponse200:
     """Search group mapping rules
 
  Search mapping rules assigned to a group.
 
 Args:
     group_id (str):
-    body (SearchMappingRulesForGroupData):
+    body (SearchMappingRulesForGroupData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -87,14 +89,14 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(group_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForGroupData) -> Response[SearchMappingRulesForGroupResponse200 | SearchMappingRulesForGroupResponse400 | SearchMappingRulesForGroupResponse401 | SearchMappingRulesForGroupResponse403 | SearchMappingRulesForGroupResponse404 | SearchMappingRulesForGroupResponse500]:
+async def asyncio_detailed(group_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForGroupData | Unset=UNSET) -> Response[SearchMappingRulesForGroupResponse200 | SearchMappingRulesForGroupResponse400 | SearchMappingRulesForGroupResponse401 | SearchMappingRulesForGroupResponse403 | SearchMappingRulesForGroupResponse404 | SearchMappingRulesForGroupResponse500]:
     """Search group mapping rules
 
      Search mapping rules assigned to a group.
 
     Args:
         group_id (str):
-        body (SearchMappingRulesForGroupData):
+        body (SearchMappingRulesForGroupData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -107,14 +109,14 @@ async def asyncio_detailed(group_id: str, *, client: AuthenticatedClient | Clien
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(group_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForGroupData, **kwargs) -> SearchMappingRulesForGroupResponse200:
+async def asyncio(group_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForGroupData | Unset=UNSET, **kwargs) -> SearchMappingRulesForGroupResponse200:
     """Search group mapping rules
 
  Search mapping rules assigned to a group.
 
 Args:
     group_id (str):
-    body (SearchMappingRulesForGroupData):
+    body (SearchMappingRulesForGroupData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

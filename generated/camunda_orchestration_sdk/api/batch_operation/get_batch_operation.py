@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -10,7 +11,7 @@ from ...models.get_batch_operation_response_500 import GetBatchOperationResponse
 from ...types import Response
 
 def _get_kwargs(batch_operation_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/batch-operations/{batch_operation_key}'.format(batch_operation_key=batch_operation_key)}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/batch-operations/{batch_operation_key}'.format(batch_operation_key=quote(str(batch_operation_key), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetBatchOperationResponse200 | GetBatchOperationResponse400 | GetBatchOperationResponse404 | GetBatchOperationResponse500 | None:

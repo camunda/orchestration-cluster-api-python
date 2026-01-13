@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -10,12 +11,13 @@ from ...models.update_mapping_rule_response_403 import UpdateMappingRuleResponse
 from ...models.update_mapping_rule_response_404 import UpdateMappingRuleResponse404
 from ...models.update_mapping_rule_response_500 import UpdateMappingRuleResponse500
 from ...models.update_mapping_rule_response_503 import UpdateMappingRuleResponse503
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(mapping_rule_id: str, *, body: UpdateMappingRuleData) -> dict[str, Any]:
+def _get_kwargs(mapping_rule_id: str, *, body: UpdateMappingRuleData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/mapping-rules/{mapping_rule_id}'.format(mapping_rule_id=mapping_rule_id)}
-    _kwargs['json'] = body.to_dict()
+    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/mapping-rules/{mapping_rule_id}'.format(mapping_rule_id=quote(str(mapping_rule_id), safe=''))}
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -47,14 +49,14 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(mapping_rule_id: str, *, client: AuthenticatedClient | Client, body: UpdateMappingRuleData) -> Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]:
+def sync_detailed(mapping_rule_id: str, *, client: AuthenticatedClient | Client, body: UpdateMappingRuleData | Unset=UNSET) -> Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]:
     """Update mapping rule
 
      Update a mapping rule.
 
     Args:
         mapping_rule_id (str):
-        body (UpdateMappingRuleData):
+        body (UpdateMappingRuleData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -67,14 +69,14 @@ def sync_detailed(mapping_rule_id: str, *, client: AuthenticatedClient | Client,
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(mapping_rule_id: str, *, client: AuthenticatedClient | Client, body: UpdateMappingRuleData, **kwargs) -> UpdateMappingRuleResponse200:
+def sync(mapping_rule_id: str, *, client: AuthenticatedClient | Client, body: UpdateMappingRuleData | Unset=UNSET, **kwargs) -> UpdateMappingRuleResponse200:
     """Update mapping rule
 
  Update a mapping rule.
 
 Args:
     mapping_rule_id (str):
-    body (UpdateMappingRuleData):
+    body (UpdateMappingRuleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -87,14 +89,14 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(mapping_rule_id: str, *, client: AuthenticatedClient | Client, body: UpdateMappingRuleData) -> Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]:
+async def asyncio_detailed(mapping_rule_id: str, *, client: AuthenticatedClient | Client, body: UpdateMappingRuleData | Unset=UNSET) -> Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]:
     """Update mapping rule
 
      Update a mapping rule.
 
     Args:
         mapping_rule_id (str):
-        body (UpdateMappingRuleData):
+        body (UpdateMappingRuleData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -107,14 +109,14 @@ async def asyncio_detailed(mapping_rule_id: str, *, client: AuthenticatedClient 
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(mapping_rule_id: str, *, client: AuthenticatedClient | Client, body: UpdateMappingRuleData, **kwargs) -> UpdateMappingRuleResponse200:
+async def asyncio(mapping_rule_id: str, *, client: AuthenticatedClient | Client, body: UpdateMappingRuleData | Unset=UNSET, **kwargs) -> UpdateMappingRuleResponse200:
     """Update mapping rule
 
  Update a mapping rule.
 
 Args:
     mapping_rule_id (str):
-    body (UpdateMappingRuleData):
+    body (UpdateMappingRuleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

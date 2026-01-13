@@ -15,7 +15,6 @@ from ...types import Response
 def _get_kwargs(*, body: Processcreationbyid | Processcreationbykey) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-instances'}
-    _kwargs['json']: dict[str, Any]
     if isinstance(body, Processcreationbyid):
         _kwargs['json'] = body.to_dict()
     else:

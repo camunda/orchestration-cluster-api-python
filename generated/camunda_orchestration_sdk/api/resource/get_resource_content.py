@@ -1,6 +1,7 @@
 from http import HTTPStatus
 from io import BytesIO
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -9,7 +10,7 @@ from ...models.get_resource_content_response_500 import GetResourceContentRespon
 from ...types import File, Response
 
 def _get_kwargs(resource_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/resources/{resource_key}/content'.format(resource_key=resource_key)}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/resources/{resource_key}/content'.format(resource_key=quote(str(resource_key), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> File | GetResourceContentResponse404 | GetResourceContentResponse500 | None:

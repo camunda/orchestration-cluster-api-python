@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -13,8 +14,7 @@ from ...types import Response
 
 def _get_kwargs(authorization_key: str, *, body: Object | Object1) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/authorizations/{authorization_key}'.format(authorization_key=authorization_key)}
-    _kwargs['json']: dict[str, Any]
+    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/authorizations/{authorization_key}'.format(authorization_key=quote(str(authorization_key), safe=''))}
     if isinstance(body, Object):
         _kwargs['json'] = body.to_dict()
     else:

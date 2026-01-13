@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -14,7 +15,7 @@ from ...types import Response
 
 def _get_kwargs(element_instance_key: str, *, body: SearchElementInstanceIncidentsData) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/element-instances/{element_instance_key}/incidents/search'.format(element_instance_key=element_instance_key)}
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/element-instances/{element_instance_key}/incidents/search'.format(element_instance_key=quote(str(element_instance_key), safe=''))}
     _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers

@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -11,7 +12,7 @@ from ...types import Response
 
 def _get_kwargs(element_instance_key: str, *, body: CreateElementInstanceVariablesData) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/element-instances/{element_instance_key}/variables'.format(element_instance_key=element_instance_key)}
+    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/element-instances/{element_instance_key}/variables'.format(element_instance_key=quote(str(element_instance_key), safe=''))}
     _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers

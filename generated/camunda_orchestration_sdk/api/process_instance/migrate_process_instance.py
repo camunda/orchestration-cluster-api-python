@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -13,7 +14,7 @@ from ...types import Response
 
 def _get_kwargs(process_instance_key: str, *, body: MigrateProcessInstanceData) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-instances/{process_instance_key}/migration'.format(process_instance_key=process_instance_key)}
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-instances/{process_instance_key}/migration'.format(process_instance_key=quote(str(process_instance_key), safe=''))}
     _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers

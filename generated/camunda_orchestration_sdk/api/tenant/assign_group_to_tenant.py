@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -11,7 +12,7 @@ from ...models.assign_group_to_tenant_response_503 import AssignGroupToTenantRes
 from ...types import Response
 
 def _get_kwargs(tenant_id: str, group_id: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/tenants/{tenant_id}/groups/{group_id}'.format(tenant_id=tenant_id, group_id=group_id)}
+    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/tenants/{tenant_id}/groups/{group_id}'.format(tenant_id=quote(str(tenant_id), safe=''), group_id=quote(str(group_id), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | AssignGroupToTenantResponse400 | AssignGroupToTenantResponse403 | AssignGroupToTenantResponse404 | AssignGroupToTenantResponse500 | AssignGroupToTenantResponse503 | None:

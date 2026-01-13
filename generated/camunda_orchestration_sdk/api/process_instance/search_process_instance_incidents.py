@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -10,12 +11,13 @@ from ...models.search_process_instance_incidents_response_401 import SearchProce
 from ...models.search_process_instance_incidents_response_403 import SearchProcessInstanceIncidentsResponse403
 from ...models.search_process_instance_incidents_response_404 import SearchProcessInstanceIncidentsResponse404
 from ...models.search_process_instance_incidents_response_500 import SearchProcessInstanceIncidentsResponse500
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(process_instance_key: str, *, body: SearchProcessInstanceIncidentsData) -> dict[str, Any]:
+def _get_kwargs(process_instance_key: str, *, body: SearchProcessInstanceIncidentsData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-instances/{process_instance_key}/incidents/search'.format(process_instance_key=process_instance_key)}
-    _kwargs['json'] = body.to_dict()
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-instances/{process_instance_key}/incidents/search'.format(process_instance_key=quote(str(process_instance_key), safe=''))}
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -47,7 +49,7 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchProcessInstanceIncidentsResponse200 | SearchProcessInstanceIncidentsResponse400 | SearchProcessInstanceIncidentsResponse401 | SearchProcessInstanceIncidentsResponse403 | SearchProcessInstanceIncidentsResponse404 | SearchProcessInstanceIncidentsResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient | Client, body: SearchProcessInstanceIncidentsData) -> Response[SearchProcessInstanceIncidentsResponse200 | SearchProcessInstanceIncidentsResponse400 | SearchProcessInstanceIncidentsResponse401 | SearchProcessInstanceIncidentsResponse403 | SearchProcessInstanceIncidentsResponse404 | SearchProcessInstanceIncidentsResponse500]:
+def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient | Client, body: SearchProcessInstanceIncidentsData | Unset=UNSET) -> Response[SearchProcessInstanceIncidentsResponse200 | SearchProcessInstanceIncidentsResponse400 | SearchProcessInstanceIncidentsResponse401 | SearchProcessInstanceIncidentsResponse403 | SearchProcessInstanceIncidentsResponse404 | SearchProcessInstanceIncidentsResponse500]:
     """Search related incidents
 
      Search for incidents caused by the process instance or any of its called process or decision
@@ -64,7 +66,7 @@ def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient | Cl
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (SearchProcessInstanceIncidentsData):
+        body (SearchProcessInstanceIncidentsData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -77,7 +79,7 @@ def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient | Cl
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(process_instance_key: str, *, client: AuthenticatedClient | Client, body: SearchProcessInstanceIncidentsData, **kwargs) -> SearchProcessInstanceIncidentsResponse200:
+def sync(process_instance_key: str, *, client: AuthenticatedClient | Client, body: SearchProcessInstanceIncidentsData | Unset=UNSET, **kwargs) -> SearchProcessInstanceIncidentsResponse200:
     """Search related incidents
 
  Search for incidents caused by the process instance or any of its called process or decision
@@ -94,7 +96,7 @@ the root.
 Args:
     process_instance_key (str): System-generated key for a process instance. Example:
         2251799813690746.
-    body (SearchProcessInstanceIncidentsData):
+    body (SearchProcessInstanceIncidentsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -107,7 +109,7 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedClient | Client, body: SearchProcessInstanceIncidentsData) -> Response[SearchProcessInstanceIncidentsResponse200 | SearchProcessInstanceIncidentsResponse400 | SearchProcessInstanceIncidentsResponse401 | SearchProcessInstanceIncidentsResponse403 | SearchProcessInstanceIncidentsResponse404 | SearchProcessInstanceIncidentsResponse500]:
+async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedClient | Client, body: SearchProcessInstanceIncidentsData | Unset=UNSET) -> Response[SearchProcessInstanceIncidentsResponse200 | SearchProcessInstanceIncidentsResponse400 | SearchProcessInstanceIncidentsResponse401 | SearchProcessInstanceIncidentsResponse403 | SearchProcessInstanceIncidentsResponse404 | SearchProcessInstanceIncidentsResponse500]:
     """Search related incidents
 
      Search for incidents caused by the process instance or any of its called process or decision
@@ -124,7 +126,7 @@ async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedCl
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (SearchProcessInstanceIncidentsData):
+        body (SearchProcessInstanceIncidentsData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -137,7 +139,7 @@ async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedCl
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(process_instance_key: str, *, client: AuthenticatedClient | Client, body: SearchProcessInstanceIncidentsData, **kwargs) -> SearchProcessInstanceIncidentsResponse200:
+async def asyncio(process_instance_key: str, *, client: AuthenticatedClient | Client, body: SearchProcessInstanceIncidentsData | Unset=UNSET, **kwargs) -> SearchProcessInstanceIncidentsResponse200:
     """Search related incidents
 
  Search for incidents caused by the process instance or any of its called process or decision
@@ -154,7 +156,7 @@ the root.
 Args:
     process_instance_key (str): System-generated key for a process instance. Example:
         2251799813690746.
-    body (SearchProcessInstanceIncidentsData):
+    body (SearchProcessInstanceIncidentsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

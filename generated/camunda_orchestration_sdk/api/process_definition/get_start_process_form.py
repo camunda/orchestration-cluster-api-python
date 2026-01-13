@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -12,7 +13,7 @@ from ...models.get_start_process_form_response_500 import GetStartProcessFormRes
 from ...types import Response
 
 def _get_kwargs(process_definition_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/process-definitions/{process_definition_key}/form'.format(process_definition_key=process_definition_key)}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/process-definitions/{process_definition_key}/form'.format(process_definition_key=quote(str(process_definition_key), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | GetStartProcessFormResponse200 | GetStartProcessFormResponse400 | GetStartProcessFormResponse401 | GetStartProcessFormResponse403 | GetStartProcessFormResponse404 | GetStartProcessFormResponse500 | None:

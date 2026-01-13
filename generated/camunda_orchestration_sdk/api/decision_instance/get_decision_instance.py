@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -12,7 +13,7 @@ from ...models.get_decision_instance_response_500 import GetDecisionInstanceResp
 from ...types import Response
 
 def _get_kwargs(decision_evaluation_instance_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/decision-instances/{decision_evaluation_instance_key}'.format(decision_evaluation_instance_key=decision_evaluation_instance_key)}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/decision-instances/{decision_evaluation_instance_key}'.format(decision_evaluation_instance_key=quote(str(decision_evaluation_instance_key), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetDecisionInstanceResponse200 | GetDecisionInstanceResponse400 | GetDecisionInstanceResponse401 | GetDecisionInstanceResponse403 | GetDecisionInstanceResponse404 | GetDecisionInstanceResponse500 | None:

@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -8,12 +9,13 @@ from ...models.resume_batch_operation_response_403 import ResumeBatchOperationRe
 from ...models.resume_batch_operation_response_404 import ResumeBatchOperationResponse404
 from ...models.resume_batch_operation_response_500 import ResumeBatchOperationResponse500
 from ...models.resume_batch_operation_response_503 import ResumeBatchOperationResponse503
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(batch_operation_key: str, *, body: Any) -> dict[str, Any]:
+def _get_kwargs(batch_operation_key: str, *, body: Any | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/batch-operations/{batch_operation_key}/resumption'.format(batch_operation_key=batch_operation_key)}
-    _kwargs['json'] = body
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/batch-operations/{batch_operation_key}/resumption'.format(batch_operation_key=quote(str(batch_operation_key), safe=''))}
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -45,7 +47,7 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | ResumeBatchOperationResponse400 | ResumeBatchOperationResponse403 | ResumeBatchOperationResponse404 | ResumeBatchOperationResponse500 | ResumeBatchOperationResponse503]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(batch_operation_key: str, *, client: AuthenticatedClient | Client, body: Any) -> Response[Any | ResumeBatchOperationResponse400 | ResumeBatchOperationResponse403 | ResumeBatchOperationResponse404 | ResumeBatchOperationResponse500 | ResumeBatchOperationResponse503]:
+def sync_detailed(batch_operation_key: str, *, client: AuthenticatedClient | Client, body: Any | Unset=UNSET) -> Response[Any | ResumeBatchOperationResponse400 | ResumeBatchOperationResponse403 | ResumeBatchOperationResponse404 | ResumeBatchOperationResponse500 | ResumeBatchOperationResponse503]:
     """Resume Batch operation
 
      Resumes a suspended batch operation.
@@ -55,7 +57,7 @@ def sync_detailed(batch_operation_key: str, *, client: AuthenticatedClient | Cli
     Args:
         batch_operation_key (str): System-generated key for an batch operation. Example:
             2251799813684321.
-        body (Any):
+        body (Any | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -68,7 +70,7 @@ def sync_detailed(batch_operation_key: str, *, client: AuthenticatedClient | Cli
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(batch_operation_key: str, *, client: AuthenticatedClient | Client, body: Any, **kwargs) -> Any:
+def sync(batch_operation_key: str, *, client: AuthenticatedClient | Client, body: Any | Unset=UNSET, **kwargs) -> Any:
     """Resume Batch operation
 
  Resumes a suspended batch operation.
@@ -78,7 +80,7 @@ This is done asynchronously, the progress can be tracked using the batch operati
 Args:
     batch_operation_key (str): System-generated key for an batch operation. Example:
         2251799813684321.
-    body (Any):
+    body (Any | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -91,7 +93,7 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(batch_operation_key: str, *, client: AuthenticatedClient | Client, body: Any) -> Response[Any | ResumeBatchOperationResponse400 | ResumeBatchOperationResponse403 | ResumeBatchOperationResponse404 | ResumeBatchOperationResponse500 | ResumeBatchOperationResponse503]:
+async def asyncio_detailed(batch_operation_key: str, *, client: AuthenticatedClient | Client, body: Any | Unset=UNSET) -> Response[Any | ResumeBatchOperationResponse400 | ResumeBatchOperationResponse403 | ResumeBatchOperationResponse404 | ResumeBatchOperationResponse500 | ResumeBatchOperationResponse503]:
     """Resume Batch operation
 
      Resumes a suspended batch operation.
@@ -101,7 +103,7 @@ async def asyncio_detailed(batch_operation_key: str, *, client: AuthenticatedCli
     Args:
         batch_operation_key (str): System-generated key for an batch operation. Example:
             2251799813684321.
-        body (Any):
+        body (Any | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -114,7 +116,7 @@ async def asyncio_detailed(batch_operation_key: str, *, client: AuthenticatedCli
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(batch_operation_key: str, *, client: AuthenticatedClient | Client, body: Any, **kwargs) -> Any:
+async def asyncio(batch_operation_key: str, *, client: AuthenticatedClient | Client, body: Any | Unset=UNSET, **kwargs) -> Any:
     """Resume Batch operation
 
  Resumes a suspended batch operation.
@@ -124,7 +126,7 @@ This is done asynchronously, the progress can be tracked using the batch operati
 Args:
     batch_operation_key (str): System-generated key for an batch operation. Example:
         2251799813684321.
-    body (Any):
+    body (Any | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

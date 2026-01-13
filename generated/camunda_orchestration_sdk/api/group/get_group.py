@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -11,7 +12,7 @@ from ...models.get_group_response_500 import GetGroupResponse500
 from ...types import Response
 
 def _get_kwargs(group_id: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/groups/{group_id}'.format(group_id=group_id)}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/groups/{group_id}'.format(group_id=quote(str(group_id), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetGroupResponse200 | GetGroupResponse401 | GetGroupResponse403 | GetGroupResponse404 | GetGroupResponse500 | None:

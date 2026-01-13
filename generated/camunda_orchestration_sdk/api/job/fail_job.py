@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -9,12 +10,13 @@ from ...models.fail_job_response_404 import FailJobResponse404
 from ...models.fail_job_response_409 import FailJobResponse409
 from ...models.fail_job_response_500 import FailJobResponse500
 from ...models.fail_job_response_503 import FailJobResponse503
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(job_key: str, *, body: FailJobData) -> dict[str, Any]:
+def _get_kwargs(job_key: str, *, body: FailJobData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/jobs/{job_key}/failure'.format(job_key=job_key)}
-    _kwargs['json'] = body.to_dict()
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/jobs/{job_key}/failure'.format(job_key=quote(str(job_key), safe=''))}
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -46,14 +48,14 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | FailJobResponse400 | FailJobResponse404 | FailJobResponse409 | FailJobResponse500 | FailJobResponse503]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(job_key: str, *, client: AuthenticatedClient | Client, body: FailJobData) -> Response[Any | FailJobResponse400 | FailJobResponse404 | FailJobResponse409 | FailJobResponse500 | FailJobResponse503]:
+def sync_detailed(job_key: str, *, client: AuthenticatedClient | Client, body: FailJobData | Unset=UNSET) -> Response[Any | FailJobResponse400 | FailJobResponse404 | FailJobResponse409 | FailJobResponse500 | FailJobResponse503]:
     """Fail job
 
      Mark the job as failed.
 
     Args:
         job_key (str): System-generated key for a job. Example: 2251799813653498.
-        body (FailJobData):
+        body (FailJobData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -66,14 +68,14 @@ def sync_detailed(job_key: str, *, client: AuthenticatedClient | Client, body: F
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(job_key: str, *, client: AuthenticatedClient | Client, body: FailJobData, **kwargs) -> Any:
+def sync(job_key: str, *, client: AuthenticatedClient | Client, body: FailJobData | Unset=UNSET, **kwargs) -> Any:
     """Fail job
 
  Mark the job as failed.
 
 Args:
     job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (FailJobData):
+    body (FailJobData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -86,14 +88,14 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(job_key: str, *, client: AuthenticatedClient | Client, body: FailJobData) -> Response[Any | FailJobResponse400 | FailJobResponse404 | FailJobResponse409 | FailJobResponse500 | FailJobResponse503]:
+async def asyncio_detailed(job_key: str, *, client: AuthenticatedClient | Client, body: FailJobData | Unset=UNSET) -> Response[Any | FailJobResponse400 | FailJobResponse404 | FailJobResponse409 | FailJobResponse500 | FailJobResponse503]:
     """Fail job
 
      Mark the job as failed.
 
     Args:
         job_key (str): System-generated key for a job. Example: 2251799813653498.
-        body (FailJobData):
+        body (FailJobData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -106,14 +108,14 @@ async def asyncio_detailed(job_key: str, *, client: AuthenticatedClient | Client
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(job_key: str, *, client: AuthenticatedClient | Client, body: FailJobData, **kwargs) -> Any:
+async def asyncio(job_key: str, *, client: AuthenticatedClient | Client, body: FailJobData | Unset=UNSET, **kwargs) -> Any:
     """Fail job
 
  Mark the job as failed.
 
 Args:
     job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (FailJobData):
+    body (FailJobData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

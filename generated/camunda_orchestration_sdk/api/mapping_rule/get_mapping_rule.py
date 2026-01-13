@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -10,7 +11,7 @@ from ...models.get_mapping_rule_response_500 import GetMappingRuleResponse500
 from ...types import Response
 
 def _get_kwargs(mapping_rule_id: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/mapping-rules/{mapping_rule_id}'.format(mapping_rule_id=mapping_rule_id)}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/mapping-rules/{mapping_rule_id}'.format(mapping_rule_id=quote(str(mapping_rule_id), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetMappingRuleResponse200 | GetMappingRuleResponse401 | GetMappingRuleResponse404 | GetMappingRuleResponse500 | None:

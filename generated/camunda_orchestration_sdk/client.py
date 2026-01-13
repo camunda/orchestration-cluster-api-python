@@ -252,6 +252,7 @@ if TYPE_CHECKING:
     from .models.delete_mapping_rule_response_500 import DeleteMappingRuleResponse500
     from .models.delete_mapping_rule_response_503 import DeleteMappingRuleResponse503
     from .models.delete_process_instance_data_type_0 import DeleteProcessInstanceDataType0
+    from .models.delete_process_instance_response_200 import DeleteProcessInstanceResponse200
     from .models.delete_process_instance_response_401 import DeleteProcessInstanceResponse401
     from .models.delete_process_instance_response_403 import DeleteProcessInstanceResponse403
     from .models.delete_process_instance_response_404 import DeleteProcessInstanceResponse404
@@ -923,6 +924,7 @@ if TYPE_CHECKING:
     from io import BytesIO
     from typing import Any
     from typing import Any, cast
+    from urllib.parse import quote
     import datetime
     import httpx
 
@@ -1341,13 +1343,13 @@ Returns:
         return await get_audit_log_asyncio(**_kwargs)
 
 
-    def search_audit_logs(self, *, data: SearchAuditLogsData, **kwargs: Any) -> Any:
+    def search_audit_logs(self, *, data: SearchAuditLogsData | Unset = UNSET, **kwargs: Any) -> Any:
         """Search audit logs
 
  Search for audit logs based on given criteria.
 
 Args:
-    body (SearchAuditLogsData): Audit log search request.
+    body (SearchAuditLogsData | Unset): Audit log search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1364,13 +1366,13 @@ Returns:
         return search_audit_logs_sync(**_kwargs)
 
 
-    async def search_audit_logs_async(self, *, data: SearchAuditLogsData, **kwargs: Any) -> Any:
+    async def search_audit_logs_async(self, *, data: SearchAuditLogsData | Unset = UNSET, **kwargs: Any) -> Any:
         """Search audit logs
 
  Search for audit logs based on given criteria.
 
 Args:
-    body (SearchAuditLogsData): Audit log search request.
+    body (SearchAuditLogsData | Unset): Audit log search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1387,7 +1389,7 @@ Returns:
         return await search_audit_logs_asyncio(**_kwargs)
 
 
-    def cancel_batch_operation(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
+    def cancel_batch_operation(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
         """Cancel Batch operation
 
  Cancels a running batch operation.
@@ -1397,7 +1399,7 @@ This is done asynchronously, the progress can be tracked using the batch operati
 Args:
     batch_operation_key (str): System-generated key for an batch operation. Example:
         2251799813684321.
-    body (Any):
+    body (Any | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1414,7 +1416,7 @@ Returns:
         return cancel_batch_operation_sync(**_kwargs)
 
 
-    async def cancel_batch_operation_async(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
+    async def cancel_batch_operation_async(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
         """Cancel Batch operation
 
  Cancels a running batch operation.
@@ -1424,7 +1426,7 @@ This is done asynchronously, the progress can be tracked using the batch operati
 Args:
     batch_operation_key (str): System-generated key for an batch operation. Example:
         2251799813684321.
-    body (Any):
+    body (Any | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1441,7 +1443,7 @@ Returns:
         return await cancel_batch_operation_asyncio(**_kwargs)
 
 
-    def suspend_batch_operation(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
+    def suspend_batch_operation(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
         """Suspend Batch operation
 
  Suspends a running batch operation.
@@ -1451,7 +1453,7 @@ This is done asynchronously, the progress can be tracked using the batch operati
 Args:
     batch_operation_key (str): System-generated key for an batch operation. Example:
         2251799813684321.
-    body (Any):
+    body (Any | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1468,7 +1470,7 @@ Returns:
         return suspend_batch_operation_sync(**_kwargs)
 
 
-    async def suspend_batch_operation_async(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
+    async def suspend_batch_operation_async(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
         """Suspend Batch operation
 
  Suspends a running batch operation.
@@ -1478,7 +1480,7 @@ This is done asynchronously, the progress can be tracked using the batch operati
 Args:
     batch_operation_key (str): System-generated key for an batch operation. Example:
         2251799813684321.
-    body (Any):
+    body (Any | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1495,13 +1497,13 @@ Returns:
         return await suspend_batch_operation_asyncio(**_kwargs)
 
 
-    def search_batch_operations(self, *, data: SearchBatchOperationsData, **kwargs: Any) -> SearchBatchOperationsResponse200:
+    def search_batch_operations(self, *, data: SearchBatchOperationsData | Unset = UNSET, **kwargs: Any) -> SearchBatchOperationsResponse200:
         """Search batch operations
 
  Search for batch operations based on given criteria.
 
 Args:
-    body (SearchBatchOperationsData): Batch operation search request.
+    body (SearchBatchOperationsData | Unset): Batch operation search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1518,13 +1520,13 @@ Returns:
         return search_batch_operations_sync(**_kwargs)
 
 
-    async def search_batch_operations_async(self, *, data: SearchBatchOperationsData, **kwargs: Any) -> SearchBatchOperationsResponse200:
+    async def search_batch_operations_async(self, *, data: SearchBatchOperationsData | Unset = UNSET, **kwargs: Any) -> SearchBatchOperationsResponse200:
         """Search batch operations
 
  Search for batch operations based on given criteria.
 
 Args:
-    body (SearchBatchOperationsData): Batch operation search request.
+    body (SearchBatchOperationsData | Unset): Batch operation search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1541,7 +1543,7 @@ Returns:
         return await search_batch_operations_asyncio(**_kwargs)
 
 
-    def resume_batch_operation(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
+    def resume_batch_operation(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
         """Resume Batch operation
 
  Resumes a suspended batch operation.
@@ -1551,7 +1553,7 @@ This is done asynchronously, the progress can be tracked using the batch operati
 Args:
     batch_operation_key (str): System-generated key for an batch operation. Example:
         2251799813684321.
-    body (Any):
+    body (Any | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1568,7 +1570,7 @@ Returns:
         return resume_batch_operation_sync(**_kwargs)
 
 
-    async def resume_batch_operation_async(self, batch_operation_key: str, *, data: Any, **kwargs: Any) -> Any:
+    async def resume_batch_operation_async(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
         """Resume Batch operation
 
  Resumes a suspended batch operation.
@@ -1578,7 +1580,7 @@ This is done asynchronously, the progress can be tracked using the batch operati
 Args:
     batch_operation_key (str): System-generated key for an batch operation. Example:
         2251799813684321.
-    body (Any):
+    body (Any | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1643,13 +1645,13 @@ Returns:
         return await get_batch_operation_asyncio(**_kwargs)
 
 
-    def search_batch_operation_items(self, *, data: SearchBatchOperationItemsData, **kwargs: Any) -> SearchBatchOperationItemsResponse200:
+    def search_batch_operation_items(self, *, data: SearchBatchOperationItemsData | Unset = UNSET, **kwargs: Any) -> SearchBatchOperationItemsResponse200:
         """Search batch operation items
 
  Search for batch operation items based on given criteria.
 
 Args:
-    body (SearchBatchOperationItemsData): Batch operation item search request.
+    body (SearchBatchOperationItemsData | Unset): Batch operation item search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1666,13 +1668,13 @@ Returns:
         return search_batch_operation_items_sync(**_kwargs)
 
 
-    async def search_batch_operation_items_async(self, *, data: SearchBatchOperationItemsData, **kwargs: Any) -> SearchBatchOperationItemsResponse200:
+    async def search_batch_operation_items_async(self, *, data: SearchBatchOperationItemsData | Unset = UNSET, **kwargs: Any) -> SearchBatchOperationItemsResponse200:
         """Search batch operation items
 
  Search for batch operation items based on given criteria.
 
 Args:
-    body (SearchBatchOperationItemsData): Batch operation item search request.
+    body (SearchBatchOperationItemsData | Unset): Batch operation item search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1741,13 +1743,13 @@ Returns:
         return await get_start_process_form_asyncio(**_kwargs)
 
 
-    def search_process_definitions(self, *, data: SearchProcessDefinitionsData, **kwargs: Any) -> SearchProcessDefinitionsResponse200:
+    def search_process_definitions(self, *, data: SearchProcessDefinitionsData | Unset = UNSET, **kwargs: Any) -> SearchProcessDefinitionsResponse200:
         """Search process definitions
 
  Search for process definitions based on given criteria.
 
 Args:
-    body (SearchProcessDefinitionsData):
+    body (SearchProcessDefinitionsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1764,13 +1766,13 @@ Returns:
         return search_process_definitions_sync(**_kwargs)
 
 
-    async def search_process_definitions_async(self, *, data: SearchProcessDefinitionsData, **kwargs: Any) -> SearchProcessDefinitionsResponse200:
+    async def search_process_definitions_async(self, *, data: SearchProcessDefinitionsData | Unset = UNSET, **kwargs: Any) -> SearchProcessDefinitionsResponse200:
         """Search process definitions
 
  Search for process definitions based on given criteria.
 
 Args:
-    body (SearchProcessDefinitionsData):
+    body (SearchProcessDefinitionsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1787,7 +1789,7 @@ Returns:
         return await search_process_definitions_asyncio(**_kwargs)
 
 
-    def get_process_definition_statistics(self, process_definition_key: str, *, data: GetProcessDefinitionStatisticsData, **kwargs: Any) -> GetProcessDefinitionStatisticsResponse200:
+    def get_process_definition_statistics(self, process_definition_key: str, *, data: GetProcessDefinitionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionStatisticsResponse200:
         """Get process definition statistics
 
  Get statistics about elements in currently running process instances by process definition key and
@@ -1796,7 +1798,8 @@ search filter.
 Args:
     process_definition_key (str): System-generated key for a deployed process definition.
         Example: 2251799813686749.
-    body (GetProcessDefinitionStatisticsData): Process definition element statistics request.
+    body (GetProcessDefinitionStatisticsData | Unset): Process definition element statistics
+        request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1813,7 +1816,7 @@ Returns:
         return get_process_definition_statistics_sync(**_kwargs)
 
 
-    async def get_process_definition_statistics_async(self, process_definition_key: str, *, data: GetProcessDefinitionStatisticsData, **kwargs: Any) -> GetProcessDefinitionStatisticsResponse200:
+    async def get_process_definition_statistics_async(self, process_definition_key: str, *, data: GetProcessDefinitionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionStatisticsResponse200:
         """Get process definition statistics
 
  Get statistics about elements in currently running process instances by process definition key and
@@ -1822,7 +1825,8 @@ search filter.
 Args:
     process_definition_key (str): System-generated key for a deployed process definition.
         Example: 2251799813686749.
-    body (GetProcessDefinitionStatisticsData): Process definition element statistics request.
+    body (GetProcessDefinitionStatisticsData | Unset): Process definition element statistics
+        request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1839,13 +1843,13 @@ Returns:
         return await get_process_definition_statistics_asyncio(**_kwargs)
 
 
-    def get_process_definition_message_subscription_statistics(self, *, data: GetProcessDefinitionMessageSubscriptionStatisticsData, **kwargs: Any) -> GetProcessDefinitionMessageSubscriptionStatisticsResponse200:
+    def get_process_definition_message_subscription_statistics(self, *, data: GetProcessDefinitionMessageSubscriptionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionMessageSubscriptionStatisticsResponse200:
         """Get message subscription statistics
 
  Get message subscription statistics, grouped by process definition.
 
 Args:
-    body (GetProcessDefinitionMessageSubscriptionStatisticsData):
+    body (GetProcessDefinitionMessageSubscriptionStatisticsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1862,13 +1866,13 @@ Returns:
         return get_process_definition_message_subscription_statistics_sync(**_kwargs)
 
 
-    async def get_process_definition_message_subscription_statistics_async(self, *, data: GetProcessDefinitionMessageSubscriptionStatisticsData, **kwargs: Any) -> GetProcessDefinitionMessageSubscriptionStatisticsResponse200:
+    async def get_process_definition_message_subscription_statistics_async(self, *, data: GetProcessDefinitionMessageSubscriptionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionMessageSubscriptionStatisticsResponse200:
         """Get message subscription statistics
 
  Get message subscription statistics, grouped by process definition.
 
 Args:
-    body (GetProcessDefinitionMessageSubscriptionStatisticsData):
+    body (GetProcessDefinitionMessageSubscriptionStatisticsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1885,13 +1889,13 @@ Returns:
         return await get_process_definition_message_subscription_statistics_asyncio(**_kwargs)
 
 
-    def get_process_definition_instance_statistics(self, *, data: GetProcessDefinitionInstanceStatisticsData, **kwargs: Any) -> GetProcessDefinitionInstanceStatisticsResponse200:
+    def get_process_definition_instance_statistics(self, *, data: GetProcessDefinitionInstanceStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionInstanceStatisticsResponse200:
         """Get process instance statistics
 
  Get statistics about process instances, grouped by process definition and tenant.
 
 Args:
-    body (GetProcessDefinitionInstanceStatisticsData):
+    body (GetProcessDefinitionInstanceStatisticsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1908,13 +1912,13 @@ Returns:
         return get_process_definition_instance_statistics_sync(**_kwargs)
 
 
-    async def get_process_definition_instance_statistics_async(self, *, data: GetProcessDefinitionInstanceStatisticsData, **kwargs: Any) -> GetProcessDefinitionInstanceStatisticsResponse200:
+    async def get_process_definition_instance_statistics_async(self, *, data: GetProcessDefinitionInstanceStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionInstanceStatisticsResponse200:
         """Get process instance statistics
 
  Get statistics about process instances, grouped by process definition and tenant.
 
 Args:
-    body (GetProcessDefinitionInstanceStatisticsData):
+    body (GetProcessDefinitionInstanceStatisticsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -1979,7 +1983,7 @@ Returns:
         return await get_process_definition_asyncio(**_kwargs)
 
 
-    def get_process_definition_instance_version_statistics(self, process_definition_id: str, *, data: GetProcessDefinitionInstanceVersionStatisticsData, **kwargs: Any) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
+    def get_process_definition_instance_version_statistics(self, process_definition_id: str, *, data: GetProcessDefinitionInstanceVersionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
         """Get process instance statistics by version
 
  Get statistics about process instances, grouped by version for a given process definition.
@@ -1988,7 +1992,7 @@ Args:
     process_definition_id (str): Id of a process definition, from the model. Only ids of
         process definitions that are deployed are useful. Example: new-account-onboarding-
         workflow.
-    body (GetProcessDefinitionInstanceVersionStatisticsData):
+    body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2005,7 +2009,7 @@ Returns:
         return get_process_definition_instance_version_statistics_sync(**_kwargs)
 
 
-    async def get_process_definition_instance_version_statistics_async(self, process_definition_id: str, *, data: GetProcessDefinitionInstanceVersionStatisticsData, **kwargs: Any) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
+    async def get_process_definition_instance_version_statistics_async(self, process_definition_id: str, *, data: GetProcessDefinitionInstanceVersionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
         """Get process instance statistics by version
 
  Get statistics about process instances, grouped by version for a given process definition.
@@ -2014,7 +2018,7 @@ Args:
     process_definition_id (str): Id of a process definition, from the model. Only ids of
         process definitions that are deployed are useful. Example: new-account-onboarding-
         workflow.
-    body (GetProcessDefinitionInstanceVersionStatisticsData):
+    body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2079,14 +2083,14 @@ Returns:
         return await get_process_definition_xml_asyncio(**_kwargs)
 
 
-    def search_roles_for_group(self, group_id: str, *, data: SearchRolesForGroupData, **kwargs: Any) -> SearchRolesForGroupResponse200:
+    def search_roles_for_group(self, group_id: str, *, data: SearchRolesForGroupData | Unset = UNSET, **kwargs: Any) -> SearchRolesForGroupResponse200:
         """Search group roles
 
  Search roles assigned to a group.
 
 Args:
     group_id (str):
-    body (SearchRolesForGroupData): Role search request.
+    body (SearchRolesForGroupData | Unset): Role search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2103,14 +2107,14 @@ Returns:
         return search_roles_for_group_sync(**_kwargs)
 
 
-    async def search_roles_for_group_async(self, group_id: str, *, data: SearchRolesForGroupData, **kwargs: Any) -> SearchRolesForGroupResponse200:
+    async def search_roles_for_group_async(self, group_id: str, *, data: SearchRolesForGroupData | Unset = UNSET, **kwargs: Any) -> SearchRolesForGroupResponse200:
         """Search group roles
 
  Search roles assigned to a group.
 
 Args:
     group_id (str):
-    body (SearchRolesForGroupData): Role search request.
+    body (SearchRolesForGroupData | Unset): Role search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2179,14 +2183,14 @@ Returns:
         return await unassign_user_from_group_asyncio(**_kwargs)
 
 
-    def search_users_for_group(self, group_id: str, *, data: SearchUsersForGroupData, **kwargs: Any) -> SearchUsersForGroupResponse200:
+    def search_users_for_group(self, group_id: str, *, data: SearchUsersForGroupData | Unset = UNSET, **kwargs: Any) -> SearchUsersForGroupResponse200:
         """Search group users
 
  Search users assigned to a group.
 
 Args:
     group_id (str):
-    body (SearchUsersForGroupData):
+    body (SearchUsersForGroupData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2203,14 +2207,14 @@ Returns:
         return search_users_for_group_sync(**_kwargs)
 
 
-    async def search_users_for_group_async(self, group_id: str, *, data: SearchUsersForGroupData, **kwargs: Any) -> SearchUsersForGroupResponse200:
+    async def search_users_for_group_async(self, group_id: str, *, data: SearchUsersForGroupData | Unset = UNSET, **kwargs: Any) -> SearchUsersForGroupResponse200:
         """Search group users
 
  Search users assigned to a group.
 
 Args:
     group_id (str):
-    body (SearchUsersForGroupData):
+    body (SearchUsersForGroupData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2329,14 +2333,14 @@ Returns:
         return await assign_user_to_group_asyncio(**_kwargs)
 
 
-    def search_clients_for_group(self, group_id: str, *, data: SearchClientsForGroupData, **kwargs: Any) -> SearchClientsForGroupResponse200:
+    def search_clients_for_group(self, group_id: str, *, data: SearchClientsForGroupData | Unset = UNSET, **kwargs: Any) -> SearchClientsForGroupResponse200:
         """Search group clients
 
  Search clients assigned to a group.
 
 Args:
     group_id (str):
-    body (SearchClientsForGroupData):
+    body (SearchClientsForGroupData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2353,14 +2357,14 @@ Returns:
         return search_clients_for_group_sync(**_kwargs)
 
 
-    async def search_clients_for_group_async(self, group_id: str, *, data: SearchClientsForGroupData, **kwargs: Any) -> SearchClientsForGroupResponse200:
+    async def search_clients_for_group_async(self, group_id: str, *, data: SearchClientsForGroupData | Unset = UNSET, **kwargs: Any) -> SearchClientsForGroupResponse200:
         """Search group clients
 
  Search clients assigned to a group.
 
 Args:
     group_id (str):
-    body (SearchClientsForGroupData):
+    body (SearchClientsForGroupData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2425,14 +2429,14 @@ Returns:
         return await assign_mapping_rule_to_group_asyncio(**_kwargs)
 
 
-    def search_mapping_rules_for_group(self, group_id: str, *, data: SearchMappingRulesForGroupData, **kwargs: Any) -> SearchMappingRulesForGroupResponse200:
+    def search_mapping_rules_for_group(self, group_id: str, *, data: SearchMappingRulesForGroupData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForGroupResponse200:
         """Search group mapping rules
 
  Search mapping rules assigned to a group.
 
 Args:
     group_id (str):
-    body (SearchMappingRulesForGroupData):
+    body (SearchMappingRulesForGroupData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2449,14 +2453,14 @@ Returns:
         return search_mapping_rules_for_group_sync(**_kwargs)
 
 
-    async def search_mapping_rules_for_group_async(self, group_id: str, *, data: SearchMappingRulesForGroupData, **kwargs: Any) -> SearchMappingRulesForGroupResponse200:
+    async def search_mapping_rules_for_group_async(self, group_id: str, *, data: SearchMappingRulesForGroupData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForGroupResponse200:
         """Search group mapping rules
 
  Search mapping rules assigned to a group.
 
 Args:
     group_id (str):
-    body (SearchMappingRulesForGroupData):
+    body (SearchMappingRulesForGroupData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2473,13 +2477,13 @@ Returns:
         return await search_mapping_rules_for_group_asyncio(**_kwargs)
 
 
-    def search_groups(self, *, data: SearchGroupsData, **kwargs: Any) -> Any:
+    def search_groups(self, *, data: SearchGroupsData | Unset = UNSET, **kwargs: Any) -> Any:
         """Search groups
 
  Search for groups based on given criteria.
 
 Args:
-    body (SearchGroupsData): Group search request.
+    body (SearchGroupsData | Unset): Group search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2496,13 +2500,13 @@ Returns:
         return search_groups_sync(**_kwargs)
 
 
-    async def search_groups_async(self, *, data: SearchGroupsData, **kwargs: Any) -> Any:
+    async def search_groups_async(self, *, data: SearchGroupsData | Unset = UNSET, **kwargs: Any) -> Any:
         """Search groups
 
  Search for groups based on given criteria.
 
 Args:
-    body (SearchGroupsData): Group search request.
+    body (SearchGroupsData | Unset): Group search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2757,13 +2761,13 @@ Returns:
         return await unassign_mapping_rule_from_group_asyncio(**_kwargs)
 
 
-    def create_group(self, *, data: CreateGroupData, **kwargs: Any) -> CreateGroupResponse201:
+    def create_group(self, *, data: CreateGroupData | Unset = UNSET, **kwargs: Any) -> CreateGroupResponse201:
         """Create group
 
  Create a new group.
 
 Args:
-    body (CreateGroupData):
+    body (CreateGroupData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2780,13 +2784,13 @@ Returns:
         return create_group_sync(**_kwargs)
 
 
-    async def create_group_async(self, *, data: CreateGroupData, **kwargs: Any) -> CreateGroupResponse201:
+    async def create_group_async(self, *, data: CreateGroupData | Unset = UNSET, **kwargs: Any) -> CreateGroupResponse201:
         """Create group
 
  Create a new group.
 
 Args:
-    body (CreateGroupData):
+    body (CreateGroupData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2849,7 +2853,7 @@ Returns:
         return await get_variable_asyncio(**_kwargs)
 
 
-    def search_variables(self, *, data: SearchVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchVariablesResponse200:
+    def search_variables(self, *, data: SearchVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchVariablesResponse200:
         """Search variables
 
  Search for process and local variables based on given criteria. By default, long variable values in
@@ -2857,7 +2861,7 @@ the response are truncated.
 
 Args:
     truncate_values (bool | Unset):
-    body (SearchVariablesData): Variable search query request.
+    body (SearchVariablesData | Unset): Variable search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2874,7 +2878,7 @@ Returns:
         return search_variables_sync(**_kwargs)
 
 
-    async def search_variables_async(self, *, data: SearchVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchVariablesResponse200:
+    async def search_variables_async(self, *, data: SearchVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchVariablesResponse200:
         """Search variables
 
  Search for process and local variables based on given criteria. By default, long variable values in
@@ -2882,7 +2886,7 @@ the response are truncated.
 
 Args:
     truncate_values (bool | Unset):
-    body (SearchVariablesData): Variable search query request.
+    body (SearchVariablesData | Unset): Variable search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -2995,13 +2999,13 @@ Returns:
         return await get_decision_instance_asyncio(**_kwargs)
 
 
-    def search_decision_instances(self, *, data: SearchDecisionInstancesData, **kwargs: Any) -> SearchDecisionInstancesResponse200:
+    def search_decision_instances(self, *, data: SearchDecisionInstancesData | Unset = UNSET, **kwargs: Any) -> SearchDecisionInstancesResponse200:
         """Search decision instances
 
  Search for decision instances based on given criteria.
 
 Args:
-    body (SearchDecisionInstancesData):
+    body (SearchDecisionInstancesData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -3018,13 +3022,13 @@ Returns:
         return search_decision_instances_sync(**_kwargs)
 
 
-    async def search_decision_instances_async(self, *, data: SearchDecisionInstancesData, **kwargs: Any) -> SearchDecisionInstancesResponse200:
+    async def search_decision_instances_async(self, *, data: SearchDecisionInstancesData | Unset = UNSET, **kwargs: Any) -> SearchDecisionInstancesResponse200:
         """Search decision instances
 
  Search for decision instances based on given criteria.
 
 Args:
-    body (SearchDecisionInstancesData):
+    body (SearchDecisionInstancesData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -3087,14 +3091,14 @@ Returns:
         return await activate_jobs_asyncio(**_kwargs)
 
 
-    def complete_job(self, job_key: str, *, data: CompleteJobData, **kwargs: Any) -> Any:
+    def complete_job(self, job_key: str, *, data: CompleteJobData | Unset = UNSET, **kwargs: Any) -> Any:
         """Complete job
 
  Complete a job with the given payload, which allows completing the associated service task.
 
 Args:
     job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (CompleteJobData):
+    body (CompleteJobData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -3111,14 +3115,14 @@ Returns:
         return complete_job_sync(**_kwargs)
 
 
-    async def complete_job_async(self, job_key: str, *, data: CompleteJobData, **kwargs: Any) -> Any:
+    async def complete_job_async(self, job_key: str, *, data: CompleteJobData | Unset = UNSET, **kwargs: Any) -> Any:
         """Complete job
 
  Complete a job with the given payload, which allows completing the associated service task.
 
 Args:
     job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (CompleteJobData):
+    body (CompleteJobData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -3135,14 +3139,14 @@ Returns:
         return await complete_job_asyncio(**_kwargs)
 
 
-    def fail_job(self, job_key: str, *, data: FailJobData, **kwargs: Any) -> Any:
+    def fail_job(self, job_key: str, *, data: FailJobData | Unset = UNSET, **kwargs: Any) -> Any:
         """Fail job
 
  Mark the job as failed.
 
 Args:
     job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (FailJobData):
+    body (FailJobData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -3159,14 +3163,14 @@ Returns:
         return fail_job_sync(**_kwargs)
 
 
-    async def fail_job_async(self, job_key: str, *, data: FailJobData, **kwargs: Any) -> Any:
+    async def fail_job_async(self, job_key: str, *, data: FailJobData | Unset = UNSET, **kwargs: Any) -> Any:
         """Fail job
 
  Mark the job as failed.
 
 Args:
     job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (FailJobData):
+    body (FailJobData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -3279,13 +3283,13 @@ Returns:
         return await update_job_asyncio(**_kwargs)
 
 
-    def search_jobs(self, *, data: SearchJobsData, **kwargs: Any) -> SearchJobsResponse200:
+    def search_jobs(self, *, data: SearchJobsData | Unset = UNSET, **kwargs: Any) -> SearchJobsResponse200:
         """Search jobs
 
  Search for jobs based on given criteria.
 
 Args:
-    body (SearchJobsData): Job search request.
+    body (SearchJobsData | Unset): Job search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -3302,13 +3306,13 @@ Returns:
         return search_jobs_sync(**_kwargs)
 
 
-    async def search_jobs_async(self, *, data: SearchJobsData, **kwargs: Any) -> SearchJobsResponse200:
+    async def search_jobs_async(self, *, data: SearchJobsData | Unset = UNSET, **kwargs: Any) -> SearchJobsResponse200:
         """Search jobs
 
  Search for jobs based on given criteria.
 
 Args:
-    body (SearchJobsData): Job search request.
+    body (SearchJobsData | Unset): Job search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -3757,7 +3761,7 @@ Returns:
         return await resolve_process_instance_incidents_asyncio(**_kwargs)
 
 
-    def resolve_incidents_batch_operation(self, *, data: ResolveIncidentsBatchOperationData, **kwargs: Any) -> ResolveIncidentsBatchOperationResponse200:
+    def resolve_incidents_batch_operation(self, *, data: ResolveIncidentsBatchOperationData | Unset = UNSET, **kwargs: Any) -> ResolveIncidentsBatchOperationResponse200:
         """Resolve related incidents (batch)
 
  Resolves multiple instances of process instances.
@@ -3767,8 +3771,8 @@ This is done asynchronously, the progress can be tracked using the batchOperatio
 response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
 Args:
-    body (ResolveIncidentsBatchOperationData): The process instance filter that defines which
-        process instances should have their incidents resolved.
+    body (ResolveIncidentsBatchOperationData | Unset): The process instance filter that
+        defines which process instances should have their incidents resolved.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -3785,7 +3789,7 @@ Returns:
         return resolve_incidents_batch_operation_sync(**_kwargs)
 
 
-    async def resolve_incidents_batch_operation_async(self, *, data: ResolveIncidentsBatchOperationData, **kwargs: Any) -> ResolveIncidentsBatchOperationResponse200:
+    async def resolve_incidents_batch_operation_async(self, *, data: ResolveIncidentsBatchOperationData | Unset = UNSET, **kwargs: Any) -> ResolveIncidentsBatchOperationResponse200:
         """Resolve related incidents (batch)
 
  Resolves multiple instances of process instances.
@@ -3795,8 +3799,8 @@ This is done asynchronously, the progress can be tracked using the batchOperatio
 response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
 Args:
-    body (ResolveIncidentsBatchOperationData): The process instance filter that defines which
-        process instances should have their incidents resolved.
+    body (ResolveIncidentsBatchOperationData | Unset): The process instance filter that
+        defines which process instances should have their incidents resolved.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -3873,7 +3877,7 @@ Returns:
         return await create_process_instance_asyncio(**_kwargs)
 
 
-    def cancel_process_instance(self, process_instance_key: str, *, data: CancelProcessInstanceDataType0 | None, **kwargs: Any) -> Any:
+    def cancel_process_instance(self, process_instance_key: str, *, data: CancelProcessInstanceDataType0 | None | Unset = UNSET, **kwargs: Any) -> Any:
         """Cancel process instance
 
  Cancels a running process instance. As a cancellation includes more than just the removal of the
@@ -3882,7 +3886,7 @@ process instance resource, the cancellation resource must be posted.
 Args:
     process_instance_key (str): System-generated key for a process instance. Example:
         2251799813690746.
-    body (CancelProcessInstanceDataType0 | None):
+    body (CancelProcessInstanceDataType0 | None | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -3899,7 +3903,7 @@ Returns:
         return cancel_process_instance_sync(**_kwargs)
 
 
-    async def cancel_process_instance_async(self, process_instance_key: str, *, data: CancelProcessInstanceDataType0 | None, **kwargs: Any) -> Any:
+    async def cancel_process_instance_async(self, process_instance_key: str, *, data: CancelProcessInstanceDataType0 | None | Unset = UNSET, **kwargs: Any) -> Any:
         """Cancel process instance
 
  Cancels a running process instance. As a cancellation includes more than just the removal of the
@@ -3908,7 +3912,7 @@ process instance resource, the cancellation resource must be posted.
 Args:
     process_instance_key (str): System-generated key for a process instance. Example:
         2251799813690746.
-    body (CancelProcessInstanceDataType0 | None):
+    body (CancelProcessInstanceDataType0 | None | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -3973,7 +3977,7 @@ Returns:
         return await get_process_instance_sequence_flows_asyncio(**_kwargs)
 
 
-    def delete_process_instance(self, process_instance_key: str, *, data: DeleteProcessInstanceDataType0 | None, **kwargs: Any) -> Any:
+    def delete_process_instance(self, process_instance_key: str, *, data: DeleteProcessInstanceDataType0 | None | Unset = UNSET, **kwargs: Any) -> DeleteProcessInstanceResponse200:
         """Delete process instance
 
  Deletes a process instance. Only instances that are completed or terminated can be deleted.
@@ -3981,14 +3985,14 @@ Returns:
 Args:
     process_instance_key (str): System-generated key for a process instance. Example:
         2251799813690746.
-    body (DeleteProcessInstanceDataType0 | None):
+    body (DeleteProcessInstanceDataType0 | None | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | DeleteProcessInstanceResponse401 | DeleteProcessInstanceResponse403 | DeleteProcessInstanceResponse404 | DeleteProcessInstanceResponse409 | DeleteProcessInstanceResponse500 | DeleteProcessInstanceResponse503]"""
+    Response[DeleteProcessInstanceResponse200 | DeleteProcessInstanceResponse401 | DeleteProcessInstanceResponse403 | DeleteProcessInstanceResponse404 | DeleteProcessInstanceResponse409 | DeleteProcessInstanceResponse500 | DeleteProcessInstanceResponse503]"""
         from .api.process_instance.delete_process_instance import sync as delete_process_instance_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -3998,7 +4002,7 @@ Returns:
         return delete_process_instance_sync(**_kwargs)
 
 
-    async def delete_process_instance_async(self, process_instance_key: str, *, data: DeleteProcessInstanceDataType0 | None, **kwargs: Any) -> Any:
+    async def delete_process_instance_async(self, process_instance_key: str, *, data: DeleteProcessInstanceDataType0 | None | Unset = UNSET, **kwargs: Any) -> DeleteProcessInstanceResponse200:
         """Delete process instance
 
  Deletes a process instance. Only instances that are completed or terminated can be deleted.
@@ -4006,14 +4010,14 @@ Returns:
 Args:
     process_instance_key (str): System-generated key for a process instance. Example:
         2251799813690746.
-    body (DeleteProcessInstanceDataType0 | None):
+    body (DeleteProcessInstanceDataType0 | None | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[Any | DeleteProcessInstanceResponse401 | DeleteProcessInstanceResponse403 | DeleteProcessInstanceResponse404 | DeleteProcessInstanceResponse409 | DeleteProcessInstanceResponse500 | DeleteProcessInstanceResponse503]"""
+    Response[DeleteProcessInstanceResponse200 | DeleteProcessInstanceResponse401 | DeleteProcessInstanceResponse403 | DeleteProcessInstanceResponse404 | DeleteProcessInstanceResponse409 | DeleteProcessInstanceResponse500 | DeleteProcessInstanceResponse503]"""
         from .api.process_instance.delete_process_instance import asyncio as delete_process_instance_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
@@ -4023,7 +4027,7 @@ Returns:
         return await delete_process_instance_asyncio(**_kwargs)
 
 
-    def search_process_instance_incidents(self, process_instance_key: str, *, data: SearchProcessInstanceIncidentsData, **kwargs: Any) -> SearchProcessInstanceIncidentsResponse200:
+    def search_process_instance_incidents(self, process_instance_key: str, *, data: SearchProcessInstanceIncidentsData | Unset = UNSET, **kwargs: Any) -> SearchProcessInstanceIncidentsResponse200:
         """Search related incidents
 
  Search for incidents caused by the process instance or any of its called process or decision
@@ -4040,7 +4044,7 @@ the root.
 Args:
     process_instance_key (str): System-generated key for a process instance. Example:
         2251799813690746.
-    body (SearchProcessInstanceIncidentsData):
+    body (SearchProcessInstanceIncidentsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -4057,7 +4061,7 @@ Returns:
         return search_process_instance_incidents_sync(**_kwargs)
 
 
-    async def search_process_instance_incidents_async(self, process_instance_key: str, *, data: SearchProcessInstanceIncidentsData, **kwargs: Any) -> SearchProcessInstanceIncidentsResponse200:
+    async def search_process_instance_incidents_async(self, process_instance_key: str, *, data: SearchProcessInstanceIncidentsData | Unset = UNSET, **kwargs: Any) -> SearchProcessInstanceIncidentsResponse200:
         """Search related incidents
 
  Search for incidents caused by the process instance or any of its called process or decision
@@ -4074,7 +4078,7 @@ the root.
 Args:
     process_instance_key (str): System-generated key for a process instance. Example:
         2251799813690746.
-    body (SearchProcessInstanceIncidentsData):
+    body (SearchProcessInstanceIncidentsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -4139,13 +4143,13 @@ Returns:
         return await get_process_instance_statistics_asyncio(**_kwargs)
 
 
-    def search_process_instances(self, *, data: SearchProcessInstancesData, **kwargs: Any) -> SearchProcessInstancesResponse200:
+    def search_process_instances(self, *, data: SearchProcessInstancesData | Unset = UNSET, **kwargs: Any) -> SearchProcessInstancesResponse200:
         """Search process instances
 
  Search for process instances based on given criteria.
 
 Args:
-    body (SearchProcessInstancesData): Process instance search request.
+    body (SearchProcessInstancesData | Unset): Process instance search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -4162,13 +4166,13 @@ Returns:
         return search_process_instances_sync(**_kwargs)
 
 
-    async def search_process_instances_async(self, *, data: SearchProcessInstancesData, **kwargs: Any) -> SearchProcessInstancesResponse200:
+    async def search_process_instances_async(self, *, data: SearchProcessInstancesData | Unset = UNSET, **kwargs: Any) -> SearchProcessInstancesResponse200:
         """Search process instances
 
  Search for process instances based on given criteria.
 
 Args:
-    body (SearchProcessInstancesData): Process instance search request.
+    body (SearchProcessInstancesData | Unset): Process instance search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -4489,14 +4493,14 @@ Returns:
         return await assign_group_to_tenant_asyncio(**_kwargs)
 
 
-    def search_group_ids_for_tenant(self, tenant_id: str, *, data: SearchGroupIdsForTenantData, **kwargs: Any) -> SearchGroupIdsForTenantResponse200:
+    def search_group_ids_for_tenant(self, tenant_id: str, *, data: SearchGroupIdsForTenantData | Unset = UNSET, **kwargs: Any) -> SearchGroupIdsForTenantResponse200:
         """Search groups for tenant
 
  Retrieves a filtered and sorted list of groups for a specified tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchGroupIdsForTenantData):
+    body (SearchGroupIdsForTenantData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -4513,14 +4517,14 @@ Returns:
         return search_group_ids_for_tenant_sync(**_kwargs)
 
 
-    async def search_group_ids_for_tenant_async(self, tenant_id: str, *, data: SearchGroupIdsForTenantData, **kwargs: Any) -> SearchGroupIdsForTenantResponse200:
+    async def search_group_ids_for_tenant_async(self, tenant_id: str, *, data: SearchGroupIdsForTenantData | Unset = UNSET, **kwargs: Any) -> SearchGroupIdsForTenantResponse200:
         """Search groups for tenant
 
  Retrieves a filtered and sorted list of groups for a specified tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchGroupIdsForTenantData):
+    body (SearchGroupIdsForTenantData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -4681,13 +4685,13 @@ Returns:
         return await assign_mapping_rule_to_tenant_asyncio(**_kwargs)
 
 
-    def search_tenants(self, *, data: SearchTenantsData, **kwargs: Any) -> Any:
+    def search_tenants(self, *, data: SearchTenantsData | Unset = UNSET, **kwargs: Any) -> Any:
         """Search tenants
 
  Retrieves a filtered and sorted list of tenants.
 
 Args:
-    body (SearchTenantsData): Tenant search request
+    body (SearchTenantsData | Unset): Tenant search request
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -4704,13 +4708,13 @@ Returns:
         return search_tenants_sync(**_kwargs)
 
 
-    async def search_tenants_async(self, *, data: SearchTenantsData, **kwargs: Any) -> Any:
+    async def search_tenants_async(self, *, data: SearchTenantsData | Unset = UNSET, **kwargs: Any) -> Any:
         """Search tenants
 
  Retrieves a filtered and sorted list of tenants.
 
 Args:
-    body (SearchTenantsData): Tenant search request
+    body (SearchTenantsData | Unset): Tenant search request
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -4823,14 +4827,14 @@ Returns:
         return await assign_client_to_tenant_asyncio(**_kwargs)
 
 
-    def search_roles_for_tenant(self, tenant_id: str, *, data: SearchRolesForTenantData, **kwargs: Any) -> SearchRolesForTenantResponse200:
+    def search_roles_for_tenant(self, tenant_id: str, *, data: SearchRolesForTenantData | Unset = UNSET, **kwargs: Any) -> SearchRolesForTenantResponse200:
         """Search roles for tenant
 
  Retrieves a filtered and sorted list of roles for a specified tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchRolesForTenantData): Role search request.
+    body (SearchRolesForTenantData | Unset): Role search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -4847,14 +4851,14 @@ Returns:
         return search_roles_for_tenant_sync(**_kwargs)
 
 
-    async def search_roles_for_tenant_async(self, tenant_id: str, *, data: SearchRolesForTenantData, **kwargs: Any) -> SearchRolesForTenantResponse200:
+    async def search_roles_for_tenant_async(self, tenant_id: str, *, data: SearchRolesForTenantData | Unset = UNSET, **kwargs: Any) -> SearchRolesForTenantResponse200:
         """Search roles for tenant
 
  Retrieves a filtered and sorted list of roles for a specified tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchRolesForTenantData): Role search request.
+    body (SearchRolesForTenantData | Unset): Role search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -4971,14 +4975,14 @@ Returns:
         return await unassign_mapping_rule_from_tenant_asyncio(**_kwargs)
 
 
-    def search_users_for_tenant(self, tenant_id: str, *, data: SearchUsersForTenantData, **kwargs: Any) -> SearchUsersForTenantResponse200:
+    def search_users_for_tenant(self, tenant_id: str, *, data: SearchUsersForTenantData | Unset = UNSET, **kwargs: Any) -> SearchUsersForTenantResponse200:
         """Search users for tenant
 
  Retrieves a filtered and sorted list of users for a specified tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchUsersForTenantData):
+    body (SearchUsersForTenantData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -4995,14 +4999,14 @@ Returns:
         return search_users_for_tenant_sync(**_kwargs)
 
 
-    async def search_users_for_tenant_async(self, tenant_id: str, *, data: SearchUsersForTenantData, **kwargs: Any) -> SearchUsersForTenantResponse200:
+    async def search_users_for_tenant_async(self, tenant_id: str, *, data: SearchUsersForTenantData | Unset = UNSET, **kwargs: Any) -> SearchUsersForTenantResponse200:
         """Search users for tenant
 
  Retrieves a filtered and sorted list of users for a specified tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchUsersForTenantData):
+    body (SearchUsersForTenantData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -5219,14 +5223,14 @@ Returns:
         return await unassign_group_from_tenant_asyncio(**_kwargs)
 
 
-    def search_clients_for_tenant(self, tenant_id: str, *, data: SearchClientsForTenantData, **kwargs: Any) -> SearchClientsForTenantResponse200:
+    def search_clients_for_tenant(self, tenant_id: str, *, data: SearchClientsForTenantData | Unset = UNSET, **kwargs: Any) -> SearchClientsForTenantResponse200:
         """Search clients for tenant
 
  Retrieves a filtered and sorted list of clients for a specified tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchClientsForTenantData):
+    body (SearchClientsForTenantData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -5243,14 +5247,14 @@ Returns:
         return search_clients_for_tenant_sync(**_kwargs)
 
 
-    async def search_clients_for_tenant_async(self, tenant_id: str, *, data: SearchClientsForTenantData, **kwargs: Any) -> SearchClientsForTenantResponse200:
+    async def search_clients_for_tenant_async(self, tenant_id: str, *, data: SearchClientsForTenantData | Unset = UNSET, **kwargs: Any) -> SearchClientsForTenantResponse200:
         """Search clients for tenant
 
  Retrieves a filtered and sorted list of clients for a specified tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchClientsForTenantData):
+    body (SearchClientsForTenantData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -5365,14 +5369,14 @@ Returns:
         return await update_tenant_asyncio(**_kwargs)
 
 
-    def search_mapping_rules_for_tenant(self, tenant_id: str, *, data: SearchMappingRulesForTenantData, **kwargs: Any) -> SearchMappingRulesForTenantResponse200:
+    def search_mapping_rules_for_tenant(self, tenant_id: str, *, data: SearchMappingRulesForTenantData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForTenantResponse200:
         """Search mapping rules for tenant
 
  Retrieves a filtered and sorted list of MappingRules for a specified tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchMappingRulesForTenantData):
+    body (SearchMappingRulesForTenantData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -5389,14 +5393,14 @@ Returns:
         return search_mapping_rules_for_tenant_sync(**_kwargs)
 
 
-    async def search_mapping_rules_for_tenant_async(self, tenant_id: str, *, data: SearchMappingRulesForTenantData, **kwargs: Any) -> SearchMappingRulesForTenantResponse200:
+    async def search_mapping_rules_for_tenant_async(self, tenant_id: str, *, data: SearchMappingRulesForTenantData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForTenantResponse200:
         """Search mapping rules for tenant
 
  Retrieves a filtered and sorted list of MappingRules for a specified tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchMappingRulesForTenantData):
+    body (SearchMappingRulesForTenantData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -5629,13 +5633,13 @@ Returns:
         return await delete_tenant_cluster_variable_asyncio(**_kwargs)
 
 
-    def search_cluster_variables(self, *, data: SearchClusterVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchClusterVariablesResponse200:
+    def search_cluster_variables(self, *, data: SearchClusterVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchClusterVariablesResponse200:
         """Search for cluster variables based on given criteria. By default, long variable values in the
 response are truncated.
 
 Args:
     truncate_values (bool | Unset):
-    body (SearchClusterVariablesData): Cluster variable search query request.
+    body (SearchClusterVariablesData | Unset): Cluster variable search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -5652,13 +5656,13 @@ Returns:
         return search_cluster_variables_sync(**_kwargs)
 
 
-    async def search_cluster_variables_async(self, *, data: SearchClusterVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchClusterVariablesResponse200:
+    async def search_cluster_variables_async(self, *, data: SearchClusterVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchClusterVariablesResponse200:
         """Search for cluster variables based on given criteria. By default, long variable values in the
 response are truncated.
 
 Args:
     truncate_values (bool | Unset):
-    body (SearchClusterVariablesData): Cluster variable search query request.
+    body (SearchClusterVariablesData | Unset): Cluster variable search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -5863,7 +5867,7 @@ Returns:
         return await create_documents_asyncio(**_kwargs)
 
 
-    def create_document_link(self, document_id: str, *, data: CreateDocumentLinkData, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentLinkResponse201:
+    def create_document_link(self, document_id: str, *, data: CreateDocumentLinkData | Unset = UNSET, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentLinkResponse201:
         """Create document link
 
  Create a link to a document in the Camunda 8 cluster.
@@ -5874,7 +5878,7 @@ Args:
     document_id (str): Document Id that uniquely identifies a document.
     store_id (str | Unset):
     content_hash (str | Unset):
-    body (CreateDocumentLinkData):
+    body (CreateDocumentLinkData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -5891,7 +5895,7 @@ Returns:
         return create_document_link_sync(**_kwargs)
 
 
-    async def create_document_link_async(self, document_id: str, *, data: CreateDocumentLinkData, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentLinkResponse201:
+    async def create_document_link_async(self, document_id: str, *, data: CreateDocumentLinkData | Unset = UNSET, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentLinkResponse201:
         """Create document link
 
  Create a link to a document in the Camunda 8 cluster.
@@ -5902,7 +5906,7 @@ Args:
     document_id (str): Document Id that uniquely identifies a document.
     store_id (str | Unset):
     content_hash (str | Unset):
-    body (CreateDocumentLinkData):
+    body (CreateDocumentLinkData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -6029,7 +6033,7 @@ Returns:
         return await delete_document_asyncio(**_kwargs)
 
 
-    def delete_resource(self, resource_key: str, *, data: DeleteResourceDataType0 | None, **kwargs: Any) -> Any:
+    def delete_resource(self, resource_key: str, *, data: DeleteResourceDataType0 | None | Unset = UNSET, **kwargs: Any) -> Any:
         """Delete resource
 
  Deletes a deployed resource.
@@ -6039,7 +6043,7 @@ deployed using the deploy resources endpoint. Specify the resource you want to d
 
 Args:
     resource_key (str): The system-assigned key for this resource.
-    body (DeleteResourceDataType0 | None):
+    body (DeleteResourceDataType0 | None | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -6056,7 +6060,7 @@ Returns:
         return delete_resource_sync(**_kwargs)
 
 
-    async def delete_resource_async(self, resource_key: str, *, data: DeleteResourceDataType0 | None, **kwargs: Any) -> Any:
+    async def delete_resource_async(self, resource_key: str, *, data: DeleteResourceDataType0 | None | Unset = UNSET, **kwargs: Any) -> Any:
         """Delete resource
 
  Deletes a deployed resource.
@@ -6066,7 +6070,7 @@ deployed using the deploy resources endpoint. Specify the resource you want to d
 
 Args:
     resource_key (str): The system-assigned key for this resource.
-    body (DeleteResourceDataType0 | None):
+    body (DeleteResourceDataType0 | None | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -6445,13 +6449,13 @@ Returns:
         return await get_decision_requirements_xml_asyncio(**_kwargs)
 
 
-    def search_decision_requirements(self, *, data: SearchDecisionRequirementsData, **kwargs: Any) -> SearchDecisionRequirementsResponse200:
+    def search_decision_requirements(self, *, data: SearchDecisionRequirementsData | Unset = UNSET, **kwargs: Any) -> SearchDecisionRequirementsResponse200:
         """Search decision requirements
 
  Search for decision requirements based on given criteria.
 
 Args:
-    body (SearchDecisionRequirementsData):
+    body (SearchDecisionRequirementsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -6468,13 +6472,13 @@ Returns:
         return search_decision_requirements_sync(**_kwargs)
 
 
-    async def search_decision_requirements_async(self, *, data: SearchDecisionRequirementsData, **kwargs: Any) -> SearchDecisionRequirementsResponse200:
+    async def search_decision_requirements_async(self, *, data: SearchDecisionRequirementsData | Unset = UNSET, **kwargs: Any) -> SearchDecisionRequirementsResponse200:
         """Search decision requirements
 
  Search for decision requirements based on given criteria.
 
 Args:
-    body (SearchDecisionRequirementsData):
+    body (SearchDecisionRequirementsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -6539,13 +6543,13 @@ Returns:
         return await get_decision_requirements_asyncio(**_kwargs)
 
 
-    def create_mapping_rule(self, *, data: CreateMappingRuleData, **kwargs: Any) -> CreateMappingRuleResponse201:
+    def create_mapping_rule(self, *, data: CreateMappingRuleData | Unset = UNSET, **kwargs: Any) -> CreateMappingRuleResponse201:
         """Create mapping rule
 
  Create a new mapping rule
 
 Args:
-    body (CreateMappingRuleData):
+    body (CreateMappingRuleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -6562,13 +6566,13 @@ Returns:
         return create_mapping_rule_sync(**_kwargs)
 
 
-    async def create_mapping_rule_async(self, *, data: CreateMappingRuleData, **kwargs: Any) -> CreateMappingRuleResponse201:
+    async def create_mapping_rule_async(self, *, data: CreateMappingRuleData | Unset = UNSET, **kwargs: Any) -> CreateMappingRuleResponse201:
         """Create mapping rule
 
  Create a new mapping rule
 
 Args:
-    body (CreateMappingRuleData):
+    body (CreateMappingRuleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -6585,13 +6589,13 @@ Returns:
         return await create_mapping_rule_asyncio(**_kwargs)
 
 
-    def search_mapping_rule(self, *, data: SearchMappingRuleData, **kwargs: Any) -> SearchMappingRuleResponse200:
+    def search_mapping_rule(self, *, data: SearchMappingRuleData | Unset = UNSET, **kwargs: Any) -> SearchMappingRuleResponse200:
         """Search mapping rules
 
  Search for mapping rules based on given criteria.
 
 Args:
-    body (SearchMappingRuleData):
+    body (SearchMappingRuleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -6608,13 +6612,13 @@ Returns:
         return search_mapping_rule_sync(**_kwargs)
 
 
-    async def search_mapping_rule_async(self, *, data: SearchMappingRuleData, **kwargs: Any) -> SearchMappingRuleResponse200:
+    async def search_mapping_rule_async(self, *, data: SearchMappingRuleData | Unset = UNSET, **kwargs: Any) -> SearchMappingRuleResponse200:
         """Search mapping rules
 
  Search for mapping rules based on given criteria.
 
 Args:
-    body (SearchMappingRuleData):
+    body (SearchMappingRuleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -6723,14 +6727,14 @@ Returns:
         return await get_mapping_rule_asyncio(**_kwargs)
 
 
-    def update_mapping_rule(self, mapping_rule_id: str, *, data: UpdateMappingRuleData, **kwargs: Any) -> UpdateMappingRuleResponse200:
+    def update_mapping_rule(self, mapping_rule_id: str, *, data: UpdateMappingRuleData | Unset = UNSET, **kwargs: Any) -> UpdateMappingRuleResponse200:
         """Update mapping rule
 
  Update a mapping rule.
 
 Args:
     mapping_rule_id (str):
-    body (UpdateMappingRuleData):
+    body (UpdateMappingRuleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -6747,14 +6751,14 @@ Returns:
         return update_mapping_rule_sync(**_kwargs)
 
 
-    async def update_mapping_rule_async(self, mapping_rule_id: str, *, data: UpdateMappingRuleData, **kwargs: Any) -> UpdateMappingRuleResponse200:
+    async def update_mapping_rule_async(self, mapping_rule_id: str, *, data: UpdateMappingRuleData | Unset = UNSET, **kwargs: Any) -> UpdateMappingRuleResponse200:
         """Update mapping rule
 
  Update a mapping rule.
 
 Args:
     mapping_rule_id (str):
-    body (UpdateMappingRuleData):
+    body (UpdateMappingRuleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -6867,13 +6871,13 @@ Returns:
         return await get_element_instance_asyncio(**_kwargs)
 
 
-    def search_element_instances(self, *, data: SearchElementInstancesData, **kwargs: Any) -> SearchElementInstancesResponse200:
+    def search_element_instances(self, *, data: SearchElementInstancesData | Unset = UNSET, **kwargs: Any) -> SearchElementInstancesResponse200:
         """Search element instances
 
  Search for element instances based on given criteria.
 
 Args:
-    body (SearchElementInstancesData): Element instance search request.
+    body (SearchElementInstancesData | Unset): Element instance search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -6890,13 +6894,13 @@ Returns:
         return search_element_instances_sync(**_kwargs)
 
 
-    async def search_element_instances_async(self, *, data: SearchElementInstancesData, **kwargs: Any) -> SearchElementInstancesResponse200:
+    async def search_element_instances_async(self, *, data: SearchElementInstancesData | Unset = UNSET, **kwargs: Any) -> SearchElementInstancesResponse200:
         """Search element instances
 
  Search for element instances based on given criteria.
 
 Args:
-    body (SearchElementInstancesData): Element instance search request.
+    body (SearchElementInstancesData | Unset): Element instance search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7083,7 +7087,7 @@ Returns:
         return await unassign_user_task_asyncio(**_kwargs)
 
 
-    def search_user_task_variables(self, user_task_key: str, *, data: SearchUserTaskVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchUserTaskVariablesResponse200:
+    def search_user_task_variables(self, user_task_key: str, *, data: SearchUserTaskVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchUserTaskVariablesResponse200:
         """Search user task variables
 
  Search for user task variables based on given criteria. By default, long variable values in the
@@ -7092,7 +7096,7 @@ response are truncated.
 Args:
     user_task_key (str): System-generated key for a user task.
     truncate_values (bool | Unset):
-    body (SearchUserTaskVariablesData): User task search query request.
+    body (SearchUserTaskVariablesData | Unset): User task search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7109,7 +7113,7 @@ Returns:
         return search_user_task_variables_sync(**_kwargs)
 
 
-    async def search_user_task_variables_async(self, user_task_key: str, *, data: SearchUserTaskVariablesData, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchUserTaskVariablesResponse200:
+    async def search_user_task_variables_async(self, user_task_key: str, *, data: SearchUserTaskVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchUserTaskVariablesResponse200:
         """Search user task variables
 
  Search for user task variables based on given criteria. By default, long variable values in the
@@ -7118,7 +7122,7 @@ response are truncated.
 Args:
     user_task_key (str): System-generated key for a user task.
     truncate_values (bool | Unset):
-    body (SearchUserTaskVariablesData): User task search query request.
+    body (SearchUserTaskVariablesData | Unset): User task search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7135,14 +7139,14 @@ Returns:
         return await search_user_task_variables_asyncio(**_kwargs)
 
 
-    def update_user_task(self, user_task_key: str, *, data: UpdateUserTaskData, **kwargs: Any) -> Any:
+    def update_user_task(self, user_task_key: str, *, data: UpdateUserTaskData | Unset = UNSET, **kwargs: Any) -> Any:
         """Update user task
 
  Update a user task with the given key.
 
 Args:
     user_task_key (str): System-generated key for a user task.
-    body (UpdateUserTaskData):
+    body (UpdateUserTaskData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7159,14 +7163,14 @@ Returns:
         return update_user_task_sync(**_kwargs)
 
 
-    async def update_user_task_async(self, user_task_key: str, *, data: UpdateUserTaskData, **kwargs: Any) -> Any:
+    async def update_user_task_async(self, user_task_key: str, *, data: UpdateUserTaskData | Unset = UNSET, **kwargs: Any) -> Any:
         """Update user task
 
  Update a user task with the given key.
 
 Args:
     user_task_key (str): System-generated key for a user task.
-    body (UpdateUserTaskData):
+    body (UpdateUserTaskData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7279,14 +7283,14 @@ Returns:
         return await get_user_task_asyncio(**_kwargs)
 
 
-    def complete_user_task(self, user_task_key: str, *, data: CompleteUserTaskData, **kwargs: Any) -> Any:
+    def complete_user_task(self, user_task_key: str, *, data: CompleteUserTaskData | Unset = UNSET, **kwargs: Any) -> Any:
         """Complete user task
 
  Completes a user task with the given key.
 
 Args:
     user_task_key (str): System-generated key for a user task.
-    body (CompleteUserTaskData):
+    body (CompleteUserTaskData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7303,14 +7307,14 @@ Returns:
         return complete_user_task_sync(**_kwargs)
 
 
-    async def complete_user_task_async(self, user_task_key: str, *, data: CompleteUserTaskData, **kwargs: Any) -> Any:
+    async def complete_user_task_async(self, user_task_key: str, *, data: CompleteUserTaskData | Unset = UNSET, **kwargs: Any) -> Any:
         """Complete user task
 
  Completes a user task with the given key.
 
 Args:
     user_task_key (str): System-generated key for a user task.
-    body (CompleteUserTaskData):
+    body (CompleteUserTaskData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7327,14 +7331,14 @@ Returns:
         return await complete_user_task_asyncio(**_kwargs)
 
 
-    def search_user_task_audit_logs(self, user_task_key: str, *, data: SearchUserTaskAuditLogsData, **kwargs: Any) -> SearchUserTaskAuditLogsResponse200:
+    def search_user_task_audit_logs(self, user_task_key: str, *, data: SearchUserTaskAuditLogsData | Unset = UNSET, **kwargs: Any) -> SearchUserTaskAuditLogsResponse200:
         """Search user task audit logs
 
  Search for user task audit logs based on given criteria.
 
 Args:
     user_task_key (str): System-generated key for a user task.
-    body (SearchUserTaskAuditLogsData): User task search query request.
+    body (SearchUserTaskAuditLogsData | Unset): User task search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7351,14 +7355,14 @@ Returns:
         return search_user_task_audit_logs_sync(**_kwargs)
 
 
-    async def search_user_task_audit_logs_async(self, user_task_key: str, *, data: SearchUserTaskAuditLogsData, **kwargs: Any) -> SearchUserTaskAuditLogsResponse200:
+    async def search_user_task_audit_logs_async(self, user_task_key: str, *, data: SearchUserTaskAuditLogsData | Unset = UNSET, **kwargs: Any) -> SearchUserTaskAuditLogsResponse200:
         """Search user task audit logs
 
  Search for user task audit logs based on given criteria.
 
 Args:
     user_task_key (str): System-generated key for a user task.
-    body (SearchUserTaskAuditLogsData): User task search query request.
+    body (SearchUserTaskAuditLogsData | Unset): User task search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7375,13 +7379,13 @@ Returns:
         return await search_user_task_audit_logs_asyncio(**_kwargs)
 
 
-    def search_user_tasks(self, *, data: SearchUserTasksData, **kwargs: Any) -> SearchUserTasksResponse200:
+    def search_user_tasks(self, *, data: SearchUserTasksData | Unset = UNSET, **kwargs: Any) -> SearchUserTasksResponse200:
         """Search user tasks
 
  Search for user tasks based on given criteria.
 
 Args:
-    body (SearchUserTasksData): User task search query request.
+    body (SearchUserTasksData | Unset): User task search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7398,13 +7402,13 @@ Returns:
         return search_user_tasks_sync(**_kwargs)
 
 
-    async def search_user_tasks_async(self, *, data: SearchUserTasksData, **kwargs: Any) -> SearchUserTasksResponse200:
+    async def search_user_tasks_async(self, *, data: SearchUserTasksData | Unset = UNSET, **kwargs: Any) -> SearchUserTasksResponse200:
         """Search user tasks
 
  Search for user tasks based on given criteria.
 
 Args:
-    body (SearchUserTasksData): User task search query request.
+    body (SearchUserTasksData | Unset): User task search query request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7469,13 +7473,13 @@ Returns:
         return await assign_user_task_asyncio(**_kwargs)
 
 
-    def search_correlated_message_subscriptions(self, *, data: SearchCorrelatedMessageSubscriptionsData, **kwargs: Any) -> SearchCorrelatedMessageSubscriptionsResponse200:
+    def search_correlated_message_subscriptions(self, *, data: SearchCorrelatedMessageSubscriptionsData | Unset = UNSET, **kwargs: Any) -> SearchCorrelatedMessageSubscriptionsResponse200:
         """Search correlated message subscriptions
 
  Search correlated message subscriptions based on given criteria.
 
 Args:
-    body (SearchCorrelatedMessageSubscriptionsData):
+    body (SearchCorrelatedMessageSubscriptionsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7492,13 +7496,13 @@ Returns:
         return search_correlated_message_subscriptions_sync(**_kwargs)
 
 
-    async def search_correlated_message_subscriptions_async(self, *, data: SearchCorrelatedMessageSubscriptionsData, **kwargs: Any) -> SearchCorrelatedMessageSubscriptionsResponse200:
+    async def search_correlated_message_subscriptions_async(self, *, data: SearchCorrelatedMessageSubscriptionsData | Unset = UNSET, **kwargs: Any) -> SearchCorrelatedMessageSubscriptionsResponse200:
         """Search correlated message subscriptions
 
  Search correlated message subscriptions based on given criteria.
 
 Args:
-    body (SearchCorrelatedMessageSubscriptionsData):
+    body (SearchCorrelatedMessageSubscriptionsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7515,13 +7519,13 @@ Returns:
         return await search_correlated_message_subscriptions_asyncio(**_kwargs)
 
 
-    def search_message_subscriptions(self, *, data: SearchMessageSubscriptionsData, **kwargs: Any) -> SearchMessageSubscriptionsResponse200:
+    def search_message_subscriptions(self, *, data: SearchMessageSubscriptionsData | Unset = UNSET, **kwargs: Any) -> SearchMessageSubscriptionsResponse200:
         """Search message subscriptions
 
  Search for message subscriptions based on given criteria.
 
 Args:
-    body (SearchMessageSubscriptionsData):
+    body (SearchMessageSubscriptionsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7538,13 +7542,13 @@ Returns:
         return search_message_subscriptions_sync(**_kwargs)
 
 
-    async def search_message_subscriptions_async(self, *, data: SearchMessageSubscriptionsData, **kwargs: Any) -> SearchMessageSubscriptionsResponse200:
+    async def search_message_subscriptions_async(self, *, data: SearchMessageSubscriptionsData | Unset = UNSET, **kwargs: Any) -> SearchMessageSubscriptionsResponse200:
         """Search message subscriptions
 
  Search for message subscriptions based on given criteria.
 
 Args:
-    body (SearchMessageSubscriptionsData):
+    body (SearchMessageSubscriptionsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7661,13 +7665,13 @@ Returns:
         return await evaluate_decision_asyncio(**_kwargs)
 
 
-    def search_decision_definitions(self, *, data: SearchDecisionDefinitionsData, **kwargs: Any) -> SearchDecisionDefinitionsResponse200:
+    def search_decision_definitions(self, *, data: SearchDecisionDefinitionsData | Unset = UNSET, **kwargs: Any) -> SearchDecisionDefinitionsResponse200:
         """Search decision definitions
 
  Search for decision definitions based on given criteria.
 
 Args:
-    body (SearchDecisionDefinitionsData):
+    body (SearchDecisionDefinitionsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7684,13 +7688,13 @@ Returns:
         return search_decision_definitions_sync(**_kwargs)
 
 
-    async def search_decision_definitions_async(self, *, data: SearchDecisionDefinitionsData, **kwargs: Any) -> SearchDecisionDefinitionsResponse200:
+    async def search_decision_definitions_async(self, *, data: SearchDecisionDefinitionsData | Unset = UNSET, **kwargs: Any) -> SearchDecisionDefinitionsResponse200:
         """Search decision definitions
 
  Search for decision definitions based on given criteria.
 
 Args:
-    body (SearchDecisionDefinitionsData):
+    body (SearchDecisionDefinitionsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7903,13 +7907,13 @@ Returns:
         return await update_authorization_asyncio(**_kwargs)
 
 
-    def search_authorizations(self, *, data: SearchAuthorizationsData, **kwargs: Any) -> SearchAuthorizationsResponse200:
+    def search_authorizations(self, *, data: SearchAuthorizationsData | Unset = UNSET, **kwargs: Any) -> SearchAuthorizationsResponse200:
         """Search authorizations
 
  Search for authorizations based on given criteria.
 
 Args:
-    body (SearchAuthorizationsData):
+    body (SearchAuthorizationsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7926,13 +7930,13 @@ Returns:
         return search_authorizations_sync(**_kwargs)
 
 
-    async def search_authorizations_async(self, *, data: SearchAuthorizationsData, **kwargs: Any) -> SearchAuthorizationsResponse200:
+    async def search_authorizations_async(self, *, data: SearchAuthorizationsData | Unset = UNSET, **kwargs: Any) -> SearchAuthorizationsResponse200:
         """Search authorizations
 
  Search for authorizations based on given criteria.
 
 Args:
-    body (SearchAuthorizationsData):
+    body (SearchAuthorizationsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -7997,13 +8001,13 @@ Returns:
         return await delete_authorization_asyncio(**_kwargs)
 
 
-    def search_incidents(self, *, data: SearchIncidentsData, **kwargs: Any) -> SearchIncidentsResponse200:
+    def search_incidents(self, *, data: SearchIncidentsData | Unset = UNSET, **kwargs: Any) -> SearchIncidentsResponse200:
         """Search incidents
 
  Search for incidents based on given criteria.
 
 Args:
-    body (SearchIncidentsData):
+    body (SearchIncidentsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8020,13 +8024,13 @@ Returns:
         return search_incidents_sync(**_kwargs)
 
 
-    async def search_incidents_async(self, *, data: SearchIncidentsData, **kwargs: Any) -> SearchIncidentsResponse200:
+    async def search_incidents_async(self, *, data: SearchIncidentsData | Unset = UNSET, **kwargs: Any) -> SearchIncidentsResponse200:
         """Search incidents
 
  Search for incidents based on given criteria.
 
 Args:
-    body (SearchIncidentsData):
+    body (SearchIncidentsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8139,7 +8143,7 @@ Returns:
         return await get_incident_asyncio(**_kwargs)
 
 
-    def resolve_incident(self, incident_key: str, *, data: ResolveIncidentData, **kwargs: Any) -> Any:
+    def resolve_incident(self, incident_key: str, *, data: ResolveIncidentData | Unset = UNSET, **kwargs: Any) -> Any:
         """Resolve incident
 
  Marks the incident as resolved; most likely a call to Update job will be necessary
@@ -8147,7 +8151,7 @@ to reset the job's retries, followed by this call.
 
 Args:
     incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-    body (ResolveIncidentData):
+    body (ResolveIncidentData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8164,7 +8168,7 @@ Returns:
         return resolve_incident_sync(**_kwargs)
 
 
-    async def resolve_incident_async(self, incident_key: str, *, data: ResolveIncidentData, **kwargs: Any) -> Any:
+    async def resolve_incident_async(self, incident_key: str, *, data: ResolveIncidentData | Unset = UNSET, **kwargs: Any) -> Any:
         """Resolve incident
 
  Marks the incident as resolved; most likely a call to Update job will be necessary
@@ -8172,7 +8176,7 @@ to reset the job's retries, followed by this call.
 
 Args:
     incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-    body (ResolveIncidentData):
+    body (ResolveIncidentData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8189,14 +8193,14 @@ Returns:
         return await resolve_incident_asyncio(**_kwargs)
 
 
-    def get_process_instance_statistics_by_error(self, *, data: GetProcessInstanceStatisticsByErrorData, **kwargs: Any) -> GetProcessInstanceStatisticsByErrorResponse200:
+    def get_process_instance_statistics_by_error(self, *, data: GetProcessInstanceStatisticsByErrorData | Unset = UNSET, **kwargs: Any) -> GetProcessInstanceStatisticsByErrorResponse200:
         """Get process instance statistics by error
 
  Returns statistics for active process instances that currently have active incidents,
 grouped by incident error hash code.
 
 Args:
-    body (GetProcessInstanceStatisticsByErrorData):
+    body (GetProcessInstanceStatisticsByErrorData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8213,14 +8217,14 @@ Returns:
         return get_process_instance_statistics_by_error_sync(**_kwargs)
 
 
-    async def get_process_instance_statistics_by_error_async(self, *, data: GetProcessInstanceStatisticsByErrorData, **kwargs: Any) -> GetProcessInstanceStatisticsByErrorResponse200:
+    async def get_process_instance_statistics_by_error_async(self, *, data: GetProcessInstanceStatisticsByErrorData | Unset = UNSET, **kwargs: Any) -> GetProcessInstanceStatisticsByErrorResponse200:
         """Get process instance statistics by error
 
  Returns statistics for active process instances that currently have active incidents,
 grouped by incident error hash code.
 
 Args:
-    body (GetProcessInstanceStatisticsByErrorData):
+    body (GetProcessInstanceStatisticsByErrorData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8375,13 +8379,13 @@ Returns:
         return await create_user_asyncio(**_kwargs)
 
 
-    def search_users(self, *, data: SearchUsersData, **kwargs: Any) -> SearchUsersResponse200:
+    def search_users(self, *, data: SearchUsersData | Unset = UNSET, **kwargs: Any) -> SearchUsersResponse200:
         """Search users
 
  Search for users based on given criteria.
 
 Args:
-    body (SearchUsersData):
+    body (SearchUsersData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8398,13 +8402,13 @@ Returns:
         return search_users_sync(**_kwargs)
 
 
-    async def search_users_async(self, *, data: SearchUsersData, **kwargs: Any) -> SearchUsersResponse200:
+    async def search_users_async(self, *, data: SearchUsersData | Unset = UNSET, **kwargs: Any) -> SearchUsersResponse200:
         """Search users
 
  Search for users based on given criteria.
 
 Args:
-    body (SearchUsersData):
+    body (SearchUsersData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8713,14 +8717,14 @@ Returns:
         return await unassign_role_from_mapping_rule_asyncio(**_kwargs)
 
 
-    def search_users_for_role(self, role_id: str, *, data: SearchUsersForRoleData, **kwargs: Any) -> SearchUsersForRoleResponse200:
+    def search_users_for_role(self, role_id: str, *, data: SearchUsersForRoleData | Unset = UNSET, **kwargs: Any) -> SearchUsersForRoleResponse200:
         """Search role users
 
  Search users with assigned role.
 
 Args:
     role_id (str):
-    body (SearchUsersForRoleData):
+    body (SearchUsersForRoleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8737,14 +8741,14 @@ Returns:
         return search_users_for_role_sync(**_kwargs)
 
 
-    async def search_users_for_role_async(self, role_id: str, *, data: SearchUsersForRoleData, **kwargs: Any) -> SearchUsersForRoleResponse200:
+    async def search_users_for_role_async(self, role_id: str, *, data: SearchUsersForRoleData | Unset = UNSET, **kwargs: Any) -> SearchUsersForRoleResponse200:
         """Search role users
 
  Search users with assigned role.
 
 Args:
     role_id (str):
-    body (SearchUsersForRoleData):
+    body (SearchUsersForRoleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8761,14 +8765,14 @@ Returns:
         return await search_users_for_role_asyncio(**_kwargs)
 
 
-    def search_mapping_rules_for_role(self, role_id: str, *, data: SearchMappingRulesForRoleData, **kwargs: Any) -> SearchMappingRulesForRoleResponse200:
+    def search_mapping_rules_for_role(self, role_id: str, *, data: SearchMappingRulesForRoleData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForRoleResponse200:
         """Search role mapping rules
 
  Search mapping rules with assigned role.
 
 Args:
     role_id (str):
-    body (SearchMappingRulesForRoleData):
+    body (SearchMappingRulesForRoleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8785,14 +8789,14 @@ Returns:
         return search_mapping_rules_for_role_sync(**_kwargs)
 
 
-    async def search_mapping_rules_for_role_async(self, role_id: str, *, data: SearchMappingRulesForRoleData, **kwargs: Any) -> SearchMappingRulesForRoleResponse200:
+    async def search_mapping_rules_for_role_async(self, role_id: str, *, data: SearchMappingRulesForRoleData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForRoleResponse200:
         """Search role mapping rules
 
  Search mapping rules with assigned role.
 
 Args:
     role_id (str):
-    body (SearchMappingRulesForRoleData):
+    body (SearchMappingRulesForRoleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8809,14 +8813,14 @@ Returns:
         return await search_mapping_rules_for_role_asyncio(**_kwargs)
 
 
-    def search_groups_for_role(self, role_id: str, *, data: SearchGroupsForRoleData, **kwargs: Any) -> SearchGroupsForRoleResponse200:
+    def search_groups_for_role(self, role_id: str, *, data: SearchGroupsForRoleData | Unset = UNSET, **kwargs: Any) -> SearchGroupsForRoleResponse200:
         """Search role groups
 
  Search groups with assigned role.
 
 Args:
     role_id (str):
-    body (SearchGroupsForRoleData):
+    body (SearchGroupsForRoleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8833,14 +8837,14 @@ Returns:
         return search_groups_for_role_sync(**_kwargs)
 
 
-    async def search_groups_for_role_async(self, role_id: str, *, data: SearchGroupsForRoleData, **kwargs: Any) -> SearchGroupsForRoleResponse200:
+    async def search_groups_for_role_async(self, role_id: str, *, data: SearchGroupsForRoleData | Unset = UNSET, **kwargs: Any) -> SearchGroupsForRoleResponse200:
         """Search role groups
 
  Search groups with assigned role.
 
 Args:
     role_id (str):
-    body (SearchGroupsForRoleData):
+    body (SearchGroupsForRoleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8857,13 +8861,13 @@ Returns:
         return await search_groups_for_role_asyncio(**_kwargs)
 
 
-    def search_roles(self, *, data: SearchRolesData, **kwargs: Any) -> Any:
+    def search_roles(self, *, data: SearchRolesData | Unset = UNSET, **kwargs: Any) -> Any:
         """Search roles
 
  Search for roles based on given criteria.
 
 Args:
-    body (SearchRolesData): Role search request.
+    body (SearchRolesData | Unset): Role search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8880,13 +8884,13 @@ Returns:
         return search_roles_sync(**_kwargs)
 
 
-    async def search_roles_async(self, *, data: SearchRolesData, **kwargs: Any) -> Any:
+    async def search_roles_async(self, *, data: SearchRolesData | Unset = UNSET, **kwargs: Any) -> Any:
         """Search roles
 
  Search for roles based on given criteria.
 
 Args:
-    body (SearchRolesData): Role search request.
+    body (SearchRolesData | Unset): Role search request.
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8903,14 +8907,14 @@ Returns:
         return await search_roles_asyncio(**_kwargs)
 
 
-    def search_clients_for_role(self, role_id: str, *, data: SearchClientsForRoleData, **kwargs: Any) -> SearchClientsForRoleResponse200:
+    def search_clients_for_role(self, role_id: str, *, data: SearchClientsForRoleData | Unset = UNSET, **kwargs: Any) -> SearchClientsForRoleResponse200:
         """Search role clients
 
  Search clients with assigned role.
 
 Args:
     role_id (str):
-    body (SearchClientsForRoleData):
+    body (SearchClientsForRoleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8927,14 +8931,14 @@ Returns:
         return search_clients_for_role_sync(**_kwargs)
 
 
-    async def search_clients_for_role_async(self, role_id: str, *, data: SearchClientsForRoleData, **kwargs: Any) -> SearchClientsForRoleResponse200:
+    async def search_clients_for_role_async(self, role_id: str, *, data: SearchClientsForRoleData | Unset = UNSET, **kwargs: Any) -> SearchClientsForRoleResponse200:
         """Search role clients
 
  Search clients with assigned role.
 
 Args:
     role_id (str):
-    body (SearchClientsForRoleData):
+    body (SearchClientsForRoleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8951,13 +8955,13 @@ Returns:
         return await search_clients_for_role_asyncio(**_kwargs)
 
 
-    def create_role(self, *, data: CreateRoleData, **kwargs: Any) -> CreateRoleResponse201:
+    def create_role(self, *, data: CreateRoleData | Unset = UNSET, **kwargs: Any) -> CreateRoleResponse201:
         """Create role
 
  Create a new role.
 
 Args:
-    body (CreateRoleData):
+    body (CreateRoleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -8974,13 +8978,13 @@ Returns:
         return create_role_sync(**_kwargs)
 
 
-    async def create_role_async(self, *, data: CreateRoleData, **kwargs: Any) -> CreateRoleResponse201:
+    async def create_role_async(self, *, data: CreateRoleData | Unset = UNSET, **kwargs: Any) -> CreateRoleResponse201:
         """Create role
 
  Create a new role.
 
 Args:
-    body (CreateRoleData):
+    body (CreateRoleData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

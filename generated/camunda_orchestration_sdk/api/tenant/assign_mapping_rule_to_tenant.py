@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -11,7 +12,7 @@ from ...models.assign_mapping_rule_to_tenant_response_503 import AssignMappingRu
 from ...types import Response
 
 def _get_kwargs(tenant_id: str, mapping_rule_id: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/tenants/{tenant_id}/mapping-rules/{mapping_rule_id}'.format(tenant_id=tenant_id, mapping_rule_id=mapping_rule_id)}
+    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/tenants/{tenant_id}/mapping-rules/{mapping_rule_id}'.format(tenant_id=quote(str(tenant_id), safe=''), mapping_rule_id=quote(str(mapping_rule_id), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | AssignMappingRuleToTenantResponse400 | AssignMappingRuleToTenantResponse403 | AssignMappingRuleToTenantResponse404 | AssignMappingRuleToTenantResponse500 | AssignMappingRuleToTenantResponse503 | None:

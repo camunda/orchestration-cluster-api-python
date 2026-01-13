@@ -1,16 +1,18 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.search_mapping_rules_for_tenant_data import SearchMappingRulesForTenantData
 from ...models.search_mapping_rules_for_tenant_response_200 import SearchMappingRulesForTenantResponse200
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(tenant_id: str, *, body: SearchMappingRulesForTenantData) -> dict[str, Any]:
+def _get_kwargs(tenant_id: str, *, body: SearchMappingRulesForTenantData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/tenants/{tenant_id}/mapping-rules/search'.format(tenant_id=tenant_id)}
-    _kwargs['json'] = body.to_dict()
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/tenants/{tenant_id}/mapping-rules/search'.format(tenant_id=quote(str(tenant_id), safe=''))}
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -27,14 +29,14 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchMappingRulesForTenantResponse200]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(tenant_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForTenantData) -> Response[SearchMappingRulesForTenantResponse200]:
+def sync_detailed(tenant_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForTenantData | Unset=UNSET) -> Response[SearchMappingRulesForTenantResponse200]:
     """Search mapping rules for tenant
 
      Retrieves a filtered and sorted list of MappingRules for a specified tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (SearchMappingRulesForTenantData):
+        body (SearchMappingRulesForTenantData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -47,14 +49,14 @@ def sync_detailed(tenant_id: str, *, client: AuthenticatedClient | Client, body:
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(tenant_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForTenantData, **kwargs) -> SearchMappingRulesForTenantResponse200:
+def sync(tenant_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForTenantData | Unset=UNSET, **kwargs) -> SearchMappingRulesForTenantResponse200:
     """Search mapping rules for tenant
 
  Retrieves a filtered and sorted list of MappingRules for a specified tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchMappingRulesForTenantData):
+    body (SearchMappingRulesForTenantData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -67,14 +69,14 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(tenant_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForTenantData) -> Response[SearchMappingRulesForTenantResponse200]:
+async def asyncio_detailed(tenant_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForTenantData | Unset=UNSET) -> Response[SearchMappingRulesForTenantResponse200]:
     """Search mapping rules for tenant
 
      Retrieves a filtered and sorted list of MappingRules for a specified tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (SearchMappingRulesForTenantData):
+        body (SearchMappingRulesForTenantData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -87,14 +89,14 @@ async def asyncio_detailed(tenant_id: str, *, client: AuthenticatedClient | Clie
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(tenant_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForTenantData, **kwargs) -> SearchMappingRulesForTenantResponse200:
+async def asyncio(tenant_id: str, *, client: AuthenticatedClient | Client, body: SearchMappingRulesForTenantData | Unset=UNSET, **kwargs) -> SearchMappingRulesForTenantResponse200:
     """Search mapping rules for tenant
 
  Retrieves a filtered and sorted list of MappingRules for a specified tenant.
 
 Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchMappingRulesForTenantData):
+    body (SearchMappingRulesForTenantData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

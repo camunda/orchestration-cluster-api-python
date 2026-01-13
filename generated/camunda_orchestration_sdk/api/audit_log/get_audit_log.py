@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -11,7 +12,7 @@ from ...models.get_audit_log_response_500 import GetAuditLogResponse500
 from ...types import Response
 
 def _get_kwargs(audit_log_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/audit-logs/{audit_log_key}'.format(audit_log_key=audit_log_key)}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/audit-logs/{audit_log_key}'.format(audit_log_key=quote(str(audit_log_key), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetAuditLogResponse200 | GetAuditLogResponse401 | GetAuditLogResponse403 | GetAuditLogResponse404 | GetAuditLogResponse500 | None:

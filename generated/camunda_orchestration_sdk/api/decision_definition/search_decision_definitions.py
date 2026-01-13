@@ -9,12 +9,13 @@ from ...models.search_decision_definitions_response_400 import SearchDecisionDef
 from ...models.search_decision_definitions_response_401 import SearchDecisionDefinitionsResponse401
 from ...models.search_decision_definitions_response_403 import SearchDecisionDefinitionsResponse403
 from ...models.search_decision_definitions_response_500 import SearchDecisionDefinitionsResponse500
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: SearchDecisionDefinitionsData) -> dict[str, Any]:
+def _get_kwargs(*, body: SearchDecisionDefinitionsData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/decision-definitions/search'}
-    _kwargs['json'] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -43,13 +44,13 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchDecisionDefinitionsResponse200 | SearchDecisionDefinitionsResponse400 | SearchDecisionDefinitionsResponse401 | SearchDecisionDefinitionsResponse403 | SearchDecisionDefinitionsResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchDecisionDefinitionsData) -> Response[SearchDecisionDefinitionsResponse200 | SearchDecisionDefinitionsResponse400 | SearchDecisionDefinitionsResponse401 | SearchDecisionDefinitionsResponse403 | SearchDecisionDefinitionsResponse500]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchDecisionDefinitionsData | Unset=UNSET) -> Response[SearchDecisionDefinitionsResponse200 | SearchDecisionDefinitionsResponse400 | SearchDecisionDefinitionsResponse401 | SearchDecisionDefinitionsResponse403 | SearchDecisionDefinitionsResponse500]:
     """Search decision definitions
 
      Search for decision definitions based on given criteria.
 
     Args:
-        body (SearchDecisionDefinitionsData):
+        body (SearchDecisionDefinitionsData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -62,13 +63,13 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchDecisionD
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: SearchDecisionDefinitionsData, **kwargs) -> SearchDecisionDefinitionsResponse200:
+def sync(*, client: AuthenticatedClient | Client, body: SearchDecisionDefinitionsData | Unset=UNSET, **kwargs) -> SearchDecisionDefinitionsResponse200:
     """Search decision definitions
 
  Search for decision definitions based on given criteria.
 
 Args:
-    body (SearchDecisionDefinitionsData):
+    body (SearchDecisionDefinitionsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -81,13 +82,13 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchDecisionDefinitionsData) -> Response[SearchDecisionDefinitionsResponse200 | SearchDecisionDefinitionsResponse400 | SearchDecisionDefinitionsResponse401 | SearchDecisionDefinitionsResponse403 | SearchDecisionDefinitionsResponse500]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchDecisionDefinitionsData | Unset=UNSET) -> Response[SearchDecisionDefinitionsResponse200 | SearchDecisionDefinitionsResponse400 | SearchDecisionDefinitionsResponse401 | SearchDecisionDefinitionsResponse403 | SearchDecisionDefinitionsResponse500]:
     """Search decision definitions
 
      Search for decision definitions based on given criteria.
 
     Args:
-        body (SearchDecisionDefinitionsData):
+        body (SearchDecisionDefinitionsData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -100,13 +101,13 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Search
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: SearchDecisionDefinitionsData, **kwargs) -> SearchDecisionDefinitionsResponse200:
+async def asyncio(*, client: AuthenticatedClient | Client, body: SearchDecisionDefinitionsData | Unset=UNSET, **kwargs) -> SearchDecisionDefinitionsResponse200:
     """Search decision definitions
 
  Search for decision definitions based on given criteria.
 
 Args:
-    body (SearchDecisionDefinitionsData):
+    body (SearchDecisionDefinitionsData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -8,12 +9,13 @@ from ...models.resolve_incident_response_400 import ResolveIncidentResponse400
 from ...models.resolve_incident_response_404 import ResolveIncidentResponse404
 from ...models.resolve_incident_response_500 import ResolveIncidentResponse500
 from ...models.resolve_incident_response_503 import ResolveIncidentResponse503
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(incident_key: str, *, body: ResolveIncidentData) -> dict[str, Any]:
+def _get_kwargs(incident_key: str, *, body: ResolveIncidentData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/incidents/{incident_key}/resolution'.format(incident_key=incident_key)}
-    _kwargs['json'] = body.to_dict()
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/incidents/{incident_key}/resolution'.format(incident_key=quote(str(incident_key), safe=''))}
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -42,7 +44,7 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(incident_key: str, *, client: AuthenticatedClient | Client, body: ResolveIncidentData) -> Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]:
+def sync_detailed(incident_key: str, *, client: AuthenticatedClient | Client, body: ResolveIncidentData | Unset=UNSET) -> Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]:
     """Resolve incident
 
      Marks the incident as resolved; most likely a call to Update job will be necessary
@@ -50,7 +52,7 @@ def sync_detailed(incident_key: str, *, client: AuthenticatedClient | Client, bo
 
     Args:
         incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-        body (ResolveIncidentData):
+        body (ResolveIncidentData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -63,7 +65,7 @@ def sync_detailed(incident_key: str, *, client: AuthenticatedClient | Client, bo
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(incident_key: str, *, client: AuthenticatedClient | Client, body: ResolveIncidentData, **kwargs) -> Any:
+def sync(incident_key: str, *, client: AuthenticatedClient | Client, body: ResolveIncidentData | Unset=UNSET, **kwargs) -> Any:
     """Resolve incident
 
  Marks the incident as resolved; most likely a call to Update job will be necessary
@@ -71,7 +73,7 @@ to reset the job's retries, followed by this call.
 
 Args:
     incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-    body (ResolveIncidentData):
+    body (ResolveIncidentData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -84,7 +86,7 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(incident_key: str, *, client: AuthenticatedClient | Client, body: ResolveIncidentData) -> Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]:
+async def asyncio_detailed(incident_key: str, *, client: AuthenticatedClient | Client, body: ResolveIncidentData | Unset=UNSET) -> Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]:
     """Resolve incident
 
      Marks the incident as resolved; most likely a call to Update job will be necessary
@@ -92,7 +94,7 @@ async def asyncio_detailed(incident_key: str, *, client: AuthenticatedClient | C
 
     Args:
         incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-        body (ResolveIncidentData):
+        body (ResolveIncidentData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -105,7 +107,7 @@ async def asyncio_detailed(incident_key: str, *, client: AuthenticatedClient | C
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(incident_key: str, *, client: AuthenticatedClient | Client, body: ResolveIncidentData, **kwargs) -> Any:
+async def asyncio(incident_key: str, *, client: AuthenticatedClient | Client, body: ResolveIncidentData | Unset=UNSET, **kwargs) -> Any:
     """Resolve incident
 
  Marks the incident as resolved; most likely a call to Update job will be necessary
@@ -113,7 +115,7 @@ to reset the job's retries, followed by this call.
 
 Args:
     incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-    body (ResolveIncidentData):
+    body (ResolveIncidentData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

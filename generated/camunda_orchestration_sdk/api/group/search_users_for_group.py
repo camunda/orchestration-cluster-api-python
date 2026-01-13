@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -10,12 +11,13 @@ from ...models.search_users_for_group_response_401 import SearchUsersForGroupRes
 from ...models.search_users_for_group_response_403 import SearchUsersForGroupResponse403
 from ...models.search_users_for_group_response_404 import SearchUsersForGroupResponse404
 from ...models.search_users_for_group_response_500 import SearchUsersForGroupResponse500
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(group_id: str, *, body: SearchUsersForGroupData) -> dict[str, Any]:
+def _get_kwargs(group_id: str, *, body: SearchUsersForGroupData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/groups/{group_id}/users/search'.format(group_id=group_id)}
-    _kwargs['json'] = body.to_dict()
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/groups/{group_id}/users/search'.format(group_id=quote(str(group_id), safe=''))}
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -47,14 +49,14 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchUsersForGroupResponse200 | SearchUsersForGroupResponse400 | SearchUsersForGroupResponse401 | SearchUsersForGroupResponse403 | SearchUsersForGroupResponse404 | SearchUsersForGroupResponse500]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(group_id: str, *, client: AuthenticatedClient | Client, body: SearchUsersForGroupData) -> Response[SearchUsersForGroupResponse200 | SearchUsersForGroupResponse400 | SearchUsersForGroupResponse401 | SearchUsersForGroupResponse403 | SearchUsersForGroupResponse404 | SearchUsersForGroupResponse500]:
+def sync_detailed(group_id: str, *, client: AuthenticatedClient | Client, body: SearchUsersForGroupData | Unset=UNSET) -> Response[SearchUsersForGroupResponse200 | SearchUsersForGroupResponse400 | SearchUsersForGroupResponse401 | SearchUsersForGroupResponse403 | SearchUsersForGroupResponse404 | SearchUsersForGroupResponse500]:
     """Search group users
 
      Search users assigned to a group.
 
     Args:
         group_id (str):
-        body (SearchUsersForGroupData):
+        body (SearchUsersForGroupData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -67,14 +69,14 @@ def sync_detailed(group_id: str, *, client: AuthenticatedClient | Client, body: 
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(group_id: str, *, client: AuthenticatedClient | Client, body: SearchUsersForGroupData, **kwargs) -> SearchUsersForGroupResponse200:
+def sync(group_id: str, *, client: AuthenticatedClient | Client, body: SearchUsersForGroupData | Unset=UNSET, **kwargs) -> SearchUsersForGroupResponse200:
     """Search group users
 
  Search users assigned to a group.
 
 Args:
     group_id (str):
-    body (SearchUsersForGroupData):
+    body (SearchUsersForGroupData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -87,14 +89,14 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(group_id: str, *, client: AuthenticatedClient | Client, body: SearchUsersForGroupData) -> Response[SearchUsersForGroupResponse200 | SearchUsersForGroupResponse400 | SearchUsersForGroupResponse401 | SearchUsersForGroupResponse403 | SearchUsersForGroupResponse404 | SearchUsersForGroupResponse500]:
+async def asyncio_detailed(group_id: str, *, client: AuthenticatedClient | Client, body: SearchUsersForGroupData | Unset=UNSET) -> Response[SearchUsersForGroupResponse200 | SearchUsersForGroupResponse400 | SearchUsersForGroupResponse401 | SearchUsersForGroupResponse403 | SearchUsersForGroupResponse404 | SearchUsersForGroupResponse500]:
     """Search group users
 
      Search users assigned to a group.
 
     Args:
         group_id (str):
-        body (SearchUsersForGroupData):
+        body (SearchUsersForGroupData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -107,14 +109,14 @@ async def asyncio_detailed(group_id: str, *, client: AuthenticatedClient | Clien
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(group_id: str, *, client: AuthenticatedClient | Client, body: SearchUsersForGroupData, **kwargs) -> SearchUsersForGroupResponse200:
+async def asyncio(group_id: str, *, client: AuthenticatedClient | Client, body: SearchUsersForGroupData | Unset=UNSET, **kwargs) -> SearchUsersForGroupResponse200:
     """Search group users
 
  Search users assigned to a group.
 
 Args:
     group_id (str):
-    body (SearchUsersForGroupData):
+    body (SearchUsersForGroupData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -11,7 +12,7 @@ from ...models.get_process_definition_xml_response_500 import GetProcessDefiniti
 from ...types import Response
 
 def _get_kwargs(process_definition_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/process-definitions/{process_definition_key}/xml'.format(process_definition_key=process_definition_key)}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/process-definitions/{process_definition_key}/xml'.format(process_definition_key=quote(str(process_definition_key), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetProcessDefinitionXMLResponse400 | GetProcessDefinitionXMLResponse401 | GetProcessDefinitionXMLResponse403 | GetProcessDefinitionXMLResponse404 | GetProcessDefinitionXMLResponse500 | str | None:

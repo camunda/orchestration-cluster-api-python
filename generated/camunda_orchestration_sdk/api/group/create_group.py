@@ -10,12 +10,13 @@ from ...models.create_group_response_401 import CreateGroupResponse401
 from ...models.create_group_response_403 import CreateGroupResponse403
 from ...models.create_group_response_500 import CreateGroupResponse500
 from ...models.create_group_response_503 import CreateGroupResponse503
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: CreateGroupData) -> dict[str, Any]:
+def _get_kwargs(*, body: CreateGroupData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {'method': 'post', 'url': '/groups'}
-    _kwargs['json'] = body.to_dict()
+    if not isinstance(body, Unset):
+        _kwargs['json'] = body.to_dict()
     headers['Content-Type'] = 'application/json'
     _kwargs['headers'] = headers
     return _kwargs
@@ -47,13 +48,13 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[CreateGroupResponse201 | CreateGroupResponse400 | CreateGroupResponse401 | CreateGroupResponse403 | CreateGroupResponse500 | CreateGroupResponse503]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: CreateGroupData) -> Response[CreateGroupResponse201 | CreateGroupResponse400 | CreateGroupResponse401 | CreateGroupResponse403 | CreateGroupResponse500 | CreateGroupResponse503]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: CreateGroupData | Unset=UNSET) -> Response[CreateGroupResponse201 | CreateGroupResponse400 | CreateGroupResponse401 | CreateGroupResponse403 | CreateGroupResponse500 | CreateGroupResponse503]:
     """Create group
 
      Create a new group.
 
     Args:
-        body (CreateGroupData):
+        body (CreateGroupData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -66,13 +67,13 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: CreateGroupData
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: CreateGroupData, **kwargs) -> CreateGroupResponse201:
+def sync(*, client: AuthenticatedClient | Client, body: CreateGroupData | Unset=UNSET, **kwargs) -> CreateGroupResponse201:
     """Create group
 
  Create a new group.
 
 Args:
-    body (CreateGroupData):
+    body (CreateGroupData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -85,13 +86,13 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: CreateGroupData) -> Response[CreateGroupResponse201 | CreateGroupResponse400 | CreateGroupResponse401 | CreateGroupResponse403 | CreateGroupResponse500 | CreateGroupResponse503]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: CreateGroupData | Unset=UNSET) -> Response[CreateGroupResponse201 | CreateGroupResponse400 | CreateGroupResponse401 | CreateGroupResponse403 | CreateGroupResponse500 | CreateGroupResponse503]:
     """Create group
 
      Create a new group.
 
     Args:
-        body (CreateGroupData):
+        body (CreateGroupData | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -104,13 +105,13 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Create
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: CreateGroupData, **kwargs) -> CreateGroupResponse201:
+async def asyncio(*, client: AuthenticatedClient | Client, body: CreateGroupData | Unset=UNSET, **kwargs) -> CreateGroupResponse201:
     """Create group
 
  Create a new group.
 
 Args:
-    body (CreateGroupData):
+    body (CreateGroupData | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

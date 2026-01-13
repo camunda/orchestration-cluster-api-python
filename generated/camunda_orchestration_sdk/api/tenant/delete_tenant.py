@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -11,7 +12,7 @@ from ...models.delete_tenant_response_503 import DeleteTenantResponse503
 from ...types import Response
 
 def _get_kwargs(tenant_id: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/tenants/{tenant_id}'.format(tenant_id=tenant_id)}
+    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/tenants/{tenant_id}'.format(tenant_id=quote(str(tenant_id), safe=''))}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | DeleteTenantResponse400 | DeleteTenantResponse403 | DeleteTenantResponse404 | DeleteTenantResponse500 | DeleteTenantResponse503 | None:

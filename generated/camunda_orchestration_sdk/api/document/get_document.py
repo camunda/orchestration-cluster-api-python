@@ -1,6 +1,7 @@
 from http import HTTPStatus
 from io import BytesIO
 from typing import Any
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -13,7 +14,7 @@ def _get_kwargs(document_id: str, *, store_id: str | Unset=UNSET, content_hash: 
     params['storeId'] = store_id
     params['contentHash'] = content_hash
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/documents/{document_id}'.format(document_id=document_id), 'params': params}
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/documents/{document_id}'.format(document_id=quote(str(document_id), safe='')), 'params': params}
     return _kwargs
 
 def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> File | GetDocumentResponse404 | GetDocumentResponse500 | None:

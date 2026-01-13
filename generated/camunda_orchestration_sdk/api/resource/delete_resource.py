@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from typing import Any, cast
+from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -8,12 +9,11 @@ from ...models.delete_resource_response_400 import DeleteResourceResponse400
 from ...models.delete_resource_response_404 import DeleteResourceResponse404
 from ...models.delete_resource_response_500 import DeleteResourceResponse500
 from ...models.delete_resource_response_503 import DeleteResourceResponse503
-from ...types import Response
+from ...types import UNSET, Response, Unset
 
-def _get_kwargs(resource_key: str, *, body: DeleteResourceDataType0 | None) -> dict[str, Any]:
+def _get_kwargs(resource_key: str, *, body: DeleteResourceDataType0 | None | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/resources/{resource_key}/deletion'.format(resource_key=resource_key)}
-    _kwargs['json']: dict[str, Any] | None
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/resources/{resource_key}/deletion'.format(resource_key=quote(str(resource_key), safe=''))}
     if isinstance(body, DeleteResourceDataType0):
         _kwargs['json'] = body.to_dict()
     else:
@@ -46,7 +46,7 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
 def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None) -> Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]:
+def sync_detailed(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None | Unset=UNSET) -> Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]:
     """Delete resource
 
      Deletes a deployed resource.
@@ -56,7 +56,7 @@ def sync_detailed(resource_key: str, *, client: AuthenticatedClient | Client, bo
 
     Args:
         resource_key (str): The system-assigned key for this resource.
-        body (DeleteResourceDataType0 | None):
+        body (DeleteResourceDataType0 | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -69,7 +69,7 @@ def sync_detailed(resource_key: str, *, client: AuthenticatedClient | Client, bo
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None, **kwargs) -> Any:
+def sync(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None | Unset=UNSET, **kwargs) -> Any:
     """Delete resource
 
  Deletes a deployed resource.
@@ -79,7 +79,7 @@ deployed using the deploy resources endpoint. Specify the resource you want to d
 
 Args:
     resource_key (str): The system-assigned key for this resource.
-    body (DeleteResourceDataType0 | None):
+    body (DeleteResourceDataType0 | None | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -92,7 +92,7 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None) -> Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]:
+async def asyncio_detailed(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None | Unset=UNSET) -> Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]:
     """Delete resource
 
      Deletes a deployed resource.
@@ -102,7 +102,7 @@ async def asyncio_detailed(resource_key: str, *, client: AuthenticatedClient | C
 
     Args:
         resource_key (str): The system-assigned key for this resource.
-        body (DeleteResourceDataType0 | None):
+        body (DeleteResourceDataType0 | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -115,7 +115,7 @@ async def asyncio_detailed(resource_key: str, *, client: AuthenticatedClient | C
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None, **kwargs) -> Any:
+async def asyncio(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None | Unset=UNSET, **kwargs) -> Any:
     """Delete resource
 
  Deletes a deployed resource.
@@ -125,7 +125,7 @@ deployed using the deploy resources endpoint. Specify the resource you want to d
 
 Args:
     resource_key (str): The system-assigned key for this resource.
-    body (DeleteResourceDataType0 | None):
+    body (DeleteResourceDataType0 | None | Unset):
 
 Raises:
     errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
