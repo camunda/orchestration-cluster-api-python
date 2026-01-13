@@ -1,0 +1,68 @@
+name: Publish to PyPI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+      - name: Start Docker Compose
+        run: docker compose -f docker/docker-compose.yaml up -d --wait
+      - name: Run integration tests
+        run: make itest
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    concurrency: release
+    permissions:
+      id-token: write
+      contents: write
+    environment: pypi
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+      - name: Python Semantic Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            
+            # Generate the SDK
+            uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests
+            
+            # Check for changes and commit if found
+            if [[ -n $(git status -s) ]]; then
+              echo "Changes detected in generated code. Committing..."
+              git add .
+              git commit -m "chore(generation): update generated SDK [skip ci]"
+            fi
+            
+            uv run semantic-release version
+            uv run semantic-release publish
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true

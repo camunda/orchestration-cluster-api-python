@@ -1,9 +1,9 @@
 .venv/
 __pycache__/
 *.pyc
-generated/
 .openapi-cache/
 *.log
+.env
 
 # Benchmark results (old location - now stored in demo/v2/results/)
 benchmark_results.json
