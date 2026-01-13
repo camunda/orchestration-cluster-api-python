@@ -71,11 +71,11 @@ Args:
     variable_key (str): System-generated key for a variable. Example: 2251799813683287.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not 2xx.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetVariableResponse200 | GetVariableResponse400 | GetVariableResponse401 | GetVariableResponse403 | GetVariableResponse404 | GetVariableResponse500]"""
+    GetVariableResponse200"""
     response = sync_detailed(variable_key=variable_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -109,11 +109,11 @@ Args:
     variable_key (str): System-generated key for a variable. Example: 2251799813683287.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not 2xx.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetVariableResponse200 | GetVariableResponse400 | GetVariableResponse401 | GetVariableResponse403 | GetVariableResponse404 | GetVariableResponse500]"""
+    GetVariableResponse200"""
     response = await asyncio_detailed(variable_key=variable_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)

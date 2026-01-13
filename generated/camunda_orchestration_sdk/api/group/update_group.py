@@ -78,11 +78,11 @@ Args:
     body (UpdateGroupData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not 2xx.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[UpdateGroupResponse200 | UpdateGroupResponse400 | UpdateGroupResponse401 | UpdateGroupResponse404 | UpdateGroupResponse500 | UpdateGroupResponse503]"""
+    UpdateGroupResponse200"""
     response = sync_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -118,11 +118,11 @@ Args:
     body (UpdateGroupData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not 2xx.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[UpdateGroupResponse200 | UpdateGroupResponse400 | UpdateGroupResponse401 | UpdateGroupResponse404 | UpdateGroupResponse500 | UpdateGroupResponse503]"""
+    UpdateGroupResponse200"""
     response = await asyncio_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)

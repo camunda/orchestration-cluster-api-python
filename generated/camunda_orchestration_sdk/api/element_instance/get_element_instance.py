@@ -73,11 +73,11 @@ Args:
         2251799813686789.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not 2xx.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]"""
+    GetElementInstanceResponse200"""
     response = sync_detailed(element_instance_key=element_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -113,11 +113,11 @@ Args:
         2251799813686789.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not 2xx.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]"""
+    GetElementInstanceResponse200"""
     response = await asyncio_detailed(element_instance_key=element_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)

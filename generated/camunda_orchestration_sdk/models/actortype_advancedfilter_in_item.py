@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class SearchAuditLogsDataFilterActorType(str, Enum):
+class ActortypeAdvancedfilterInItem(str, Enum):
     ANONYMOUS = "ANONYMOUS"
     CLIENT = "CLIENT"
     UNKNOWN = "UNKNOWN"

@@ -65,11 +65,11 @@ Args:
     resource_key (str): The system-assigned key for this resource.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not 2xx.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetResourceResponse200 | GetResourceResponse404 | GetResourceResponse500]"""
+    GetResourceResponse200"""
     response = sync_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -109,11 +109,11 @@ Args:
     resource_key (str): The system-assigned key for this resource.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not 2xx.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetResourceResponse200 | GetResourceResponse404 | GetResourceResponse500]"""
+    GetResourceResponse200"""
     response = await asyncio_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)

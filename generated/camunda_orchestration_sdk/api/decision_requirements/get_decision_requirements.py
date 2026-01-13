@@ -73,11 +73,11 @@ Args:
         definition. Example: 2251799813683346.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not 2xx.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetDecisionRequirementsResponse200 | GetDecisionRequirementsResponse400 | GetDecisionRequirementsResponse401 | GetDecisionRequirementsResponse403 | GetDecisionRequirementsResponse404 | GetDecisionRequirementsResponse500]"""
+    GetDecisionRequirementsResponse200"""
     response = sync_detailed(decision_requirements_key=decision_requirements_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -113,11 +113,11 @@ Args:
         definition. Example: 2251799813683346.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not 2xx.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetDecisionRequirementsResponse200 | GetDecisionRequirementsResponse400 | GetDecisionRequirementsResponse401 | GetDecisionRequirementsResponse403 | GetDecisionRequirementsResponse404 | GetDecisionRequirementsResponse500]"""
+    GetDecisionRequirementsResponse200"""
     response = await asyncio_detailed(decision_requirements_key=decision_requirements_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)

@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class SearchAuditLogsDataFilterResult(str, Enum):
+class ResultAdvancedfilterEq(str, Enum):
     FAIL = "FAIL"
     SUCCESS = "SUCCESS"
 

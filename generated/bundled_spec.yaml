@@ -1476,6 +1476,7 @@ paths:
                             - READ
                             - READ_DECISION_DEFINITION
                             - READ_DECISION_INSTANCE
+                            - READ_JOB_METRIC
                             - READ_PROCESS_DEFINITION
                             - READ_PROCESS_INSTANCE
                             - READ_USAGE_METRIC
@@ -1991,6 +1992,7 @@ paths:
                       - READ
                       - READ_DECISION_DEFINITION
                       - READ_DECISION_INSTANCE
+                      - READ_JOB_METRIC
                       - READ_PROCESS_DEFINITION
                       - READ_PROCESS_INSTANCE
                       - READ_USAGE_METRIC
@@ -3927,9 +3929,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
+                - scope
                 - value
                 - name
-                - scope
         '400':
           description: The provided data is not valid.
           content:
@@ -4121,9 +4123,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
+                - scope
                 - value
                 - name
-                - scope
         '400':
           description: The provided data is not valid.
           content:
@@ -4577,9 +4579,9 @@ paths:
                           description: Only provided if the cluster variable scope
                             is TENANT.
                       required:
+                      - scope
                       - value
                       - name
-                      - scope
                   page:
                     description: Pagination information about the search results.
                     type: object
@@ -4832,9 +4834,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
+                - scope
                 - value
                 - name
-                - scope
         '400':
           description: The provided data is not valid.
           content:
@@ -5039,9 +5041,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
+                - scope
                 - value
                 - name
-                - scope
         '400':
           description: The provided data is not valid.
           content:
@@ -23668,8 +23670,8 @@ paths:
                 description: Process instance search response.
                 type: object
                 required:
-                - items
                 - page
+                - items
                 properties:
                   items:
                     description: The matching process instances.
@@ -36244,8 +36246,8 @@ paths:
               schema:
                 type: object
                 required:
-                - items
                 - page
+                - items
                 properties:
                   items:
                     description: The matching users.
@@ -40504,6 +40506,58 @@ components:
             Wildcard characters can be escaped with backslash, for instance: `\*`.
 
             '
+    ResultExactmatch:
+      type: string
+      title: ResultExactmatch
+      description: Matches the value exactly.
+      enum:
+      - FAIL
+      - SUCCESS
+    ResultAdvancedfilter:
+      title: ResultAdvancedfilter
+      description: Advanced AuditLogResultEnum filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          type: string
+          enum:
+          - FAIL
+          - SUCCESS
+        $neq:
+          description: Checks for inequality with the provided value.
+          type: string
+          enum:
+          - FAIL
+          - SUCCESS
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            type: string
+            description: The result status of the operation.
+            enum:
+            - FAIL
+            - SUCCESS
+        $like:
+          type: string
+          description: 'Checks if the property matches the provided like value.
+
+
+            Supported wildcard characters are:
+
+
+            * `*`: matches zero, one, or multiple characters.
+
+            * `?`: matches one, single character.
+
+
+            Wildcard characters can be escaped with backslash, for instance: `\*`.
+
+            '
     TimestampExactmatch:
       type: string
       format: date-time
@@ -40575,6 +40629,66 @@ components:
           type: array
           items:
             type: string
+        $like:
+          type: string
+          description: 'Checks if the property matches the provided like value.
+
+
+            Supported wildcard characters are:
+
+
+            * `*`: matches zero, one, or multiple characters.
+
+            * `?`: matches one, single character.
+
+
+            Wildcard characters can be escaped with backslash, for instance: `\*`.
+
+            '
+    ActortypeExactmatch:
+      type: string
+      title: ActortypeExactmatch
+      description: Matches the value exactly.
+      enum:
+      - ANONYMOUS
+      - CLIENT
+      - UNKNOWN
+      - USER
+    ActortypeAdvancedfilter:
+      title: ActortypeAdvancedfilter
+      description: Advanced AuditLogActorTypeEnum filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          type: string
+          enum:
+          - ANONYMOUS
+          - CLIENT
+          - UNKNOWN
+          - USER
+        $neq:
+          description: Checks for inequality with the provided value.
+          type: string
+          enum:
+          - ANONYMOUS
+          - CLIENT
+          - UNKNOWN
+          - USER
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            type: string
+            description: The type of actor who performed the operation.
+            enum:
+            - ANONYMOUS
+            - CLIENT
+            - UNKNOWN
+            - USER
         $like:
           type: string
           description: 'Checks if the property matches the provided like value.
@@ -41251,6 +41365,7 @@ components:
             - READ
             - READ_DECISION_DEFINITION
             - READ_DECISION_INSTANCE
+            - READ_JOB_METRIC
             - READ_PROCESS_DEFINITION
             - READ_PROCESS_INSTANCE
             - READ_USAGE_METRIC
@@ -41343,6 +41458,7 @@ components:
             - READ
             - READ_DECISION_DEFINITION
             - READ_DECISION_INSTANCE
+            - READ_JOB_METRIC
             - READ_PROCESS_DEFINITION
             - READ_PROCESS_INSTANCE
             - READ_USAGE_METRIC
@@ -43568,11 +43684,9 @@ components:
               - $ref: '#/components/schemas/OperationtypeExactmatch'
               - $ref: '#/components/schemas/OperationtypeAdvancedfilter'
             result:
-              description: The result search filter.
-              type: string
-              enum:
-              - FAIL
-              - SUCCESS
+              oneOf:
+              - $ref: '#/components/schemas/ResultExactmatch'
+              - $ref: '#/components/schemas/ResultAdvancedfilter'
             timestamp:
               oneOf:
               - $ref: '#/components/schemas/TimestampExactmatch'
@@ -43582,13 +43696,9 @@ components:
               - $ref: '#/components/schemas/ActoridExactmatch'
               - $ref: '#/components/schemas/ActoridAdvancedfilter'
             actorType:
-              description: The actor type search filter.
-              type: string
-              enum:
-              - ANONYMOUS
-              - CLIENT
-              - UNKNOWN
-              - USER
+              oneOf:
+              - $ref: '#/components/schemas/ActortypeExactmatch'
+              - $ref: '#/components/schemas/ActortypeAdvancedfilter'
             entityType:
               oneOf:
               - $ref: '#/components/schemas/EntitytypeExactmatch'
@@ -45732,9 +45842,9 @@ components:
           description: The name of the mapping rule.
       required:
       - claimValue
-      - name
       - mappingRuleId
       - claimName
+      - name
     SearchMappingRuleData:
       additionalProperties: false
       type: object
@@ -45803,8 +45913,8 @@ components:
           description: The name of the mapping rule.
       required:
       - claimValue
-      - name
       - claimName
+      - name
     SearchMessageSubscriptionsData:
       type: object
       additionalProperties: false
@@ -47603,8 +47713,8 @@ components:
                 - targetElementId
               description: The mapping instructions.
           required:
-          - targetProcessDefinitionKey
           - mappingInstructions
+          - targetProcessDefinitionKey
         operationReference:
           description: 'A reference key chosen by the user that will be part of all
             records resulting from this operation.
@@ -49577,36 +49687,14 @@ components:
           type: array
           items:
             type: object
-            additionalProperties: false
             properties:
               field:
                 description: The field to sort by.
                 type: string
                 enum:
-                - actorId
-                - actorType
-                - annotation
-                - auditLogKey
-                - batchOperationKey
-                - batchOperationType
-                - category
-                - decisionDefinitionId
-                - decisionDefinitionKey
-                - decisionEvaluationKey
-                - decisionRequirementsId
-                - decisionRequirementsKey
-                - elementInstanceKey
-                - entityKey
-                - entityType
-                - jobKey
                 - operationType
-                - processDefinitionId
-                - processDefinitionKey
-                - processInstanceKey
                 - result
-                - tenantId
                 - timestamp
-                - userTaskKey
               order:
                 description: The order in which to sort the related field.
                 type: string
@@ -49616,6 +49704,30 @@ components:
                 default: ASC
             required:
             - field
+        filter:
+          description: The user task audit log search filters.
+          type: object
+          properties:
+            operationType:
+              oneOf:
+              - $ref: '#/components/schemas/OperationtypeExactmatch'
+              - $ref: '#/components/schemas/OperationtypeAdvancedfilter'
+            result:
+              oneOf:
+              - $ref: '#/components/schemas/ResultExactmatch'
+              - $ref: '#/components/schemas/ResultAdvancedfilter'
+            timestamp:
+              oneOf:
+              - $ref: '#/components/schemas/TimestampExactmatch'
+              - $ref: '#/components/schemas/TimestampAdvancedfilter'
+            actorType:
+              oneOf:
+              - $ref: '#/components/schemas/ActortypeExactmatch'
+              - $ref: '#/components/schemas/ActortypeAdvancedfilter'
+            actorId:
+              oneOf:
+              - $ref: '#/components/schemas/ActoridExactmatch'
+              - $ref: '#/components/schemas/ActoridAdvancedfilter'
         page:
           description: Pagination criteria.
           allOf:

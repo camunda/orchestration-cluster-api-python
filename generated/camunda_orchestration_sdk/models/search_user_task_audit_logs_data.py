@@ -8,6 +8,9 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
+    from ..models.search_user_task_audit_logs_data_filter import (
+        SearchUserTaskAuditLogsDataFilter,
+    )
     from ..models.search_user_task_audit_logs_data_page import (
         SearchUserTaskAuditLogsDataPage,
     )
@@ -25,10 +28,12 @@ class SearchUserTaskAuditLogsData:
 
     Attributes:
         sort (list[SearchUserTaskAuditLogsDataSortItem] | Unset): Sort field criteria.
+        filter_ (SearchUserTaskAuditLogsDataFilter | Unset): The user task audit log search filters.
         page (SearchUserTaskAuditLogsDataPage | Unset): Pagination criteria.
     """
 
     sort: list[SearchUserTaskAuditLogsDataSortItem] | Unset = UNSET
+    filter_: SearchUserTaskAuditLogsDataFilter | Unset = UNSET
     page: SearchUserTaskAuditLogsDataPage | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -39,6 +44,10 @@ class SearchUserTaskAuditLogsData:
                 sort_item = sort_item_data.to_dict()
                 sort.append(sort_item)
 
+        filter_: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.filter_, Unset):
+            filter_ = self.filter_.to_dict()
+
         page: dict[str, Any] | Unset = UNSET
         if not isinstance(self.page, Unset):
             page = self.page.to_dict()
@@ -48,6 +57,8 @@ class SearchUserTaskAuditLogsData:
         field_dict.update({})
         if sort is not UNSET:
             field_dict["sort"] = sort
+        if filter_ is not UNSET:
+            field_dict["filter"] = filter_
         if page is not UNSET:
             field_dict["page"] = page
 
@@ -55,6 +66,9 @@ class SearchUserTaskAuditLogsData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.search_user_task_audit_logs_data_filter import (
+            SearchUserTaskAuditLogsDataFilter,
+        )
         from ..models.search_user_task_audit_logs_data_page import (
             SearchUserTaskAuditLogsDataPage,
         )
@@ -74,6 +88,13 @@ class SearchUserTaskAuditLogsData:
 
                 sort.append(sort_item)
 
+        _filter_ = d.pop("filter", UNSET)
+        filter_: SearchUserTaskAuditLogsDataFilter | Unset
+        if isinstance(_filter_, Unset):
+            filter_ = UNSET
+        else:
+            filter_ = SearchUserTaskAuditLogsDataFilter.from_dict(_filter_)
+
         _page = d.pop("page", UNSET)
         page: SearchUserTaskAuditLogsDataPage | Unset
         if isinstance(_page, Unset):
@@ -83,6 +104,7 @@ class SearchUserTaskAuditLogsData:
 
         search_user_task_audit_logs_data = cls(
             sort=sort,
+            filter_=filter_,
             page=page,
         )
 

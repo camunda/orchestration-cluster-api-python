@@ -2,25 +2,112 @@ import ast
 import os
 from pathlib import Path
 
-def get_success_type(return_annotation):
-    """
-    Extracts the success type from a return annotation.
-    Assumes the success type is the first one in the Union or the only one if not a Union.
-    This is a heuristic and might need adjustment based on actual generated code structure.
-    """
-    if isinstance(return_annotation, ast.BinOp) and isinstance(return_annotation.op, ast.BitOr):
-        # Handle TypeA | TypeB | ...
-        # We assume the first type is the success type (200 OK)
-        # Recursively get the left-most type
-        return get_success_type(return_annotation.left)
-    elif isinstance(return_annotation, ast.Name):
-        return return_annotation
-    elif isinstance(return_annotation, ast.Subscript): # Optional[Type] or Union[Type, None]
-        # If it's Optional[Type], we want Type.
-        # But wait, the generated code uses | None for optional.
-        # If it is Response[Type], we want Type.
-        return return_annotation
-    return return_annotation
+
+def _is_docstring_stmt(stmt: ast.stmt) -> bool:
+    return (
+        isinstance(stmt, ast.Expr)
+        and isinstance(stmt.value, ast.Constant)
+        and isinstance(stmt.value.value, str)
+    )
+
+
+def _set_docstring(func_node: ast.AST, docstring: str) -> None:
+    if not isinstance(func_node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+        return
+
+    doc_stmt = ast.Expr(value=ast.Constant(value=docstring))
+    if func_node.body and _is_docstring_stmt(func_node.body[0]):
+        func_node.body[0] = doc_stmt
+    else:
+        func_node.body.insert(0, doc_stmt)
+
+
+def _get_success_type_from_union(type_expr: ast.expr) -> ast.expr:
+    """Heuristic: pick the left-most type from a PEP604 union (A | B | C)."""
+    current = type_expr
+    while isinstance(current, ast.BinOp) and isinstance(current.op, ast.BitOr):
+        current = current.left
+    return current
+
+
+def _get_success_type_from_detailed_return(return_annotation: ast.expr | None) -> ast.expr | None:
+    """Given detailed's return annotation (typically Response[T]), returns the success type expr."""
+    if return_annotation is None:
+        return None
+    if not isinstance(return_annotation, ast.Subscript):
+        return None
+
+    # detailed returns Response[T] where T is (Success | Error1 | Error2 ...)
+    slice_val = return_annotation.slice
+    if isinstance(slice_val, ast.Tuple) and slice_val.elts:
+        # Very defensive; shouldn't happen for our generator output.
+        slice_val = slice_val.elts[0]
+    return _get_success_type_from_union(slice_val)
+
+
+def _rewrite_docstring(docstring: str, return_type_str: str) -> str:
+    lines = docstring.splitlines()
+    if not lines:
+        return docstring
+
+    def is_section_header(line: str) -> bool:
+        stripped = line.strip()
+        return stripped.endswith(":") and stripped[:-1] in {"Args", "Raises", "Returns", "Attributes"}
+
+    def find_section(name: str) -> int | None:
+        for i, line in enumerate(lines):
+            if line.strip() == f"{name}:":
+                return i
+        return None
+
+    # Update/insert Raises section for UnexpectedStatus
+    raises_i = find_section("Raises")
+    returns_i = find_section("Returns")
+
+    if raises_i is None:
+        insert_at = returns_i if returns_i is not None else len(lines)
+        block = [
+            "",
+            "Raises:",
+            "    errors.UnexpectedStatus: If the response status code is not 2xx.",
+            "    httpx.TimeoutException: If the request takes longer than Client.timeout.",
+        ]
+        lines[insert_at:insert_at] = block
+        # refresh indices
+        raises_i = find_section("Raises")
+        returns_i = find_section("Returns")
+    else:
+        # Replace the UnexpectedStatus description if present; otherwise insert it.
+        j = raises_i + 1
+        inserted = False
+        while j < len(lines) and (lines[j].strip() == "" or lines[j].startswith(" ") or lines[j].startswith("\t")):
+            if lines[j].lstrip().startswith("errors.UnexpectedStatus:"):
+                indent = lines[j][: len(lines[j]) - len(lines[j].lstrip())]
+                lines[j] = f"{indent}errors.UnexpectedStatus: If the response status code is not 2xx."
+                inserted = True
+                break
+            j += 1
+
+        if not inserted:
+            # Insert right after the Raises: header
+            lines.insert(raises_i + 1, "    errors.UnexpectedStatus: If the response status code is not 2xx.")
+
+    # Update Returns section to match the rewritten return annotation.
+    returns_i = find_section("Returns")
+    if returns_i is not None:
+        content_start = returns_i + 1
+        content_end = content_start
+        while content_end < len(lines) and not is_section_header(lines[content_end]):
+            content_end += 1
+
+        # Determine indentation to use for the content line
+        indent = "    "
+        if content_start < len(lines) and lines[content_start].strip() != "":
+            indent = lines[content_start][: len(lines[content_start]) - len(lines[content_start].lstrip())]
+
+        lines[content_start:content_end] = [f"{indent}{return_type_str}"]
+
+    return "\n".join(lines)
 
 def modify_api_file(file_path):
     with open(file_path, "r") as f:
@@ -31,79 +118,66 @@ def modify_api_file(file_path):
     
     # We need to find the sync and asyncio functions
     for node in tree.body:
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            if node.name in ["sync", "asyncio"]:
-                # Check if it already raises exceptions (heuristic)
-                if "raise errors.UnexpectedStatus" in ast.unparse(node):
-                    continue
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        if node.name not in {"sync", "asyncio"}:
+            continue
 
-                # Ensure the function accepts **kwargs if it doesn't already
-                # This is needed for the flattened client which passes extra kwargs
-                if not node.args.kwarg:
-                    node.args.kwarg = ast.arg(arg='kwargs', annotation=None)
-                    modified = True
+        # Ensure the function accepts **kwargs if it doesn't already.
+        # Needed for the flattened client which passes extra kwargs.
+        if not node.args.kwarg:
+            node.args.kwarg = ast.arg(arg="kwargs", annotation=None)
+            modified = True
 
-                # Find the detailed function call
-                detailed_func_name = f"{node.name}_detailed"
-                
-                # Find the detailed function definition to get the return type and docstring
-                detailed_node = next((n for n in tree.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == detailed_func_name), None)
-                
-                success_type = None
-                if detailed_node and detailed_node.returns:
-                    # detailed returns Response[Union[...]]
-                    # We want the first type in the Union inside Response
-                    if isinstance(detailed_node.returns, ast.Subscript):
-                        slice_val = detailed_node.returns.slice
-                        success_type = get_success_type(slice_val)
+        detailed_func_name = f"{node.name}_detailed"
+        detailed_node = next(
+            (
+                n
+                for n in tree.body
+                if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == detailed_func_name
+            ),
+            None,
+        )
 
-                if success_type:
-                    node.returns = success_type
-                    modified = True
-                
-                # Rewrite body - preserve all args but DON'T pass **kwargs to detailed
-                # (detailed functions don't accept **kwargs)
-                func_call = f"{detailed_func_name}(\n"
-                for arg in node.args.args:
-                    if arg.arg != 'self': # self is not there for module functions
-                        func_call += f"    {arg.arg}={arg.arg},\n"
-                for arg in node.args.kwonlyargs:
-                     func_call += f"    {arg.arg}={arg.arg},\n"
-                
-                # Don't include **kwargs in the call to detailed function
-                # (it doesn't accept them)
-                
-                func_call += ")"
-                
-                if isinstance(node, ast.AsyncFunctionDef):
-                    func_call = f"await {func_call}"
-                
-                new_body_code = f"""
+        success_type = _get_success_type_from_detailed_return(detailed_node.returns if detailed_node else None)
+        if success_type is not None:
+            node.returns = success_type
+            modified = True
+        return_type_str = ast.unparse(node.returns) if node.returns is not None else "Any"
+
+        # Rewrite body if it doesn't already raise on non-2xx
+        already_raises = "raise errors.UnexpectedStatus" in ast.unparse(node)
+        if not already_raises:
+            func_call = f"{detailed_func_name}(\n"
+            for arg in node.args.args:
+                if arg.arg != "self":  # module functions have no self, but be safe
+                    func_call += f"    {arg.arg}={arg.arg},\n"
+            for arg in node.args.kwonlyargs:
+                func_call += f"    {arg.arg}={arg.arg},\n"
+            func_call += ")"
+            if isinstance(node, ast.AsyncFunctionDef):
+                func_call = f"await {func_call}"
+
+            new_body_code = f"""
 def temp():
     response = {func_call}
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 """
-                new_body_ast = ast.parse(new_body_code).body[0].body
-                node.body = new_body_ast
-                
-                # Update docstring
-                docstring = ast.get_docstring(node)
-                if not docstring and detailed_node:
-                    docstring = ast.get_docstring(detailed_node)
-                
-                if docstring:
-                    # Add Raises section if not present
-                    if "Raises:" not in docstring:
-                        docstring += "\n\n    Raises:\n        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True."
-                    else:
-                        # Append to existing Raises
-                        pass # Simplified for now
-                    
-                    node.body.insert(0, ast.Expr(value=ast.Constant(value=docstring)))
-                
-                modified = True
+            new_body_ast = ast.parse(new_body_code).body[0].body
+            node.body = new_body_ast
+            modified = True
+
+        # Rewrite docstring so it matches the rewritten behavior/signature.
+        docstring = ast.get_docstring(node)
+        if not docstring and detailed_node:
+            docstring = ast.get_docstring(detailed_node)
+
+        if docstring:
+            updated_docstring = _rewrite_docstring(docstring, return_type_str)
+            _set_docstring(node, updated_docstring)
+            modified = True
 
     if modified:
         # We need to unparse. ast.unparse is available in Python 3.9+

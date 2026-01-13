@@ -81,11 +81,11 @@ Args:
     with_tenants (bool | Unset):  Default: False.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not 2xx.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetUsageMetricsResponse200 | GetUsageMetricsResponse400 | GetUsageMetricsResponse401 | GetUsageMetricsResponse403 | GetUsageMetricsResponse500]"""
+    GetUsageMetricsResponse200"""
     response = sync_detailed(client=client, start_time=start_time, end_time=end_time, tenant_id=tenant_id, with_tenants=with_tenants)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -125,11 +125,11 @@ Args:
     with_tenants (bool | Unset):  Default: False.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not 2xx.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[GetUsageMetricsResponse200 | GetUsageMetricsResponse400 | GetUsageMetricsResponse401 | GetUsageMetricsResponse403 | GetUsageMetricsResponse500]"""
+    GetUsageMetricsResponse200"""
     response = await asyncio_detailed(client=client, start_time=start_time, end_time=end_time, tenant_id=tenant_id, with_tenants=with_tenants)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)

@@ -50,6 +50,11 @@ from .activate_jobs_response_401 import ActivateJobsResponse401
 from .activate_jobs_response_500 import ActivateJobsResponse500
 from .activate_jobs_response_503 import ActivateJobsResponse503
 from .actorid_advancedfilter import ActoridAdvancedfilter
+from .actortype_advancedfilter import ActortypeAdvancedfilter
+from .actortype_advancedfilter_eq import ActortypeAdvancedfilterEq
+from .actortype_advancedfilter_in_item import ActortypeAdvancedfilterInItem
+from .actortype_advancedfilter_neq import ActortypeAdvancedfilterNeq
+from .actortype_exactmatch import ActortypeExactmatch
 from .ancestorscopeinstruction_object import AncestorscopeinstructionObject
 from .ancestorscopeinstruction_object_1 import AncestorscopeinstructionObject1
 from .ancestorscopeinstruction_object_2 import AncestorscopeinstructionObject2
@@ -1373,6 +1378,11 @@ from .resolve_process_instance_incidents_response_503 import (
     ResolveProcessInstanceIncidentsResponse503,
 )
 from .resourcekey_advancedfilter import ResourcekeyAdvancedfilter
+from .result_advancedfilter import ResultAdvancedfilter
+from .result_advancedfilter_eq import ResultAdvancedfilterEq
+from .result_advancedfilter_in_item import ResultAdvancedfilterInItem
+from .result_advancedfilter_neq import ResultAdvancedfilterNeq
+from .result_exactmatch import ResultExactmatch
 from .result_object import ResultObject
 from .result_object_1 import ResultObject1
 from .result_object_1_activateelements_item import ResultObject1ActivateelementsItem
@@ -1393,8 +1403,6 @@ from .scope_exactmatch import ScopeExactmatch
 from .scopekey_advancedfilter import ScopekeyAdvancedfilter
 from .search_audit_logs_data import SearchAuditLogsData
 from .search_audit_logs_data_filter import SearchAuditLogsDataFilter
-from .search_audit_logs_data_filter_actor_type import SearchAuditLogsDataFilterActorType
-from .search_audit_logs_data_filter_result import SearchAuditLogsDataFilterResult
 from .search_audit_logs_data_page import SearchAuditLogsDataPage
 from .search_audit_logs_data_sort_item import SearchAuditLogsDataSortItem
 from .search_audit_logs_data_sort_item_field import SearchAuditLogsDataSortItemField
@@ -2225,6 +2233,7 @@ from .search_tenants_response_401 import SearchTenantsResponse401
 from .search_tenants_response_403 import SearchTenantsResponse403
 from .search_tenants_response_500 import SearchTenantsResponse500
 from .search_user_task_audit_logs_data import SearchUserTaskAuditLogsData
+from .search_user_task_audit_logs_data_filter import SearchUserTaskAuditLogsDataFilter
 from .search_user_task_audit_logs_data_page import SearchUserTaskAuditLogsDataPage
 from .search_user_task_audit_logs_data_sort_item import (
     SearchUserTaskAuditLogsDataSortItem,
@@ -2634,6 +2643,11 @@ __all__ = (
     "ActivateJobsResponse500",
     "ActivateJobsResponse503",
     "ActoridAdvancedfilter",
+    "ActortypeAdvancedfilter",
+    "ActortypeAdvancedfilterEq",
+    "ActortypeAdvancedfilterInItem",
+    "ActortypeAdvancedfilterNeq",
+    "ActortypeExactmatch",
     "AncestorscopeinstructionObject",
     "AncestorscopeinstructionObject1",
     "AncestorscopeinstructionObject2",
@@ -3397,6 +3411,11 @@ __all__ = (
     "ResolveProcessInstanceIncidentsResponse500",
     "ResolveProcessInstanceIncidentsResponse503",
     "ResourcekeyAdvancedfilter",
+    "ResultAdvancedfilter",
+    "ResultAdvancedfilterEq",
+    "ResultAdvancedfilterInItem",
+    "ResultAdvancedfilterNeq",
+    "ResultExactmatch",
     "ResultObject",
     "ResultObject1",
     "ResultObject1ActivateelementsItem",
@@ -3415,8 +3434,6 @@ __all__ = (
     "ScopekeyAdvancedfilter",
     "SearchAuditLogsData",
     "SearchAuditLogsDataFilter",
-    "SearchAuditLogsDataFilterActorType",
-    "SearchAuditLogsDataFilterResult",
     "SearchAuditLogsDataPage",
     "SearchAuditLogsDataSortItem",
     "SearchAuditLogsDataSortItemField",
@@ -3882,6 +3899,7 @@ __all__ = (
     "SearchUsersResponse403",
     "SearchUsersResponse500",
     "SearchUserTaskAuditLogsData",
+    "SearchUserTaskAuditLogsDataFilter",
     "SearchUserTaskAuditLogsDataPage",
     "SearchUserTaskAuditLogsDataSortItem",
     "SearchUserTaskAuditLogsDataSortItemField",

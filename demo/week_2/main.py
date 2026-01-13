@@ -23,6 +23,8 @@ import json
 from datetime import datetime
 from loguru import logger
 
+from demo.week_2.loan_workers import run_workers
+
 from .deploy_loan_process import deploy_loan_process
 
 # Global Camunda client instance
@@ -56,6 +58,7 @@ async def lifespan(app: FastAPI):
 
     process_definition_key = await deploy_loan_process(camunda_client)
 
+    await run_workers(camunda_client)
     yield
 
     # Shutdown: Clean up resources
@@ -105,13 +108,6 @@ async def root():
         "version": "0.1.0",
         "frontend": "/frontend/index.html",
     }
-
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    return {"status": "healthy", "camunda_client": camunda_client is not None}
-
 
 class LoanApplicationRequest(BaseModel):
     variables: dict[str, Any]
@@ -243,18 +239,6 @@ async def loan_application(request: LoanApplicationRequest):
         raise HTTPException(
             status_code=500, detail=f"Failed to create process instance: {str(e)}"
         )
-
-@app.get("/workers")
-async def list_workers():
-    """List all registered workers (placeholder endpoint)"""
-    if not camunda_client:
-        raise HTTPException(status_code=500, detail="Camunda client not initialized")
-
-    # Note: This is a simplified endpoint. In production, you'd track workers differently
-    return {
-        "message": "No workers registered yet",
-        "info": "Workers are typically registered at startup, not via API",
-    }
 
 if __name__ == "__main__":
     import uvicorn

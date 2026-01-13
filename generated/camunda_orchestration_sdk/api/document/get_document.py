@@ -73,11 +73,11 @@ Args:
     content_hash (str | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not 2xx.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[File | GetDocumentResponse404 | GetDocumentResponse500]"""
+    File"""
     response = sync_detailed(document_id=document_id, client=client, store_id=store_id, content_hash=content_hash)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -121,11 +121,11 @@ Args:
     content_hash (str | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not 2xx.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 
 Returns:
-    Response[File | GetDocumentResponse404 | GetDocumentResponse500]"""
+    File"""
     response = await asyncio_detailed(document_id=document_id, client=client, store_id=store_id, content_hash=content_hash)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)
