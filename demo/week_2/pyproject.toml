@@ -1,0 +1,13 @@
+[project]
+name = "camunda-demo-week2"
+version = "0.1.0"
+description = "Week 2 demo - FastAPI application for Camunda Orchestration SDK"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

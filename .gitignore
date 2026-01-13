@@ -10,3 +10,4 @@ benchmark_results.json
 scenarios_*.json
 results_*.json
 
+demo/.DS_Store
