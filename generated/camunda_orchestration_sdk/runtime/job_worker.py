@@ -35,7 +35,7 @@ class HintedCallable(Protocol):
     _execution_hint: _EFFECTIVE_EXECUTION_STRATEGY
     def __call__(self, job: Any) -> dict[str, Any] | None | Awaitable[dict[str, Any] | None]: ...
 
-AsyncJobHandler = Callable[["JobContext"], Coroutine[Any, Any, dict[str, Any] | None]]
+AsyncJobHandler = Callable[["JobContext"], Coroutine[Any, Any, dict[str, Any] | CompleteJobData | None ]]
 SyncJobHandler = Callable[["JobContext"], dict[str, Any] | None]
 JobHandler = AsyncJobHandler | SyncJobHandler | HintedCallable
 
@@ -45,6 +45,8 @@ class WorkerConfig:
     job_type: str
     """How long the job is reserved for this worker only"""
     job_timeout_milliseconds: int
+    """Long-poll request timeout in milliseconds. Defaults to 0, which allows the server to set the request timeout"""
+    request_timeout_milliseconds: int = 0 
     max_concurrent_jobs: int = 10  # Max jobs executing at once
     execution_strategy: EXECUTION_STRATEGY = "auto"
     fetch_variables: list[str] | None = None
@@ -263,13 +265,13 @@ class JobWorker:
             empty_jobs: list[ActivateJobsResponse200JobsItem] = []
             return empty_jobs
 
-        self.logger.debug(f'Polling for jobs (capacity: {capacity})...')
+        self.logger.debug(f'Polling for jobs of type {self.config.job_type} (capacity: {capacity} | request_timeout: {self.config.request_timeout_milliseconds})...')
         jobsResult = await self.client.activate_jobs_async(data=
             ActivateJobsData(
                 type_=self.config.job_type, 
                 timeout=self.config.job_timeout_milliseconds, 
                 max_jobs_to_activate=capacity,
-                request_timeout=0, # This allows the server to autonegotiate the poll timeout
+                request_timeout=self.config.request_timeout_milliseconds, # 0 means that the server will use its default timeout 
                 fetch_variable = self.config.fetch_variables if self.config.fetch_variables is not None else UNSET,
                 worker=self.config.worker_name
             )
