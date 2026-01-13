@@ -1,6 +1,9 @@
 name: Build and Deploy Python API Docs
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch: # Manual trigger
 
 permissions:
@@ -18,7 +21,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-      
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
