@@ -30,8 +30,11 @@ typecheck:
 	uv run pyright
 
 docs-api:
-	uv pip install pdoc --system
-	pdoc ./generated/camunda_orchestration_sdk -o ./public --docformat google
+	# Install pdoc and required dependencies
+	uv pip install pdoc httpx --system
+	# Run pdoc. We use PYTHONPATH so pdoc 'sees' your code inside /generated
+	# as if it were the root, which prevents 'generated' appearing in the URLs.
+	PYTHONPATH=./generated pdoc camunda_orchestration_sdk -o ./public --docformat google
 
 clean-docs:
 	rm -rf ./public
