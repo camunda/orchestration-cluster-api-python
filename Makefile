@@ -1,4 +1,4 @@
-.PHONY: install generate clean test itest
+.PHONY: install generate clean test itest docs-api
 
 install:
 	mkdir -p generated
@@ -28,3 +28,7 @@ lint:
 
 typecheck:
 	uv run pyright
+
+docs-api:
+	uv pip install pdoc
+	pdoc ./generated/camunda_orchestration_sdk -o ./docs-api-html --docformat google
