@@ -13,3 +13,22 @@ extensions = [
 # Basic settings
 master_doc = "index"
 project = "Camunda Orchestration SDK"
+
+# HTML theme settings - enable table of contents in sidebar
+html_theme = "alabaster"
+html_theme_options = {
+    "sidebar_collapse": True,
+    "show_powered_by": False,
+}
+
+# Show table of contents in sidebar
+html_sidebars = {
+    "**": [
+        "about.html",
+        "searchbox.html",
+        "localtoc.html",  # This adds the local table of contents
+    ]
+}
+
+# TOC depth for the local table of contents
+toc_object_entries_show_parents = "hide"  # Cleaner display of nested items
