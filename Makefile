@@ -29,8 +29,11 @@ lint:
 typecheck:
 	uv run pyright
 
-docs-api:
-	PYTHONPATH=./generated uv run pdoc camunda_orchestration_sdk -o ./public --docformat google
+docs-api-old:
+	uv pip install pdoc --system
+	# install root project (and all its dependencies)
+	uv pip install -e . --system
+	PYTHONPATH=./generated pdoc camunda_orchestration_sdk -o ./public --docformat google
 
 clean-docs:
 	rm -rf ./public
@@ -39,7 +42,7 @@ preview-docs: clean-docs docs-api
 	@echo "Starting pdoc server at http://localhost:8080..."
 	PYTHONPATH=./generated pdoc camunda_orchestration_sdk --docformat google
 
-docs-sphinx-md:
+docs-api:
 	# 1. Install dependencies
 	uv pip install sphinx sphinx-markdown-builder --system
 	
