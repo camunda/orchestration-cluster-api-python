@@ -31,7 +31,8 @@ typecheck:
 
 docs-api:
 	uv pip install pdoc --system
-	uv pip install -e ./generated --system  # Installs the SDK and all its dependencies
+	# install root project (and all its dependencies)
+	uv pip install -e . --system
 	PYTHONPATH=./generated pdoc camunda_orchestration_sdk -o ./public --docformat google
 
 clean-docs:
