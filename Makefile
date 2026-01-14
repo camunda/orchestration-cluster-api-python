@@ -45,15 +45,16 @@ preview-docs: clean-docs docs-api
 docs-api:
 	# 1. Install dependencies
 	uv pip install sphinx sphinx-markdown-builder --system
-	
-	# 2. Run Sphinx build
-	# -M markdown: use the markdown builder
-	# docs-sphinx: the directory with your conf.py and index.rst
-	# public: the output directory
+
+	# 2. Build HTML for GitHub Pages preview
+	PYTHONPATH=./generated sphinx-build -M html docs-sphinx public
+
+	# 3. Build Markdown for Docusaurus integration
 	PYTHONPATH=./generated sphinx-build -M markdown docs-sphinx public
-	
-	# 3. Clean up: Sphinx-markdown-builder puts files in public/markdown
-	# We move them to our Docusaurus folder
+
+	# 4. Copy markdown to Docusaurus folder
 	mkdir -p ./website/docs/api
 	cp -R ./public/markdown/* ./website/docs/api/
-	@echo "Sphinx Markdown docs are now in ./website/docs/api"
+
+	@echo "HTML docs for preview: ./public/html"
+	@echo "Markdown docs for Docusaurus: ./website/docs/api"
