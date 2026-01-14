@@ -1,4 +1,4 @@
-.PHONY: install generate clean test itest docs-api
+.PHONY: install generate clean test itest docs-api docs-sphinx-md clean-docs preview-docs generate-v1
 
 install:
 	mkdir -p generated
@@ -37,4 +37,20 @@ clean-docs:
 
 preview-docs: clean-docs docs-api
 	@echo "Starting pdoc server at http://localhost:8080..."
-	PYTHONPATH=./generated uv run pdoc camunda_orchestration_sdk --docformat google
+	PYTHONPATH=./generated pdoc camunda_orchestration_sdk --docformat google
+
+docs-sphinx-md:
+	# 1. Install dependencies
+	uv pip install sphinx sphinx-markdown-builder --system
+	
+	# 2. Run Sphinx build
+	# -M markdown: use the markdown builder
+	# docs-sphinx: the directory with your conf.py and index.rst
+	# public: the output directory
+	PYTHONPATH=./generated sphinx-build -M markdown docs-sphinx public
+	
+	# 3. Clean up: Sphinx-markdown-builder puts files in public/markdown
+	# We move them to our Docusaurus folder
+	mkdir -p ./website/docs/api
+	cp -R ./public/markdown/* ./website/docs/api/
+	@echo "Sphinx Markdown docs are now in ./website/docs/api"
