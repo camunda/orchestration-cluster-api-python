@@ -99,9 +99,12 @@ paths:
                           minLength: 1
                           maxLength: 25
                         entityKey:
+                          description: System-generated entity key for an audit log
+                            entry.
+                          format: AuditLogEntityKey
+                          x-semantic-type: AuditLogEntityKey
+                          example: '22517998136843567'
                           type: string
-                          description: The key of the entity this audit log refers
-                            to.
                         entityType:
                           type: string
                           description: The type of entity affected by the operation.
@@ -520,8 +523,11 @@ paths:
                     minLength: 1
                     maxLength: 25
                   entityKey:
+                    description: System-generated entity key for an audit log entry.
+                    format: AuditLogEntityKey
+                    x-semantic-type: AuditLogEntityKey
+                    example: '22517998136843567'
                     type: string
-                    description: The key of the entity this audit log refers to.
                   entityType:
                     type: string
                     description: The type of entity affected by the operation.
@@ -3929,9 +3935,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - scope
-                - value
                 - name
+                - value
+                - scope
         '400':
           description: The provided data is not valid.
           content:
@@ -4123,9 +4129,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - scope
-                - value
                 - name
+                - value
+                - scope
         '400':
           description: The provided data is not valid.
           content:
@@ -4579,9 +4585,9 @@ paths:
                           description: Only provided if the cluster variable scope
                             is TENANT.
                       required:
-                      - scope
-                      - value
                       - name
+                      - value
+                      - scope
                   page:
                     description: Pagination information about the search results.
                     type: object
@@ -4834,9 +4840,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - scope
-                - value
                 - name
+                - value
+                - scope
         '400':
           description: The provided data is not valid.
           content:
@@ -5041,9 +5047,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - scope
-                - value
                 - name
+                - value
+                - scope
         '400':
           description: The provided data is not valid.
           content:
@@ -23670,8 +23676,8 @@ paths:
                 description: Process instance search response.
                 type: object
                 required:
-                - page
                 - items
+                - page
                 properties:
                   items:
                     description: The matching process instances.
@@ -36246,8 +36252,8 @@ paths:
               schema:
                 type: object
                 required:
-                - page
                 - items
+                - page
                 properties:
                   items:
                     description: The matching users.
@@ -38569,9 +38575,12 @@ paths:
                           minLength: 1
                           maxLength: 25
                         entityKey:
+                          description: System-generated entity key for an audit log
+                            entry.
+                          format: AuditLogEntityKey
+                          x-semantic-type: AuditLogEntityKey
+                          example: '22517998136843567'
                           type: string
-                          description: The key of the entity this audit log refers
-                            to.
                         entityType:
                           type: string
                           description: The type of entity affected by the operation.
@@ -40705,6 +40714,51 @@ components:
             Wildcard characters can be escaped with backslash, for instance: `\*`.
 
             '
+    EntitykeyExactmatch:
+      type: string
+      title: EntitykeyExactmatch
+      description: Matches the value exactly.
+      format: AuditLogEntityKey
+      x-semantic-type: AuditLogEntityKey
+      example: '22517998136843567'
+    EntitykeyAdvancedfilter:
+      title: EntitykeyAdvancedfilter
+      description: Advanced entityKey filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          format: AuditLogEntityKey
+          x-semantic-type: AuditLogEntityKey
+          example: '22517998136843567'
+          type: string
+        $neq:
+          description: Checks for inequality with the provided value.
+          format: AuditLogEntityKey
+          x-semantic-type: AuditLogEntityKey
+          example: '22517998136843567'
+          type: string
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            description: System-generated entity key for an audit log entry.
+            format: AuditLogEntityKey
+            x-semantic-type: AuditLogEntityKey
+            example: '22517998136843567'
+            type: string
+        $notIn:
+          description: Checks if the property matches none of the provided values.
+          type: array
+          items:
+            description: System-generated entity key for an audit log entry.
+            format: AuditLogEntityKey
+            x-semantic-type: AuditLogEntityKey
+            example: '22517998136843567'
+            type: string
     EntitytypeExactmatch:
       type: string
       title: EntitytypeExactmatch
@@ -43699,6 +43753,10 @@ components:
               oneOf:
               - $ref: '#/components/schemas/ActortypeExactmatch'
               - $ref: '#/components/schemas/ActortypeAdvancedfilter'
+            entityKey:
+              oneOf:
+              - $ref: '#/components/schemas/EntitykeyExactmatch'
+              - $ref: '#/components/schemas/EntitykeyAdvancedfilter'
             entityType:
               oneOf:
               - $ref: '#/components/schemas/EntitytypeExactmatch'
@@ -45841,8 +45899,8 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimValue
       - mappingRuleId
+      - claimValue
       - claimName
       - name
     SearchMappingRuleData:
@@ -45912,9 +45970,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimValue
       - claimName
       - name
+      - claimValue
     SearchMessageSubscriptionsData:
       type: object
       additionalProperties: false

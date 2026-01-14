@@ -17,7 +17,12 @@ def test_api_client_constructible():
     semantic_types.ProcessDefinitionId 
 
 def test_camunda_client_constructible():
-    from camunda_orchestration_sdk import CamundaClient
+    from camunda_orchestration_sdk import CamundaClient, CamundaAsyncClient
+
     client = CamundaClient(base_url="http://localhost")
     assert client is not None
     assert client.client is not None
+
+    async_client = CamundaAsyncClient(base_url="http://localhost")
+    assert async_client is not None
+    assert async_client.client is not None

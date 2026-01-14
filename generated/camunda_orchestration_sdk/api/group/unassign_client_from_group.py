@@ -76,13 +76,27 @@ Args:
     client_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UnassignClientFromGroupBadRequest: If the response status code is 400.
+    errors.UnassignClientFromGroupForbidden: If the response status code is 403.
+    errors.UnassignClientFromGroupNotFound: If the response status code is 404.
+    errors.UnassignClientFromGroupInternalServerError: If the response status code is 500.
+    errors.UnassignClientFromGroupServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(group_id=group_id, client_id=client_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UnassignClientFromGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromGroupResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.UnassignClientFromGroupForbidden(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromGroupResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.UnassignClientFromGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromGroupResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UnassignClientFromGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromGroupResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UnassignClientFromGroupServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromGroupResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -120,12 +134,26 @@ Args:
     client_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UnassignClientFromGroupBadRequest: If the response status code is 400.
+    errors.UnassignClientFromGroupForbidden: If the response status code is 403.
+    errors.UnassignClientFromGroupNotFound: If the response status code is 404.
+    errors.UnassignClientFromGroupInternalServerError: If the response status code is 500.
+    errors.UnassignClientFromGroupServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(group_id=group_id, client_id=client_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UnassignClientFromGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromGroupResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.UnassignClientFromGroupForbidden(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromGroupResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.UnassignClientFromGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromGroupResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UnassignClientFromGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromGroupResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UnassignClientFromGroupServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromGroupResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

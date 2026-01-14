@@ -75,13 +75,21 @@ Args:
     body (CreateElementInstanceVariablesData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.CreateElementInstanceVariablesBadRequest: If the response status code is 400.
+    errors.CreateElementInstanceVariablesInternalServerError: If the response status code is 500.
+    errors.CreateElementInstanceVariablesServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(element_instance_key=element_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateElementInstanceVariablesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateElementInstanceVariablesResponse400, response.parsed))
+        if response.status_code == 500:
+            raise errors.CreateElementInstanceVariablesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateElementInstanceVariablesResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.CreateElementInstanceVariablesServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(CreateElementInstanceVariablesResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -121,12 +129,20 @@ Args:
     body (CreateElementInstanceVariablesData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.CreateElementInstanceVariablesBadRequest: If the response status code is 400.
+    errors.CreateElementInstanceVariablesInternalServerError: If the response status code is 500.
+    errors.CreateElementInstanceVariablesServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(element_instance_key=element_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateElementInstanceVariablesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateElementInstanceVariablesResponse400, response.parsed))
+        if response.status_code == 500:
+            raise errors.CreateElementInstanceVariablesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateElementInstanceVariablesResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.CreateElementInstanceVariablesServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(CreateElementInstanceVariablesResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -67,13 +67,24 @@ Args:
     body (CreateGlobalClusterVariableData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.CreateGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     CreateGlobalClusterVariableResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateGlobalClusterVariableBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.CreateGlobalClusterVariableUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.CreateGlobalClusterVariableForbidden(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.CreateGlobalClusterVariableInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -101,12 +112,23 @@ Args:
     body (CreateGlobalClusterVariableData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.CreateGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     CreateGlobalClusterVariableResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateGlobalClusterVariableBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.CreateGlobalClusterVariableUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.CreateGlobalClusterVariableForbidden(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.CreateGlobalClusterVariableInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

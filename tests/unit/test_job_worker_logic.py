@@ -7,8 +7,8 @@ from camunda_orchestration_sdk.models.activate_jobs_response_200_jobs_item impor
 async def test_worker_decrements_active_jobs_on_success():
     # Mock client
     mock_client = MagicMock()
-    mock_client.activate_jobs_async = AsyncMock(return_value=None) # Don't return jobs in poll loop
-    mock_client.complete_job_async = AsyncMock()
+    mock_client.activate_jobs = AsyncMock(return_value=None) # Don't return jobs in poll loop
+    mock_client.complete_job = AsyncMock()
 
     # Mock job
     mock_job_item = MagicMock(spec=ActivateJobsResponse200JobsItem)
@@ -56,15 +56,15 @@ async def test_worker_decrements_active_jobs_on_success():
     assert worker.active_jobs == 0
     
     # 4. Verify complete was called
-    mock_client.complete_job_async.assert_called_once()
+    mock_client.complete_job.assert_called_once()
 
 
 @pytest.mark.asyncio
 async def test_worker_handles_exception_and_decrements_counter():
     # Mock client
     mock_client = MagicMock()
-    mock_client.activate_jobs_async = AsyncMock(return_value=None)
-    mock_client.fail_job_async = AsyncMock()
+    mock_client.activate_jobs = AsyncMock(return_value=None)
+    mock_client.fail_job = AsyncMock()
 
     # Mock job
     mock_job_item = MagicMock(spec=ActivateJobsResponse200JobsItem)
@@ -109,8 +109,8 @@ async def test_worker_handles_exception_and_decrements_counter():
     assert worker.active_jobs == 0
     
     # 4. Verify fail_job_async was called with correct error message
-    mock_client.fail_job_async.assert_called_once()
-    call_args = mock_client.fail_job_async.call_args
+    mock_client.fail_job.assert_called_once()
+    call_args = mock_client.fail_job.call_args
     assert call_args.kwargs['job_key'] == 456
     assert call_args.kwargs['data'].error_message == "Something went wrong!"
     assert call_args.kwargs['data'].retries == 2 # Should be decremented
@@ -120,7 +120,7 @@ async def test_worker_handles_exception_and_decrements_counter():
 async def test_worker_thread_strategy_exception_handling():
     # Mock client
     mock_client = MagicMock()
-    mock_client.fail_job_async = AsyncMock()
+    mock_client.fail_job = AsyncMock()
 
     # Mock job
     mock_job_item = MagicMock(spec=ActivateJobsResponse200JobsItem)
@@ -163,5 +163,5 @@ async def test_worker_thread_strategy_exception_handling():
     assert worker.active_jobs == 0
     
     # 4. Verify fail_job_async was called
-    mock_client.fail_job_async.assert_called_once()
-    assert "Thread failure!" in mock_client.fail_job_async.call_args.kwargs['data'].error_message
+    mock_client.fail_job.assert_called_once()
+    assert "Thread failure!" in mock_client.fail_job.call_args.kwargs['data'].error_message

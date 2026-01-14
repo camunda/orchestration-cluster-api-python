@@ -1,6 +1,39 @@
 import ast
 import os
+import re
 from pathlib import Path
+
+import yaml
+
+
+def _to_camel_case(snake_str: str) -> str:
+    parts = snake_str.split("_")
+    return "".join(p.title() for p in parts if p)
+
+
+def _status_suffix(code: int) -> str:
+    mapping = {
+        400: "BadRequest",
+        401: "Unauthorized",
+        402: "PaymentRequired",
+        403: "Forbidden",
+        404: "NotFound",
+        405: "MethodNotAllowed",
+        408: "RequestTimeout",
+        409: "Conflict",
+        410: "Gone",
+        412: "PreconditionFailed",
+        413: "PayloadTooLarge",
+        415: "UnsupportedMediaType",
+        422: "UnprocessableEntity",
+        429: "TooManyRequests",
+        500: "InternalServerError",
+        501: "NotImplemented",
+        502: "BadGateway",
+        503: "ServiceUnavailable",
+        504: "GatewayTimeout",
+    }
+    return mapping.get(code, f"Http{code}")
 
 
 def _is_docstring_stmt(stmt: ast.stmt) -> bool:
@@ -45,7 +78,224 @@ def _get_success_type_from_detailed_return(return_annotation: ast.expr | None) -
     return _get_success_type_from_union(slice_val)
 
 
-def _rewrite_docstring(docstring: str, return_type_str: str) -> str:
+def _infer_return_type_from_if(if_node: ast.If) -> str | None:
+    # Find the returned expression.
+    return_expr: ast.expr | None = None
+    for stmt in if_node.body:
+        if isinstance(stmt, ast.Return):
+            return_expr = stmt.value
+            break
+
+    if return_expr is None:
+        return None
+
+    # Common pattern: response_XXX = Model.from_dict(...); return response_XXX
+    if isinstance(return_expr, ast.Name):
+        returned_name = return_expr.id
+        for stmt in if_node.body:
+            if (
+                isinstance(stmt, ast.Assign)
+                and len(stmt.targets) == 1
+                and isinstance(stmt.targets[0], ast.Name)
+                and stmt.targets[0].id == returned_name
+            ):
+                value = stmt.value
+                if isinstance(value, ast.Call):
+                    # Model.from_dict(...)
+                    if isinstance(value.func, ast.Attribute) and isinstance(value.func.value, ast.Name):
+                        return value.func.value.id
+                    # cast(Type, ...)
+                    if isinstance(value.func, ast.Name) and value.func.id == "cast" and value.args:
+                        return ast.unparse(value.args[0])
+                return ast.unparse(value)
+        return None
+
+    # Other patterns: return Model.from_dict(...)
+    if isinstance(return_expr, ast.Call):
+        if isinstance(return_expr.func, ast.Attribute) and isinstance(return_expr.func.value, ast.Name):
+            return return_expr.func.value.id
+        if isinstance(return_expr.func, ast.Name) and return_expr.func.id == "cast" and return_expr.args:
+            return ast.unparse(return_expr.args[0])
+
+    return ast.unparse(return_expr)
+
+
+def _extract_status_type_map(tree: ast.Module) -> dict[int, str]:
+    """Return mapping status_code -> parsed model type string from _parse_response."""
+
+    parse_func: ast.FunctionDef | None = None
+    for node in tree.body:
+        if isinstance(node, ast.FunctionDef) and node.name == "_parse_response":
+            parse_func = node
+            break
+
+    if parse_func is None:
+        return {}
+
+    status_to_type: dict[int, str] = {}
+    for stmt in parse_func.body:
+        if not isinstance(stmt, ast.If):
+            continue
+
+        test = stmt.test
+        if not (
+            isinstance(test, ast.Compare)
+            and len(test.ops) == 1
+            and isinstance(test.ops[0], ast.Eq)
+            and len(test.comparators) == 1
+            and isinstance(test.comparators[0], ast.Constant)
+            and isinstance(test.comparators[0].value, int)
+        ):
+            continue
+
+        left = test.left
+        if not (
+            isinstance(left, ast.Attribute)
+            and left.attr == "status_code"
+            and isinstance(left.value, ast.Name)
+            and left.value.id == "response"
+        ):
+            continue
+
+        code = int(test.comparators[0].value)
+        inferred = _infer_return_type_from_if(stmt)
+        if inferred:
+            status_to_type[code] = inferred
+
+    return status_to_type
+
+
+def _extract_method_and_url(tree: ast.Module) -> tuple[str, str] | None:
+    """Extract (method, url) from the generated `_get_kwargs` function."""
+
+    get_kwargs: ast.FunctionDef | None = None
+    for node in tree.body:
+        if isinstance(node, ast.FunctionDef) and node.name == "_get_kwargs":
+            get_kwargs = node
+            break
+    if get_kwargs is None:
+        return None
+
+    method: str | None = None
+    url: str | None = None
+
+    for stmt in get_kwargs.body:
+        dict_value: ast.Dict | None = None
+
+        # Pattern 1: _kwargs = {'method': 'post', 'url': '/process-instances'}
+        if (
+            isinstance(stmt, ast.Assign)
+            and len(stmt.targets) == 1
+            and isinstance(stmt.targets[0], ast.Name)
+            and stmt.targets[0].id == "_kwargs"
+            and isinstance(stmt.value, ast.Dict)
+        ):
+            dict_value = stmt.value
+
+        # Pattern 1b: _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-instances'}
+        if (
+            isinstance(stmt, ast.AnnAssign)
+            and isinstance(stmt.target, ast.Name)
+            and stmt.target.id == "_kwargs"
+            and isinstance(stmt.value, ast.Dict)
+        ):
+            dict_value = stmt.value
+
+        if dict_value is not None:
+            for k, v in zip(dict_value.keys, dict_value.values, strict=False):
+                if not isinstance(k, ast.Constant) or not isinstance(k.value, str):
+                    continue
+                if not isinstance(v, ast.Constant) or not isinstance(v.value, str):
+                    continue
+                if k.value == "method":
+                    method = v.value
+                elif k.value == "url":
+                    url = v.value
+
+        if isinstance(stmt, ast.Assign) and len(stmt.targets) == 1 and isinstance(stmt.targets[0], ast.Subscript):
+            target = stmt.targets[0]
+            if not (isinstance(target.value, ast.Name) and target.value.id == "_kwargs"):
+                continue
+            if not isinstance(stmt.value, ast.Constant) or not isinstance(stmt.value.value, str):
+                continue
+
+            key_node = target.slice
+            if isinstance(key_node, ast.Constant) and isinstance(key_node.value, str):
+                if key_node.value == "method":
+                    method = stmt.value.value
+                elif key_node.value == "url":
+                    url = stmt.value.value
+
+    if method and url:
+        return method.lower(), url
+    return None
+
+
+def _resolve_ref(spec: dict, ref: str) -> dict | None:
+    if not ref.startswith("#/"):
+        return None
+    current: object = spec
+    for part in ref[2:].split("/"):
+        if not isinstance(current, dict) or part not in current:
+            return None
+        current = current[part]
+    return current if isinstance(current, dict) else None
+
+
+def _normalize_description(desc: str) -> str:
+    return re.sub(r"\s+", " ", desc).strip()
+
+
+def _get_response_descriptions_for_endpoint(
+    *, spec: dict, method: str, url: str
+) -> dict[int, str]:
+    operation = (((spec.get("paths") or {}).get(url) or {}).get(method))
+    if not isinstance(operation, dict):
+        return {}
+
+    responses = operation.get("responses")
+    if not isinstance(responses, dict):
+        return {}
+
+    out: dict[int, str] = {}
+    for code_str, resp in responses.items():
+        if not isinstance(code_str, str) or not code_str.isdigit():
+            continue
+        code = int(code_str)
+        if isinstance(resp, dict) and "$ref" in resp and isinstance(resp["$ref"], str):
+            resolved = _resolve_ref(spec, resp["$ref"])
+            resp = resolved if resolved is not None else resp
+        if not isinstance(resp, dict):
+            continue
+        desc = resp.get("description")
+        if isinstance(desc, str) and desc.strip():
+            out[code] = _normalize_description(desc)
+    return out
+
+
+def _ensure_typing_import(tree: ast.Module, name: str) -> None:
+    """Ensure `from typing import <name>` exists (prefer augmenting existing typing imports)."""
+
+    for stmt in tree.body:
+        if isinstance(stmt, ast.ImportFrom) and stmt.module == "typing" and stmt.level == 0:
+            if any(alias.name == name for alias in stmt.names):
+                return
+            stmt.names.append(ast.alias(name=name, asname=None))
+            return
+
+    # Insert a new import after any __future__ import / module docstring and other imports.
+    insert_at = 0
+    if tree.body and isinstance(tree.body[0], ast.Expr) and isinstance(tree.body[0].value, ast.Constant) and isinstance(tree.body[0].value.value, str):
+        insert_at = 1
+    while insert_at < len(tree.body) and isinstance(tree.body[insert_at], ast.ImportFrom) and tree.body[insert_at].module == "__future__":
+        insert_at += 1
+    while insert_at < len(tree.body) and isinstance(tree.body[insert_at], (ast.Import, ast.ImportFrom)):
+        insert_at += 1
+
+    tree.body.insert(insert_at, ast.ImportFrom(module="typing", names=[ast.alias(name=name, asname=None)], level=0))
+
+
+def _rewrite_docstring(docstring: str, return_type_str: str, raise_lines: list[str]) -> str:
     lines = docstring.splitlines()
     if not lines:
         return docstring
@@ -60,37 +310,30 @@ def _rewrite_docstring(docstring: str, return_type_str: str) -> str:
                 return i
         return None
 
-    # Update/insert Raises section for UnexpectedStatus
+    # Replace/insert Raises section to list typed exceptions
     raises_i = find_section("Raises")
     returns_i = find_section("Returns")
+    indent = "    "
+
+    new_raises_block = ["", "Raises:"]
+    new_raises_block.extend([f"{indent}{l}" for l in raise_lines])
+    new_raises_block.append(f"{indent}httpx.TimeoutException: If the request takes longer than Client.timeout.")
 
     if raises_i is None:
         insert_at = returns_i if returns_i is not None else len(lines)
-        block = [
-            "",
-            "Raises:",
-            "    errors.UnexpectedStatus: If the response status code is not 2xx.",
-            "    httpx.TimeoutException: If the request takes longer than Client.timeout.",
-        ]
-        lines[insert_at:insert_at] = block
-        # refresh indices
-        raises_i = find_section("Raises")
-        returns_i = find_section("Returns")
+        lines[insert_at:insert_at] = new_raises_block
     else:
-        # Replace the UnexpectedStatus description if present; otherwise insert it.
-        j = raises_i + 1
-        inserted = False
-        while j < len(lines) and (lines[j].strip() == "" or lines[j].startswith(" ") or lines[j].startswith("\t")):
-            if lines[j].lstrip().startswith("errors.UnexpectedStatus:"):
-                indent = lines[j][: len(lines[j]) - len(lines[j].lstrip())]
-                lines[j] = f"{indent}errors.UnexpectedStatus: If the response status code is not 2xx."
-                inserted = True
-                break
-            j += 1
-
-        if not inserted:
-            # Insert right after the Raises: header
-            lines.insert(raises_i + 1, "    errors.UnexpectedStatus: If the response status code is not 2xx.")
+        content_start = raises_i + 1
+        content_end = content_start
+        while content_end < len(lines) and not is_section_header(lines[content_end]):
+            content_end += 1
+        # replace from just before Raises: (keeping any single preceding blank line stable)
+        # We will replace the section header + its content.
+        section_start = raises_i
+        # remove a blank line right before Raises: if present, we insert our own
+        if section_start > 0 and lines[section_start - 1].strip() == "":
+            section_start -= 1
+        lines[section_start:content_end] = new_raises_block
 
     # Update Returns section to match the rewritten return annotation.
     returns_i = find_section("Returns")
@@ -109,13 +352,24 @@ def _rewrite_docstring(docstring: str, return_type_str: str) -> str:
 
     return "\n".join(lines)
 
-def modify_api_file(file_path):
+def modify_api_file(file_path: Path, *, spec: dict) -> None:
     with open(file_path, "r") as f:
         code = f.read()
     
     tree = ast.parse(code)
     modified = False
     
+    module_stem = Path(file_path).stem
+    endpoint_name = _to_camel_case(module_stem)
+    status_type_map = _extract_status_type_map(tree)
+    error_codes = sorted([c for c in status_type_map.keys() if not (200 <= c < 300)])
+
+    response_desc: dict[int, str] = {}
+    method_url = _extract_method_and_url(tree)
+    if method_url and spec:
+        method, url = method_url
+        response_desc = _get_response_descriptions_for_endpoint(spec=spec, method=method, url=url)
+
     # We need to find the sync and asyncio functions
     for node in tree.body:
         if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
@@ -145,29 +399,57 @@ def modify_api_file(file_path):
             modified = True
         return_type_str = ast.unparse(node.returns) if node.returns is not None else "Any"
 
-        # Rewrite body if it doesn't already raise on non-2xx
-        already_raises = "raise errors.UnexpectedStatus" in ast.unparse(node)
-        if not already_raises:
-            func_call = f"{detailed_func_name}(\n"
-            for arg in node.args.args:
-                if arg.arg != "self":  # module functions have no self, but be safe
-                    func_call += f"    {arg.arg}={arg.arg},\n"
-            for arg in node.args.kwonlyargs:
-                func_call += f"    {arg.arg}={arg.arg},\n"
-            func_call += ")"
-            if isinstance(node, ast.AsyncFunctionDef):
-                func_call = f"await {func_call}"
+        # Ensure cast is available if we need to cast parsed error models.
+        needs_cast = any(status_type_map.get(c) not in {None, "Any"} for c in error_codes)
+        if needs_cast:
+            _ensure_typing_import(tree, "cast")
+            modified = True
 
-            new_body_code = f"""
+        func_call = f"{detailed_func_name}(\n"
+        for arg in node.args.args:
+            if arg.arg != "self":  # module functions have no self, but be safe
+                func_call += f"    {arg.arg}={arg.arg},\n"
+        for arg in node.args.kwonlyargs:
+            func_call += f"    {arg.arg}={arg.arg},\n"
+        func_call += ")"
+        if isinstance(node, ast.AsyncFunctionDef):
+            func_call = f"await {func_call}"
+
+        raise_blocks = ""
+        raise_lines: list[str] = []
+        for code in error_codes:
+            parsed_type = status_type_map.get(code, "Any")
+            exc_name = f"{endpoint_name}{_status_suffix(code)}"
+            desc = response_desc.get(code)
+            if desc:
+                raise_lines.append(f"errors.{exc_name}: If the response status code is {code}. {desc}")
+            else:
+                raise_lines.append(f"errors.{exc_name}: If the response status code is {code}.")
+
+            if parsed_type and parsed_type != "Any":
+                parsed_expr = f"cast({parsed_type}, response.parsed)"
+            else:
+                parsed_expr = "response.parsed"
+
+            # NOTE: this block is nested under `if response.status_code < 200 or response.status_code >= 300:`
+            # so it must be indented by 8+ spaces inside the temp() function.
+            raise_blocks += (
+                f"        if response.status_code == {code}:\n"
+                f"            raise errors.{exc_name}(status_code=response.status_code, content=response.content, parsed={parsed_expr})\n"
+            )
+
+        raise_lines.append("errors.UnexpectedStatus: If the response status code is not documented.")
+
+        new_body_code = f"""
 def temp():
     response = {func_call}
     if response.status_code < 200 or response.status_code >= 300:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+{raise_blocks}        raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 """
-            new_body_ast = ast.parse(new_body_code).body[0].body
-            node.body = new_body_ast
-            modified = True
+        new_body_ast = ast.parse(new_body_code).body[0].body
+        node.body = new_body_ast
+        modified = True
 
         # Rewrite docstring so it matches the rewritten behavior/signature.
         docstring = ast.get_docstring(node)
@@ -175,7 +457,7 @@ def temp():
             docstring = ast.get_docstring(detailed_node)
 
         if docstring:
-            updated_docstring = _rewrite_docstring(docstring, return_type_str)
+            updated_docstring = _rewrite_docstring(docstring, return_type_str, raise_lines)
             _set_docstring(node, updated_docstring)
             modified = True
 
@@ -189,6 +471,11 @@ def run(context):
     out_dir = Path(context["out_dir"])
     package_dir = out_dir / "camunda_orchestration_sdk"
     api_dir = package_dir / "api"
+
+    spec_path = out_dir / "bundled_spec.yaml"
+    spec: dict = {}
+    if spec_path.exists():
+        spec = yaml.safe_load(spec_path.read_text()) or {}
     
     if not api_dir.exists():
         print(f"API directory not found at {api_dir}")
@@ -197,7 +484,7 @@ def run(context):
     for root, dirs, files in os.walk(api_dir):
         for file in files:
             if file.endswith(".py") and file != "__init__.py":
-                modify_api_file(Path(root) / file)
+                modify_api_file(Path(root) / file, spec=spec)
 
 if __name__ == "__main__":
     # For testing

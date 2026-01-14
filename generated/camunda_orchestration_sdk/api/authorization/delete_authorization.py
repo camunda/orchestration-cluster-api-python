@@ -68,13 +68,24 @@ Args:
         2251799813684332.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.DeleteAuthorizationUnauthorized: If the response status code is 401.
+    errors.DeleteAuthorizationNotFound: If the response status code is 404.
+    errors.DeleteAuthorizationInternalServerError: If the response status code is 500.
+    errors.DeleteAuthorizationServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(authorization_key=authorization_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.DeleteAuthorizationUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(DeleteAuthorizationResponse401, response.parsed))
+        if response.status_code == 404:
+            raise errors.DeleteAuthorizationNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteAuthorizationResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.DeleteAuthorizationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteAuthorizationResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.DeleteAuthorizationServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(DeleteAuthorizationResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -108,12 +119,23 @@ Args:
         2251799813684332.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.DeleteAuthorizationUnauthorized: If the response status code is 401.
+    errors.DeleteAuthorizationNotFound: If the response status code is 404.
+    errors.DeleteAuthorizationInternalServerError: If the response status code is 500.
+    errors.DeleteAuthorizationServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(authorization_key=authorization_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.DeleteAuthorizationUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(DeleteAuthorizationResponse401, response.parsed))
+        if response.status_code == 404:
+            raise errors.DeleteAuthorizationNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteAuthorizationResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.DeleteAuthorizationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteAuthorizationResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.DeleteAuthorizationServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(DeleteAuthorizationResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

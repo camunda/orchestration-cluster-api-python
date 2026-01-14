@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -74,13 +74,24 @@ Args:
     body (GetProcessInstanceStatisticsByErrorData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetProcessInstanceStatisticsByErrorBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceStatisticsByErrorUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceStatisticsByErrorForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceStatisticsByErrorInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetProcessInstanceStatisticsByErrorResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetProcessInstanceStatisticsByErrorBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceStatisticsByErrorResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetProcessInstanceStatisticsByErrorUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceStatisticsByErrorResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetProcessInstanceStatisticsByErrorForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceStatisticsByErrorResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetProcessInstanceStatisticsByErrorInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceStatisticsByErrorResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -114,12 +125,23 @@ Args:
     body (GetProcessInstanceStatisticsByErrorData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetProcessInstanceStatisticsByErrorBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceStatisticsByErrorUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceStatisticsByErrorForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceStatisticsByErrorInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetProcessInstanceStatisticsByErrorResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetProcessInstanceStatisticsByErrorBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceStatisticsByErrorResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetProcessInstanceStatisticsByErrorUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceStatisticsByErrorResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetProcessInstanceStatisticsByErrorForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceStatisticsByErrorResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetProcessInstanceStatisticsByErrorInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceStatisticsByErrorResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

@@ -78,13 +78,27 @@ Args:
     body (FailJobData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.FailJobBadRequest: If the response status code is 400.
+    errors.FailJobNotFound: If the response status code is 404.
+    errors.FailJobConflict: If the response status code is 409.
+    errors.FailJobInternalServerError: If the response status code is 500.
+    errors.FailJobServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(job_key=job_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.FailJobBadRequest(status_code=response.status_code, content=response.content, parsed=cast(FailJobResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.FailJobNotFound(status_code=response.status_code, content=response.content, parsed=cast(FailJobResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.FailJobConflict(status_code=response.status_code, content=response.content, parsed=cast(FailJobResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.FailJobInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(FailJobResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.FailJobServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(FailJobResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -118,12 +132,26 @@ Args:
     body (FailJobData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.FailJobBadRequest: If the response status code is 400.
+    errors.FailJobNotFound: If the response status code is 404.
+    errors.FailJobConflict: If the response status code is 409.
+    errors.FailJobInternalServerError: If the response status code is 500.
+    errors.FailJobServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(job_key=job_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.FailJobBadRequest(status_code=response.status_code, content=response.content, parsed=cast(FailJobResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.FailJobNotFound(status_code=response.status_code, content=response.content, parsed=cast(FailJobResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.FailJobConflict(status_code=response.status_code, content=response.content, parsed=cast(FailJobResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.FailJobInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(FailJobResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.FailJobServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(FailJobResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -100,13 +100,27 @@ Args:
     body (SearchElementInstanceIncidentsData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400.
+    errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401.
+    errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403.
+    errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404.
+    errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchElementInstanceIncidentsResponse200"""
     response = sync_detailed(element_instance_key=element_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchElementInstanceIncidentsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchElementInstanceIncidentsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchElementInstanceIncidentsForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SearchElementInstanceIncidentsNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchElementInstanceIncidentsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -162,12 +176,26 @@ Args:
     body (SearchElementInstanceIncidentsData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400.
+    errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401.
+    errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403.
+    errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404.
+    errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchElementInstanceIncidentsResponse200"""
     response = await asyncio_detailed(element_instance_key=element_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchElementInstanceIncidentsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchElementInstanceIncidentsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchElementInstanceIncidentsForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SearchElementInstanceIncidentsNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchElementInstanceIncidentsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

@@ -27,27 +27,38 @@ Generated SDK will be placed in `generated/` by default. You can change this wit
 
 ### Using the generated SDK
 
-The generated SDK provides a `CamundaClient` class that wraps the underlying API client and provides a unified interface for both synchronous and asynchronous operations.
+The generated SDK provides two convenience clients:
+
+- `CamundaClient`: sync-only convenience client.
+- `CamundaAsyncClient`: async-only convenience client.
 
 #### Initialization
 
 ```python
-from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk import CamundaClient, CamundaAsyncClient
 
 # Unauthenticated (for local development)
-client = CamundaClient(base_url="http://localhost:8080")
+client = CamundaClient(base_url="http://localhost:8080/v2")
+async_client = CamundaAsyncClient(base_url="http://localhost:8080/v2")
 
 # Authenticated (for production/SaaS)
 client = CamundaClient(
     base_url="https://...", 
     token="your-access-token"
 )
+
+async_client = CamundaAsyncClient(
+  base_url="https://...",
+  token="your-access-token"
+)
 ```
 
 #### Synchronous Usage
 
 ```python
-with CamundaClient(base_url="http://localhost:8080") as client:
+from camunda_orchestration_sdk import CamundaClient
+
+with CamundaClient(base_url="http://localhost:8080/v2") as client:
     topology = client.get_topology()
     print(topology)
 ```
@@ -56,11 +67,11 @@ with CamundaClient(base_url="http://localhost:8080") as client:
 
 ```python
 import asyncio
-from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk import CamundaAsyncClient
 
 async def main():
-    async with CamundaClient(base_url="http://localhost:8080") as client:
-        topology = await client.get_topology_async()
+  async with CamundaAsyncClient(base_url="http://localhost:8080/v2") as client:
+    topology = await client.get_topology()
         print(topology)
 
 asyncio.run(main())

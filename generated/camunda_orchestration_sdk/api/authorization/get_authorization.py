@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -69,13 +69,24 @@ Args:
         2251799813684332.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetAuthorizationUnauthorized: If the response status code is 401.
+    errors.GetAuthorizationForbidden: If the response status code is 403.
+    errors.GetAuthorizationNotFound: If the response status code is 404.
+    errors.GetAuthorizationInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetAuthorizationResponse200"""
     response = sync_detailed(authorization_key=authorization_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetAuthorizationUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetAuthorizationResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetAuthorizationForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetAuthorizationResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetAuthorizationNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetAuthorizationResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetAuthorizationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetAuthorizationResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -109,12 +120,23 @@ Args:
         2251799813684332.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetAuthorizationUnauthorized: If the response status code is 401.
+    errors.GetAuthorizationForbidden: If the response status code is 403.
+    errors.GetAuthorizationNotFound: If the response status code is 404.
+    errors.GetAuthorizationInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetAuthorizationResponse200"""
     response = await asyncio_detailed(authorization_key=authorization_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetAuthorizationUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetAuthorizationResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetAuthorizationForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetAuthorizationResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetAuthorizationNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetAuthorizationResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetAuthorizationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetAuthorizationResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

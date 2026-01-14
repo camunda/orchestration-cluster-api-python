@@ -76,13 +76,27 @@ Args:
     role_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UnassignRoleFromTenantBadRequest: If the response status code is 400.
+    errors.UnassignRoleFromTenantForbidden: If the response status code is 403.
+    errors.UnassignRoleFromTenantNotFound: If the response status code is 404.
+    errors.UnassignRoleFromTenantInternalServerError: If the response status code is 500.
+    errors.UnassignRoleFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(tenant_id=tenant_id, role_id=role_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UnassignRoleFromTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.UnassignRoleFromTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.UnassignRoleFromTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UnassignRoleFromTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UnassignRoleFromTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -120,12 +134,26 @@ Args:
     role_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UnassignRoleFromTenantBadRequest: If the response status code is 400.
+    errors.UnassignRoleFromTenantForbidden: If the response status code is 403.
+    errors.UnassignRoleFromTenantNotFound: If the response status code is 404.
+    errors.UnassignRoleFromTenantInternalServerError: If the response status code is 500.
+    errors.UnassignRoleFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(tenant_id=tenant_id, role_id=role_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UnassignRoleFromTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.UnassignRoleFromTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.UnassignRoleFromTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UnassignRoleFromTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UnassignRoleFromTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

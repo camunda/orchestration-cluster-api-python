@@ -11,7 +11,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Any, Optional
 from contextlib import asynccontextmanager
 from pathlib import Path
-from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk import CamundaAsyncClient
 from camunda_orchestration_sdk.models.processcreationbykey import Processcreationbykey
 from camunda_orchestration_sdk.models.search_process_instances_data import SearchProcessInstancesData
 from camunda_orchestration_sdk.models.search_process_instances_data_filter import SearchProcessInstancesDataFilter
@@ -28,7 +28,7 @@ from demo.week_2.loan_workers import run_workers
 from .deploy_loan_process import deploy_loan_process
 
 # Global Camunda client instance
-camunda_client: Optional[CamundaClient] = None
+camunda_client: Optional[CamundaAsyncClient] = None
 process_definition_key: ProcessDefinitionKey
 
 
@@ -53,7 +53,7 @@ async def lifespan(app: FastAPI):
     global process_definition_key
 
     # Startup: Initialize Camunda client
-    camunda_client = CamundaClient(base_url=settings.camunda_base_url)
+    camunda_client = CamundaAsyncClient(base_url=settings.camunda_base_url)
     logger.info(f"Camunda client initialized (base_url: {settings.camunda_base_url})")
 
     process_definition_key = await deploy_loan_process(camunda_client)
@@ -125,7 +125,7 @@ async def loan_application(request: LoanApplicationRequest):
 
     try:
         # Create the process instance
-        process_instance = await camunda_client.create_process_instance_async(
+        process_instance = await camunda_client.create_process_instance(
             data=Processcreationbykey(
                 process_definition_key=process_definition_key,
                 variables=ProcesscreationbyidVariables.from_dict(request.variables),
@@ -147,7 +147,7 @@ async def loan_application(request: LoanApplicationRequest):
                 await asyncio.sleep(poll_interval)
 
             # Search for completed process instance
-            search_result = await camunda_client.search_process_instances_async(
+            search_result = await camunda_client.search_process_instances(
                 data=SearchProcessInstancesData(
                     filter_=SearchProcessInstancesDataFilter(
                         process_instance_key=process_instance.process_instance_key,
@@ -161,7 +161,7 @@ async def loan_application(request: LoanApplicationRequest):
                 logger.info(f"Process {process_instance.process_instance_key} completed after {(datetime.now() - start_time).total_seconds():.1f}s")
 
                 # Fetch all variables for the completed process instance
-                variables_result = await camunda_client.search_variables_async(
+                variables_result = await camunda_client.search_variables(
                     data=SearchVariablesData(
                         filter_=SearchVariablesDataFilter(
                             process_instance_key=process_instance.process_instance_key

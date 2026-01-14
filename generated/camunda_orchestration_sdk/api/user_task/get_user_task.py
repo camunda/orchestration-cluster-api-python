@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -71,13 +71,27 @@ Args:
     user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetUserTaskBadRequest: If the response status code is 400.
+    errors.GetUserTaskUnauthorized: If the response status code is 401.
+    errors.GetUserTaskForbidden: If the response status code is 403.
+    errors.GetUserTaskNotFound: If the response status code is 404.
+    errors.GetUserTaskInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetUserTaskResponse200"""
     response = sync_detailed(user_task_key=user_task_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetUserTaskBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetUserTaskUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetUserTaskForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetUserTaskNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetUserTaskInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -109,12 +123,26 @@ Args:
     user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetUserTaskBadRequest: If the response status code is 400.
+    errors.GetUserTaskUnauthorized: If the response status code is 401.
+    errors.GetUserTaskForbidden: If the response status code is 403.
+    errors.GetUserTaskNotFound: If the response status code is 404.
+    errors.GetUserTaskInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetUserTaskResponse200"""
     response = await asyncio_detailed(user_task_key=user_task_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetUserTaskBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetUserTaskUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetUserTaskForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetUserTaskNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetUserTaskInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

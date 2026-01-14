@@ -1,11 +1,12 @@
 """A client library for accessing Orchestration Cluster API"""
 
-from .client import AuthenticatedClient, Client, CamundaClient
+from .client import AuthenticatedClient, Client, CamundaClient, CamundaAsyncClient
 
 __all__ = (
     "AuthenticatedClient",
     "Client",
     "CamundaClient",
+    "CamundaAsyncClient",
     "WorkerConfig",
 )
 

@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -65,13 +65,18 @@ Args:
     resource_key (str): The system-assigned key for this resource.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetResourceNotFound: If the response status code is 404.
+    errors.GetResourceInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetResourceResponse200"""
     response = sync_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 404:
+            raise errors.GetResourceNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetResourceResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetResourceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetResourceResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -109,12 +114,17 @@ Args:
     resource_key (str): The system-assigned key for this resource.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetResourceNotFound: If the response status code is 404.
+    errors.GetResourceInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetResourceResponse200"""
     response = await asyncio_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 404:
+            raise errors.GetResourceNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetResourceResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetResourceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetResourceResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

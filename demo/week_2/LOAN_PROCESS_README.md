@@ -124,8 +124,8 @@ Create a file `loan_workers.py`:
 
 ```python
 import asyncio
-from camunda_orchestration_sdk import CamundaClient
-from camunda_orchestration_sdk.worker import WorkerConfig
+from camunda_orchestration_sdk import CamundaAsyncClient
+from camunda_orchestration_sdk.runtime.job_worker import WorkerConfig
 
 async def validate_application(job_context):
     """Validate the loan application data"""
@@ -203,7 +203,7 @@ async def send_rejection_notification(job_context):
 
 async def main():
     """Register all workers and keep them running"""
-    camunda = CamundaClient(base_url="http://localhost:8080/v2")
+    camunda = CamundaAsyncClient(base_url="http://localhost:8080/v2")
 
     # Register workers
     workers = [

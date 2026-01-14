@@ -96,13 +96,13 @@ If you have a BPMN file in your project (like in `tests/integration/resources/`)
 
 ```python
 import asyncio
-from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk import CamundaAsyncClient
 
 async def deploy_process():
-    camunda = CamundaClient(base_url="http://localhost:8080/v2")
+  camunda = CamundaAsyncClient(base_url="http://localhost:8080/v2")
 
     # Deploy your BPMN file
-    result = await camunda.deploy_resources_from_files_async(
+    result = await camunda.deploy_resources_from_files(
         files=["./path/to/your/process.bpmn"]
     )
 

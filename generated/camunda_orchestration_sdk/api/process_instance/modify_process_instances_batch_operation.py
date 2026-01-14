@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -89,13 +89,24 @@ Args:
         and new element instances should be activated or terminated.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.ModifyProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.ModifyProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ModifyProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.ModifyProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     ModifyProcessInstancesBatchOperationResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.ModifyProcessInstancesBatchOperationBadRequest(status_code=response.status_code, content=response.content, parsed=cast(ModifyProcessInstancesBatchOperationResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.ModifyProcessInstancesBatchOperationUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(ModifyProcessInstancesBatchOperationResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.ModifyProcessInstancesBatchOperationForbidden(status_code=response.status_code, content=response.content, parsed=cast(ModifyProcessInstancesBatchOperationResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.ModifyProcessInstancesBatchOperationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(ModifyProcessInstancesBatchOperationResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -145,12 +156,23 @@ Args:
         and new element instances should be activated or terminated.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.ModifyProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.ModifyProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ModifyProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.ModifyProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     ModifyProcessInstancesBatchOperationResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.ModifyProcessInstancesBatchOperationBadRequest(status_code=response.status_code, content=response.content, parsed=cast(ModifyProcessInstancesBatchOperationResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.ModifyProcessInstancesBatchOperationUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(ModifyProcessInstancesBatchOperationResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.ModifyProcessInstancesBatchOperationForbidden(status_code=response.status_code, content=response.content, parsed=cast(ModifyProcessInstancesBatchOperationResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.ModifyProcessInstancesBatchOperationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(ModifyProcessInstancesBatchOperationResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

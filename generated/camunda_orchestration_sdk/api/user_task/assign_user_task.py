@@ -77,13 +77,27 @@ Args:
     body (AssignUserTaskData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.AssignUserTaskBadRequest: If the response status code is 400.
+    errors.AssignUserTaskNotFound: If the response status code is 404.
+    errors.AssignUserTaskConflict: If the response status code is 409.
+    errors.AssignUserTaskInternalServerError: If the response status code is 500.
+    errors.AssignUserTaskServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(user_task_key=user_task_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.AssignUserTaskBadRequest(status_code=response.status_code, content=response.content, parsed=cast(AssignUserTaskResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.AssignUserTaskNotFound(status_code=response.status_code, content=response.content, parsed=cast(AssignUserTaskResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.AssignUserTaskConflict(status_code=response.status_code, content=response.content, parsed=cast(AssignUserTaskResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.AssignUserTaskInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(AssignUserTaskResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.AssignUserTaskServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(AssignUserTaskResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -117,12 +131,26 @@ Args:
     body (AssignUserTaskData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.AssignUserTaskBadRequest: If the response status code is 400.
+    errors.AssignUserTaskNotFound: If the response status code is 404.
+    errors.AssignUserTaskConflict: If the response status code is 409.
+    errors.AssignUserTaskInternalServerError: If the response status code is 500.
+    errors.AssignUserTaskServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(user_task_key=user_task_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.AssignUserTaskBadRequest(status_code=response.status_code, content=response.content, parsed=cast(AssignUserTaskResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.AssignUserTaskNotFound(status_code=response.status_code, content=response.content, parsed=cast(AssignUserTaskResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.AssignUserTaskConflict(status_code=response.status_code, content=response.content, parsed=cast(AssignUserTaskResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.AssignUserTaskInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(AssignUserTaskResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.AssignUserTaskServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(AssignUserTaskResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

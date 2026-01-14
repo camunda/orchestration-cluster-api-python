@@ -76,13 +76,24 @@ Args:
     body (ResolveIncidentData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.ResolveIncidentBadRequest: If the response status code is 400.
+    errors.ResolveIncidentNotFound: If the response status code is 404.
+    errors.ResolveIncidentInternalServerError: If the response status code is 500.
+    errors.ResolveIncidentServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(incident_key=incident_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.ResolveIncidentBadRequest(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.ResolveIncidentNotFound(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.ResolveIncidentInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.ResolveIncidentServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -118,12 +129,23 @@ Args:
     body (ResolveIncidentData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.ResolveIncidentBadRequest: If the response status code is 400.
+    errors.ResolveIncidentNotFound: If the response status code is 404.
+    errors.ResolveIncidentInternalServerError: If the response status code is 500.
+    errors.ResolveIncidentServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(incident_key=incident_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.ResolveIncidentBadRequest(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.ResolveIncidentNotFound(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.ResolveIncidentInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.ResolveIncidentServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

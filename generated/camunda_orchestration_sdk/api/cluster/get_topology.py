@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -52,13 +52,18 @@ def sync(*, client: AuthenticatedClient | Client, **kwargs) -> GetTopologyRespon
  Obtains the current topology of the cluster the gateway is part of.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetTopologyUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTopologyInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetTopologyResponse200"""
     response = sync_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetTopologyUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetTopologyResponse401, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetTopologyInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetTopologyResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -84,12 +89,17 @@ async def asyncio(*, client: AuthenticatedClient | Client, **kwargs) -> GetTopol
  Obtains the current topology of the cluster the gateway is part of.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetTopologyUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTopologyInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetTopologyResponse200"""
     response = await asyncio_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetTopologyUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetTopologyResponse401, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetTopologyInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetTopologyResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

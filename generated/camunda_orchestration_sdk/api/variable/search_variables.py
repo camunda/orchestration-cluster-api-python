@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -79,13 +79,24 @@ Args:
     body (SearchVariablesData | Unset): Variable search query request.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SearchVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchVariablesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchVariablesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchVariablesResponse200"""
     response = sync_detailed(client=client, body=body, truncate_values=truncate_values)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchVariablesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchVariablesResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchVariablesUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchVariablesResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchVariablesForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchVariablesResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchVariablesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchVariablesResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -121,12 +132,23 @@ Args:
     body (SearchVariablesData | Unset): Variable search query request.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SearchVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchVariablesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchVariablesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchVariablesResponse200"""
     response = await asyncio_detailed(client=client, body=body, truncate_values=truncate_values)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchVariablesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchVariablesResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchVariablesUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchVariablesResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchVariablesForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchVariablesResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchVariablesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchVariablesResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

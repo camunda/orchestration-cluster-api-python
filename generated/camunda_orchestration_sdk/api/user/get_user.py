@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -67,13 +67,24 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetUserUnauthorized: If the response status code is 401.
+    errors.GetUserForbidden: If the response status code is 403.
+    errors.GetUserNotFound: If the response status code is 404.
+    errors.GetUserInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetUserResponse200"""
     response = sync_detailed(username=username, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetUserUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetUserForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetUserNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetUserInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -105,12 +116,23 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetUserUnauthorized: If the response status code is 401.
+    errors.GetUserForbidden: If the response status code is 403.
+    errors.GetUserNotFound: If the response status code is 404.
+    errors.GetUserInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetUserResponse200"""
     response = await asyncio_detailed(username=username, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetUserUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetUserForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetUserNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetUserInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

@@ -87,13 +87,30 @@ Args:
     body (ActivateAdHocSubProcessActivitiesData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.ActivateAdHocSubProcessActivitiesBadRequest: If the response status code is 400.
+    errors.ActivateAdHocSubProcessActivitiesUnauthorized: If the response status code is 401.
+    errors.ActivateAdHocSubProcessActivitiesForbidden: If the response status code is 403.
+    errors.ActivateAdHocSubProcessActivitiesNotFound: If the response status code is 404.
+    errors.ActivateAdHocSubProcessActivitiesInternalServerError: If the response status code is 500.
+    errors.ActivateAdHocSubProcessActivitiesServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     ActivateAdHocSubProcessActivitiesResponse400"""
     response = sync_detailed(ad_hoc_sub_process_instance_key=ad_hoc_sub_process_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.ActivateAdHocSubProcessActivitiesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(ActivateAdHocSubProcessActivitiesResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.ActivateAdHocSubProcessActivitiesUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(ActivateAdHocSubProcessActivitiesResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.ActivateAdHocSubProcessActivitiesForbidden(status_code=response.status_code, content=response.content, parsed=cast(ActivateAdHocSubProcessActivitiesResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.ActivateAdHocSubProcessActivitiesNotFound(status_code=response.status_code, content=response.content, parsed=cast(ActivateAdHocSubProcessActivitiesResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.ActivateAdHocSubProcessActivitiesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(ActivateAdHocSubProcessActivitiesResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.ActivateAdHocSubProcessActivitiesServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(ActivateAdHocSubProcessActivitiesResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -133,12 +150,29 @@ Args:
     body (ActivateAdHocSubProcessActivitiesData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.ActivateAdHocSubProcessActivitiesBadRequest: If the response status code is 400.
+    errors.ActivateAdHocSubProcessActivitiesUnauthorized: If the response status code is 401.
+    errors.ActivateAdHocSubProcessActivitiesForbidden: If the response status code is 403.
+    errors.ActivateAdHocSubProcessActivitiesNotFound: If the response status code is 404.
+    errors.ActivateAdHocSubProcessActivitiesInternalServerError: If the response status code is 500.
+    errors.ActivateAdHocSubProcessActivitiesServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     ActivateAdHocSubProcessActivitiesResponse400"""
     response = await asyncio_detailed(ad_hoc_sub_process_instance_key=ad_hoc_sub_process_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.ActivateAdHocSubProcessActivitiesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(ActivateAdHocSubProcessActivitiesResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.ActivateAdHocSubProcessActivitiesUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(ActivateAdHocSubProcessActivitiesResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.ActivateAdHocSubProcessActivitiesForbidden(status_code=response.status_code, content=response.content, parsed=cast(ActivateAdHocSubProcessActivitiesResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.ActivateAdHocSubProcessActivitiesNotFound(status_code=response.status_code, content=response.content, parsed=cast(ActivateAdHocSubProcessActivitiesResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.ActivateAdHocSubProcessActivitiesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(ActivateAdHocSubProcessActivitiesResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.ActivateAdHocSubProcessActivitiesServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(ActivateAdHocSubProcessActivitiesResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

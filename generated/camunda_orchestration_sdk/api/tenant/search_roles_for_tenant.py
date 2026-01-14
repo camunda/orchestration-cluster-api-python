@@ -59,9 +59,8 @@ Args:
     body (SearchRolesForTenantData | Unset): Role search request.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchRolesForTenantResponse200"""
     response = sync_detailed(tenant_id=tenant_id, client=client, body=body)
@@ -99,9 +98,8 @@ Args:
     body (SearchRolesForTenantData | Unset): Role search request.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchRolesForTenantResponse200"""
     response = await asyncio_detailed(tenant_id=tenant_id, client=client, body=body)

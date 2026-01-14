@@ -78,13 +78,30 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.AssignUserToGroupBadRequest: If the response status code is 400.
+    errors.AssignUserToGroupForbidden: If the response status code is 403.
+    errors.AssignUserToGroupNotFound: If the response status code is 404.
+    errors.AssignUserToGroupConflict: If the response status code is 409.
+    errors.AssignUserToGroupInternalServerError: If the response status code is 500.
+    errors.AssignUserToGroupServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(group_id=group_id, username=username, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.AssignUserToGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(AssignUserToGroupResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.AssignUserToGroupForbidden(status_code=response.status_code, content=response.content, parsed=cast(AssignUserToGroupResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.AssignUserToGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(AssignUserToGroupResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.AssignUserToGroupConflict(status_code=response.status_code, content=response.content, parsed=cast(AssignUserToGroupResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.AssignUserToGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(AssignUserToGroupResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.AssignUserToGroupServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(AssignUserToGroupResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -120,12 +137,29 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.AssignUserToGroupBadRequest: If the response status code is 400.
+    errors.AssignUserToGroupForbidden: If the response status code is 403.
+    errors.AssignUserToGroupNotFound: If the response status code is 404.
+    errors.AssignUserToGroupConflict: If the response status code is 409.
+    errors.AssignUserToGroupInternalServerError: If the response status code is 500.
+    errors.AssignUserToGroupServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(group_id=group_id, username=username, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.AssignUserToGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(AssignUserToGroupResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.AssignUserToGroupForbidden(status_code=response.status_code, content=response.content, parsed=cast(AssignUserToGroupResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.AssignUserToGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(AssignUserToGroupResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.AssignUserToGroupConflict(status_code=response.status_code, content=response.content, parsed=cast(AssignUserToGroupResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.AssignUserToGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(AssignUserToGroupResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.AssignUserToGroupServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(AssignUserToGroupResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

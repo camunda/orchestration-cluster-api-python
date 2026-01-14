@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -79,13 +79,27 @@ Args:
     body (SearchGroupsForRoleData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SearchGroupsForRoleBadRequest: If the response status code is 400.
+    errors.SearchGroupsForRoleUnauthorized: If the response status code is 401.
+    errors.SearchGroupsForRoleForbidden: If the response status code is 403.
+    errors.SearchGroupsForRoleNotFound: If the response status code is 404.
+    errors.SearchGroupsForRoleInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchGroupsForRoleResponse200"""
     response = sync_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchGroupsForRoleBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchGroupsForRoleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchGroupsForRoleForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SearchGroupsForRoleNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchGroupsForRoleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -119,12 +133,26 @@ Args:
     body (SearchGroupsForRoleData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SearchGroupsForRoleBadRequest: If the response status code is 400.
+    errors.SearchGroupsForRoleUnauthorized: If the response status code is 401.
+    errors.SearchGroupsForRoleForbidden: If the response status code is 403.
+    errors.SearchGroupsForRoleNotFound: If the response status code is 404.
+    errors.SearchGroupsForRoleInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchGroupsForRoleResponse200"""
     response = await asyncio_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchGroupsForRoleBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchGroupsForRoleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchGroupsForRoleForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SearchGroupsForRoleNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchGroupsForRoleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

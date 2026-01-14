@@ -30,6 +30,18 @@ def try_lift_audit_log_category_enum(value: Any) -> Tuple[bool, AuditLogCategory
 	except Exception as e:
 		return False, e
 
+AuditLogEntityKey = NewType('AuditLogEntityKey', str)
+def lift_audit_log_entity_key(value: Any) -> AuditLogEntityKey:
+	if not isinstance(value, str):
+		raise TypeError(f"AuditLogEntityKey must be str, got {type(value).__name__}: {value!r}")
+	return AuditLogEntityKey(value)
+
+def try_lift_audit_log_entity_key(value: Any) -> Tuple[bool, AuditLogEntityKey | Exception]:
+	try:
+		return True, lift_audit_log_entity_key(value)
+	except Exception as e:
+		return False, e
+
 AuditLogEntityTypeEnum = NewType('AuditLogEntityTypeEnum', str)
 def lift_audit_log_entity_type_enum(value: Any) -> AuditLogEntityTypeEnum:
 	if not isinstance(value, str):

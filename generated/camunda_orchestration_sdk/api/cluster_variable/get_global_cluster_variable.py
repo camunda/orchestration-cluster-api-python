@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -67,13 +67,27 @@ Args:
     name (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetGlobalClusterVariableBadRequest: If the response status code is 400.
+    errors.GetGlobalClusterVariableUnauthorized: If the response status code is 401.
+    errors.GetGlobalClusterVariableForbidden: If the response status code is 403.
+    errors.GetGlobalClusterVariableNotFound: If the response status code is 404.
+    errors.GetGlobalClusterVariableInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetGlobalClusterVariableResponse200"""
     response = sync_detailed(name=name, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetGlobalClusterVariableBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetGlobalClusterVariableResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetGlobalClusterVariableUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetGlobalClusterVariableResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetGlobalClusterVariableForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetGlobalClusterVariableResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetGlobalClusterVariableNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetGlobalClusterVariableResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetGlobalClusterVariableInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetGlobalClusterVariableResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -101,12 +115,26 @@ Args:
     name (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetGlobalClusterVariableBadRequest: If the response status code is 400.
+    errors.GetGlobalClusterVariableUnauthorized: If the response status code is 401.
+    errors.GetGlobalClusterVariableForbidden: If the response status code is 403.
+    errors.GetGlobalClusterVariableNotFound: If the response status code is 404.
+    errors.GetGlobalClusterVariableInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetGlobalClusterVariableResponse200"""
     response = await asyncio_detailed(name=name, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetGlobalClusterVariableBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetGlobalClusterVariableResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetGlobalClusterVariableUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetGlobalClusterVariableResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetGlobalClusterVariableForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetGlobalClusterVariableResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetGlobalClusterVariableNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetGlobalClusterVariableResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetGlobalClusterVariableInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetGlobalClusterVariableResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

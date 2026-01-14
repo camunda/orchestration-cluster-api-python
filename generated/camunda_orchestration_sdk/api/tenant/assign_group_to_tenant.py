@@ -74,13 +74,27 @@ Args:
     group_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.AssignGroupToTenantBadRequest: If the response status code is 400.
+    errors.AssignGroupToTenantForbidden: If the response status code is 403.
+    errors.AssignGroupToTenantNotFound: If the response status code is 404.
+    errors.AssignGroupToTenantInternalServerError: If the response status code is 500.
+    errors.AssignGroupToTenantServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(tenant_id=tenant_id, group_id=group_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.AssignGroupToTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(AssignGroupToTenantResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.AssignGroupToTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(AssignGroupToTenantResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.AssignGroupToTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(AssignGroupToTenantResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.AssignGroupToTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(AssignGroupToTenantResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.AssignGroupToTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(AssignGroupToTenantResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -116,12 +130,26 @@ Args:
     group_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.AssignGroupToTenantBadRequest: If the response status code is 400.
+    errors.AssignGroupToTenantForbidden: If the response status code is 403.
+    errors.AssignGroupToTenantNotFound: If the response status code is 404.
+    errors.AssignGroupToTenantInternalServerError: If the response status code is 500.
+    errors.AssignGroupToTenantServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(tenant_id=tenant_id, group_id=group_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.AssignGroupToTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(AssignGroupToTenantResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.AssignGroupToTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(AssignGroupToTenantResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.AssignGroupToTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(AssignGroupToTenantResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.AssignGroupToTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(AssignGroupToTenantResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.AssignGroupToTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(AssignGroupToTenantResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

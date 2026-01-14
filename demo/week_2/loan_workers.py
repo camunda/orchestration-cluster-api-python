@@ -17,7 +17,7 @@ import os
 from pathlib import Path
 from typing import Any, TypedDict
 from dotenv import load_dotenv
-from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk import CamundaAsyncClient
 from camunda_orchestration_sdk.runtime.job_worker import (
     AsyncJobHandler,
     WorkerConfig,
@@ -338,7 +338,7 @@ async def send_rejection_notification(
         "notificationDate": variables.get("applicationDate"),
     }
 
-async def run_workers(camunda: CamundaClient):
+async def run_workers(camunda: CamundaAsyncClient):
     """
     Main function to register all workers and keep them running.
     """
@@ -411,6 +411,6 @@ async def run_workers(camunda: CamundaClient):
 if __name__ == "__main__":
 
     # Initialize Camunda client
-    camunda = CamundaClient(base_url=CAMUNDA_BASE_URL, token=CAMUNDA_TOKEN)
+    camunda = CamundaAsyncClient(base_url=CAMUNDA_BASE_URL, token=CAMUNDA_TOKEN)
 
     asyncio.run(run_workers(camunda))

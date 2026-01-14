@@ -78,13 +78,30 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.AssignRoleToUserBadRequest: If the response status code is 400.
+    errors.AssignRoleToUserForbidden: If the response status code is 403.
+    errors.AssignRoleToUserNotFound: If the response status code is 404.
+    errors.AssignRoleToUserConflict: If the response status code is 409.
+    errors.AssignRoleToUserInternalServerError: If the response status code is 500.
+    errors.AssignRoleToUserServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(role_id=role_id, username=username, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.AssignRoleToUserBadRequest(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.AssignRoleToUserForbidden(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.AssignRoleToUserNotFound(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.AssignRoleToUserConflict(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.AssignRoleToUserInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.AssignRoleToUserServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -120,12 +137,29 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.AssignRoleToUserBadRequest: If the response status code is 400.
+    errors.AssignRoleToUserForbidden: If the response status code is 403.
+    errors.AssignRoleToUserNotFound: If the response status code is 404.
+    errors.AssignRoleToUserConflict: If the response status code is 409.
+    errors.AssignRoleToUserInternalServerError: If the response status code is 500.
+    errors.AssignRoleToUserServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(role_id=role_id, username=username, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.AssignRoleToUserBadRequest(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.AssignRoleToUserForbidden(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.AssignRoleToUserNotFound(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.AssignRoleToUserConflict(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.AssignRoleToUserInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.AssignRoleToUserServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

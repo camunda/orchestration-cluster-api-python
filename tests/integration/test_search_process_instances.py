@@ -1,6 +1,6 @@
 import os
 import pytest
-from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk import CamundaAsyncClient
 from camunda_orchestration_sdk.models.search_process_instances_data import SearchProcessInstancesData
 from camunda_orchestration_sdk.models.search_process_instances_data_page import SearchProcessInstancesDataPage
 
@@ -11,7 +11,7 @@ pytestmark = pytest.mark.skipif(
 
 def _make_client():
     host = os.environ.get("CAMUNDA_BASE_URL", "http://localhost:8080/v2")
-    return CamundaClient(base_url=host)
+    return CamundaAsyncClient(base_url=host)
 
 
 @pytest.mark.asyncio
@@ -28,7 +28,7 @@ async def test_searchProcessInstances_smoke():
         query = SearchProcessInstancesData(
             page=page
         )        
-        resp = await camunda.search_process_instances_async(data=query)
+        resp = await camunda.search_process_instances(data=query)
 
         print(resp)
         assert resp is not None

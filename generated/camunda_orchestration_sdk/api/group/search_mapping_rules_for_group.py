@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -79,13 +79,27 @@ Args:
     body (SearchMappingRulesForGroupData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SearchMappingRulesForGroupBadRequest: If the response status code is 400.
+    errors.SearchMappingRulesForGroupUnauthorized: If the response status code is 401.
+    errors.SearchMappingRulesForGroupForbidden: If the response status code is 403.
+    errors.SearchMappingRulesForGroupNotFound: If the response status code is 404.
+    errors.SearchMappingRulesForGroupInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchMappingRulesForGroupResponse200"""
     response = sync_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchMappingRulesForGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRulesForGroupResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchMappingRulesForGroupUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRulesForGroupResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchMappingRulesForGroupForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRulesForGroupResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SearchMappingRulesForGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRulesForGroupResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchMappingRulesForGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRulesForGroupResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -119,12 +133,26 @@ Args:
     body (SearchMappingRulesForGroupData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SearchMappingRulesForGroupBadRequest: If the response status code is 400.
+    errors.SearchMappingRulesForGroupUnauthorized: If the response status code is 401.
+    errors.SearchMappingRulesForGroupForbidden: If the response status code is 403.
+    errors.SearchMappingRulesForGroupNotFound: If the response status code is 404.
+    errors.SearchMappingRulesForGroupInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchMappingRulesForGroupResponse200"""
     response = await asyncio_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchMappingRulesForGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRulesForGroupResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchMappingRulesForGroupUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRulesForGroupResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchMappingRulesForGroupForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRulesForGroupResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SearchMappingRulesForGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRulesForGroupResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchMappingRulesForGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRulesForGroupResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

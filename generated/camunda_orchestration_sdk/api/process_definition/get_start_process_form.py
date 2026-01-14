@@ -80,13 +80,27 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetStartProcessFormBadRequest: If the response status code is 400.
+    errors.GetStartProcessFormUnauthorized: If the response status code is 401.
+    errors.GetStartProcessFormForbidden: If the response status code is 403.
+    errors.GetStartProcessFormNotFound: If the response status code is 404.
+    errors.GetStartProcessFormInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(process_definition_key=process_definition_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetStartProcessFormBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetStartProcessFormUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetStartProcessFormForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetStartProcessFormNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetStartProcessFormInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -124,12 +138,26 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetStartProcessFormBadRequest: If the response status code is 400.
+    errors.GetStartProcessFormUnauthorized: If the response status code is 401.
+    errors.GetStartProcessFormForbidden: If the response status code is 403.
+    errors.GetStartProcessFormNotFound: If the response status code is 404.
+    errors.GetStartProcessFormInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(process_definition_key=process_definition_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetStartProcessFormBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetStartProcessFormUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetStartProcessFormForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetStartProcessFormNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetStartProcessFormInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

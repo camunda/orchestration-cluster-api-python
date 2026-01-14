@@ -1,8 +1,0 @@
-MANIFEST.in
-README.md
-pyproject.toml
-generated/camunda_orchestration_sdk.egg-info/PKG-INFO
-generated/camunda_orchestration_sdk.egg-info/SOURCES.txt
-generated/camunda_orchestration_sdk.egg-info/dependency_links.txt
-generated/camunda_orchestration_sdk.egg-info/requires.txt
-generated/camunda_orchestration_sdk.egg-info/top_level.txt

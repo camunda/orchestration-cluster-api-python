@@ -236,7 +236,7 @@ export CAMUNDA_BASE_URL="http://localhost:8080/v2"
 - Monitor with `top` or `htop` during runs
 
 ### Process Strategy Errors
-The `process` strategy currently doesn't work due to pickling issues with the `ActivatedJob` containing unpicklable `CamundaClient`. Stick with `async`, `thread`, or `auto`.
+The `process` strategy currently doesn't work due to pickling issues with the `ActivatedJob` containing an unpicklable client (`CamundaAsyncClient`). Stick with `async`, `thread`, or `auto`.
 
 ## Example Workflow
 

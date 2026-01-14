@@ -17,7 +17,7 @@ from camunda_orchestration_sdk.models.throw_job_error_data import ThrowJobErrorD
 from camunda_orchestration_sdk.types import UNSET
 
 if TYPE_CHECKING:
-    from camunda_orchestration_sdk import CamundaClient
+    from camunda_orchestration_sdk import CamundaAsyncClient
 
 _EFFECTIVE_EXECUTION_STRATEGY = Literal["thread", "process", "async"]
 EXECUTION_STRATEGY = _EFFECTIVE_EXECUTION_STRATEGY | Literal["auto"]
@@ -140,7 +140,7 @@ def _execute_task_isolated(callback: JobHandler, job_context: JobContext) -> Job
 
 class JobWorker:
     _strategy: _EFFECTIVE_EXECUTION_STRATEGY = "async"
-    def __init__(self, client: "CamundaClient", callback: JobHandler, config: WorkerConfig):
+    def __init__(self, client: "CamundaAsyncClient", callback: JobHandler, config: WorkerConfig):
         self.callback = callback
         self.config = config
         self.client = client
@@ -266,7 +266,7 @@ class JobWorker:
             return empty_jobs
 
         self.logger.debug(f'Polling for jobs of type {self.config.job_type} (capacity: {capacity} | request_timeout: {self.config.request_timeout_milliseconds})...')
-        jobsResult = await self.client.activate_jobs_async(data=
+        jobsResult = await self.client.activate_jobs(data=
             ActivateJobsData(
                 type_=self.config.job_type, 
                 timeout=self.config.job_timeout_milliseconds, 
@@ -344,7 +344,7 @@ class JobWorker:
                         elif isinstance(action_data, CompleteJobData):
                             complete_data = action_data
                             
-                        await self.client.complete_job_async(job_key=job_context.job_key, data=complete_data)
+                        await self.client.complete_job(job_key=job_context.job_key, data=complete_data)
                         self.logger.debug(f"Job completed: {job_context.job_key}")
                         
                     elif action[0] == "fail":
@@ -353,7 +353,7 @@ class JobWorker:
                         if retries is None:
                             retries = job_context.retries - 1 if job_context.retries > 0 else 0
                             
-                        await self.client.fail_job_async(
+                        await self.client.fail_job(
                             job_key=job_context.job_key, 
                             data=FailJobData(
                                 error_message=error_message,
@@ -365,7 +365,7 @@ class JobWorker:
                         
                     elif action[0] == "error":
                         _, (error_code, error_message) = action
-                        await self.client.throw_job_error_async(
+                        await self.client.throw_job_error(
                             job_key=job_context.job_key, 
                             data=ThrowJobErrorData(
                                 error_code=error_code,
@@ -383,7 +383,7 @@ class JobWorker:
             self.logger.error(f"System error executing job {job_item.job_key}: {e}")
             # Try to fail the job if possible
             try:
-                await self.client.fail_job_async(
+                await self.client.fail_job(
                     job_key=job_item.job_key,
                     data=FailJobData(
                         error_message=f"System error: {str(e)}",

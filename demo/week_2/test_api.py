@@ -5,7 +5,7 @@ Run this after starting the FastAPI server with: python -m demo.week_2.main
 """
 import asyncio
 import json
-from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk import CamundaAsyncClient
 from camunda_orchestration_sdk.models.processcreationbykey import Processcreationbykey
 
 
@@ -13,13 +13,13 @@ async def main():
     print("🚀 Testing Camunda Python SDK\n")
 
     # Initialize client (note: base_url should include /v2)
-    camunda = CamundaClient(base_url="http://localhost:8080/v2", token=None)
+    camunda = CamundaAsyncClient(base_url="http://localhost:8080/v2", token=None)
     print("✅ Camunda client initialized")
 
     # Step 1: Deploy a process
     print("\n📦 Step 1: Deploying BPMN process...")
     try:
-        deployed_resources = await camunda.deploy_resources_from_files_async(
+        deployed_resources = await camunda.deploy_resources_from_files(
             files=["./tests/integration/resources/job_worker_load_test_process_1.bpmn"]
         )
 
@@ -37,7 +37,7 @@ async def main():
     # Step 2: Create a process instance
     print("\n🎬 Step 2: Creating process instance...")
     try:
-        process_instance = await camunda.create_process_instance_async(
+        process_instance = await camunda.create_process_instance(
             data=Processcreationbykey(
                 process_definition_key=process_definition_key
             )
@@ -52,7 +52,7 @@ async def main():
     # Step 3: Check topology
     print("\n🔍 Step 3: Checking Camunda topology...")
     try:
-        topology = await camunda.get_topology_async()
+        topology = await camunda.get_topology()
         print(f"✅ Cluster Size: {topology.cluster_size}")
         print(f"   Partitions: {topology.partitions_count}")
         print(f"   Version: {topology.brokers[0].version}")

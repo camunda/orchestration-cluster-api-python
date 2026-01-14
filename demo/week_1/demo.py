@@ -1,10 +1,10 @@
 import asyncio
 from functools import partial
-from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk import CamundaAsyncClient
 from camunda_orchestration_sdk.runtime.job_worker import WorkerConfig
 from camunda_orchestration_sdk.models.processcreationbykey import Processcreationbykey
 
-from cancel_processes import cancel_running_process_instances
+from cancel_processes import cancel_running_process_instances_async
 from cpu_bound_workload import simulate_cpu_work  # pyright: ignore[reportUnusedImport]
 from io_bound_workload import (
     simulate_io_work_async, # pyright: ignore[reportUnusedImport]
@@ -16,10 +16,10 @@ WORK_DURATION_SECONDS = 5
 
 
 async def main():
-    camunda = CamundaClient()
+    camunda = CamundaAsyncClient()
 
     # Deploy the process definition
-    deployed_resources = await camunda.deploy_resources_from_files_async(
+    deployed_resources = await camunda.deploy_resources_from_files(
         files=["./tests/integration/resources/job_worker_load_test_process_1.bpmn"]
     )
 
@@ -32,7 +32,7 @@ async def main():
         f"Deployed process definition: {process_definition_id} (Key: {process_definition_key})"
     )
 
-    cancel_running_process_instances(
+    await cancel_running_process_instances_async(
         camunda, process_definition_key=process_definition_key
     )
 
@@ -55,7 +55,7 @@ async def main():
 
     # Start process instances
     for i in range(NUM_PROCESSES_TO_START):
-        process_instance = await camunda.create_process_instance_async(
+        process_instance = await camunda.create_process_instance(
             data=Processcreationbykey(process_definition_key=process_definition_key)
         )
 

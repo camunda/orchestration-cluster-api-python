@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -75,13 +75,15 @@ Args:
     body (CreateDocumentLinkData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.CreateDocumentLinkBadRequest: If the response status code is 400.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     CreateDocumentLinkResponse201"""
     response = sync_detailed(document_id=document_id, client=client, body=body, store_id=store_id, content_hash=content_hash)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateDocumentLinkBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateDocumentLinkResponse400, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -123,12 +125,14 @@ Args:
     body (CreateDocumentLinkData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.CreateDocumentLinkBadRequest: If the response status code is 400.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     CreateDocumentLinkResponse201"""
     response = await asyncio_detailed(document_id=document_id, client=client, body=body, store_id=store_id, content_hash=content_hash)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateDocumentLinkBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateDocumentLinkResponse400, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

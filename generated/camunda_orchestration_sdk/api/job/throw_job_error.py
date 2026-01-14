@@ -77,13 +77,27 @@ Args:
     body (ThrowJobErrorData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.ThrowJobErrorBadRequest: If the response status code is 400.
+    errors.ThrowJobErrorNotFound: If the response status code is 404.
+    errors.ThrowJobErrorConflict: If the response status code is 409.
+    errors.ThrowJobErrorInternalServerError: If the response status code is 500.
+    errors.ThrowJobErrorServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(job_key=job_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.ThrowJobErrorBadRequest(status_code=response.status_code, content=response.content, parsed=cast(ThrowJobErrorResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.ThrowJobErrorNotFound(status_code=response.status_code, content=response.content, parsed=cast(ThrowJobErrorResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.ThrowJobErrorConflict(status_code=response.status_code, content=response.content, parsed=cast(ThrowJobErrorResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.ThrowJobErrorInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(ThrowJobErrorResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.ThrowJobErrorServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(ThrowJobErrorResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -117,12 +131,26 @@ Args:
     body (ThrowJobErrorData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.ThrowJobErrorBadRequest: If the response status code is 400.
+    errors.ThrowJobErrorNotFound: If the response status code is 404.
+    errors.ThrowJobErrorConflict: If the response status code is 409.
+    errors.ThrowJobErrorInternalServerError: If the response status code is 500.
+    errors.ThrowJobErrorServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(job_key=job_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.ThrowJobErrorBadRequest(status_code=response.status_code, content=response.content, parsed=cast(ThrowJobErrorResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.ThrowJobErrorNotFound(status_code=response.status_code, content=response.content, parsed=cast(ThrowJobErrorResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.ThrowJobErrorConflict(status_code=response.status_code, content=response.content, parsed=cast(ThrowJobErrorResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.ThrowJobErrorInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(ThrowJobErrorResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.ThrowJobErrorServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(ThrowJobErrorResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

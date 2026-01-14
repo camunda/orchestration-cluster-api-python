@@ -72,13 +72,27 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.AssignMappingRuleToTenantBadRequest: If the response status code is 400.
+    errors.AssignMappingRuleToTenantForbidden: If the response status code is 403.
+    errors.AssignMappingRuleToTenantNotFound: If the response status code is 404.
+    errors.AssignMappingRuleToTenantInternalServerError: If the response status code is 500.
+    errors.AssignMappingRuleToTenantServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(tenant_id=tenant_id, mapping_rule_id=mapping_rule_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.AssignMappingRuleToTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(AssignMappingRuleToTenantResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.AssignMappingRuleToTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(AssignMappingRuleToTenantResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.AssignMappingRuleToTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(AssignMappingRuleToTenantResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.AssignMappingRuleToTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(AssignMappingRuleToTenantResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.AssignMappingRuleToTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(AssignMappingRuleToTenantResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -112,12 +126,26 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.AssignMappingRuleToTenantBadRequest: If the response status code is 400.
+    errors.AssignMappingRuleToTenantForbidden: If the response status code is 403.
+    errors.AssignMappingRuleToTenantNotFound: If the response status code is 404.
+    errors.AssignMappingRuleToTenantInternalServerError: If the response status code is 500.
+    errors.AssignMappingRuleToTenantServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(tenant_id=tenant_id, mapping_rule_id=mapping_rule_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.AssignMappingRuleToTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(AssignMappingRuleToTenantResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.AssignMappingRuleToTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(AssignMappingRuleToTenantResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.AssignMappingRuleToTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(AssignMappingRuleToTenantResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.AssignMappingRuleToTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(AssignMappingRuleToTenantResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.AssignMappingRuleToTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(AssignMappingRuleToTenantResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

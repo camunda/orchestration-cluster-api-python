@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -78,13 +78,27 @@ Args:
     body (UpdateGroupData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UpdateGroupBadRequest: If the response status code is 400.
+    errors.UpdateGroupUnauthorized: If the response status code is 401.
+    errors.UpdateGroupNotFound: If the response status code is 404.
+    errors.UpdateGroupInternalServerError: If the response status code is 500.
+    errors.UpdateGroupServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     UpdateGroupResponse200"""
     response = sync_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UpdateGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.UpdateGroupUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse401, response.parsed))
+        if response.status_code == 404:
+            raise errors.UpdateGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UpdateGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UpdateGroupServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -118,12 +132,26 @@ Args:
     body (UpdateGroupData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UpdateGroupBadRequest: If the response status code is 400.
+    errors.UpdateGroupUnauthorized: If the response status code is 401.
+    errors.UpdateGroupNotFound: If the response status code is 404.
+    errors.UpdateGroupInternalServerError: If the response status code is 500.
+    errors.UpdateGroupServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     UpdateGroupResponse200"""
     response = await asyncio_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UpdateGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.UpdateGroupUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse401, response.parsed))
+        if response.status_code == 404:
+            raise errors.UpdateGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UpdateGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UpdateGroupServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

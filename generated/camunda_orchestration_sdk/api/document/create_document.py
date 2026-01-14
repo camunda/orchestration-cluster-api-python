@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -76,13 +76,18 @@ Args:
     body (CreateDocumentData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.CreateDocumentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateDocumentUnsupportedMediaType: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     CreateDocumentResponse201"""
     response = sync_detailed(client=client, body=body, store_id=store_id, document_id=document_id)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateDocumentBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateDocumentResponse400, response.parsed))
+        if response.status_code == 415:
+            raise errors.CreateDocumentUnsupportedMediaType(status_code=response.status_code, content=response.content, parsed=cast(CreateDocumentResponse415, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -124,12 +129,17 @@ Args:
     body (CreateDocumentData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.CreateDocumentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateDocumentUnsupportedMediaType: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     CreateDocumentResponse201"""
     response = await asyncio_detailed(client=client, body=body, store_id=store_id, document_id=document_id)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateDocumentBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateDocumentResponse400, response.parsed))
+        if response.status_code == 415:
+            raise errors.CreateDocumentUnsupportedMediaType(status_code=response.status_code, content=response.content, parsed=cast(CreateDocumentResponse415, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

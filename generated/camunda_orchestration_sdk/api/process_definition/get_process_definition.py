@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -73,13 +73,27 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetProcessDefinitionBadRequest: If the response status code is 400.
+    errors.GetProcessDefinitionUnauthorized: If the response status code is 401.
+    errors.GetProcessDefinitionForbidden: If the response status code is 403.
+    errors.GetProcessDefinitionNotFound: If the response status code is 404.
+    errors.GetProcessDefinitionInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetProcessDefinitionResponse200"""
     response = sync_detailed(process_definition_key=process_definition_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetProcessDefinitionBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetProcessDefinitionUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetProcessDefinitionForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetProcessDefinitionNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetProcessDefinitionInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -113,12 +127,26 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetProcessDefinitionBadRequest: If the response status code is 400.
+    errors.GetProcessDefinitionUnauthorized: If the response status code is 401.
+    errors.GetProcessDefinitionForbidden: If the response status code is 403.
+    errors.GetProcessDefinitionNotFound: If the response status code is 404.
+    errors.GetProcessDefinitionInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetProcessDefinitionResponse200"""
     response = await asyncio_detailed(process_definition_key=process_definition_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetProcessDefinitionBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetProcessDefinitionUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetProcessDefinitionForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetProcessDefinitionNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetProcessDefinitionInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

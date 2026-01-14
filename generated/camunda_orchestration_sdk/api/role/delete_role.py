@@ -66,13 +66,24 @@ Args:
     role_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.DeleteRoleUnauthorized: If the response status code is 401.
+    errors.DeleteRoleNotFound: If the response status code is 404.
+    errors.DeleteRoleInternalServerError: If the response status code is 500.
+    errors.DeleteRoleServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(role_id=role_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.DeleteRoleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(DeleteRoleResponse401, response.parsed))
+        if response.status_code == 404:
+            raise errors.DeleteRoleNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteRoleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.DeleteRoleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteRoleResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.DeleteRoleServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(DeleteRoleResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -104,12 +115,23 @@ Args:
     role_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.DeleteRoleUnauthorized: If the response status code is 401.
+    errors.DeleteRoleNotFound: If the response status code is 404.
+    errors.DeleteRoleInternalServerError: If the response status code is 500.
+    errors.DeleteRoleServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(role_id=role_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.DeleteRoleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(DeleteRoleResponse401, response.parsed))
+        if response.status_code == 404:
+            raise errors.DeleteRoleNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteRoleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.DeleteRoleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteRoleResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.DeleteRoleServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(DeleteRoleResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

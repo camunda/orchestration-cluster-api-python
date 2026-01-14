@@ -24,6 +24,7 @@ if TYPE_CHECKING:
     from ..models.elementinstancekey_advancedfilter import (
         ElementinstancekeyAdvancedfilter,
     )
+    from ..models.entitykey_advancedfilter import EntitykeyAdvancedfilter
     from ..models.entitytype_advancedfilter import EntitytypeAdvancedfilter
     from ..models.formkey_advancedfilter import FormkeyAdvancedfilter
     from ..models.operationtype_advancedfilter import OperationtypeAdvancedfilter
@@ -55,6 +56,7 @@ class SearchAuditLogsDataFilter:
         timestamp (datetime.datetime | TimestampAdvancedfilter | Unset):
         actor_id (ActoridAdvancedfilter | str | Unset):
         actor_type (ActortypeAdvancedfilter | ActortypeExactmatch | Unset):
+        entity_key (EntitykeyAdvancedfilter | str | Unset):
         entity_type (EntitytypeAdvancedfilter | EntitytypeExactmatch | Unset):
         tenant_id (ActoridAdvancedfilter | str | Unset):
         category (CategoryAdvancedfilter | CategoryExactmatch | Unset):
@@ -74,6 +76,7 @@ class SearchAuditLogsDataFilter:
     timestamp: datetime.datetime | TimestampAdvancedfilter | Unset = UNSET
     actor_id: ActoridAdvancedfilter | str | Unset = UNSET
     actor_type: ActortypeAdvancedfilter | ActortypeExactmatch | Unset = UNSET
+    entity_key: EntitykeyAdvancedfilter | str | Unset = UNSET
     entity_type: EntitytypeAdvancedfilter | EntitytypeExactmatch | Unset = UNSET
     tenant_id: ActoridAdvancedfilter | str | Unset = UNSET
     category: CategoryAdvancedfilter | CategoryExactmatch | Unset = UNSET
@@ -89,6 +92,7 @@ class SearchAuditLogsDataFilter:
         from ..models.elementinstancekey_advancedfilter import (
             ElementinstancekeyAdvancedfilter,
         )
+        from ..models.entitykey_advancedfilter import EntitykeyAdvancedfilter
         from ..models.formkey_advancedfilter import FormkeyAdvancedfilter
         from ..models.processdefinitionkey_advancedfilter import (
             ProcessdefinitionkeyAdvancedfilter,
@@ -172,6 +176,14 @@ class SearchAuditLogsDataFilter:
         else:
             actor_type = self.actor_type.to_dict()
 
+        entity_key: dict[str, Any] | str | Unset
+        if isinstance(self.entity_key, Unset):
+            entity_key = UNSET
+        elif isinstance(self.entity_key, EntitykeyAdvancedfilter):
+            entity_key = self.entity_key.to_dict()
+        else:
+            entity_key = self.entity_key
+
         entity_type: dict[str, Any] | str | Unset
         if isinstance(self.entity_type, Unset):
             entity_type = UNSET
@@ -241,6 +253,8 @@ class SearchAuditLogsDataFilter:
             field_dict["actorId"] = actor_id
         if actor_type is not UNSET:
             field_dict["actorType"] = actor_type
+        if entity_key is not UNSET:
+            field_dict["entityKey"] = entity_key
         if entity_type is not UNSET:
             field_dict["entityType"] = entity_type
         if tenant_id is not UNSET:
@@ -266,6 +280,7 @@ class SearchAuditLogsDataFilter:
         from ..models.elementinstancekey_advancedfilter import (
             ElementinstancekeyAdvancedfilter,
         )
+        from ..models.entitykey_advancedfilter import EntitykeyAdvancedfilter
         from ..models.entitytype_advancedfilter import EntitytypeAdvancedfilter
         from ..models.formkey_advancedfilter import FormkeyAdvancedfilter
         from ..models.operationtype_advancedfilter import OperationtypeAdvancedfilter
@@ -460,6 +475,21 @@ class SearchAuditLogsDataFilter:
 
         actor_type = _parse_actor_type(d.pop("actorType", UNSET))
 
+        def _parse_entity_key(data: object) -> EntitykeyAdvancedfilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                entity_key_type_1 = EntitykeyAdvancedfilter.from_dict(data)
+
+                return entity_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(EntitykeyAdvancedfilter | str | Unset, data)
+
+        entity_key = _parse_entity_key(d.pop("entityKey", UNSET))
+
         def _parse_entity_type(
             data: object,
         ) -> EntitytypeAdvancedfilter | EntitytypeExactmatch | Unset:
@@ -576,6 +606,7 @@ class SearchAuditLogsDataFilter:
             timestamp=timestamp,
             actor_id=actor_id,
             actor_type=actor_type,
+            entity_key=entity_key,
             entity_type=entity_type,
             tenant_id=tenant_id,
             category=category,

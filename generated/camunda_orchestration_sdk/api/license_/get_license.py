@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -48,13 +48,15 @@ def sync(*, client: AuthenticatedClient | Client, **kwargs) -> GetLicenseRespons
  Obtains the status of the current Camunda license.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetLicenseInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetLicenseResponse200"""
     response = sync_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 500:
+            raise errors.GetLicenseInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetLicenseResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -80,12 +82,14 @@ async def asyncio(*, client: AuthenticatedClient | Client, **kwargs) -> GetLicen
  Obtains the status of the current Camunda license.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetLicenseInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetLicenseResponse200"""
     response = await asyncio_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 500:
+            raise errors.GetLicenseInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetLicenseResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

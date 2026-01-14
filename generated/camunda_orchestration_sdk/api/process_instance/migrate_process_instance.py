@@ -93,13 +93,27 @@ Args:
         process instance from one process definition to another.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.MigrateProcessInstanceBadRequest: If the response status code is 400.
+    errors.MigrateProcessInstanceNotFound: If the response status code is 404.
+    errors.MigrateProcessInstanceConflict: If the response status code is 409.
+    errors.MigrateProcessInstanceInternalServerError: If the response status code is 500.
+    errors.MigrateProcessInstanceServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(process_instance_key=process_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.MigrateProcessInstanceBadRequest(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstanceResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.MigrateProcessInstanceNotFound(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstanceResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.MigrateProcessInstanceConflict(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstanceResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.MigrateProcessInstanceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstanceResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.MigrateProcessInstanceServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstanceResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -149,12 +163,26 @@ Args:
         process instance from one process definition to another.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.MigrateProcessInstanceBadRequest: If the response status code is 400.
+    errors.MigrateProcessInstanceNotFound: If the response status code is 404.
+    errors.MigrateProcessInstanceConflict: If the response status code is 409.
+    errors.MigrateProcessInstanceInternalServerError: If the response status code is 500.
+    errors.MigrateProcessInstanceServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(process_instance_key=process_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.MigrateProcessInstanceBadRequest(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstanceResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.MigrateProcessInstanceNotFound(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstanceResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.MigrateProcessInstanceConflict(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstanceResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.MigrateProcessInstanceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstanceResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.MigrateProcessInstanceServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstanceResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

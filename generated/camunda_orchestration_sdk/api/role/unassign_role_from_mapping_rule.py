@@ -72,13 +72,27 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UnassignRoleFromMappingRuleBadRequest: If the response status code is 400.
+    errors.UnassignRoleFromMappingRuleForbidden: If the response status code is 403.
+    errors.UnassignRoleFromMappingRuleNotFound: If the response status code is 404.
+    errors.UnassignRoleFromMappingRuleInternalServerError: If the response status code is 500.
+    errors.UnassignRoleFromMappingRuleServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(role_id=role_id, mapping_rule_id=mapping_rule_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UnassignRoleFromMappingRuleBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromMappingRuleResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.UnassignRoleFromMappingRuleForbidden(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromMappingRuleResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.UnassignRoleFromMappingRuleNotFound(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromMappingRuleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UnassignRoleFromMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromMappingRuleResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UnassignRoleFromMappingRuleServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromMappingRuleResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -112,12 +126,26 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UnassignRoleFromMappingRuleBadRequest: If the response status code is 400.
+    errors.UnassignRoleFromMappingRuleForbidden: If the response status code is 403.
+    errors.UnassignRoleFromMappingRuleNotFound: If the response status code is 404.
+    errors.UnassignRoleFromMappingRuleInternalServerError: If the response status code is 500.
+    errors.UnassignRoleFromMappingRuleServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(role_id=role_id, mapping_rule_id=mapping_rule_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UnassignRoleFromMappingRuleBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromMappingRuleResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.UnassignRoleFromMappingRuleForbidden(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromMappingRuleResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.UnassignRoleFromMappingRuleNotFound(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromMappingRuleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UnassignRoleFromMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromMappingRuleResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UnassignRoleFromMappingRuleServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromMappingRuleResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

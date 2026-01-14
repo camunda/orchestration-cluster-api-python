@@ -74,13 +74,27 @@ Args:
     client_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UnassignClientFromTenantBadRequest: If the response status code is 400.
+    errors.UnassignClientFromTenantForbidden: If the response status code is 403.
+    errors.UnassignClientFromTenantNotFound: If the response status code is 404.
+    errors.UnassignClientFromTenantInternalServerError: If the response status code is 500.
+    errors.UnassignClientFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(tenant_id=tenant_id, client_id=client_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UnassignClientFromTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromTenantResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.UnassignClientFromTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromTenantResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.UnassignClientFromTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromTenantResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UnassignClientFromTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromTenantResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UnassignClientFromTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromTenantResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -116,12 +130,26 @@ Args:
     client_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UnassignClientFromTenantBadRequest: If the response status code is 400.
+    errors.UnassignClientFromTenantForbidden: If the response status code is 403.
+    errors.UnassignClientFromTenantNotFound: If the response status code is 404.
+    errors.UnassignClientFromTenantInternalServerError: If the response status code is 500.
+    errors.UnassignClientFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(tenant_id=tenant_id, client_id=client_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UnassignClientFromTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromTenantResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.UnassignClientFromTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromTenantResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.UnassignClientFromTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromTenantResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UnassignClientFromTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromTenantResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UnassignClientFromTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UnassignClientFromTenantResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

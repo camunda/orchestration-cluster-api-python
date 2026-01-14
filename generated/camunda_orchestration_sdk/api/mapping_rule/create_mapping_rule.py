@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -72,13 +72,24 @@ Args:
     body (CreateMappingRuleData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.CreateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateMappingRuleForbidden: If the response status code is 403. The request to create a mapping rule was denied. More details are provided in the response body.
+    errors.CreateMappingRuleNotFound: If the response status code is 404. The request to create a mapping rule was denied.
+    errors.CreateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     CreateMappingRuleResponse201"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateMappingRuleBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateMappingRuleResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.CreateMappingRuleForbidden(status_code=response.status_code, content=response.content, parsed=cast(CreateMappingRuleResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.CreateMappingRuleNotFound(status_code=response.status_code, content=response.content, parsed=cast(CreateMappingRuleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.CreateMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateMappingRuleResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -110,12 +121,23 @@ Args:
     body (CreateMappingRuleData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.CreateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateMappingRuleForbidden: If the response status code is 403. The request to create a mapping rule was denied. More details are provided in the response body.
+    errors.CreateMappingRuleNotFound: If the response status code is 404. The request to create a mapping rule was denied.
+    errors.CreateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     CreateMappingRuleResponse201"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateMappingRuleBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateMappingRuleResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.CreateMappingRuleForbidden(status_code=response.status_code, content=response.content, parsed=cast(CreateMappingRuleResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.CreateMappingRuleNotFound(status_code=response.status_code, content=response.content, parsed=cast(CreateMappingRuleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.CreateMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateMappingRuleResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

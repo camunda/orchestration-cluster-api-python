@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -72,13 +72,27 @@ Args:
         2251799813326547.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400.
+    errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401.
+    errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403.
+    errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404.
+    errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetDecisionDefinitionXMLResponse400"""
     response = sync_detailed(decision_definition_key=decision_definition_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetDecisionDefinitionXmlBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetDecisionDefinitionXmlUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetDecisionDefinitionXmlForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetDecisionDefinitionXmlNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetDecisionDefinitionXmlInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -112,12 +126,26 @@ Args:
         2251799813326547.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400.
+    errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401.
+    errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403.
+    errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404.
+    errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetDecisionDefinitionXMLResponse400"""
     response = await asyncio_detailed(decision_definition_key=decision_definition_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetDecisionDefinitionXmlBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetDecisionDefinitionXmlUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetDecisionDefinitionXmlForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetDecisionDefinitionXmlNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetDecisionDefinitionXmlInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

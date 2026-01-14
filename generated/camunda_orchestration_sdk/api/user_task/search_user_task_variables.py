@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -74,13 +74,18 @@ Args:
     body (SearchUserTaskVariablesData | Unset): User task search query request.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SearchUserTaskVariablesBadRequest: If the response status code is 400.
+    errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchUserTaskVariablesResponse200"""
     response = sync_detailed(user_task_key=user_task_key, client=client, body=body, truncate_values=truncate_values)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchUserTaskVariablesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchUserTaskVariablesResponse400, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchUserTaskVariablesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchUserTaskVariablesResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -118,12 +123,17 @@ Args:
     body (SearchUserTaskVariablesData | Unset): User task search query request.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SearchUserTaskVariablesBadRequest: If the response status code is 400.
+    errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchUserTaskVariablesResponse200"""
     response = await asyncio_detailed(user_task_key=user_task_key, client=client, body=body, truncate_values=truncate_values)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchUserTaskVariablesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchUserTaskVariablesResponse400, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchUserTaskVariablesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchUserTaskVariablesResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

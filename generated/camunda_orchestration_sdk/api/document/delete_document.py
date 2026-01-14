@@ -69,13 +69,18 @@ Args:
     store_id (str | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.DeleteDocumentNotFound: If the response status code is 404.
+    errors.DeleteDocumentInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(document_id=document_id, client=client, store_id=store_id)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 404:
+            raise errors.DeleteDocumentNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteDocumentResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.DeleteDocumentInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteDocumentResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -115,12 +120,17 @@ Args:
     store_id (str | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.DeleteDocumentNotFound: If the response status code is 404.
+    errors.DeleteDocumentInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(document_id=document_id, client=client, store_id=store_id)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 404:
+            raise errors.DeleteDocumentNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteDocumentResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.DeleteDocumentInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteDocumentResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

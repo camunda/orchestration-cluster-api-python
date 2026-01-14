@@ -539,6 +539,7 @@ from .delete_user_response_500 import DeleteUserResponse500
 from .delete_user_response_503 import DeleteUserResponse503
 from .deploymentkey_advancedfilter import DeploymentkeyAdvancedfilter
 from .elementinstancekey_advancedfilter import ElementinstancekeyAdvancedfilter
+from .entitykey_advancedfilter import EntitykeyAdvancedfilter
 from .entitytype_advancedfilter import EntitytypeAdvancedfilter
 from .entitytype_advancedfilter_eq import EntitytypeAdvancedfilterEq
 from .entitytype_advancedfilter_in_item import EntitytypeAdvancedfilterInItem
@@ -2962,6 +2963,7 @@ __all__ = (
     "DeleteUserResponse503",
     "DeploymentkeyAdvancedfilter",
     "ElementinstancekeyAdvancedfilter",
+    "EntitykeyAdvancedfilter",
     "EntitytypeAdvancedfilter",
     "EntitytypeAdvancedfilterEq",
     "EntitytypeAdvancedfilterInItem",

@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -75,13 +75,24 @@ Args:
     body (SearchClusterVariablesData | Unset): Cluster variable search query request.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SearchClusterVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchClusterVariablesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchClusterVariablesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchClusterVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchClusterVariablesResponse200"""
     response = sync_detailed(client=client, body=body, truncate_values=truncate_values)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchClusterVariablesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchClusterVariablesResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchClusterVariablesUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchClusterVariablesResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchClusterVariablesForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchClusterVariablesResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchClusterVariablesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchClusterVariablesResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -113,12 +124,23 @@ Args:
     body (SearchClusterVariablesData | Unset): Cluster variable search query request.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SearchClusterVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchClusterVariablesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchClusterVariablesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchClusterVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchClusterVariablesResponse200"""
     response = await asyncio_detailed(client=client, body=body, truncate_values=truncate_values)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchClusterVariablesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchClusterVariablesResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchClusterVariablesUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchClusterVariablesResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchClusterVariablesForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchClusterVariablesResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchClusterVariablesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchClusterVariablesResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

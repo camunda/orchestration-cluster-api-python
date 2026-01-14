@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -81,13 +81,24 @@ Args:
         request.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetProcessDefinitionStatisticsBadRequest: If the response status code is 400.
+    errors.GetProcessDefinitionStatisticsUnauthorized: If the response status code is 401.
+    errors.GetProcessDefinitionStatisticsForbidden: If the response status code is 403.
+    errors.GetProcessDefinitionStatisticsInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetProcessDefinitionStatisticsResponse200"""
     response = sync_detailed(process_definition_key=process_definition_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetProcessDefinitionStatisticsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionStatisticsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetProcessDefinitionStatisticsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionStatisticsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetProcessDefinitionStatisticsForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionStatisticsResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetProcessDefinitionStatisticsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionStatisticsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -127,12 +138,23 @@ Args:
         request.
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetProcessDefinitionStatisticsBadRequest: If the response status code is 400.
+    errors.GetProcessDefinitionStatisticsUnauthorized: If the response status code is 401.
+    errors.GetProcessDefinitionStatisticsForbidden: If the response status code is 403.
+    errors.GetProcessDefinitionStatisticsInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetProcessDefinitionStatisticsResponse200"""
     response = await asyncio_detailed(process_definition_key=process_definition_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetProcessDefinitionStatisticsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionStatisticsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetProcessDefinitionStatisticsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionStatisticsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetProcessDefinitionStatisticsForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionStatisticsResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetProcessDefinitionStatisticsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionStatisticsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

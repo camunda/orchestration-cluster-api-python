@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -78,13 +78,27 @@ Args:
     body (UpdateTenantData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UpdateTenantBadRequest: If the response status code is 400.
+    errors.UpdateTenantForbidden: If the response status code is 403.
+    errors.UpdateTenantNotFound: If the response status code is 404.
+    errors.UpdateTenantInternalServerError: If the response status code is 500.
+    errors.UpdateTenantServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     UpdateTenantResponse200"""
     response = sync_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UpdateTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UpdateTenantResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.UpdateTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(UpdateTenantResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.UpdateTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(UpdateTenantResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UpdateTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UpdateTenantResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UpdateTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UpdateTenantResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -118,12 +132,26 @@ Args:
     body (UpdateTenantData):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UpdateTenantBadRequest: If the response status code is 400.
+    errors.UpdateTenantForbidden: If the response status code is 403.
+    errors.UpdateTenantNotFound: If the response status code is 404.
+    errors.UpdateTenantInternalServerError: If the response status code is 500.
+    errors.UpdateTenantServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     UpdateTenantResponse200"""
     response = await asyncio_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UpdateTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UpdateTenantResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.UpdateTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(UpdateTenantResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.UpdateTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(UpdateTenantResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UpdateTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UpdateTenantResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UpdateTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UpdateTenantResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

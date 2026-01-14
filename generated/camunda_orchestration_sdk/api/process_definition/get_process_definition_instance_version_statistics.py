@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -79,13 +79,24 @@ Args:
     body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest: If the response status code is 400.
+    errors.GetProcessDefinitionInstanceVersionStatisticsUnauthorized: If the response status code is 401.
+    errors.GetProcessDefinitionInstanceVersionStatisticsForbidden: If the response status code is 403.
+    errors.GetProcessDefinitionInstanceVersionStatisticsInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetProcessDefinitionInstanceVersionStatisticsResponse200"""
     response = sync_detailed(process_definition_id=process_definition_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionInstanceVersionStatisticsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetProcessDefinitionInstanceVersionStatisticsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionInstanceVersionStatisticsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetProcessDefinitionInstanceVersionStatisticsForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionInstanceVersionStatisticsResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetProcessDefinitionInstanceVersionStatisticsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionInstanceVersionStatisticsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -123,12 +134,23 @@ Args:
     body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest: If the response status code is 400.
+    errors.GetProcessDefinitionInstanceVersionStatisticsUnauthorized: If the response status code is 401.
+    errors.GetProcessDefinitionInstanceVersionStatisticsForbidden: If the response status code is 403.
+    errors.GetProcessDefinitionInstanceVersionStatisticsInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetProcessDefinitionInstanceVersionStatisticsResponse200"""
     response = await asyncio_detailed(process_definition_id=process_definition_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionInstanceVersionStatisticsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetProcessDefinitionInstanceVersionStatisticsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionInstanceVersionStatisticsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetProcessDefinitionInstanceVersionStatisticsForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionInstanceVersionStatisticsResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetProcessDefinitionInstanceVersionStatisticsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionInstanceVersionStatisticsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

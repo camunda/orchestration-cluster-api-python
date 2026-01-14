@@ -66,13 +66,24 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.DeleteMappingRuleUnauthorized: If the response status code is 401.
+    errors.DeleteMappingRuleNotFound: If the response status code is 404.
+    errors.DeleteMappingRuleInternalServerError: If the response status code is 500.
+    errors.DeleteMappingRuleServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(mapping_rule_id=mapping_rule_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.DeleteMappingRuleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse401, response.parsed))
+        if response.status_code == 404:
+            raise errors.DeleteMappingRuleNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.DeleteMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.DeleteMappingRuleServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -104,12 +115,23 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.DeleteMappingRuleUnauthorized: If the response status code is 401.
+    errors.DeleteMappingRuleNotFound: If the response status code is 404.
+    errors.DeleteMappingRuleInternalServerError: If the response status code is 500.
+    errors.DeleteMappingRuleServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(mapping_rule_id=mapping_rule_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.DeleteMappingRuleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse401, response.parsed))
+        if response.status_code == 404:
+            raise errors.DeleteMappingRuleNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.DeleteMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.DeleteMappingRuleServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

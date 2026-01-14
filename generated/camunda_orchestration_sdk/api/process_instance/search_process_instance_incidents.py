@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -99,13 +99,27 @@ Args:
     body (SearchProcessInstanceIncidentsData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SearchProcessInstanceIncidentsBadRequest: If the response status code is 400.
+    errors.SearchProcessInstanceIncidentsUnauthorized: If the response status code is 401.
+    errors.SearchProcessInstanceIncidentsForbidden: If the response status code is 403.
+    errors.SearchProcessInstanceIncidentsNotFound: If the response status code is 404.
+    errors.SearchProcessInstanceIncidentsInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchProcessInstanceIncidentsResponse200"""
     response = sync_detailed(process_instance_key=process_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchProcessInstanceIncidentsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstanceIncidentsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchProcessInstanceIncidentsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstanceIncidentsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchProcessInstanceIncidentsForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstanceIncidentsResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SearchProcessInstanceIncidentsNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstanceIncidentsResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchProcessInstanceIncidentsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstanceIncidentsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -159,12 +173,26 @@ Args:
     body (SearchProcessInstanceIncidentsData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SearchProcessInstanceIncidentsBadRequest: If the response status code is 400.
+    errors.SearchProcessInstanceIncidentsUnauthorized: If the response status code is 401.
+    errors.SearchProcessInstanceIncidentsForbidden: If the response status code is 403.
+    errors.SearchProcessInstanceIncidentsNotFound: If the response status code is 404.
+    errors.SearchProcessInstanceIncidentsInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     SearchProcessInstanceIncidentsResponse200"""
     response = await asyncio_detailed(process_instance_key=process_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchProcessInstanceIncidentsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstanceIncidentsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchProcessInstanceIncidentsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstanceIncidentsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchProcessInstanceIncidentsForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstanceIncidentsResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SearchProcessInstanceIncidentsNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstanceIncidentsResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchProcessInstanceIncidentsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstanceIncidentsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

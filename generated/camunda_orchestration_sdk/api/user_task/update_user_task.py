@@ -78,13 +78,27 @@ Args:
     body (UpdateUserTaskData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UpdateUserTaskBadRequest: If the response status code is 400.
+    errors.UpdateUserTaskNotFound: If the response status code is 404.
+    errors.UpdateUserTaskConflict: If the response status code is 409.
+    errors.UpdateUserTaskInternalServerError: If the response status code is 500.
+    errors.UpdateUserTaskServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(user_task_key=user_task_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UpdateUserTaskBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserTaskResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.UpdateUserTaskNotFound(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserTaskResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.UpdateUserTaskConflict(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserTaskResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.UpdateUserTaskInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserTaskResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UpdateUserTaskServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserTaskResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -118,12 +132,26 @@ Args:
     body (UpdateUserTaskData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.UpdateUserTaskBadRequest: If the response status code is 400.
+    errors.UpdateUserTaskNotFound: If the response status code is 404.
+    errors.UpdateUserTaskConflict: If the response status code is 409.
+    errors.UpdateUserTaskInternalServerError: If the response status code is 500.
+    errors.UpdateUserTaskServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(user_task_key=user_task_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UpdateUserTaskBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserTaskResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.UpdateUserTaskNotFound(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserTaskResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.UpdateUserTaskConflict(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserTaskResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.UpdateUserTaskInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserTaskResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UpdateUserTaskServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserTaskResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

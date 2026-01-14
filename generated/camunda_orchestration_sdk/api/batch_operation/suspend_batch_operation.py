@@ -83,13 +83,27 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SuspendBatchOperationBadRequest: If the response status code is 400.
+    errors.SuspendBatchOperationForbidden: If the response status code is 403.
+    errors.SuspendBatchOperationNotFound: If the response status code is 404.
+    errors.SuspendBatchOperationInternalServerError: If the response status code is 500.
+    errors.SuspendBatchOperationServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = sync_detailed(batch_operation_key=batch_operation_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SuspendBatchOperationBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SuspendBatchOperationResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.SuspendBatchOperationForbidden(status_code=response.status_code, content=response.content, parsed=cast(SuspendBatchOperationResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SuspendBatchOperationNotFound(status_code=response.status_code, content=response.content, parsed=cast(SuspendBatchOperationResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SuspendBatchOperationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SuspendBatchOperationResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.SuspendBatchOperationServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(SuspendBatchOperationResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -129,12 +143,26 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.SuspendBatchOperationBadRequest: If the response status code is 400.
+    errors.SuspendBatchOperationForbidden: If the response status code is 403.
+    errors.SuspendBatchOperationNotFound: If the response status code is 404.
+    errors.SuspendBatchOperationInternalServerError: If the response status code is 500.
+    errors.SuspendBatchOperationServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     Any"""
     response = await asyncio_detailed(batch_operation_key=batch_operation_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SuspendBatchOperationBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SuspendBatchOperationResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.SuspendBatchOperationForbidden(status_code=response.status_code, content=response.content, parsed=cast(SuspendBatchOperationResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SuspendBatchOperationNotFound(status_code=response.status_code, content=response.content, parsed=cast(SuspendBatchOperationResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SuspendBatchOperationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SuspendBatchOperationResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.SuspendBatchOperationServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(SuspendBatchOperationResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

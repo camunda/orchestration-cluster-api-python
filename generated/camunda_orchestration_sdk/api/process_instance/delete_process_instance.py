@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -87,13 +87,30 @@ Args:
     body (DeleteProcessInstanceDataType0 | None | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.DeleteProcessInstanceUnauthorized: If the response status code is 401.
+    errors.DeleteProcessInstanceForbidden: If the response status code is 403.
+    errors.DeleteProcessInstanceNotFound: If the response status code is 404.
+    errors.DeleteProcessInstanceConflict: If the response status code is 409.
+    errors.DeleteProcessInstanceInternalServerError: If the response status code is 500.
+    errors.DeleteProcessInstanceServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     DeleteProcessInstanceResponse200"""
     response = sync_detailed(process_instance_key=process_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.DeleteProcessInstanceUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstanceResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.DeleteProcessInstanceForbidden(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstanceResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.DeleteProcessInstanceNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstanceResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.DeleteProcessInstanceConflict(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstanceResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.DeleteProcessInstanceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstanceResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.DeleteProcessInstanceServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstanceResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -129,12 +146,29 @@ Args:
     body (DeleteProcessInstanceDataType0 | None | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.DeleteProcessInstanceUnauthorized: If the response status code is 401.
+    errors.DeleteProcessInstanceForbidden: If the response status code is 403.
+    errors.DeleteProcessInstanceNotFound: If the response status code is 404.
+    errors.DeleteProcessInstanceConflict: If the response status code is 409.
+    errors.DeleteProcessInstanceInternalServerError: If the response status code is 500.
+    errors.DeleteProcessInstanceServiceUnavailable: If the response status code is 503.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     DeleteProcessInstanceResponse200"""
     response = await asyncio_detailed(process_instance_key=process_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.DeleteProcessInstanceUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstanceResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.DeleteProcessInstanceForbidden(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstanceResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.DeleteProcessInstanceNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstanceResponse404, response.parsed))
+        if response.status_code == 409:
+            raise errors.DeleteProcessInstanceConflict(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstanceResponse409, response.parsed))
+        if response.status_code == 500:
+            raise errors.DeleteProcessInstanceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstanceResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.DeleteProcessInstanceServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstanceResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

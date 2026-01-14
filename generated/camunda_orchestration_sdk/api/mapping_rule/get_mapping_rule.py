@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -63,13 +63,21 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetMappingRuleUnauthorized: If the response status code is 401.
+    errors.GetMappingRuleNotFound: If the response status code is 404.
+    errors.GetMappingRuleInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetMappingRuleResponse200"""
     response = sync_detailed(mapping_rule_id=mapping_rule_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetMappingRuleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetMappingRuleResponse401, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetMappingRuleNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetMappingRuleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetMappingRuleResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -101,12 +109,20 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the response status code is not 2xx.
+    errors.GetMappingRuleUnauthorized: If the response status code is 401.
+    errors.GetMappingRuleNotFound: If the response status code is 404.
+    errors.GetMappingRuleInternalServerError: If the response status code is 500.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
     GetMappingRuleResponse200"""
     response = await asyncio_detailed(mapping_rule_id=mapping_rule_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetMappingRuleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetMappingRuleResponse401, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetMappingRuleNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetMappingRuleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetMappingRuleResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
