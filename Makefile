@@ -59,9 +59,11 @@ docs-api:
 	# 5. Build Markdown for Docusaurus integration
 	PYTHONPATH=./generated sphinx-build -M markdown docs-sphinx public
 
-	# 6. Copy markdown to Docusaurus folder
+	# 6. Copy markdown to Docusaurus folder and add frontmatter
 	mkdir -p ./website/docs/api
 	cp -R ./public/markdown/* ./website/docs/api/
+	@# Add Docusaurus frontmatter to index.md
+	@echo '---\nid: api-reference\ntitle: Python SDK API Reference\nsidebar_label: API Reference\n---\n' | cat - ./website/docs/api/index.md > ./website/docs/api/index.md.tmp && mv ./website/docs/api/index.md.tmp ./website/docs/api/index.md
 
 	@echo "HTML docs for preview: ./public/html"
 	@echo "Markdown docs for Docusaurus: ./website/docs/api"
