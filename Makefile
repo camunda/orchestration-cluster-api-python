@@ -43,19 +43,23 @@ preview-docs: clean-docs docs-api
 	PYTHONPATH=./generated pdoc camunda_orchestration_sdk --docformat google
 
 docs-api:
-	# 1. Install dependencies
+	# 1. Install Sphinx and SDK dependencies
 	uv pip install sphinx sphinx-markdown-builder --system
+	uv pip install -e . --system
 
-	# 2. Build HTML for GitHub Pages preview
+	# 2. Clean previous Sphinx build cache
+	rm -rf public
+
+	# 3. Build HTML for GitHub Pages preview
 	PYTHONPATH=./generated sphinx-build -M html docs-sphinx public
 
-	# 3. Add .nojekyll to prevent GitHub Pages from ignoring _static folder
+	# 4. Add .nojekyll to prevent GitHub Pages from ignoring _static folder
 	touch ./public/html/.nojekyll
 
-	# 4. Build Markdown for Docusaurus integration
+	# 5. Build Markdown for Docusaurus integration
 	PYTHONPATH=./generated sphinx-build -M markdown docs-sphinx public
 
-	# 5. Copy markdown to Docusaurus folder
+	# 6. Copy markdown to Docusaurus folder
 	mkdir -p ./website/docs/api
 	cp -R ./public/markdown/* ./website/docs/api/
 
