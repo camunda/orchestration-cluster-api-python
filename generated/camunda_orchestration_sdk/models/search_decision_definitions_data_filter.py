@@ -20,6 +20,10 @@ class SearchDecisionDefinitionsDataFilter:
         decision_definition_id (str | Unset): The DMN ID of the decision definition. Example: new-hire-onboarding-
             workflow.
         name (str | Unset): The DMN name of the decision definition.
+        is_latest_version (bool | Unset): Whether to only return the latest version of each decision definition.
+            When using this filter, pagination functionality is limited, you can only paginate forward using `after` and
+            `limit`.
+            The response contains no `startCursor` in the `page`, and requests ignore the `from` and `before` in the `page`.
         version (int | Unset): The assigned version of the decision definition.
         decision_requirements_id (str | Unset): the DMN ID of the decision requirements graph that the decision
             definition is part of.
@@ -36,6 +40,7 @@ class SearchDecisionDefinitionsDataFilter:
 
     decision_definition_id: DecisionDefinitionId | Unset = UNSET
     name: str | Unset = UNSET
+    is_latest_version: bool | Unset = UNSET
     version: int | Unset = UNSET
     decision_requirements_id: str | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
@@ -49,6 +54,8 @@ class SearchDecisionDefinitionsDataFilter:
         decision_definition_id = self.decision_definition_id
 
         name = self.name
+
+        is_latest_version = self.is_latest_version
 
         version = self.version
 
@@ -71,6 +78,8 @@ class SearchDecisionDefinitionsDataFilter:
             field_dict["decisionDefinitionId"] = decision_definition_id
         if name is not UNSET:
             field_dict["name"] = name
+        if is_latest_version is not UNSET:
+            field_dict["isLatestVersion"] = is_latest_version
         if version is not UNSET:
             field_dict["version"] = version
         if decision_requirements_id is not UNSET:
@@ -95,6 +104,8 @@ class SearchDecisionDefinitionsDataFilter:
 
         name = d.pop("name", UNSET)
 
+        is_latest_version = d.pop("isLatestVersion", UNSET)
+
         version = d.pop("version", UNSET)
 
         decision_requirements_id = d.pop("decisionRequirementsId", UNSET)
@@ -112,6 +123,7 @@ class SearchDecisionDefinitionsDataFilter:
         search_decision_definitions_data_filter = cls(
             decision_definition_id=decision_definition_id,
             name=name,
+            is_latest_version=is_latest_version,
             version=version,
             decision_requirements_id=decision_requirements_id,
             tenant_id=tenant_id,

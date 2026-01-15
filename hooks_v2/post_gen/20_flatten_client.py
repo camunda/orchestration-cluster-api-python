@@ -342,7 +342,10 @@ class CamundaClient:
 
         # Ensure every request gets auth headers via httpx event hooks.
         kwargs["httpx_args"] = inject_auth_event_hooks(
-            kwargs.get("httpx_args"), auth_provider, async_client=False
+            kwargs.get("httpx_args"),
+            auth_provider,
+            async_client=False,
+            log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -445,7 +448,10 @@ class CamundaAsyncClient:
 
         # Ensure every request gets auth headers via httpx event hooks.
         kwargs["httpx_args"] = inject_auth_event_hooks(
-            kwargs.get("httpx_args"), auth_provider, async_client=True
+            kwargs.get("httpx_args"),
+            auth_provider,
+            async_client=True,
+            log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)

@@ -9,6 +9,46 @@ from typing import Any, Mapping, Protocol, runtime_checkable
 
 import httpx
 
+try:
+    from loguru import logger as _logger
+except Exception:  # pragma: no cover
+    _logger = None  # type: ignore[assignment]
+
+
+_LOG_LEVEL_ORDER: dict[str, int] = {
+    "silent": 0,
+    "error": 1,
+    "warn": 2,
+    "info": 3,
+    "debug": 4,
+    "trace": 5,
+    "silly": 6,
+}
+
+
+def _should_log_http(log_level: str | None) -> bool:
+    if not log_level:
+        return False
+    return _LOG_LEVEL_ORDER.get(str(log_level).lower(), 0) >= _LOG_LEVEL_ORDER["debug"]
+
+
+def _should_log_http_body(log_level: str | None) -> bool:
+    if not log_level:
+        return False
+    return _LOG_LEVEL_ORDER.get(str(log_level).lower(), 0) >= _LOG_LEVEL_ORDER["trace"]
+
+
+def _log_debug(message: str, **kwargs: Any) -> None:
+    if _logger is None:
+        return
+    _logger.debug(message, **kwargs)
+
+
+def _log_warning(message: str, **kwargs: Any) -> None:
+    if _logger is None:
+        return
+    _logger.warning(message, **kwargs)
+
 
 @runtime_checkable
 class AuthProvider(Protocol):
@@ -119,6 +159,15 @@ class OAuthClientCredentialsAuthProvider:
             "client_secret": self._client_secret,
             "audience": self._audience,
         }
+
+        if _logger is not None:
+            _logger.debug(
+                "OAuth token request: url={url} audience={audience} client_id={client_id}",
+                url=self._oauth_url,
+                audience=self._audience,
+                client_id=self._client_id,
+            )
+
         resp = self._client.post(
             self._oauth_url,
             data=data,
@@ -181,6 +230,15 @@ class AsyncOAuthClientCredentialsAuthProvider:
             "client_secret": self._client_secret,
             "audience": self._audience,
         }
+
+        if _logger is not None:
+            _logger.debug(
+                "OAuth token request (async): url={url} audience={audience} client_id={client_id}",
+                url=self._oauth_url,
+                audience=self._audience,
+                client_id=self._client_id,
+            )
+
         resp = await self._client.post(
             self._oauth_url,
             data=data,
@@ -210,11 +268,15 @@ def inject_auth_event_hooks(
     auth_provider: object,
     *,
     async_client: bool = False,
+    log_level: str | None = None,
 ) -> dict[str, Any]:
     """Return a copy of httpx_args with a request hook that applies auth headers.
 
     This uses httpx event hooks so we don't have to inject headers in every generated API call.
     """
+
+    log_http = _should_log_http(log_level)
+    log_http_body = _should_log_http_body(log_level)
 
     if async_client:
 
@@ -223,12 +285,94 @@ def inject_auth_event_hooks(
             if headers:
                 request.headers.update(headers)
 
+            if log_http:
+                _log_debug(
+                    "HTTP request: method={method} url={url} has_auth={has_auth}",
+                    method=request.method,
+                    url=str(request.url),
+                    has_auth=("authorization" in request.headers),
+                )
+
+        async def _response_hook(response: httpx.Response) -> None:
+            if not log_http:
+                return
+
+            request = response.request
+            status = response.status_code
+
+            # Keep output safe and compact; only show body at trace.
+            if status >= 400:
+                if log_http_body:
+                    body_preview = (response.text or "").strip().replace("\n", " ")[:500]
+                    _log_warning(
+                        "HTTP response: status={status} method={method} url={url} body={body}",
+                        status=status,
+                        method=request.method,
+                        url=str(request.url),
+                        body=body_preview,
+                    )
+                else:
+                    _log_warning(
+                        "HTTP response: status={status} method={method} url={url}",
+                        status=status,
+                        method=request.method,
+                        url=str(request.url),
+                    )
+            else:
+                _log_debug(
+                    "HTTP response: status={status} method={method} url={url}",
+                    status=status,
+                    method=request.method,
+                    url=str(request.url),
+                )
+
     else:
 
         def _request_hook(request: httpx.Request) -> None:
             headers = _resolve_auth_headers(auth_provider)
             if headers:
                 request.headers.update(headers)
+
+            if log_http:
+                _log_debug(
+                    "HTTP request: method={method} url={url} has_auth={has_auth}",
+                    method=request.method,
+                    url=str(request.url),
+                    has_auth=("authorization" in request.headers),
+                )
+
+        def _response_hook(response: httpx.Response) -> None:
+            if not log_http:
+                return
+
+            request = response.request
+            status = response.status_code
+
+            # Keep output safe and compact; only show body at trace.
+            if status >= 400:
+                if log_http_body:
+                    body_preview = (response.text or "").strip().replace("\n", " ")[:500]
+                    _log_warning(
+                        "HTTP response: status={status} method={method} url={url} body={body}",
+                        status=status,
+                        method=request.method,
+                        url=str(request.url),
+                        body=body_preview,
+                    )
+                else:
+                    _log_warning(
+                        "HTTP response: status={status} method={method} url={url}",
+                        status=status,
+                        method=request.method,
+                        url=str(request.url),
+                    )
+            else:
+                _log_debug(
+                    "HTTP response: status={status} method={method} url={url}",
+                    status=status,
+                    method=request.method,
+                    url=str(request.url),
+                )
 
     out: dict[str, Any] = dict(httpx_args or {})
 
@@ -255,6 +399,20 @@ def inject_auth_event_hooks(
 
     request_hooks.append(_request_hook)
     event_hooks["request"] = request_hooks
+
+    # Normalize response hooks to a list.
+    existing_response_hooks = event_hooks.get("response")
+    if existing_response_hooks is None:
+        response_hooks: list[Any] = []
+    elif isinstance(existing_response_hooks, list):
+        response_hooks = list(existing_response_hooks)
+    elif isinstance(existing_response_hooks, tuple):
+        response_hooks = list(existing_response_hooks)
+    else:
+        raise TypeError("httpx_args['event_hooks']['response'] must be a list or tuple")
+
+    response_hooks.append(_response_hook)
+    event_hooks["response"] = response_hooks
     out["event_hooks"] = event_hooks
 
     return out

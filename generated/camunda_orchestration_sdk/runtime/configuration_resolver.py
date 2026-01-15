@@ -92,8 +92,26 @@ class CamundaSdkConfiguration(BaseModel):
     # Logging
     CAMUNDA_SDK_LOG_LEVEL: CamundaSdkLogLevel = Field(default="error")
 
+    @staticmethod
+    def _normalize_rest_address(value: str) -> str:
+        value = value.strip()
+        if not value:
+            return value
+        normalized = value.rstrip("/")
+        if normalized.endswith("/v2"):
+            return normalized
+        return normalized + "/v2"
+
     @model_validator(mode="after")
     def _validate_required_when(self) -> "CamundaSdkConfiguration":
+        # Normalize REST endpoints so users can supply either
+        #   https://host/<clusterId>
+        # or
+        #   https://host/<clusterId>/v2
+        # and the SDK will consistently call /v2/...
+        self.ZEEBE_REST_ADDRESS = self._normalize_rest_address(self.ZEEBE_REST_ADDRESS)
+        self.CAMUNDA_REST_ADDRESS = self._normalize_rest_address(self.CAMUNDA_REST_ADDRESS)
+
         if self.CAMUNDA_AUTH_STRATEGY == "BASIC":
             if not self.CAMUNDA_BASIC_AUTH_USERNAME:
                 raise ValueError(
@@ -146,6 +164,28 @@ class ConfigurationResolver:
     def resolve(self) -> ResolvedCamundaSdkConfiguration:
         merged: dict[str, Any] = {**self._environment, **(self._explicit or {})}
         merged = self._apply_alias_resolution(merged, self._environment, self._explicit)
+
+        # Infer an auth strategy only if the user did NOT explicitly set one.
+        # (Defaults do not count as explicit.)
+        if "CAMUNDA_AUTH_STRATEGY" not in merged:
+            def _non_empty(value: Any) -> bool:
+                if value is None:
+                    return False
+                if isinstance(value, str):
+                    return bool(value.strip())
+                return True
+
+            has_oauth_creds = _non_empty(merged.get("CAMUNDA_CLIENT_ID")) and _non_empty(
+                merged.get("CAMUNDA_CLIENT_SECRET")
+            )
+            has_basic_creds = _non_empty(merged.get("CAMUNDA_BASIC_AUTH_USERNAME")) and _non_empty(
+                merged.get("CAMUNDA_BASIC_AUTH_PASSWORD")
+            )
+
+            if has_oauth_creds:
+                merged["CAMUNDA_AUTH_STRATEGY"] = "OAUTH"
+            elif has_basic_creds:
+                merged["CAMUNDA_AUTH_STRATEGY"] = "BASIC"
 
         try:
             effective = CamundaSdkConfiguration.model_validate(merged)
