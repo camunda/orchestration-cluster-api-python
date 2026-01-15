@@ -16,10 +16,7 @@ demo/.DS_Store
 public/
 website/docs/api/
 
-# Docusaurus test site
+# Docusaurus test site (has its own .gitignore)
 demo/docusaurus-test/node_modules/
-demo/docusaurus-test/build/
-demo/docusaurus-test/.docusaurus/
-demo/docusaurus-test/docs/
 
 .DS_Store
