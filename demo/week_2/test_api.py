@@ -12,8 +12,10 @@ from camunda_orchestration_sdk.models.processcreationbykey import Processcreatio
 async def main():
     print("🚀 Testing Camunda Python SDK\n")
 
-    # Initialize client (note: base_url should include /v2)
-    camunda = CamundaAsyncClient(base_url="http://localhost:8080/v2", token=None)
+    # Initialize client (note: CAMUNDA_REST_ADDRESS should include /v2)
+    camunda = CamundaAsyncClient(
+        configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"}
+    )
     print("✅ Camunda client initialized")
 
     # Step 1: Deploy a process

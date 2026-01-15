@@ -38,19 +38,15 @@ The generated SDK provides two convenience clients:
 from camunda_orchestration_sdk import CamundaClient, CamundaAsyncClient
 
 # Unauthenticated (for local development)
-client = CamundaClient(base_url="http://localhost:8080/v2")
-async_client = CamundaAsyncClient(base_url="http://localhost:8080/v2")
-
-# Authenticated (for production/SaaS)
-client = CamundaClient(
-    base_url="https://...", 
-    token="your-access-token"
-)
-
+client = CamundaClient(configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"})
 async_client = CamundaAsyncClient(
-  base_url="https://...",
-  token="your-access-token"
+    configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"}
 )
+
+# Or configure via environment (preferred for apps)
+# export CAMUNDA_REST_ADDRESS="http://localhost:8080/v2"
+# client = CamundaClient()
+# async_client = CamundaAsyncClient()
 ```
 
 #### Synchronous Usage
@@ -58,7 +54,7 @@ async_client = CamundaAsyncClient(
 ```python
 from camunda_orchestration_sdk import CamundaClient
 
-with CamundaClient(base_url="http://localhost:8080/v2") as client:
+with CamundaClient(configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"}) as client:
     topology = client.get_topology()
     print(topology)
 ```
@@ -70,7 +66,9 @@ import asyncio
 from camunda_orchestration_sdk import CamundaAsyncClient
 
 async def main():
-  async with CamundaAsyncClient(base_url="http://localhost:8080/v2") as client:
+  async with CamundaAsyncClient(
+      configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"}
+  ) as client:
     topology = await client.get_topology()
         print(topology)
 
@@ -141,7 +139,7 @@ make test
 
 ### Integration tests (opt-in)
 
-Integration tests live in `tests/integration` and require a running server. They are skipped unless `CAMUNDA_INTEGRATION=1` is set. By default, the client points to `http://localhost:8080/v2`; override with `CAMUNDA_BASE_URL`.
+Integration tests live in `tests/integration` and require a running server. They are skipped unless `CAMUNDA_INTEGRATION=1` is set. By default, the client points to `http://localhost:8080/v2`; override with `CAMUNDA_REST_ADDRESS`.
 
 Run manually:
 

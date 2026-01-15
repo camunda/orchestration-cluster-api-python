@@ -1,0 +1,223 @@
+from __future__ import annotations
+
+import os
+from dataclasses import dataclass
+from typing import Any, Mapping, TypedDict, Literal
+
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+
+
+CamundaAuthStrategy = Literal["NONE", "OAUTH", "BASIC"]
+CamundaSdkLogLevel = Literal[
+    "silent",
+    "error",
+    "warn",
+    "info",
+    "debug",
+    "trace",
+    "silly",
+]
+
+
+class CamundaSdkConfigPartial(TypedDict, total=False):
+    ZEEBE_REST_ADDRESS: str
+    CAMUNDA_REST_ADDRESS: str
+
+    CAMUNDA_TOKEN_AUDIENCE: str
+
+    CAMUNDA_OAUTH_URL: str
+
+    CAMUNDA_AUTH_STRATEGY: CamundaAuthStrategy
+
+    CAMUNDA_BASIC_AUTH_USERNAME: str
+    CAMUNDA_BASIC_AUTH_PASSWORD: str
+
+    CAMUNDA_CLIENT_ID: str
+    CAMUNDA_CLIENT_SECRET: str
+
+    CAMUNDA_CLIENT_AUTH_CLIENTID: str
+    CAMUNDA_CLIENT_AUTH_CLIENTSECRET: str
+
+    CAMUNDA_SDK_LOG_LEVEL: CamundaSdkLogLevel
+
+
+CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
+    "ZEEBE_REST_ADDRESS",
+    "CAMUNDA_REST_ADDRESS",
+    "CAMUNDA_TOKEN_AUDIENCE",
+    "CAMUNDA_OAUTH_URL",
+    "CAMUNDA_AUTH_STRATEGY",
+    "CAMUNDA_BASIC_AUTH_USERNAME",
+    "CAMUNDA_BASIC_AUTH_PASSWORD",
+    "CAMUNDA_CLIENT_ID",
+    "CAMUNDA_CLIENT_SECRET",
+    "CAMUNDA_CLIENT_AUTH_CLIENTID",
+    "CAMUNDA_CLIENT_AUTH_CLIENTSECRET",
+    "CAMUNDA_SDK_LOG_LEVEL",
+)
+
+
+def read_environment(environ: Mapping[str, str] | None = None) -> CamundaSdkConfigPartial:
+    env = os.environ if environ is None else environ
+    out: dict[str, str] = {}
+    for key in CAMUNDA_SDK_CONFIG_KEYS:
+        if key in env:
+            out[key] = env[key]
+    return out  # type: ignore[return-value]
+
+
+class CamundaSdkConfiguration(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    # REST
+    ZEEBE_REST_ADDRESS: str = Field(default="http://localhost:8080/v2")
+    CAMUNDA_REST_ADDRESS: str = Field(default="http://localhost:8080/v2")
+
+    # OAuth
+    CAMUNDA_TOKEN_AUDIENCE: str = Field(default="zeebe.camunda.io")
+    CAMUNDA_OAUTH_URL: str = Field(default="https://login.cloud.camunda.io/oauth/token")
+
+    CAMUNDA_CLIENT_ID: str | None = None
+    CAMUNDA_CLIENT_SECRET: str | None = None
+
+    CAMUNDA_CLIENT_AUTH_CLIENTID: str | None = None
+    CAMUNDA_CLIENT_AUTH_CLIENTSECRET: str | None = None
+
+    # Auth strategy
+    CAMUNDA_AUTH_STRATEGY: CamundaAuthStrategy = Field(default="NONE")
+
+    CAMUNDA_BASIC_AUTH_USERNAME: str | None = None
+    CAMUNDA_BASIC_AUTH_PASSWORD: str | None = None
+
+    # Logging
+    CAMUNDA_SDK_LOG_LEVEL: CamundaSdkLogLevel = Field(default="error")
+
+    @model_validator(mode="after")
+    def _validate_required_when(self) -> "CamundaSdkConfiguration":
+        if self.CAMUNDA_AUTH_STRATEGY == "BASIC":
+            if not self.CAMUNDA_BASIC_AUTH_USERNAME:
+                raise ValueError(
+                    "CAMUNDA_BASIC_AUTH_USERNAME is required when CAMUNDA_AUTH_STRATEGY=BASIC"
+                )
+            if not self.CAMUNDA_BASIC_AUTH_PASSWORD:
+                raise ValueError(
+                    "CAMUNDA_BASIC_AUTH_PASSWORD is required when CAMUNDA_AUTH_STRATEGY=BASIC"
+                )
+
+        if self.CAMUNDA_AUTH_STRATEGY == "OAUTH":
+            if not self.CAMUNDA_CLIENT_ID:
+                raise ValueError(
+                    "CAMUNDA_CLIENT_ID is required when CAMUNDA_AUTH_STRATEGY=OAUTH"
+                )
+            if not self.CAMUNDA_CLIENT_SECRET:
+                raise ValueError(
+                    "CAMUNDA_CLIENT_SECRET is required when CAMUNDA_AUTH_STRATEGY=OAUTH"
+                )
+
+        return self
+
+
+@dataclass(frozen=True)
+class ResolvedCamundaSdkConfiguration:
+    effective: CamundaSdkConfiguration
+    environment: CamundaSdkConfigPartial
+    explicit: CamundaSdkConfigPartial | None
+
+
+class ConfigurationResolver:
+    """Resolves an effective configuration from environment + explicit overrides."""
+
+    _ALIAS_PAIRS: tuple[tuple[str, str, str | None], ...] = (
+        ("ZEEBE_REST_ADDRESS", "CAMUNDA_REST_ADDRESS", "http://localhost:8080/v2"),
+        ("CAMUNDA_CLIENT_ID", "CAMUNDA_CLIENT_AUTH_CLIENTID", None),
+        ("CAMUNDA_CLIENT_SECRET", "CAMUNDA_CLIENT_AUTH_CLIENTSECRET", None),
+    )
+
+    def __init__(
+        self,
+        environment: CamundaSdkConfigPartial | Mapping[str, Any],
+        explicit_configuration: CamundaSdkConfigPartial | Mapping[str, Any] | None = None,
+    ):
+        self._environment: dict[str, Any] = dict(environment)
+        self._explicit: dict[str, Any] | None = (
+            dict(explicit_configuration) if explicit_configuration is not None else None
+        )
+
+    def resolve(self) -> ResolvedCamundaSdkConfiguration:
+        merged: dict[str, Any] = {**self._environment, **(self._explicit or {})}
+        merged = self._apply_alias_resolution(merged, self._environment, self._explicit)
+
+        try:
+            effective = CamundaSdkConfiguration.model_validate(merged)
+        except ValidationError as e:
+            # Surface as-is; tests rely on pydantic's rich errors.
+            raise e
+
+        return ResolvedCamundaSdkConfiguration(
+            effective=effective,
+            environment=self._environment, # type: ignore
+            explicit=self._explicit, # type: ignore
+        )
+
+    @classmethod
+    def _apply_alias_resolution(
+        cls,
+        merged: dict[str, Any],
+        environment: Mapping[str, Any],
+        explicit: Mapping[str, Any] | None,
+    ) -> dict[str, Any]:
+        explicit_map: Mapping[str, Any] = explicit or {}
+
+        for left, right, default in cls._ALIAS_PAIRS:
+            value = cls._resolve_alias_value(
+                left=left,
+                right=right,
+                environment=environment,
+                explicit=explicit_map,
+                default=default,
+            )
+
+            # Ensure the effective config always has both keys.
+            if value is not None:
+                merged[left] = value
+                merged[right] = value
+            else:
+                merged.pop(left, None)
+                merged.pop(right, None)
+
+        return merged
+
+    @staticmethod
+    def _resolve_alias_value(
+        *,
+        left: str,
+        right: str,
+        environment: Mapping[str, Any],
+        explicit: Mapping[str, Any],
+        default: str | None,
+    ) -> Any:
+        def _is_set(source: Mapping[str, Any], key: str) -> bool:
+            return key in source and source[key] is not None
+
+        # Explicit wins over environment even if it uses the other alias.
+        explicit_left_set = _is_set(explicit, left)
+        explicit_right_set = _is_set(explicit, right)
+
+        if explicit_left_set and explicit_right_set and explicit[left] != explicit[right]:
+            raise ValueError(
+                f"Conflicting explicit configuration: {left}={explicit[left]!r} != {right}={explicit[right]!r}"
+            )
+        if explicit_left_set or explicit_right_set:
+            return explicit[left] if explicit_left_set else explicit[right]
+
+        env_left_set = _is_set(environment, left)
+        env_right_set = _is_set(environment, right)
+
+        if env_left_set and env_right_set and environment[left] != environment[right]:
+            raise ValueError(
+                f"Conflicting environment configuration: {left}={environment[left]!r} != {right}={environment[right]!r}"
+            )
+        if env_left_set or env_right_set:
+            return environment[left] if env_left_set else environment[right]
+
+        return default

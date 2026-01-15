@@ -224,7 +224,7 @@ python demo/v2/run_benchmark_scenarios.py custom_scenarios.json
 ### Camunda Connection Issues
 ```bash
 # Set Camunda URL
-export CAMUNDA_BASE_URL="http://localhost:8080/v2"
+export CAMUNDA_REST_ADDRESS="http://localhost:8080/v2"
 ```
 
 ### Timeouts

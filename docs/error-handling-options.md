@@ -49,7 +49,7 @@ from camunda_orchestration_sdk import CamundaClient
 from camunda_orchestration_sdk import errors
 from camunda_orchestration_sdk.models.get_authentication_response_401 import GetAuthenticationResponse401
 
-client = CamundaClient(base_url="http://localhost:8080/v2", token="...")
+client = CamundaClient(configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"})
 
 try:
     me = client.get_authentication()
@@ -74,7 +74,7 @@ except errors.UnexpectedStatus as e:
 from camunda_orchestration_sdk import CamundaClient
 from camunda_orchestration_sdk import errors
 
-client = CamundaClient(base_url="http://localhost:8080/v2", token="...")
+client = CamundaClient(configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"})
 
 async def main() -> None:
     try:
@@ -122,7 +122,7 @@ from camunda_orchestration_sdk import CamundaClient
 from camunda_orchestration_sdk import errors
 from camunda_orchestration_sdk.models.get_authentication_response_401 import GetAuthenticationResponse401
 
-client = CamundaClient(base_url="http://localhost:8080/v2", token="...")
+client = CamundaClient(configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"})
 
 try:
     me = client.get_authentication()
@@ -140,7 +140,7 @@ except errors.GetAuthenticationError as e:
 from camunda_orchestration_sdk import CamundaClient
 from camunda_orchestration_sdk import errors
 
-client = CamundaClient(base_url="http://localhost:8080/v2", token="...")
+client = CamundaClient(configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"})
 
 async def main() -> None:
     try:
@@ -188,7 +188,7 @@ The wrapper raises the most specific exception based on status code.
 from camunda_orchestration_sdk import CamundaClient
 from camunda_orchestration_sdk import errors
 
-client = CamundaClient(base_url="http://localhost:8080/v2", token="...")
+client = CamundaClient(configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"})
 
 try:
     me = client.get_authentication()
@@ -207,7 +207,7 @@ except errors.GetAuthenticationInternalServerError as e:
 from camunda_orchestration_sdk import CamundaClient
 from camunda_orchestration_sdk import errors
 
-client = CamundaClient(base_url="http://localhost:8080/v2", token="...")
+client = CamundaClient(configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"})
 
 async def main() -> None:
     try:
