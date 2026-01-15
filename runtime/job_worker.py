@@ -35,8 +35,23 @@ class HintedCallable(Protocol):
     _execution_hint: _EFFECTIVE_EXECUTION_STRATEGY
     def __call__(self, job: Any) -> dict[str, Any] | None | Awaitable[dict[str, Any] | None]: ...
 
-AsyncJobHandler = Callable[["JobContext"], Coroutine[Any, Any, dict[str, Any] | CompleteJobData | None ]]
-SyncJobHandler = Callable[["JobContext"], dict[str, Any] | None]
+
+@attrs.define
+class JobContext(ActivateJobsResponse200JobsItem):
+    """Read-only context for a job execution."""
+
+    @classmethod
+    def from_job(cls, job: ActivateJobsResponse200JobsItem) -> "JobContext":
+        # Extract init fields
+        init_fields = {
+            f.name: getattr(job, f.name)
+            for f in attrs.fields(ActivateJobsResponse200JobsItem)
+            if f.init
+        }
+        return cls(**init_fields)
+
+AsyncJobHandler = Callable[[JobContext], Coroutine[Any, Any, dict[str, Any] | CompleteJobData | None]]
+SyncJobHandler = Callable[[JobContext], dict[str, Any] | None]
 JobHandler = AsyncJobHandler | SyncJobHandler | HintedCallable
 
 @dataclass
@@ -74,20 +89,6 @@ class ExecutionHint:
             func._execution_permits.add(strategy) # type: ignore
             return func # type: ignore
         return decorator
-
-@attrs.define
-class JobContext(ActivateJobsResponse200JobsItem):
-    """Read-only context for a job execution."""
-
-    @classmethod
-    def from_job(cls, job: ActivateJobsResponse200JobsItem) -> "JobContext":
-        # Extract init fields
-        init_fields = {
-            f.name: getattr(job, f.name)
-            for f in attrs.fields(ActivateJobsResponse200JobsItem)
-            if f.init
-        }
-        return cls(**init_fields)
 
 class JobError(Exception):
     """Raise this exception to throw a BPMN error."""

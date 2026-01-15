@@ -37,5 +37,4 @@ clean-docs:
 
 preview-docs: clean-docs docs-api
 	@echo "Starting pdoc server at http://localhost:8080..."
-	# We don't use -o here because pdoc serves from memory in dev mode
 	PYTHONPATH=./generated uv run pdoc camunda_orchestration_sdk --docformat google

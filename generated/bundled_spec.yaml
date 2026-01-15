@@ -3935,8 +3935,8 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - scope
                 - name
+                - scope
                 - value
         '400':
           description: The provided data is not valid.
@@ -4129,8 +4129,8 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - scope
                 - name
+                - scope
                 - value
         '400':
           description: The provided data is not valid.
@@ -4585,8 +4585,8 @@ paths:
                           description: Only provided if the cluster variable scope
                             is TENANT.
                       required:
-                      - scope
                       - name
+                      - scope
                       - value
                   page:
                     description: Pagination information about the search results.
@@ -4840,8 +4840,8 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - scope
                 - name
+                - scope
                 - value
         '400':
           description: The provided data is not valid.
@@ -5047,8 +5047,8 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - scope
                 - name
+                - scope
                 - value
         '400':
           description: The provided data is not valid.
@@ -23676,8 +23676,8 @@ paths:
                 description: Process instance search response.
                 type: object
                 required:
-                - page
                 - items
+                - page
                 properties:
                   items:
                     description: The matching process instances.
@@ -36252,8 +36252,8 @@ paths:
               schema:
                 type: object
                 required:
-                - page
                 - items
+                - page
                 properties:
                   items:
                     description: The matching users.
@@ -45899,8 +45899,8 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - mappingRuleId
       - claimName
+      - mappingRuleId
       - name
       - claimValue
     SearchMappingRuleData:
@@ -47771,8 +47771,8 @@ components:
                 - targetElementId
               description: The mapping instructions.
           required:
-          - mappingInstructions
           - targetProcessDefinitionKey
+          - mappingInstructions
         operationReference:
           description: 'A reference key chosen by the user that will be part of all
             records resulting from this operation.
