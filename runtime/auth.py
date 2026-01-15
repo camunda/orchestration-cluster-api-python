@@ -23,7 +23,6 @@ class NullAuthProvider:
 
     def get_headers(self) -> dict[str, str]:
         return {}
-
 def _resolve_auth_headers(provider: object) -> Mapping[str, str]:
     get_headers = getattr(provider, "get_headers", None)
     if callable(get_headers):
