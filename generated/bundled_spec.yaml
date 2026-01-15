@@ -45899,9 +45899,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - mappingRuleId
-      - claimName
       - claimValue
+      - claimName
+      - mappingRuleId
       - name
     SearchMappingRuleData:
       additionalProperties: false

@@ -260,7 +260,7 @@ def generate_flat_client(package_path: str):
     imports_content += "\nfrom typing import Callable"
     imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, JobHandler"
     imports_content += "\nfrom .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
-    imports_content += "\nfrom .runtime.auth import AuthProvider, NullAuthProvider, inject_auth_event_hooks"
+    imports_content += "\nfrom .runtime.auth import AuthProvider, BasicAuthProvider, NullAuthProvider, OAuthClientCredentialsAuthProvider, AsyncOAuthClientCredentialsAuthProvider, inject_auth_event_hooks"
     imports_content += "\nfrom pathlib import Path"
     imports_content += "\nfrom .models.create_deployment_response_200 import CreateDeploymentResponse200"
     imports_content += "\nfrom .models.create_deployment_response_200_deployments_item_process_definition import CreateDeploymentResponse200DeploymentsItemProcessDefinition"
@@ -319,11 +319,24 @@ class CamundaClient:
             )
 
         if auth_provider is None:
-            if self.configuration.CAMUNDA_AUTH_STRATEGY != "NONE":
-                raise NotImplementedError(
-                    "Built-in auth providers are not implemented yet; pass auth_provider=... to CamundaClient (or set CAMUNDA_AUTH_STRATEGY=NONE)."
+            if self.configuration.CAMUNDA_AUTH_STRATEGY == "NONE":
+                auth_provider = NullAuthProvider()
+            elif self.configuration.CAMUNDA_AUTH_STRATEGY == "BASIC":
+                auth_provider = BasicAuthProvider(
+                    username=self.configuration.CAMUNDA_BASIC_AUTH_USERNAME or "",
+                    password=self.configuration.CAMUNDA_BASIC_AUTH_PASSWORD or "",
                 )
-            auth_provider = NullAuthProvider()
+            elif self.configuration.CAMUNDA_AUTH_STRATEGY == "OAUTH":
+                transport = (kwargs.get("httpx_args") or {{}}).get("transport")
+                auth_provider = OAuthClientCredentialsAuthProvider(
+                    oauth_url=self.configuration.CAMUNDA_OAUTH_URL,
+                    client_id=self.configuration.CAMUNDA_CLIENT_ID or "",
+                    client_secret=self.configuration.CAMUNDA_CLIENT_SECRET or "",
+                    audience=self.configuration.CAMUNDA_TOKEN_AUDIENCE,
+                    transport=transport,
+                )
+            else:
+                auth_provider = NullAuthProvider()
 
         self.auth_provider = auth_provider
 
@@ -409,11 +422,24 @@ class CamundaAsyncClient:
             )
 
         if auth_provider is None:
-            if self.configuration.CAMUNDA_AUTH_STRATEGY != "NONE":
-                raise NotImplementedError(
-                    "Built-in auth providers are not implemented yet; pass auth_provider=... to CamundaAsyncClient (or set CAMUNDA_AUTH_STRATEGY=NONE)."
+            if self.configuration.CAMUNDA_AUTH_STRATEGY == "NONE":
+                auth_provider = NullAuthProvider()
+            elif self.configuration.CAMUNDA_AUTH_STRATEGY == "BASIC":
+                auth_provider = BasicAuthProvider(
+                    username=self.configuration.CAMUNDA_BASIC_AUTH_USERNAME or "",
+                    password=self.configuration.CAMUNDA_BASIC_AUTH_PASSWORD or "",
                 )
-            auth_provider = NullAuthProvider()
+            elif self.configuration.CAMUNDA_AUTH_STRATEGY == "OAUTH":
+                transport = (kwargs.get("httpx_args") or {{}}).get("transport")
+                auth_provider = AsyncOAuthClientCredentialsAuthProvider(
+                    oauth_url=self.configuration.CAMUNDA_OAUTH_URL,
+                    client_id=self.configuration.CAMUNDA_CLIENT_ID or "",
+                    client_secret=self.configuration.CAMUNDA_CLIENT_SECRET or "",
+                    audience=self.configuration.CAMUNDA_TOKEN_AUDIENCE,
+                    transport=transport,
+                )
+            else:
+                auth_provider = NullAuthProvider()
 
         self.auth_provider = auth_provider
 
