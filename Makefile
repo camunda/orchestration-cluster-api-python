@@ -43,8 +43,8 @@ preview-docs: clean-docs docs-api
 	PYTHONPATH=./generated pdoc camunda_orchestration_sdk --docformat google
 
 docs-api:
-	# 1. Install Sphinx and SDK dependencies
-	uv pip install sphinx sphinx-markdown-builder --system
+	# 1. Install Sphinx, theme, and SDK dependencies
+	uv pip install sphinx sphinx-markdown-builder sphinx-book-theme --system
 	uv pip install -e . --system
 
 	# 2. Clean previous Sphinx build cache

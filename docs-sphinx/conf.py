@@ -14,21 +14,12 @@ extensions = [
 master_doc = "index"
 project = "Camunda Orchestration SDK"
 
-# HTML theme settings - enable table of contents in sidebar
-html_theme = "alabaster"
+# Sphinx Book Theme - left sidebar TOC similar to TypeDoc
+html_theme = "sphinx_book_theme"
 html_theme_options = {
-    "sidebar_collapse": True,
-    "show_powered_by": False,
+    "show_toc_level": 3,  # Show 3 levels deep in left sidebar TOC
+    "navigation_with_keys": True,
 }
 
-# Show table of contents in sidebar
-html_sidebars = {
-    "**": [
-        "about.html",
-        "searchbox.html",
-        "localtoc.html",  # This adds the local table of contents
-    ]
-}
-
-# TOC depth for the local table of contents
-toc_object_entries_show_parents = "hide"  # Cleaner display of nested items
+# Cleaner display of nested items in TOC
+toc_object_entries_show_parents = "hide"
