@@ -1239,6 +1239,33 @@ class CamundaClient:
         return self.client.__exit__(*args, **kwargs)
 
     def deploy_resources_from_files(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
+        """Deploy BPMN/DMN/Form resources from local files.
+
+        This is a convenience wrapper around :meth:`create_deployment` that:
+
+        - Reads each path in ``files`` as bytes.
+        - Wraps the bytes in :class:`camunda_orchestration_sdk.types.File` using the file's basename
+          as ``file_name``.
+        - Builds :class:`camunda_orchestration_sdk.models.CreateDeploymentData` and calls
+          :meth:`create_deployment`.
+        - Returns an :class:`ExtendedDeploymentResult`, which is the deployment response plus
+          convenience lists (``processes``, ``decisions``, ``decision_requirements``, ``forms``).
+
+        Args:
+            files: File paths (``str`` or ``Path``) to deploy.
+            tenant_id: Optional tenant identifier. If not provided, the default tenant is used.
+
+        Returns:
+            ExtendedDeploymentResult: The deployment result with extracted resource lists.
+
+        Raises:
+            FileNotFoundError: If any file path does not exist.
+            PermissionError: If any file path cannot be read.
+            IsADirectoryError: If any file path is a directory.
+            OSError: For other I/O failures while reading files.
+            Exception: Propagates any exception raised by :meth:`create_deployment` (including
+                typed API errors in :mod:`camunda_orchestration_sdk.errors` and ``httpx.TimeoutException``).
+        """
         from .models.create_deployment_data import CreateDeploymentData
         from .types import File, UNSET
         import os
@@ -5920,6 +5947,32 @@ class CamundaAsyncClient:
                 worker.stop()
 
     async def deploy_resources_from_files(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
+        """Deploy BPMN/DMN/Form resources from local files.
+
+        Async variant of :meth:`CamundaClient.deploy_resources_from_files`.
+
+        This reads each file path in ``files`` as bytes, wraps them into
+        :class:`camunda_orchestration_sdk.types.File`, calls :meth:`create_deployment`, and returns
+        an :class:`ExtendedDeploymentResult`.
+
+        Note: file reads are currently performed using blocking I/O (``open(...).read()``). If you
+        need fully non-blocking file access, load the bytes yourself and call :meth:`create_deployment`.
+
+        Args:
+            files: File paths (``str`` or ``Path``) to deploy.
+            tenant_id: Optional tenant identifier. If not provided, the default tenant is used.
+
+        Returns:
+            ExtendedDeploymentResult: The deployment result with extracted resource lists.
+
+        Raises:
+            FileNotFoundError: If any file path does not exist.
+            PermissionError: If any file path cannot be read.
+            IsADirectoryError: If any file path is a directory.
+            OSError: For other I/O failures while reading files.
+            Exception: Propagates any exception raised by :meth:`create_deployment` (including
+                typed API errors in :mod:`camunda_orchestration_sdk.errors` and ``httpx.TimeoutException``).
+        """
         from .models.create_deployment_data import CreateDeploymentData
         from .types import File, UNSET
         import os
