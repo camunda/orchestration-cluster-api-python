@@ -60,11 +60,15 @@ docs-api:
 	PYTHONPATH=./generated sphinx-build -M markdown docs-sphinx public
 
 	# 6. Post-process markdown for Docusaurus compatibility
+	@# Simplify class headings (strip parameters for cleaner TOC)
+	perl -i -pe 's/^(### \*class\* [\w.]+)\([^)]*\)\s*$$/$$1/g' ./public/markdown/index.md
 	@# Escape <...> and {...} to prevent MDX parsing as JSX
 	perl -i -pe 's/<([a-zA-Z_][^>]*)>/`<$$1>`/g' ./public/markdown/index.md
 	perl -i -pe 's/\{([a-zA-Z_][^}]*)\}/`{$$1}`/g' ./public/markdown/index.md
 	@# Remove malformed code blocks with :param/:type (RST leftovers)
-	perl -i -pe 's/^```default\n//g; s/^:param\s+(\w+):\s*(.*)/* **$$1**: $$2/g; s/^:type\s+\w+:.*\n//g; s/^```\n//g if /^```$$/;' ./public/markdown/index.md
+	perl -i -pe 's/^```default\s*\n//g' ./public/markdown/index.md
+	perl -i -pe 's/^:param\s+(\w+):\s*(.*)$$/* **$$1**: $$2/g' ./public/markdown/index.md
+	perl -i -pe 's/^:type\s+\w+:.*\n//g' ./public/markdown/index.md
 	@# Fix broken admonition syntax (:: at end of :::info blocks)
 	perl -i -pe 's/^::\s*$$/:::/g' ./public/markdown/index.md
 

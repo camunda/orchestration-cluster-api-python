@@ -20,5 +20,6 @@ website/docs/api/
 demo/docusaurus-test/node_modules/
 demo/docusaurus-test/build/
 demo/docusaurus-test/.docusaurus/
+demo/docusaurus-test/docs/
 
 .DS_Store
