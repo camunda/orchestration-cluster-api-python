@@ -12,7 +12,6 @@ Job Types Handled:
 - send-approval-notification
 - send-rejection-notification
 """
-import asyncio
 import os
 from pathlib import Path
 from typing import Any, TypedDict
@@ -398,19 +397,3 @@ async def run_workers(camunda: CamundaAsyncClient):
     print("   Press Ctrl+C to stop")
     print("=" * 70)
     print()
-
-    # Keep workers running
-    try:
-        await asyncio.Event().wait()
-    except KeyboardInterrupt:
-        print(f"\n{'='*70}")
-        print("👋 Shutting down workers...")
-        print("=" * 70)
-
-
-if __name__ == "__main__":
-
-    # Initialize Camunda client
-    camunda = CamundaAsyncClient(base_url=CAMUNDA_BASE_URL, token=CAMUNDA_TOKEN)
-
-    asyncio.run(run_workers(camunda))
