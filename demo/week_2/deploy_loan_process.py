@@ -4,11 +4,11 @@ Deploy the loan application BPMN process to Camunda and get the process definiti
 Run this script to deploy the process before using the frontend.
 """
 from pathlib import Path
-from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk import CamundaAsyncClient
 from camunda_orchestration_sdk.semantic_types import ProcessDefinitionKey
 
 
-async def deploy_loan_process(camunda: CamundaClient) -> ProcessDefinitionKey:
+async def deploy_loan_process(camunda: CamundaAsyncClient) -> ProcessDefinitionKey:
     """Deploy the loan application process and return the process definition key"""
 
     # Get the BPMN file path
@@ -20,7 +20,7 @@ async def deploy_loan_process(camunda: CamundaClient) -> ProcessDefinitionKey:
     print(f"📦 Deploying: {bpmn_file.name}")
 
     # Deploy the process
-    result = await camunda.deploy_resources_from_files_async(files=[str(bpmn_file)])
+    result = await camunda.deploy_resources_from_files(files=[str(bpmn_file)])
 
     if not result.processes:
         raise Exception("❌ Error: No processes were deployed")

@@ -74,7 +74,8 @@ def generate_flat_client(package_path: str):
         print(f"API directory not found at {api_dir}")
         return
 
-    methods = []
+    sync_methods: list[str] = []
+    async_methods: list[str] = []
     all_imports: set[ast.stmt] = set()
 
     for root, dirs, files in os.walk(api_dir):
@@ -148,7 +149,7 @@ def generate_flat_client(package_path: str):
                 docstring = ast.get_docstring(sync_func)
                 docstring_str = f'        """{docstring}"""\n' if docstring else ""
                 
-                methods.append(f"""
+                sync_methods.append(f"""
     def {method_name}({sig_str}){return_ann}:
 {docstring_str}        from {import_path} import sync as {method_name}_sync
         _kwargs = locals()
@@ -205,8 +206,8 @@ def generate_flat_client(package_path: str):
                 docstring = ast.get_docstring(async_func)
                 docstring_str = f'        """{docstring}"""\n' if docstring else ""
                 
-                methods.append(f"""
-    async def {method_name}_async({sig_str}){return_ann}:
+                async_methods.append(f"""
+    async def {method_name}({sig_str}){return_ann}:
 {docstring_str}        from {import_path} import asyncio as {method_name}_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
@@ -271,7 +272,8 @@ def generate_flat_client(package_path: str):
     for imp in sorted_imports:
         type_checking_block += f"    {imp}\n"
 
-    new_methods = "\n".join(methods)
+    new_sync_methods = "\n".join(sync_methods)
+    new_async_methods = "\n".join(async_methods)
 
     extended_result_code = """
 class ExtendedDeploymentResult(CreateDeploymentResponse200):
@@ -292,8 +294,69 @@ class ExtendedDeploymentResult(CreateDeploymentResponse200):
         self.forms = [d.form for d in self.deployments if not isinstance(d.form, Unset)]
 """
 
-    camunda_client_code = f"""
+    camunda_client_code = f'''
 class CamundaClient:
+    client: Client | AuthenticatedClient
+
+    def __init__(self, base_url: str = "http://localhost:8080/v2", token: str | None = None, **kwargs):
+        if token:
+            self.client = AuthenticatedClient(base_url=base_url, token=token, **kwargs)
+        else:
+            self.client = Client(base_url=base_url, **kwargs)
+
+    def __enter__(self):
+        self.client.__enter__()
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        return self.client.__exit__(*args, **kwargs)
+
+    def deploy_resources_from_files(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
+        """Deploy BPMN/DMN/Form resources from local files.
+
+        This is a convenience wrapper around :meth:`create_deployment` that:
+
+        - Reads each path in ``files`` as bytes.
+        - Wraps the bytes in :class:`camunda_orchestration_sdk.types.File` using the file's basename
+          as ``file_name``.
+        - Builds :class:`camunda_orchestration_sdk.models.CreateDeploymentData` and calls
+          :meth:`create_deployment`.
+        - Returns an :class:`ExtendedDeploymentResult`, which is the deployment response plus
+          convenience lists (``processes``, ``decisions``, ``decision_requirements``, ``forms``).
+
+        Args:
+            files: File paths (``str`` or ``Path``) to deploy.
+            tenant_id: Optional tenant identifier. If not provided, the default tenant is used.
+
+        Returns:
+            ExtendedDeploymentResult: The deployment result with extracted resource lists.
+
+        Raises:
+            FileNotFoundError: If any file path does not exist.
+            PermissionError: If any file path cannot be read.
+            IsADirectoryError: If any file path is a directory.
+            OSError: For other I/O failures while reading files.
+            Exception: Propagates any exception raised by :meth:`create_deployment` (including
+                typed API errors in :mod:`camunda_orchestration_sdk.errors` and ``httpx.TimeoutException``).
+        """
+        from .models.create_deployment_data import CreateDeploymentData
+        from .types import File, UNSET
+        import os
+
+        resources = []
+        for file_path in files:
+            file_path = str(file_path)
+            with open(file_path, "rb") as f:
+                content = f.read()
+            resources.append(File(payload=content, file_name=os.path.basename(file_path)))
+
+        data = CreateDeploymentData(resources=resources, tenant_id=tenant_id if tenant_id is not None else UNSET)
+        return ExtendedDeploymentResult(self.create_deployment(data=data))
+
+{new_sync_methods}
+
+
+class CamundaAsyncClient:
     client: Client | AuthenticatedClient
     _workers: list[JobWorker]
 
@@ -303,13 +366,6 @@ class CamundaClient:
         else:
             self.client = Client(base_url=base_url, **kwargs)
         self._workers = []
-
-    def __enter__(self):
-        self.client.__enter__()
-        return self
-
-    def __exit__(self, *args, **kwargs):
-        return self.client.__exit__(*args, **kwargs)
 
     async def __aenter__(self):
         await self.client.__aenter__()
@@ -335,7 +391,33 @@ class CamundaClient:
             for worker in self._workers:
                 worker.stop()
 
-    def deploy_resources_from_files(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
+    async def deploy_resources_from_files(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
+        """Deploy BPMN/DMN/Form resources from local files.
+
+        Async variant of :meth:`CamundaClient.deploy_resources_from_files`.
+
+        This reads each file path in ``files`` as bytes, wraps them into
+        :class:`camunda_orchestration_sdk.types.File`, calls :meth:`create_deployment`, and returns
+        an :class:`ExtendedDeploymentResult`.
+
+        Note: file reads are currently performed using blocking I/O (``open(...).read()``). If you
+        need fully non-blocking file access, load the bytes yourself and call :meth:`create_deployment`.
+
+        Args:
+            files: File paths (``str`` or ``Path``) to deploy.
+            tenant_id: Optional tenant identifier. If not provided, the default tenant is used.
+
+        Returns:
+            ExtendedDeploymentResult: The deployment result with extracted resource lists.
+
+        Raises:
+            FileNotFoundError: If any file path does not exist.
+            PermissionError: If any file path cannot be read.
+            IsADirectoryError: If any file path is a directory.
+            OSError: For other I/O failures while reading files.
+            Exception: Propagates any exception raised by :meth:`create_deployment` (including
+                typed API errors in :mod:`camunda_orchestration_sdk.errors` and ``httpx.TimeoutException``).
+        """
         from .models.create_deployment_data import CreateDeploymentData
         from .types import File, UNSET
         import os
@@ -346,54 +428,93 @@ class CamundaClient:
             with open(file_path, "rb") as f:
                 content = f.read()
             resources.append(File(payload=content, file_name=os.path.basename(file_path)))
-        
+
         data = CreateDeploymentData(resources=resources, tenant_id=tenant_id if tenant_id is not None else UNSET)
-        return ExtendedDeploymentResult(self.create_deployment(data=data))
+        return ExtendedDeploymentResult(await self.create_deployment(data=data))
 
-    async def deploy_resources_from_files_async(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
-        from .models.create_deployment_data import CreateDeploymentData
-        from .types import File, UNSET
-        import os
-
-        resources = []
-        for file_path in files:
-            file_path = str(file_path)
-            with open(file_path, "rb") as f:
-                content = f.read()
-            resources.append(File(payload=content, file_name=os.path.basename(file_path)))
-        
-        data = CreateDeploymentData(resources=resources, tenant_id=tenant_id if tenant_id is not None else UNSET)
-        return ExtendedDeploymentResult(await self.create_deployment_async(data=data))
-
-{new_methods}
-"""
+{new_async_methods}
+'''
     
     final_content = f"{imports_content}\n{type_checking_block}\n{class_content}\n{extended_result_code}\n{camunda_client_code}"
 
     with open(client_file, "w") as f:
         f.write(final_content)
     
-    print(f"Successfully added CamundaClient to {client_file}")
+    print(f"Successfully added CamundaClient and CamundaAsyncClient to {client_file}")
 
     init_file = package_path / "__init__.py"
     if init_file.exists():
         with open(init_file, "r") as f:
             init_content = f.read()
-        
-        if "CamundaClient" not in init_content:
-            init_content = init_content.replace(
-                '"Client",',
-                '"Client",\n    "CamundaClient",\n    "WorkerConfig",'
-            )
-            init_content = init_content.replace(
-                "from .client import AuthenticatedClient, Client",
-                "from .client import AuthenticatedClient, Client, CamundaClient"
-            )
+
+        def _ensure_all_tuple_exports(content: str, exports: list[str]) -> str:
+            lines = content.splitlines()
+            out: list[str] = []
+            i = 0
+            while i < len(lines):
+                line = lines[i]
+                if line.startswith("__all__"):
+                    out.append(line)
+                    i += 1
+
+                    tuple_lines: list[str] = []
+                    while i < len(lines) and lines[i].strip() != ")":
+                        tuple_lines.append(lines[i])
+                        i += 1
+
+                    closing = lines[i] if i < len(lines) else ")"
+
+                    existing: set[str] = set()
+                    for tl in tuple_lines:
+                        stripped = tl.strip()
+                        if stripped.startswith('"') and stripped.endswith(','):
+                            existing.add(stripped.strip(',').strip('"'))
+
+                    indent = "    "
+                    for tl in tuple_lines:
+                        m = re.match(r"^(\s*)\"", tl)
+                        if m:
+                            indent = m.group(1)
+                            break
+
+                    for export in exports:
+                        if export not in existing:
+                            tuple_lines.append(f'{indent}"{export}",')
+
+                    out.extend(tuple_lines)
+                    out.append(closing)
+                    i += 1
+                    continue
+
+                out.append(line)
+                i += 1
+
+            return "\n".join(out) + "\n"
+
+        # Ensure clients are exported
+        if "from .client import AuthenticatedClient, Client, CamundaClient, CamundaAsyncClient" not in init_content:
+            if "from .client import AuthenticatedClient, Client, CamundaClient" in init_content:
+                init_content = init_content.replace(
+                    "from .client import AuthenticatedClient, Client, CamundaClient",
+                    "from .client import AuthenticatedClient, Client, CamundaClient, CamundaAsyncClient",
+                )
+            else:
+                init_content = init_content.replace(
+                    "from .client import AuthenticatedClient, Client",
+                    "from .client import AuthenticatedClient, Client, CamundaClient, CamundaAsyncClient",
+                )
+
+        init_content = _ensure_all_tuple_exports(
+            init_content,
+            ["CamundaClient", "CamundaAsyncClient", "WorkerConfig"],
+        )
+
+        if "from .runtime.job_worker import WorkerConfig" not in init_content:
             init_content += "\nfrom .runtime.job_worker import WorkerConfig"
-            
-            with open(init_file, "w") as f:
-                f.write(init_content)
-            print(f"Successfully exported CamundaClient and WorkerConfig in {init_file}")
+
+        with open(init_file, "w") as f:
+            f.write(init_content)
+        print(f"Successfully exported CamundaClient, CamundaAsyncClient, and WorkerConfig in {init_file}")
 
 def run(context):
     out_dir = Path(context["out_dir"])

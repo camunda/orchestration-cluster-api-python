@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -72,13 +72,24 @@ Args:
     body (SearchMappingRuleData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMappingRuleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchMappingRuleResponse200 | SearchMappingRuleResponse400 | SearchMappingRuleResponse401 | SearchMappingRuleResponse403 | SearchMappingRuleResponse500]"""
+    SearchMappingRuleResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchMappingRuleBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRuleResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchMappingRuleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRuleResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchMappingRuleForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRuleResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRuleResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -110,12 +121,23 @@ Args:
     body (SearchMappingRuleData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMappingRuleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchMappingRuleResponse200 | SearchMappingRuleResponse400 | SearchMappingRuleResponse401 | SearchMappingRuleResponse403 | SearchMappingRuleResponse500]"""
+    SearchMappingRuleResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchMappingRuleBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRuleResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchMappingRuleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRuleResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchMappingRuleForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRuleResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchMappingRuleResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

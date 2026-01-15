@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -85,13 +85,30 @@ Args:
         Either an id-based or a property-based authorization can be provided.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateAuthorizationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateAuthorizationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateAuthorizationNotFound: If the response status code is 404. The owner was not found.
+    errors.CreateAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateAuthorizationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[CreateAuthorizationResponse201 | CreateAuthorizationResponse400 | CreateAuthorizationResponse401 | CreateAuthorizationResponse403 | CreateAuthorizationResponse404 | CreateAuthorizationResponse500 | CreateAuthorizationResponse503]"""
+    CreateAuthorizationResponse201"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateAuthorizationBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateAuthorizationResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.CreateAuthorizationUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(CreateAuthorizationResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.CreateAuthorizationForbidden(status_code=response.status_code, content=response.content, parsed=cast(CreateAuthorizationResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.CreateAuthorizationNotFound(status_code=response.status_code, content=response.content, parsed=cast(CreateAuthorizationResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.CreateAuthorizationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateAuthorizationResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.CreateAuthorizationServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(CreateAuthorizationResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -125,12 +142,29 @@ Args:
         Either an id-based or a property-based authorization can be provided.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateAuthorizationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateAuthorizationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateAuthorizationNotFound: If the response status code is 404. The owner was not found.
+    errors.CreateAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateAuthorizationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[CreateAuthorizationResponse201 | CreateAuthorizationResponse400 | CreateAuthorizationResponse401 | CreateAuthorizationResponse403 | CreateAuthorizationResponse404 | CreateAuthorizationResponse500 | CreateAuthorizationResponse503]"""
+    CreateAuthorizationResponse201"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateAuthorizationBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateAuthorizationResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.CreateAuthorizationUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(CreateAuthorizationResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.CreateAuthorizationForbidden(status_code=response.status_code, content=response.content, parsed=cast(CreateAuthorizationResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.CreateAuthorizationNotFound(status_code=response.status_code, content=response.content, parsed=cast(CreateAuthorizationResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.CreateAuthorizationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateAuthorizationResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.CreateAuthorizationServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(CreateAuthorizationResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

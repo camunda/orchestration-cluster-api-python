@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -69,13 +69,27 @@ Args:
     name (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetTenantClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.GetTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetTenantClusterVariableResponse200 | GetTenantClusterVariableResponse400 | GetTenantClusterVariableResponse401 | GetTenantClusterVariableResponse403 | GetTenantClusterVariableResponse404 | GetTenantClusterVariableResponse500]"""
+    GetTenantClusterVariableResponse200"""
     response = sync_detailed(tenant_id=tenant_id, name=name, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetTenantClusterVariableBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetTenantClusterVariableResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetTenantClusterVariableUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetTenantClusterVariableResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetTenantClusterVariableForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetTenantClusterVariableResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetTenantClusterVariableNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetTenantClusterVariableResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetTenantClusterVariableInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetTenantClusterVariableResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -105,12 +119,26 @@ Args:
     name (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetTenantClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.GetTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetTenantClusterVariableResponse200 | GetTenantClusterVariableResponse400 | GetTenantClusterVariableResponse401 | GetTenantClusterVariableResponse403 | GetTenantClusterVariableResponse404 | GetTenantClusterVariableResponse500]"""
+    GetTenantClusterVariableResponse200"""
     response = await asyncio_detailed(tenant_id=tenant_id, name=name, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetTenantClusterVariableBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetTenantClusterVariableResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetTenantClusterVariableUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetTenantClusterVariableResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetTenantClusterVariableForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetTenantClusterVariableResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetTenantClusterVariableNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetTenantClusterVariableResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetTenantClusterVariableInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetTenantClusterVariableResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

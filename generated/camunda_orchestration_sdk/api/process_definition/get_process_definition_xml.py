@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -75,13 +75,27 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetProcessDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionXmlNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+    errors.GetProcessDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessDefinitionXMLResponse400 | GetProcessDefinitionXMLResponse401 | GetProcessDefinitionXMLResponse403 | GetProcessDefinitionXMLResponse404 | GetProcessDefinitionXMLResponse500 | str]"""
+    GetProcessDefinitionXMLResponse400"""
     response = sync_detailed(process_definition_key=process_definition_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetProcessDefinitionXmlBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionXMLResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetProcessDefinitionXmlUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionXMLResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetProcessDefinitionXmlForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionXMLResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetProcessDefinitionXmlNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionXMLResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetProcessDefinitionXmlInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionXMLResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -115,12 +129,26 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetProcessDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionXmlNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+    errors.GetProcessDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessDefinitionXMLResponse400 | GetProcessDefinitionXMLResponse401 | GetProcessDefinitionXMLResponse403 | GetProcessDefinitionXMLResponse404 | GetProcessDefinitionXMLResponse500 | str]"""
+    GetProcessDefinitionXMLResponse400"""
     response = await asyncio_detailed(process_definition_key=process_definition_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetProcessDefinitionXmlBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionXMLResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetProcessDefinitionXmlUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionXMLResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetProcessDefinitionXmlForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionXMLResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetProcessDefinitionXmlNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionXMLResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetProcessDefinitionXmlInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionXMLResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

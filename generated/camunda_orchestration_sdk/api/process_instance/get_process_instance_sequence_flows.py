@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -69,13 +69,24 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetProcessInstanceSequenceFlowsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceSequenceFlowsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceSequenceFlowsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceSequenceFlowsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessInstanceSequenceFlowsResponse200 | GetProcessInstanceSequenceFlowsResponse400 | GetProcessInstanceSequenceFlowsResponse401 | GetProcessInstanceSequenceFlowsResponse403 | GetProcessInstanceSequenceFlowsResponse500]"""
+    GetProcessInstanceSequenceFlowsResponse200"""
     response = sync_detailed(process_instance_key=process_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetProcessInstanceSequenceFlowsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceSequenceFlowsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetProcessInstanceSequenceFlowsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceSequenceFlowsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetProcessInstanceSequenceFlowsForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceSequenceFlowsResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetProcessInstanceSequenceFlowsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceSequenceFlowsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -109,12 +120,23 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetProcessInstanceSequenceFlowsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceSequenceFlowsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceSequenceFlowsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceSequenceFlowsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessInstanceSequenceFlowsResponse200 | GetProcessInstanceSequenceFlowsResponse400 | GetProcessInstanceSequenceFlowsResponse401 | GetProcessInstanceSequenceFlowsResponse403 | GetProcessInstanceSequenceFlowsResponse500]"""
+    GetProcessInstanceSequenceFlowsResponse200"""
     response = await asyncio_detailed(process_instance_key=process_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetProcessInstanceSequenceFlowsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceSequenceFlowsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetProcessInstanceSequenceFlowsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceSequenceFlowsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetProcessInstanceSequenceFlowsForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceSequenceFlowsResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetProcessInstanceSequenceFlowsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetProcessInstanceSequenceFlowsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

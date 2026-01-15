@@ -18,7 +18,7 @@ from camunda_orchestration_sdk.models.state_advancedfilter_6_eq import (
 )
 from loguru import logger
 import pytest
-from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk import CamundaAsyncClient
 from camunda_orchestration_sdk.runtime.job_worker import WorkerConfig, JobContext
 from typing import cast
 
@@ -30,7 +30,7 @@ pytestmark = pytest.mark.skipif(
 
 def _make_client():
     host = os.environ.get("CAMUNDA_BASE_URL", "http://localhost:8080/v2")
-    return CamundaClient(base_url=host)
+    return CamundaAsyncClient(base_url=host)
 
 
 # TODO: workloads (maybe multiple with different scenarios)
@@ -53,7 +53,7 @@ async def test_job_worker_performance():
             process_file = File(
                 payload=f, file_name="job_worker_load_test_process_1.bpmn"
             )
-            deployed_resources = await camunda.create_deployment_async(
+            deployed_resources = await camunda.create_deployment(
                 data=CreateDeploymentData(resources=[process_file])
             )
 
@@ -69,10 +69,10 @@ async def test_job_worker_performance():
                 state=StateAdvancedfilter6(eq=StateAdvancedfilter6Eq("ACTIVE")),
             )
         )
-        alreadyRunningProcesses = camunda.search_process_instances(data=searchQuery)
+        alreadyRunningProcesses = await camunda.search_process_instances(data=searchQuery)
         for process in alreadyRunningProcesses.items:
             print(f"Canceling process instance: {process.process_instance_key}")
-            await camunda.cancel_process_instance_async(
+            await camunda.cancel_process_instance(
                 data=None, process_instance_key=process.process_instance_key
             )
         # Start 100 instances
@@ -86,7 +86,7 @@ async def test_job_worker_performance():
         # Single worker starts and starts working on jobs
         worker = camunda.create_job_worker(config=config, callback=callback) # pyright: ignore[reportUnusedVariable]
 
-        process_instance = camunda.create_process_instance(
+        process_instance = await camunda.create_process_instance(
             data=Processcreationbykey(
                 process_definition_key=process_definition_key
             )

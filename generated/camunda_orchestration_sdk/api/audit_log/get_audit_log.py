@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -69,13 +69,24 @@ Args:
         22517998136843567.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetAuditLogUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuditLogForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuditLogNotFound: If the response status code is 404. The audit log with the given key was not found.
+    errors.GetAuditLogInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetAuditLogResponse200 | GetAuditLogResponse401 | GetAuditLogResponse403 | GetAuditLogResponse404 | GetAuditLogResponse500]"""
+    GetAuditLogResponse200"""
     response = sync_detailed(audit_log_key=audit_log_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetAuditLogUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetAuditLogResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetAuditLogForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetAuditLogResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetAuditLogNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetAuditLogResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetAuditLogInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetAuditLogResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -109,12 +120,23 @@ Args:
         22517998136843567.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetAuditLogUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuditLogForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuditLogNotFound: If the response status code is 404. The audit log with the given key was not found.
+    errors.GetAuditLogInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetAuditLogResponse200 | GetAuditLogResponse401 | GetAuditLogResponse403 | GetAuditLogResponse404 | GetAuditLogResponse500]"""
+    GetAuditLogResponse200"""
     response = await asyncio_detailed(audit_log_key=audit_log_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetAuditLogUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetAuditLogResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetAuditLogForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetAuditLogResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetAuditLogNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetAuditLogResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetAuditLogInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetAuditLogResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -78,13 +78,27 @@ Args:
     body (UpdateGroupData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UpdateGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.UpdateGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[UpdateGroupResponse200 | UpdateGroupResponse400 | UpdateGroupResponse401 | UpdateGroupResponse404 | UpdateGroupResponse500 | UpdateGroupResponse503]"""
+    UpdateGroupResponse200"""
     response = sync_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UpdateGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.UpdateGroupUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse401, response.parsed))
+        if response.status_code == 404:
+            raise errors.UpdateGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UpdateGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UpdateGroupServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -118,12 +132,26 @@ Args:
     body (UpdateGroupData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UpdateGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.UpdateGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[UpdateGroupResponse200 | UpdateGroupResponse400 | UpdateGroupResponse401 | UpdateGroupResponse404 | UpdateGroupResponse500 | UpdateGroupResponse503]"""
+    UpdateGroupResponse200"""
     response = await asyncio_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UpdateGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.UpdateGroupUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse401, response.parsed))
+        if response.status_code == 404:
+            raise errors.UpdateGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UpdateGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UpdateGroupServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UpdateGroupResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -73,13 +73,27 @@ Args:
         instance. Example: 22517998136843567.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetDecisionInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionInstanceNotFound: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetDecisionInstanceResponse200 | GetDecisionInstanceResponse400 | GetDecisionInstanceResponse401 | GetDecisionInstanceResponse403 | GetDecisionInstanceResponse404 | GetDecisionInstanceResponse500]"""
+    GetDecisionInstanceResponse200"""
     response = sync_detailed(decision_evaluation_instance_key=decision_evaluation_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetDecisionInstanceBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionInstanceResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetDecisionInstanceUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionInstanceResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetDecisionInstanceForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionInstanceResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetDecisionInstanceNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionInstanceResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetDecisionInstanceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionInstanceResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -113,12 +127,26 @@ Args:
         instance. Example: 22517998136843567.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetDecisionInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionInstanceNotFound: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetDecisionInstanceResponse200 | GetDecisionInstanceResponse400 | GetDecisionInstanceResponse401 | GetDecisionInstanceResponse403 | GetDecisionInstanceResponse404 | GetDecisionInstanceResponse500]"""
+    GetDecisionInstanceResponse200"""
     response = await asyncio_detailed(decision_evaluation_instance_key=decision_evaluation_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetDecisionInstanceBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionInstanceResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetDecisionInstanceUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionInstanceResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetDecisionInstanceForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionInstanceResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetDecisionInstanceNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionInstanceResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetDecisionInstanceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionInstanceResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

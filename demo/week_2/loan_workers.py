@@ -12,46 +12,29 @@ Job Types Handled:
 - send-approval-notification
 - send-rejection-notification
 """
-import asyncio
 import os
 from pathlib import Path
-from typing import Any, TypedDict, Callable, Coroutine
+from typing import Any, TypedDict
 from dotenv import load_dotenv
-from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk import CamundaAsyncClient
 from camunda_orchestration_sdk.runtime.job_worker import (
+    AsyncJobHandler,
     WorkerConfig,
     JobContext,
-)
-from camunda_orchestration_sdk.models.complete_job_data import CompleteJobData
-from camunda_orchestration_sdk.models.complete_job_data_variables_type_0 import (
-    CompleteJobDataVariablesType0,
 )
 
 # Load environment variables from .env file
 load_dotenv(Path(__file__).parent / ".env")
 
-# Extended async job handler type that includes CompleteJobData support
-AsyncJobHandlerExtended = Callable[
-    [JobContext], Coroutine[Any, Any, dict[str, Any] | CompleteJobData | None]
-]
-
-
 class WorkerDefinition(TypedDict):
     """Configuration for registering a job worker."""
-
     job_type: str
-    callback: AsyncJobHandlerExtended
+    callback: AsyncJobHandler
     description: str
-
 
 # Configuration
 CAMUNDA_BASE_URL = os.getenv("CAMUNDA_BASE_URL", "http://localhost:8080/v2")
 CAMUNDA_TOKEN = os.getenv("CAMUNDA_TOKEN")
-
-
-async def test():
-    pass
-
 
 # Worker 1: Validate Loan Application
 async def validate_application(job_context: JobContext) -> dict[str, Any]:
@@ -104,9 +87,8 @@ async def validate_application(job_context: JobContext) -> dict[str, Any]:
         "validationErrors": validation_errors if validation_errors else [],
     }
 
-
 # Worker 2: Check Credit Score
-async def check_credit_score(job_context: JobContext) -> CompleteJobData | None:
+async def check_credit_score(job_context: JobContext):
     """
     Checks or assigns a credit score.
     In a real system, this would call a credit bureau API.
@@ -155,18 +137,13 @@ async def check_credit_score(job_context: JobContext) -> CompleteJobData | None:
 
     print(f"Credit Rating: {credit_rating}")
 
-    return CompleteJobData(
-        variables=CompleteJobDataVariablesType0.from_dict(
-            {
+    return {
                 "creditScore": credit_score,
                 "creditRating": credit_rating,
             }
-        )
-    )
-
 
 # Worker 3: Assess Risk and Make Decision
-async def assess_risk(job_context: JobContext) -> CompleteJobData | None:
+async def assess_risk(job_context: JobContext):
     """
     Assesses the risk profile and makes the loan approval decision.
     This is the core decision-making logic.
@@ -262,22 +239,19 @@ async def assess_risk(job_context: JobContext) -> CompleteJobData | None:
     else:
         print(f"  Reason: {rejection_reason}")
 
-    return CompleteJobData(
-        variables=CompleteJobDataVariablesType0.from_dict(
-            {
-                "loanApproved": approved,
-                "riskLevel": risk_level,
-                "debtToIncomeRatio": round(debt_to_income_ratio, 2),
-                "interestRate": interest_rate,
-                "rejectionReason": rejection_reason,
-                "decisionDate": variables.get("applicationDate"),
-            }
-        )
-    )
+    return {
+        "loanApproved": approved,
+        "riskLevel": risk_level,
+        "debtToIncomeRatio": round(debt_to_income_ratio, 2),
+        "interestRate": interest_rate,
+        "rejectionReason": rejection_reason,
+        "decisionDate": variables.get("applicationDate"),
+    }
+
 
 
 # Worker 4: Send Approval Notification
-async def send_approval_notification(job_context: JobContext) -> CompleteJobData | None:
+async def send_approval_notification(job_context: JobContext):
     """
     Sends approval notification to the applicant.
     In a real system, this would send an email or SMS.
@@ -311,21 +285,18 @@ async def send_approval_notification(job_context: JobContext) -> CompleteJobData
     print(f"\nBest regards,")
     print(f"QuickLoan Bank")
 
-    return CompleteJobData(
-        variables=CompleteJobDataVariablesType0.from_dict(
-            {
-                "notificationSent": True,
-                "notificationType": "approval",
-                "notificationDate": variables.get("applicationDate"),
-            }
-        )
-    )
+    return {
+        "notificationSent": True,
+        "notificationType": "approval",
+        "notificationDate": variables.get("applicationDate"),
+    }
+
 
 
 # Worker 5: Send Rejection Notification
 async def send_rejection_notification(
     job_context: JobContext,
-) -> CompleteJobData | None:
+):
     """
     Sends rejection notification to the applicant.
     In a real system, this would send an email or SMS.
@@ -360,18 +331,13 @@ async def send_rejection_notification(
     print(f"\nBest regards,")
     print(f"QuickLoan Bank")
 
-    return CompleteJobData(
-        variables=CompleteJobDataVariablesType0.from_dict(
-            {
-                "notificationSent": True,
-                "notificationType": "rejection",
-                "notificationDate": variables.get("applicationDate"),
-            }
-        )
-    )
+    return {
+        "notificationSent": True,
+        "notificationType": "rejection",
+        "notificationDate": variables.get("applicationDate"),
+    }
 
-
-async def main():
+async def run_workers(camunda: CamundaAsyncClient):
     """
     Main function to register all workers and keep them running.
     """
@@ -380,9 +346,6 @@ async def main():
     print("=" * 70)
     print(f"Camunda URL: {CAMUNDA_BASE_URL}")
     print()
-
-    # Initialize Camunda client
-    camunda = CamundaClient(base_url=CAMUNDA_BASE_URL, token=CAMUNDA_TOKEN)
 
     # Define workers configuration
     workers: list[WorkerDefinition] = [
@@ -434,15 +397,3 @@ async def main():
     print("   Press Ctrl+C to stop")
     print("=" * 70)
     print()
-
-    # Keep workers running
-    try:
-        await asyncio.Event().wait()
-    except KeyboardInterrupt:
-        print(f"\n{'='*70}")
-        print("👋 Shutting down workers...")
-        print("=" * 70)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())

@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -72,13 +72,24 @@ Args:
     body (SearchUsersData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchUsersBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]"""
+    SearchUsersResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchUsersBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchUsersUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchUsersForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchUsersInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -110,12 +121,23 @@ Args:
     body (SearchUsersData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchUsersBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]"""
+    SearchUsersResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchUsersBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchUsersUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchUsersForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchUsersInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -100,13 +100,27 @@ Args:
     body (SearchElementInstanceIncidentsData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404. The element instance with the given key was not found.
+    errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchElementInstanceIncidentsResponse200 | SearchElementInstanceIncidentsResponse400 | SearchElementInstanceIncidentsResponse401 | SearchElementInstanceIncidentsResponse403 | SearchElementInstanceIncidentsResponse404 | SearchElementInstanceIncidentsResponse500]"""
+    SearchElementInstanceIncidentsResponse200"""
     response = sync_detailed(element_instance_key=element_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchElementInstanceIncidentsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchElementInstanceIncidentsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchElementInstanceIncidentsForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SearchElementInstanceIncidentsNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchElementInstanceIncidentsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -162,12 +176,26 @@ Args:
     body (SearchElementInstanceIncidentsData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404. The element instance with the given key was not found.
+    errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchElementInstanceIncidentsResponse200 | SearchElementInstanceIncidentsResponse400 | SearchElementInstanceIncidentsResponse401 | SearchElementInstanceIncidentsResponse403 | SearchElementInstanceIncidentsResponse404 | SearchElementInstanceIncidentsResponse500]"""
+    SearchElementInstanceIncidentsResponse200"""
     response = await asyncio_detailed(element_instance_key=element_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchElementInstanceIncidentsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchElementInstanceIncidentsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchElementInstanceIncidentsForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SearchElementInstanceIncidentsNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchElementInstanceIncidentsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchElementInstanceIncidentsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -71,13 +71,27 @@ Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetTenantUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetTenantNotFound: If the response status code is 404. Tenant not found.
+    errors.GetTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetTenantResponse200 | GetTenantResponse400 | GetTenantResponse401 | GetTenantResponse403 | GetTenantResponse404 | GetTenantResponse500]"""
+    GetTenantResponse200"""
     response = sync_detailed(tenant_id=tenant_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetTenantResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetTenantUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetTenantResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetTenantResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetTenantResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetTenantResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -109,12 +123,26 @@ Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetTenantUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetTenantNotFound: If the response status code is 404. Tenant not found.
+    errors.GetTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetTenantResponse200 | GetTenantResponse400 | GetTenantResponse401 | GetTenantResponse403 | GetTenantResponse404 | GetTenantResponse500]"""
+    GetTenantResponse200"""
     response = await asyncio_detailed(tenant_id=tenant_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetTenantResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetTenantUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetTenantResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetTenantResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetTenantResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetTenantResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

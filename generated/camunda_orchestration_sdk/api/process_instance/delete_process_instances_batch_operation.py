@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -79,13 +79,24 @@ Args:
         which process instances should be deleted.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.DeleteProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.DeleteProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[DeleteProcessInstancesBatchOperationResponse200 | DeleteProcessInstancesBatchOperationResponse400 | DeleteProcessInstancesBatchOperationResponse401 | DeleteProcessInstancesBatchOperationResponse403 | DeleteProcessInstancesBatchOperationResponse500]"""
+    DeleteProcessInstancesBatchOperationResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.DeleteProcessInstancesBatchOperationBadRequest(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstancesBatchOperationResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.DeleteProcessInstancesBatchOperationUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstancesBatchOperationResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.DeleteProcessInstancesBatchOperationForbidden(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstancesBatchOperationResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.DeleteProcessInstancesBatchOperationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstancesBatchOperationResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -125,12 +136,23 @@ Args:
         which process instances should be deleted.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.DeleteProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.DeleteProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[DeleteProcessInstancesBatchOperationResponse200 | DeleteProcessInstancesBatchOperationResponse400 | DeleteProcessInstancesBatchOperationResponse401 | DeleteProcessInstancesBatchOperationResponse403 | DeleteProcessInstancesBatchOperationResponse500]"""
+    DeleteProcessInstancesBatchOperationResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.DeleteProcessInstancesBatchOperationBadRequest(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstancesBatchOperationResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.DeleteProcessInstancesBatchOperationUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstancesBatchOperationResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.DeleteProcessInstancesBatchOperationForbidden(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstancesBatchOperationResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.DeleteProcessInstancesBatchOperationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteProcessInstancesBatchOperationResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

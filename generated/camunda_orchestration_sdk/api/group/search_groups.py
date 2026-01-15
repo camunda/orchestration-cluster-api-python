@@ -71,13 +71,24 @@ Args:
     body (SearchGroupsData | Unset): Group search request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchGroupsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchGroupsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchGroupsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchGroupsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | SearchGroupsResponse200 | SearchGroupsResponse400 | SearchGroupsResponse401 | SearchGroupsResponse403]"""
+    Any"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchGroupsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchGroupsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchGroupsForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchGroupsInternalServerError(status_code=response.status_code, content=response.content, parsed=response.parsed)
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -109,12 +120,23 @@ Args:
     body (SearchGroupsData | Unset): Group search request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchGroupsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchGroupsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchGroupsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchGroupsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | SearchGroupsResponse200 | SearchGroupsResponse400 | SearchGroupsResponse401 | SearchGroupsResponse403]"""
+    Any"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchGroupsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchGroupsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchGroupsForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchGroupsInternalServerError(status_code=response.status_code, content=response.content, parsed=response.parsed)
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

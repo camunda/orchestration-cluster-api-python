@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -67,13 +67,24 @@ Args:
     group_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.GetGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetGroupResponse200 | GetGroupResponse401 | GetGroupResponse403 | GetGroupResponse404 | GetGroupResponse500]"""
+    GetGroupResponse200"""
     response = sync_detailed(group_id=group_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetGroupUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetGroupResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetGroupForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetGroupResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetGroupResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetGroupResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -105,12 +116,23 @@ Args:
     group_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.GetGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetGroupResponse200 | GetGroupResponse401 | GetGroupResponse403 | GetGroupResponse404 | GetGroupResponse500]"""
+    GetGroupResponse200"""
     response = await asyncio_detailed(group_id=group_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetGroupUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetGroupResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetGroupForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetGroupResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetGroupResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetGroupResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

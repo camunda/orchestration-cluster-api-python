@@ -75,13 +75,21 @@ Args:
     body (CreateElementInstanceVariablesData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateElementInstanceVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateElementInstanceVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateElementInstanceVariablesServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | CreateElementInstanceVariablesResponse400 | CreateElementInstanceVariablesResponse500 | CreateElementInstanceVariablesResponse503]"""
+    Any"""
     response = sync_detailed(element_instance_key=element_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateElementInstanceVariablesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateElementInstanceVariablesResponse400, response.parsed))
+        if response.status_code == 500:
+            raise errors.CreateElementInstanceVariablesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateElementInstanceVariablesResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.CreateElementInstanceVariablesServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(CreateElementInstanceVariablesResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -121,12 +129,20 @@ Args:
     body (CreateElementInstanceVariablesData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateElementInstanceVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateElementInstanceVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateElementInstanceVariablesServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | CreateElementInstanceVariablesResponse400 | CreateElementInstanceVariablesResponse500 | CreateElementInstanceVariablesResponse503]"""
+    Any"""
     response = await asyncio_detailed(element_instance_key=element_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateElementInstanceVariablesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateElementInstanceVariablesResponse400, response.parsed))
+        if response.status_code == 500:
+            raise errors.CreateElementInstanceVariablesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateElementInstanceVariablesResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.CreateElementInstanceVariablesServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(CreateElementInstanceVariablesResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

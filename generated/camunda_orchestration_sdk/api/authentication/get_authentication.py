@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -56,13 +56,21 @@ def sync(*, client: AuthenticatedClient, **kwargs) -> GetAuthenticationResponse2
  Retrieves the current authenticated user.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetAuthenticationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuthenticationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuthenticationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetAuthenticationResponse200 | GetAuthenticationResponse401 | GetAuthenticationResponse403 | GetAuthenticationResponse500]"""
+    GetAuthenticationResponse200"""
     response = sync_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetAuthenticationUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetAuthenticationResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetAuthenticationForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetAuthenticationResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetAuthenticationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetAuthenticationResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -88,12 +96,20 @@ async def asyncio(*, client: AuthenticatedClient, **kwargs) -> GetAuthentication
  Retrieves the current authenticated user.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetAuthenticationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuthenticationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuthenticationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetAuthenticationResponse200 | GetAuthenticationResponse401 | GetAuthenticationResponse403 | GetAuthenticationResponse500]"""
+    GetAuthenticationResponse200"""
     response = await asyncio_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetAuthenticationUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetAuthenticationResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetAuthenticationForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetAuthenticationResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetAuthenticationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetAuthenticationResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

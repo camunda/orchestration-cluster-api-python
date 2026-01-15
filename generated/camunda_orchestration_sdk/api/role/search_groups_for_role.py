@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -79,13 +79,27 @@ Args:
     body (SearchGroupsForRoleData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchGroupsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchGroupsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchGroupsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchGroupsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchGroupsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchGroupsForRoleResponse200 | SearchGroupsForRoleResponse400 | SearchGroupsForRoleResponse401 | SearchGroupsForRoleResponse403 | SearchGroupsForRoleResponse404 | SearchGroupsForRoleResponse500]"""
+    SearchGroupsForRoleResponse200"""
     response = sync_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchGroupsForRoleBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchGroupsForRoleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchGroupsForRoleForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SearchGroupsForRoleNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchGroupsForRoleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -119,12 +133,26 @@ Args:
     body (SearchGroupsForRoleData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchGroupsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchGroupsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchGroupsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchGroupsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchGroupsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchGroupsForRoleResponse200 | SearchGroupsForRoleResponse400 | SearchGroupsForRoleResponse401 | SearchGroupsForRoleResponse403 | SearchGroupsForRoleResponse404 | SearchGroupsForRoleResponse500]"""
+    SearchGroupsForRoleResponse200"""
     response = await asyncio_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchGroupsForRoleBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchGroupsForRoleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchGroupsForRoleForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SearchGroupsForRoleNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchGroupsForRoleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchGroupsForRoleResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

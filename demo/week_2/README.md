@@ -1,6 +1,32 @@
 # Camunda Orchestration API - Week 2 Demo
 
-A FastAPI application demonstrating the Camunda Python Orchestration SDK.
+This directory contains a complete fake bank loan application system with a BPMN process, FastAPI backend, and web frontend.
+
+## Overview
+
+The loan application process includes:
+
+1. **BPMN Process** ([loan-application-process.bpmn](loan-application-process.bpmn)) - Defines the loan approval workflow
+2. **FastAPI Backend** ([main.py](main.py)) - REST API that integrates with Camunda
+3. **Web Frontend** ([frontend/](frontend/)) - User-facing loan application website
+
+## Process Flow
+
+```
+Start → Validate → Credit Check → Risk Assessment → Decision Gateway
+                                                      ├─→ Approved → Send Approval → End
+                                                      └─→ Rejected → Send Rejection → End
+```
+
+### Service Tasks (Job Types)
+
+The process includes these service tasks that need workers:
+
+1. **validate-loan-application** - Validates the application data
+2. **check-credit-score** - Performs credit score check
+3. **assess-risk** - Assesses the risk profile and makes approval decision
+4. **send-approval-notification** - Sends approval email/notification
+5. **send-rejection-notification** - Sends rejection email/notification
 
 ## Features
 
@@ -59,98 +85,47 @@ With custom Camunda URL:
 CAMUNDA_BASE_URL="http://your-camunda:8080" python -m demo.week_2.main
 ```
 
-Or using uvicorn directly:
+### Access the Demo Application
 
-```bash
-uvicorn demo.week_2.main:app --reload --host 0.0.0.0 --port 8000
+Open your browser and visit:
+```
+http://localhost:8000
 ```
 
-Or add the project root to your PYTHONPATH:
+You should see the **QuickLoan Bank** website!
 
-```bash
-cd demo/week_2
-PYTHONPATH=../.. python main.py
+## Test the Application
+
+1. **Fill out the loan application form**:
+   - First Name: John
+   - Last Name: Doe
+   - Email: john.doe@email.com
+   - Phone: 555-1234
+   - Loan Amount: $50,000
+   - Loan Purpose: Home Purchase
+   - Annual Income: $85,000
+   - Employment Status: Employed
+   - Credit Score: 750
+
+2. **Click "Submit Application"**
+
+3. **You should see**:
+   - Success message
+   - Process instance key
+   - Application details
+
+## Architecture
+
 ```
-
-The API will be available at:
-- **API**: http://localhost:8000
-- **Interactive docs (Swagger UI)**: http://localhost:8000/docs
-- **Alternative docs (ReDoc)**: http://localhost:8000/redoc
-
-## API Endpoints
-
-### Health Check
-```bash
-GET /health
+┌─────────────────┐      ┌──────────────────┐      ┌─────────────────┐
+│  Frontend       │─────▶│  FastAPI         │─────▶│  Camunda        │
+│  (Submit Form)  │      │  (Create Process)│      │  (Orchestrate)  │
+└─────────────────┘      └──────────────────┘      └────────┬────────┘
+                                                              │
+                                                              │ Jobs
+                                                              ▼
+                                                     ┌─────────────────┐
+                                                     │  loan_workers   │
+                                                     │  (Process Jobs) │
+                                                     └─────────────────┘
 ```
-
-### Deploy a BPMN Resource
-```bash
-POST /deploy/resource
-Content-Type: application/json
-
-{
-  "file_path": "./path/to/process.bpmn"
-}
-```
-
-### Create Process Instance
-```bash
-POST /process-instance/create
-Content-Type: application/json
-
-{
-  "process_definition_key": 123456789,
-  "variables": {
-    "customerId": "12345",
-    "orderAmount": 100.50
-  }
-}
-```
-
-### Register Job Worker
-```bash
-POST /worker/register
-Content-Type: application/json
-
-{
-  "job_type": "my-task-type",
-  "job_timeout_milliseconds": 30000,
-  "max_concurrent_jobs": 10,
-  "execution_strategy": "async"
-}
-```
-
-## Example Usage
-
-Using `curl`:
-
-```bash
-# Health check
-curl http://localhost:8000/health
-
-# Deploy a process
-curl -X POST http://localhost:8000/deploy/resource \
-  -H "Content-Type: application/json" \
-  -d '{"file_path": "./tests/integration/resources/job_worker_load_test_process_1.bpmn"}'
-
-# Create a process instance
-curl -X POST http://localhost:8000/process-instance/create \
-  -H "Content-Type: application/json" \
-  -d '{"process_definition_key": 123456789, "variables": {"test": "value"}}'
-```
-
-## Development
-
-The app uses:
-- **FastAPI** for the web framework
-- **Uvicorn** as the ASGI server
-- **Pydantic** for request/response validation
-- **Camunda Orchestration SDK** for Camunda integration
-
-## Next Steps
-
-- Add more endpoints for process queries, cancellation, etc.
-- Implement custom job handlers with business logic
-- Add authentication and authorization
-- Connect to a real Camunda cluster

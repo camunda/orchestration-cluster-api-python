@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -65,13 +65,21 @@ Args:
         2251799813684321.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetBatchOperationNotFound: If the response status code is 404. The batch operation is not found.
+    errors.GetBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetBatchOperationResponse200 | GetBatchOperationResponse400 | GetBatchOperationResponse404 | GetBatchOperationResponse500]"""
+    GetBatchOperationResponse200"""
     response = sync_detailed(batch_operation_key=batch_operation_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetBatchOperationBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetBatchOperationResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetBatchOperationNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetBatchOperationResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetBatchOperationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetBatchOperationResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -105,12 +113,20 @@ Args:
         2251799813684321.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetBatchOperationNotFound: If the response status code is 404. The batch operation is not found.
+    errors.GetBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetBatchOperationResponse200 | GetBatchOperationResponse400 | GetBatchOperationResponse404 | GetBatchOperationResponse500]"""
+    GetBatchOperationResponse200"""
     response = await asyncio_detailed(batch_operation_key=batch_operation_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetBatchOperationBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetBatchOperationResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetBatchOperationNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetBatchOperationResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetBatchOperationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetBatchOperationResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

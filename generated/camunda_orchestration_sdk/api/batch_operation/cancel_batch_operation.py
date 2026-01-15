@@ -79,13 +79,24 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CancelBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CancelBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CancelBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.CancelBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | CancelBatchOperationResponse400 | CancelBatchOperationResponse403 | CancelBatchOperationResponse404 | CancelBatchOperationResponse500]"""
+    Any"""
     response = sync_detailed(batch_operation_key=batch_operation_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CancelBatchOperationBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CancelBatchOperationResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.CancelBatchOperationForbidden(status_code=response.status_code, content=response.content, parsed=cast(CancelBatchOperationResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.CancelBatchOperationNotFound(status_code=response.status_code, content=response.content, parsed=cast(CancelBatchOperationResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.CancelBatchOperationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CancelBatchOperationResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -125,12 +136,23 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CancelBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CancelBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CancelBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.CancelBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | CancelBatchOperationResponse400 | CancelBatchOperationResponse403 | CancelBatchOperationResponse404 | CancelBatchOperationResponse500]"""
+    Any"""
     response = await asyncio_detailed(batch_operation_key=batch_operation_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CancelBatchOperationBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CancelBatchOperationResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.CancelBatchOperationForbidden(status_code=response.status_code, content=response.content, parsed=cast(CancelBatchOperationResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.CancelBatchOperationNotFound(status_code=response.status_code, content=response.content, parsed=cast(CancelBatchOperationResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.CancelBatchOperationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CancelBatchOperationResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

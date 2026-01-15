@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -71,13 +71,24 @@ Args:
     body (ActivateJobsData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.ActivateJobsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ActivateJobsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ActivateJobsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ActivateJobsServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[ActivateJobsResponse200 | ActivateJobsResponse400 | ActivateJobsResponse401 | ActivateJobsResponse500 | ActivateJobsResponse503]"""
+    ActivateJobsResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.ActivateJobsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(ActivateJobsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.ActivateJobsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(ActivateJobsResponse401, response.parsed))
+        if response.status_code == 500:
+            raise errors.ActivateJobsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(ActivateJobsResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.ActivateJobsServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(ActivateJobsResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -109,12 +120,23 @@ Args:
     body (ActivateJobsData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.ActivateJobsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ActivateJobsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ActivateJobsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ActivateJobsServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[ActivateJobsResponse200 | ActivateJobsResponse400 | ActivateJobsResponse401 | ActivateJobsResponse500 | ActivateJobsResponse503]"""
+    ActivateJobsResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.ActivateJobsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(ActivateJobsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.ActivateJobsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(ActivateJobsResponse401, response.parsed))
+        if response.status_code == 500:
+            raise errors.ActivateJobsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(ActivateJobsResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.ActivateJobsServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(ActivateJobsResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

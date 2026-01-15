@@ -34,7 +34,7 @@ class GetAuditLogResponse200:
 
     Attributes:
         audit_log_key (str | Unset): The unique key of the audit log entry. Example: 22517998136843567.
-        entity_key (str | Unset): The key of the entity this audit log refers to.
+        entity_key (str | Unset): System-generated entity key for an audit log entry. Example: 22517998136843567.
         entity_type (GetAuditLogResponse200EntityType | Unset): The type of entity affected by the operation.
         operation_type (GetAuditLogResponse200OperationType | Unset): The type of operation performed.
         batch_operation_key (str | Unset): Key of the batch operation. Example: 2251799813684321.
@@ -65,7 +65,7 @@ class GetAuditLogResponse200:
     """
 
     audit_log_key: AuditLogKey | Unset = UNSET
-    entity_key: str | Unset = UNSET
+    entity_key: AuditLogEntityKey | Unset = UNSET
     entity_type: GetAuditLogResponse200EntityType | Unset = UNSET
     operation_type: GetAuditLogResponse200OperationType | Unset = UNSET
     batch_operation_key: BatchOperationKey | Unset = UNSET
@@ -231,7 +231,7 @@ class GetAuditLogResponse200:
         d = dict(src_dict)
         audit_log_key = lift_audit_log_key(_val) if (_val := d.pop("auditLogKey", UNSET)) is not UNSET else UNSET
 
-        entity_key = d.pop("entityKey", UNSET)
+        entity_key = lift_audit_log_entity_key(_val) if (_val := d.pop("entityKey", UNSET)) is not UNSET else UNSET
 
         _entity_type = d.pop("entityType", UNSET)
         entity_type: GetAuditLogResponse200EntityType | Unset

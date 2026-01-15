@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -79,13 +79,27 @@ Args:
     body (SearchClientsForGroupData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchClientsForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchClientsForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchClientsForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchClientsForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchClientsForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchClientsForGroupResponse200 | SearchClientsForGroupResponse400 | SearchClientsForGroupResponse401 | SearchClientsForGroupResponse403 | SearchClientsForGroupResponse404 | SearchClientsForGroupResponse500]"""
+    SearchClientsForGroupResponse200"""
     response = sync_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchClientsForGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchClientsForGroupUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchClientsForGroupForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SearchClientsForGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchClientsForGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -119,12 +133,26 @@ Args:
     body (SearchClientsForGroupData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchClientsForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchClientsForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchClientsForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchClientsForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchClientsForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchClientsForGroupResponse200 | SearchClientsForGroupResponse400 | SearchClientsForGroupResponse401 | SearchClientsForGroupResponse403 | SearchClientsForGroupResponse404 | SearchClientsForGroupResponse500]"""
+    SearchClientsForGroupResponse200"""
     response = await asyncio_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchClientsForGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.SearchClientsForGroupUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.SearchClientsForGroupForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.SearchClientsForGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchClientsForGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

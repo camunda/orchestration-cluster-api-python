@@ -18,13 +18,10 @@ from camunda_orchestration_sdk.models.throw_job_error_data import ThrowJobErrorD
 @pytest.fixture
 def mock_client():
     client = MagicMock()
-    client.complete_job_async = AsyncMock()
-    client.fail_job_async = AsyncMock()
-    client.throw_job_error_async = AsyncMock()
-    client.complete_job = MagicMock()
-    client.fail_job = MagicMock()
-    client.throw_job_error = MagicMock()
-    client.activate_jobs_async = AsyncMock(return_value=ActivateJobsResponse200(jobs=[]))
+    client.complete_job = AsyncMock()
+    client.fail_job = AsyncMock()
+    client.throw_job_error = AsyncMock()
+    client.activate_jobs = AsyncMock(return_value=ActivateJobsResponse200(jobs=[]))
     return client
 
 @pytest.fixture
@@ -62,8 +59,8 @@ async def test_job_completion(mock_client: MagicMock, mock_job_item: JobContext)
     
     await worker._execute_job(mock_job_item) # pyright: ignore[reportPrivateUsage]
     
-    mock_client.complete_job_async.assert_called_once()
-    call_args = mock_client.complete_job_async.call_args
+    mock_client.complete_job.assert_called_once()
+    call_args = mock_client.complete_job.call_args
     assert call_args.kwargs['job_key'] == 12345
     assert isinstance(call_args.kwargs['data'], CompleteJobData)
 
@@ -77,8 +74,8 @@ async def test_job_failure(mock_client: MagicMock, mock_job_item: JobContext):
     
     await worker._execute_job(mock_job_item) # pyright: ignore[reportPrivateUsage]
     
-    mock_client.fail_job_async.assert_called_once()
-    call_args = mock_client.fail_job_async.call_args
+    mock_client.fail_job.assert_called_once()
+    call_args = mock_client.fail_job.call_args
     assert call_args.kwargs['job_key'] == 12345
     assert isinstance(call_args.kwargs['data'], FailJobData)
     assert call_args.kwargs['data'].error_message == "Something failed"
@@ -95,8 +92,8 @@ async def test_job_error(mock_client: MagicMock, mock_job_item: JobContext):
     
     await worker._execute_job(mock_job_item) # pyright: ignore[reportPrivateUsage]
     
-    mock_client.throw_job_error_async.assert_called_once()
-    call_args = mock_client.throw_job_error_async.call_args
+    mock_client.throw_job_error.assert_called_once()
+    call_args = mock_client.throw_job_error.call_args
     assert call_args.kwargs['job_key'] == 12345
     assert isinstance(call_args.kwargs['data'], ThrowJobErrorData)
     assert call_args.kwargs['data'].error_code == "ERR_CODE"
@@ -112,8 +109,8 @@ async def test_job_exception(mock_client: MagicMock, mock_job_item: JobContext):
     
     await worker._execute_job(mock_job_item) # pyright: ignore[reportPrivateUsage]
     
-    mock_client.fail_job_async.assert_called_once()
-    call_args = mock_client.fail_job_async.call_args
+    mock_client.fail_job.assert_called_once()
+    call_args = mock_client.fail_job.call_args
     assert call_args.kwargs['job_key'] == 12345
     assert "Unexpected error" in call_args.kwargs['data'].error_message
     assert call_args.kwargs['data'].retries == 2 # Decremented from 3
@@ -150,7 +147,7 @@ def test_strategy_detection_sync():
 @pytest.mark.asyncio
 async def test_worker_concurrency_limit(mock_client: MagicMock):
     # Setup
-    mock_client.activate_jobs_async = AsyncMock()
+    mock_client.activate_jobs = AsyncMock()
     
     # Create a callback that holds the job for a bit
     active_jobs_in_callback = 0
@@ -186,29 +183,29 @@ async def test_worker_concurrency_limit(mock_client: MagicMock):
     
     # 1. Initial state: 0 active jobs
     worker.active_jobs = 0
-    mock_client.activate_jobs_async.return_value = ActivateJobsResponse200(jobs=[job1, job2])
+    mock_client.activate_jobs.return_value = ActivateJobsResponse200(jobs=[job1, job2])
     
     jobs = await worker._poll_for_jobs() # pyright: ignore[reportPrivateUsage]
     assert len(jobs) == 2
     assert worker.active_jobs == 2
     
     # 2. Capacity full: should skip poll
-    mock_client.activate_jobs_async.reset_mock()
+    mock_client.activate_jobs.reset_mock()
     jobs = await worker._poll_for_jobs() # pyright: ignore[reportPrivateUsage]
     assert len(jobs) == 0
-    mock_client.activate_jobs_async.assert_not_called()
+    mock_client.activate_jobs.assert_not_called()
     
     # 3. One job finishes
     worker._decrement_active_jobs() # pyright: ignore[reportPrivateUsage]
     assert worker.active_jobs == 1
     
     # 4. Capacity available: should poll again
-    mock_client.activate_jobs_async.return_value = ActivateJobsResponse200(jobs=[job3])
+    mock_client.activate_jobs.return_value = ActivateJobsResponse200(jobs=[job3])
     jobs = await worker._poll_for_jobs() # pyright: ignore[reportPrivateUsage]
     assert len(jobs) == 1
     assert worker.active_jobs == 2
-    mock_client.activate_jobs_async.assert_called_once()
+    mock_client.activate_jobs.assert_called_once()
     
     # Verify call args for capacity
-    call_args = mock_client.activate_jobs_async.call_args
+    call_args = mock_client.activate_jobs.call_args
     assert call_args.kwargs['data'].max_jobs_to_activate == 1

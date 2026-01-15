@@ -66,13 +66,24 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.DeleteMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+    errors.DeleteMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | DeleteMappingRuleResponse401 | DeleteMappingRuleResponse404 | DeleteMappingRuleResponse500 | DeleteMappingRuleResponse503]"""
+    Any"""
     response = sync_detailed(mapping_rule_id=mapping_rule_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.DeleteMappingRuleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse401, response.parsed))
+        if response.status_code == 404:
+            raise errors.DeleteMappingRuleNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.DeleteMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.DeleteMappingRuleServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -104,12 +115,23 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.DeleteMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+    errors.DeleteMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | DeleteMappingRuleResponse401 | DeleteMappingRuleResponse404 | DeleteMappingRuleResponse500 | DeleteMappingRuleResponse503]"""
+    Any"""
     response = await asyncio_detailed(mapping_rule_id=mapping_rule_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.DeleteMappingRuleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse401, response.parsed))
+        if response.status_code == 404:
+            raise errors.DeleteMappingRuleNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.DeleteMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.DeleteMappingRuleServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(DeleteMappingRuleResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

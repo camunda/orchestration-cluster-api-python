@@ -1224,14 +1224,12 @@ class ExtendedDeploymentResult(CreateDeploymentResponse200):
 
 class CamundaClient:
     client: Client | AuthenticatedClient
-    _workers: list[JobWorker]
 
     def __init__(self, base_url: str = "http://localhost:8080/v2", token: str | None = None, **kwargs):
         if token:
             self.client = AuthenticatedClient(base_url=base_url, token=token, **kwargs)
         else:
             self.client = Client(base_url=base_url, **kwargs)
-        self._workers = []
 
     def __enter__(self):
         self.client.__enter__()
@@ -1240,31 +1238,34 @@ class CamundaClient:
     def __exit__(self, *args, **kwargs):
         return self.client.__exit__(*args, **kwargs)
 
-    async def __aenter__(self):
-        await self.client.__aenter__()
-        return self
-
-    async def __aexit__(self, *args, **kwargs):
-        await self.client.__aexit__(*args, **kwargs)
-
-    def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True) -> JobWorker:
-        worker = JobWorker(self, callback, config)
-        self._workers.append(worker)
-        if auto_start:
-            worker.start()
-        return worker
-
-    async def run_workers(self):
-        stop_event = asyncio.Event()
-        try:
-            await stop_event.wait()
-        except asyncio.CancelledError:
-            pass
-        finally:
-            for worker in self._workers:
-                worker.stop()
-
     def deploy_resources_from_files(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
+        """Deploy BPMN/DMN/Form resources from local files.
+
+        This is a convenience wrapper around :meth:`create_deployment` that:
+
+        - Reads each path in ``files`` as bytes.
+        - Wraps the bytes in :class:`camunda_orchestration_sdk.types.File` using the file's basename
+          as ``file_name``.
+        - Builds :class:`camunda_orchestration_sdk.models.CreateDeploymentData` and calls
+          :meth:`create_deployment`.
+        - Returns an :class:`ExtendedDeploymentResult`, which is the deployment response plus
+          convenience lists (``processes``, ``decisions``, ``decision_requirements``, ``forms``).
+
+        Args:
+            files: File paths (``str`` or ``Path``) to deploy.
+            tenant_id: Optional tenant identifier. If not provided, the default tenant is used.
+
+        Returns:
+            ExtendedDeploymentResult: The deployment result with extracted resource lists.
+
+        Raises:
+            FileNotFoundError: If any file path does not exist.
+            PermissionError: If any file path cannot be read.
+            IsADirectoryError: If any file path is a directory.
+            OSError: For other I/O failures while reading files.
+            Exception: Propagates any exception raised by :meth:`create_deployment` (including
+                typed API errors in :mod:`camunda_orchestration_sdk.errors` and ``httpx.TimeoutException``).
+        """
         from .models.create_deployment_data import CreateDeploymentData
         from .types import File, UNSET
         import os
@@ -1275,118 +1276,552 @@ class CamundaClient:
             with open(file_path, "rb") as f:
                 content = f.read()
             resources.append(File(payload=content, file_name=os.path.basename(file_path)))
-        
+
         data = CreateDeploymentData(resources=resources, tenant_id=tenant_id if tenant_id is not None else UNSET)
         return ExtendedDeploymentResult(self.create_deployment(data=data))
 
-    async def deploy_resources_from_files_async(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
-        from .models.create_deployment_data import CreateDeploymentData
-        from .types import File, UNSET
-        import os
 
-        resources = []
-        for file_path in files:
-            file_path = str(file_path)
-            with open(file_path, "rb") as f:
-                content = f.read()
-            resources.append(File(payload=content, file_name=os.path.basename(file_path)))
-        
-        data = CreateDeploymentData(resources=resources, tenant_id=tenant_id if tenant_id is not None else UNSET)
-        return ExtendedDeploymentResult(await self.create_deployment_async(data=data))
+    def delete_tenant(self, tenant_id: str, **kwargs: Any) -> Any:
+        """Delete tenant
 
-
-    def get_audit_log(self, audit_log_key: str, **kwargs: Any) -> GetAuditLogResponse200:
-        """Get audit log
-
- Get an audit log entry by auditLogKey.
+ Deletes an existing tenant.
 
 Args:
-    audit_log_key (str): System-generated key for an audit log entry. Example:
-        22517998136843567.
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.DeleteTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteTenantNotFound: If the response status code is 404. Not found. The tenant was not found.
+    errors.DeleteTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetAuditLogResponse200 | GetAuditLogResponse401 | GetAuditLogResponse403 | GetAuditLogResponse404 | GetAuditLogResponse500]"""
-        from .api.audit_log.get_audit_log import sync as get_audit_log_sync
+    Any"""
+        from .api.tenant.delete_tenant import sync as delete_tenant_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_audit_log_sync(**_kwargs)
+        return delete_tenant_sync(**_kwargs)
 
 
-    async def get_audit_log_async(self, audit_log_key: str, **kwargs: Any) -> GetAuditLogResponse200:
-        """Get audit log
+    def assign_group_to_tenant(self, tenant_id: str, group_id: str, **kwargs: Any) -> Any:
+        """Assign a group to a tenant
 
- Get an audit log entry by auditLogKey.
+ Assigns a group to a specified tenant.
+Group members (users, clients) can then access tenant data and perform authorized actions.
 
 Args:
-    audit_log_key (str): System-generated key for an audit log entry. Example:
-        22517998136843567.
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    group_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.AssignGroupToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignGroupToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignGroupToTenantNotFound: If the response status code is 404. Not found. The tenant or group was not found.
+    errors.AssignGroupToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignGroupToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetAuditLogResponse200 | GetAuditLogResponse401 | GetAuditLogResponse403 | GetAuditLogResponse404 | GetAuditLogResponse500]"""
-        from .api.audit_log.get_audit_log import asyncio as get_audit_log_asyncio
+    Any"""
+        from .api.tenant.assign_group_to_tenant import sync as assign_group_to_tenant_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_audit_log_asyncio(**_kwargs)
+        return assign_group_to_tenant_sync(**_kwargs)
 
 
-    def search_audit_logs(self, *, data: SearchAuditLogsData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Search audit logs
+    def unassign_role_from_tenant(self, tenant_id: str, role_id: str, **kwargs: Any) -> Any:
+        """Unassign a role from a tenant
 
- Search for audit logs based on given criteria.
+ Unassigns a role from a specified tenant.
+Users, Clients or Groups, that have the role assigned, will no longer have access to the
+tenant's data - unless they are assigned directly to the tenant.
 
 Args:
-    body (SearchAuditLogsData | Unset): Audit log search request.
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    role_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnassignRoleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromTenantNotFound: If the response status code is 404. Not found. The tenant or role was not found.
+    errors.UnassignRoleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | SearchAuditLogsResponse200 | SearchAuditLogsResponse400 | SearchAuditLogsResponse401 | SearchAuditLogsResponse403]"""
-        from .api.audit_log.search_audit_logs import sync as search_audit_logs_sync
+    Any"""
+        from .api.tenant.unassign_role_from_tenant import sync as unassign_role_from_tenant_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return search_audit_logs_sync(**_kwargs)
+        return unassign_role_from_tenant_sync(**_kwargs)
 
 
-    async def search_audit_logs_async(self, *, data: SearchAuditLogsData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Search audit logs
+    def search_group_ids_for_tenant(self, tenant_id: str, *, data: SearchGroupIdsForTenantData | Unset = UNSET, **kwargs: Any) -> SearchGroupIdsForTenantResponse200:
+        """Search groups for tenant
 
- Search for audit logs based on given criteria.
+ Retrieves a filtered and sorted list of groups for a specified tenant.
 
 Args:
-    body (SearchAuditLogsData | Unset): Audit log search request.
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchGroupIdsForTenantData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | SearchAuditLogsResponse200 | SearchAuditLogsResponse400 | SearchAuditLogsResponse401 | SearchAuditLogsResponse403]"""
-        from .api.audit_log.search_audit_logs import asyncio as search_audit_logs_asyncio
+    SearchGroupIdsForTenantResponse200"""
+        from .api.tenant.search_group_ids_for_tenant import sync as search_group_ids_for_tenant_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_audit_logs_asyncio(**_kwargs)
+        return search_group_ids_for_tenant_sync(**_kwargs)
+
+
+    def search_users_for_tenant(self, tenant_id: str, *, data: SearchUsersForTenantData | Unset = UNSET, **kwargs: Any) -> SearchUsersForTenantResponse200:
+        """Search users for tenant
+
+ Retrieves a filtered and sorted list of users for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchUsersForTenantData | Unset):
+
+Raises:
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchUsersForTenantResponse200"""
+        from .api.tenant.search_users_for_tenant import sync as search_users_for_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_users_for_tenant_sync(**_kwargs)
+
+
+    def unassign_client_from_tenant(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Unassign a client from a tenant
+
+ Unassigns the client from the specified tenant.
+The client can no longer access tenant data.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    client_id (str):
+
+Raises:
+    errors.UnassignClientFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignClientFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignClientFromTenantNotFound: If the response status code is 404. The tenant does not exist or the client was not assigned to it.
+    errors.UnassignClientFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignClientFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.unassign_client_from_tenant import sync as unassign_client_from_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_client_from_tenant_sync(**_kwargs)
+
+
+    def unassign_user_from_tenant(self, tenant_id: str, username: str, **kwargs: Any) -> Any:
+        """Unassign a user from a tenant
+
+ Unassigns the user from the specified tenant.
+The user can no longer access tenant data.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnassignUserFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignUserFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignUserFromTenantNotFound: If the response status code is 404. Not found. The tenant or user was not found.
+    errors.UnassignUserFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignUserFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.unassign_user_from_tenant import sync as unassign_user_from_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_user_from_tenant_sync(**_kwargs)
+
+
+    def search_roles_for_tenant(self, tenant_id: str, *, data: SearchRolesForTenantData | Unset = UNSET, **kwargs: Any) -> SearchRolesForTenantResponse200:
+        """Search roles for tenant
+
+ Retrieves a filtered and sorted list of roles for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchRolesForTenantData | Unset): Role search request.
+
+Raises:
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchRolesForTenantResponse200"""
+        from .api.tenant.search_roles_for_tenant import sync as search_roles_for_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_roles_for_tenant_sync(**_kwargs)
+
+
+    def unassign_group_from_tenant(self, tenant_id: str, group_id: str, **kwargs: Any) -> Any:
+        """Unassign a group from a tenant
+
+ Unassigns a group from a specified tenant.
+Members of the group (users, clients) will no longer have access to the tenant's data - except they
+are assigned directly to the tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    group_id (str):
+
+Raises:
+    errors.UnassignGroupFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignGroupFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignGroupFromTenantNotFound: If the response status code is 404. Not found. The tenant or group was not found.
+    errors.UnassignGroupFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignGroupFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.unassign_group_from_tenant import sync as unassign_group_from_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_group_from_tenant_sync(**_kwargs)
+
+
+    def search_clients_for_tenant(self, tenant_id: str, *, data: SearchClientsForTenantData | Unset = UNSET, **kwargs: Any) -> SearchClientsForTenantResponse200:
+        """Search clients for tenant
+
+ Retrieves a filtered and sorted list of clients for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchClientsForTenantData | Unset):
+
+Raises:
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchClientsForTenantResponse200"""
+        from .api.tenant.search_clients_for_tenant import sync as search_clients_for_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_clients_for_tenant_sync(**_kwargs)
+
+
+    def search_tenants(self, *, data: SearchTenantsData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Search tenants
+
+ Retrieves a filtered and sorted list of tenants.
+
+Args:
+    body (SearchTenantsData | Unset): Tenant search request
+
+Raises:
+    errors.SearchTenantsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchTenantsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchTenantsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchTenantsNotFound: If the response status code is 404. Not found
+    errors.SearchTenantsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.search_tenants import sync as search_tenants_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_tenants_sync(**_kwargs)
+
+
+    def assign_user_to_tenant(self, tenant_id: str, username: str, **kwargs: Any) -> Any:
+        """Assign a user to a tenant
+
+ Assign a single user to a specified tenant. The user can then access tenant data and perform
+authorized actions.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.AssignUserToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignUserToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignUserToTenantNotFound: If the response status code is 404. Not found. The tenant or user was not found.
+    errors.AssignUserToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignUserToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.assign_user_to_tenant import sync as assign_user_to_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_user_to_tenant_sync(**_kwargs)
+
+
+    def assign_role_to_tenant(self, tenant_id: str, role_id: str, **kwargs: Any) -> Any:
+        """Assign a role to a tenant
+
+ Assigns a role to a specified tenant.
+Users, Clients or Groups, that have the role assigned, will get access to the tenant's data and can
+perform actions according to their authorizations.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    role_id (str):
+
+Raises:
+    errors.AssignRoleToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToTenantNotFound: If the response status code is 404. Not found. The tenant or role was not found.
+    errors.AssignRoleToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.assign_role_to_tenant import sync as assign_role_to_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_role_to_tenant_sync(**_kwargs)
+
+
+    def search_mapping_rules_for_tenant(self, tenant_id: str, *, data: SearchMappingRulesForTenantData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForTenantResponse200:
+        """Search mapping rules for tenant
+
+ Retrieves a filtered and sorted list of MappingRules for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchMappingRulesForTenantData | Unset):
+
+Raises:
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchMappingRulesForTenantResponse200"""
+        from .api.tenant.search_mapping_rules_for_tenant import sync as search_mapping_rules_for_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_mapping_rules_for_tenant_sync(**_kwargs)
+
+
+    def assign_mapping_rule_to_tenant(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Assign a mapping rule to a tenant
+
+ Assign a single mapping rule to a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    mapping_rule_id (str):
+
+Raises:
+    errors.AssignMappingRuleToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignMappingRuleToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignMappingRuleToTenantNotFound: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+    errors.AssignMappingRuleToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignMappingRuleToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.assign_mapping_rule_to_tenant import sync as assign_mapping_rule_to_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_mapping_rule_to_tenant_sync(**_kwargs)
+
+
+    def update_tenant(self, tenant_id: str, *, data: UpdateTenantData, **kwargs: Any) -> UpdateTenantResponse200:
+        """Update tenant
+
+ Updates an existing tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (UpdateTenantData):
+
+Raises:
+    errors.UpdateTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UpdateTenantNotFound: If the response status code is 404. Not found. The tenant was not found.
+    errors.UpdateTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    UpdateTenantResponse200"""
+        from .api.tenant.update_tenant import sync as update_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return update_tenant_sync(**_kwargs)
+
+
+    def assign_client_to_tenant(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Assign a client to a tenant
+
+ Assign the client to the specified tenant.
+The client can then access tenant data and perform authorized actions.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    client_id (str):
+
+Raises:
+    errors.AssignClientToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignClientToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignClientToTenantNotFound: If the response status code is 404. The tenant was not found.
+    errors.AssignClientToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignClientToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.assign_client_to_tenant import sync as assign_client_to_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_client_to_tenant_sync(**_kwargs)
+
+
+    def get_tenant(self, tenant_id: str, **kwargs: Any) -> GetTenantResponse200:
+        """Get tenant
+
+ Retrieves a single tenant by tenant ID.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+
+Raises:
+    errors.GetTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetTenantUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetTenantNotFound: If the response status code is 404. Tenant not found.
+    errors.GetTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetTenantResponse200"""
+        from .api.tenant.get_tenant import sync as get_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_tenant_sync(**_kwargs)
+
+
+    def create_tenant(self, *, data: CreateTenantData, **kwargs: Any) -> Any:
+        """Create tenant
+
+ Creates a new tenant.
+
+Args:
+    body (CreateTenantData):
+
+Raises:
+    errors.CreateTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateTenantNotFound: If the response status code is 404. Not found. The resource was not found.
+    errors.CreateTenantConflict: If the response status code is 409. Tenant with this id already exists.
+    errors.CreateTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.create_tenant import sync as create_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_tenant_sync(**_kwargs)
+
+
+    def unassign_mapping_rule_from_tenant(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Unassign a mapping rule from a tenant
+
+ Unassigns a single mapping rule from a specified tenant without deleting the rule.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnassignMappingRuleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignMappingRuleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignMappingRuleFromTenantNotFound: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+    errors.UnassignMappingRuleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignMappingRuleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.unassign_mapping_rule_from_tenant import sync as unassign_mapping_rule_from_tenant_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_mapping_rule_from_tenant_sync(**_kwargs)
 
 
     def cancel_batch_operation(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
@@ -1402,11 +1837,14 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CancelBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CancelBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CancelBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.CancelBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | CancelBatchOperationResponse400 | CancelBatchOperationResponse403 | CancelBatchOperationResponse404 | CancelBatchOperationResponse500]"""
+    Any"""
         from .api.batch_operation.cancel_batch_operation import sync as cancel_batch_operation_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -1414,133 +1852,6 @@ Returns:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return cancel_batch_operation_sync(**_kwargs)
-
-
-    async def cancel_batch_operation_async(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
-        """Cancel Batch operation
-
- Cancels a running batch operation.
-This is done asynchronously, the progress can be tracked using the batch operation status endpoint
-(/batch-operations/{batchOperationKey}).
-
-Args:
-    batch_operation_key (str): System-generated key for an batch operation. Example:
-        2251799813684321.
-    body (Any | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CancelBatchOperationResponse400 | CancelBatchOperationResponse403 | CancelBatchOperationResponse404 | CancelBatchOperationResponse500]"""
-        from .api.batch_operation.cancel_batch_operation import asyncio as cancel_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await cancel_batch_operation_asyncio(**_kwargs)
-
-
-    def suspend_batch_operation(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
-        """Suspend Batch operation
-
- Suspends a running batch operation.
-This is done asynchronously, the progress can be tracked using the batch operation status endpoint
-(/batch-operations/{batchOperationKey}).
-
-Args:
-    batch_operation_key (str): System-generated key for an batch operation. Example:
-        2251799813684321.
-    body (Any | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | SuspendBatchOperationResponse400 | SuspendBatchOperationResponse403 | SuspendBatchOperationResponse404 | SuspendBatchOperationResponse500 | SuspendBatchOperationResponse503]"""
-        from .api.batch_operation.suspend_batch_operation import sync as suspend_batch_operation_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return suspend_batch_operation_sync(**_kwargs)
-
-
-    async def suspend_batch_operation_async(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
-        """Suspend Batch operation
-
- Suspends a running batch operation.
-This is done asynchronously, the progress can be tracked using the batch operation status endpoint
-(/batch-operations/{batchOperationKey}).
-
-Args:
-    batch_operation_key (str): System-generated key for an batch operation. Example:
-        2251799813684321.
-    body (Any | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | SuspendBatchOperationResponse400 | SuspendBatchOperationResponse403 | SuspendBatchOperationResponse404 | SuspendBatchOperationResponse500 | SuspendBatchOperationResponse503]"""
-        from .api.batch_operation.suspend_batch_operation import asyncio as suspend_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await suspend_batch_operation_asyncio(**_kwargs)
-
-
-    def search_batch_operations(self, *, data: SearchBatchOperationsData | Unset = UNSET, **kwargs: Any) -> SearchBatchOperationsResponse200:
-        """Search batch operations
-
- Search for batch operations based on given criteria.
-
-Args:
-    body (SearchBatchOperationsData | Unset): Batch operation search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchBatchOperationsResponse200 | SearchBatchOperationsResponse400 | SearchBatchOperationsResponse500]"""
-        from .api.batch_operation.search_batch_operations import sync as search_batch_operations_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_batch_operations_sync(**_kwargs)
-
-
-    async def search_batch_operations_async(self, *, data: SearchBatchOperationsData | Unset = UNSET, **kwargs: Any) -> SearchBatchOperationsResponse200:
-        """Search batch operations
-
- Search for batch operations based on given criteria.
-
-Args:
-    body (SearchBatchOperationsData | Unset): Batch operation search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchBatchOperationsResponse200 | SearchBatchOperationsResponse400 | SearchBatchOperationsResponse500]"""
-        from .api.batch_operation.search_batch_operations import asyncio as search_batch_operations_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_batch_operations_asyncio(**_kwargs)
 
 
     def resume_batch_operation(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
@@ -1556,11 +1867,15 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.ResumeBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ResumeBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.ResumeBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.ResumeBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResumeBatchOperationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | ResumeBatchOperationResponse400 | ResumeBatchOperationResponse403 | ResumeBatchOperationResponse404 | ResumeBatchOperationResponse500 | ResumeBatchOperationResponse503]"""
+    Any"""
         from .api.batch_operation.resume_batch_operation import sync as resume_batch_operation_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -1570,10 +1885,10 @@ Returns:
         return resume_batch_operation_sync(**_kwargs)
 
 
-    async def resume_batch_operation_async(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
-        """Resume Batch operation
+    def suspend_batch_operation(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
+        """Suspend Batch operation
 
- Resumes a suspended batch operation.
+ Suspends a running batch operation.
 This is done asynchronously, the progress can be tracked using the batch operation status endpoint
 (/batch-operations/{batchOperationKey}).
 
@@ -1583,18 +1898,46 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SuspendBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SuspendBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SuspendBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.SuspendBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.SuspendBatchOperationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | ResumeBatchOperationResponse400 | ResumeBatchOperationResponse403 | ResumeBatchOperationResponse404 | ResumeBatchOperationResponse500 | ResumeBatchOperationResponse503]"""
-        from .api.batch_operation.resume_batch_operation import asyncio as resume_batch_operation_asyncio
+    Any"""
+        from .api.batch_operation.suspend_batch_operation import sync as suspend_batch_operation_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await resume_batch_operation_asyncio(**_kwargs)
+        return suspend_batch_operation_sync(**_kwargs)
+
+
+    def search_batch_operations(self, *, data: SearchBatchOperationsData | Unset = UNSET, **kwargs: Any) -> SearchBatchOperationsResponse200:
+        """Search batch operations
+
+ Search for batch operations based on given criteria.
+
+Args:
+    body (SearchBatchOperationsData | Unset): Batch operation search request.
+
+Raises:
+    errors.SearchBatchOperationsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchBatchOperationsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchBatchOperationsResponse200"""
+        from .api.batch_operation.search_batch_operations import sync as search_batch_operations_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_batch_operations_sync(**_kwargs)
 
 
     def get_batch_operation(self, batch_operation_key: str, **kwargs: Any) -> GetBatchOperationResponse200:
@@ -1607,11 +1950,13 @@ Args:
         2251799813684321.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetBatchOperationNotFound: If the response status code is 404. The batch operation is not found.
+    errors.GetBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetBatchOperationResponse200 | GetBatchOperationResponse400 | GetBatchOperationResponse404 | GetBatchOperationResponse500]"""
+    GetBatchOperationResponse200"""
         from .api.batch_operation.get_batch_operation import sync as get_batch_operation_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -1619,30 +1964,6 @@ Returns:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return get_batch_operation_sync(**_kwargs)
-
-
-    async def get_batch_operation_async(self, batch_operation_key: str, **kwargs: Any) -> GetBatchOperationResponse200:
-        """Get batch operation
-
- Get batch operation by key.
-
-Args:
-    batch_operation_key (str): System-generated key for an batch operation. Example:
-        2251799813684321.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetBatchOperationResponse200 | GetBatchOperationResponse400 | GetBatchOperationResponse404 | GetBatchOperationResponse500]"""
-        from .api.batch_operation.get_batch_operation import asyncio as get_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_batch_operation_asyncio(**_kwargs)
 
 
     def search_batch_operation_items(self, *, data: SearchBatchOperationItemsData | Unset = UNSET, **kwargs: Any) -> SearchBatchOperationItemsResponse200:
@@ -1654,11 +1975,12 @@ Args:
     body (SearchBatchOperationItemsData | Unset): Batch operation item search request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchBatchOperationItemsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchBatchOperationItemsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchBatchOperationItemsResponse200 | SearchBatchOperationItemsResponse400 | SearchBatchOperationItemsResponse500]"""
+    SearchBatchOperationItemsResponse200"""
         from .api.batch_operation.search_batch_operation_items import sync as search_batch_operation_items_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -1668,419 +1990,869 @@ Returns:
         return search_batch_operation_items_sync(**_kwargs)
 
 
-    async def search_batch_operation_items_async(self, *, data: SearchBatchOperationItemsData | Unset = UNSET, **kwargs: Any) -> SearchBatchOperationItemsResponse200:
-        """Search batch operation items
+    def get_topology(self, **kwargs: Any) -> GetTopologyResponse200:
+        """Get cluster topology
 
- Search for batch operation items based on given criteria.
-
-Args:
-    body (SearchBatchOperationItemsData | Unset): Batch operation item search request.
+ Obtains the current topology of the cluster the gateway is part of.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetTopologyUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTopologyInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchBatchOperationItemsResponse200 | SearchBatchOperationItemsResponse400 | SearchBatchOperationItemsResponse500]"""
-        from .api.batch_operation.search_batch_operation_items import asyncio as search_batch_operation_items_asyncio
+    GetTopologyResponse200"""
+        from .api.cluster.get_topology import sync as get_topology_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_batch_operation_items_asyncio(**_kwargs)
+        return get_topology_sync(**_kwargs)
 
 
-    def get_start_process_form(self, process_definition_key: str, **kwargs: Any) -> Any:
-        """Get process start form
+    def unassign_role_from_group(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
+        """Unassign a role from a group
 
- Get the start form of a process.
-Note that this endpoint will only return linked forms. This endpoint does not support embedded
-forms.
+ Unassigns the specified role from the group. All group members (user or client) no longer inherit
+the authorizations associated with this role.
 
 Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
+    role_id (str):
+    group_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnassignRoleFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromGroupNotFound: If the response status code is 404. The role or group with the given ID was not found.
+    errors.UnassignRoleFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | GetStartProcessFormResponse200 | GetStartProcessFormResponse400 | GetStartProcessFormResponse401 | GetStartProcessFormResponse403 | GetStartProcessFormResponse404 | GetStartProcessFormResponse500]"""
-        from .api.process_definition.get_start_process_form import sync as get_start_process_form_sync
+    Any"""
+        from .api.role.unassign_role_from_group import sync as unassign_role_from_group_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_start_process_form_sync(**_kwargs)
+        return unassign_role_from_group_sync(**_kwargs)
 
 
-    async def get_start_process_form_async(self, process_definition_key: str, **kwargs: Any) -> Any:
-        """Get process start form
+    def search_users_for_role(self, role_id: str, *, data: SearchUsersForRoleData | Unset = UNSET, **kwargs: Any) -> SearchUsersForRoleResponse200:
+        """Search role users
 
- Get the start form of a process.
-Note that this endpoint will only return linked forms. This endpoint does not support embedded
-forms.
+ Search users with assigned role.
 
 Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
+    role_id (str):
+    body (SearchUsersForRoleData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchUsersForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchUsersForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | GetStartProcessFormResponse200 | GetStartProcessFormResponse400 | GetStartProcessFormResponse401 | GetStartProcessFormResponse403 | GetStartProcessFormResponse404 | GetStartProcessFormResponse500]"""
-        from .api.process_definition.get_start_process_form import asyncio as get_start_process_form_asyncio
+    SearchUsersForRoleResponse200"""
+        from .api.role.search_users_for_role import sync as search_users_for_role_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_start_process_form_asyncio(**_kwargs)
+        return search_users_for_role_sync(**_kwargs)
 
 
-    def search_process_definitions(self, *, data: SearchProcessDefinitionsData | Unset = UNSET, **kwargs: Any) -> SearchProcessDefinitionsResponse200:
-        """Search process definitions
+    def unassign_role_from_mapping_rule(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Unassign a role from a mapping rule
 
- Search for process definitions based on given criteria.
+ Unassigns a role from a mapping rule.
 
 Args:
-    body (SearchProcessDefinitionsData | Unset):
+    role_id (str):
+    mapping_rule_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnassignRoleFromMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromMappingRuleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromMappingRuleNotFound: If the response status code is 404. The role or mapping rule with the given ID was not found.
+    errors.UnassignRoleFromMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchProcessDefinitionsResponse200 | SearchProcessDefinitionsResponse400 | SearchProcessDefinitionsResponse401 | SearchProcessDefinitionsResponse403 | SearchProcessDefinitionsResponse500]"""
-        from .api.process_definition.search_process_definitions import sync as search_process_definitions_sync
+    Any"""
+        from .api.role.unassign_role_from_mapping_rule import sync as unassign_role_from_mapping_rule_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return search_process_definitions_sync(**_kwargs)
+        return unassign_role_from_mapping_rule_sync(**_kwargs)
 
 
-    async def search_process_definitions_async(self, *, data: SearchProcessDefinitionsData | Unset = UNSET, **kwargs: Any) -> SearchProcessDefinitionsResponse200:
-        """Search process definitions
+    def search_roles(self, *, data: SearchRolesData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Search roles
 
- Search for process definitions based on given criteria.
+ Search for roles based on given criteria.
 
 Args:
-    body (SearchProcessDefinitionsData | Unset):
+    body (SearchRolesData | Unset): Role search request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchRolesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchRolesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchRolesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchRolesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchProcessDefinitionsResponse200 | SearchProcessDefinitionsResponse400 | SearchProcessDefinitionsResponse401 | SearchProcessDefinitionsResponse403 | SearchProcessDefinitionsResponse500]"""
-        from .api.process_definition.search_process_definitions import asyncio as search_process_definitions_asyncio
+    Any"""
+        from .api.role.search_roles import sync as search_roles_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_process_definitions_asyncio(**_kwargs)
+        return search_roles_sync(**_kwargs)
 
 
-    def get_process_definition_statistics(self, process_definition_key: str, *, data: GetProcessDefinitionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionStatisticsResponse200:
-        """Get process definition statistics
+    def unassign_role_from_client(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Unassign a role from a client
 
- Get statistics about elements in currently running process instances by process definition key and
-search filter.
+ Unassigns the specified role from the client. The client will no longer inherit the authorizations
+associated with this role.
 
 Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
-    body (GetProcessDefinitionStatisticsData | Unset): Process definition element statistics
-        request.
+    role_id (str):
+    client_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnassignRoleFromClientBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromClientForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromClientNotFound: If the response status code is 404. The role or client with the given ID or username was not found.
+    errors.UnassignRoleFromClientInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromClientServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessDefinitionStatisticsResponse200 | GetProcessDefinitionStatisticsResponse400 | GetProcessDefinitionStatisticsResponse401 | GetProcessDefinitionStatisticsResponse403 | GetProcessDefinitionStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_statistics import sync as get_process_definition_statistics_sync
+    Any"""
+        from .api.role.unassign_role_from_client import sync as unassign_role_from_client_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_process_definition_statistics_sync(**_kwargs)
+        return unassign_role_from_client_sync(**_kwargs)
 
 
-    async def get_process_definition_statistics_async(self, process_definition_key: str, *, data: GetProcessDefinitionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionStatisticsResponse200:
-        """Get process definition statistics
+    def unassign_role_from_user(self, role_id: str, username: str, **kwargs: Any) -> Any:
+        """Unassign a role from a user
 
- Get statistics about elements in currently running process instances by process definition key and
-search filter.
+ Unassigns a role from a user. The user will no longer inherit the authorizations associated with
+this role.
 
 Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
-    body (GetProcessDefinitionStatisticsData | Unset): Process definition element statistics
-        request.
+    role_id (str):
+    username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnassignRoleFromUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromUserNotFound: If the response status code is 404. The role or user with the given ID or username was not found.
+    errors.UnassignRoleFromUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessDefinitionStatisticsResponse200 | GetProcessDefinitionStatisticsResponse400 | GetProcessDefinitionStatisticsResponse401 | GetProcessDefinitionStatisticsResponse403 | GetProcessDefinitionStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_statistics import asyncio as get_process_definition_statistics_asyncio
+    Any"""
+        from .api.role.unassign_role_from_user import sync as unassign_role_from_user_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_definition_statistics_asyncio(**_kwargs)
+        return unassign_role_from_user_sync(**_kwargs)
 
 
-    def get_process_definition_message_subscription_statistics(self, *, data: GetProcessDefinitionMessageSubscriptionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionMessageSubscriptionStatisticsResponse200:
-        """Get message subscription statistics
+    def create_role(self, *, data: CreateRoleData | Unset = UNSET, **kwargs: Any) -> CreateRoleResponse201:
+        """Create role
 
- Get message subscription statistics, grouped by process definition.
+ Create a new role.
 
 Args:
-    body (GetProcessDefinitionMessageSubscriptionStatisticsData | Unset):
+    body (CreateRoleData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateRoleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessDefinitionMessageSubscriptionStatisticsResponse200 | GetProcessDefinitionMessageSubscriptionStatisticsResponse400 | GetProcessDefinitionMessageSubscriptionStatisticsResponse401 | GetProcessDefinitionMessageSubscriptionStatisticsResponse403 | GetProcessDefinitionMessageSubscriptionStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_message_subscription_statistics import sync as get_process_definition_message_subscription_statistics_sync
+    CreateRoleResponse201"""
+        from .api.role.create_role import sync as create_role_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_process_definition_message_subscription_statistics_sync(**_kwargs)
+        return create_role_sync(**_kwargs)
 
 
-    async def get_process_definition_message_subscription_statistics_async(self, *, data: GetProcessDefinitionMessageSubscriptionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionMessageSubscriptionStatisticsResponse200:
-        """Get message subscription statistics
+    def search_clients_for_role(self, role_id: str, *, data: SearchClientsForRoleData | Unset = UNSET, **kwargs: Any) -> SearchClientsForRoleResponse200:
+        """Search role clients
 
- Get message subscription statistics, grouped by process definition.
+ Search clients with assigned role.
 
 Args:
-    body (GetProcessDefinitionMessageSubscriptionStatisticsData | Unset):
+    role_id (str):
+    body (SearchClientsForRoleData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchClientsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchClientsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchClientsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchClientsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchClientsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessDefinitionMessageSubscriptionStatisticsResponse200 | GetProcessDefinitionMessageSubscriptionStatisticsResponse400 | GetProcessDefinitionMessageSubscriptionStatisticsResponse401 | GetProcessDefinitionMessageSubscriptionStatisticsResponse403 | GetProcessDefinitionMessageSubscriptionStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_message_subscription_statistics import asyncio as get_process_definition_message_subscription_statistics_asyncio
+    SearchClientsForRoleResponse200"""
+        from .api.role.search_clients_for_role import sync as search_clients_for_role_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_definition_message_subscription_statistics_asyncio(**_kwargs)
+        return search_clients_for_role_sync(**_kwargs)
 
 
-    def get_process_definition_instance_statistics(self, *, data: GetProcessDefinitionInstanceStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionInstanceStatisticsResponse200:
-        """Get process instance statistics
+    def assign_role_to_user(self, role_id: str, username: str, **kwargs: Any) -> Any:
+        """Assign a role to a user
 
- Get statistics about process instances, grouped by process definition and tenant.
+ Assigns the specified role to the user. The user will inherit the authorizations associated with
+this role.
 
 Args:
-    body (GetProcessDefinitionInstanceStatisticsData | Unset):
+    role_id (str):
+    username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.AssignRoleToUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToUserNotFound: If the response status code is 404. The role or user with the given ID or username was not found.
+    errors.AssignRoleToUserConflict: If the response status code is 409. The role is already assigned to the user with the given ID.
+    errors.AssignRoleToUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessDefinitionInstanceStatisticsResponse200 | GetProcessDefinitionInstanceStatisticsResponse400 | GetProcessDefinitionInstanceStatisticsResponse401 | GetProcessDefinitionInstanceStatisticsResponse403 | GetProcessDefinitionInstanceStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_instance_statistics import sync as get_process_definition_instance_statistics_sync
+    Any"""
+        from .api.role.assign_role_to_user import sync as assign_role_to_user_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_process_definition_instance_statistics_sync(**_kwargs)
+        return assign_role_to_user_sync(**_kwargs)
 
 
-    async def get_process_definition_instance_statistics_async(self, *, data: GetProcessDefinitionInstanceStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionInstanceStatisticsResponse200:
-        """Get process instance statistics
+    def search_groups_for_role(self, role_id: str, *, data: SearchGroupsForRoleData | Unset = UNSET, **kwargs: Any) -> SearchGroupsForRoleResponse200:
+        """Search role groups
 
- Get statistics about process instances, grouped by process definition and tenant.
+ Search groups with assigned role.
 
 Args:
-    body (GetProcessDefinitionInstanceStatisticsData | Unset):
+    role_id (str):
+    body (SearchGroupsForRoleData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchGroupsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchGroupsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchGroupsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchGroupsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchGroupsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessDefinitionInstanceStatisticsResponse200 | GetProcessDefinitionInstanceStatisticsResponse400 | GetProcessDefinitionInstanceStatisticsResponse401 | GetProcessDefinitionInstanceStatisticsResponse403 | GetProcessDefinitionInstanceStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_instance_statistics import asyncio as get_process_definition_instance_statistics_asyncio
+    SearchGroupsForRoleResponse200"""
+        from .api.role.search_groups_for_role import sync as search_groups_for_role_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_definition_instance_statistics_asyncio(**_kwargs)
+        return search_groups_for_role_sync(**_kwargs)
 
 
-    def get_process_definition(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionResponse200:
-        """Get process definition
+    def update_role(self, role_id: str, *, data: UpdateRoleData, **kwargs: Any) -> UpdateRoleResponse200:
+        """Update role
 
- Returns process definition as JSON.
+ Update a role with the given ID.
 
 Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
+    role_id (str):
+    body (UpdateRoleData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UpdateRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateRoleNotFound: If the response status code is 404. The role with the ID is not found.
+    errors.UpdateRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateRoleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessDefinitionResponse200 | GetProcessDefinitionResponse400 | GetProcessDefinitionResponse401 | GetProcessDefinitionResponse403 | GetProcessDefinitionResponse404 | GetProcessDefinitionResponse500]"""
-        from .api.process_definition.get_process_definition import sync as get_process_definition_sync
+    UpdateRoleResponse200"""
+        from .api.role.update_role import sync as update_role_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_process_definition_sync(**_kwargs)
+        return update_role_sync(**_kwargs)
 
 
-    async def get_process_definition_async(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionResponse200:
-        """Get process definition
+    def assign_role_to_group(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
+        """Assign a role to a group
 
- Returns process definition as JSON.
+ Assigns the specified role to the group. Every member of the group (user or client) will inherit the
+authorizations associated with this role.
 
 Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
+    role_id (str):
+    group_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.AssignRoleToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToGroupNotFound: If the response status code is 404. The role or group with the given ID was not found.
+    errors.AssignRoleToGroupConflict: If the response status code is 409. The role is already assigned to the group with the given ID.
+    errors.AssignRoleToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessDefinitionResponse200 | GetProcessDefinitionResponse400 | GetProcessDefinitionResponse401 | GetProcessDefinitionResponse403 | GetProcessDefinitionResponse404 | GetProcessDefinitionResponse500]"""
-        from .api.process_definition.get_process_definition import asyncio as get_process_definition_asyncio
+    Any"""
+        from .api.role.assign_role_to_group import sync as assign_role_to_group_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_definition_asyncio(**_kwargs)
+        return assign_role_to_group_sync(**_kwargs)
 
 
-    def get_process_definition_instance_version_statistics(self, process_definition_id: str, *, data: GetProcessDefinitionInstanceVersionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
-        """Get process instance statistics by version
+    def search_mapping_rules_for_role(self, role_id: str, *, data: SearchMappingRulesForRoleData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForRoleResponse200:
+        """Search role mapping rules
 
- Get statistics about process instances, grouped by version for a given process definition.
+ Search mapping rules with assigned role.
 
 Args:
-    process_definition_id (str): Id of a process definition, from the model. Only ids of
-        process definitions that are deployed are useful. Example: new-account-onboarding-
-        workflow.
-    body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
+    role_id (str):
+    body (SearchMappingRulesForRoleData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchMappingRulesForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMappingRulesForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMappingRulesForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMappingRulesForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchMappingRulesForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessDefinitionInstanceVersionStatisticsResponse200 | GetProcessDefinitionInstanceVersionStatisticsResponse400 | GetProcessDefinitionInstanceVersionStatisticsResponse401 | GetProcessDefinitionInstanceVersionStatisticsResponse403 | GetProcessDefinitionInstanceVersionStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_instance_version_statistics import sync as get_process_definition_instance_version_statistics_sync
+    SearchMappingRulesForRoleResponse200"""
+        from .api.role.search_mapping_rules_for_role import sync as search_mapping_rules_for_role_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_process_definition_instance_version_statistics_sync(**_kwargs)
+        return search_mapping_rules_for_role_sync(**_kwargs)
 
 
-    async def get_process_definition_instance_version_statistics_async(self, process_definition_id: str, *, data: GetProcessDefinitionInstanceVersionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
-        """Get process instance statistics by version
+    def assign_role_to_client(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Assign a role to a client
 
- Get statistics about process instances, grouped by version for a given process definition.
+ Assigns the specified role to the client. The client will inherit the authorizations associated with
+this role.
 
 Args:
-    process_definition_id (str): Id of a process definition, from the model. Only ids of
-        process definitions that are deployed are useful. Example: new-account-onboarding-
-        workflow.
-    body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
+    role_id (str):
+    client_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.AssignRoleToClientBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToClientForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToClientNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.AssignRoleToClientConflict: If the response status code is 409. The role was already assigned to the client with the given ID.
+    errors.AssignRoleToClientInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToClientServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessDefinitionInstanceVersionStatisticsResponse200 | GetProcessDefinitionInstanceVersionStatisticsResponse400 | GetProcessDefinitionInstanceVersionStatisticsResponse401 | GetProcessDefinitionInstanceVersionStatisticsResponse403 | GetProcessDefinitionInstanceVersionStatisticsResponse500]"""
-        from .api.process_definition.get_process_definition_instance_version_statistics import asyncio as get_process_definition_instance_version_statistics_asyncio
+    Any"""
+        from .api.role.assign_role_to_client import sync as assign_role_to_client_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_definition_instance_version_statistics_asyncio(**_kwargs)
+        return assign_role_to_client_sync(**_kwargs)
 
 
-    def get_process_definition_xml(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionXMLResponse400:
-        """Get process definition XML
+    def delete_role(self, role_id: str, **kwargs: Any) -> Any:
+        """Delete role
 
- Returns process definition as XML.
+ Deletes the role with the given ID.
 
 Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
+    role_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.DeleteRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteRoleNotFound: If the response status code is 404. The role with the ID was not found.
+    errors.DeleteRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteRoleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessDefinitionXMLResponse400 | GetProcessDefinitionXMLResponse401 | GetProcessDefinitionXMLResponse403 | GetProcessDefinitionXMLResponse404 | GetProcessDefinitionXMLResponse500 | str]"""
-        from .api.process_definition.get_process_definition_xml import sync as get_process_definition_xml_sync
+    Any"""
+        from .api.role.delete_role import sync as delete_role_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_process_definition_xml_sync(**_kwargs)
+        return delete_role_sync(**_kwargs)
 
 
-    async def get_process_definition_xml_async(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionXMLResponse400:
-        """Get process definition XML
+    def assign_role_to_mapping_rule(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Assign a role to a mapping rule
 
- Returns process definition as XML.
+ Assigns a role to a mapping rule.
 
 Args:
-    process_definition_key (str): System-generated key for a deployed process definition.
-        Example: 2251799813686749.
+    role_id (str):
+    mapping_rule_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.AssignRoleToMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToMappingRuleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToMappingRuleNotFound: If the response status code is 404. The role or mapping rule with the given ID was not found.
+    errors.AssignRoleToMappingRuleConflict: If the response status code is 409. The role is already assigned to the mapping rule with the given ID.
+    errors.AssignRoleToMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetProcessDefinitionXMLResponse400 | GetProcessDefinitionXMLResponse401 | GetProcessDefinitionXMLResponse403 | GetProcessDefinitionXMLResponse404 | GetProcessDefinitionXMLResponse500 | str]"""
-        from .api.process_definition.get_process_definition_xml import asyncio as get_process_definition_xml_asyncio
+    Any"""
+        from .api.role.assign_role_to_mapping_rule import sync as assign_role_to_mapping_rule_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_definition_xml_asyncio(**_kwargs)
+        return assign_role_to_mapping_rule_sync(**_kwargs)
+
+
+    def get_role(self, role_id: str, **kwargs: Any) -> GetRoleResponse200:
+        """Get role
+
+ Get a role by its ID.
+
+Args:
+    role_id (str):
+
+Raises:
+    errors.GetRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.GetRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetRoleResponse200"""
+        from .api.role.get_role import sync as get_role_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_role_sync(**_kwargs)
+
+
+    def evaluate_conditionals(self, *, data: EvaluateConditionalsData, **kwargs: Any) -> EvaluateConditionalsResponse200:
+        """Evaluate root level conditional start events
+
+ Evaluates root-level conditional start events for process definitions.
+If the evaluation is successful, it will return the keys of all created process instances, along
+with their associated process definition key.
+Multiple root-level conditional start events of the same process definition can trigger if their
+conditions evaluate to true.
+
+Args:
+    body (EvaluateConditionalsData):
+
+Raises:
+    errors.EvaluateConditionalsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.EvaluateConditionalsForbidden: If the response status code is 403. The client is not authorized to start process instances for the specified process definition. If a processDefinitionKey is not provided, this indicates that the client is not authorized to start process instances for at least one of the matched process definitions.
+    errors.EvaluateConditionalsNotFound: If the response status code is 404. The process definition was not found for the given processDefinitionKey.
+    errors.EvaluateConditionalsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.EvaluateConditionalsServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    EvaluateConditionalsResponse200"""
+        from .api.conditional.evaluate_conditionals import sync as evaluate_conditionals_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return evaluate_conditionals_sync(**_kwargs)
+
+
+    def get_license(self, **kwargs: Any) -> GetLicenseResponse200:
+        """Get license status
+
+ Obtains the status of the current Camunda license.
+
+Raises:
+    errors.GetLicenseInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetLicenseResponse200"""
+        from .api.license_.get_license import sync as get_license_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_license_sync(**_kwargs)
+
+
+    def search_decision_instances(self, *, data: SearchDecisionInstancesData | Unset = UNSET, **kwargs: Any) -> SearchDecisionInstancesResponse200:
+        """Search decision instances
+
+ Search for decision instances based on given criteria.
+
+Args:
+    body (SearchDecisionInstancesData | Unset):
+
+Raises:
+    errors.SearchDecisionInstancesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchDecisionInstancesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchDecisionInstancesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchDecisionInstancesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchDecisionInstancesResponse200"""
+        from .api.decision_instance.search_decision_instances import sync as search_decision_instances_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_decision_instances_sync(**_kwargs)
+
+
+    def get_decision_instance(self, decision_evaluation_instance_key: str, **kwargs: Any) -> GetDecisionInstanceResponse200:
+        """Get decision instance
+
+ Returns a decision instance.
+
+Args:
+    decision_evaluation_instance_key (str): System-generated key for a deployed decision
+        instance. Example: 22517998136843567.
+
+Raises:
+    errors.GetDecisionInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionInstanceNotFound: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetDecisionInstanceResponse200"""
+        from .api.decision_instance.get_decision_instance import sync as get_decision_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_decision_instance_sync(**_kwargs)
+
+
+    def get_variable(self, variable_key: str, **kwargs: Any) -> GetVariableResponse200:
+        """Get variable
+
+ Get the variable by the variable key.
+
+Args:
+    variable_key (str): System-generated key for a variable. Example: 2251799813683287.
+
+Raises:
+    errors.GetVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetVariableNotFound: If the response status code is 404. Not found
+    errors.GetVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetVariableResponse200"""
+        from .api.variable.get_variable import sync as get_variable_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_variable_sync(**_kwargs)
+
+
+    def search_variables(self, *, data: SearchVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchVariablesResponse200:
+        """Search variables
+
+ Search for process and local variables based on given criteria. By default, long variable values in
+the response are truncated.
+
+Args:
+    truncate_values (bool | Unset):
+    body (SearchVariablesData | Unset): Variable search query request.
+
+Raises:
+    errors.SearchVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchVariablesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchVariablesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchVariablesResponse200"""
+        from .api.variable.search_variables import sync as search_variables_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_variables_sync(**_kwargs)
+
+
+    def get_tenant_cluster_variable(self, tenant_id: str, name: str, **kwargs: Any) -> GetTenantClusterVariableResponse200:
+        """Get a tenant-scoped cluster variable
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    name (str):
+
+Raises:
+    errors.GetTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetTenantClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.GetTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetTenantClusterVariableResponse200"""
+        from .api.cluster_variable.get_tenant_cluster_variable import sync as get_tenant_cluster_variable_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_tenant_cluster_variable_sync(**_kwargs)
+
+
+    def search_cluster_variables(self, *, data: SearchClusterVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchClusterVariablesResponse200:
+        """Search for cluster variables based on given criteria. By default, long variable values in the
+response are truncated.
+
+Args:
+    truncate_values (bool | Unset):
+    body (SearchClusterVariablesData | Unset): Cluster variable search query request.
+
+Raises:
+    errors.SearchClusterVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchClusterVariablesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchClusterVariablesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchClusterVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchClusterVariablesResponse200"""
+        from .api.cluster_variable.search_cluster_variables import sync as search_cluster_variables_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_cluster_variables_sync(**_kwargs)
+
+
+    def create_global_cluster_variable(self, *, data: CreateGlobalClusterVariableData, **kwargs: Any) -> CreateGlobalClusterVariableResponse200:
+        """Create a global-scoped cluster variable
+
+Args:
+    body (CreateGlobalClusterVariableData):
+
+Raises:
+    errors.CreateGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateGlobalClusterVariableResponse200"""
+        from .api.cluster_variable.create_global_cluster_variable import sync as create_global_cluster_variable_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_global_cluster_variable_sync(**_kwargs)
+
+
+    def delete_global_cluster_variable(self, name: str, **kwargs: Any) -> Any:
+        """Delete a global-scoped cluster variable
+
+Args:
+    name (str):
+
+Raises:
+    errors.DeleteGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.DeleteGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.cluster_variable.delete_global_cluster_variable import sync as delete_global_cluster_variable_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_global_cluster_variable_sync(**_kwargs)
+
+
+    def delete_tenant_cluster_variable(self, tenant_id: str, name: str, **kwargs: Any) -> Any:
+        """Delete a tenant-scoped cluster variable
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    name (str):
+
+Raises:
+    errors.DeleteTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteTenantClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.DeleteTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.cluster_variable.delete_tenant_cluster_variable import sync as delete_tenant_cluster_variable_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_tenant_cluster_variable_sync(**_kwargs)
+
+
+    def create_tenant_cluster_variable(self, tenant_id: str, *, data: CreateTenantClusterVariableData, **kwargs: Any) -> CreateTenantClusterVariableResponse200:
+        """Create a tenant-scoped cluster variable
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (CreateTenantClusterVariableData):
+
+Raises:
+    errors.CreateTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateTenantClusterVariableResponse200"""
+        from .api.cluster_variable.create_tenant_cluster_variable import sync as create_tenant_cluster_variable_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_tenant_cluster_variable_sync(**_kwargs)
+
+
+    def get_global_cluster_variable(self, name: str, **kwargs: Any) -> GetGlobalClusterVariableResponse200:
+        """Get a global-scoped cluster variable
+
+Args:
+    name (str):
+
+Raises:
+    errors.GetGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.GetGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetGlobalClusterVariableResponse200"""
+        from .api.cluster_variable.get_global_cluster_variable import sync as get_global_cluster_variable_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_global_cluster_variable_sync(**_kwargs)
+
+
+    def unassign_mapping_rule_from_group(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Unassign a mapping rule from a group
+
+ Unassigns a mapping rule from a group.
+
+Args:
+    group_id (str):
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnassignMappingRuleFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignMappingRuleFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignMappingRuleFromGroupNotFound: If the response status code is 404. The group or mapping rule with the given ID was not found, or the mapping rule is not assigned to this group.
+    errors.UnassignMappingRuleFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignMappingRuleFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.group.unassign_mapping_rule_from_group import sync as unassign_mapping_rule_from_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_mapping_rule_from_group_sync(**_kwargs)
 
 
     def search_roles_for_group(self, group_id: str, *, data: SearchRolesForGroupData | Unset = UNSET, **kwargs: Any) -> SearchRolesForGroupResponse200:
@@ -2093,11 +2865,15 @@ Args:
     body (SearchRolesForGroupData | Unset): Role search request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchRolesForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchRolesForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchRolesForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchRolesForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchRolesForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchRolesForGroupResponse200 | SearchRolesForGroupResponse400 | SearchRolesForGroupResponse401 | SearchRolesForGroupResponse403 | SearchRolesForGroupResponse404 | SearchRolesForGroupResponse500]"""
+    SearchRolesForGroupResponse200"""
         from .api.group.search_roles_for_group import sync as search_roles_for_group_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -2107,28 +2883,34 @@ Returns:
         return search_roles_for_group_sync(**_kwargs)
 
 
-    async def search_roles_for_group_async(self, group_id: str, *, data: SearchRolesForGroupData | Unset = UNSET, **kwargs: Any) -> SearchRolesForGroupResponse200:
-        """Search group roles
+    def assign_client_to_group(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Assign a client to a group
 
- Search roles assigned to a group.
+ Assigns a client to a group, making it a member of the group.
+Members of the group inherit the group authorizations, roles, and tenant assignments.
 
 Args:
     group_id (str):
-    body (SearchRolesForGroupData | Unset): Role search request.
+    client_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.AssignClientToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignClientToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignClientToGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.AssignClientToGroupConflict: If the response status code is 409. The client with the given ID is already assigned to the group.
+    errors.AssignClientToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignClientToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchRolesForGroupResponse200 | SearchRolesForGroupResponse400 | SearchRolesForGroupResponse401 | SearchRolesForGroupResponse403 | SearchRolesForGroupResponse404 | SearchRolesForGroupResponse500]"""
-        from .api.group.search_roles_for_group import asyncio as search_roles_for_group_asyncio
+    Any"""
+        from .api.group.assign_client_to_group import sync as assign_client_to_group_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_roles_for_group_asyncio(**_kwargs)
+        return assign_client_to_group_sync(**_kwargs)
 
 
     def unassign_user_from_group(self, group_id: str, username: str, **kwargs: Any) -> Any:
@@ -2143,11 +2925,15 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnassignUserFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignUserFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignUserFromGroupNotFound: If the response status code is 404. The group or user with the given ID was not found, or the user is not assigned to this group.
+    errors.UnassignUserFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignUserFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | UnassignUserFromGroupResponse400 | UnassignUserFromGroupResponse403 | UnassignUserFromGroupResponse404 | UnassignUserFromGroupResponse500 | UnassignUserFromGroupResponse503]"""
+    Any"""
         from .api.group.unassign_user_from_group import sync as unassign_user_from_group_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -2155,32 +2941,6 @@ Returns:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return unassign_user_from_group_sync(**_kwargs)
-
-
-    async def unassign_user_from_group_async(self, group_id: str, username: str, **kwargs: Any) -> Any:
-        """Unassign a user from a group
-
- Unassigns a user from a group.
-The user is removed as a group member, with associated authorizations, roles, and tenant assignments
-no longer applied.
-
-Args:
-    group_id (str):
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignUserFromGroupResponse400 | UnassignUserFromGroupResponse403 | UnassignUserFromGroupResponse404 | UnassignUserFromGroupResponse500 | UnassignUserFromGroupResponse503]"""
-        from .api.group.unassign_user_from_group import asyncio as unassign_user_from_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_user_from_group_asyncio(**_kwargs)
 
 
     def search_users_for_group(self, group_id: str, *, data: SearchUsersForGroupData | Unset = UNSET, **kwargs: Any) -> SearchUsersForGroupResponse200:
@@ -2193,11 +2953,15 @@ Args:
     body (SearchUsersForGroupData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchUsersForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchUsersForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchUsersForGroupResponse200 | SearchUsersForGroupResponse400 | SearchUsersForGroupResponse401 | SearchUsersForGroupResponse403 | SearchUsersForGroupResponse404 | SearchUsersForGroupResponse500]"""
+    SearchUsersForGroupResponse200"""
         from .api.group.search_users_for_group import sync as search_users_for_group_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -2207,28 +2971,30 @@ Returns:
         return search_users_for_group_sync(**_kwargs)
 
 
-    async def search_users_for_group_async(self, group_id: str, *, data: SearchUsersForGroupData | Unset = UNSET, **kwargs: Any) -> SearchUsersForGroupResponse200:
-        """Search group users
+    def get_group(self, group_id: str, **kwargs: Any) -> GetGroupResponse200:
+        """Get group
 
- Search users assigned to a group.
+ Get a group by its ID.
 
 Args:
     group_id (str):
-    body (SearchUsersForGroupData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.GetGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchUsersForGroupResponse200 | SearchUsersForGroupResponse400 | SearchUsersForGroupResponse401 | SearchUsersForGroupResponse403 | SearchUsersForGroupResponse404 | SearchUsersForGroupResponse500]"""
-        from .api.group.search_users_for_group import asyncio as search_users_for_group_asyncio
+    GetGroupResponse200"""
+        from .api.group.get_group import sync as get_group_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_users_for_group_asyncio(**_kwargs)
+        return get_group_sync(**_kwargs)
 
 
     def unassign_client_from_group(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
@@ -2243,11 +3009,15 @@ Args:
     client_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnassignClientFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignClientFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignClientFromGroupNotFound: If the response status code is 404. The group with the given ID was not found, or the client is not assigned to this group.
+    errors.UnassignClientFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignClientFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | UnassignClientFromGroupResponse400 | UnassignClientFromGroupResponse403 | UnassignClientFromGroupResponse404 | UnassignClientFromGroupResponse500 | UnassignClientFromGroupResponse503]"""
+    Any"""
         from .api.group.unassign_client_from_group import sync as unassign_client_from_group_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -2257,30 +3027,168 @@ Returns:
         return unassign_client_from_group_sync(**_kwargs)
 
 
-    async def unassign_client_from_group_async(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Unassign a client from a group
+    def update_group(self, group_id: str, *, data: UpdateGroupData, **kwargs: Any) -> UpdateGroupResponse200:
+        """Update group
 
- Unassigns a client from a group.
-The client is removed as a group member, with associated authorizations, roles, and tenant
-assignments no longer applied.
+ Update a group with the given ID.
 
 Args:
     group_id (str):
-    client_id (str):
+    body (UpdateGroupData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UpdateGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.UpdateGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | UnassignClientFromGroupResponse400 | UnassignClientFromGroupResponse403 | UnassignClientFromGroupResponse404 | UnassignClientFromGroupResponse500 | UnassignClientFromGroupResponse503]"""
-        from .api.group.unassign_client_from_group import asyncio as unassign_client_from_group_asyncio
+    UpdateGroupResponse200"""
+        from .api.group.update_group import sync as update_group_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_client_from_group_asyncio(**_kwargs)
+        return update_group_sync(**_kwargs)
+
+
+    def search_groups(self, *, data: SearchGroupsData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Search groups
+
+ Search for groups based on given criteria.
+
+Args:
+    body (SearchGroupsData | Unset): Group search request.
+
+Raises:
+    errors.SearchGroupsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchGroupsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchGroupsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchGroupsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.group.search_groups import sync as search_groups_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_groups_sync(**_kwargs)
+
+
+    def assign_mapping_rule_to_group(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Assign a mapping rule to a group
+
+ Assigns a mapping rule to a group.
+
+Args:
+    group_id (str):
+    mapping_rule_id (str):
+
+Raises:
+    errors.AssignMappingRuleToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignMappingRuleToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignMappingRuleToGroupNotFound: If the response status code is 404. The group or mapping rule with the given ID was not found.
+    errors.AssignMappingRuleToGroupConflict: If the response status code is 409. The mapping rule with the given ID is already assigned to the group.
+    errors.AssignMappingRuleToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignMappingRuleToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.group.assign_mapping_rule_to_group import sync as assign_mapping_rule_to_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_mapping_rule_to_group_sync(**_kwargs)
+
+
+    def search_mapping_rules_for_group(self, group_id: str, *, data: SearchMappingRulesForGroupData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForGroupResponse200:
+        """Search group mapping rules
+
+ Search mapping rules assigned to a group.
+
+Args:
+    group_id (str):
+    body (SearchMappingRulesForGroupData | Unset):
+
+Raises:
+    errors.SearchMappingRulesForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMappingRulesForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMappingRulesForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMappingRulesForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchMappingRulesForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchMappingRulesForGroupResponse200"""
+        from .api.group.search_mapping_rules_for_group import sync as search_mapping_rules_for_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_mapping_rules_for_group_sync(**_kwargs)
+
+
+    def create_group(self, *, data: CreateGroupData | Unset = UNSET, **kwargs: Any) -> CreateGroupResponse201:
+        """Create group
+
+ Create a new group.
+
+Args:
+    body (CreateGroupData | Unset):
+
+Raises:
+    errors.CreateGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateGroupResponse201"""
+        from .api.group.create_group import sync as create_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_group_sync(**_kwargs)
+
+
+    def delete_group(self, group_id: str, **kwargs: Any) -> Any:
+        """Delete group
+
+ Deletes the group with the given ID.
+
+Args:
+    group_id (str):
+
+Raises:
+    errors.DeleteGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.DeleteGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.group.delete_group import sync as delete_group_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_group_sync(**_kwargs)
 
 
     def assign_user_to_group(self, group_id: str, username: str, **kwargs: Any) -> Any:
@@ -2294,11 +3202,16 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.AssignUserToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignUserToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignUserToGroupNotFound: If the response status code is 404. The group or user with the given ID or username was not found.
+    errors.AssignUserToGroupConflict: If the response status code is 409. The user with the given ID is already assigned to the group.
+    errors.AssignUserToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignUserToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | AssignUserToGroupResponse400 | AssignUserToGroupResponse403 | AssignUserToGroupResponse404 | AssignUserToGroupResponse409 | AssignUserToGroupResponse500 | AssignUserToGroupResponse503]"""
+    Any"""
         from .api.group.assign_user_to_group import sync as assign_user_to_group_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -2306,31 +3219,6 @@ Returns:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return assign_user_to_group_sync(**_kwargs)
-
-
-    async def assign_user_to_group_async(self, group_id: str, username: str, **kwargs: Any) -> Any:
-        """Assign a user to a group
-
- Assigns a user to a group, making the user a member of the group.
-Group members inherit the group authorizations, roles, and tenant assignments.
-
-Args:
-    group_id (str):
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignUserToGroupResponse400 | AssignUserToGroupResponse403 | AssignUserToGroupResponse404 | AssignUserToGroupResponse409 | AssignUserToGroupResponse500 | AssignUserToGroupResponse503]"""
-        from .api.group.assign_user_to_group import asyncio as assign_user_to_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_user_to_group_asyncio(**_kwargs)
 
 
     def search_clients_for_group(self, group_id: str, *, data: SearchClientsForGroupData | Unset = UNSET, **kwargs: Any) -> SearchClientsForGroupResponse200:
@@ -2343,11 +3231,15 @@ Args:
     body (SearchClientsForGroupData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchClientsForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchClientsForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchClientsForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchClientsForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchClientsForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchClientsForGroupResponse200 | SearchClientsForGroupResponse400 | SearchClientsForGroupResponse401 | SearchClientsForGroupResponse403 | SearchClientsForGroupResponse404 | SearchClientsForGroupResponse500]"""
+    SearchClientsForGroupResponse200"""
         from .api.group.search_clients_for_group import sync as search_clients_for_group_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -2357,550 +3249,56 @@ Returns:
         return search_clients_for_group_sync(**_kwargs)
 
 
-    async def search_clients_for_group_async(self, group_id: str, *, data: SearchClientsForGroupData | Unset = UNSET, **kwargs: Any) -> SearchClientsForGroupResponse200:
-        """Search group clients
+    def search_correlated_message_subscriptions(self, *, data: SearchCorrelatedMessageSubscriptionsData | Unset = UNSET, **kwargs: Any) -> SearchCorrelatedMessageSubscriptionsResponse200:
+        """Search correlated message subscriptions
 
- Search clients assigned to a group.
+ Search correlated message subscriptions based on given criteria.
 
 Args:
-    group_id (str):
-    body (SearchClientsForGroupData | Unset):
+    body (SearchCorrelatedMessageSubscriptionsData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchCorrelatedMessageSubscriptionsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchCorrelatedMessageSubscriptionsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchCorrelatedMessageSubscriptionsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchCorrelatedMessageSubscriptionsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchClientsForGroupResponse200 | SearchClientsForGroupResponse400 | SearchClientsForGroupResponse401 | SearchClientsForGroupResponse403 | SearchClientsForGroupResponse404 | SearchClientsForGroupResponse500]"""
-        from .api.group.search_clients_for_group import asyncio as search_clients_for_group_asyncio
+    SearchCorrelatedMessageSubscriptionsResponse200"""
+        from .api.message_subscription.search_correlated_message_subscriptions import sync as search_correlated_message_subscriptions_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_clients_for_group_asyncio(**_kwargs)
+        return search_correlated_message_subscriptions_sync(**_kwargs)
 
 
-    def assign_mapping_rule_to_group(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Assign a mapping rule to a group
+    def search_message_subscriptions(self, *, data: SearchMessageSubscriptionsData | Unset = UNSET, **kwargs: Any) -> SearchMessageSubscriptionsResponse200:
+        """Search message subscriptions
 
- Assigns a mapping rule to a group.
+ Search for message subscriptions based on given criteria.
 
 Args:
-    group_id (str):
-    mapping_rule_id (str):
+    body (SearchMessageSubscriptionsData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchMessageSubscriptionsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMessageSubscriptionsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMessageSubscriptionsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMessageSubscriptionsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | AssignMappingRuleToGroupResponse400 | AssignMappingRuleToGroupResponse403 | AssignMappingRuleToGroupResponse404 | AssignMappingRuleToGroupResponse409 | AssignMappingRuleToGroupResponse500 | AssignMappingRuleToGroupResponse503]"""
-        from .api.group.assign_mapping_rule_to_group import sync as assign_mapping_rule_to_group_sync
+    SearchMessageSubscriptionsResponse200"""
+        from .api.message_subscription.search_message_subscriptions import sync as search_message_subscriptions_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return assign_mapping_rule_to_group_sync(**_kwargs)
-
-
-    async def assign_mapping_rule_to_group_async(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Assign a mapping rule to a group
-
- Assigns a mapping rule to a group.
-
-Args:
-    group_id (str):
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignMappingRuleToGroupResponse400 | AssignMappingRuleToGroupResponse403 | AssignMappingRuleToGroupResponse404 | AssignMappingRuleToGroupResponse409 | AssignMappingRuleToGroupResponse500 | AssignMappingRuleToGroupResponse503]"""
-        from .api.group.assign_mapping_rule_to_group import asyncio as assign_mapping_rule_to_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_mapping_rule_to_group_asyncio(**_kwargs)
-
-
-    def search_mapping_rules_for_group(self, group_id: str, *, data: SearchMappingRulesForGroupData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForGroupResponse200:
-        """Search group mapping rules
-
- Search mapping rules assigned to a group.
-
-Args:
-    group_id (str):
-    body (SearchMappingRulesForGroupData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMappingRulesForGroupResponse200 | SearchMappingRulesForGroupResponse400 | SearchMappingRulesForGroupResponse401 | SearchMappingRulesForGroupResponse403 | SearchMappingRulesForGroupResponse404 | SearchMappingRulesForGroupResponse500]"""
-        from .api.group.search_mapping_rules_for_group import sync as search_mapping_rules_for_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_mapping_rules_for_group_sync(**_kwargs)
-
-
-    async def search_mapping_rules_for_group_async(self, group_id: str, *, data: SearchMappingRulesForGroupData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForGroupResponse200:
-        """Search group mapping rules
-
- Search mapping rules assigned to a group.
-
-Args:
-    group_id (str):
-    body (SearchMappingRulesForGroupData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMappingRulesForGroupResponse200 | SearchMappingRulesForGroupResponse400 | SearchMappingRulesForGroupResponse401 | SearchMappingRulesForGroupResponse403 | SearchMappingRulesForGroupResponse404 | SearchMappingRulesForGroupResponse500]"""
-        from .api.group.search_mapping_rules_for_group import asyncio as search_mapping_rules_for_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_mapping_rules_for_group_asyncio(**_kwargs)
-
-
-    def search_groups(self, *, data: SearchGroupsData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Search groups
-
- Search for groups based on given criteria.
-
-Args:
-    body (SearchGroupsData | Unset): Group search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | SearchGroupsResponse200 | SearchGroupsResponse400 | SearchGroupsResponse401 | SearchGroupsResponse403]"""
-        from .api.group.search_groups import sync as search_groups_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_groups_sync(**_kwargs)
-
-
-    async def search_groups_async(self, *, data: SearchGroupsData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Search groups
-
- Search for groups based on given criteria.
-
-Args:
-    body (SearchGroupsData | Unset): Group search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | SearchGroupsResponse200 | SearchGroupsResponse400 | SearchGroupsResponse401 | SearchGroupsResponse403]"""
-        from .api.group.search_groups import asyncio as search_groups_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_groups_asyncio(**_kwargs)
-
-
-    def get_group(self, group_id: str, **kwargs: Any) -> GetGroupResponse200:
-        """Get group
-
- Get a group by its ID.
-
-Args:
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetGroupResponse200 | GetGroupResponse401 | GetGroupResponse403 | GetGroupResponse404 | GetGroupResponse500]"""
-        from .api.group.get_group import sync as get_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_group_sync(**_kwargs)
-
-
-    async def get_group_async(self, group_id: str, **kwargs: Any) -> GetGroupResponse200:
-        """Get group
-
- Get a group by its ID.
-
-Args:
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetGroupResponse200 | GetGroupResponse401 | GetGroupResponse403 | GetGroupResponse404 | GetGroupResponse500]"""
-        from .api.group.get_group import asyncio as get_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_group_asyncio(**_kwargs)
-
-
-    def delete_group(self, group_id: str, **kwargs: Any) -> Any:
-        """Delete group
-
- Deletes the group with the given ID.
-
-Args:
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteGroupResponse401 | DeleteGroupResponse404 | DeleteGroupResponse500 | DeleteGroupResponse503]"""
-        from .api.group.delete_group import sync as delete_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_group_sync(**_kwargs)
-
-
-    async def delete_group_async(self, group_id: str, **kwargs: Any) -> Any:
-        """Delete group
-
- Deletes the group with the given ID.
-
-Args:
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteGroupResponse401 | DeleteGroupResponse404 | DeleteGroupResponse500 | DeleteGroupResponse503]"""
-        from .api.group.delete_group import asyncio as delete_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_group_asyncio(**_kwargs)
-
-
-    def assign_client_to_group(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Assign a client to a group
-
- Assigns a client to a group, making it a member of the group.
-Members of the group inherit the group authorizations, roles, and tenant assignments.
-
-Args:
-    group_id (str):
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignClientToGroupResponse400 | AssignClientToGroupResponse403 | AssignClientToGroupResponse404 | AssignClientToGroupResponse409 | AssignClientToGroupResponse500 | AssignClientToGroupResponse503]"""
-        from .api.group.assign_client_to_group import sync as assign_client_to_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_client_to_group_sync(**_kwargs)
-
-
-    async def assign_client_to_group_async(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Assign a client to a group
-
- Assigns a client to a group, making it a member of the group.
-Members of the group inherit the group authorizations, roles, and tenant assignments.
-
-Args:
-    group_id (str):
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignClientToGroupResponse400 | AssignClientToGroupResponse403 | AssignClientToGroupResponse404 | AssignClientToGroupResponse409 | AssignClientToGroupResponse500 | AssignClientToGroupResponse503]"""
-        from .api.group.assign_client_to_group import asyncio as assign_client_to_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_client_to_group_asyncio(**_kwargs)
-
-
-    def update_group(self, group_id: str, *, data: UpdateGroupData, **kwargs: Any) -> UpdateGroupResponse200:
-        """Update group
-
- Update a group with the given ID.
-
-Args:
-    group_id (str):
-    body (UpdateGroupData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[UpdateGroupResponse200 | UpdateGroupResponse400 | UpdateGroupResponse401 | UpdateGroupResponse404 | UpdateGroupResponse500 | UpdateGroupResponse503]"""
-        from .api.group.update_group import sync as update_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return update_group_sync(**_kwargs)
-
-
-    async def update_group_async(self, group_id: str, *, data: UpdateGroupData, **kwargs: Any) -> UpdateGroupResponse200:
-        """Update group
-
- Update a group with the given ID.
-
-Args:
-    group_id (str):
-    body (UpdateGroupData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[UpdateGroupResponse200 | UpdateGroupResponse400 | UpdateGroupResponse401 | UpdateGroupResponse404 | UpdateGroupResponse500 | UpdateGroupResponse503]"""
-        from .api.group.update_group import asyncio as update_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await update_group_asyncio(**_kwargs)
-
-
-    def unassign_mapping_rule_from_group(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Unassign a mapping rule from a group
-
- Unassigns a mapping rule from a group.
-
-Args:
-    group_id (str):
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignMappingRuleFromGroupResponse400 | UnassignMappingRuleFromGroupResponse403 | UnassignMappingRuleFromGroupResponse404 | UnassignMappingRuleFromGroupResponse500 | UnassignMappingRuleFromGroupResponse503]"""
-        from .api.group.unassign_mapping_rule_from_group import sync as unassign_mapping_rule_from_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_mapping_rule_from_group_sync(**_kwargs)
-
-
-    async def unassign_mapping_rule_from_group_async(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Unassign a mapping rule from a group
-
- Unassigns a mapping rule from a group.
-
-Args:
-    group_id (str):
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignMappingRuleFromGroupResponse400 | UnassignMappingRuleFromGroupResponse403 | UnassignMappingRuleFromGroupResponse404 | UnassignMappingRuleFromGroupResponse500 | UnassignMappingRuleFromGroupResponse503]"""
-        from .api.group.unassign_mapping_rule_from_group import asyncio as unassign_mapping_rule_from_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_mapping_rule_from_group_asyncio(**_kwargs)
-
-
-    def create_group(self, *, data: CreateGroupData | Unset = UNSET, **kwargs: Any) -> CreateGroupResponse201:
-        """Create group
-
- Create a new group.
-
-Args:
-    body (CreateGroupData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateGroupResponse201 | CreateGroupResponse400 | CreateGroupResponse401 | CreateGroupResponse403 | CreateGroupResponse500 | CreateGroupResponse503]"""
-        from .api.group.create_group import sync as create_group_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_group_sync(**_kwargs)
-
-
-    async def create_group_async(self, *, data: CreateGroupData | Unset = UNSET, **kwargs: Any) -> CreateGroupResponse201:
-        """Create group
-
- Create a new group.
-
-Args:
-    body (CreateGroupData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateGroupResponse201 | CreateGroupResponse400 | CreateGroupResponse401 | CreateGroupResponse403 | CreateGroupResponse500 | CreateGroupResponse503]"""
-        from .api.group.create_group import asyncio as create_group_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_group_asyncio(**_kwargs)
-
-
-    def get_variable(self, variable_key: str, **kwargs: Any) -> GetVariableResponse200:
-        """Get variable
-
- Get the variable by the variable key.
-
-Args:
-    variable_key (str): System-generated key for a variable. Example: 2251799813683287.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetVariableResponse200 | GetVariableResponse400 | GetVariableResponse401 | GetVariableResponse403 | GetVariableResponse404 | GetVariableResponse500]"""
-        from .api.variable.get_variable import sync as get_variable_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_variable_sync(**_kwargs)
-
-
-    async def get_variable_async(self, variable_key: str, **kwargs: Any) -> GetVariableResponse200:
-        """Get variable
-
- Get the variable by the variable key.
-
-Args:
-    variable_key (str): System-generated key for a variable. Example: 2251799813683287.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetVariableResponse200 | GetVariableResponse400 | GetVariableResponse401 | GetVariableResponse403 | GetVariableResponse404 | GetVariableResponse500]"""
-        from .api.variable.get_variable import asyncio as get_variable_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_variable_asyncio(**_kwargs)
-
-
-    def search_variables(self, *, data: SearchVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchVariablesResponse200:
-        """Search variables
-
- Search for process and local variables based on given criteria. By default, long variable values in
-the response are truncated.
-
-Args:
-    truncate_values (bool | Unset):
-    body (SearchVariablesData | Unset): Variable search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchVariablesResponse200 | SearchVariablesResponse400 | SearchVariablesResponse401 | SearchVariablesResponse403 | SearchVariablesResponse500]"""
-        from .api.variable.search_variables import sync as search_variables_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_variables_sync(**_kwargs)
-
-
-    async def search_variables_async(self, *, data: SearchVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchVariablesResponse200:
-        """Search variables
-
- Search for process and local variables based on given criteria. By default, long variable values in
-the response are truncated.
-
-Args:
-    truncate_values (bool | Unset):
-    body (SearchVariablesData | Unset): Variable search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchVariablesResponse200 | SearchVariablesResponse400 | SearchVariablesResponse401 | SearchVariablesResponse403 | SearchVariablesResponse500]"""
-        from .api.variable.search_variables import asyncio as search_variables_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_variables_asyncio(**_kwargs)
+        return search_message_subscriptions_sync(**_kwargs)
 
 
     def create_admin_user(self, *, data: CreateAdminUserData, **kwargs: Any) -> Any:
@@ -2913,11 +3311,14 @@ Args:
     body (CreateAdminUserData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateAdminUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateAdminUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateAdminUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateAdminUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | CreateAdminUserResponse400 | CreateAdminUserResponse403 | CreateAdminUserResponse500 | CreateAdminUserResponse503]"""
+    Any"""
         from .api.setup.create_admin_user import sync as create_admin_user_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -2925,502 +3326,6 @@ Returns:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return create_admin_user_sync(**_kwargs)
-
-
-    async def create_admin_user_async(self, *, data: CreateAdminUserData, **kwargs: Any) -> Any:
-        """Create admin user
-
- Creates a new user and assigns the admin role to it. This endpoint is only usable when users are
-managed in the Orchestration Cluster and while no user is assigned to the admin role.
-
-Args:
-    body (CreateAdminUserData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CreateAdminUserResponse400 | CreateAdminUserResponse403 | CreateAdminUserResponse500 | CreateAdminUserResponse503]"""
-        from .api.setup.create_admin_user import asyncio as create_admin_user_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_admin_user_asyncio(**_kwargs)
-
-
-    def get_decision_instance(self, decision_evaluation_instance_key: str, **kwargs: Any) -> GetDecisionInstanceResponse200:
-        """Get decision instance
-
- Returns a decision instance.
-
-Args:
-    decision_evaluation_instance_key (str): System-generated key for a deployed decision
-        instance. Example: 22517998136843567.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetDecisionInstanceResponse200 | GetDecisionInstanceResponse400 | GetDecisionInstanceResponse401 | GetDecisionInstanceResponse403 | GetDecisionInstanceResponse404 | GetDecisionInstanceResponse500]"""
-        from .api.decision_instance.get_decision_instance import sync as get_decision_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_decision_instance_sync(**_kwargs)
-
-
-    async def get_decision_instance_async(self, decision_evaluation_instance_key: str, **kwargs: Any) -> GetDecisionInstanceResponse200:
-        """Get decision instance
-
- Returns a decision instance.
-
-Args:
-    decision_evaluation_instance_key (str): System-generated key for a deployed decision
-        instance. Example: 22517998136843567.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetDecisionInstanceResponse200 | GetDecisionInstanceResponse400 | GetDecisionInstanceResponse401 | GetDecisionInstanceResponse403 | GetDecisionInstanceResponse404 | GetDecisionInstanceResponse500]"""
-        from .api.decision_instance.get_decision_instance import asyncio as get_decision_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_decision_instance_asyncio(**_kwargs)
-
-
-    def search_decision_instances(self, *, data: SearchDecisionInstancesData | Unset = UNSET, **kwargs: Any) -> SearchDecisionInstancesResponse200:
-        """Search decision instances
-
- Search for decision instances based on given criteria.
-
-Args:
-    body (SearchDecisionInstancesData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchDecisionInstancesResponse200 | SearchDecisionInstancesResponse400 | SearchDecisionInstancesResponse401 | SearchDecisionInstancesResponse403 | SearchDecisionInstancesResponse500]"""
-        from .api.decision_instance.search_decision_instances import sync as search_decision_instances_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_decision_instances_sync(**_kwargs)
-
-
-    async def search_decision_instances_async(self, *, data: SearchDecisionInstancesData | Unset = UNSET, **kwargs: Any) -> SearchDecisionInstancesResponse200:
-        """Search decision instances
-
- Search for decision instances based on given criteria.
-
-Args:
-    body (SearchDecisionInstancesData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchDecisionInstancesResponse200 | SearchDecisionInstancesResponse400 | SearchDecisionInstancesResponse401 | SearchDecisionInstancesResponse403 | SearchDecisionInstancesResponse500]"""
-        from .api.decision_instance.search_decision_instances import asyncio as search_decision_instances_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_decision_instances_asyncio(**_kwargs)
-
-
-    def activate_jobs(self, *, data: ActivateJobsData, **kwargs: Any) -> ActivateJobsResponse200:
-        """Activate jobs
-
- Iterate through all known partitions and activate jobs up to the requested maximum.
-
-Args:
-    body (ActivateJobsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ActivateJobsResponse200 | ActivateJobsResponse400 | ActivateJobsResponse401 | ActivateJobsResponse500 | ActivateJobsResponse503]"""
-        from .api.job.activate_jobs import sync as activate_jobs_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return activate_jobs_sync(**_kwargs)
-
-
-    async def activate_jobs_async(self, *, data: ActivateJobsData, **kwargs: Any) -> ActivateJobsResponse200:
-        """Activate jobs
-
- Iterate through all known partitions and activate jobs up to the requested maximum.
-
-Args:
-    body (ActivateJobsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ActivateJobsResponse200 | ActivateJobsResponse400 | ActivateJobsResponse401 | ActivateJobsResponse500 | ActivateJobsResponse503]"""
-        from .api.job.activate_jobs import asyncio as activate_jobs_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await activate_jobs_asyncio(**_kwargs)
-
-
-    def complete_job(self, job_key: str, *, data: CompleteJobData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Complete job
-
- Complete a job with the given payload, which allows completing the associated service task.
-
-Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (CompleteJobData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CompleteJobResponse400 | CompleteJobResponse404 | CompleteJobResponse409 | CompleteJobResponse500 | CompleteJobResponse503]"""
-        from .api.job.complete_job import sync as complete_job_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return complete_job_sync(**_kwargs)
-
-
-    async def complete_job_async(self, job_key: str, *, data: CompleteJobData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Complete job
-
- Complete a job with the given payload, which allows completing the associated service task.
-
-Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (CompleteJobData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CompleteJobResponse400 | CompleteJobResponse404 | CompleteJobResponse409 | CompleteJobResponse500 | CompleteJobResponse503]"""
-        from .api.job.complete_job import asyncio as complete_job_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await complete_job_asyncio(**_kwargs)
-
-
-    def fail_job(self, job_key: str, *, data: FailJobData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Fail job
-
- Mark the job as failed.
-
-Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (FailJobData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | FailJobResponse400 | FailJobResponse404 | FailJobResponse409 | FailJobResponse500 | FailJobResponse503]"""
-        from .api.job.fail_job import sync as fail_job_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return fail_job_sync(**_kwargs)
-
-
-    async def fail_job_async(self, job_key: str, *, data: FailJobData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Fail job
-
- Mark the job as failed.
-
-Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (FailJobData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | FailJobResponse400 | FailJobResponse404 | FailJobResponse409 | FailJobResponse500 | FailJobResponse503]"""
-        from .api.job.fail_job import asyncio as fail_job_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await fail_job_asyncio(**_kwargs)
-
-
-    def throw_job_error(self, job_key: str, *, data: ThrowJobErrorData, **kwargs: Any) -> Any:
-        """Throw error for job
-
- Reports a business error (i.e. non-technical) that occurs while processing a job.
-
-Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (ThrowJobErrorData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ThrowJobErrorResponse400 | ThrowJobErrorResponse404 | ThrowJobErrorResponse409 | ThrowJobErrorResponse500 | ThrowJobErrorResponse503]"""
-        from .api.job.throw_job_error import sync as throw_job_error_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return throw_job_error_sync(**_kwargs)
-
-
-    async def throw_job_error_async(self, job_key: str, *, data: ThrowJobErrorData, **kwargs: Any) -> Any:
-        """Throw error for job
-
- Reports a business error (i.e. non-technical) that occurs while processing a job.
-
-Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (ThrowJobErrorData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ThrowJobErrorResponse400 | ThrowJobErrorResponse404 | ThrowJobErrorResponse409 | ThrowJobErrorResponse500 | ThrowJobErrorResponse503]"""
-        from .api.job.throw_job_error import asyncio as throw_job_error_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await throw_job_error_asyncio(**_kwargs)
-
-
-    def update_job(self, job_key: str, *, data: UpdateJobData, **kwargs: Any) -> Any:
-        """Update job
-
- Update a job with the given key.
-
-Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (UpdateJobData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UpdateJobResponse400 | UpdateJobResponse404 | UpdateJobResponse409 | UpdateJobResponse500 | UpdateJobResponse503]"""
-        from .api.job.update_job import sync as update_job_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return update_job_sync(**_kwargs)
-
-
-    async def update_job_async(self, job_key: str, *, data: UpdateJobData, **kwargs: Any) -> Any:
-        """Update job
-
- Update a job with the given key.
-
-Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (UpdateJobData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UpdateJobResponse400 | UpdateJobResponse404 | UpdateJobResponse409 | UpdateJobResponse500 | UpdateJobResponse503]"""
-        from .api.job.update_job import asyncio as update_job_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await update_job_asyncio(**_kwargs)
-
-
-    def search_jobs(self, *, data: SearchJobsData | Unset = UNSET, **kwargs: Any) -> SearchJobsResponse200:
-        """Search jobs
-
- Search for jobs based on given criteria.
-
-Args:
-    body (SearchJobsData | Unset): Job search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchJobsResponse200 | SearchJobsResponse400 | SearchJobsResponse401 | SearchJobsResponse403 | SearchJobsResponse500]"""
-        from .api.job.search_jobs import sync as search_jobs_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_jobs_sync(**_kwargs)
-
-
-    async def search_jobs_async(self, *, data: SearchJobsData | Unset = UNSET, **kwargs: Any) -> SearchJobsResponse200:
-        """Search jobs
-
- Search for jobs based on given criteria.
-
-Args:
-    body (SearchJobsData | Unset): Job search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchJobsResponse200 | SearchJobsResponse400 | SearchJobsResponse401 | SearchJobsResponse403 | SearchJobsResponse500]"""
-        from .api.job.search_jobs import asyncio as search_jobs_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_jobs_asyncio(**_kwargs)
-
-
-    def get_topology(self, **kwargs: Any) -> GetTopologyResponse200:
-        """Get cluster topology
-
- Obtains the current topology of the cluster the gateway is part of.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]"""
-        from .api.cluster.get_topology import sync as get_topology_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_topology_sync(**_kwargs)
-
-
-    async def get_topology_async(self, **kwargs: Any) -> GetTopologyResponse200:
-        """Get cluster topology
-
- Obtains the current topology of the cluster the gateway is part of.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]"""
-        from .api.cluster.get_topology import asyncio as get_topology_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_topology_asyncio(**_kwargs)
-
-
-    def correlate_message(self, *, data: CorrelateMessageData, **kwargs: Any) -> CorrelateMessageResponse200:
-        """Correlate message
-
- Publishes a message and correlates it to a subscription.
-If correlation is successful it will return the first process instance key the message correlated
-with.
-The message is not buffered.
-Use the publish message endpoint to send messages that can be buffered.
-
-Args:
-    body (CorrelateMessageData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CorrelateMessageResponse200 | CorrelateMessageResponse400 | CorrelateMessageResponse403 | CorrelateMessageResponse404 | CorrelateMessageResponse500 | CorrelateMessageResponse503]"""
-        from .api.message.correlate_message import sync as correlate_message_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return correlate_message_sync(**_kwargs)
-
-
-    async def correlate_message_async(self, *, data: CorrelateMessageData, **kwargs: Any) -> CorrelateMessageResponse200:
-        """Correlate message
-
- Publishes a message and correlates it to a subscription.
-If correlation is successful it will return the first process instance key the message correlated
-with.
-The message is not buffered.
-Use the publish message endpoint to send messages that can be buffered.
-
-Args:
-    body (CorrelateMessageData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CorrelateMessageResponse200 | CorrelateMessageResponse400 | CorrelateMessageResponse403 | CorrelateMessageResponse404 | CorrelateMessageResponse500 | CorrelateMessageResponse503]"""
-        from .api.message.correlate_message import asyncio as correlate_message_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await correlate_message_asyncio(**_kwargs)
 
 
     def publish_message(self, *, data: PublishMessageData, **kwargs: Any) -> PublishMessageResponse200:
@@ -3436,11 +3341,13 @@ Args:
     body (PublishMessageData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.PublishMessageBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.PublishMessageInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.PublishMessageServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[PublishMessageResponse200 | PublishMessageResponse400 | PublishMessageResponse500 | PublishMessageResponse503]"""
+    PublishMessageResponse200"""
         from .api.message.publish_message import sync as publish_message_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -3450,2275 +3357,169 @@ Returns:
         return publish_message_sync(**_kwargs)
 
 
-    async def publish_message_async(self, *, data: PublishMessageData, **kwargs: Any) -> PublishMessageResponse200:
-        """Publish message
+    def correlate_message(self, *, data: CorrelateMessageData, **kwargs: Any) -> CorrelateMessageResponse200:
+        """Correlate message
 
- Publishes a single message.
-Messages are published to specific partitions computed from their correlation keys.
-Messages can be buffered.
-The endpoint does not wait for a correlation result.
-Use the message correlation endpoint for such use cases.
-
-Args:
-    body (PublishMessageData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[PublishMessageResponse200 | PublishMessageResponse400 | PublishMessageResponse500 | PublishMessageResponse503]"""
-        from .api.message.publish_message import asyncio as publish_message_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await publish_message_asyncio(**_kwargs)
-
-
-    def delete_process_instances_batch_operation(self, *, data: DeleteProcessInstancesBatchOperationData, **kwargs: Any) -> DeleteProcessInstancesBatchOperationResponse200:
-        """Delete process instances (batch)
-
- Delete multiple process instances. This will delete the historic data from secondary storage.
-Only process instances in a final state (COMPLETED or TERMINATED) can be deleted.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+ Publishes a message and correlates it to a subscription.
+If correlation is successful it will return the first process instance key the message correlated
+with.
+The message is not buffered.
+Use the publish message endpoint to send messages that can be buffered.
 
 Args:
-    body (DeleteProcessInstancesBatchOperationData): The process instance filter that defines
-        which process instances should be deleted.
+    body (CorrelateMessageData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CorrelateMessageBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CorrelateMessageForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CorrelateMessageNotFound: If the response status code is 404. Not found
+    errors.CorrelateMessageInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CorrelateMessageServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[DeleteProcessInstancesBatchOperationResponse200 | DeleteProcessInstancesBatchOperationResponse400 | DeleteProcessInstancesBatchOperationResponse401 | DeleteProcessInstancesBatchOperationResponse403 | DeleteProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.delete_process_instances_batch_operation import sync as delete_process_instances_batch_operation_sync
+    CorrelateMessageResponse200"""
+        from .api.message.correlate_message import sync as correlate_message_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return delete_process_instances_batch_operation_sync(**_kwargs)
+        return correlate_message_sync(**_kwargs)
 
 
-    async def delete_process_instances_batch_operation_async(self, *, data: DeleteProcessInstancesBatchOperationData, **kwargs: Any) -> DeleteProcessInstancesBatchOperationResponse200:
-        """Delete process instances (batch)
+    def create_user(self, *, data: CreateUserData, **kwargs: Any) -> CreateUserResponse201:
+        """Create user
 
- Delete multiple process instances. This will delete the historic data from secondary storage.
-Only process instances in a final state (COMPLETED or TERMINATED) can be deleted.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+ Create a new user.
 
 Args:
-    body (DeleteProcessInstancesBatchOperationData): The process instance filter that defines
-        which process instances should be deleted.
+    body (CreateUserData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateUserUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateUserConflict: If the response status code is 409. A user with this username already exists.
+    errors.CreateUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[DeleteProcessInstancesBatchOperationResponse200 | DeleteProcessInstancesBatchOperationResponse400 | DeleteProcessInstancesBatchOperationResponse401 | DeleteProcessInstancesBatchOperationResponse403 | DeleteProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.delete_process_instances_batch_operation import asyncio as delete_process_instances_batch_operation_asyncio
+    CreateUserResponse201"""
+        from .api.user.create_user import sync as create_user_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await delete_process_instances_batch_operation_asyncio(**_kwargs)
+        return create_user_sync(**_kwargs)
 
 
-    def migrate_process_instances_batch_operation(self, *, data: MigrateProcessInstancesBatchOperationData, **kwargs: Any) -> MigrateProcessInstancesBatchOperationResponse200:
-        """Migrate process instances (batch)
+    def search_users(self, *, data: SearchUsersData | Unset = UNSET, **kwargs: Any) -> SearchUsersResponse200:
+        """Search users
 
- Migrate multiple process instances.
-Since only process instances with ACTIVE state can be migrated, any given
-filters for state are ignored and overridden during this batch operation.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+ Search for users based on given criteria.
 
 Args:
-    body (MigrateProcessInstancesBatchOperationData):
+    body (SearchUsersData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchUsersBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[MigrateProcessInstancesBatchOperationResponse200 | MigrateProcessInstancesBatchOperationResponse400 | MigrateProcessInstancesBatchOperationResponse401 | MigrateProcessInstancesBatchOperationResponse403 | MigrateProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.migrate_process_instances_batch_operation import sync as migrate_process_instances_batch_operation_sync
+    SearchUsersResponse200"""
+        from .api.user.search_users import sync as search_users_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return migrate_process_instances_batch_operation_sync(**_kwargs)
+        return search_users_sync(**_kwargs)
 
 
-    async def migrate_process_instances_batch_operation_async(self, *, data: MigrateProcessInstancesBatchOperationData, **kwargs: Any) -> MigrateProcessInstancesBatchOperationResponse200:
-        """Migrate process instances (batch)
+    def delete_user(self, username: str, **kwargs: Any) -> Any:
+        """Delete user
 
- Migrate multiple process instances.
-Since only process instances with ACTIVE state can be migrated, any given
-filters for state are ignored and overridden during this batch operation.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+ Deletes a user.
 
 Args:
-    body (MigrateProcessInstancesBatchOperationData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[MigrateProcessInstancesBatchOperationResponse200 | MigrateProcessInstancesBatchOperationResponse400 | MigrateProcessInstancesBatchOperationResponse401 | MigrateProcessInstancesBatchOperationResponse403 | MigrateProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.migrate_process_instances_batch_operation import asyncio as migrate_process_instances_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await migrate_process_instances_batch_operation_asyncio(**_kwargs)
-
-
-    def modify_process_instances_batch_operation(self, *, data: ModifyProcessInstancesBatchOperationData, **kwargs: Any) -> ModifyProcessInstancesBatchOperationResponse200:
-        """Modify process instances (batch)
-
- Modify multiple process instances.
-Since only process instances with ACTIVE state can be modified, any given
-filters for state are ignored and overridden during this batch operation.
-In contrast to single modification operation, it is not possible to add variable instructions or
-modify by element key.
-It is only possible to use the element id of the source and target.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (ModifyProcessInstancesBatchOperationData): The process instance filter to define on
-        which process instances tokens should be moved,
-        and new element instances should be activated or terminated.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ModifyProcessInstancesBatchOperationResponse200 | ModifyProcessInstancesBatchOperationResponse400 | ModifyProcessInstancesBatchOperationResponse401 | ModifyProcessInstancesBatchOperationResponse403 | ModifyProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.modify_process_instances_batch_operation import sync as modify_process_instances_batch_operation_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return modify_process_instances_batch_operation_sync(**_kwargs)
-
-
-    async def modify_process_instances_batch_operation_async(self, *, data: ModifyProcessInstancesBatchOperationData, **kwargs: Any) -> ModifyProcessInstancesBatchOperationResponse200:
-        """Modify process instances (batch)
-
- Modify multiple process instances.
-Since only process instances with ACTIVE state can be modified, any given
-filters for state are ignored and overridden during this batch operation.
-In contrast to single modification operation, it is not possible to add variable instructions or
-modify by element key.
-It is only possible to use the element id of the source and target.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (ModifyProcessInstancesBatchOperationData): The process instance filter to define on
-        which process instances tokens should be moved,
-        and new element instances should be activated or terminated.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ModifyProcessInstancesBatchOperationResponse200 | ModifyProcessInstancesBatchOperationResponse400 | ModifyProcessInstancesBatchOperationResponse401 | ModifyProcessInstancesBatchOperationResponse403 | ModifyProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.modify_process_instances_batch_operation import asyncio as modify_process_instances_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await modify_process_instances_batch_operation_asyncio(**_kwargs)
-
-
-    def migrate_process_instance(self, process_instance_key: str, *, data: MigrateProcessInstanceData, **kwargs: Any) -> Any:
-        """Migrate process instance
-
- Migrates a process instance to a new process definition.
-This request can contain multiple mapping instructions to define mapping between the active
-process instance's elements and target process definition elements.
-
-Use this to upgrade a process instance to a new version of a process or to
-a different process definition, e.g. to keep your running instances up-to-date with the
-latest process improvements.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (MigrateProcessInstanceData): The migration instructions describe how to migrate a
-        process instance from one process definition to another.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | MigrateProcessInstanceResponse400 | MigrateProcessInstanceResponse404 | MigrateProcessInstanceResponse409 | MigrateProcessInstanceResponse500 | MigrateProcessInstanceResponse503]"""
-        from .api.process_instance.migrate_process_instance import sync as migrate_process_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return migrate_process_instance_sync(**_kwargs)
-
-
-    async def migrate_process_instance_async(self, process_instance_key: str, *, data: MigrateProcessInstanceData, **kwargs: Any) -> Any:
-        """Migrate process instance
-
- Migrates a process instance to a new process definition.
-This request can contain multiple mapping instructions to define mapping between the active
-process instance's elements and target process definition elements.
-
-Use this to upgrade a process instance to a new version of a process or to
-a different process definition, e.g. to keep your running instances up-to-date with the
-latest process improvements.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (MigrateProcessInstanceData): The migration instructions describe how to migrate a
-        process instance from one process definition to another.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | MigrateProcessInstanceResponse400 | MigrateProcessInstanceResponse404 | MigrateProcessInstanceResponse409 | MigrateProcessInstanceResponse500 | MigrateProcessInstanceResponse503]"""
-        from .api.process_instance.migrate_process_instance import asyncio as migrate_process_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await migrate_process_instance_asyncio(**_kwargs)
-
-
-    def resolve_process_instance_incidents(self, process_instance_key: str, **kwargs: Any) -> ResolveProcessInstanceIncidentsResponse200:
-        """Resolve related incidents
-
- Creates a batch operation to resolve multiple incidents of a process instance.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ResolveProcessInstanceIncidentsResponse200 | ResolveProcessInstanceIncidentsResponse400 | ResolveProcessInstanceIncidentsResponse401 | ResolveProcessInstanceIncidentsResponse404 | ResolveProcessInstanceIncidentsResponse500 | ResolveProcessInstanceIncidentsResponse503]"""
-        from .api.process_instance.resolve_process_instance_incidents import sync as resolve_process_instance_incidents_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return resolve_process_instance_incidents_sync(**_kwargs)
-
-
-    async def resolve_process_instance_incidents_async(self, process_instance_key: str, **kwargs: Any) -> ResolveProcessInstanceIncidentsResponse200:
-        """Resolve related incidents
-
- Creates a batch operation to resolve multiple incidents of a process instance.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ResolveProcessInstanceIncidentsResponse200 | ResolveProcessInstanceIncidentsResponse400 | ResolveProcessInstanceIncidentsResponse401 | ResolveProcessInstanceIncidentsResponse404 | ResolveProcessInstanceIncidentsResponse500 | ResolveProcessInstanceIncidentsResponse503]"""
-        from .api.process_instance.resolve_process_instance_incidents import asyncio as resolve_process_instance_incidents_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await resolve_process_instance_incidents_asyncio(**_kwargs)
-
-
-    def resolve_incidents_batch_operation(self, *, data: ResolveIncidentsBatchOperationData | Unset = UNSET, **kwargs: Any) -> ResolveIncidentsBatchOperationResponse200:
-        """Resolve related incidents (batch)
-
- Resolves multiple instances of process instances.
-Since only process instances with ACTIVE state can have unresolved incidents, any given
-filters for state are ignored and overridden during this batch operation.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (ResolveIncidentsBatchOperationData | Unset): The process instance filter that
-        defines which process instances should have their incidents resolved.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ResolveIncidentsBatchOperationResponse200 | ResolveIncidentsBatchOperationResponse400 | ResolveIncidentsBatchOperationResponse401 | ResolveIncidentsBatchOperationResponse403 | ResolveIncidentsBatchOperationResponse500]"""
-        from .api.process_instance.resolve_incidents_batch_operation import sync as resolve_incidents_batch_operation_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return resolve_incidents_batch_operation_sync(**_kwargs)
-
-
-    async def resolve_incidents_batch_operation_async(self, *, data: ResolveIncidentsBatchOperationData | Unset = UNSET, **kwargs: Any) -> ResolveIncidentsBatchOperationResponse200:
-        """Resolve related incidents (batch)
-
- Resolves multiple instances of process instances.
-Since only process instances with ACTIVE state can have unresolved incidents, any given
-filters for state are ignored and overridden during this batch operation.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (ResolveIncidentsBatchOperationData | Unset): The process instance filter that
-        defines which process instances should have their incidents resolved.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ResolveIncidentsBatchOperationResponse200 | ResolveIncidentsBatchOperationResponse400 | ResolveIncidentsBatchOperationResponse401 | ResolveIncidentsBatchOperationResponse403 | ResolveIncidentsBatchOperationResponse500]"""
-        from .api.process_instance.resolve_incidents_batch_operation import asyncio as resolve_incidents_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await resolve_incidents_batch_operation_asyncio(**_kwargs)
-
-
-    def create_process_instance(self, *, data: Processcreationbyid | Processcreationbykey, **kwargs: Any) -> CreateProcessInstanceResponse200:
-        """Create process instance
-
- Creates and starts an instance of the specified process.
-The process definition to use to create the instance can be specified either using its unique key
-(as returned by Deploy resources), or using the BPMN process id and a version.
-
-Waits for the completion of the process instance before returning a result
-when awaitCompletion is enabled.
-
-Args:
-    body (Processcreationbyid | Processcreationbykey): Instructions for creating a process
-        instance. The process definition can be specified
-        either by id or by key.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateProcessInstanceResponse200 | CreateProcessInstanceResponse400 | CreateProcessInstanceResponse500 | CreateProcessInstanceResponse503 | CreateProcessInstanceResponse504]"""
-        from .api.process_instance.create_process_instance import sync as create_process_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_process_instance_sync(**_kwargs)
-
-
-    async def create_process_instance_async(self, *, data: Processcreationbyid | Processcreationbykey, **kwargs: Any) -> CreateProcessInstanceResponse200:
-        """Create process instance
-
- Creates and starts an instance of the specified process.
-The process definition to use to create the instance can be specified either using its unique key
-(as returned by Deploy resources), or using the BPMN process id and a version.
-
-Waits for the completion of the process instance before returning a result
-when awaitCompletion is enabled.
-
-Args:
-    body (Processcreationbyid | Processcreationbykey): Instructions for creating a process
-        instance. The process definition can be specified
-        either by id or by key.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateProcessInstanceResponse200 | CreateProcessInstanceResponse400 | CreateProcessInstanceResponse500 | CreateProcessInstanceResponse503 | CreateProcessInstanceResponse504]"""
-        from .api.process_instance.create_process_instance import asyncio as create_process_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_process_instance_asyncio(**_kwargs)
-
-
-    def cancel_process_instance(self, process_instance_key: str, *, data: CancelProcessInstanceDataType0 | None | Unset = UNSET, **kwargs: Any) -> Any:
-        """Cancel process instance
-
- Cancels a running process instance. As a cancellation includes more than just the removal of the
-process instance resource, the cancellation resource must be posted.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (CancelProcessInstanceDataType0 | None | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]"""
-        from .api.process_instance.cancel_process_instance import sync as cancel_process_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return cancel_process_instance_sync(**_kwargs)
-
-
-    async def cancel_process_instance_async(self, process_instance_key: str, *, data: CancelProcessInstanceDataType0 | None | Unset = UNSET, **kwargs: Any) -> Any:
-        """Cancel process instance
-
- Cancels a running process instance. As a cancellation includes more than just the removal of the
-process instance resource, the cancellation resource must be posted.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (CancelProcessInstanceDataType0 | None | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]"""
-        from .api.process_instance.cancel_process_instance import asyncio as cancel_process_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await cancel_process_instance_asyncio(**_kwargs)
-
-
-    def get_process_instance_sequence_flows(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceSequenceFlowsResponse200:
-        """Get sequence flows
-
- Get sequence flows taken by the process instance.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceSequenceFlowsResponse200 | GetProcessInstanceSequenceFlowsResponse400 | GetProcessInstanceSequenceFlowsResponse401 | GetProcessInstanceSequenceFlowsResponse403 | GetProcessInstanceSequenceFlowsResponse500]"""
-        from .api.process_instance.get_process_instance_sequence_flows import sync as get_process_instance_sequence_flows_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_instance_sequence_flows_sync(**_kwargs)
-
-
-    async def get_process_instance_sequence_flows_async(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceSequenceFlowsResponse200:
-        """Get sequence flows
-
- Get sequence flows taken by the process instance.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceSequenceFlowsResponse200 | GetProcessInstanceSequenceFlowsResponse400 | GetProcessInstanceSequenceFlowsResponse401 | GetProcessInstanceSequenceFlowsResponse403 | GetProcessInstanceSequenceFlowsResponse500]"""
-        from .api.process_instance.get_process_instance_sequence_flows import asyncio as get_process_instance_sequence_flows_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_instance_sequence_flows_asyncio(**_kwargs)
-
-
-    def delete_process_instance(self, process_instance_key: str, *, data: DeleteProcessInstanceDataType0 | None | Unset = UNSET, **kwargs: Any) -> DeleteProcessInstanceResponse200:
-        """Delete process instance
-
- Deletes a process instance. Only instances that are completed or terminated can be deleted.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (DeleteProcessInstanceDataType0 | None | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[DeleteProcessInstanceResponse200 | DeleteProcessInstanceResponse401 | DeleteProcessInstanceResponse403 | DeleteProcessInstanceResponse404 | DeleteProcessInstanceResponse409 | DeleteProcessInstanceResponse500 | DeleteProcessInstanceResponse503]"""
-        from .api.process_instance.delete_process_instance import sync as delete_process_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_process_instance_sync(**_kwargs)
-
-
-    async def delete_process_instance_async(self, process_instance_key: str, *, data: DeleteProcessInstanceDataType0 | None | Unset = UNSET, **kwargs: Any) -> DeleteProcessInstanceResponse200:
-        """Delete process instance
-
- Deletes a process instance. Only instances that are completed or terminated can be deleted.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (DeleteProcessInstanceDataType0 | None | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[DeleteProcessInstanceResponse200 | DeleteProcessInstanceResponse401 | DeleteProcessInstanceResponse403 | DeleteProcessInstanceResponse404 | DeleteProcessInstanceResponse409 | DeleteProcessInstanceResponse500 | DeleteProcessInstanceResponse503]"""
-        from .api.process_instance.delete_process_instance import asyncio as delete_process_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_process_instance_asyncio(**_kwargs)
-
-
-    def search_process_instance_incidents(self, process_instance_key: str, *, data: SearchProcessInstanceIncidentsData | Unset = UNSET, **kwargs: Any) -> SearchProcessInstanceIncidentsResponse200:
-        """Search related incidents
-
- Search for incidents caused by the process instance or any of its called process or decision
-instances.
-
-Although the `processInstanceKey` is provided as a path parameter to indicate the root process
-instance,
-you may also include a `processInstanceKey` within the filter object to narrow results to specific
-child process instances. This is useful, for example, if you want to isolate incidents associated
-with
-subprocesses or called processes under the root instance while excluding incidents directly tied to
-the root.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (SearchProcessInstanceIncidentsData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchProcessInstanceIncidentsResponse200 | SearchProcessInstanceIncidentsResponse400 | SearchProcessInstanceIncidentsResponse401 | SearchProcessInstanceIncidentsResponse403 | SearchProcessInstanceIncidentsResponse404 | SearchProcessInstanceIncidentsResponse500]"""
-        from .api.process_instance.search_process_instance_incidents import sync as search_process_instance_incidents_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_process_instance_incidents_sync(**_kwargs)
-
-
-    async def search_process_instance_incidents_async(self, process_instance_key: str, *, data: SearchProcessInstanceIncidentsData | Unset = UNSET, **kwargs: Any) -> SearchProcessInstanceIncidentsResponse200:
-        """Search related incidents
-
- Search for incidents caused by the process instance or any of its called process or decision
-instances.
-
-Although the `processInstanceKey` is provided as a path parameter to indicate the root process
-instance,
-you may also include a `processInstanceKey` within the filter object to narrow results to specific
-child process instances. This is useful, for example, if you want to isolate incidents associated
-with
-subprocesses or called processes under the root instance while excluding incidents directly tied to
-the root.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (SearchProcessInstanceIncidentsData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchProcessInstanceIncidentsResponse200 | SearchProcessInstanceIncidentsResponse400 | SearchProcessInstanceIncidentsResponse401 | SearchProcessInstanceIncidentsResponse403 | SearchProcessInstanceIncidentsResponse404 | SearchProcessInstanceIncidentsResponse500]"""
-        from .api.process_instance.search_process_instance_incidents import asyncio as search_process_instance_incidents_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_process_instance_incidents_asyncio(**_kwargs)
-
-
-    def get_process_instance_statistics(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceStatisticsResponse200:
-        """Get element instance statistics
-
- Get statistics about elements by the process instance key.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceStatisticsResponse200 | GetProcessInstanceStatisticsResponse400 | GetProcessInstanceStatisticsResponse401 | GetProcessInstanceStatisticsResponse403 | GetProcessInstanceStatisticsResponse500]"""
-        from .api.process_instance.get_process_instance_statistics import sync as get_process_instance_statistics_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_instance_statistics_sync(**_kwargs)
-
-
-    async def get_process_instance_statistics_async(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceStatisticsResponse200:
-        """Get element instance statistics
-
- Get statistics about elements by the process instance key.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceStatisticsResponse200 | GetProcessInstanceStatisticsResponse400 | GetProcessInstanceStatisticsResponse401 | GetProcessInstanceStatisticsResponse403 | GetProcessInstanceStatisticsResponse500]"""
-        from .api.process_instance.get_process_instance_statistics import asyncio as get_process_instance_statistics_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_instance_statistics_asyncio(**_kwargs)
-
-
-    def search_process_instances(self, *, data: SearchProcessInstancesData | Unset = UNSET, **kwargs: Any) -> SearchProcessInstancesResponse200:
-        """Search process instances
-
- Search for process instances based on given criteria.
-
-Args:
-    body (SearchProcessInstancesData | Unset): Process instance search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchProcessInstancesResponse200 | SearchProcessInstancesResponse400 | SearchProcessInstancesResponse401 | SearchProcessInstancesResponse403 | SearchProcessInstancesResponse500]"""
-        from .api.process_instance.search_process_instances import sync as search_process_instances_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_process_instances_sync(**_kwargs)
-
-
-    async def search_process_instances_async(self, *, data: SearchProcessInstancesData | Unset = UNSET, **kwargs: Any) -> SearchProcessInstancesResponse200:
-        """Search process instances
-
- Search for process instances based on given criteria.
-
-Args:
-    body (SearchProcessInstancesData | Unset): Process instance search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchProcessInstancesResponse200 | SearchProcessInstancesResponse400 | SearchProcessInstancesResponse401 | SearchProcessInstancesResponse403 | SearchProcessInstancesResponse500]"""
-        from .api.process_instance.search_process_instances import asyncio as search_process_instances_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_process_instances_asyncio(**_kwargs)
-
-
-    def cancel_process_instances_batch_operation(self, *, data: CancelProcessInstancesBatchOperationData, **kwargs: Any) -> CancelProcessInstancesBatchOperationResponse200:
-        """Cancel process instances (batch)
-
- Cancels multiple running process instances.
-Since only ACTIVE root instances can be cancelled, any given filters for state and
-parentProcessInstanceKey are ignored and overridden during this batch operation.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (CancelProcessInstancesBatchOperationData): The process instance filter that defines
-        which process instances should be canceled.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CancelProcessInstancesBatchOperationResponse200 | CancelProcessInstancesBatchOperationResponse400 | CancelProcessInstancesBatchOperationResponse401 | CancelProcessInstancesBatchOperationResponse403 | CancelProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.cancel_process_instances_batch_operation import sync as cancel_process_instances_batch_operation_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return cancel_process_instances_batch_operation_sync(**_kwargs)
-
-
-    async def cancel_process_instances_batch_operation_async(self, *, data: CancelProcessInstancesBatchOperationData, **kwargs: Any) -> CancelProcessInstancesBatchOperationResponse200:
-        """Cancel process instances (batch)
-
- Cancels multiple running process instances.
-Since only ACTIVE root instances can be cancelled, any given filters for state and
-parentProcessInstanceKey are ignored and overridden during this batch operation.
-This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
-
-Args:
-    body (CancelProcessInstancesBatchOperationData): The process instance filter that defines
-        which process instances should be canceled.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CancelProcessInstancesBatchOperationResponse200 | CancelProcessInstancesBatchOperationResponse400 | CancelProcessInstancesBatchOperationResponse401 | CancelProcessInstancesBatchOperationResponse403 | CancelProcessInstancesBatchOperationResponse500]"""
-        from .api.process_instance.cancel_process_instances_batch_operation import asyncio as cancel_process_instances_batch_operation_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await cancel_process_instances_batch_operation_asyncio(**_kwargs)
-
-
-    def get_process_instance(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceResponse200:
-        """Get process instance
-
- Get the process instance by the process instance key.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceResponse200 | GetProcessInstanceResponse400 | GetProcessInstanceResponse401 | GetProcessInstanceResponse403 | GetProcessInstanceResponse404 | GetProcessInstanceResponse500]"""
-        from .api.process_instance.get_process_instance import sync as get_process_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_instance_sync(**_kwargs)
-
-
-    async def get_process_instance_async(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceResponse200:
-        """Get process instance
-
- Get the process instance by the process instance key.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceResponse200 | GetProcessInstanceResponse400 | GetProcessInstanceResponse401 | GetProcessInstanceResponse403 | GetProcessInstanceResponse404 | GetProcessInstanceResponse500]"""
-        from .api.process_instance.get_process_instance import asyncio as get_process_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_instance_asyncio(**_kwargs)
-
-
-    def get_process_instance_call_hierarchy(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceCallHierarchyResponse400:
-        """Get call hierarchy
-
- Returns the call hierarchy for a given process instance, showing its ancestry up to the root
-instance.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceCallHierarchyResponse400 | GetProcessInstanceCallHierarchyResponse401 | GetProcessInstanceCallHierarchyResponse403 | GetProcessInstanceCallHierarchyResponse404 | GetProcessInstanceCallHierarchyResponse500 | list[GetProcessInstanceCallHierarchyResponse200Item]]"""
-        from .api.process_instance.get_process_instance_call_hierarchy import sync as get_process_instance_call_hierarchy_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_instance_call_hierarchy_sync(**_kwargs)
-
-
-    async def get_process_instance_call_hierarchy_async(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceCallHierarchyResponse400:
-        """Get call hierarchy
-
- Returns the call hierarchy for a given process instance, showing its ancestry up to the root
-instance.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceCallHierarchyResponse400 | GetProcessInstanceCallHierarchyResponse401 | GetProcessInstanceCallHierarchyResponse403 | GetProcessInstanceCallHierarchyResponse404 | GetProcessInstanceCallHierarchyResponse500 | list[GetProcessInstanceCallHierarchyResponse200Item]]"""
-        from .api.process_instance.get_process_instance_call_hierarchy import asyncio as get_process_instance_call_hierarchy_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_instance_call_hierarchy_asyncio(**_kwargs)
-
-
-    def modify_process_instance(self, process_instance_key: str, *, data: ModifyProcessInstanceData, **kwargs: Any) -> Any:
-        """Modify process instance
-
- Modifies a running process instance.
-This request can contain multiple instructions to activate an element of the process or
-to terminate an active instance of an element.
-
-Use this to repair a process instance that is stuck on an element or took an unintended path.
-For example, because an external system is not available or doesn't respond as expected.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (ModifyProcessInstanceData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ModifyProcessInstanceResponse400 | ModifyProcessInstanceResponse404 | ModifyProcessInstanceResponse500 | ModifyProcessInstanceResponse503]"""
-        from .api.process_instance.modify_process_instance import sync as modify_process_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return modify_process_instance_sync(**_kwargs)
-
-
-    async def modify_process_instance_async(self, process_instance_key: str, *, data: ModifyProcessInstanceData, **kwargs: Any) -> Any:
-        """Modify process instance
-
- Modifies a running process instance.
-This request can contain multiple instructions to activate an element of the process or
-to terminate an active instance of an element.
-
-Use this to repair a process instance that is stuck on an element or took an unintended path.
-For example, because an external system is not available or doesn't respond as expected.
-
-Args:
-    process_instance_key (str): System-generated key for a process instance. Example:
-        2251799813690746.
-    body (ModifyProcessInstanceData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ModifyProcessInstanceResponse400 | ModifyProcessInstanceResponse404 | ModifyProcessInstanceResponse500 | ModifyProcessInstanceResponse503]"""
-        from .api.process_instance.modify_process_instance import asyncio as modify_process_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await modify_process_instance_asyncio(**_kwargs)
-
-
-    def get_authentication(self, **kwargs: Any) -> GetAuthenticationResponse200:
-        """Get current user
-
- Retrieves the current authenticated user.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetAuthenticationResponse200 | GetAuthenticationResponse401 | GetAuthenticationResponse403 | GetAuthenticationResponse500]"""
-        from .api.authentication.get_authentication import sync as get_authentication_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_authentication_sync(**_kwargs)
-
-
-    async def get_authentication_async(self, **kwargs: Any) -> GetAuthenticationResponse200:
-        """Get current user
-
- Retrieves the current authenticated user.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetAuthenticationResponse200 | GetAuthenticationResponse401 | GetAuthenticationResponse403 | GetAuthenticationResponse500]"""
-        from .api.authentication.get_authentication import asyncio as get_authentication_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_authentication_asyncio(**_kwargs)
-
-
-    def assign_group_to_tenant(self, tenant_id: str, group_id: str, **kwargs: Any) -> Any:
-        """Assign a group to a tenant
-
- Assigns a group to a specified tenant.
-Group members (users, clients) can then access tenant data and perform authorized actions.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignGroupToTenantResponse400 | AssignGroupToTenantResponse403 | AssignGroupToTenantResponse404 | AssignGroupToTenantResponse500 | AssignGroupToTenantResponse503]"""
-        from .api.tenant.assign_group_to_tenant import sync as assign_group_to_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_group_to_tenant_sync(**_kwargs)
-
-
-    async def assign_group_to_tenant_async(self, tenant_id: str, group_id: str, **kwargs: Any) -> Any:
-        """Assign a group to a tenant
-
- Assigns a group to a specified tenant.
-Group members (users, clients) can then access tenant data and perform authorized actions.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignGroupToTenantResponse400 | AssignGroupToTenantResponse403 | AssignGroupToTenantResponse404 | AssignGroupToTenantResponse500 | AssignGroupToTenantResponse503]"""
-        from .api.tenant.assign_group_to_tenant import asyncio as assign_group_to_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_group_to_tenant_asyncio(**_kwargs)
-
-
-    def search_group_ids_for_tenant(self, tenant_id: str, *, data: SearchGroupIdsForTenantData | Unset = UNSET, **kwargs: Any) -> SearchGroupIdsForTenantResponse200:
-        """Search groups for tenant
-
- Retrieves a filtered and sorted list of groups for a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchGroupIdsForTenantData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchGroupIdsForTenantResponse200]"""
-        from .api.tenant.search_group_ids_for_tenant import sync as search_group_ids_for_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_group_ids_for_tenant_sync(**_kwargs)
-
-
-    async def search_group_ids_for_tenant_async(self, tenant_id: str, *, data: SearchGroupIdsForTenantData | Unset = UNSET, **kwargs: Any) -> SearchGroupIdsForTenantResponse200:
-        """Search groups for tenant
-
- Retrieves a filtered and sorted list of groups for a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchGroupIdsForTenantData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchGroupIdsForTenantResponse200]"""
-        from .api.tenant.search_group_ids_for_tenant import asyncio as search_group_ids_for_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_group_ids_for_tenant_asyncio(**_kwargs)
-
-
-    def unassign_client_from_tenant(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Unassign a client from a tenant
-
- Unassigns the client from the specified tenant.
-The client can no longer access tenant data.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignClientFromTenantResponse400 | UnassignClientFromTenantResponse403 | UnassignClientFromTenantResponse404 | UnassignClientFromTenantResponse500 | UnassignClientFromTenantResponse503]"""
-        from .api.tenant.unassign_client_from_tenant import sync as unassign_client_from_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_client_from_tenant_sync(**_kwargs)
-
-
-    async def unassign_client_from_tenant_async(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Unassign a client from a tenant
-
- Unassigns the client from the specified tenant.
-The client can no longer access tenant data.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignClientFromTenantResponse400 | UnassignClientFromTenantResponse403 | UnassignClientFromTenantResponse404 | UnassignClientFromTenantResponse500 | UnassignClientFromTenantResponse503]"""
-        from .api.tenant.unassign_client_from_tenant import asyncio as unassign_client_from_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_client_from_tenant_asyncio(**_kwargs)
-
-
-    def get_tenant(self, tenant_id: str, **kwargs: Any) -> GetTenantResponse200:
-        """Get tenant
-
- Retrieves a single tenant by tenant ID.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetTenantResponse200 | GetTenantResponse400 | GetTenantResponse401 | GetTenantResponse403 | GetTenantResponse404 | GetTenantResponse500]"""
-        from .api.tenant.get_tenant import sync as get_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_tenant_sync(**_kwargs)
-
-
-    async def get_tenant_async(self, tenant_id: str, **kwargs: Any) -> GetTenantResponse200:
-        """Get tenant
-
- Retrieves a single tenant by tenant ID.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetTenantResponse200 | GetTenantResponse400 | GetTenantResponse401 | GetTenantResponse403 | GetTenantResponse404 | GetTenantResponse500]"""
-        from .api.tenant.get_tenant import asyncio as get_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_tenant_asyncio(**_kwargs)
-
-
-    def assign_mapping_rule_to_tenant(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Assign a mapping rule to a tenant
-
- Assign a single mapping rule to a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignMappingRuleToTenantResponse400 | AssignMappingRuleToTenantResponse403 | AssignMappingRuleToTenantResponse404 | AssignMappingRuleToTenantResponse500 | AssignMappingRuleToTenantResponse503]"""
-        from .api.tenant.assign_mapping_rule_to_tenant import sync as assign_mapping_rule_to_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_mapping_rule_to_tenant_sync(**_kwargs)
-
-
-    async def assign_mapping_rule_to_tenant_async(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Assign a mapping rule to a tenant
-
- Assign a single mapping rule to a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignMappingRuleToTenantResponse400 | AssignMappingRuleToTenantResponse403 | AssignMappingRuleToTenantResponse404 | AssignMappingRuleToTenantResponse500 | AssignMappingRuleToTenantResponse503]"""
-        from .api.tenant.assign_mapping_rule_to_tenant import asyncio as assign_mapping_rule_to_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_mapping_rule_to_tenant_asyncio(**_kwargs)
-
-
-    def search_tenants(self, *, data: SearchTenantsData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Search tenants
-
- Retrieves a filtered and sorted list of tenants.
-
-Args:
-    body (SearchTenantsData | Unset): Tenant search request
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | SearchTenantsResponse200 | SearchTenantsResponse400 | SearchTenantsResponse401 | SearchTenantsResponse403 | SearchTenantsResponse500]"""
-        from .api.tenant.search_tenants import sync as search_tenants_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_tenants_sync(**_kwargs)
-
-
-    async def search_tenants_async(self, *, data: SearchTenantsData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Search tenants
-
- Retrieves a filtered and sorted list of tenants.
-
-Args:
-    body (SearchTenantsData | Unset): Tenant search request
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | SearchTenantsResponse200 | SearchTenantsResponse400 | SearchTenantsResponse401 | SearchTenantsResponse403 | SearchTenantsResponse500]"""
-        from .api.tenant.search_tenants import asyncio as search_tenants_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_tenants_asyncio(**_kwargs)
-
-
-    def delete_tenant(self, tenant_id: str, **kwargs: Any) -> Any:
-        """Delete tenant
-
- Deletes an existing tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteTenantResponse400 | DeleteTenantResponse403 | DeleteTenantResponse404 | DeleteTenantResponse500 | DeleteTenantResponse503]"""
-        from .api.tenant.delete_tenant import sync as delete_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_tenant_sync(**_kwargs)
-
-
-    async def delete_tenant_async(self, tenant_id: str, **kwargs: Any) -> Any:
-        """Delete tenant
-
- Deletes an existing tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteTenantResponse400 | DeleteTenantResponse403 | DeleteTenantResponse404 | DeleteTenantResponse500 | DeleteTenantResponse503]"""
-        from .api.tenant.delete_tenant import asyncio as delete_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_tenant_asyncio(**_kwargs)
-
-
-    def assign_client_to_tenant(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Assign a client to a tenant
-
- Assign the client to the specified tenant.
-The client can then access tenant data and perform authorized actions.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignClientToTenantResponse400 | AssignClientToTenantResponse403 | AssignClientToTenantResponse404 | AssignClientToTenantResponse500 | AssignClientToTenantResponse503]"""
-        from .api.tenant.assign_client_to_tenant import sync as assign_client_to_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_client_to_tenant_sync(**_kwargs)
-
-
-    async def assign_client_to_tenant_async(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Assign a client to a tenant
-
- Assign the client to the specified tenant.
-The client can then access tenant data and perform authorized actions.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    client_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignClientToTenantResponse400 | AssignClientToTenantResponse403 | AssignClientToTenantResponse404 | AssignClientToTenantResponse500 | AssignClientToTenantResponse503]"""
-        from .api.tenant.assign_client_to_tenant import asyncio as assign_client_to_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_client_to_tenant_asyncio(**_kwargs)
-
-
-    def search_roles_for_tenant(self, tenant_id: str, *, data: SearchRolesForTenantData | Unset = UNSET, **kwargs: Any) -> SearchRolesForTenantResponse200:
-        """Search roles for tenant
-
- Retrieves a filtered and sorted list of roles for a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchRolesForTenantData | Unset): Role search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchRolesForTenantResponse200]"""
-        from .api.tenant.search_roles_for_tenant import sync as search_roles_for_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_roles_for_tenant_sync(**_kwargs)
-
-
-    async def search_roles_for_tenant_async(self, tenant_id: str, *, data: SearchRolesForTenantData | Unset = UNSET, **kwargs: Any) -> SearchRolesForTenantResponse200:
-        """Search roles for tenant
-
- Retrieves a filtered and sorted list of roles for a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchRolesForTenantData | Unset): Role search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchRolesForTenantResponse200]"""
-        from .api.tenant.search_roles_for_tenant import asyncio as search_roles_for_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_roles_for_tenant_asyncio(**_kwargs)
-
-
-    def unassign_role_from_tenant(self, tenant_id: str, role_id: str, **kwargs: Any) -> Any:
-        """Unassign a role from a tenant
-
- Unassigns a role from a specified tenant.
-Users, Clients or Groups, that have the role assigned, will no longer have access to the
-tenant's data - unless they are assigned directly to the tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    role_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignRoleFromTenantResponse400 | UnassignRoleFromTenantResponse403 | UnassignRoleFromTenantResponse404 | UnassignRoleFromTenantResponse500 | UnassignRoleFromTenantResponse503]"""
-        from .api.tenant.unassign_role_from_tenant import sync as unassign_role_from_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_role_from_tenant_sync(**_kwargs)
-
-
-    async def unassign_role_from_tenant_async(self, tenant_id: str, role_id: str, **kwargs: Any) -> Any:
-        """Unassign a role from a tenant
-
- Unassigns a role from a specified tenant.
-Users, Clients or Groups, that have the role assigned, will no longer have access to the
-tenant's data - unless they are assigned directly to the tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    role_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignRoleFromTenantResponse400 | UnassignRoleFromTenantResponse403 | UnassignRoleFromTenantResponse404 | UnassignRoleFromTenantResponse500 | UnassignRoleFromTenantResponse503]"""
-        from .api.tenant.unassign_role_from_tenant import asyncio as unassign_role_from_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_role_from_tenant_asyncio(**_kwargs)
-
-
-    def unassign_mapping_rule_from_tenant(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Unassign a mapping rule from a tenant
-
- Unassigns a single mapping rule from a specified tenant without deleting the rule.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignMappingRuleFromTenantResponse400 | UnassignMappingRuleFromTenantResponse403 | UnassignMappingRuleFromTenantResponse404 | UnassignMappingRuleFromTenantResponse500 | UnassignMappingRuleFromTenantResponse503]"""
-        from .api.tenant.unassign_mapping_rule_from_tenant import sync as unassign_mapping_rule_from_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_mapping_rule_from_tenant_sync(**_kwargs)
-
-
-    async def unassign_mapping_rule_from_tenant_async(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Unassign a mapping rule from a tenant
-
- Unassigns a single mapping rule from a specified tenant without deleting the rule.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignMappingRuleFromTenantResponse400 | UnassignMappingRuleFromTenantResponse403 | UnassignMappingRuleFromTenantResponse404 | UnassignMappingRuleFromTenantResponse500 | UnassignMappingRuleFromTenantResponse503]"""
-        from .api.tenant.unassign_mapping_rule_from_tenant import asyncio as unassign_mapping_rule_from_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_mapping_rule_from_tenant_asyncio(**_kwargs)
-
-
-    def search_users_for_tenant(self, tenant_id: str, *, data: SearchUsersForTenantData | Unset = UNSET, **kwargs: Any) -> SearchUsersForTenantResponse200:
-        """Search users for tenant
-
- Retrieves a filtered and sorted list of users for a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchUsersForTenantData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUsersForTenantResponse200]"""
-        from .api.tenant.search_users_for_tenant import sync as search_users_for_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_users_for_tenant_sync(**_kwargs)
-
-
-    async def search_users_for_tenant_async(self, tenant_id: str, *, data: SearchUsersForTenantData | Unset = UNSET, **kwargs: Any) -> SearchUsersForTenantResponse200:
-        """Search users for tenant
-
- Retrieves a filtered and sorted list of users for a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchUsersForTenantData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUsersForTenantResponse200]"""
-        from .api.tenant.search_users_for_tenant import asyncio as search_users_for_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_users_for_tenant_asyncio(**_kwargs)
-
-
-    def assign_user_to_tenant(self, tenant_id: str, username: str, **kwargs: Any) -> Any:
-        """Assign a user to a tenant
-
- Assign a single user to a specified tenant. The user can then access tenant data and perform
-authorized actions.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.DeleteUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteUserNotFound: If the response status code is 404. The user is not found.
+    errors.DeleteUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | AssignUserToTenantResponse400 | AssignUserToTenantResponse403 | AssignUserToTenantResponse404 | AssignUserToTenantResponse500 | AssignUserToTenantResponse503]"""
-        from .api.tenant.assign_user_to_tenant import sync as assign_user_to_tenant_sync
+    Any"""
+        from .api.user.delete_user import sync as delete_user_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return assign_user_to_tenant_sync(**_kwargs)
+        return delete_user_sync(**_kwargs)
 
 
-    async def assign_user_to_tenant_async(self, tenant_id: str, username: str, **kwargs: Any) -> Any:
-        """Assign a user to a tenant
+    def get_user(self, username: str, **kwargs: Any) -> GetUserResponse200:
+        """Get user
 
- Assign a single user to a specified tenant. The user can then access tenant data and perform
-authorized actions.
+ Get a user by its username.
 
 Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetUserUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserNotFound: If the response status code is 404. The user with the given username was not found.
+    errors.GetUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | AssignUserToTenantResponse400 | AssignUserToTenantResponse403 | AssignUserToTenantResponse404 | AssignUserToTenantResponse500 | AssignUserToTenantResponse503]"""
-        from .api.tenant.assign_user_to_tenant import asyncio as assign_user_to_tenant_asyncio
+    GetUserResponse200"""
+        from .api.user.get_user import sync as get_user_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await assign_user_to_tenant_asyncio(**_kwargs)
+        return get_user_sync(**_kwargs)
 
 
-    def assign_role_to_tenant(self, tenant_id: str, role_id: str, **kwargs: Any) -> Any:
-        """Assign a role to a tenant
+    def update_user(self, username: str, *, data: UpdateUserData, **kwargs: Any) -> UpdateUserResponse200:
+        """Update user
 
- Assigns a role to a specified tenant.
-Users, Clients or Groups, that have the role assigned, will get access to the tenant's data and can
-perform actions according to their authorizations.
+ Updates a user.
 
 Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    role_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignRoleToTenantResponse400 | AssignRoleToTenantResponse403 | AssignRoleToTenantResponse404 | AssignRoleToTenantResponse500 | AssignRoleToTenantResponse503]"""
-        from .api.tenant.assign_role_to_tenant import sync as assign_role_to_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_role_to_tenant_sync(**_kwargs)
-
-
-    async def assign_role_to_tenant_async(self, tenant_id: str, role_id: str, **kwargs: Any) -> Any:
-        """Assign a role to a tenant
-
- Assigns a role to a specified tenant.
-Users, Clients or Groups, that have the role assigned, will get access to the tenant's data and can
-perform actions according to their authorizations.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    role_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignRoleToTenantResponse400 | AssignRoleToTenantResponse403 | AssignRoleToTenantResponse404 | AssignRoleToTenantResponse500 | AssignRoleToTenantResponse503]"""
-        from .api.tenant.assign_role_to_tenant import asyncio as assign_role_to_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_role_to_tenant_asyncio(**_kwargs)
-
-
-    def create_tenant(self, *, data: CreateTenantData, **kwargs: Any) -> Any:
-        """Create tenant
-
- Creates a new tenant.
-
-Args:
-    body (CreateTenantData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CreateTenantResponse201 | CreateTenantResponse400 | CreateTenantResponse403 | CreateTenantResponse404 | CreateTenantResponse500 | CreateTenantResponse503]"""
-        from .api.tenant.create_tenant import sync as create_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_tenant_sync(**_kwargs)
-
-
-    async def create_tenant_async(self, *, data: CreateTenantData, **kwargs: Any) -> Any:
-        """Create tenant
-
- Creates a new tenant.
-
-Args:
-    body (CreateTenantData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CreateTenantResponse201 | CreateTenantResponse400 | CreateTenantResponse403 | CreateTenantResponse404 | CreateTenantResponse500 | CreateTenantResponse503]"""
-        from .api.tenant.create_tenant import asyncio as create_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_tenant_asyncio(**_kwargs)
-
-
-    def unassign_group_from_tenant(self, tenant_id: str, group_id: str, **kwargs: Any) -> Any:
-        """Unassign a group from a tenant
-
- Unassigns a group from a specified tenant.
-Members of the group (users, clients) will no longer have access to the tenant's data - except they
-are assigned directly to the tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignGroupFromTenantResponse400 | UnassignGroupFromTenantResponse403 | UnassignGroupFromTenantResponse404 | UnassignGroupFromTenantResponse500 | UnassignGroupFromTenantResponse503]"""
-        from .api.tenant.unassign_group_from_tenant import sync as unassign_group_from_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_group_from_tenant_sync(**_kwargs)
-
-
-    async def unassign_group_from_tenant_async(self, tenant_id: str, group_id: str, **kwargs: Any) -> Any:
-        """Unassign a group from a tenant
-
- Unassigns a group from a specified tenant.
-Members of the group (users, clients) will no longer have access to the tenant's data - except they
-are assigned directly to the tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    group_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignGroupFromTenantResponse400 | UnassignGroupFromTenantResponse403 | UnassignGroupFromTenantResponse404 | UnassignGroupFromTenantResponse500 | UnassignGroupFromTenantResponse503]"""
-        from .api.tenant.unassign_group_from_tenant import asyncio as unassign_group_from_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_group_from_tenant_asyncio(**_kwargs)
-
-
-    def search_clients_for_tenant(self, tenant_id: str, *, data: SearchClientsForTenantData | Unset = UNSET, **kwargs: Any) -> SearchClientsForTenantResponse200:
-        """Search clients for tenant
-
- Retrieves a filtered and sorted list of clients for a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchClientsForTenantData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchClientsForTenantResponse200]"""
-        from .api.tenant.search_clients_for_tenant import sync as search_clients_for_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_clients_for_tenant_sync(**_kwargs)
-
-
-    async def search_clients_for_tenant_async(self, tenant_id: str, *, data: SearchClientsForTenantData | Unset = UNSET, **kwargs: Any) -> SearchClientsForTenantResponse200:
-        """Search clients for tenant
-
- Retrieves a filtered and sorted list of clients for a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchClientsForTenantData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchClientsForTenantResponse200]"""
-        from .api.tenant.search_clients_for_tenant import asyncio as search_clients_for_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_clients_for_tenant_asyncio(**_kwargs)
-
-
-    def unassign_user_from_tenant(self, tenant_id: str, username: str, **kwargs: Any) -> Any:
-        """Unassign a user from a tenant
-
- Unassigns the user from the specified tenant.
-The user can no longer access tenant data.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
     username (str): The unique name of a user. Example: swillis.
+    body (UpdateUserData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UpdateUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UpdateUserNotFound: If the response status code is 404. The user was not found.
+    errors.UpdateUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | UnassignUserFromTenantResponse400 | UnassignUserFromTenantResponse403 | UnassignUserFromTenantResponse404 | UnassignUserFromTenantResponse500 | UnassignUserFromTenantResponse503]"""
-        from .api.tenant.unassign_user_from_tenant import sync as unassign_user_from_tenant_sync
+    UpdateUserResponse200"""
+        from .api.user.update_user import sync as update_user_sync
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return unassign_user_from_tenant_sync(**_kwargs)
-
-
-    async def unassign_user_from_tenant_async(self, tenant_id: str, username: str, **kwargs: Any) -> Any:
-        """Unassign a user from a tenant
-
- Unassigns the user from the specified tenant.
-The user can no longer access tenant data.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignUserFromTenantResponse400 | UnassignUserFromTenantResponse403 | UnassignUserFromTenantResponse404 | UnassignUserFromTenantResponse500 | UnassignUserFromTenantResponse503]"""
-        from .api.tenant.unassign_user_from_tenant import asyncio as unassign_user_from_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_user_from_tenant_asyncio(**_kwargs)
-
-
-    def update_tenant(self, tenant_id: str, *, data: UpdateTenantData, **kwargs: Any) -> UpdateTenantResponse200:
-        """Update tenant
-
- Updates an existing tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (UpdateTenantData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[UpdateTenantResponse200 | UpdateTenantResponse400 | UpdateTenantResponse403 | UpdateTenantResponse404 | UpdateTenantResponse500 | UpdateTenantResponse503]"""
-        from .api.tenant.update_tenant import sync as update_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return update_tenant_sync(**_kwargs)
-
-
-    async def update_tenant_async(self, tenant_id: str, *, data: UpdateTenantData, **kwargs: Any) -> UpdateTenantResponse200:
-        """Update tenant
-
- Updates an existing tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (UpdateTenantData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[UpdateTenantResponse200 | UpdateTenantResponse400 | UpdateTenantResponse403 | UpdateTenantResponse404 | UpdateTenantResponse500 | UpdateTenantResponse503]"""
-        from .api.tenant.update_tenant import asyncio as update_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await update_tenant_asyncio(**_kwargs)
-
-
-    def search_mapping_rules_for_tenant(self, tenant_id: str, *, data: SearchMappingRulesForTenantData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForTenantResponse200:
-        """Search mapping rules for tenant
-
- Retrieves a filtered and sorted list of MappingRules for a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchMappingRulesForTenantData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMappingRulesForTenantResponse200]"""
-        from .api.tenant.search_mapping_rules_for_tenant import sync as search_mapping_rules_for_tenant_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_mapping_rules_for_tenant_sync(**_kwargs)
-
-
-    async def search_mapping_rules_for_tenant_async(self, tenant_id: str, *, data: SearchMappingRulesForTenantData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForTenantResponse200:
-        """Search mapping rules for tenant
-
- Retrieves a filtered and sorted list of MappingRules for a specified tenant.
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (SearchMappingRulesForTenantData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMappingRulesForTenantResponse200]"""
-        from .api.tenant.search_mapping_rules_for_tenant import asyncio as search_mapping_rules_for_tenant_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_mapping_rules_for_tenant_asyncio(**_kwargs)
-
-
-    def get_global_cluster_variable(self, name: str, **kwargs: Any) -> GetGlobalClusterVariableResponse200:
-        """Get a global-scoped cluster variable
-
-Args:
-    name (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetGlobalClusterVariableResponse200 | GetGlobalClusterVariableResponse400 | GetGlobalClusterVariableResponse401 | GetGlobalClusterVariableResponse403 | GetGlobalClusterVariableResponse404 | GetGlobalClusterVariableResponse500]"""
-        from .api.cluster_variable.get_global_cluster_variable import sync as get_global_cluster_variable_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_global_cluster_variable_sync(**_kwargs)
-
-
-    async def get_global_cluster_variable_async(self, name: str, **kwargs: Any) -> GetGlobalClusterVariableResponse200:
-        """Get a global-scoped cluster variable
-
-Args:
-    name (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetGlobalClusterVariableResponse200 | GetGlobalClusterVariableResponse400 | GetGlobalClusterVariableResponse401 | GetGlobalClusterVariableResponse403 | GetGlobalClusterVariableResponse404 | GetGlobalClusterVariableResponse500]"""
-        from .api.cluster_variable.get_global_cluster_variable import asyncio as get_global_cluster_variable_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_global_cluster_variable_asyncio(**_kwargs)
-
-
-    def delete_global_cluster_variable(self, name: str, **kwargs: Any) -> Any:
-        """Delete a global-scoped cluster variable
-
-Args:
-    name (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteGlobalClusterVariableResponse400 | DeleteGlobalClusterVariableResponse401 | DeleteGlobalClusterVariableResponse403 | DeleteGlobalClusterVariableResponse404 | DeleteGlobalClusterVariableResponse500]"""
-        from .api.cluster_variable.delete_global_cluster_variable import sync as delete_global_cluster_variable_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_global_cluster_variable_sync(**_kwargs)
-
-
-    async def delete_global_cluster_variable_async(self, name: str, **kwargs: Any) -> Any:
-        """Delete a global-scoped cluster variable
-
-Args:
-    name (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteGlobalClusterVariableResponse400 | DeleteGlobalClusterVariableResponse401 | DeleteGlobalClusterVariableResponse403 | DeleteGlobalClusterVariableResponse404 | DeleteGlobalClusterVariableResponse500]"""
-        from .api.cluster_variable.delete_global_cluster_variable import asyncio as delete_global_cluster_variable_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_global_cluster_variable_asyncio(**_kwargs)
-
-
-    def get_tenant_cluster_variable(self, tenant_id: str, name: str, **kwargs: Any) -> GetTenantClusterVariableResponse200:
-        """Get a tenant-scoped cluster variable
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    name (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetTenantClusterVariableResponse200 | GetTenantClusterVariableResponse400 | GetTenantClusterVariableResponse401 | GetTenantClusterVariableResponse403 | GetTenantClusterVariableResponse404 | GetTenantClusterVariableResponse500]"""
-        from .api.cluster_variable.get_tenant_cluster_variable import sync as get_tenant_cluster_variable_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_tenant_cluster_variable_sync(**_kwargs)
-
-
-    async def get_tenant_cluster_variable_async(self, tenant_id: str, name: str, **kwargs: Any) -> GetTenantClusterVariableResponse200:
-        """Get a tenant-scoped cluster variable
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    name (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetTenantClusterVariableResponse200 | GetTenantClusterVariableResponse400 | GetTenantClusterVariableResponse401 | GetTenantClusterVariableResponse403 | GetTenantClusterVariableResponse404 | GetTenantClusterVariableResponse500]"""
-        from .api.cluster_variable.get_tenant_cluster_variable import asyncio as get_tenant_cluster_variable_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_tenant_cluster_variable_asyncio(**_kwargs)
-
-
-    def create_tenant_cluster_variable(self, tenant_id: str, *, data: CreateTenantClusterVariableData, **kwargs: Any) -> CreateTenantClusterVariableResponse200:
-        """Create a tenant-scoped cluster variable
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (CreateTenantClusterVariableData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateTenantClusterVariableResponse200 | CreateTenantClusterVariableResponse400 | CreateTenantClusterVariableResponse401 | CreateTenantClusterVariableResponse403 | CreateTenantClusterVariableResponse500]"""
-        from .api.cluster_variable.create_tenant_cluster_variable import sync as create_tenant_cluster_variable_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_tenant_cluster_variable_sync(**_kwargs)
-
-
-    async def create_tenant_cluster_variable_async(self, tenant_id: str, *, data: CreateTenantClusterVariableData, **kwargs: Any) -> CreateTenantClusterVariableResponse200:
-        """Create a tenant-scoped cluster variable
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    body (CreateTenantClusterVariableData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateTenantClusterVariableResponse200 | CreateTenantClusterVariableResponse400 | CreateTenantClusterVariableResponse401 | CreateTenantClusterVariableResponse403 | CreateTenantClusterVariableResponse500]"""
-        from .api.cluster_variable.create_tenant_cluster_variable import asyncio as create_tenant_cluster_variable_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_tenant_cluster_variable_asyncio(**_kwargs)
-
-
-    def delete_tenant_cluster_variable(self, tenant_id: str, name: str, **kwargs: Any) -> Any:
-        """Delete a tenant-scoped cluster variable
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    name (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteTenantClusterVariableResponse400 | DeleteTenantClusterVariableResponse401 | DeleteTenantClusterVariableResponse403 | DeleteTenantClusterVariableResponse404 | DeleteTenantClusterVariableResponse500]"""
-        from .api.cluster_variable.delete_tenant_cluster_variable import sync as delete_tenant_cluster_variable_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_tenant_cluster_variable_sync(**_kwargs)
-
-
-    async def delete_tenant_cluster_variable_async(self, tenant_id: str, name: str, **kwargs: Any) -> Any:
-        """Delete a tenant-scoped cluster variable
-
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    name (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteTenantClusterVariableResponse400 | DeleteTenantClusterVariableResponse401 | DeleteTenantClusterVariableResponse403 | DeleteTenantClusterVariableResponse404 | DeleteTenantClusterVariableResponse500]"""
-        from .api.cluster_variable.delete_tenant_cluster_variable import asyncio as delete_tenant_cluster_variable_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_tenant_cluster_variable_asyncio(**_kwargs)
-
-
-    def search_cluster_variables(self, *, data: SearchClusterVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchClusterVariablesResponse200:
-        """Search for cluster variables based on given criteria. By default, long variable values in the
-response are truncated.
-
-Args:
-    truncate_values (bool | Unset):
-    body (SearchClusterVariablesData | Unset): Cluster variable search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchClusterVariablesResponse200 | SearchClusterVariablesResponse400 | SearchClusterVariablesResponse401 | SearchClusterVariablesResponse403 | SearchClusterVariablesResponse500]"""
-        from .api.cluster_variable.search_cluster_variables import sync as search_cluster_variables_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_cluster_variables_sync(**_kwargs)
-
-
-    async def search_cluster_variables_async(self, *, data: SearchClusterVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchClusterVariablesResponse200:
-        """Search for cluster variables based on given criteria. By default, long variable values in the
-response are truncated.
-
-Args:
-    truncate_values (bool | Unset):
-    body (SearchClusterVariablesData | Unset): Cluster variable search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchClusterVariablesResponse200 | SearchClusterVariablesResponse400 | SearchClusterVariablesResponse401 | SearchClusterVariablesResponse403 | SearchClusterVariablesResponse500]"""
-        from .api.cluster_variable.search_cluster_variables import asyncio as search_cluster_variables_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_cluster_variables_asyncio(**_kwargs)
-
-
-    def create_global_cluster_variable(self, *, data: CreateGlobalClusterVariableData, **kwargs: Any) -> CreateGlobalClusterVariableResponse200:
-        """Create a global-scoped cluster variable
-
-Args:
-    body (CreateGlobalClusterVariableData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateGlobalClusterVariableResponse200 | CreateGlobalClusterVariableResponse400 | CreateGlobalClusterVariableResponse401 | CreateGlobalClusterVariableResponse403 | CreateGlobalClusterVariableResponse500]"""
-        from .api.cluster_variable.create_global_cluster_variable import sync as create_global_cluster_variable_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_global_cluster_variable_sync(**_kwargs)
-
-
-    async def create_global_cluster_variable_async(self, *, data: CreateGlobalClusterVariableData, **kwargs: Any) -> CreateGlobalClusterVariableResponse200:
-        """Create a global-scoped cluster variable
-
-Args:
-    body (CreateGlobalClusterVariableData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateGlobalClusterVariableResponse200 | CreateGlobalClusterVariableResponse400 | CreateGlobalClusterVariableResponse401 | CreateGlobalClusterVariableResponse403 | CreateGlobalClusterVariableResponse500]"""
-        from .api.cluster_variable.create_global_cluster_variable import asyncio as create_global_cluster_variable_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_global_cluster_variable_asyncio(**_kwargs)
+        return update_user_sync(**_kwargs)
 
 
     def get_document(self, document_id: str, *, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> File:
@@ -5735,11 +3536,12 @@ Args:
     content_hash (str | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
+    errors.GetDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[File | GetDocumentResponse404 | GetDocumentResponse500]"""
+    File"""
         from .api.document.get_document import sync as get_document_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -5747,34 +3549,6 @@ Returns:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return get_document_sync(**_kwargs)
-
-
-    async def get_document_async(self, document_id: str, *, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> File:
-        """Download document
-
- Download a document from the Camunda 8 cluster.
-
-Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
-production), local (non-production)
-
-Args:
-    document_id (str): Document Id that uniquely identifies a document.
-    store_id (str | Unset):
-    content_hash (str | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[File | GetDocumentResponse404 | GetDocumentResponse500]"""
-        from .api.document.get_document import asyncio as get_document_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_document_asyncio(**_kwargs)
 
 
     def create_documents(self, *, data: CreateDocumentsData, store_id: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentsResponse201:
@@ -5808,11 +3582,12 @@ Args:
     body (CreateDocumentsData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateDocumentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateDocumentsUnsupportedMediaType: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[CreateDocumentsResponse201 | CreateDocumentsResponse207 | CreateDocumentsResponse400 | CreateDocumentsResponse415]"""
+    CreateDocumentsResponse201"""
         from .api.document.create_documents import sync as create_documents_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -5822,7 +3597,4668 @@ Returns:
         return create_documents_sync(**_kwargs)
 
 
-    async def create_documents_async(self, *, data: CreateDocumentsData, store_id: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentsResponse201:
+    def create_document_link(self, document_id: str, *, data: CreateDocumentLinkData | Unset = UNSET, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentLinkResponse201:
+        """Create document link
+
+ Create a link to a document in the Camunda 8 cluster.
+
+Note that this is currently supported for document stores of type: AWS, GCP
+
+Args:
+    document_id (str): Document Id that uniquely identifies a document.
+    store_id (str | Unset):
+    content_hash (str | Unset):
+    body (CreateDocumentLinkData | Unset):
+
+Raises:
+    errors.CreateDocumentLinkBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateDocumentLinkResponse201"""
+        from .api.document.create_document_link import sync as create_document_link_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_document_link_sync(**_kwargs)
+
+
+    def delete_document(self, document_id: str, *, store_id: str | Unset = UNSET, **kwargs: Any) -> Any:
+        """Delete document
+
+ Delete a document from the Camunda 8 cluster.
+
+Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+production), local (non-production)
+
+Args:
+    document_id (str): Document Id that uniquely identifies a document.
+    store_id (str | Unset):
+
+Raises:
+    errors.DeleteDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
+    errors.DeleteDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.document.delete_document import sync as delete_document_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_document_sync(**_kwargs)
+
+
+    def create_document(self, *, data: CreateDocumentData, store_id: str | Unset = UNSET, document_id: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentResponse201:
+        """Upload document
+
+ Upload a document to the Camunda 8 cluster.
+
+Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+production), local (non-production)
+
+Args:
+    store_id (str | Unset):
+    document_id (str | Unset): Document Id that uniquely identifies a document.
+    body (CreateDocumentData):
+
+Raises:
+    errors.CreateDocumentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateDocumentUnsupportedMediaType: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateDocumentResponse201"""
+        from .api.document.create_document import sync as create_document_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_document_sync(**_kwargs)
+
+
+    def get_audit_log(self, audit_log_key: str, **kwargs: Any) -> GetAuditLogResponse200:
+        """Get audit log
+
+ Get an audit log entry by auditLogKey.
+
+Args:
+    audit_log_key (str): System-generated key for an audit log entry. Example:
+        22517998136843567.
+
+Raises:
+    errors.GetAuditLogUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuditLogForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuditLogNotFound: If the response status code is 404. The audit log with the given key was not found.
+    errors.GetAuditLogInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetAuditLogResponse200"""
+        from .api.audit_log.get_audit_log import sync as get_audit_log_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_audit_log_sync(**_kwargs)
+
+
+    def search_audit_logs(self, *, data: SearchAuditLogsData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Search audit logs
+
+ Search for audit logs based on given criteria.
+
+Args:
+    body (SearchAuditLogsData | Unset): Audit log search request.
+
+Raises:
+    errors.SearchAuditLogsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchAuditLogsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchAuditLogsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchAuditLogsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.audit_log.search_audit_logs import sync as search_audit_logs_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_audit_logs_sync(**_kwargs)
+
+
+    def get_usage_metrics(self, *, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = False, **kwargs: Any) -> GetUsageMetricsResponse200:
+        """Get usage metrics
+
+ Retrieve the usage metrics based on given criteria.
+
+Args:
+    start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
+    end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
+    tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
+    with_tenants (bool | Unset):  Default: False.
+
+Raises:
+    errors.GetUsageMetricsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUsageMetricsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUsageMetricsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUsageMetricsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetUsageMetricsResponse200"""
+        from .api.system.get_usage_metrics import sync as get_usage_metrics_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_usage_metrics_sync(**_kwargs)
+
+
+    def search_element_instance_incidents(self, element_instance_key: str, *, data: SearchElementInstanceIncidentsData, **kwargs: Any) -> SearchElementInstanceIncidentsResponse200:
+        """Search for incidents of a specific element instance
+
+ Search for incidents caused by the specified element instance, including incidents of any child
+instances created from this element instance.
+
+Although the `elementInstanceKey` is provided as a path parameter to indicate the root element
+instance,
+you may also include an `elementInstanceKey` within the filter object to narrow results to specific
+child element instances. This is useful, for example, if you want to isolate incidents associated
+with
+nested or subordinate elements within the given element instance while excluding incidents directly
+tied
+to the root element itself.
+
+Args:
+    element_instance_key (str): System-generated key for a element instance. Example:
+        2251799813686789.
+    body (SearchElementInstanceIncidentsData):
+
+Raises:
+    errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404. The element instance with the given key was not found.
+    errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchElementInstanceIncidentsResponse200"""
+        from .api.element_instance.search_element_instance_incidents import sync as search_element_instance_incidents_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_element_instance_incidents_sync(**_kwargs)
+
+
+    def get_element_instance(self, element_instance_key: str, **kwargs: Any) -> GetElementInstanceResponse200:
+        """Get element instance
+
+ Returns element instance as JSON.
+
+Args:
+    element_instance_key (str): System-generated key for a element instance. Example:
+        2251799813686789.
+
+Raises:
+    errors.GetElementInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetElementInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetElementInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetElementInstanceNotFound: If the response status code is 404. The element instance with the given key was not found. More details are provided in the response body.
+    errors.GetElementInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetElementInstanceResponse200"""
+        from .api.element_instance.get_element_instance import sync as get_element_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_element_instance_sync(**_kwargs)
+
+
+    def create_element_instance_variables(self, element_instance_key: str, *, data: CreateElementInstanceVariablesData, **kwargs: Any) -> Any:
+        """Update element instance variables
+
+ Updates all the variables of a particular scope (for example, process instance, element instance)
+with the given variable data.
+Specify the element instance in the `elementInstanceKey` parameter.
+
+Args:
+    element_instance_key (str): System-generated key for a element instance. Example:
+        2251799813686789.
+    body (CreateElementInstanceVariablesData):
+
+Raises:
+    errors.CreateElementInstanceVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateElementInstanceVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateElementInstanceVariablesServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.element_instance.create_element_instance_variables import sync as create_element_instance_variables_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_element_instance_variables_sync(**_kwargs)
+
+
+    def search_element_instances(self, *, data: SearchElementInstancesData | Unset = UNSET, **kwargs: Any) -> SearchElementInstancesResponse200:
+        """Search element instances
+
+ Search for element instances based on given criteria.
+
+Args:
+    body (SearchElementInstancesData | Unset): Element instance search request.
+
+Raises:
+    errors.SearchElementInstancesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchElementInstancesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchElementInstancesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchElementInstancesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchElementInstancesResponse200"""
+        from .api.element_instance.search_element_instances import sync as search_element_instances_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_element_instances_sync(**_kwargs)
+
+
+    def activate_ad_hoc_sub_process_activities(self, ad_hoc_sub_process_instance_key: str, *, data: ActivateAdHocSubProcessActivitiesData, **kwargs: Any) -> ActivateAdHocSubProcessActivitiesResponse400:
+        """Activate activities within an ad-hoc sub-process
+
+ Activates selected activities within an ad-hoc sub-process identified by element ID.
+The provided element IDs must exist within the ad-hoc sub-process instance identified by the
+provided adHocSubProcessInstanceKey.
+
+Args:
+    ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
+        Example: 2251799813686789.
+    body (ActivateAdHocSubProcessActivitiesData):
+
+Raises:
+    errors.ActivateAdHocSubProcessActivitiesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ActivateAdHocSubProcessActivitiesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ActivateAdHocSubProcessActivitiesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.ActivateAdHocSubProcessActivitiesNotFound: If the response status code is 404. The ad-hoc sub-process instance is not found or the provided key does not identify an ad-hoc sub-process.
+    errors.ActivateAdHocSubProcessActivitiesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ActivateAdHocSubProcessActivitiesServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ActivateAdHocSubProcessActivitiesResponse400"""
+        from .api.ad_hoc_sub_process.activate_ad_hoc_sub_process_activities import sync as activate_ad_hoc_sub_process_activities_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return activate_ad_hoc_sub_process_activities_sync(**_kwargs)
+
+
+    def fail_job(self, job_key: str, *, data: FailJobData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Fail job
+
+ Mark the job as failed.
+
+Args:
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (FailJobData | Unset):
+
+Raises:
+    errors.FailJobBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.FailJobNotFound: If the response status code is 404. The job with the given jobKey is not found. It was completed by another worker, or the process instance itself was canceled.
+    errors.FailJobConflict: If the response status code is 409. The job with the given key is in the wrong state (i.e: not ACTIVATED or ACTIVATABLE). The job was failed by another worker with retries = 0, and the process is now in an incident state.
+    errors.FailJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.FailJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.job.fail_job import sync as fail_job_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return fail_job_sync(**_kwargs)
+
+
+    def search_jobs(self, *, data: SearchJobsData | Unset = UNSET, **kwargs: Any) -> SearchJobsResponse200:
+        """Search jobs
+
+ Search for jobs based on given criteria.
+
+Args:
+    body (SearchJobsData | Unset): Job search request.
+
+Raises:
+    errors.SearchJobsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchJobsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchJobsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchJobsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchJobsResponse200"""
+        from .api.job.search_jobs import sync as search_jobs_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_jobs_sync(**_kwargs)
+
+
+    def activate_jobs(self, *, data: ActivateJobsData, **kwargs: Any) -> ActivateJobsResponse200:
+        """Activate jobs
+
+ Iterate through all known partitions and activate jobs up to the requested maximum.
+
+Args:
+    body (ActivateJobsData):
+
+Raises:
+    errors.ActivateJobsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ActivateJobsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ActivateJobsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ActivateJobsServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ActivateJobsResponse200"""
+        from .api.job.activate_jobs import sync as activate_jobs_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return activate_jobs_sync(**_kwargs)
+
+
+    def throw_job_error(self, job_key: str, *, data: ThrowJobErrorData, **kwargs: Any) -> Any:
+        """Throw error for job
+
+ Reports a business error (i.e. non-technical) that occurs while processing a job.
+
+Args:
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (ThrowJobErrorData):
+
+Raises:
+    errors.ThrowJobErrorBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ThrowJobErrorNotFound: If the response status code is 404. The job with the given key was not found or is not activated.
+    errors.ThrowJobErrorConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.ThrowJobErrorInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ThrowJobErrorServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.job.throw_job_error import sync as throw_job_error_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return throw_job_error_sync(**_kwargs)
+
+
+    def complete_job(self, job_key: str, *, data: CompleteJobData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Complete job
+
+ Complete a job with the given payload, which allows completing the associated service task.
+
+Args:
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (CompleteJobData | Unset):
+
+Raises:
+    errors.CompleteJobBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CompleteJobNotFound: If the response status code is 404. The job with the given key was not found.
+    errors.CompleteJobConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.CompleteJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CompleteJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.job.complete_job import sync as complete_job_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return complete_job_sync(**_kwargs)
+
+
+    def update_job(self, job_key: str, *, data: UpdateJobData, **kwargs: Any) -> Any:
+        """Update job
+
+ Update a job with the given key.
+
+Args:
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (UpdateJobData):
+
+Raises:
+    errors.UpdateJobBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateJobNotFound: If the response status code is 404. The job with the jobKey is not found.
+    errors.UpdateJobConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.UpdateJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.job.update_job import sync as update_job_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return update_job_sync(**_kwargs)
+
+
+    def get_process_instance_statistics_by_definition(self, *, data: GetProcessInstanceStatisticsByDefinitionData, **kwargs: Any) -> GetProcessInstanceStatisticsByDefinitionResponse200:
+        """Get process instance statistics by definition
+
+ Returns statistics for active process instances with incidents, grouped by process
+definition. The result set is scoped to a specific incident error hash code, which must be
+provided as a filter in the request body.
+
+Args:
+    body (GetProcessInstanceStatisticsByDefinitionData):
+
+Raises:
+    errors.GetProcessInstanceStatisticsByDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceStatisticsByDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceStatisticsByDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceStatisticsByDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessInstanceStatisticsByDefinitionResponse200"""
+        from .api.incident.get_process_instance_statistics_by_definition import sync as get_process_instance_statistics_by_definition_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_instance_statistics_by_definition_sync(**_kwargs)
+
+
+    def resolve_incident(self, incident_key: str, *, data: ResolveIncidentData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Resolve incident
+
+ Marks the incident as resolved; most likely a call to Update job will be necessary
+to reset the job's retries, followed by this call.
+
+Args:
+    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
+    body (ResolveIncidentData | Unset):
+
+Raises:
+    errors.ResolveIncidentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ResolveIncidentNotFound: If the response status code is 404. The incident with the incidentKey is not found.
+    errors.ResolveIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResolveIncidentServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.incident.resolve_incident import sync as resolve_incident_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return resolve_incident_sync(**_kwargs)
+
+
+    def search_incidents(self, *, data: SearchIncidentsData | Unset = UNSET, **kwargs: Any) -> SearchIncidentsResponse200:
+        """Search incidents
+
+ Search for incidents based on given criteria.
+
+Args:
+    body (SearchIncidentsData | Unset):
+
+Raises:
+    errors.SearchIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchIncidentsResponse200"""
+        from .api.incident.search_incidents import sync as search_incidents_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_incidents_sync(**_kwargs)
+
+
+    def get_process_instance_statistics_by_error(self, *, data: GetProcessInstanceStatisticsByErrorData | Unset = UNSET, **kwargs: Any) -> GetProcessInstanceStatisticsByErrorResponse200:
+        """Get process instance statistics by error
+
+ Returns statistics for active process instances that currently have active incidents,
+grouped by incident error hash code.
+
+Args:
+    body (GetProcessInstanceStatisticsByErrorData | Unset):
+
+Raises:
+    errors.GetProcessInstanceStatisticsByErrorBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceStatisticsByErrorUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceStatisticsByErrorForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceStatisticsByErrorInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessInstanceStatisticsByErrorResponse200"""
+        from .api.incident.get_process_instance_statistics_by_error import sync as get_process_instance_statistics_by_error_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_instance_statistics_by_error_sync(**_kwargs)
+
+
+    def get_incident(self, incident_key: str, **kwargs: Any) -> GetIncidentResponse200:
+        """Get incident
+
+ Returns incident as JSON.
+
+Args:
+    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
+
+Raises:
+    errors.GetIncidentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetIncidentUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetIncidentForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetIncidentNotFound: If the response status code is 404. The incident with the given key was not found.
+    errors.GetIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetIncidentResponse200"""
+        from .api.incident.get_incident import sync as get_incident_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_incident_sync(**_kwargs)
+
+
+    def get_decision_definition(self, decision_definition_key: str, **kwargs: Any) -> GetDecisionDefinitionResponse200:
+        """Get decision definition
+
+ Returns a decision definition by key.
+
+Args:
+    decision_definition_key (str): System-generated key for a decision definition. Example:
+        2251799813326547.
+
+Raises:
+    errors.GetDecisionDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionDefinitionNotFound: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetDecisionDefinitionResponse200"""
+        from .api.decision_definition.get_decision_definition import sync as get_decision_definition_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_decision_definition_sync(**_kwargs)
+
+
+    def evaluate_decision(self, *, data: DecisionevaluationbyID | Decisionevaluationbykey, **kwargs: Any) -> Any:
+        """Evaluate decision
+
+ Evaluates a decision.
+You specify the decision to evaluate either by using its unique key (as returned by
+DeployResource), or using the decision ID. When using the decision ID, the latest deployed
+version of the decision is used.
+
+Args:
+    body (DecisionevaluationbyID | Decisionevaluationbykey):
+
+Raises:
+    errors.EvaluateDecisionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.EvaluateDecisionNotFound: If the response status code is 404. The decision is not found.
+    errors.EvaluateDecisionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.EvaluateDecisionServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.decision_definition.evaluate_decision import sync as evaluate_decision_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return evaluate_decision_sync(**_kwargs)
+
+
+    def search_decision_definitions(self, *, data: SearchDecisionDefinitionsData | Unset = UNSET, **kwargs: Any) -> SearchDecisionDefinitionsResponse200:
+        """Search decision definitions
+
+ Search for decision definitions based on given criteria.
+
+Args:
+    body (SearchDecisionDefinitionsData | Unset):
+
+Raises:
+    errors.SearchDecisionDefinitionsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchDecisionDefinitionsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchDecisionDefinitionsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchDecisionDefinitionsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchDecisionDefinitionsResponse200"""
+        from .api.decision_definition.search_decision_definitions import sync as search_decision_definitions_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_decision_definitions_sync(**_kwargs)
+
+
+    def get_decision_definition_xml(self, decision_definition_key: str, **kwargs: Any) -> GetDecisionDefinitionXMLResponse400:
+        """Get decision definition XML
+
+ Returns decision definition as XML.
+
+Args:
+    decision_definition_key (str): System-generated key for a decision definition. Example:
+        2251799813326547.
+
+Raises:
+    errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetDecisionDefinitionXMLResponse400"""
+        from .api.decision_definition.get_decision_definition_xml import sync as get_decision_definition_xml_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_decision_definition_xml_sync(**_kwargs)
+
+
+    def evaluate_expression(self, *, data: EvaluateExpressionData, **kwargs: Any) -> EvaluateExpressionResponse200:
+        """Evaluate an expression
+
+ Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
+variables when a tenant ID is provided.
+
+Args:
+    body (EvaluateExpressionData):
+
+Raises:
+    errors.EvaluateExpressionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.EvaluateExpressionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.EvaluateExpressionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.EvaluateExpressionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    EvaluateExpressionResponse200"""
+        from .api.expression.evaluate_expression import sync as evaluate_expression_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return evaluate_expression_sync(**_kwargs)
+
+
+    def unassign_user_task(self, user_task_key: str, **kwargs: Any) -> Any:
+        """Unassign user task
+
+ Removes the assignee of a task with the given key.
+
+Args:
+    user_task_key (str): System-generated key for a user task.
+
+Raises:
+    errors.UnassignUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.UnassignUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.UnassignUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.user_task.unassign_user_task import sync as unassign_user_task_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return unassign_user_task_sync(**_kwargs)
+
+
+    def search_user_task_variables(self, user_task_key: str, *, data: SearchUserTaskVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchUserTaskVariablesResponse200:
+        """Search user task variables
+
+ Search for user task variables based on given criteria. By default, long variable values in the
+response are truncated.
+
+Args:
+    user_task_key (str): System-generated key for a user task.
+    truncate_values (bool | Unset):
+    body (SearchUserTaskVariablesData | Unset): User task search query request.
+
+Raises:
+    errors.SearchUserTaskVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchUserTaskVariablesResponse200"""
+        from .api.user_task.search_user_task_variables import sync as search_user_task_variables_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_user_task_variables_sync(**_kwargs)
+
+
+    def assign_user_task(self, user_task_key: str, *, data: AssignUserTaskData, **kwargs: Any) -> Any:
+        """Assign user task
+
+ Assigns a user task with the given key to the given assignee.
+
+Args:
+    user_task_key (str): System-generated key for a user task.
+    body (AssignUserTaskData):
+
+Raises:
+    errors.AssignUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.AssignUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.AssignUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.user_task.assign_user_task import sync as assign_user_task_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return assign_user_task_sync(**_kwargs)
+
+
+    def update_user_task(self, user_task_key: str, *, data: UpdateUserTaskData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Update user task
+
+ Update a user task with the given key.
+
+Args:
+    user_task_key (str): System-generated key for a user task.
+    body (UpdateUserTaskData | Unset):
+
+Raises:
+    errors.UpdateUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.UpdateUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.UpdateUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.user_task.update_user_task import sync as update_user_task_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return update_user_task_sync(**_kwargs)
+
+
+    def get_user_task_form(self, user_task_key: str, **kwargs: Any) -> Any:
+        """Get user task form
+
+ Get the form of a user task.
+Note that this endpoint will only return linked forms. This endpoint does not support embedded
+forms.
+
+Args:
+    user_task_key (str): System-generated key for a user task.
+
+Raises:
+    errors.GetUserTaskFormBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUserTaskFormUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserTaskFormForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserTaskFormNotFound: If the response status code is 404. Not found
+    errors.GetUserTaskFormInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.user_task.get_user_task_form import sync as get_user_task_form_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_user_task_form_sync(**_kwargs)
+
+
+    def get_user_task(self, user_task_key: str, **kwargs: Any) -> GetUserTaskResponse200:
+        """Get user task
+
+ Get the user task by the user task key.
+
+Args:
+    user_task_key (str): System-generated key for a user task.
+
+Raises:
+    errors.GetUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUserTaskUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserTaskForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.GetUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetUserTaskResponse200"""
+        from .api.user_task.get_user_task import sync as get_user_task_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_user_task_sync(**_kwargs)
+
+
+    def search_user_task_audit_logs(self, user_task_key: str, *, data: SearchUserTaskAuditLogsData | Unset = UNSET, **kwargs: Any) -> SearchUserTaskAuditLogsResponse200:
+        """Search user task audit logs
+
+ Search for user task audit logs based on given criteria.
+
+Args:
+    user_task_key (str): System-generated key for a user task.
+    body (SearchUserTaskAuditLogsData | Unset): User task search query request.
+
+Raises:
+    errors.SearchUserTaskAuditLogsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUserTaskAuditLogsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchUserTaskAuditLogsResponse200"""
+        from .api.user_task.search_user_task_audit_logs import sync as search_user_task_audit_logs_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_user_task_audit_logs_sync(**_kwargs)
+
+
+    def search_user_tasks(self, *, data: SearchUserTasksData | Unset = UNSET, **kwargs: Any) -> SearchUserTasksResponse200:
+        """Search user tasks
+
+ Search for user tasks based on given criteria.
+
+Args:
+    body (SearchUserTasksData | Unset): User task search query request.
+
+Raises:
+    errors.SearchUserTasksBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUserTasksUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUserTasksForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUserTasksInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchUserTasksResponse200"""
+        from .api.user_task.search_user_tasks import sync as search_user_tasks_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_user_tasks_sync(**_kwargs)
+
+
+    def complete_user_task(self, user_task_key: str, *, data: CompleteUserTaskData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Complete user task
+
+ Completes a user task with the given key.
+
+Args:
+    user_task_key (str): System-generated key for a user task.
+    body (CompleteUserTaskData | Unset):
+
+Raises:
+    errors.CompleteUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CompleteUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.CompleteUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.CompleteUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CompleteUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.user_task.complete_user_task import sync as complete_user_task_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return complete_user_task_sync(**_kwargs)
+
+
+    def delete_resource(self, resource_key: str, *, data: DeleteResourceDataType0 | None | Unset = UNSET, **kwargs: Any) -> Any:
+        """Delete resource
+
+ Deletes a deployed resource.
+This can be a process definition, decision requirements definition, or form definition
+deployed using the deploy resources endpoint. Specify the resource you want to delete in the
+`resourceKey` parameter.
+
+Args:
+    resource_key (str): The system-assigned key for this resource.
+    body (DeleteResourceDataType0 | None | Unset):
+
+Raises:
+    errors.DeleteResourceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteResourceNotFound: If the response status code is 404. The resource is not found.
+    errors.DeleteResourceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteResourceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.resource.delete_resource import sync as delete_resource_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_resource_sync(**_kwargs)
+
+
+    def get_resource_content(self, resource_key: str, **kwargs: Any) -> File:
+        """Get resource content
+
+ Returns the content of a deployed resource.
+:::info
+Currently, this endpoint only supports RPA resources.
+:::
+
+Args:
+    resource_key (str): The system-assigned key for this resource.
+
+Raises:
+    errors.GetResourceContentNotFound: If the response status code is 404. A resource with the given key was not found.
+    errors.GetResourceContentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    File"""
+        from .api.resource.get_resource_content import sync as get_resource_content_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_resource_content_sync(**_kwargs)
+
+
+    def create_deployment(self, *, data: CreateDeploymentData, **kwargs: Any) -> CreateDeploymentResponse200:
+        """Deploy resources
+
+ Deploys one or more resources (e.g. processes, decision models, or forms).
+This is an atomic call, i.e. either all resources are deployed or none of them are.
+
+Args:
+    body (CreateDeploymentData):
+
+Raises:
+    errors.CreateDeploymentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateDeploymentServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateDeploymentResponse200"""
+        from .api.resource.create_deployment import sync as create_deployment_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_deployment_sync(**_kwargs)
+
+
+    def get_resource(self, resource_key: str, **kwargs: Any) -> GetResourceResponse200:
+        """Get resource
+
+ Returns a deployed resource.
+:::info
+Currently, this endpoint only supports RPA resources.
+:::
+
+Args:
+    resource_key (str): The system-assigned key for this resource.
+
+Raises:
+    errors.GetResourceNotFound: If the response status code is 404. A resource with the given key was not found.
+    errors.GetResourceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetResourceResponse200"""
+        from .api.resource.get_resource import sync as get_resource_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_resource_sync(**_kwargs)
+
+
+    def update_authorization(self, authorization_key: str, *, data: Object | Object1, **kwargs: Any) -> Any:
+        """Update authorization
+
+ Update the authorization with the given key.
+
+Args:
+    authorization_key (str): System-generated key for an authorization. Example:
+        2251799813684332.
+    body (Object | Object1): Defines an authorization request.
+        Either an id-based or a property-based authorization can be provided.
+
+Raises:
+    errors.UpdateAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateAuthorizationNotFound: If the response status code is 404. The authorization with the authorizationKey was not found.
+    errors.UpdateAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateAuthorizationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.authorization.update_authorization import sync as update_authorization_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return update_authorization_sync(**_kwargs)
+
+
+    def create_authorization(self, *, data: Object | Object1, **kwargs: Any) -> CreateAuthorizationResponse201:
+        """Create authorization
+
+ Create the authorization.
+
+Args:
+    body (Object | Object1): Defines an authorization request.
+        Either an id-based or a property-based authorization can be provided.
+
+Raises:
+    errors.CreateAuthorizationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateAuthorizationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateAuthorizationNotFound: If the response status code is 404. The owner was not found.
+    errors.CreateAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateAuthorizationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateAuthorizationResponse201"""
+        from .api.authorization.create_authorization import sync as create_authorization_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_authorization_sync(**_kwargs)
+
+
+    def search_authorizations(self, *, data: SearchAuthorizationsData | Unset = UNSET, **kwargs: Any) -> SearchAuthorizationsResponse200:
+        """Search authorizations
+
+ Search for authorizations based on given criteria.
+
+Args:
+    body (SearchAuthorizationsData | Unset):
+
+Raises:
+    errors.SearchAuthorizationsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchAuthorizationsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchAuthorizationsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchAuthorizationsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchAuthorizationsResponse200"""
+        from .api.authorization.search_authorizations import sync as search_authorizations_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_authorizations_sync(**_kwargs)
+
+
+    def get_authorization(self, authorization_key: str, **kwargs: Any) -> GetAuthorizationResponse200:
+        """Get authorization
+
+ Get authorization by the given key.
+
+Args:
+    authorization_key (str): System-generated key for an authorization. Example:
+        2251799813684332.
+
+Raises:
+    errors.GetAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuthorizationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuthorizationNotFound: If the response status code is 404. The authorization with the given key was not found.
+    errors.GetAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetAuthorizationResponse200"""
+        from .api.authorization.get_authorization import sync as get_authorization_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_authorization_sync(**_kwargs)
+
+
+    def delete_authorization(self, authorization_key: str, **kwargs: Any) -> Any:
+        """Delete authorization
+
+ Deletes the authorization with the given key.
+
+Args:
+    authorization_key (str): System-generated key for an authorization. Example:
+        2251799813684332.
+
+Raises:
+    errors.DeleteAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteAuthorizationNotFound: If the response status code is 404. The authorization with the authorizationKey was not found.
+    errors.DeleteAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteAuthorizationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.authorization.delete_authorization import sync as delete_authorization_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_authorization_sync(**_kwargs)
+
+
+    def get_decision_requirements_xml(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsXMLResponse400:
+        """Get decision requirements XML
+
+ Returns decision requirements as XML.
+
+Args:
+    decision_requirements_key (str): System-generated key for a deployed decision requirements
+        definition. Example: 2251799813683346.
+
+Raises:
+    errors.GetDecisionRequirementsXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionRequirementsXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionRequirementsXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionRequirementsXmlNotFound: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionRequirementsXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetDecisionRequirementsXMLResponse400"""
+        from .api.decision_requirements.get_decision_requirements_xml import sync as get_decision_requirements_xml_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_decision_requirements_xml_sync(**_kwargs)
+
+
+    def search_decision_requirements(self, *, data: SearchDecisionRequirementsData | Unset = UNSET, **kwargs: Any) -> SearchDecisionRequirementsResponse200:
+        """Search decision requirements
+
+ Search for decision requirements based on given criteria.
+
+Args:
+    body (SearchDecisionRequirementsData | Unset):
+
+Raises:
+    errors.SearchDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchDecisionRequirementsResponse200"""
+        from .api.decision_requirements.search_decision_requirements import sync as search_decision_requirements_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_decision_requirements_sync(**_kwargs)
+
+
+    def get_decision_requirements(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsResponse200:
+        """Get decision requirements
+
+ Returns Decision Requirements as JSON.
+
+Args:
+    decision_requirements_key (str): System-generated key for a deployed decision requirements
+        definition. Example: 2251799813683346.
+
+Raises:
+    errors.GetDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionRequirementsNotFound: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetDecisionRequirementsResponse200"""
+        from .api.decision_requirements.get_decision_requirements import sync as get_decision_requirements_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_decision_requirements_sync(**_kwargs)
+
+
+    def get_authentication(self, **kwargs: Any) -> GetAuthenticationResponse200:
+        """Get current user
+
+ Retrieves the current authenticated user.
+
+Raises:
+    errors.GetAuthenticationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuthenticationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuthenticationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetAuthenticationResponse200"""
+        from .api.authentication.get_authentication import sync as get_authentication_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_authentication_sync(**_kwargs)
+
+
+    def broadcast_signal(self, *, data: BroadcastSignalData, **kwargs: Any) -> BroadcastSignalResponse200:
+        """Broadcast signal
+
+ Broadcasts a signal.
+
+Args:
+    body (BroadcastSignalData):
+
+Raises:
+    errors.BroadcastSignalBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.BroadcastSignalNotFound: If the response status code is 404. The signal is not found.
+    errors.BroadcastSignalInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.BroadcastSignalServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    BroadcastSignalResponse200"""
+        from .api.signal.broadcast_signal import sync as broadcast_signal_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return broadcast_signal_sync(**_kwargs)
+
+
+    def update_mapping_rule(self, mapping_rule_id: str, *, data: UpdateMappingRuleData | Unset = UNSET, **kwargs: Any) -> UpdateMappingRuleResponse200:
+        """Update mapping rule
+
+ Update a mapping rule.
+
+Args:
+    mapping_rule_id (str):
+    body (UpdateMappingRuleData | Unset):
+
+Raises:
+    errors.UpdateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateMappingRuleForbidden: If the response status code is 403. The request to update a mapping rule was denied. More details are provided in the response body.
+    errors.UpdateMappingRuleNotFound: If the response status code is 404. The request to update a mapping rule was denied.
+    errors.UpdateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    UpdateMappingRuleResponse200"""
+        from .api.mapping_rule.update_mapping_rule import sync as update_mapping_rule_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return update_mapping_rule_sync(**_kwargs)
+
+
+    def delete_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Delete a mapping rule
+
+ Deletes the mapping rule with the given ID.
+
+Args:
+    mapping_rule_id (str):
+
+Raises:
+    errors.DeleteMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+    errors.DeleteMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.mapping_rule.delete_mapping_rule import sync as delete_mapping_rule_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_mapping_rule_sync(**_kwargs)
+
+
+    def create_mapping_rule(self, *, data: CreateMappingRuleData | Unset = UNSET, **kwargs: Any) -> CreateMappingRuleResponse201:
+        """Create mapping rule
+
+ Create a new mapping rule
+
+Args:
+    body (CreateMappingRuleData | Unset):
+
+Raises:
+    errors.CreateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateMappingRuleForbidden: If the response status code is 403. The request to create a mapping rule was denied. More details are provided in the response body.
+    errors.CreateMappingRuleNotFound: If the response status code is 404. The request to create a mapping rule was denied.
+    errors.CreateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateMappingRuleResponse201"""
+        from .api.mapping_rule.create_mapping_rule import sync as create_mapping_rule_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_mapping_rule_sync(**_kwargs)
+
+
+    def search_mapping_rule(self, *, data: SearchMappingRuleData | Unset = UNSET, **kwargs: Any) -> SearchMappingRuleResponse200:
+        """Search mapping rules
+
+ Search for mapping rules based on given criteria.
+
+Args:
+    body (SearchMappingRuleData | Unset):
+
+Raises:
+    errors.SearchMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMappingRuleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchMappingRuleResponse200"""
+        from .api.mapping_rule.search_mapping_rule import sync as search_mapping_rule_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_mapping_rule_sync(**_kwargs)
+
+
+    def get_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> GetMappingRuleResponse200:
+        """Get a mapping rule
+
+ Gets the mapping rule with the given ID.
+
+Args:
+    mapping_rule_id (str):
+
+Raises:
+    errors.GetMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+    errors.GetMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetMappingRuleResponse200"""
+        from .api.mapping_rule.get_mapping_rule import sync as get_mapping_rule_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_mapping_rule_sync(**_kwargs)
+
+
+    def get_process_instance_sequence_flows(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceSequenceFlowsResponse200:
+        """Get sequence flows
+
+ Get sequence flows taken by the process instance.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.GetProcessInstanceSequenceFlowsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceSequenceFlowsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceSequenceFlowsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceSequenceFlowsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessInstanceSequenceFlowsResponse200"""
+        from .api.process_instance.get_process_instance_sequence_flows import sync as get_process_instance_sequence_flows_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_instance_sequence_flows_sync(**_kwargs)
+
+
+    def get_process_instance_call_hierarchy(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceCallHierarchyResponse400:
+        """Get call hierarchy
+
+ Returns the call hierarchy for a given process instance, showing its ancestry up to the root
+instance.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.GetProcessInstanceCallHierarchyBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceCallHierarchyUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceCallHierarchyForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceCallHierarchyNotFound: If the response status code is 404. The process instance is not found.
+    errors.GetProcessInstanceCallHierarchyInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessInstanceCallHierarchyResponse400"""
+        from .api.process_instance.get_process_instance_call_hierarchy import sync as get_process_instance_call_hierarchy_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_instance_call_hierarchy_sync(**_kwargs)
+
+
+    def modify_process_instance(self, process_instance_key: str, *, data: ModifyProcessInstanceData, **kwargs: Any) -> Any:
+        """Modify process instance
+
+ Modifies a running process instance.
+This request can contain multiple instructions to activate an element of the process or
+to terminate an active instance of an element.
+
+Use this to repair a process instance that is stuck on an element or took an unintended path.
+For example, because an external system is not available or doesn't respond as expected.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (ModifyProcessInstanceData):
+
+Raises:
+    errors.ModifyProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ModifyProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.ModifyProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ModifyProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.process_instance.modify_process_instance import sync as modify_process_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return modify_process_instance_sync(**_kwargs)
+
+
+    def get_process_instance_statistics(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceStatisticsResponse200:
+        """Get element instance statistics
+
+ Get statistics about elements by the process instance key.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.GetProcessInstanceStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessInstanceStatisticsResponse200"""
+        from .api.process_instance.get_process_instance_statistics import sync as get_process_instance_statistics_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_instance_statistics_sync(**_kwargs)
+
+
+    def migrate_process_instances_batch_operation(self, *, data: MigrateProcessInstancesBatchOperationData, **kwargs: Any) -> MigrateProcessInstancesBatchOperationResponse200:
+        """Migrate process instances (batch)
+
+ Migrate multiple process instances.
+Since only process instances with ACTIVE state can be migrated, any given
+filters for state are ignored and overridden during this batch operation.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (MigrateProcessInstancesBatchOperationData):
+
+Raises:
+    errors.MigrateProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.MigrateProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.MigrateProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.MigrateProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    MigrateProcessInstancesBatchOperationResponse200"""
+        from .api.process_instance.migrate_process_instances_batch_operation import sync as migrate_process_instances_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return migrate_process_instances_batch_operation_sync(**_kwargs)
+
+
+    def get_process_instance(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceResponse200:
+        """Get process instance
+
+ Get the process instance by the process instance key.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.GetProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceNotFound: If the response status code is 404. The process instance with the given key was not found.
+    errors.GetProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessInstanceResponse200"""
+        from .api.process_instance.get_process_instance import sync as get_process_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_instance_sync(**_kwargs)
+
+
+    def resolve_incidents_batch_operation(self, *, data: ResolveIncidentsBatchOperationData | Unset = UNSET, **kwargs: Any) -> ResolveIncidentsBatchOperationResponse200:
+        """Resolve related incidents (batch)
+
+ Resolves multiple instances of process instances.
+Since only process instances with ACTIVE state can have unresolved incidents, any given
+filters for state are ignored and overridden during this batch operation.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (ResolveIncidentsBatchOperationData | Unset): The process instance filter that
+        defines which process instances should have their incidents resolved.
+
+Raises:
+    errors.ResolveIncidentsBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.ResolveIncidentsBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ResolveIncidentsBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.ResolveIncidentsBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ResolveIncidentsBatchOperationResponse200"""
+        from .api.process_instance.resolve_incidents_batch_operation import sync as resolve_incidents_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return resolve_incidents_batch_operation_sync(**_kwargs)
+
+
+    def modify_process_instances_batch_operation(self, *, data: ModifyProcessInstancesBatchOperationData, **kwargs: Any) -> ModifyProcessInstancesBatchOperationResponse200:
+        """Modify process instances (batch)
+
+ Modify multiple process instances.
+Since only process instances with ACTIVE state can be modified, any given
+filters for state are ignored and overridden during this batch operation.
+In contrast to single modification operation, it is not possible to add variable instructions or
+modify by element key.
+It is only possible to use the element id of the source and target.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (ModifyProcessInstancesBatchOperationData): The process instance filter to define on
+        which process instances tokens should be moved,
+        and new element instances should be activated or terminated.
+
+Raises:
+    errors.ModifyProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.ModifyProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ModifyProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.ModifyProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ModifyProcessInstancesBatchOperationResponse200"""
+        from .api.process_instance.modify_process_instances_batch_operation import sync as modify_process_instances_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return modify_process_instances_batch_operation_sync(**_kwargs)
+
+
+    def delete_process_instance(self, process_instance_key: str, *, data: DeleteProcessInstanceDataType0 | None | Unset = UNSET, **kwargs: Any) -> DeleteProcessInstanceResponse200:
+        """Delete process instance
+
+ Deletes a process instance. Only instances that are completed or terminated can be deleted.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (DeleteProcessInstanceDataType0 | None | Unset):
+
+Raises:
+    errors.DeleteProcessInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteProcessInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.DeleteProcessInstanceConflict: If the response status code is 409. The process instance is not in a completed or terminated state and cannot be deleted.
+    errors.DeleteProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    DeleteProcessInstanceResponse200"""
+        from .api.process_instance.delete_process_instance import sync as delete_process_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_process_instance_sync(**_kwargs)
+
+
+    def delete_process_instances_batch_operation(self, *, data: DeleteProcessInstancesBatchOperationData, **kwargs: Any) -> DeleteProcessInstancesBatchOperationResponse200:
+        """Delete process instances (batch)
+
+ Delete multiple process instances. This will delete the historic data from secondary storage.
+Only process instances in a final state (COMPLETED or TERMINATED) can be deleted.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (DeleteProcessInstancesBatchOperationData): The process instance filter that defines
+        which process instances should be deleted.
+
+Raises:
+    errors.DeleteProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.DeleteProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    DeleteProcessInstancesBatchOperationResponse200"""
+        from .api.process_instance.delete_process_instances_batch_operation import sync as delete_process_instances_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_process_instances_batch_operation_sync(**_kwargs)
+
+
+    def cancel_process_instances_batch_operation(self, *, data: CancelProcessInstancesBatchOperationData, **kwargs: Any) -> CancelProcessInstancesBatchOperationResponse200:
+        """Cancel process instances (batch)
+
+ Cancels multiple running process instances.
+Since only ACTIVE root instances can be cancelled, any given filters for state and
+parentProcessInstanceKey are ignored and overridden during this batch operation.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (CancelProcessInstancesBatchOperationData): The process instance filter that defines
+        which process instances should be canceled.
+
+Raises:
+    errors.CancelProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.CancelProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CancelProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CancelProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CancelProcessInstancesBatchOperationResponse200"""
+        from .api.process_instance.cancel_process_instances_batch_operation import sync as cancel_process_instances_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return cancel_process_instances_batch_operation_sync(**_kwargs)
+
+
+    def create_process_instance(self, *, data: Processcreationbyid | Processcreationbykey, **kwargs: Any) -> CreateProcessInstanceResponse200:
+        """Create process instance
+
+ Creates and starts an instance of the specified process.
+The process definition to use to create the instance can be specified either using its unique key
+(as returned by Deploy resources), or using the BPMN process id and a version.
+
+Waits for the completion of the process instance before returning a result
+when awaitCompletion is enabled.
+
+Args:
+    body (Processcreationbyid | Processcreationbykey): Instructions for creating a process
+        instance. The process definition can be specified
+        either by id or by key.
+
+Raises:
+    errors.CreateProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.CreateProcessInstanceGatewayTimeout: If the response status code is 504. The process instance creation request timed out in the gateway. This can happen if the `awaitCompletion` request parameter is set to `true` and the created process instance did not complete within the defined request timeout. This often happens when the created instance is not fully automated or contains wait states.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateProcessInstanceResponse200"""
+        from .api.process_instance.create_process_instance import sync as create_process_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return create_process_instance_sync(**_kwargs)
+
+
+    def cancel_process_instance(self, process_instance_key: str, *, data: CancelProcessInstanceDataType0 | None | Unset = UNSET, **kwargs: Any) -> Any:
+        """Cancel process instance
+
+ Cancels a running process instance. As a cancellation includes more than just the removal of the
+process instance resource, the cancellation resource must be posted.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (CancelProcessInstanceDataType0 | None | Unset):
+
+Raises:
+    errors.CancelProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CancelProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.CancelProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CancelProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.process_instance.cancel_process_instance import sync as cancel_process_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return cancel_process_instance_sync(**_kwargs)
+
+
+    def search_process_instance_incidents(self, process_instance_key: str, *, data: SearchProcessInstanceIncidentsData | Unset = UNSET, **kwargs: Any) -> SearchProcessInstanceIncidentsResponse200:
+        """Search related incidents
+
+ Search for incidents caused by the process instance or any of its called process or decision
+instances.
+
+Although the `processInstanceKey` is provided as a path parameter to indicate the root process
+instance,
+you may also include a `processInstanceKey` within the filter object to narrow results to specific
+child process instances. This is useful, for example, if you want to isolate incidents associated
+with
+subprocesses or called processes under the root instance while excluding incidents directly tied to
+the root.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (SearchProcessInstanceIncidentsData | Unset):
+
+Raises:
+    errors.SearchProcessInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchProcessInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchProcessInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchProcessInstanceIncidentsNotFound: If the response status code is 404. The process instance with the given key was not found.
+    errors.SearchProcessInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchProcessInstanceIncidentsResponse200"""
+        from .api.process_instance.search_process_instance_incidents import sync as search_process_instance_incidents_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_process_instance_incidents_sync(**_kwargs)
+
+
+    def migrate_process_instance(self, process_instance_key: str, *, data: MigrateProcessInstanceData, **kwargs: Any) -> Any:
+        """Migrate process instance
+
+ Migrates a process instance to a new process definition.
+This request can contain multiple mapping instructions to define mapping between the active
+process instance's elements and target process definition elements.
+
+Use this to upgrade a process instance to a new version of a process or to
+a different process definition, e.g. to keep your running instances up-to-date with the
+latest process improvements.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (MigrateProcessInstanceData): The migration instructions describe how to migrate a
+        process instance from one process definition to another.
+
+Raises:
+    errors.MigrateProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.MigrateProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.MigrateProcessInstanceConflict: If the response status code is 409. The process instance migration failed. More details are provided in the response body.
+    errors.MigrateProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.MigrateProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.process_instance.migrate_process_instance import sync as migrate_process_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return migrate_process_instance_sync(**_kwargs)
+
+
+    def search_process_instances(self, *, data: SearchProcessInstancesData | Unset = UNSET, **kwargs: Any) -> SearchProcessInstancesResponse200:
+        """Search process instances
+
+ Search for process instances based on given criteria.
+
+Args:
+    body (SearchProcessInstancesData | Unset): Process instance search request.
+
+Raises:
+    errors.SearchProcessInstancesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchProcessInstancesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchProcessInstancesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchProcessInstancesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchProcessInstancesResponse200"""
+        from .api.process_instance.search_process_instances import sync as search_process_instances_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_process_instances_sync(**_kwargs)
+
+
+    def resolve_process_instance_incidents(self, process_instance_key: str, **kwargs: Any) -> ResolveProcessInstanceIncidentsResponse200:
+        """Resolve related incidents
+
+ Creates a batch operation to resolve multiple incidents of a process instance.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.ResolveProcessInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ResolveProcessInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ResolveProcessInstanceIncidentsNotFound: If the response status code is 404. The process instance is not found.
+    errors.ResolveProcessInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResolveProcessInstanceIncidentsServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ResolveProcessInstanceIncidentsResponse200"""
+        from .api.process_instance.resolve_process_instance_incidents import sync as resolve_process_instance_incidents_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return resolve_process_instance_incidents_sync(**_kwargs)
+
+
+    def pin_clock(self, *, data: PinClockData, **kwargs: Any) -> Any:
+        """Pin internal clock (alpha)
+
+ Set a precise, static time for the Zeebe engine's internal clock.
+When the clock is pinned, it remains at the specified time and does not advance.
+To change the time, the clock must be pinned again with a new timestamp.
+
+This endpoint is an alpha feature and may be subject to change
+in future releases.
+
+Args:
+    body (PinClockData):
+
+Raises:
+    errors.PinClockBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.PinClockInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.PinClockServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.clock.pin_clock import sync as pin_clock_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return pin_clock_sync(**_kwargs)
+
+
+    def reset_clock(self, **kwargs: Any) -> Any:
+        """Reset internal clock (alpha)
+
+ Resets the Zeebe engine's internal clock to the current system time, enabling it to tick in real-
+time.
+This operation is useful for returning the clock to
+normal behavior after it has been pinned to a specific time.
+
+This endpoint is an alpha feature and may be subject to change
+in future releases.
+
+Raises:
+    errors.ResetClockInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResetClockServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.clock.reset_clock import sync as reset_clock_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return reset_clock_sync(**_kwargs)
+
+
+    def get_process_definition_instance_version_statistics(self, process_definition_id: str, *, data: GetProcessDefinitionInstanceVersionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
+        """Get process instance statistics by version
+
+ Get statistics about process instances, grouped by version for a given process definition.
+
+Args:
+    process_definition_id (str): Id of a process definition, from the model. Only ids of
+        process definitions that are deployed are useful. Example: new-account-onboarding-
+        workflow.
+    body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
+
+Raises:
+    errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionInstanceVersionStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionInstanceVersionStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionInstanceVersionStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessDefinitionInstanceVersionStatisticsResponse200"""
+        from .api.process_definition.get_process_definition_instance_version_statistics import sync as get_process_definition_instance_version_statistics_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_definition_instance_version_statistics_sync(**_kwargs)
+
+
+    def get_process_definition_instance_statistics(self, *, data: GetProcessDefinitionInstanceStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionInstanceStatisticsResponse200:
+        """Get process instance statistics
+
+ Get statistics about process instances, grouped by process definition and tenant.
+
+Args:
+    body (GetProcessDefinitionInstanceStatisticsData | Unset):
+
+Raises:
+    errors.GetProcessDefinitionInstanceStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionInstanceStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionInstanceStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionInstanceStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessDefinitionInstanceStatisticsResponse200"""
+        from .api.process_definition.get_process_definition_instance_statistics import sync as get_process_definition_instance_statistics_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_definition_instance_statistics_sync(**_kwargs)
+
+
+    def search_process_definitions(self, *, data: SearchProcessDefinitionsData | Unset = UNSET, **kwargs: Any) -> SearchProcessDefinitionsResponse200:
+        """Search process definitions
+
+ Search for process definitions based on given criteria.
+
+Args:
+    body (SearchProcessDefinitionsData | Unset):
+
+Raises:
+    errors.SearchProcessDefinitionsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchProcessDefinitionsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchProcessDefinitionsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchProcessDefinitionsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchProcessDefinitionsResponse200"""
+        from .api.process_definition.search_process_definitions import sync as search_process_definitions_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_process_definitions_sync(**_kwargs)
+
+
+    def get_process_definition_message_subscription_statistics(self, *, data: GetProcessDefinitionMessageSubscriptionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionMessageSubscriptionStatisticsResponse200:
+        """Get message subscription statistics
+
+ Get message subscription statistics, grouped by process definition.
+
+Args:
+    body (GetProcessDefinitionMessageSubscriptionStatisticsData | Unset):
+
+Raises:
+    errors.GetProcessDefinitionMessageSubscriptionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionMessageSubscriptionStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionMessageSubscriptionStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionMessageSubscriptionStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessDefinitionMessageSubscriptionStatisticsResponse200"""
+        from .api.process_definition.get_process_definition_message_subscription_statistics import sync as get_process_definition_message_subscription_statistics_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_definition_message_subscription_statistics_sync(**_kwargs)
+
+
+    def get_start_process_form(self, process_definition_key: str, **kwargs: Any) -> Any:
+        """Get process start form
+
+ Get the start form of a process.
+Note that this endpoint will only return linked forms. This endpoint does not support embedded
+forms.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+
+Raises:
+    errors.GetStartProcessFormBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetStartProcessFormUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetStartProcessFormForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetStartProcessFormNotFound: If the response status code is 404. Not found
+    errors.GetStartProcessFormInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.process_definition.get_start_process_form import sync as get_start_process_form_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_start_process_form_sync(**_kwargs)
+
+
+    def get_process_definition_xml(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionXMLResponse400:
+        """Get process definition XML
+
+ Returns process definition as XML.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+
+Raises:
+    errors.GetProcessDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionXmlNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+    errors.GetProcessDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessDefinitionXMLResponse400"""
+        from .api.process_definition.get_process_definition_xml import sync as get_process_definition_xml_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_definition_xml_sync(**_kwargs)
+
+
+    def get_process_definition(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionResponse200:
+        """Get process definition
+
+ Returns process definition as JSON.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+
+Raises:
+    errors.GetProcessDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+    errors.GetProcessDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessDefinitionResponse200"""
+        from .api.process_definition.get_process_definition import sync as get_process_definition_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_definition_sync(**_kwargs)
+
+
+    def get_process_definition_statistics(self, process_definition_key: str, *, data: GetProcessDefinitionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionStatisticsResponse200:
+        """Get process definition statistics
+
+ Get statistics about elements in currently running process instances by process definition key and
+search filter.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+    body (GetProcessDefinitionStatisticsData | Unset): Process definition element statistics
+        request.
+
+Raises:
+    errors.GetProcessDefinitionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessDefinitionStatisticsResponse200"""
+        from .api.process_definition.get_process_definition_statistics import sync as get_process_definition_statistics_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_process_definition_statistics_sync(**_kwargs)
+
+
+
+class CamundaAsyncClient:
+    client: Client | AuthenticatedClient
+    _workers: list[JobWorker]
+
+    def __init__(self, base_url: str = "http://localhost:8080/v2", token: str | None = None, **kwargs):
+        if token:
+            self.client = AuthenticatedClient(base_url=base_url, token=token, **kwargs)
+        else:
+            self.client = Client(base_url=base_url, **kwargs)
+        self._workers = []
+
+    async def __aenter__(self):
+        await self.client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args, **kwargs):
+        await self.client.__aexit__(*args, **kwargs)
+
+    def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True) -> JobWorker:
+        worker = JobWorker(self, callback, config)
+        self._workers.append(worker)
+        if auto_start:
+            worker.start()
+        return worker
+
+    async def run_workers(self):
+        stop_event = asyncio.Event()
+        try:
+            await stop_event.wait()
+        except asyncio.CancelledError:
+            pass
+        finally:
+            for worker in self._workers:
+                worker.stop()
+
+    async def deploy_resources_from_files(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
+        """Deploy BPMN/DMN/Form resources from local files.
+
+        Async variant of :meth:`CamundaClient.deploy_resources_from_files`.
+
+        This reads each file path in ``files`` as bytes, wraps them into
+        :class:`camunda_orchestration_sdk.types.File`, calls :meth:`create_deployment`, and returns
+        an :class:`ExtendedDeploymentResult`.
+
+        Note: file reads are currently performed using blocking I/O (``open(...).read()``). If you
+        need fully non-blocking file access, load the bytes yourself and call :meth:`create_deployment`.
+
+        Args:
+            files: File paths (``str`` or ``Path``) to deploy.
+            tenant_id: Optional tenant identifier. If not provided, the default tenant is used.
+
+        Returns:
+            ExtendedDeploymentResult: The deployment result with extracted resource lists.
+
+        Raises:
+            FileNotFoundError: If any file path does not exist.
+            PermissionError: If any file path cannot be read.
+            IsADirectoryError: If any file path is a directory.
+            OSError: For other I/O failures while reading files.
+            Exception: Propagates any exception raised by :meth:`create_deployment` (including
+                typed API errors in :mod:`camunda_orchestration_sdk.errors` and ``httpx.TimeoutException``).
+        """
+        from .models.create_deployment_data import CreateDeploymentData
+        from .types import File, UNSET
+        import os
+
+        resources = []
+        for file_path in files:
+            file_path = str(file_path)
+            with open(file_path, "rb") as f:
+                content = f.read()
+            resources.append(File(payload=content, file_name=os.path.basename(file_path)))
+
+        data = CreateDeploymentData(resources=resources, tenant_id=tenant_id if tenant_id is not None else UNSET)
+        return ExtendedDeploymentResult(await self.create_deployment(data=data))
+
+
+    async def delete_tenant(self, tenant_id: str, **kwargs: Any) -> Any:
+        """Delete tenant
+
+ Deletes an existing tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+
+Raises:
+    errors.DeleteTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteTenantNotFound: If the response status code is 404. Not found. The tenant was not found.
+    errors.DeleteTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.delete_tenant import asyncio as delete_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_tenant_asyncio(**_kwargs)
+
+
+    async def assign_group_to_tenant(self, tenant_id: str, group_id: str, **kwargs: Any) -> Any:
+        """Assign a group to a tenant
+
+ Assigns a group to a specified tenant.
+Group members (users, clients) can then access tenant data and perform authorized actions.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    group_id (str):
+
+Raises:
+    errors.AssignGroupToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignGroupToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignGroupToTenantNotFound: If the response status code is 404. Not found. The tenant or group was not found.
+    errors.AssignGroupToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignGroupToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.assign_group_to_tenant import asyncio as assign_group_to_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_group_to_tenant_asyncio(**_kwargs)
+
+
+    async def unassign_role_from_tenant(self, tenant_id: str, role_id: str, **kwargs: Any) -> Any:
+        """Unassign a role from a tenant
+
+ Unassigns a role from a specified tenant.
+Users, Clients or Groups, that have the role assigned, will no longer have access to the
+tenant's data - unless they are assigned directly to the tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    role_id (str):
+
+Raises:
+    errors.UnassignRoleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromTenantNotFound: If the response status code is 404. Not found. The tenant or role was not found.
+    errors.UnassignRoleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.unassign_role_from_tenant import asyncio as unassign_role_from_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_role_from_tenant_asyncio(**_kwargs)
+
+
+    async def search_group_ids_for_tenant(self, tenant_id: str, *, data: SearchGroupIdsForTenantData | Unset = UNSET, **kwargs: Any) -> SearchGroupIdsForTenantResponse200:
+        """Search groups for tenant
+
+ Retrieves a filtered and sorted list of groups for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchGroupIdsForTenantData | Unset):
+
+Raises:
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchGroupIdsForTenantResponse200"""
+        from .api.tenant.search_group_ids_for_tenant import asyncio as search_group_ids_for_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_group_ids_for_tenant_asyncio(**_kwargs)
+
+
+    async def search_users_for_tenant(self, tenant_id: str, *, data: SearchUsersForTenantData | Unset = UNSET, **kwargs: Any) -> SearchUsersForTenantResponse200:
+        """Search users for tenant
+
+ Retrieves a filtered and sorted list of users for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchUsersForTenantData | Unset):
+
+Raises:
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchUsersForTenantResponse200"""
+        from .api.tenant.search_users_for_tenant import asyncio as search_users_for_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_users_for_tenant_asyncio(**_kwargs)
+
+
+    async def unassign_client_from_tenant(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Unassign a client from a tenant
+
+ Unassigns the client from the specified tenant.
+The client can no longer access tenant data.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    client_id (str):
+
+Raises:
+    errors.UnassignClientFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignClientFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignClientFromTenantNotFound: If the response status code is 404. The tenant does not exist or the client was not assigned to it.
+    errors.UnassignClientFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignClientFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.unassign_client_from_tenant import asyncio as unassign_client_from_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_client_from_tenant_asyncio(**_kwargs)
+
+
+    async def unassign_user_from_tenant(self, tenant_id: str, username: str, **kwargs: Any) -> Any:
+        """Unassign a user from a tenant
+
+ Unassigns the user from the specified tenant.
+The user can no longer access tenant data.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnassignUserFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignUserFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignUserFromTenantNotFound: If the response status code is 404. Not found. The tenant or user was not found.
+    errors.UnassignUserFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignUserFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.unassign_user_from_tenant import asyncio as unassign_user_from_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_user_from_tenant_asyncio(**_kwargs)
+
+
+    async def search_roles_for_tenant(self, tenant_id: str, *, data: SearchRolesForTenantData | Unset = UNSET, **kwargs: Any) -> SearchRolesForTenantResponse200:
+        """Search roles for tenant
+
+ Retrieves a filtered and sorted list of roles for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchRolesForTenantData | Unset): Role search request.
+
+Raises:
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchRolesForTenantResponse200"""
+        from .api.tenant.search_roles_for_tenant import asyncio as search_roles_for_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_roles_for_tenant_asyncio(**_kwargs)
+
+
+    async def unassign_group_from_tenant(self, tenant_id: str, group_id: str, **kwargs: Any) -> Any:
+        """Unassign a group from a tenant
+
+ Unassigns a group from a specified tenant.
+Members of the group (users, clients) will no longer have access to the tenant's data - except they
+are assigned directly to the tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    group_id (str):
+
+Raises:
+    errors.UnassignGroupFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignGroupFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignGroupFromTenantNotFound: If the response status code is 404. Not found. The tenant or group was not found.
+    errors.UnassignGroupFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignGroupFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.unassign_group_from_tenant import asyncio as unassign_group_from_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_group_from_tenant_asyncio(**_kwargs)
+
+
+    async def search_clients_for_tenant(self, tenant_id: str, *, data: SearchClientsForTenantData | Unset = UNSET, **kwargs: Any) -> SearchClientsForTenantResponse200:
+        """Search clients for tenant
+
+ Retrieves a filtered and sorted list of clients for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchClientsForTenantData | Unset):
+
+Raises:
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchClientsForTenantResponse200"""
+        from .api.tenant.search_clients_for_tenant import asyncio as search_clients_for_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_clients_for_tenant_asyncio(**_kwargs)
+
+
+    async def search_tenants(self, *, data: SearchTenantsData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Search tenants
+
+ Retrieves a filtered and sorted list of tenants.
+
+Args:
+    body (SearchTenantsData | Unset): Tenant search request
+
+Raises:
+    errors.SearchTenantsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchTenantsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchTenantsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchTenantsNotFound: If the response status code is 404. Not found
+    errors.SearchTenantsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.search_tenants import asyncio as search_tenants_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_tenants_asyncio(**_kwargs)
+
+
+    async def assign_user_to_tenant(self, tenant_id: str, username: str, **kwargs: Any) -> Any:
+        """Assign a user to a tenant
+
+ Assign a single user to a specified tenant. The user can then access tenant data and perform
+authorized actions.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.AssignUserToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignUserToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignUserToTenantNotFound: If the response status code is 404. Not found. The tenant or user was not found.
+    errors.AssignUserToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignUserToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.assign_user_to_tenant import asyncio as assign_user_to_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_user_to_tenant_asyncio(**_kwargs)
+
+
+    async def assign_role_to_tenant(self, tenant_id: str, role_id: str, **kwargs: Any) -> Any:
+        """Assign a role to a tenant
+
+ Assigns a role to a specified tenant.
+Users, Clients or Groups, that have the role assigned, will get access to the tenant's data and can
+perform actions according to their authorizations.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    role_id (str):
+
+Raises:
+    errors.AssignRoleToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToTenantNotFound: If the response status code is 404. Not found. The tenant or role was not found.
+    errors.AssignRoleToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.assign_role_to_tenant import asyncio as assign_role_to_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_role_to_tenant_asyncio(**_kwargs)
+
+
+    async def search_mapping_rules_for_tenant(self, tenant_id: str, *, data: SearchMappingRulesForTenantData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForTenantResponse200:
+        """Search mapping rules for tenant
+
+ Retrieves a filtered and sorted list of MappingRules for a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (SearchMappingRulesForTenantData | Unset):
+
+Raises:
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchMappingRulesForTenantResponse200"""
+        from .api.tenant.search_mapping_rules_for_tenant import asyncio as search_mapping_rules_for_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_mapping_rules_for_tenant_asyncio(**_kwargs)
+
+
+    async def assign_mapping_rule_to_tenant(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Assign a mapping rule to a tenant
+
+ Assign a single mapping rule to a specified tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    mapping_rule_id (str):
+
+Raises:
+    errors.AssignMappingRuleToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignMappingRuleToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignMappingRuleToTenantNotFound: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+    errors.AssignMappingRuleToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignMappingRuleToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.assign_mapping_rule_to_tenant import asyncio as assign_mapping_rule_to_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_mapping_rule_to_tenant_asyncio(**_kwargs)
+
+
+    async def update_tenant(self, tenant_id: str, *, data: UpdateTenantData, **kwargs: Any) -> UpdateTenantResponse200:
+        """Update tenant
+
+ Updates an existing tenant.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (UpdateTenantData):
+
+Raises:
+    errors.UpdateTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UpdateTenantNotFound: If the response status code is 404. Not found. The tenant was not found.
+    errors.UpdateTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    UpdateTenantResponse200"""
+        from .api.tenant.update_tenant import asyncio as update_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await update_tenant_asyncio(**_kwargs)
+
+
+    async def assign_client_to_tenant(self, tenant_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Assign a client to a tenant
+
+ Assign the client to the specified tenant.
+The client can then access tenant data and perform authorized actions.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    client_id (str):
+
+Raises:
+    errors.AssignClientToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignClientToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignClientToTenantNotFound: If the response status code is 404. The tenant was not found.
+    errors.AssignClientToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignClientToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.assign_client_to_tenant import asyncio as assign_client_to_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_client_to_tenant_asyncio(**_kwargs)
+
+
+    async def get_tenant(self, tenant_id: str, **kwargs: Any) -> GetTenantResponse200:
+        """Get tenant
+
+ Retrieves a single tenant by tenant ID.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+
+Raises:
+    errors.GetTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetTenantUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetTenantNotFound: If the response status code is 404. Tenant not found.
+    errors.GetTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetTenantResponse200"""
+        from .api.tenant.get_tenant import asyncio as get_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_tenant_asyncio(**_kwargs)
+
+
+    async def create_tenant(self, *, data: CreateTenantData, **kwargs: Any) -> Any:
+        """Create tenant
+
+ Creates a new tenant.
+
+Args:
+    body (CreateTenantData):
+
+Raises:
+    errors.CreateTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateTenantNotFound: If the response status code is 404. Not found. The resource was not found.
+    errors.CreateTenantConflict: If the response status code is 409. Tenant with this id already exists.
+    errors.CreateTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.create_tenant import asyncio as create_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_tenant_asyncio(**_kwargs)
+
+
+    async def unassign_mapping_rule_from_tenant(self, tenant_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Unassign a mapping rule from a tenant
+
+ Unassigns a single mapping rule from a specified tenant without deleting the rule.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnassignMappingRuleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignMappingRuleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignMappingRuleFromTenantNotFound: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+    errors.UnassignMappingRuleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignMappingRuleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.tenant.unassign_mapping_rule_from_tenant import asyncio as unassign_mapping_rule_from_tenant_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_mapping_rule_from_tenant_asyncio(**_kwargs)
+
+
+    async def cancel_batch_operation(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
+        """Cancel Batch operation
+
+ Cancels a running batch operation.
+This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+(/batch-operations/{batchOperationKey}).
+
+Args:
+    batch_operation_key (str): System-generated key for an batch operation. Example:
+        2251799813684321.
+    body (Any | Unset):
+
+Raises:
+    errors.CancelBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CancelBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CancelBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.CancelBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.batch_operation.cancel_batch_operation import asyncio as cancel_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await cancel_batch_operation_asyncio(**_kwargs)
+
+
+    async def resume_batch_operation(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
+        """Resume Batch operation
+
+ Resumes a suspended batch operation.
+This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+(/batch-operations/{batchOperationKey}).
+
+Args:
+    batch_operation_key (str): System-generated key for an batch operation. Example:
+        2251799813684321.
+    body (Any | Unset):
+
+Raises:
+    errors.ResumeBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ResumeBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.ResumeBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.ResumeBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResumeBatchOperationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.batch_operation.resume_batch_operation import asyncio as resume_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await resume_batch_operation_asyncio(**_kwargs)
+
+
+    async def suspend_batch_operation(self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any) -> Any:
+        """Suspend Batch operation
+
+ Suspends a running batch operation.
+This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+(/batch-operations/{batchOperationKey}).
+
+Args:
+    batch_operation_key (str): System-generated key for an batch operation. Example:
+        2251799813684321.
+    body (Any | Unset):
+
+Raises:
+    errors.SuspendBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SuspendBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SuspendBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.SuspendBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.SuspendBatchOperationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.batch_operation.suspend_batch_operation import asyncio as suspend_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await suspend_batch_operation_asyncio(**_kwargs)
+
+
+    async def search_batch_operations(self, *, data: SearchBatchOperationsData | Unset = UNSET, **kwargs: Any) -> SearchBatchOperationsResponse200:
+        """Search batch operations
+
+ Search for batch operations based on given criteria.
+
+Args:
+    body (SearchBatchOperationsData | Unset): Batch operation search request.
+
+Raises:
+    errors.SearchBatchOperationsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchBatchOperationsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchBatchOperationsResponse200"""
+        from .api.batch_operation.search_batch_operations import asyncio as search_batch_operations_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_batch_operations_asyncio(**_kwargs)
+
+
+    async def get_batch_operation(self, batch_operation_key: str, **kwargs: Any) -> GetBatchOperationResponse200:
+        """Get batch operation
+
+ Get batch operation by key.
+
+Args:
+    batch_operation_key (str): System-generated key for an batch operation. Example:
+        2251799813684321.
+
+Raises:
+    errors.GetBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetBatchOperationNotFound: If the response status code is 404. The batch operation is not found.
+    errors.GetBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetBatchOperationResponse200"""
+        from .api.batch_operation.get_batch_operation import asyncio as get_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_batch_operation_asyncio(**_kwargs)
+
+
+    async def search_batch_operation_items(self, *, data: SearchBatchOperationItemsData | Unset = UNSET, **kwargs: Any) -> SearchBatchOperationItemsResponse200:
+        """Search batch operation items
+
+ Search for batch operation items based on given criteria.
+
+Args:
+    body (SearchBatchOperationItemsData | Unset): Batch operation item search request.
+
+Raises:
+    errors.SearchBatchOperationItemsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchBatchOperationItemsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchBatchOperationItemsResponse200"""
+        from .api.batch_operation.search_batch_operation_items import asyncio as search_batch_operation_items_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_batch_operation_items_asyncio(**_kwargs)
+
+
+    async def get_topology(self, **kwargs: Any) -> GetTopologyResponse200:
+        """Get cluster topology
+
+ Obtains the current topology of the cluster the gateway is part of.
+
+Raises:
+    errors.GetTopologyUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTopologyInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetTopologyResponse200"""
+        from .api.cluster.get_topology import asyncio as get_topology_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_topology_asyncio(**_kwargs)
+
+
+    async def unassign_role_from_group(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
+        """Unassign a role from a group
+
+ Unassigns the specified role from the group. All group members (user or client) no longer inherit
+the authorizations associated with this role.
+
+Args:
+    role_id (str):
+    group_id (str):
+
+Raises:
+    errors.UnassignRoleFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromGroupNotFound: If the response status code is 404. The role or group with the given ID was not found.
+    errors.UnassignRoleFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.role.unassign_role_from_group import asyncio as unassign_role_from_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_role_from_group_asyncio(**_kwargs)
+
+
+    async def search_users_for_role(self, role_id: str, *, data: SearchUsersForRoleData | Unset = UNSET, **kwargs: Any) -> SearchUsersForRoleResponse200:
+        """Search role users
+
+ Search users with assigned role.
+
+Args:
+    role_id (str):
+    body (SearchUsersForRoleData | Unset):
+
+Raises:
+    errors.SearchUsersForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchUsersForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchUsersForRoleResponse200"""
+        from .api.role.search_users_for_role import asyncio as search_users_for_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_users_for_role_asyncio(**_kwargs)
+
+
+    async def unassign_role_from_mapping_rule(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Unassign a role from a mapping rule
+
+ Unassigns a role from a mapping rule.
+
+Args:
+    role_id (str):
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnassignRoleFromMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromMappingRuleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromMappingRuleNotFound: If the response status code is 404. The role or mapping rule with the given ID was not found.
+    errors.UnassignRoleFromMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.role.unassign_role_from_mapping_rule import asyncio as unassign_role_from_mapping_rule_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_role_from_mapping_rule_asyncio(**_kwargs)
+
+
+    async def search_roles(self, *, data: SearchRolesData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Search roles
+
+ Search for roles based on given criteria.
+
+Args:
+    body (SearchRolesData | Unset): Role search request.
+
+Raises:
+    errors.SearchRolesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchRolesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchRolesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchRolesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.role.search_roles import asyncio as search_roles_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_roles_asyncio(**_kwargs)
+
+
+    async def unassign_role_from_client(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Unassign a role from a client
+
+ Unassigns the specified role from the client. The client will no longer inherit the authorizations
+associated with this role.
+
+Args:
+    role_id (str):
+    client_id (str):
+
+Raises:
+    errors.UnassignRoleFromClientBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromClientForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromClientNotFound: If the response status code is 404. The role or client with the given ID or username was not found.
+    errors.UnassignRoleFromClientInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromClientServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.role.unassign_role_from_client import asyncio as unassign_role_from_client_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_role_from_client_asyncio(**_kwargs)
+
+
+    async def unassign_role_from_user(self, role_id: str, username: str, **kwargs: Any) -> Any:
+        """Unassign a role from a user
+
+ Unassigns a role from a user. The user will no longer inherit the authorizations associated with
+this role.
+
+Args:
+    role_id (str):
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnassignRoleFromUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromUserNotFound: If the response status code is 404. The role or user with the given ID or username was not found.
+    errors.UnassignRoleFromUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.role.unassign_role_from_user import asyncio as unassign_role_from_user_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_role_from_user_asyncio(**_kwargs)
+
+
+    async def create_role(self, *, data: CreateRoleData | Unset = UNSET, **kwargs: Any) -> CreateRoleResponse201:
+        """Create role
+
+ Create a new role.
+
+Args:
+    body (CreateRoleData | Unset):
+
+Raises:
+    errors.CreateRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateRoleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateRoleResponse201"""
+        from .api.role.create_role import asyncio as create_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_role_asyncio(**_kwargs)
+
+
+    async def search_clients_for_role(self, role_id: str, *, data: SearchClientsForRoleData | Unset = UNSET, **kwargs: Any) -> SearchClientsForRoleResponse200:
+        """Search role clients
+
+ Search clients with assigned role.
+
+Args:
+    role_id (str):
+    body (SearchClientsForRoleData | Unset):
+
+Raises:
+    errors.SearchClientsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchClientsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchClientsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchClientsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchClientsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchClientsForRoleResponse200"""
+        from .api.role.search_clients_for_role import asyncio as search_clients_for_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_clients_for_role_asyncio(**_kwargs)
+
+
+    async def assign_role_to_user(self, role_id: str, username: str, **kwargs: Any) -> Any:
+        """Assign a role to a user
+
+ Assigns the specified role to the user. The user will inherit the authorizations associated with
+this role.
+
+Args:
+    role_id (str):
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.AssignRoleToUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToUserNotFound: If the response status code is 404. The role or user with the given ID or username was not found.
+    errors.AssignRoleToUserConflict: If the response status code is 409. The role is already assigned to the user with the given ID.
+    errors.AssignRoleToUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.role.assign_role_to_user import asyncio as assign_role_to_user_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_role_to_user_asyncio(**_kwargs)
+
+
+    async def search_groups_for_role(self, role_id: str, *, data: SearchGroupsForRoleData | Unset = UNSET, **kwargs: Any) -> SearchGroupsForRoleResponse200:
+        """Search role groups
+
+ Search groups with assigned role.
+
+Args:
+    role_id (str):
+    body (SearchGroupsForRoleData | Unset):
+
+Raises:
+    errors.SearchGroupsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchGroupsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchGroupsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchGroupsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchGroupsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchGroupsForRoleResponse200"""
+        from .api.role.search_groups_for_role import asyncio as search_groups_for_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_groups_for_role_asyncio(**_kwargs)
+
+
+    async def update_role(self, role_id: str, *, data: UpdateRoleData, **kwargs: Any) -> UpdateRoleResponse200:
+        """Update role
+
+ Update a role with the given ID.
+
+Args:
+    role_id (str):
+    body (UpdateRoleData):
+
+Raises:
+    errors.UpdateRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateRoleNotFound: If the response status code is 404. The role with the ID is not found.
+    errors.UpdateRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateRoleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    UpdateRoleResponse200"""
+        from .api.role.update_role import asyncio as update_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await update_role_asyncio(**_kwargs)
+
+
+    async def assign_role_to_group(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
+        """Assign a role to a group
+
+ Assigns the specified role to the group. Every member of the group (user or client) will inherit the
+authorizations associated with this role.
+
+Args:
+    role_id (str):
+    group_id (str):
+
+Raises:
+    errors.AssignRoleToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToGroupNotFound: If the response status code is 404. The role or group with the given ID was not found.
+    errors.AssignRoleToGroupConflict: If the response status code is 409. The role is already assigned to the group with the given ID.
+    errors.AssignRoleToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.role.assign_role_to_group import asyncio as assign_role_to_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_role_to_group_asyncio(**_kwargs)
+
+
+    async def search_mapping_rules_for_role(self, role_id: str, *, data: SearchMappingRulesForRoleData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForRoleResponse200:
+        """Search role mapping rules
+
+ Search mapping rules with assigned role.
+
+Args:
+    role_id (str):
+    body (SearchMappingRulesForRoleData | Unset):
+
+Raises:
+    errors.SearchMappingRulesForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMappingRulesForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMappingRulesForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMappingRulesForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchMappingRulesForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchMappingRulesForRoleResponse200"""
+        from .api.role.search_mapping_rules_for_role import asyncio as search_mapping_rules_for_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_mapping_rules_for_role_asyncio(**_kwargs)
+
+
+    async def assign_role_to_client(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Assign a role to a client
+
+ Assigns the specified role to the client. The client will inherit the authorizations associated with
+this role.
+
+Args:
+    role_id (str):
+    client_id (str):
+
+Raises:
+    errors.AssignRoleToClientBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToClientForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToClientNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.AssignRoleToClientConflict: If the response status code is 409. The role was already assigned to the client with the given ID.
+    errors.AssignRoleToClientInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToClientServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.role.assign_role_to_client import asyncio as assign_role_to_client_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_role_to_client_asyncio(**_kwargs)
+
+
+    async def delete_role(self, role_id: str, **kwargs: Any) -> Any:
+        """Delete role
+
+ Deletes the role with the given ID.
+
+Args:
+    role_id (str):
+
+Raises:
+    errors.DeleteRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteRoleNotFound: If the response status code is 404. The role with the ID was not found.
+    errors.DeleteRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteRoleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.role.delete_role import asyncio as delete_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_role_asyncio(**_kwargs)
+
+
+    async def assign_role_to_mapping_rule(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Assign a role to a mapping rule
+
+ Assigns a role to a mapping rule.
+
+Args:
+    role_id (str):
+    mapping_rule_id (str):
+
+Raises:
+    errors.AssignRoleToMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToMappingRuleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToMappingRuleNotFound: If the response status code is 404. The role or mapping rule with the given ID was not found.
+    errors.AssignRoleToMappingRuleConflict: If the response status code is 409. The role is already assigned to the mapping rule with the given ID.
+    errors.AssignRoleToMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.role.assign_role_to_mapping_rule import asyncio as assign_role_to_mapping_rule_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_role_to_mapping_rule_asyncio(**_kwargs)
+
+
+    async def get_role(self, role_id: str, **kwargs: Any) -> GetRoleResponse200:
+        """Get role
+
+ Get a role by its ID.
+
+Args:
+    role_id (str):
+
+Raises:
+    errors.GetRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.GetRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetRoleResponse200"""
+        from .api.role.get_role import asyncio as get_role_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_role_asyncio(**_kwargs)
+
+
+    async def evaluate_conditionals(self, *, data: EvaluateConditionalsData, **kwargs: Any) -> EvaluateConditionalsResponse200:
+        """Evaluate root level conditional start events
+
+ Evaluates root-level conditional start events for process definitions.
+If the evaluation is successful, it will return the keys of all created process instances, along
+with their associated process definition key.
+Multiple root-level conditional start events of the same process definition can trigger if their
+conditions evaluate to true.
+
+Args:
+    body (EvaluateConditionalsData):
+
+Raises:
+    errors.EvaluateConditionalsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.EvaluateConditionalsForbidden: If the response status code is 403. The client is not authorized to start process instances for the specified process definition. If a processDefinitionKey is not provided, this indicates that the client is not authorized to start process instances for at least one of the matched process definitions.
+    errors.EvaluateConditionalsNotFound: If the response status code is 404. The process definition was not found for the given processDefinitionKey.
+    errors.EvaluateConditionalsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.EvaluateConditionalsServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    EvaluateConditionalsResponse200"""
+        from .api.conditional.evaluate_conditionals import asyncio as evaluate_conditionals_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await evaluate_conditionals_asyncio(**_kwargs)
+
+
+    async def get_license(self, **kwargs: Any) -> GetLicenseResponse200:
+        """Get license status
+
+ Obtains the status of the current Camunda license.
+
+Raises:
+    errors.GetLicenseInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetLicenseResponse200"""
+        from .api.license_.get_license import asyncio as get_license_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_license_asyncio(**_kwargs)
+
+
+    async def search_decision_instances(self, *, data: SearchDecisionInstancesData | Unset = UNSET, **kwargs: Any) -> SearchDecisionInstancesResponse200:
+        """Search decision instances
+
+ Search for decision instances based on given criteria.
+
+Args:
+    body (SearchDecisionInstancesData | Unset):
+
+Raises:
+    errors.SearchDecisionInstancesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchDecisionInstancesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchDecisionInstancesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchDecisionInstancesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchDecisionInstancesResponse200"""
+        from .api.decision_instance.search_decision_instances import asyncio as search_decision_instances_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_decision_instances_asyncio(**_kwargs)
+
+
+    async def get_decision_instance(self, decision_evaluation_instance_key: str, **kwargs: Any) -> GetDecisionInstanceResponse200:
+        """Get decision instance
+
+ Returns a decision instance.
+
+Args:
+    decision_evaluation_instance_key (str): System-generated key for a deployed decision
+        instance. Example: 22517998136843567.
+
+Raises:
+    errors.GetDecisionInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionInstanceNotFound: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetDecisionInstanceResponse200"""
+        from .api.decision_instance.get_decision_instance import asyncio as get_decision_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_decision_instance_asyncio(**_kwargs)
+
+
+    async def get_variable(self, variable_key: str, **kwargs: Any) -> GetVariableResponse200:
+        """Get variable
+
+ Get the variable by the variable key.
+
+Args:
+    variable_key (str): System-generated key for a variable. Example: 2251799813683287.
+
+Raises:
+    errors.GetVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetVariableNotFound: If the response status code is 404. Not found
+    errors.GetVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetVariableResponse200"""
+        from .api.variable.get_variable import asyncio as get_variable_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_variable_asyncio(**_kwargs)
+
+
+    async def search_variables(self, *, data: SearchVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchVariablesResponse200:
+        """Search variables
+
+ Search for process and local variables based on given criteria. By default, long variable values in
+the response are truncated.
+
+Args:
+    truncate_values (bool | Unset):
+    body (SearchVariablesData | Unset): Variable search query request.
+
+Raises:
+    errors.SearchVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchVariablesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchVariablesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchVariablesResponse200"""
+        from .api.variable.search_variables import asyncio as search_variables_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_variables_asyncio(**_kwargs)
+
+
+    async def get_tenant_cluster_variable(self, tenant_id: str, name: str, **kwargs: Any) -> GetTenantClusterVariableResponse200:
+        """Get a tenant-scoped cluster variable
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    name (str):
+
+Raises:
+    errors.GetTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetTenantClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.GetTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetTenantClusterVariableResponse200"""
+        from .api.cluster_variable.get_tenant_cluster_variable import asyncio as get_tenant_cluster_variable_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_tenant_cluster_variable_asyncio(**_kwargs)
+
+
+    async def search_cluster_variables(self, *, data: SearchClusterVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchClusterVariablesResponse200:
+        """Search for cluster variables based on given criteria. By default, long variable values in the
+response are truncated.
+
+Args:
+    truncate_values (bool | Unset):
+    body (SearchClusterVariablesData | Unset): Cluster variable search query request.
+
+Raises:
+    errors.SearchClusterVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchClusterVariablesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchClusterVariablesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchClusterVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchClusterVariablesResponse200"""
+        from .api.cluster_variable.search_cluster_variables import asyncio as search_cluster_variables_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_cluster_variables_asyncio(**_kwargs)
+
+
+    async def create_global_cluster_variable(self, *, data: CreateGlobalClusterVariableData, **kwargs: Any) -> CreateGlobalClusterVariableResponse200:
+        """Create a global-scoped cluster variable
+
+Args:
+    body (CreateGlobalClusterVariableData):
+
+Raises:
+    errors.CreateGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateGlobalClusterVariableResponse200"""
+        from .api.cluster_variable.create_global_cluster_variable import asyncio as create_global_cluster_variable_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_global_cluster_variable_asyncio(**_kwargs)
+
+
+    async def delete_global_cluster_variable(self, name: str, **kwargs: Any) -> Any:
+        """Delete a global-scoped cluster variable
+
+Args:
+    name (str):
+
+Raises:
+    errors.DeleteGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.DeleteGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.cluster_variable.delete_global_cluster_variable import asyncio as delete_global_cluster_variable_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_global_cluster_variable_asyncio(**_kwargs)
+
+
+    async def delete_tenant_cluster_variable(self, tenant_id: str, name: str, **kwargs: Any) -> Any:
+        """Delete a tenant-scoped cluster variable
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    name (str):
+
+Raises:
+    errors.DeleteTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteTenantClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.DeleteTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.cluster_variable.delete_tenant_cluster_variable import asyncio as delete_tenant_cluster_variable_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_tenant_cluster_variable_asyncio(**_kwargs)
+
+
+    async def create_tenant_cluster_variable(self, tenant_id: str, *, data: CreateTenantClusterVariableData, **kwargs: Any) -> CreateTenantClusterVariableResponse200:
+        """Create a tenant-scoped cluster variable
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    body (CreateTenantClusterVariableData):
+
+Raises:
+    errors.CreateTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateTenantClusterVariableResponse200"""
+        from .api.cluster_variable.create_tenant_cluster_variable import asyncio as create_tenant_cluster_variable_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_tenant_cluster_variable_asyncio(**_kwargs)
+
+
+    async def get_global_cluster_variable(self, name: str, **kwargs: Any) -> GetGlobalClusterVariableResponse200:
+        """Get a global-scoped cluster variable
+
+Args:
+    name (str):
+
+Raises:
+    errors.GetGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.GetGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetGlobalClusterVariableResponse200"""
+        from .api.cluster_variable.get_global_cluster_variable import asyncio as get_global_cluster_variable_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_global_cluster_variable_asyncio(**_kwargs)
+
+
+    async def unassign_mapping_rule_from_group(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Unassign a mapping rule from a group
+
+ Unassigns a mapping rule from a group.
+
+Args:
+    group_id (str):
+    mapping_rule_id (str):
+
+Raises:
+    errors.UnassignMappingRuleFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignMappingRuleFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignMappingRuleFromGroupNotFound: If the response status code is 404. The group or mapping rule with the given ID was not found, or the mapping rule is not assigned to this group.
+    errors.UnassignMappingRuleFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignMappingRuleFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.group.unassign_mapping_rule_from_group import asyncio as unassign_mapping_rule_from_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_mapping_rule_from_group_asyncio(**_kwargs)
+
+
+    async def search_roles_for_group(self, group_id: str, *, data: SearchRolesForGroupData | Unset = UNSET, **kwargs: Any) -> SearchRolesForGroupResponse200:
+        """Search group roles
+
+ Search roles assigned to a group.
+
+Args:
+    group_id (str):
+    body (SearchRolesForGroupData | Unset): Role search request.
+
+Raises:
+    errors.SearchRolesForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchRolesForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchRolesForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchRolesForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchRolesForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchRolesForGroupResponse200"""
+        from .api.group.search_roles_for_group import asyncio as search_roles_for_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_roles_for_group_asyncio(**_kwargs)
+
+
+    async def assign_client_to_group(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Assign a client to a group
+
+ Assigns a client to a group, making it a member of the group.
+Members of the group inherit the group authorizations, roles, and tenant assignments.
+
+Args:
+    group_id (str):
+    client_id (str):
+
+Raises:
+    errors.AssignClientToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignClientToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignClientToGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.AssignClientToGroupConflict: If the response status code is 409. The client with the given ID is already assigned to the group.
+    errors.AssignClientToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignClientToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.group.assign_client_to_group import asyncio as assign_client_to_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_client_to_group_asyncio(**_kwargs)
+
+
+    async def unassign_user_from_group(self, group_id: str, username: str, **kwargs: Any) -> Any:
+        """Unassign a user from a group
+
+ Unassigns a user from a group.
+The user is removed as a group member, with associated authorizations, roles, and tenant assignments
+no longer applied.
+
+Args:
+    group_id (str):
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.UnassignUserFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignUserFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignUserFromGroupNotFound: If the response status code is 404. The group or user with the given ID was not found, or the user is not assigned to this group.
+    errors.UnassignUserFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignUserFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.group.unassign_user_from_group import asyncio as unassign_user_from_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_user_from_group_asyncio(**_kwargs)
+
+
+    async def search_users_for_group(self, group_id: str, *, data: SearchUsersForGroupData | Unset = UNSET, **kwargs: Any) -> SearchUsersForGroupResponse200:
+        """Search group users
+
+ Search users assigned to a group.
+
+Args:
+    group_id (str):
+    body (SearchUsersForGroupData | Unset):
+
+Raises:
+    errors.SearchUsersForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchUsersForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchUsersForGroupResponse200"""
+        from .api.group.search_users_for_group import asyncio as search_users_for_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_users_for_group_asyncio(**_kwargs)
+
+
+    async def get_group(self, group_id: str, **kwargs: Any) -> GetGroupResponse200:
+        """Get group
+
+ Get a group by its ID.
+
+Args:
+    group_id (str):
+
+Raises:
+    errors.GetGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.GetGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetGroupResponse200"""
+        from .api.group.get_group import asyncio as get_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_group_asyncio(**_kwargs)
+
+
+    async def unassign_client_from_group(self, group_id: str, client_id: str, **kwargs: Any) -> Any:
+        """Unassign a client from a group
+
+ Unassigns a client from a group.
+The client is removed as a group member, with associated authorizations, roles, and tenant
+assignments no longer applied.
+
+Args:
+    group_id (str):
+    client_id (str):
+
+Raises:
+    errors.UnassignClientFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignClientFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignClientFromGroupNotFound: If the response status code is 404. The group with the given ID was not found, or the client is not assigned to this group.
+    errors.UnassignClientFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignClientFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.group.unassign_client_from_group import asyncio as unassign_client_from_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await unassign_client_from_group_asyncio(**_kwargs)
+
+
+    async def update_group(self, group_id: str, *, data: UpdateGroupData, **kwargs: Any) -> UpdateGroupResponse200:
+        """Update group
+
+ Update a group with the given ID.
+
+Args:
+    group_id (str):
+    body (UpdateGroupData):
+
+Raises:
+    errors.UpdateGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.UpdateGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    UpdateGroupResponse200"""
+        from .api.group.update_group import asyncio as update_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await update_group_asyncio(**_kwargs)
+
+
+    async def search_groups(self, *, data: SearchGroupsData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Search groups
+
+ Search for groups based on given criteria.
+
+Args:
+    body (SearchGroupsData | Unset): Group search request.
+
+Raises:
+    errors.SearchGroupsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchGroupsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchGroupsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchGroupsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.group.search_groups import asyncio as search_groups_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_groups_asyncio(**_kwargs)
+
+
+    async def assign_mapping_rule_to_group(self, group_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Assign a mapping rule to a group
+
+ Assigns a mapping rule to a group.
+
+Args:
+    group_id (str):
+    mapping_rule_id (str):
+
+Raises:
+    errors.AssignMappingRuleToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignMappingRuleToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignMappingRuleToGroupNotFound: If the response status code is 404. The group or mapping rule with the given ID was not found.
+    errors.AssignMappingRuleToGroupConflict: If the response status code is 409. The mapping rule with the given ID is already assigned to the group.
+    errors.AssignMappingRuleToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignMappingRuleToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.group.assign_mapping_rule_to_group import asyncio as assign_mapping_rule_to_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_mapping_rule_to_group_asyncio(**_kwargs)
+
+
+    async def search_mapping_rules_for_group(self, group_id: str, *, data: SearchMappingRulesForGroupData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForGroupResponse200:
+        """Search group mapping rules
+
+ Search mapping rules assigned to a group.
+
+Args:
+    group_id (str):
+    body (SearchMappingRulesForGroupData | Unset):
+
+Raises:
+    errors.SearchMappingRulesForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMappingRulesForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMappingRulesForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMappingRulesForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchMappingRulesForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchMappingRulesForGroupResponse200"""
+        from .api.group.search_mapping_rules_for_group import asyncio as search_mapping_rules_for_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_mapping_rules_for_group_asyncio(**_kwargs)
+
+
+    async def create_group(self, *, data: CreateGroupData | Unset = UNSET, **kwargs: Any) -> CreateGroupResponse201:
+        """Create group
+
+ Create a new group.
+
+Args:
+    body (CreateGroupData | Unset):
+
+Raises:
+    errors.CreateGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateGroupResponse201"""
+        from .api.group.create_group import asyncio as create_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_group_asyncio(**_kwargs)
+
+
+    async def delete_group(self, group_id: str, **kwargs: Any) -> Any:
+        """Delete group
+
+ Deletes the group with the given ID.
+
+Args:
+    group_id (str):
+
+Raises:
+    errors.DeleteGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.DeleteGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.group.delete_group import asyncio as delete_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_group_asyncio(**_kwargs)
+
+
+    async def assign_user_to_group(self, group_id: str, username: str, **kwargs: Any) -> Any:
+        """Assign a user to a group
+
+ Assigns a user to a group, making the user a member of the group.
+Group members inherit the group authorizations, roles, and tenant assignments.
+
+Args:
+    group_id (str):
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.AssignUserToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignUserToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignUserToGroupNotFound: If the response status code is 404. The group or user with the given ID or username was not found.
+    errors.AssignUserToGroupConflict: If the response status code is 409. The user with the given ID is already assigned to the group.
+    errors.AssignUserToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignUserToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.group.assign_user_to_group import asyncio as assign_user_to_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await assign_user_to_group_asyncio(**_kwargs)
+
+
+    async def search_clients_for_group(self, group_id: str, *, data: SearchClientsForGroupData | Unset = UNSET, **kwargs: Any) -> SearchClientsForGroupResponse200:
+        """Search group clients
+
+ Search clients assigned to a group.
+
+Args:
+    group_id (str):
+    body (SearchClientsForGroupData | Unset):
+
+Raises:
+    errors.SearchClientsForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchClientsForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchClientsForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchClientsForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchClientsForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchClientsForGroupResponse200"""
+        from .api.group.search_clients_for_group import asyncio as search_clients_for_group_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_clients_for_group_asyncio(**_kwargs)
+
+
+    async def search_correlated_message_subscriptions(self, *, data: SearchCorrelatedMessageSubscriptionsData | Unset = UNSET, **kwargs: Any) -> SearchCorrelatedMessageSubscriptionsResponse200:
+        """Search correlated message subscriptions
+
+ Search correlated message subscriptions based on given criteria.
+
+Args:
+    body (SearchCorrelatedMessageSubscriptionsData | Unset):
+
+Raises:
+    errors.SearchCorrelatedMessageSubscriptionsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchCorrelatedMessageSubscriptionsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchCorrelatedMessageSubscriptionsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchCorrelatedMessageSubscriptionsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchCorrelatedMessageSubscriptionsResponse200"""
+        from .api.message_subscription.search_correlated_message_subscriptions import asyncio as search_correlated_message_subscriptions_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_correlated_message_subscriptions_asyncio(**_kwargs)
+
+
+    async def search_message_subscriptions(self, *, data: SearchMessageSubscriptionsData | Unset = UNSET, **kwargs: Any) -> SearchMessageSubscriptionsResponse200:
+        """Search message subscriptions
+
+ Search for message subscriptions based on given criteria.
+
+Args:
+    body (SearchMessageSubscriptionsData | Unset):
+
+Raises:
+    errors.SearchMessageSubscriptionsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMessageSubscriptionsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMessageSubscriptionsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMessageSubscriptionsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchMessageSubscriptionsResponse200"""
+        from .api.message_subscription.search_message_subscriptions import asyncio as search_message_subscriptions_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_message_subscriptions_asyncio(**_kwargs)
+
+
+    async def create_admin_user(self, *, data: CreateAdminUserData, **kwargs: Any) -> Any:
+        """Create admin user
+
+ Creates a new user and assigns the admin role to it. This endpoint is only usable when users are
+managed in the Orchestration Cluster and while no user is assigned to the admin role.
+
+Args:
+    body (CreateAdminUserData):
+
+Raises:
+    errors.CreateAdminUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateAdminUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateAdminUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateAdminUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.setup.create_admin_user import asyncio as create_admin_user_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_admin_user_asyncio(**_kwargs)
+
+
+    async def publish_message(self, *, data: PublishMessageData, **kwargs: Any) -> PublishMessageResponse200:
+        """Publish message
+
+ Publishes a single message.
+Messages are published to specific partitions computed from their correlation keys.
+Messages can be buffered.
+The endpoint does not wait for a correlation result.
+Use the message correlation endpoint for such use cases.
+
+Args:
+    body (PublishMessageData):
+
+Raises:
+    errors.PublishMessageBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.PublishMessageInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.PublishMessageServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    PublishMessageResponse200"""
+        from .api.message.publish_message import asyncio as publish_message_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await publish_message_asyncio(**_kwargs)
+
+
+    async def correlate_message(self, *, data: CorrelateMessageData, **kwargs: Any) -> CorrelateMessageResponse200:
+        """Correlate message
+
+ Publishes a message and correlates it to a subscription.
+If correlation is successful it will return the first process instance key the message correlated
+with.
+The message is not buffered.
+Use the publish message endpoint to send messages that can be buffered.
+
+Args:
+    body (CorrelateMessageData):
+
+Raises:
+    errors.CorrelateMessageBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CorrelateMessageForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CorrelateMessageNotFound: If the response status code is 404. Not found
+    errors.CorrelateMessageInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CorrelateMessageServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CorrelateMessageResponse200"""
+        from .api.message.correlate_message import asyncio as correlate_message_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await correlate_message_asyncio(**_kwargs)
+
+
+    async def create_user(self, *, data: CreateUserData, **kwargs: Any) -> CreateUserResponse201:
+        """Create user
+
+ Create a new user.
+
+Args:
+    body (CreateUserData):
+
+Raises:
+    errors.CreateUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateUserUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateUserConflict: If the response status code is 409. A user with this username already exists.
+    errors.CreateUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateUserResponse201"""
+        from .api.user.create_user import asyncio as create_user_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_user_asyncio(**_kwargs)
+
+
+    async def search_users(self, *, data: SearchUsersData | Unset = UNSET, **kwargs: Any) -> SearchUsersResponse200:
+        """Search users
+
+ Search for users based on given criteria.
+
+Args:
+    body (SearchUsersData | Unset):
+
+Raises:
+    errors.SearchUsersBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchUsersResponse200"""
+        from .api.user.search_users import asyncio as search_users_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_users_asyncio(**_kwargs)
+
+
+    async def delete_user(self, username: str, **kwargs: Any) -> Any:
+        """Delete user
+
+ Deletes a user.
+
+Args:
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.DeleteUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteUserNotFound: If the response status code is 404. The user is not found.
+    errors.DeleteUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.user.delete_user import asyncio as delete_user_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_user_asyncio(**_kwargs)
+
+
+    async def get_user(self, username: str, **kwargs: Any) -> GetUserResponse200:
+        """Get user
+
+ Get a user by its username.
+
+Args:
+    username (str): The unique name of a user. Example: swillis.
+
+Raises:
+    errors.GetUserUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserNotFound: If the response status code is 404. The user with the given username was not found.
+    errors.GetUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetUserResponse200"""
+        from .api.user.get_user import asyncio as get_user_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_user_asyncio(**_kwargs)
+
+
+    async def update_user(self, username: str, *, data: UpdateUserData, **kwargs: Any) -> UpdateUserResponse200:
+        """Update user
+
+ Updates a user.
+
+Args:
+    username (str): The unique name of a user. Example: swillis.
+    body (UpdateUserData):
+
+Raises:
+    errors.UpdateUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UpdateUserNotFound: If the response status code is 404. The user was not found.
+    errors.UpdateUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    UpdateUserResponse200"""
+        from .api.user.update_user import asyncio as update_user_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await update_user_asyncio(**_kwargs)
+
+
+    async def get_document(self, document_id: str, *, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> File:
+        """Download document
+
+ Download a document from the Camunda 8 cluster.
+
+Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+production), local (non-production)
+
+Args:
+    document_id (str): Document Id that uniquely identifies a document.
+    store_id (str | Unset):
+    content_hash (str | Unset):
+
+Raises:
+    errors.GetDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
+    errors.GetDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    File"""
+        from .api.document.get_document import asyncio as get_document_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_document_asyncio(**_kwargs)
+
+
+    async def create_documents(self, *, data: CreateDocumentsData, store_id: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentsResponse201:
         """Upload multiple documents
 
  Upload multiple documents to the Camunda 8 cluster.
@@ -5853,11 +8289,12 @@ Args:
     body (CreateDocumentsData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateDocumentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateDocumentsUnsupportedMediaType: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[CreateDocumentsResponse201 | CreateDocumentsResponse207 | CreateDocumentsResponse400 | CreateDocumentsResponse415]"""
+    CreateDocumentsResponse201"""
         from .api.document.create_documents import asyncio as create_documents_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
@@ -5867,7 +8304,7 @@ Returns:
         return await create_documents_asyncio(**_kwargs)
 
 
-    def create_document_link(self, document_id: str, *, data: CreateDocumentLinkData | Unset = UNSET, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentLinkResponse201:
+    async def create_document_link(self, document_id: str, *, data: CreateDocumentLinkData | Unset = UNSET, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentLinkResponse201:
         """Create document link
 
  Create a link to a document in the Camunda 8 cluster.
@@ -5881,39 +8318,11 @@ Args:
     body (CreateDocumentLinkData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateDocumentLinkBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[CreateDocumentLinkResponse201 | CreateDocumentLinkResponse400]"""
-        from .api.document.create_document_link import sync as create_document_link_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_document_link_sync(**_kwargs)
-
-
-    async def create_document_link_async(self, document_id: str, *, data: CreateDocumentLinkData | Unset = UNSET, store_id: str | Unset = UNSET, content_hash: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentLinkResponse201:
-        """Create document link
-
- Create a link to a document in the Camunda 8 cluster.
-
-Note that this is currently supported for document stores of type: AWS, GCP
-
-Args:
-    document_id (str): Document Id that uniquely identifies a document.
-    store_id (str | Unset):
-    content_hash (str | Unset):
-    body (CreateDocumentLinkData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateDocumentLinkResponse201 | CreateDocumentLinkResponse400]"""
+    CreateDocumentLinkResponse201"""
         from .api.document.create_document_link import asyncio as create_document_link_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
@@ -5923,63 +8332,7 @@ Returns:
         return await create_document_link_asyncio(**_kwargs)
 
 
-    def create_document(self, *, data: CreateDocumentData, store_id: str | Unset = UNSET, document_id: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentResponse201:
-        """Upload document
-
- Upload a document to the Camunda 8 cluster.
-
-Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
-production), local (non-production)
-
-Args:
-    store_id (str | Unset):
-    document_id (str | Unset): Document Id that uniquely identifies a document.
-    body (CreateDocumentData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateDocumentResponse201 | CreateDocumentResponse400 | CreateDocumentResponse415]"""
-        from .api.document.create_document import sync as create_document_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_document_sync(**_kwargs)
-
-
-    async def create_document_async(self, *, data: CreateDocumentData, store_id: str | Unset = UNSET, document_id: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentResponse201:
-        """Upload document
-
- Upload a document to the Camunda 8 cluster.
-
-Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
-production), local (non-production)
-
-Args:
-    store_id (str | Unset):
-    document_id (str | Unset): Document Id that uniquely identifies a document.
-    body (CreateDocumentData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateDocumentResponse201 | CreateDocumentResponse400 | CreateDocumentResponse415]"""
-        from .api.document.create_document import asyncio as create_document_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_document_asyncio(**_kwargs)
-
-
-    def delete_document(self, document_id: str, *, store_id: str | Unset = UNSET, **kwargs: Any) -> Any:
+    async def delete_document(self, document_id: str, *, store_id: str | Unset = UNSET, **kwargs: Any) -> Any:
         """Delete document
 
  Delete a document from the Camunda 8 cluster.
@@ -5992,38 +8345,12 @@ Args:
     store_id (str | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.DeleteDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
+    errors.DeleteDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]"""
-        from .api.document.delete_document import sync as delete_document_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_document_sync(**_kwargs)
-
-
-    async def delete_document_async(self, document_id: str, *, store_id: str | Unset = UNSET, **kwargs: Any) -> Any:
-        """Delete document
-
- Delete a document from the Camunda 8 cluster.
-
-Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
-production), local (non-production)
-
-Args:
-    document_id (str): Document Id that uniquely identifies a document.
-    store_id (str | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]"""
+    Any"""
         from .api.document.delete_document import asyncio as delete_document_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
@@ -6033,2447 +8360,89 @@ Returns:
         return await delete_document_asyncio(**_kwargs)
 
 
-    def delete_resource(self, resource_key: str, *, data: DeleteResourceDataType0 | None | Unset = UNSET, **kwargs: Any) -> Any:
-        """Delete resource
+    async def create_document(self, *, data: CreateDocumentData, store_id: str | Unset = UNSET, document_id: str | Unset = UNSET, **kwargs: Any) -> CreateDocumentResponse201:
+        """Upload document
 
- Deletes a deployed resource.
-This can be a process definition, decision requirements definition, or form definition
-deployed using the deploy resources endpoint. Specify the resource you want to delete in the
-`resourceKey` parameter.
+ Upload a document to the Camunda 8 cluster.
 
-Args:
-    resource_key (str): The system-assigned key for this resource.
-    body (DeleteResourceDataType0 | None | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]"""
-        from .api.resource.delete_resource import sync as delete_resource_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_resource_sync(**_kwargs)
-
-
-    async def delete_resource_async(self, resource_key: str, *, data: DeleteResourceDataType0 | None | Unset = UNSET, **kwargs: Any) -> Any:
-        """Delete resource
-
- Deletes a deployed resource.
-This can be a process definition, decision requirements definition, or form definition
-deployed using the deploy resources endpoint. Specify the resource you want to delete in the
-`resourceKey` parameter.
-
-Args:
-    resource_key (str): The system-assigned key for this resource.
-    body (DeleteResourceDataType0 | None | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]"""
-        from .api.resource.delete_resource import asyncio as delete_resource_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_resource_asyncio(**_kwargs)
-
-
-    def create_deployment(self, *, data: CreateDeploymentData, **kwargs: Any) -> CreateDeploymentResponse200:
-        """Deploy resources
-
- Deploys one or more resources (e.g. processes, decision models, or forms).
-This is an atomic call, i.e. either all resources are deployed or none of them are.
-
-Args:
-    body (CreateDeploymentData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateDeploymentResponse200 | CreateDeploymentResponse400 | CreateDeploymentResponse503]"""
-        from .api.resource.create_deployment import sync as create_deployment_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_deployment_sync(**_kwargs)
-
-
-    async def create_deployment_async(self, *, data: CreateDeploymentData, **kwargs: Any) -> CreateDeploymentResponse200:
-        """Deploy resources
-
- Deploys one or more resources (e.g. processes, decision models, or forms).
-This is an atomic call, i.e. either all resources are deployed or none of them are.
-
-Args:
-    body (CreateDeploymentData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateDeploymentResponse200 | CreateDeploymentResponse400 | CreateDeploymentResponse503]"""
-        from .api.resource.create_deployment import asyncio as create_deployment_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_deployment_asyncio(**_kwargs)
-
-
-    def get_resource(self, resource_key: str, **kwargs: Any) -> GetResourceResponse200:
-        """Get resource
-
- Returns a deployed resource.
-:::info
-Currently, this endpoint only supports RPA resources.
-:::
-
-Args:
-    resource_key (str): The system-assigned key for this resource.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetResourceResponse200 | GetResourceResponse404 | GetResourceResponse500]"""
-        from .api.resource.get_resource import sync as get_resource_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_resource_sync(**_kwargs)
-
-
-    async def get_resource_async(self, resource_key: str, **kwargs: Any) -> GetResourceResponse200:
-        """Get resource
-
- Returns a deployed resource.
-:::info
-Currently, this endpoint only supports RPA resources.
-:::
-
-Args:
-    resource_key (str): The system-assigned key for this resource.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetResourceResponse200 | GetResourceResponse404 | GetResourceResponse500]"""
-        from .api.resource.get_resource import asyncio as get_resource_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_resource_asyncio(**_kwargs)
-
-
-    def get_resource_content(self, resource_key: str, **kwargs: Any) -> File:
-        """Get resource content
-
- Returns the content of a deployed resource.
-:::info
-Currently, this endpoint only supports RPA resources.
-:::
-
-Args:
-    resource_key (str): The system-assigned key for this resource.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[File | GetResourceContentResponse404 | GetResourceContentResponse500]"""
-        from .api.resource.get_resource_content import sync as get_resource_content_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_resource_content_sync(**_kwargs)
-
-
-    async def get_resource_content_async(self, resource_key: str, **kwargs: Any) -> File:
-        """Get resource content
-
- Returns the content of a deployed resource.
-:::info
-Currently, this endpoint only supports RPA resources.
-:::
-
-Args:
-    resource_key (str): The system-assigned key for this resource.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[File | GetResourceContentResponse404 | GetResourceContentResponse500]"""
-        from .api.resource.get_resource_content import asyncio as get_resource_content_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_resource_content_asyncio(**_kwargs)
-
-
-    def pin_clock(self, *, data: PinClockData, **kwargs: Any) -> Any:
-        """Pin internal clock (alpha)
-
- Set a precise, static time for the Zeebe engine's internal clock.
-When the clock is pinned, it remains at the specified time and does not advance.
-To change the time, the clock must be pinned again with a new timestamp.
-
-This endpoint is an alpha feature and may be subject to change
-in future releases.
-
-Args:
-    body (PinClockData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | PinClockResponse400 | PinClockResponse500 | PinClockResponse503]"""
-        from .api.clock.pin_clock import sync as pin_clock_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return pin_clock_sync(**_kwargs)
-
-
-    async def pin_clock_async(self, *, data: PinClockData, **kwargs: Any) -> Any:
-        """Pin internal clock (alpha)
-
- Set a precise, static time for the Zeebe engine's internal clock.
-When the clock is pinned, it remains at the specified time and does not advance.
-To change the time, the clock must be pinned again with a new timestamp.
-
-This endpoint is an alpha feature and may be subject to change
-in future releases.
-
-Args:
-    body (PinClockData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | PinClockResponse400 | PinClockResponse500 | PinClockResponse503]"""
-        from .api.clock.pin_clock import asyncio as pin_clock_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await pin_clock_asyncio(**_kwargs)
-
-
-    def reset_clock(self, **kwargs: Any) -> Any:
-        """Reset internal clock (alpha)
-
- Resets the Zeebe engine's internal clock to the current system time, enabling it to tick in real-
-time.
-This operation is useful for returning the clock to
-normal behavior after it has been pinned to a specific time.
-
-This endpoint is an alpha feature and may be subject to change
-in future releases.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ResetClockResponse500 | ResetClockResponse503]"""
-        from .api.clock.reset_clock import sync as reset_clock_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return reset_clock_sync(**_kwargs)
-
-
-    async def reset_clock_async(self, **kwargs: Any) -> Any:
-        """Reset internal clock (alpha)
-
- Resets the Zeebe engine's internal clock to the current system time, enabling it to tick in real-
-time.
-This operation is useful for returning the clock to
-normal behavior after it has been pinned to a specific time.
-
-This endpoint is an alpha feature and may be subject to change
-in future releases.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ResetClockResponse500 | ResetClockResponse503]"""
-        from .api.clock.reset_clock import asyncio as reset_clock_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await reset_clock_asyncio(**_kwargs)
-
-
-    def activate_ad_hoc_sub_process_activities(self, ad_hoc_sub_process_instance_key: str, *, data: ActivateAdHocSubProcessActivitiesData, **kwargs: Any) -> ActivateAdHocSubProcessActivitiesResponse400:
-        """Activate activities within an ad-hoc sub-process
-
- Activates selected activities within an ad-hoc sub-process identified by element ID.
-The provided element IDs must exist within the ad-hoc sub-process instance identified by the
-provided adHocSubProcessInstanceKey.
-
-Args:
-    ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
-        Example: 2251799813686789.
-    body (ActivateAdHocSubProcessActivitiesData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ActivateAdHocSubProcessActivitiesResponse400 | ActivateAdHocSubProcessActivitiesResponse401 | ActivateAdHocSubProcessActivitiesResponse403 | ActivateAdHocSubProcessActivitiesResponse404 | ActivateAdHocSubProcessActivitiesResponse500 | ActivateAdHocSubProcessActivitiesResponse503 | Any]"""
-        from .api.ad_hoc_sub_process.activate_ad_hoc_sub_process_activities import sync as activate_ad_hoc_sub_process_activities_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return activate_ad_hoc_sub_process_activities_sync(**_kwargs)
-
-
-    async def activate_ad_hoc_sub_process_activities_async(self, ad_hoc_sub_process_instance_key: str, *, data: ActivateAdHocSubProcessActivitiesData, **kwargs: Any) -> ActivateAdHocSubProcessActivitiesResponse400:
-        """Activate activities within an ad-hoc sub-process
-
- Activates selected activities within an ad-hoc sub-process identified by element ID.
-The provided element IDs must exist within the ad-hoc sub-process instance identified by the
-provided adHocSubProcessInstanceKey.
-
-Args:
-    ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
-        Example: 2251799813686789.
-    body (ActivateAdHocSubProcessActivitiesData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[ActivateAdHocSubProcessActivitiesResponse400 | ActivateAdHocSubProcessActivitiesResponse401 | ActivateAdHocSubProcessActivitiesResponse403 | ActivateAdHocSubProcessActivitiesResponse404 | ActivateAdHocSubProcessActivitiesResponse500 | ActivateAdHocSubProcessActivitiesResponse503 | Any]"""
-        from .api.ad_hoc_sub_process.activate_ad_hoc_sub_process_activities import asyncio as activate_ad_hoc_sub_process_activities_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await activate_ad_hoc_sub_process_activities_asyncio(**_kwargs)
-
-
-    def get_decision_requirements_xml(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsXMLResponse400:
-        """Get decision requirements XML
-
- Returns decision requirements as XML.
-
-Args:
-    decision_requirements_key (str): System-generated key for a deployed decision requirements
-        definition. Example: 2251799813683346.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetDecisionRequirementsXMLResponse400 | GetDecisionRequirementsXMLResponse401 | GetDecisionRequirementsXMLResponse403 | GetDecisionRequirementsXMLResponse404 | GetDecisionRequirementsXMLResponse500 | str]"""
-        from .api.decision_requirements.get_decision_requirements_xml import sync as get_decision_requirements_xml_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_decision_requirements_xml_sync(**_kwargs)
-
-
-    async def get_decision_requirements_xml_async(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsXMLResponse400:
-        """Get decision requirements XML
-
- Returns decision requirements as XML.
-
-Args:
-    decision_requirements_key (str): System-generated key for a deployed decision requirements
-        definition. Example: 2251799813683346.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetDecisionRequirementsXMLResponse400 | GetDecisionRequirementsXMLResponse401 | GetDecisionRequirementsXMLResponse403 | GetDecisionRequirementsXMLResponse404 | GetDecisionRequirementsXMLResponse500 | str]"""
-        from .api.decision_requirements.get_decision_requirements_xml import asyncio as get_decision_requirements_xml_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_decision_requirements_xml_asyncio(**_kwargs)
-
-
-    def search_decision_requirements(self, *, data: SearchDecisionRequirementsData | Unset = UNSET, **kwargs: Any) -> SearchDecisionRequirementsResponse200:
-        """Search decision requirements
-
- Search for decision requirements based on given criteria.
-
-Args:
-    body (SearchDecisionRequirementsData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchDecisionRequirementsResponse200 | SearchDecisionRequirementsResponse400 | SearchDecisionRequirementsResponse401 | SearchDecisionRequirementsResponse403 | SearchDecisionRequirementsResponse500]"""
-        from .api.decision_requirements.search_decision_requirements import sync as search_decision_requirements_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_decision_requirements_sync(**_kwargs)
-
-
-    async def search_decision_requirements_async(self, *, data: SearchDecisionRequirementsData | Unset = UNSET, **kwargs: Any) -> SearchDecisionRequirementsResponse200:
-        """Search decision requirements
-
- Search for decision requirements based on given criteria.
-
-Args:
-    body (SearchDecisionRequirementsData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchDecisionRequirementsResponse200 | SearchDecisionRequirementsResponse400 | SearchDecisionRequirementsResponse401 | SearchDecisionRequirementsResponse403 | SearchDecisionRequirementsResponse500]"""
-        from .api.decision_requirements.search_decision_requirements import asyncio as search_decision_requirements_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_decision_requirements_asyncio(**_kwargs)
-
-
-    def get_decision_requirements(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsResponse200:
-        """Get decision requirements
-
- Returns Decision Requirements as JSON.
-
-Args:
-    decision_requirements_key (str): System-generated key for a deployed decision requirements
-        definition. Example: 2251799813683346.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetDecisionRequirementsResponse200 | GetDecisionRequirementsResponse400 | GetDecisionRequirementsResponse401 | GetDecisionRequirementsResponse403 | GetDecisionRequirementsResponse404 | GetDecisionRequirementsResponse500]"""
-        from .api.decision_requirements.get_decision_requirements import sync as get_decision_requirements_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_decision_requirements_sync(**_kwargs)
-
-
-    async def get_decision_requirements_async(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsResponse200:
-        """Get decision requirements
-
- Returns Decision Requirements as JSON.
-
-Args:
-    decision_requirements_key (str): System-generated key for a deployed decision requirements
-        definition. Example: 2251799813683346.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetDecisionRequirementsResponse200 | GetDecisionRequirementsResponse400 | GetDecisionRequirementsResponse401 | GetDecisionRequirementsResponse403 | GetDecisionRequirementsResponse404 | GetDecisionRequirementsResponse500]"""
-        from .api.decision_requirements.get_decision_requirements import asyncio as get_decision_requirements_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_decision_requirements_asyncio(**_kwargs)
-
-
-    def create_mapping_rule(self, *, data: CreateMappingRuleData | Unset = UNSET, **kwargs: Any) -> CreateMappingRuleResponse201:
-        """Create mapping rule
-
- Create a new mapping rule
-
-Args:
-    body (CreateMappingRuleData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateMappingRuleResponse201 | CreateMappingRuleResponse400 | CreateMappingRuleResponse403 | CreateMappingRuleResponse404 | CreateMappingRuleResponse500]"""
-        from .api.mapping_rule.create_mapping_rule import sync as create_mapping_rule_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_mapping_rule_sync(**_kwargs)
-
-
-    async def create_mapping_rule_async(self, *, data: CreateMappingRuleData | Unset = UNSET, **kwargs: Any) -> CreateMappingRuleResponse201:
-        """Create mapping rule
-
- Create a new mapping rule
-
-Args:
-    body (CreateMappingRuleData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateMappingRuleResponse201 | CreateMappingRuleResponse400 | CreateMappingRuleResponse403 | CreateMappingRuleResponse404 | CreateMappingRuleResponse500]"""
-        from .api.mapping_rule.create_mapping_rule import asyncio as create_mapping_rule_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_mapping_rule_asyncio(**_kwargs)
-
-
-    def search_mapping_rule(self, *, data: SearchMappingRuleData | Unset = UNSET, **kwargs: Any) -> SearchMappingRuleResponse200:
-        """Search mapping rules
-
- Search for mapping rules based on given criteria.
-
-Args:
-    body (SearchMappingRuleData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMappingRuleResponse200 | SearchMappingRuleResponse400 | SearchMappingRuleResponse401 | SearchMappingRuleResponse403 | SearchMappingRuleResponse500]"""
-        from .api.mapping_rule.search_mapping_rule import sync as search_mapping_rule_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_mapping_rule_sync(**_kwargs)
-
-
-    async def search_mapping_rule_async(self, *, data: SearchMappingRuleData | Unset = UNSET, **kwargs: Any) -> SearchMappingRuleResponse200:
-        """Search mapping rules
-
- Search for mapping rules based on given criteria.
-
-Args:
-    body (SearchMappingRuleData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMappingRuleResponse200 | SearchMappingRuleResponse400 | SearchMappingRuleResponse401 | SearchMappingRuleResponse403 | SearchMappingRuleResponse500]"""
-        from .api.mapping_rule.search_mapping_rule import asyncio as search_mapping_rule_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_mapping_rule_asyncio(**_kwargs)
-
-
-    def delete_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Delete a mapping rule
-
- Deletes the mapping rule with the given ID.
-
-Args:
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteMappingRuleResponse401 | DeleteMappingRuleResponse404 | DeleteMappingRuleResponse500 | DeleteMappingRuleResponse503]"""
-        from .api.mapping_rule.delete_mapping_rule import sync as delete_mapping_rule_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_mapping_rule_sync(**_kwargs)
-
-
-    async def delete_mapping_rule_async(self, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Delete a mapping rule
-
- Deletes the mapping rule with the given ID.
-
-Args:
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteMappingRuleResponse401 | DeleteMappingRuleResponse404 | DeleteMappingRuleResponse500 | DeleteMappingRuleResponse503]"""
-        from .api.mapping_rule.delete_mapping_rule import asyncio as delete_mapping_rule_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_mapping_rule_asyncio(**_kwargs)
-
-
-    def get_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> GetMappingRuleResponse200:
-        """Get a mapping rule
-
- Gets the mapping rule with the given ID.
-
-Args:
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetMappingRuleResponse200 | GetMappingRuleResponse401 | GetMappingRuleResponse404 | GetMappingRuleResponse500]"""
-        from .api.mapping_rule.get_mapping_rule import sync as get_mapping_rule_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_mapping_rule_sync(**_kwargs)
-
-
-    async def get_mapping_rule_async(self, mapping_rule_id: str, **kwargs: Any) -> GetMappingRuleResponse200:
-        """Get a mapping rule
-
- Gets the mapping rule with the given ID.
-
-Args:
-    mapping_rule_id (str):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetMappingRuleResponse200 | GetMappingRuleResponse401 | GetMappingRuleResponse404 | GetMappingRuleResponse500]"""
-        from .api.mapping_rule.get_mapping_rule import asyncio as get_mapping_rule_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_mapping_rule_asyncio(**_kwargs)
-
-
-    def update_mapping_rule(self, mapping_rule_id: str, *, data: UpdateMappingRuleData | Unset = UNSET, **kwargs: Any) -> UpdateMappingRuleResponse200:
-        """Update mapping rule
-
- Update a mapping rule.
-
-Args:
-    mapping_rule_id (str):
-    body (UpdateMappingRuleData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]"""
-        from .api.mapping_rule.update_mapping_rule import sync as update_mapping_rule_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return update_mapping_rule_sync(**_kwargs)
-
-
-    async def update_mapping_rule_async(self, mapping_rule_id: str, *, data: UpdateMappingRuleData | Unset = UNSET, **kwargs: Any) -> UpdateMappingRuleResponse200:
-        """Update mapping rule
-
- Update a mapping rule.
-
-Args:
-    mapping_rule_id (str):
-    body (UpdateMappingRuleData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]"""
-        from .api.mapping_rule.update_mapping_rule import asyncio as update_mapping_rule_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await update_mapping_rule_asyncio(**_kwargs)
-
-
-    def evaluate_expression(self, *, data: EvaluateExpressionData, **kwargs: Any) -> EvaluateExpressionResponse200:
-        """Evaluate an expression
-
- Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
-variables when a tenant ID is provided.
-
-Args:
-    body (EvaluateExpressionData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[EvaluateExpressionResponse200 | EvaluateExpressionResponse400 | EvaluateExpressionResponse401 | EvaluateExpressionResponse403 | EvaluateExpressionResponse500]"""
-        from .api.expression.evaluate_expression import sync as evaluate_expression_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return evaluate_expression_sync(**_kwargs)
-
-
-    async def evaluate_expression_async(self, *, data: EvaluateExpressionData, **kwargs: Any) -> EvaluateExpressionResponse200:
-        """Evaluate an expression
-
- Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
-variables when a tenant ID is provided.
-
-Args:
-    body (EvaluateExpressionData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[EvaluateExpressionResponse200 | EvaluateExpressionResponse400 | EvaluateExpressionResponse401 | EvaluateExpressionResponse403 | EvaluateExpressionResponse500]"""
-        from .api.expression.evaluate_expression import asyncio as evaluate_expression_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await evaluate_expression_asyncio(**_kwargs)
-
-
-    def get_element_instance(self, element_instance_key: str, **kwargs: Any) -> GetElementInstanceResponse200:
-        """Get element instance
-
- Returns element instance as JSON.
-
-Args:
-    element_instance_key (str): System-generated key for a element instance. Example:
-        2251799813686789.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]"""
-        from .api.element_instance.get_element_instance import sync as get_element_instance_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_element_instance_sync(**_kwargs)
-
-
-    async def get_element_instance_async(self, element_instance_key: str, **kwargs: Any) -> GetElementInstanceResponse200:
-        """Get element instance
-
- Returns element instance as JSON.
-
-Args:
-    element_instance_key (str): System-generated key for a element instance. Example:
-        2251799813686789.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]"""
-        from .api.element_instance.get_element_instance import asyncio as get_element_instance_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_element_instance_asyncio(**_kwargs)
-
-
-    def search_element_instances(self, *, data: SearchElementInstancesData | Unset = UNSET, **kwargs: Any) -> SearchElementInstancesResponse200:
-        """Search element instances
-
- Search for element instances based on given criteria.
-
-Args:
-    body (SearchElementInstancesData | Unset): Element instance search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchElementInstancesResponse200 | SearchElementInstancesResponse400 | SearchElementInstancesResponse401 | SearchElementInstancesResponse403 | SearchElementInstancesResponse500]"""
-        from .api.element_instance.search_element_instances import sync as search_element_instances_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_element_instances_sync(**_kwargs)
-
-
-    async def search_element_instances_async(self, *, data: SearchElementInstancesData | Unset = UNSET, **kwargs: Any) -> SearchElementInstancesResponse200:
-        """Search element instances
-
- Search for element instances based on given criteria.
-
-Args:
-    body (SearchElementInstancesData | Unset): Element instance search request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchElementInstancesResponse200 | SearchElementInstancesResponse400 | SearchElementInstancesResponse401 | SearchElementInstancesResponse403 | SearchElementInstancesResponse500]"""
-        from .api.element_instance.search_element_instances import asyncio as search_element_instances_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_element_instances_asyncio(**_kwargs)
-
-
-    def create_element_instance_variables(self, element_instance_key: str, *, data: CreateElementInstanceVariablesData, **kwargs: Any) -> Any:
-        """Update element instance variables
-
- Updates all the variables of a particular scope (for example, process instance, element instance)
-with the given variable data.
-Specify the element instance in the `elementInstanceKey` parameter.
-
-Args:
-    element_instance_key (str): System-generated key for a element instance. Example:
-        2251799813686789.
-    body (CreateElementInstanceVariablesData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CreateElementInstanceVariablesResponse400 | CreateElementInstanceVariablesResponse500 | CreateElementInstanceVariablesResponse503]"""
-        from .api.element_instance.create_element_instance_variables import sync as create_element_instance_variables_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_element_instance_variables_sync(**_kwargs)
-
-
-    async def create_element_instance_variables_async(self, element_instance_key: str, *, data: CreateElementInstanceVariablesData, **kwargs: Any) -> Any:
-        """Update element instance variables
-
- Updates all the variables of a particular scope (for example, process instance, element instance)
-with the given variable data.
-Specify the element instance in the `elementInstanceKey` parameter.
-
-Args:
-    element_instance_key (str): System-generated key for a element instance. Example:
-        2251799813686789.
-    body (CreateElementInstanceVariablesData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CreateElementInstanceVariablesResponse400 | CreateElementInstanceVariablesResponse500 | CreateElementInstanceVariablesResponse503]"""
-        from .api.element_instance.create_element_instance_variables import asyncio as create_element_instance_variables_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_element_instance_variables_asyncio(**_kwargs)
-
-
-    def search_element_instance_incidents(self, element_instance_key: str, *, data: SearchElementInstanceIncidentsData, **kwargs: Any) -> SearchElementInstanceIncidentsResponse200:
-        """Search for incidents of a specific element instance
-
- Search for incidents caused by the specified element instance, including incidents of any child
-instances created from this element instance.
-
-Although the `elementInstanceKey` is provided as a path parameter to indicate the root element
-instance,
-you may also include an `elementInstanceKey` within the filter object to narrow results to specific
-child element instances. This is useful, for example, if you want to isolate incidents associated
-with
-nested or subordinate elements within the given element instance while excluding incidents directly
-tied
-to the root element itself.
-
-Args:
-    element_instance_key (str): System-generated key for a element instance. Example:
-        2251799813686789.
-    body (SearchElementInstanceIncidentsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchElementInstanceIncidentsResponse200 | SearchElementInstanceIncidentsResponse400 | SearchElementInstanceIncidentsResponse401 | SearchElementInstanceIncidentsResponse403 | SearchElementInstanceIncidentsResponse404 | SearchElementInstanceIncidentsResponse500]"""
-        from .api.element_instance.search_element_instance_incidents import sync as search_element_instance_incidents_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_element_instance_incidents_sync(**_kwargs)
-
-
-    async def search_element_instance_incidents_async(self, element_instance_key: str, *, data: SearchElementInstanceIncidentsData, **kwargs: Any) -> SearchElementInstanceIncidentsResponse200:
-        """Search for incidents of a specific element instance
-
- Search for incidents caused by the specified element instance, including incidents of any child
-instances created from this element instance.
-
-Although the `elementInstanceKey` is provided as a path parameter to indicate the root element
-instance,
-you may also include an `elementInstanceKey` within the filter object to narrow results to specific
-child element instances. This is useful, for example, if you want to isolate incidents associated
-with
-nested or subordinate elements within the given element instance while excluding incidents directly
-tied
-to the root element itself.
-
-Args:
-    element_instance_key (str): System-generated key for a element instance. Example:
-        2251799813686789.
-    body (SearchElementInstanceIncidentsData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchElementInstanceIncidentsResponse200 | SearchElementInstanceIncidentsResponse400 | SearchElementInstanceIncidentsResponse401 | SearchElementInstanceIncidentsResponse403 | SearchElementInstanceIncidentsResponse404 | SearchElementInstanceIncidentsResponse500]"""
-        from .api.element_instance.search_element_instance_incidents import asyncio as search_element_instance_incidents_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_element_instance_incidents_asyncio(**_kwargs)
-
-
-    def unassign_user_task(self, user_task_key: str, **kwargs: Any) -> Any:
-        """Unassign user task
-
- Removes the assignee of a task with the given key.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignUserTaskResponse400 | UnassignUserTaskResponse404 | UnassignUserTaskResponse409 | UnassignUserTaskResponse500 | UnassignUserTaskResponse503]"""
-        from .api.user_task.unassign_user_task import sync as unassign_user_task_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return unassign_user_task_sync(**_kwargs)
-
-
-    async def unassign_user_task_async(self, user_task_key: str, **kwargs: Any) -> Any:
-        """Unassign user task
-
- Removes the assignee of a task with the given key.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UnassignUserTaskResponse400 | UnassignUserTaskResponse404 | UnassignUserTaskResponse409 | UnassignUserTaskResponse500 | UnassignUserTaskResponse503]"""
-        from .api.user_task.unassign_user_task import asyncio as unassign_user_task_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_user_task_asyncio(**_kwargs)
-
-
-    def search_user_task_variables(self, user_task_key: str, *, data: SearchUserTaskVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchUserTaskVariablesResponse200:
-        """Search user task variables
-
- Search for user task variables based on given criteria. By default, long variable values in the
-response are truncated.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    truncate_values (bool | Unset):
-    body (SearchUserTaskVariablesData | Unset): User task search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]"""
-        from .api.user_task.search_user_task_variables import sync as search_user_task_variables_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_user_task_variables_sync(**_kwargs)
-
-
-    async def search_user_task_variables_async(self, user_task_key: str, *, data: SearchUserTaskVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchUserTaskVariablesResponse200:
-        """Search user task variables
-
- Search for user task variables based on given criteria. By default, long variable values in the
-response are truncated.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    truncate_values (bool | Unset):
-    body (SearchUserTaskVariablesData | Unset): User task search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]"""
-        from .api.user_task.search_user_task_variables import asyncio as search_user_task_variables_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_user_task_variables_asyncio(**_kwargs)
-
-
-    def update_user_task(self, user_task_key: str, *, data: UpdateUserTaskData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Update user task
-
- Update a user task with the given key.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    body (UpdateUserTaskData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UpdateUserTaskResponse400 | UpdateUserTaskResponse404 | UpdateUserTaskResponse409 | UpdateUserTaskResponse500 | UpdateUserTaskResponse503]"""
-        from .api.user_task.update_user_task import sync as update_user_task_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return update_user_task_sync(**_kwargs)
-
-
-    async def update_user_task_async(self, user_task_key: str, *, data: UpdateUserTaskData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Update user task
-
- Update a user task with the given key.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    body (UpdateUserTaskData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UpdateUserTaskResponse400 | UpdateUserTaskResponse404 | UpdateUserTaskResponse409 | UpdateUserTaskResponse500 | UpdateUserTaskResponse503]"""
-        from .api.user_task.update_user_task import asyncio as update_user_task_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await update_user_task_asyncio(**_kwargs)
-
-
-    def get_user_task_form(self, user_task_key: str, **kwargs: Any) -> Any:
-        """Get user task form
-
- Get the form of a user task.
-Note that this endpoint will only return linked forms. This endpoint does not support embedded
-forms.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | GetUserTaskFormResponse200 | GetUserTaskFormResponse400 | GetUserTaskFormResponse401 | GetUserTaskFormResponse403 | GetUserTaskFormResponse404 | GetUserTaskFormResponse500]"""
-        from .api.user_task.get_user_task_form import sync as get_user_task_form_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_user_task_form_sync(**_kwargs)
-
-
-    async def get_user_task_form_async(self, user_task_key: str, **kwargs: Any) -> Any:
-        """Get user task form
-
- Get the form of a user task.
-Note that this endpoint will only return linked forms. This endpoint does not support embedded
-forms.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | GetUserTaskFormResponse200 | GetUserTaskFormResponse400 | GetUserTaskFormResponse401 | GetUserTaskFormResponse403 | GetUserTaskFormResponse404 | GetUserTaskFormResponse500]"""
-        from .api.user_task.get_user_task_form import asyncio as get_user_task_form_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_user_task_form_asyncio(**_kwargs)
-
-
-    def get_user_task(self, user_task_key: str, **kwargs: Any) -> GetUserTaskResponse200:
-        """Get user task
-
- Get the user task by the user task key.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetUserTaskResponse200 | GetUserTaskResponse400 | GetUserTaskResponse401 | GetUserTaskResponse403 | GetUserTaskResponse404 | GetUserTaskResponse500]"""
-        from .api.user_task.get_user_task import sync as get_user_task_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_user_task_sync(**_kwargs)
-
-
-    async def get_user_task_async(self, user_task_key: str, **kwargs: Any) -> GetUserTaskResponse200:
-        """Get user task
-
- Get the user task by the user task key.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetUserTaskResponse200 | GetUserTaskResponse400 | GetUserTaskResponse401 | GetUserTaskResponse403 | GetUserTaskResponse404 | GetUserTaskResponse500]"""
-        from .api.user_task.get_user_task import asyncio as get_user_task_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_user_task_asyncio(**_kwargs)
-
-
-    def complete_user_task(self, user_task_key: str, *, data: CompleteUserTaskData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Complete user task
-
- Completes a user task with the given key.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    body (CompleteUserTaskData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CompleteUserTaskResponse400 | CompleteUserTaskResponse404 | CompleteUserTaskResponse409 | CompleteUserTaskResponse500 | CompleteUserTaskResponse503]"""
-        from .api.user_task.complete_user_task import sync as complete_user_task_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return complete_user_task_sync(**_kwargs)
-
-
-    async def complete_user_task_async(self, user_task_key: str, *, data: CompleteUserTaskData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Complete user task
-
- Completes a user task with the given key.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    body (CompleteUserTaskData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | CompleteUserTaskResponse400 | CompleteUserTaskResponse404 | CompleteUserTaskResponse409 | CompleteUserTaskResponse500 | CompleteUserTaskResponse503]"""
-        from .api.user_task.complete_user_task import asyncio as complete_user_task_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await complete_user_task_asyncio(**_kwargs)
-
-
-    def search_user_task_audit_logs(self, user_task_key: str, *, data: SearchUserTaskAuditLogsData | Unset = UNSET, **kwargs: Any) -> SearchUserTaskAuditLogsResponse200:
-        """Search user task audit logs
-
- Search for user task audit logs based on given criteria.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    body (SearchUserTaskAuditLogsData | Unset): User task search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUserTaskAuditLogsResponse200 | SearchUserTaskAuditLogsResponse400 | SearchUserTaskAuditLogsResponse500]"""
-        from .api.user_task.search_user_task_audit_logs import sync as search_user_task_audit_logs_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_user_task_audit_logs_sync(**_kwargs)
-
-
-    async def search_user_task_audit_logs_async(self, user_task_key: str, *, data: SearchUserTaskAuditLogsData | Unset = UNSET, **kwargs: Any) -> SearchUserTaskAuditLogsResponse200:
-        """Search user task audit logs
-
- Search for user task audit logs based on given criteria.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    body (SearchUserTaskAuditLogsData | Unset): User task search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUserTaskAuditLogsResponse200 | SearchUserTaskAuditLogsResponse400 | SearchUserTaskAuditLogsResponse500]"""
-        from .api.user_task.search_user_task_audit_logs import asyncio as search_user_task_audit_logs_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_user_task_audit_logs_asyncio(**_kwargs)
-
-
-    def search_user_tasks(self, *, data: SearchUserTasksData | Unset = UNSET, **kwargs: Any) -> SearchUserTasksResponse200:
-        """Search user tasks
-
- Search for user tasks based on given criteria.
-
-Args:
-    body (SearchUserTasksData | Unset): User task search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUserTasksResponse200 | SearchUserTasksResponse400 | SearchUserTasksResponse401 | SearchUserTasksResponse403 | SearchUserTasksResponse500]"""
-        from .api.user_task.search_user_tasks import sync as search_user_tasks_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_user_tasks_sync(**_kwargs)
-
-
-    async def search_user_tasks_async(self, *, data: SearchUserTasksData | Unset = UNSET, **kwargs: Any) -> SearchUserTasksResponse200:
-        """Search user tasks
-
- Search for user tasks based on given criteria.
-
-Args:
-    body (SearchUserTasksData | Unset): User task search query request.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUserTasksResponse200 | SearchUserTasksResponse400 | SearchUserTasksResponse401 | SearchUserTasksResponse403 | SearchUserTasksResponse500]"""
-        from .api.user_task.search_user_tasks import asyncio as search_user_tasks_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_user_tasks_asyncio(**_kwargs)
-
-
-    def assign_user_task(self, user_task_key: str, *, data: AssignUserTaskData, **kwargs: Any) -> Any:
-        """Assign user task
-
- Assigns a user task with the given key to the given assignee.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    body (AssignUserTaskData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignUserTaskResponse400 | AssignUserTaskResponse404 | AssignUserTaskResponse409 | AssignUserTaskResponse500 | AssignUserTaskResponse503]"""
-        from .api.user_task.assign_user_task import sync as assign_user_task_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return assign_user_task_sync(**_kwargs)
-
-
-    async def assign_user_task_async(self, user_task_key: str, *, data: AssignUserTaskData, **kwargs: Any) -> Any:
-        """Assign user task
-
- Assigns a user task with the given key to the given assignee.
-
-Args:
-    user_task_key (str): System-generated key for a user task.
-    body (AssignUserTaskData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | AssignUserTaskResponse400 | AssignUserTaskResponse404 | AssignUserTaskResponse409 | AssignUserTaskResponse500 | AssignUserTaskResponse503]"""
-        from .api.user_task.assign_user_task import asyncio as assign_user_task_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await assign_user_task_asyncio(**_kwargs)
-
-
-    def search_correlated_message_subscriptions(self, *, data: SearchCorrelatedMessageSubscriptionsData | Unset = UNSET, **kwargs: Any) -> SearchCorrelatedMessageSubscriptionsResponse200:
-        """Search correlated message subscriptions
-
- Search correlated message subscriptions based on given criteria.
-
-Args:
-    body (SearchCorrelatedMessageSubscriptionsData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchCorrelatedMessageSubscriptionsResponse200 | SearchCorrelatedMessageSubscriptionsResponse400 | SearchCorrelatedMessageSubscriptionsResponse401 | SearchCorrelatedMessageSubscriptionsResponse403 | SearchCorrelatedMessageSubscriptionsResponse500]"""
-        from .api.message_subscription.search_correlated_message_subscriptions import sync as search_correlated_message_subscriptions_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_correlated_message_subscriptions_sync(**_kwargs)
-
-
-    async def search_correlated_message_subscriptions_async(self, *, data: SearchCorrelatedMessageSubscriptionsData | Unset = UNSET, **kwargs: Any) -> SearchCorrelatedMessageSubscriptionsResponse200:
-        """Search correlated message subscriptions
-
- Search correlated message subscriptions based on given criteria.
-
-Args:
-    body (SearchCorrelatedMessageSubscriptionsData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchCorrelatedMessageSubscriptionsResponse200 | SearchCorrelatedMessageSubscriptionsResponse400 | SearchCorrelatedMessageSubscriptionsResponse401 | SearchCorrelatedMessageSubscriptionsResponse403 | SearchCorrelatedMessageSubscriptionsResponse500]"""
-        from .api.message_subscription.search_correlated_message_subscriptions import asyncio as search_correlated_message_subscriptions_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_correlated_message_subscriptions_asyncio(**_kwargs)
-
-
-    def search_message_subscriptions(self, *, data: SearchMessageSubscriptionsData | Unset = UNSET, **kwargs: Any) -> SearchMessageSubscriptionsResponse200:
-        """Search message subscriptions
-
- Search for message subscriptions based on given criteria.
-
-Args:
-    body (SearchMessageSubscriptionsData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMessageSubscriptionsResponse200 | SearchMessageSubscriptionsResponse400 | SearchMessageSubscriptionsResponse401 | SearchMessageSubscriptionsResponse403 | SearchMessageSubscriptionsResponse500]"""
-        from .api.message_subscription.search_message_subscriptions import sync as search_message_subscriptions_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_message_subscriptions_sync(**_kwargs)
-
-
-    async def search_message_subscriptions_async(self, *, data: SearchMessageSubscriptionsData | Unset = UNSET, **kwargs: Any) -> SearchMessageSubscriptionsResponse200:
-        """Search message subscriptions
-
- Search for message subscriptions based on given criteria.
-
-Args:
-    body (SearchMessageSubscriptionsData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchMessageSubscriptionsResponse200 | SearchMessageSubscriptionsResponse400 | SearchMessageSubscriptionsResponse401 | SearchMessageSubscriptionsResponse403 | SearchMessageSubscriptionsResponse500]"""
-        from .api.message_subscription.search_message_subscriptions import asyncio as search_message_subscriptions_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_message_subscriptions_asyncio(**_kwargs)
-
-
-    def get_decision_definition(self, decision_definition_key: str, **kwargs: Any) -> GetDecisionDefinitionResponse200:
-        """Get decision definition
-
- Returns a decision definition by key.
-
-Args:
-    decision_definition_key (str): System-generated key for a decision definition. Example:
-        2251799813326547.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetDecisionDefinitionResponse200 | GetDecisionDefinitionResponse400 | GetDecisionDefinitionResponse401 | GetDecisionDefinitionResponse403 | GetDecisionDefinitionResponse404 | GetDecisionDefinitionResponse500]"""
-        from .api.decision_definition.get_decision_definition import sync as get_decision_definition_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_decision_definition_sync(**_kwargs)
-
-
-    async def get_decision_definition_async(self, decision_definition_key: str, **kwargs: Any) -> GetDecisionDefinitionResponse200:
-        """Get decision definition
-
- Returns a decision definition by key.
-
-Args:
-    decision_definition_key (str): System-generated key for a decision definition. Example:
-        2251799813326547.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetDecisionDefinitionResponse200 | GetDecisionDefinitionResponse400 | GetDecisionDefinitionResponse401 | GetDecisionDefinitionResponse403 | GetDecisionDefinitionResponse404 | GetDecisionDefinitionResponse500]"""
-        from .api.decision_definition.get_decision_definition import asyncio as get_decision_definition_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_decision_definition_asyncio(**_kwargs)
-
-
-    def evaluate_decision(self, *, data: DecisionevaluationbyID | Decisionevaluationbykey, **kwargs: Any) -> Any:
-        """Evaluate decision
-
- Evaluates a decision.
-You specify the decision to evaluate either by using its unique key (as returned by
-DeployResource), or using the decision ID. When using the decision ID, the latest deployed
-version of the decision is used.
-
-Args:
-    body (DecisionevaluationbyID | Decisionevaluationbykey):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | EvaluateDecisionResponse200 | EvaluateDecisionResponse400 | EvaluateDecisionResponse500 | EvaluateDecisionResponse503]"""
-        from .api.decision_definition.evaluate_decision import sync as evaluate_decision_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return evaluate_decision_sync(**_kwargs)
-
-
-    async def evaluate_decision_async(self, *, data: DecisionevaluationbyID | Decisionevaluationbykey, **kwargs: Any) -> Any:
-        """Evaluate decision
-
- Evaluates a decision.
-You specify the decision to evaluate either by using its unique key (as returned by
-DeployResource), or using the decision ID. When using the decision ID, the latest deployed
-version of the decision is used.
-
-Args:
-    body (DecisionevaluationbyID | Decisionevaluationbykey):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | EvaluateDecisionResponse200 | EvaluateDecisionResponse400 | EvaluateDecisionResponse500 | EvaluateDecisionResponse503]"""
-        from .api.decision_definition.evaluate_decision import asyncio as evaluate_decision_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await evaluate_decision_asyncio(**_kwargs)
-
-
-    def search_decision_definitions(self, *, data: SearchDecisionDefinitionsData | Unset = UNSET, **kwargs: Any) -> SearchDecisionDefinitionsResponse200:
-        """Search decision definitions
-
- Search for decision definitions based on given criteria.
-
-Args:
-    body (SearchDecisionDefinitionsData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchDecisionDefinitionsResponse200 | SearchDecisionDefinitionsResponse400 | SearchDecisionDefinitionsResponse401 | SearchDecisionDefinitionsResponse403 | SearchDecisionDefinitionsResponse500]"""
-        from .api.decision_definition.search_decision_definitions import sync as search_decision_definitions_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_decision_definitions_sync(**_kwargs)
-
-
-    async def search_decision_definitions_async(self, *, data: SearchDecisionDefinitionsData | Unset = UNSET, **kwargs: Any) -> SearchDecisionDefinitionsResponse200:
-        """Search decision definitions
-
- Search for decision definitions based on given criteria.
-
-Args:
-    body (SearchDecisionDefinitionsData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchDecisionDefinitionsResponse200 | SearchDecisionDefinitionsResponse400 | SearchDecisionDefinitionsResponse401 | SearchDecisionDefinitionsResponse403 | SearchDecisionDefinitionsResponse500]"""
-        from .api.decision_definition.search_decision_definitions import asyncio as search_decision_definitions_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_decision_definitions_asyncio(**_kwargs)
-
-
-    def get_decision_definition_xml(self, decision_definition_key: str, **kwargs: Any) -> GetDecisionDefinitionXMLResponse400:
-        """Get decision definition XML
-
- Returns decision definition as XML.
-
-Args:
-    decision_definition_key (str): System-generated key for a decision definition. Example:
-        2251799813326547.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetDecisionDefinitionXMLResponse400 | GetDecisionDefinitionXMLResponse401 | GetDecisionDefinitionXMLResponse403 | GetDecisionDefinitionXMLResponse404 | GetDecisionDefinitionXMLResponse500 | str]"""
-        from .api.decision_definition.get_decision_definition_xml import sync as get_decision_definition_xml_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_decision_definition_xml_sync(**_kwargs)
-
-
-    async def get_decision_definition_xml_async(self, decision_definition_key: str, **kwargs: Any) -> GetDecisionDefinitionXMLResponse400:
-        """Get decision definition XML
-
- Returns decision definition as XML.
-
-Args:
-    decision_definition_key (str): System-generated key for a decision definition. Example:
-        2251799813326547.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetDecisionDefinitionXMLResponse400 | GetDecisionDefinitionXMLResponse401 | GetDecisionDefinitionXMLResponse403 | GetDecisionDefinitionXMLResponse404 | GetDecisionDefinitionXMLResponse500 | str]"""
-        from .api.decision_definition.get_decision_definition_xml import asyncio as get_decision_definition_xml_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_decision_definition_xml_asyncio(**_kwargs)
-
-
-    def create_authorization(self, *, data: Object | Object1, **kwargs: Any) -> CreateAuthorizationResponse201:
-        """Create authorization
-
- Create the authorization.
-
-Args:
-    body (Object | Object1): Defines an authorization request.
-        Either an id-based or a property-based authorization can be provided.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateAuthorizationResponse201 | CreateAuthorizationResponse400 | CreateAuthorizationResponse401 | CreateAuthorizationResponse403 | CreateAuthorizationResponse404 | CreateAuthorizationResponse500 | CreateAuthorizationResponse503]"""
-        from .api.authorization.create_authorization import sync as create_authorization_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_authorization_sync(**_kwargs)
-
-
-    async def create_authorization_async(self, *, data: Object | Object1, **kwargs: Any) -> CreateAuthorizationResponse201:
-        """Create authorization
-
- Create the authorization.
-
-Args:
-    body (Object | Object1): Defines an authorization request.
-        Either an id-based or a property-based authorization can be provided.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateAuthorizationResponse201 | CreateAuthorizationResponse400 | CreateAuthorizationResponse401 | CreateAuthorizationResponse403 | CreateAuthorizationResponse404 | CreateAuthorizationResponse500 | CreateAuthorizationResponse503]"""
-        from .api.authorization.create_authorization import asyncio as create_authorization_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_authorization_asyncio(**_kwargs)
-
-
-    def get_authorization(self, authorization_key: str, **kwargs: Any) -> GetAuthorizationResponse200:
-        """Get authorization
-
- Get authorization by the given key.
-
-Args:
-    authorization_key (str): System-generated key for an authorization. Example:
-        2251799813684332.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetAuthorizationResponse200 | GetAuthorizationResponse401 | GetAuthorizationResponse403 | GetAuthorizationResponse404 | GetAuthorizationResponse500]"""
-        from .api.authorization.get_authorization import sync as get_authorization_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_authorization_sync(**_kwargs)
-
-
-    async def get_authorization_async(self, authorization_key: str, **kwargs: Any) -> GetAuthorizationResponse200:
-        """Get authorization
-
- Get authorization by the given key.
-
-Args:
-    authorization_key (str): System-generated key for an authorization. Example:
-        2251799813684332.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetAuthorizationResponse200 | GetAuthorizationResponse401 | GetAuthorizationResponse403 | GetAuthorizationResponse404 | GetAuthorizationResponse500]"""
-        from .api.authorization.get_authorization import asyncio as get_authorization_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_authorization_asyncio(**_kwargs)
-
-
-    def update_authorization(self, authorization_key: str, *, data: Object | Object1, **kwargs: Any) -> Any:
-        """Update authorization
-
- Update the authorization with the given key.
-
-Args:
-    authorization_key (str): System-generated key for an authorization. Example:
-        2251799813684332.
-    body (Object | Object1): Defines an authorization request.
-        Either an id-based or a property-based authorization can be provided.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UpdateAuthorizationResponse401 | UpdateAuthorizationResponse404 | UpdateAuthorizationResponse500 | UpdateAuthorizationResponse503]"""
-        from .api.authorization.update_authorization import sync as update_authorization_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return update_authorization_sync(**_kwargs)
-
-
-    async def update_authorization_async(self, authorization_key: str, *, data: Object | Object1, **kwargs: Any) -> Any:
-        """Update authorization
-
- Update the authorization with the given key.
-
-Args:
-    authorization_key (str): System-generated key for an authorization. Example:
-        2251799813684332.
-    body (Object | Object1): Defines an authorization request.
-        Either an id-based or a property-based authorization can be provided.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | UpdateAuthorizationResponse401 | UpdateAuthorizationResponse404 | UpdateAuthorizationResponse500 | UpdateAuthorizationResponse503]"""
-        from .api.authorization.update_authorization import asyncio as update_authorization_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await update_authorization_asyncio(**_kwargs)
-
-
-    def search_authorizations(self, *, data: SearchAuthorizationsData | Unset = UNSET, **kwargs: Any) -> SearchAuthorizationsResponse200:
-        """Search authorizations
-
- Search for authorizations based on given criteria.
-
-Args:
-    body (SearchAuthorizationsData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchAuthorizationsResponse200 | SearchAuthorizationsResponse400 | SearchAuthorizationsResponse401 | SearchAuthorizationsResponse403 | SearchAuthorizationsResponse500]"""
-        from .api.authorization.search_authorizations import sync as search_authorizations_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_authorizations_sync(**_kwargs)
-
-
-    async def search_authorizations_async(self, *, data: SearchAuthorizationsData | Unset = UNSET, **kwargs: Any) -> SearchAuthorizationsResponse200:
-        """Search authorizations
-
- Search for authorizations based on given criteria.
-
-Args:
-    body (SearchAuthorizationsData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchAuthorizationsResponse200 | SearchAuthorizationsResponse400 | SearchAuthorizationsResponse401 | SearchAuthorizationsResponse403 | SearchAuthorizationsResponse500]"""
-        from .api.authorization.search_authorizations import asyncio as search_authorizations_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_authorizations_asyncio(**_kwargs)
-
-
-    def delete_authorization(self, authorization_key: str, **kwargs: Any) -> Any:
-        """Delete authorization
-
- Deletes the authorization with the given key.
-
-Args:
-    authorization_key (str): System-generated key for an authorization. Example:
-        2251799813684332.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteAuthorizationResponse401 | DeleteAuthorizationResponse404 | DeleteAuthorizationResponse500 | DeleteAuthorizationResponse503]"""
-        from .api.authorization.delete_authorization import sync as delete_authorization_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_authorization_sync(**_kwargs)
-
-
-    async def delete_authorization_async(self, authorization_key: str, **kwargs: Any) -> Any:
-        """Delete authorization
-
- Deletes the authorization with the given key.
-
-Args:
-    authorization_key (str): System-generated key for an authorization. Example:
-        2251799813684332.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteAuthorizationResponse401 | DeleteAuthorizationResponse404 | DeleteAuthorizationResponse500 | DeleteAuthorizationResponse503]"""
-        from .api.authorization.delete_authorization import asyncio as delete_authorization_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_authorization_asyncio(**_kwargs)
-
-
-    def search_incidents(self, *, data: SearchIncidentsData | Unset = UNSET, **kwargs: Any) -> SearchIncidentsResponse200:
-        """Search incidents
-
- Search for incidents based on given criteria.
-
-Args:
-    body (SearchIncidentsData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchIncidentsResponse200 | SearchIncidentsResponse400 | SearchIncidentsResponse401 | SearchIncidentsResponse403 | SearchIncidentsResponse500]"""
-        from .api.incident.search_incidents import sync as search_incidents_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return search_incidents_sync(**_kwargs)
-
-
-    async def search_incidents_async(self, *, data: SearchIncidentsData | Unset = UNSET, **kwargs: Any) -> SearchIncidentsResponse200:
-        """Search incidents
-
- Search for incidents based on given criteria.
-
-Args:
-    body (SearchIncidentsData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchIncidentsResponse200 | SearchIncidentsResponse400 | SearchIncidentsResponse401 | SearchIncidentsResponse403 | SearchIncidentsResponse500]"""
-        from .api.incident.search_incidents import asyncio as search_incidents_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_incidents_asyncio(**_kwargs)
-
-
-    def get_process_instance_statistics_by_definition(self, *, data: GetProcessInstanceStatisticsByDefinitionData, **kwargs: Any) -> GetProcessInstanceStatisticsByDefinitionResponse200:
-        """Get process instance statistics by definition
-
- Returns statistics for active process instances with incidents, grouped by process
-definition. The result set is scoped to a specific incident error hash code, which must be
-provided as a filter in the request body.
-
-Args:
-    body (GetProcessInstanceStatisticsByDefinitionData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceStatisticsByDefinitionResponse200 | GetProcessInstanceStatisticsByDefinitionResponse400 | GetProcessInstanceStatisticsByDefinitionResponse401 | GetProcessInstanceStatisticsByDefinitionResponse403 | GetProcessInstanceStatisticsByDefinitionResponse500]"""
-        from .api.incident.get_process_instance_statistics_by_definition import sync as get_process_instance_statistics_by_definition_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_instance_statistics_by_definition_sync(**_kwargs)
-
-
-    async def get_process_instance_statistics_by_definition_async(self, *, data: GetProcessInstanceStatisticsByDefinitionData, **kwargs: Any) -> GetProcessInstanceStatisticsByDefinitionResponse200:
-        """Get process instance statistics by definition
-
- Returns statistics for active process instances with incidents, grouped by process
-definition. The result set is scoped to a specific incident error hash code, which must be
-provided as a filter in the request body.
-
-Args:
-    body (GetProcessInstanceStatisticsByDefinitionData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceStatisticsByDefinitionResponse200 | GetProcessInstanceStatisticsByDefinitionResponse400 | GetProcessInstanceStatisticsByDefinitionResponse401 | GetProcessInstanceStatisticsByDefinitionResponse403 | GetProcessInstanceStatisticsByDefinitionResponse500]"""
-        from .api.incident.get_process_instance_statistics_by_definition import asyncio as get_process_instance_statistics_by_definition_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_instance_statistics_by_definition_asyncio(**_kwargs)
-
-
-    def get_incident(self, incident_key: str, **kwargs: Any) -> GetIncidentResponse200:
-        """Get incident
-
- Returns incident as JSON.
-
-Args:
-    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetIncidentResponse200 | GetIncidentResponse400 | GetIncidentResponse401 | GetIncidentResponse403 | GetIncidentResponse404 | GetIncidentResponse500]"""
-        from .api.incident.get_incident import sync as get_incident_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_incident_sync(**_kwargs)
-
-
-    async def get_incident_async(self, incident_key: str, **kwargs: Any) -> GetIncidentResponse200:
-        """Get incident
-
- Returns incident as JSON.
-
-Args:
-    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetIncidentResponse200 | GetIncidentResponse400 | GetIncidentResponse401 | GetIncidentResponse403 | GetIncidentResponse404 | GetIncidentResponse500]"""
-        from .api.incident.get_incident import asyncio as get_incident_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_incident_asyncio(**_kwargs)
-
-
-    def resolve_incident(self, incident_key: str, *, data: ResolveIncidentData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Resolve incident
-
- Marks the incident as resolved; most likely a call to Update job will be necessary
-to reset the job's retries, followed by this call.
-
-Args:
-    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-    body (ResolveIncidentData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]"""
-        from .api.incident.resolve_incident import sync as resolve_incident_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return resolve_incident_sync(**_kwargs)
-
-
-    async def resolve_incident_async(self, incident_key: str, *, data: ResolveIncidentData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Resolve incident
-
- Marks the incident as resolved; most likely a call to Update job will be necessary
-to reset the job's retries, followed by this call.
-
-Args:
-    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-    body (ResolveIncidentData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]"""
-        from .api.incident.resolve_incident import asyncio as resolve_incident_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await resolve_incident_asyncio(**_kwargs)
-
-
-    def get_process_instance_statistics_by_error(self, *, data: GetProcessInstanceStatisticsByErrorData | Unset = UNSET, **kwargs: Any) -> GetProcessInstanceStatisticsByErrorResponse200:
-        """Get process instance statistics by error
-
- Returns statistics for active process instances that currently have active incidents,
-grouped by incident error hash code.
-
-Args:
-    body (GetProcessInstanceStatisticsByErrorData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceStatisticsByErrorResponse200 | GetProcessInstanceStatisticsByErrorResponse400 | GetProcessInstanceStatisticsByErrorResponse401 | GetProcessInstanceStatisticsByErrorResponse403 | GetProcessInstanceStatisticsByErrorResponse500]"""
-        from .api.incident.get_process_instance_statistics_by_error import sync as get_process_instance_statistics_by_error_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_process_instance_statistics_by_error_sync(**_kwargs)
-
-
-    async def get_process_instance_statistics_by_error_async(self, *, data: GetProcessInstanceStatisticsByErrorData | Unset = UNSET, **kwargs: Any) -> GetProcessInstanceStatisticsByErrorResponse200:
-        """Get process instance statistics by error
-
- Returns statistics for active process instances that currently have active incidents,
-grouped by incident error hash code.
-
-Args:
-    body (GetProcessInstanceStatisticsByErrorData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetProcessInstanceStatisticsByErrorResponse200 | GetProcessInstanceStatisticsByErrorResponse400 | GetProcessInstanceStatisticsByErrorResponse401 | GetProcessInstanceStatisticsByErrorResponse403 | GetProcessInstanceStatisticsByErrorResponse500]"""
-        from .api.incident.get_process_instance_statistics_by_error import asyncio as get_process_instance_statistics_by_error_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_process_instance_statistics_by_error_asyncio(**_kwargs)
-
-
-    def get_user(self, username: str, **kwargs: Any) -> GetUserResponse200:
-        """Get user
-
- Get a user by its username.
-
-Args:
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetUserResponse200 | GetUserResponse401 | GetUserResponse403 | GetUserResponse404 | GetUserResponse500]"""
-        from .api.user.get_user import sync as get_user_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_user_sync(**_kwargs)
-
-
-    async def get_user_async(self, username: str, **kwargs: Any) -> GetUserResponse200:
-        """Get user
-
- Get a user by its username.
-
-Args:
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetUserResponse200 | GetUserResponse401 | GetUserResponse403 | GetUserResponse404 | GetUserResponse500]"""
-        from .api.user.get_user import asyncio as get_user_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await get_user_asyncio(**_kwargs)
-
-
-    def delete_user(self, username: str, **kwargs: Any) -> Any:
-        """Delete user
-
- Deletes a user.
-
-Args:
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteUserResponse400 | DeleteUserResponse404 | DeleteUserResponse500 | DeleteUserResponse503]"""
-        from .api.user.delete_user import sync as delete_user_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return delete_user_sync(**_kwargs)
-
+Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+production), local (non-production)
 
-    async def delete_user_async(self, username: str, **kwargs: Any) -> Any:
-        """Delete user
-
- Deletes a user.
-
-Args:
-    username (str): The unique name of a user. Example: swillis.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[Any | DeleteUserResponse400 | DeleteUserResponse404 | DeleteUserResponse500 | DeleteUserResponse503]"""
-        from .api.user.delete_user import asyncio as delete_user_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await delete_user_asyncio(**_kwargs)
-
-
-    def create_user(self, *, data: CreateUserData, **kwargs: Any) -> CreateUserResponse201:
-        """Create user
-
- Create a new user.
-
-Args:
-    body (CreateUserData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateUserResponse201 | CreateUserResponse400 | CreateUserResponse401 | CreateUserResponse403 | CreateUserResponse409 | CreateUserResponse500 | CreateUserResponse503]"""
-        from .api.user.create_user import sync as create_user_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return create_user_sync(**_kwargs)
-
-
-    async def create_user_async(self, *, data: CreateUserData, **kwargs: Any) -> CreateUserResponse201:
-        """Create user
-
- Create a new user.
-
 Args:
-    body (CreateUserData):
+    store_id (str | Unset):
+    document_id (str | Unset): Document Id that uniquely identifies a document.
+    body (CreateDocumentData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateDocumentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateDocumentUnsupportedMediaType: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[CreateUserResponse201 | CreateUserResponse400 | CreateUserResponse401 | CreateUserResponse403 | CreateUserResponse409 | CreateUserResponse500 | CreateUserResponse503]"""
-        from .api.user.create_user import asyncio as create_user_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await create_user_asyncio(**_kwargs)
-
-
-    def search_users(self, *, data: SearchUsersData | Unset = UNSET, **kwargs: Any) -> SearchUsersResponse200:
-        """Search users
-
- Search for users based on given criteria.
-
-Args:
-    body (SearchUsersData | Unset):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]"""
-        from .api.user.search_users import sync as search_users_sync
+    CreateDocumentResponse201"""
+        from .api.document.create_document import asyncio as create_document_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return search_users_sync(**_kwargs)
+        return await create_document_asyncio(**_kwargs)
 
 
-    async def search_users_async(self, *, data: SearchUsersData | Unset = UNSET, **kwargs: Any) -> SearchUsersResponse200:
-        """Search users
+    async def get_audit_log(self, audit_log_key: str, **kwargs: Any) -> GetAuditLogResponse200:
+        """Get audit log
 
- Search for users based on given criteria.
+ Get an audit log entry by auditLogKey.
 
 Args:
-    body (SearchUsersData | Unset):
+    audit_log_key (str): System-generated key for an audit log entry. Example:
+        22517998136843567.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetAuditLogUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuditLogForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuditLogNotFound: If the response status code is 404. The audit log with the given key was not found.
+    errors.GetAuditLogInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]"""
-        from .api.user.search_users import asyncio as search_users_asyncio
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return await search_users_asyncio(**_kwargs)
-
-
-    def update_user(self, username: str, *, data: UpdateUserData, **kwargs: Any) -> UpdateUserResponse200:
-        """Update user
-
- Updates a user.
-
-Args:
-    username (str): The unique name of a user. Example: swillis.
-    body (UpdateUserData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[UpdateUserResponse200 | UpdateUserResponse400 | UpdateUserResponse403 | UpdateUserResponse404 | UpdateUserResponse500 | UpdateUserResponse503]"""
-        from .api.user.update_user import sync as update_user_sync
+    GetAuditLogResponse200"""
+        from .api.audit_log.get_audit_log import asyncio as get_audit_log_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return update_user_sync(**_kwargs)
+        return await get_audit_log_asyncio(**_kwargs)
 
 
-    async def update_user_async(self, username: str, *, data: UpdateUserData, **kwargs: Any) -> UpdateUserResponse200:
-        """Update user
+    async def search_audit_logs(self, *, data: SearchAuditLogsData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Search audit logs
 
- Updates a user.
+ Search for audit logs based on given criteria.
 
 Args:
-    username (str): The unique name of a user. Example: swillis.
-    body (UpdateUserData):
+    body (SearchAuditLogsData | Unset): Audit log search request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchAuditLogsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchAuditLogsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchAuditLogsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchAuditLogsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[UpdateUserResponse200 | UpdateUserResponse400 | UpdateUserResponse403 | UpdateUserResponse404 | UpdateUserResponse500 | UpdateUserResponse503]"""
-        from .api.user.update_user import asyncio as update_user_asyncio
+    Any"""
+        from .api.audit_log.search_audit_logs import asyncio as search_audit_logs_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await update_user_asyncio(**_kwargs)
+        return await search_audit_logs_asyncio(**_kwargs)
 
 
-    def get_usage_metrics(self, *, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = False, **kwargs: Any) -> GetUsageMetricsResponse200:
+    async def get_usage_metrics(self, *, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = False, **kwargs: Any) -> GetUsageMetricsResponse200:
         """Get usage metrics
 
  Retrieve the usage metrics based on given criteria.
@@ -8485,37 +8454,14 @@ Args:
     with_tenants (bool | Unset):  Default: False.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetUsageMetricsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUsageMetricsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUsageMetricsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUsageMetricsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetUsageMetricsResponse200 | GetUsageMetricsResponse400 | GetUsageMetricsResponse401 | GetUsageMetricsResponse403 | GetUsageMetricsResponse500]"""
-        from .api.system.get_usage_metrics import sync as get_usage_metrics_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return get_usage_metrics_sync(**_kwargs)
-
-
-    async def get_usage_metrics_async(self, *, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = False, **kwargs: Any) -> GetUsageMetricsResponse200:
-        """Get usage metrics
-
- Retrieve the usage metrics based on given criteria.
-
-Args:
-    start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
-    end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
-    tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
-    with_tenants (bool | Unset):  Default: False.
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[GetUsageMetricsResponse200 | GetUsageMetricsResponse400 | GetUsageMetricsResponse401 | GetUsageMetricsResponse403 | GetUsageMetricsResponse500]"""
+    GetUsageMetricsResponse200"""
         from .api.system.get_usage_metrics import asyncio as get_usage_metrics_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
@@ -8525,867 +8471,1195 @@ Returns:
         return await get_usage_metrics_asyncio(**_kwargs)
 
 
-    def update_role(self, role_id: str, *, data: UpdateRoleData, **kwargs: Any) -> UpdateRoleResponse200:
-        """Update role
+    async def search_element_instance_incidents(self, element_instance_key: str, *, data: SearchElementInstanceIncidentsData, **kwargs: Any) -> SearchElementInstanceIncidentsResponse200:
+        """Search for incidents of a specific element instance
 
- Update a role with the given ID.
+ Search for incidents caused by the specified element instance, including incidents of any child
+instances created from this element instance.
 
-Args:
-    role_id (str):
-    body (UpdateRoleData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[UpdateRoleResponse200 | UpdateRoleResponse400 | UpdateRoleResponse401 | UpdateRoleResponse404 | UpdateRoleResponse500 | UpdateRoleResponse503]"""
-        from .api.role.update_role import sync as update_role_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return update_role_sync(**_kwargs)
-
-
-    async def update_role_async(self, role_id: str, *, data: UpdateRoleData, **kwargs: Any) -> UpdateRoleResponse200:
-        """Update role
-
- Update a role with the given ID.
+Although the `elementInstanceKey` is provided as a path parameter to indicate the root element
+instance,
+you may also include an `elementInstanceKey` within the filter object to narrow results to specific
+child element instances. This is useful, for example, if you want to isolate incidents associated
+with
+nested or subordinate elements within the given element instance while excluding incidents directly
+tied
+to the root element itself.
 
 Args:
-    role_id (str):
-    body (UpdateRoleData):
+    element_instance_key (str): System-generated key for a element instance. Example:
+        2251799813686789.
+    body (SearchElementInstanceIncidentsData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404. The element instance with the given key was not found.
+    errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[UpdateRoleResponse200 | UpdateRoleResponse400 | UpdateRoleResponse401 | UpdateRoleResponse404 | UpdateRoleResponse500 | UpdateRoleResponse503]"""
-        from .api.role.update_role import asyncio as update_role_asyncio
+    SearchElementInstanceIncidentsResponse200"""
+        from .api.element_instance.search_element_instance_incidents import asyncio as search_element_instance_incidents_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await update_role_asyncio(**_kwargs)
+        return await search_element_instance_incidents_asyncio(**_kwargs)
 
 
-    def assign_role_to_client(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Assign a role to a client
+    async def get_element_instance(self, element_instance_key: str, **kwargs: Any) -> GetElementInstanceResponse200:
+        """Get element instance
 
- Assigns the specified role to the client. The client will inherit the authorizations associated with
-this role.
+ Returns element instance as JSON.
 
 Args:
-    role_id (str):
-    client_id (str):
+    element_instance_key (str): System-generated key for a element instance. Example:
+        2251799813686789.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetElementInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetElementInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetElementInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetElementInstanceNotFound: If the response status code is 404. The element instance with the given key was not found. More details are provided in the response body.
+    errors.GetElementInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | AssignRoleToClientResponse400 | AssignRoleToClientResponse403 | AssignRoleToClientResponse404 | AssignRoleToClientResponse409 | AssignRoleToClientResponse500 | AssignRoleToClientResponse503]"""
-        from .api.role.assign_role_to_client import sync as assign_role_to_client_sync
+    GetElementInstanceResponse200"""
+        from .api.element_instance.get_element_instance import asyncio as get_element_instance_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return assign_role_to_client_sync(**_kwargs)
+        return await get_element_instance_asyncio(**_kwargs)
 
 
-    async def assign_role_to_client_async(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Assign a role to a client
+    async def create_element_instance_variables(self, element_instance_key: str, *, data: CreateElementInstanceVariablesData, **kwargs: Any) -> Any:
+        """Update element instance variables
 
- Assigns the specified role to the client. The client will inherit the authorizations associated with
-this role.
+ Updates all the variables of a particular scope (for example, process instance, element instance)
+with the given variable data.
+Specify the element instance in the `elementInstanceKey` parameter.
 
 Args:
-    role_id (str):
-    client_id (str):
+    element_instance_key (str): System-generated key for a element instance. Example:
+        2251799813686789.
+    body (CreateElementInstanceVariablesData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateElementInstanceVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateElementInstanceVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateElementInstanceVariablesServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | AssignRoleToClientResponse400 | AssignRoleToClientResponse403 | AssignRoleToClientResponse404 | AssignRoleToClientResponse409 | AssignRoleToClientResponse500 | AssignRoleToClientResponse503]"""
-        from .api.role.assign_role_to_client import asyncio as assign_role_to_client_asyncio
+    Any"""
+        from .api.element_instance.create_element_instance_variables import asyncio as create_element_instance_variables_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await assign_role_to_client_asyncio(**_kwargs)
+        return await create_element_instance_variables_asyncio(**_kwargs)
 
 
-    def get_role(self, role_id: str, **kwargs: Any) -> GetRoleResponse200:
-        """Get role
+    async def search_element_instances(self, *, data: SearchElementInstancesData | Unset = UNSET, **kwargs: Any) -> SearchElementInstancesResponse200:
+        """Search element instances
 
- Get a role by its ID.
+ Search for element instances based on given criteria.
 
 Args:
-    role_id (str):
+    body (SearchElementInstancesData | Unset): Element instance search request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchElementInstancesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchElementInstancesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchElementInstancesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchElementInstancesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetRoleResponse200 | GetRoleResponse401 | GetRoleResponse403 | GetRoleResponse404 | GetRoleResponse500]"""
-        from .api.role.get_role import sync as get_role_sync
+    SearchElementInstancesResponse200"""
+        from .api.element_instance.search_element_instances import asyncio as search_element_instances_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_role_sync(**_kwargs)
+        return await search_element_instances_asyncio(**_kwargs)
 
 
-    async def get_role_async(self, role_id: str, **kwargs: Any) -> GetRoleResponse200:
-        """Get role
+    async def activate_ad_hoc_sub_process_activities(self, ad_hoc_sub_process_instance_key: str, *, data: ActivateAdHocSubProcessActivitiesData, **kwargs: Any) -> ActivateAdHocSubProcessActivitiesResponse400:
+        """Activate activities within an ad-hoc sub-process
 
- Get a role by its ID.
+ Activates selected activities within an ad-hoc sub-process identified by element ID.
+The provided element IDs must exist within the ad-hoc sub-process instance identified by the
+provided adHocSubProcessInstanceKey.
 
 Args:
-    role_id (str):
+    ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
+        Example: 2251799813686789.
+    body (ActivateAdHocSubProcessActivitiesData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.ActivateAdHocSubProcessActivitiesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ActivateAdHocSubProcessActivitiesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ActivateAdHocSubProcessActivitiesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.ActivateAdHocSubProcessActivitiesNotFound: If the response status code is 404. The ad-hoc sub-process instance is not found or the provided key does not identify an ad-hoc sub-process.
+    errors.ActivateAdHocSubProcessActivitiesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ActivateAdHocSubProcessActivitiesServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetRoleResponse200 | GetRoleResponse401 | GetRoleResponse403 | GetRoleResponse404 | GetRoleResponse500]"""
-        from .api.role.get_role import asyncio as get_role_asyncio
+    ActivateAdHocSubProcessActivitiesResponse400"""
+        from .api.ad_hoc_sub_process.activate_ad_hoc_sub_process_activities import asyncio as activate_ad_hoc_sub_process_activities_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_role_asyncio(**_kwargs)
+        return await activate_ad_hoc_sub_process_activities_asyncio(**_kwargs)
 
 
-    def unassign_role_from_mapping_rule(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Unassign a role from a mapping rule
+    async def fail_job(self, job_key: str, *, data: FailJobData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Fail job
 
- Unassigns a role from a mapping rule.
+ Mark the job as failed.
 
 Args:
-    role_id (str):
-    mapping_rule_id (str):
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (FailJobData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.FailJobBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.FailJobNotFound: If the response status code is 404. The job with the given jobKey is not found. It was completed by another worker, or the process instance itself was canceled.
+    errors.FailJobConflict: If the response status code is 409. The job with the given key is in the wrong state (i.e: not ACTIVATED or ACTIVATABLE). The job was failed by another worker with retries = 0, and the process is now in an incident state.
+    errors.FailJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.FailJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | UnassignRoleFromMappingRuleResponse400 | UnassignRoleFromMappingRuleResponse403 | UnassignRoleFromMappingRuleResponse404 | UnassignRoleFromMappingRuleResponse500 | UnassignRoleFromMappingRuleResponse503]"""
-        from .api.role.unassign_role_from_mapping_rule import sync as unassign_role_from_mapping_rule_sync
+    Any"""
+        from .api.job.fail_job import asyncio as fail_job_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return unassign_role_from_mapping_rule_sync(**_kwargs)
+        return await fail_job_asyncio(**_kwargs)
 
 
-    async def unassign_role_from_mapping_rule_async(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Unassign a role from a mapping rule
+    async def search_jobs(self, *, data: SearchJobsData | Unset = UNSET, **kwargs: Any) -> SearchJobsResponse200:
+        """Search jobs
 
- Unassigns a role from a mapping rule.
+ Search for jobs based on given criteria.
 
 Args:
-    role_id (str):
-    mapping_rule_id (str):
+    body (SearchJobsData | Unset): Job search request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchJobsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchJobsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchJobsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchJobsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | UnassignRoleFromMappingRuleResponse400 | UnassignRoleFromMappingRuleResponse403 | UnassignRoleFromMappingRuleResponse404 | UnassignRoleFromMappingRuleResponse500 | UnassignRoleFromMappingRuleResponse503]"""
-        from .api.role.unassign_role_from_mapping_rule import asyncio as unassign_role_from_mapping_rule_asyncio
+    SearchJobsResponse200"""
+        from .api.job.search_jobs import asyncio as search_jobs_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_role_from_mapping_rule_asyncio(**_kwargs)
+        return await search_jobs_asyncio(**_kwargs)
 
 
-    def search_users_for_role(self, role_id: str, *, data: SearchUsersForRoleData | Unset = UNSET, **kwargs: Any) -> SearchUsersForRoleResponse200:
-        """Search role users
+    async def activate_jobs(self, *, data: ActivateJobsData, **kwargs: Any) -> ActivateJobsResponse200:
+        """Activate jobs
 
- Search users with assigned role.
+ Iterate through all known partitions and activate jobs up to the requested maximum.
 
 Args:
-    role_id (str):
-    body (SearchUsersForRoleData | Unset):
+    body (ActivateJobsData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.ActivateJobsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ActivateJobsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ActivateJobsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ActivateJobsServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchUsersForRoleResponse200 | SearchUsersForRoleResponse400 | SearchUsersForRoleResponse401 | SearchUsersForRoleResponse403 | SearchUsersForRoleResponse404 | SearchUsersForRoleResponse500]"""
-        from .api.role.search_users_for_role import sync as search_users_for_role_sync
+    ActivateJobsResponse200"""
+        from .api.job.activate_jobs import asyncio as activate_jobs_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return search_users_for_role_sync(**_kwargs)
+        return await activate_jobs_asyncio(**_kwargs)
 
 
-    async def search_users_for_role_async(self, role_id: str, *, data: SearchUsersForRoleData | Unset = UNSET, **kwargs: Any) -> SearchUsersForRoleResponse200:
-        """Search role users
+    async def throw_job_error(self, job_key: str, *, data: ThrowJobErrorData, **kwargs: Any) -> Any:
+        """Throw error for job
 
- Search users with assigned role.
+ Reports a business error (i.e. non-technical) that occurs while processing a job.
 
 Args:
-    role_id (str):
-    body (SearchUsersForRoleData | Unset):
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (ThrowJobErrorData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.ThrowJobErrorBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ThrowJobErrorNotFound: If the response status code is 404. The job with the given key was not found or is not activated.
+    errors.ThrowJobErrorConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.ThrowJobErrorInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ThrowJobErrorServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchUsersForRoleResponse200 | SearchUsersForRoleResponse400 | SearchUsersForRoleResponse401 | SearchUsersForRoleResponse403 | SearchUsersForRoleResponse404 | SearchUsersForRoleResponse500]"""
-        from .api.role.search_users_for_role import asyncio as search_users_for_role_asyncio
+    Any"""
+        from .api.job.throw_job_error import asyncio as throw_job_error_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_users_for_role_asyncio(**_kwargs)
+        return await throw_job_error_asyncio(**_kwargs)
 
 
-    def search_mapping_rules_for_role(self, role_id: str, *, data: SearchMappingRulesForRoleData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForRoleResponse200:
-        """Search role mapping rules
+    async def complete_job(self, job_key: str, *, data: CompleteJobData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Complete job
 
- Search mapping rules with assigned role.
+ Complete a job with the given payload, which allows completing the associated service task.
 
 Args:
-    role_id (str):
-    body (SearchMappingRulesForRoleData | Unset):
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (CompleteJobData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CompleteJobBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CompleteJobNotFound: If the response status code is 404. The job with the given key was not found.
+    errors.CompleteJobConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.CompleteJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CompleteJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchMappingRulesForRoleResponse200 | SearchMappingRulesForRoleResponse400 | SearchMappingRulesForRoleResponse401 | SearchMappingRulesForRoleResponse403 | SearchMappingRulesForRoleResponse404 | SearchMappingRulesForRoleResponse500]"""
-        from .api.role.search_mapping_rules_for_role import sync as search_mapping_rules_for_role_sync
+    Any"""
+        from .api.job.complete_job import asyncio as complete_job_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return search_mapping_rules_for_role_sync(**_kwargs)
+        return await complete_job_asyncio(**_kwargs)
 
 
-    async def search_mapping_rules_for_role_async(self, role_id: str, *, data: SearchMappingRulesForRoleData | Unset = UNSET, **kwargs: Any) -> SearchMappingRulesForRoleResponse200:
-        """Search role mapping rules
+    async def update_job(self, job_key: str, *, data: UpdateJobData, **kwargs: Any) -> Any:
+        """Update job
 
- Search mapping rules with assigned role.
+ Update a job with the given key.
 
 Args:
-    role_id (str):
-    body (SearchMappingRulesForRoleData | Unset):
+    job_key (str): System-generated key for a job. Example: 2251799813653498.
+    body (UpdateJobData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UpdateJobBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateJobNotFound: If the response status code is 404. The job with the jobKey is not found.
+    errors.UpdateJobConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.UpdateJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchMappingRulesForRoleResponse200 | SearchMappingRulesForRoleResponse400 | SearchMappingRulesForRoleResponse401 | SearchMappingRulesForRoleResponse403 | SearchMappingRulesForRoleResponse404 | SearchMappingRulesForRoleResponse500]"""
-        from .api.role.search_mapping_rules_for_role import asyncio as search_mapping_rules_for_role_asyncio
+    Any"""
+        from .api.job.update_job import asyncio as update_job_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_mapping_rules_for_role_asyncio(**_kwargs)
+        return await update_job_asyncio(**_kwargs)
 
 
-    def search_groups_for_role(self, role_id: str, *, data: SearchGroupsForRoleData | Unset = UNSET, **kwargs: Any) -> SearchGroupsForRoleResponse200:
-        """Search role groups
+    async def get_process_instance_statistics_by_definition(self, *, data: GetProcessInstanceStatisticsByDefinitionData, **kwargs: Any) -> GetProcessInstanceStatisticsByDefinitionResponse200:
+        """Get process instance statistics by definition
 
- Search groups with assigned role.
+ Returns statistics for active process instances with incidents, grouped by process
+definition. The result set is scoped to a specific incident error hash code, which must be
+provided as a filter in the request body.
 
 Args:
-    role_id (str):
-    body (SearchGroupsForRoleData | Unset):
+    body (GetProcessInstanceStatisticsByDefinitionData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetProcessInstanceStatisticsByDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceStatisticsByDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceStatisticsByDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceStatisticsByDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchGroupsForRoleResponse200 | SearchGroupsForRoleResponse400 | SearchGroupsForRoleResponse401 | SearchGroupsForRoleResponse403 | SearchGroupsForRoleResponse404 | SearchGroupsForRoleResponse500]"""
-        from .api.role.search_groups_for_role import sync as search_groups_for_role_sync
+    GetProcessInstanceStatisticsByDefinitionResponse200"""
+        from .api.incident.get_process_instance_statistics_by_definition import asyncio as get_process_instance_statistics_by_definition_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return search_groups_for_role_sync(**_kwargs)
+        return await get_process_instance_statistics_by_definition_asyncio(**_kwargs)
 
 
-    async def search_groups_for_role_async(self, role_id: str, *, data: SearchGroupsForRoleData | Unset = UNSET, **kwargs: Any) -> SearchGroupsForRoleResponse200:
-        """Search role groups
+    async def resolve_incident(self, incident_key: str, *, data: ResolveIncidentData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Resolve incident
 
- Search groups with assigned role.
+ Marks the incident as resolved; most likely a call to Update job will be necessary
+to reset the job's retries, followed by this call.
 
 Args:
-    role_id (str):
-    body (SearchGroupsForRoleData | Unset):
+    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
+    body (ResolveIncidentData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.ResolveIncidentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ResolveIncidentNotFound: If the response status code is 404. The incident with the incidentKey is not found.
+    errors.ResolveIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResolveIncidentServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchGroupsForRoleResponse200 | SearchGroupsForRoleResponse400 | SearchGroupsForRoleResponse401 | SearchGroupsForRoleResponse403 | SearchGroupsForRoleResponse404 | SearchGroupsForRoleResponse500]"""
-        from .api.role.search_groups_for_role import asyncio as search_groups_for_role_asyncio
+    Any"""
+        from .api.incident.resolve_incident import asyncio as resolve_incident_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_groups_for_role_asyncio(**_kwargs)
+        return await resolve_incident_asyncio(**_kwargs)
 
 
-    def search_roles(self, *, data: SearchRolesData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Search roles
+    async def search_incidents(self, *, data: SearchIncidentsData | Unset = UNSET, **kwargs: Any) -> SearchIncidentsResponse200:
+        """Search incidents
 
- Search for roles based on given criteria.
+ Search for incidents based on given criteria.
 
 Args:
-    body (SearchRolesData | Unset): Role search request.
+    body (SearchIncidentsData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | SearchRolesResponse200 | SearchRolesResponse400 | SearchRolesResponse401 | SearchRolesResponse403]"""
-        from .api.role.search_roles import sync as search_roles_sync
+    SearchIncidentsResponse200"""
+        from .api.incident.search_incidents import asyncio as search_incidents_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return search_roles_sync(**_kwargs)
+        return await search_incidents_asyncio(**_kwargs)
 
 
-    async def search_roles_async(self, *, data: SearchRolesData | Unset = UNSET, **kwargs: Any) -> Any:
-        """Search roles
+    async def get_process_instance_statistics_by_error(self, *, data: GetProcessInstanceStatisticsByErrorData | Unset = UNSET, **kwargs: Any) -> GetProcessInstanceStatisticsByErrorResponse200:
+        """Get process instance statistics by error
 
- Search for roles based on given criteria.
+ Returns statistics for active process instances that currently have active incidents,
+grouped by incident error hash code.
 
 Args:
-    body (SearchRolesData | Unset): Role search request.
+    body (GetProcessInstanceStatisticsByErrorData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetProcessInstanceStatisticsByErrorBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceStatisticsByErrorUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceStatisticsByErrorForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceStatisticsByErrorInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | SearchRolesResponse200 | SearchRolesResponse400 | SearchRolesResponse401 | SearchRolesResponse403]"""
-        from .api.role.search_roles import asyncio as search_roles_asyncio
+    GetProcessInstanceStatisticsByErrorResponse200"""
+        from .api.incident.get_process_instance_statistics_by_error import asyncio as get_process_instance_statistics_by_error_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_roles_asyncio(**_kwargs)
+        return await get_process_instance_statistics_by_error_asyncio(**_kwargs)
 
 
-    def search_clients_for_role(self, role_id: str, *, data: SearchClientsForRoleData | Unset = UNSET, **kwargs: Any) -> SearchClientsForRoleResponse200:
-        """Search role clients
+    async def get_incident(self, incident_key: str, **kwargs: Any) -> GetIncidentResponse200:
+        """Get incident
 
- Search clients with assigned role.
+ Returns incident as JSON.
 
 Args:
-    role_id (str):
-    body (SearchClientsForRoleData | Unset):
+    incident_key (str): System-generated key for a incident. Example: 2251799813689432.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetIncidentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetIncidentUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetIncidentForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetIncidentNotFound: If the response status code is 404. The incident with the given key was not found.
+    errors.GetIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchClientsForRoleResponse200 | SearchClientsForRoleResponse400 | SearchClientsForRoleResponse401 | SearchClientsForRoleResponse403 | SearchClientsForRoleResponse404 | SearchClientsForRoleResponse500]"""
-        from .api.role.search_clients_for_role import sync as search_clients_for_role_sync
+    GetIncidentResponse200"""
+        from .api.incident.get_incident import asyncio as get_incident_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return search_clients_for_role_sync(**_kwargs)
+        return await get_incident_asyncio(**_kwargs)
 
 
-    async def search_clients_for_role_async(self, role_id: str, *, data: SearchClientsForRoleData | Unset = UNSET, **kwargs: Any) -> SearchClientsForRoleResponse200:
-        """Search role clients
+    async def get_decision_definition(self, decision_definition_key: str, **kwargs: Any) -> GetDecisionDefinitionResponse200:
+        """Get decision definition
 
- Search clients with assigned role.
+ Returns a decision definition by key.
 
 Args:
-    role_id (str):
-    body (SearchClientsForRoleData | Unset):
+    decision_definition_key (str): System-generated key for a decision definition. Example:
+        2251799813326547.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetDecisionDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionDefinitionNotFound: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchClientsForRoleResponse200 | SearchClientsForRoleResponse400 | SearchClientsForRoleResponse401 | SearchClientsForRoleResponse403 | SearchClientsForRoleResponse404 | SearchClientsForRoleResponse500]"""
-        from .api.role.search_clients_for_role import asyncio as search_clients_for_role_asyncio
+    GetDecisionDefinitionResponse200"""
+        from .api.decision_definition.get_decision_definition import asyncio as get_decision_definition_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await search_clients_for_role_asyncio(**_kwargs)
+        return await get_decision_definition_asyncio(**_kwargs)
 
 
-    def create_role(self, *, data: CreateRoleData | Unset = UNSET, **kwargs: Any) -> CreateRoleResponse201:
-        """Create role
+    async def evaluate_decision(self, *, data: DecisionevaluationbyID | Decisionevaluationbykey, **kwargs: Any) -> Any:
+        """Evaluate decision
 
- Create a new role.
+ Evaluates a decision.
+You specify the decision to evaluate either by using its unique key (as returned by
+DeployResource), or using the decision ID. When using the decision ID, the latest deployed
+version of the decision is used.
 
 Args:
-    body (CreateRoleData | Unset):
+    body (DecisionevaluationbyID | Decisionevaluationbykey):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.EvaluateDecisionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.EvaluateDecisionNotFound: If the response status code is 404. The decision is not found.
+    errors.EvaluateDecisionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.EvaluateDecisionServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[CreateRoleResponse201 | CreateRoleResponse400 | CreateRoleResponse401 | CreateRoleResponse403 | CreateRoleResponse500 | CreateRoleResponse503]"""
-        from .api.role.create_role import sync as create_role_sync
+    Any"""
+        from .api.decision_definition.evaluate_decision import asyncio as evaluate_decision_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return create_role_sync(**_kwargs)
+        return await evaluate_decision_asyncio(**_kwargs)
 
 
-    async def create_role_async(self, *, data: CreateRoleData | Unset = UNSET, **kwargs: Any) -> CreateRoleResponse201:
-        """Create role
+    async def search_decision_definitions(self, *, data: SearchDecisionDefinitionsData | Unset = UNSET, **kwargs: Any) -> SearchDecisionDefinitionsResponse200:
+        """Search decision definitions
 
- Create a new role.
+ Search for decision definitions based on given criteria.
 
 Args:
-    body (CreateRoleData | Unset):
+    body (SearchDecisionDefinitionsData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchDecisionDefinitionsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchDecisionDefinitionsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchDecisionDefinitionsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchDecisionDefinitionsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[CreateRoleResponse201 | CreateRoleResponse400 | CreateRoleResponse401 | CreateRoleResponse403 | CreateRoleResponse500 | CreateRoleResponse503]"""
-        from .api.role.create_role import asyncio as create_role_asyncio
+    SearchDecisionDefinitionsResponse200"""
+        from .api.decision_definition.search_decision_definitions import asyncio as search_decision_definitions_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await create_role_asyncio(**_kwargs)
+        return await search_decision_definitions_asyncio(**_kwargs)
 
 
-    def assign_role_to_group(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
-        """Assign a role to a group
+    async def get_decision_definition_xml(self, decision_definition_key: str, **kwargs: Any) -> GetDecisionDefinitionXMLResponse400:
+        """Get decision definition XML
 
- Assigns the specified role to the group. Every member of the group (user or client) will inherit the
-authorizations associated with this role.
+ Returns decision definition as XML.
 
 Args:
-    role_id (str):
-    group_id (str):
+    decision_definition_key (str): System-generated key for a decision definition. Example:
+        2251799813326547.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | AssignRoleToGroupResponse400 | AssignRoleToGroupResponse403 | AssignRoleToGroupResponse404 | AssignRoleToGroupResponse409 | AssignRoleToGroupResponse500 | AssignRoleToGroupResponse503]"""
-        from .api.role.assign_role_to_group import sync as assign_role_to_group_sync
+    GetDecisionDefinitionXMLResponse400"""
+        from .api.decision_definition.get_decision_definition_xml import asyncio as get_decision_definition_xml_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return assign_role_to_group_sync(**_kwargs)
+        return await get_decision_definition_xml_asyncio(**_kwargs)
 
 
-    async def assign_role_to_group_async(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
-        """Assign a role to a group
+    async def evaluate_expression(self, *, data: EvaluateExpressionData, **kwargs: Any) -> EvaluateExpressionResponse200:
+        """Evaluate an expression
 
- Assigns the specified role to the group. Every member of the group (user or client) will inherit the
-authorizations associated with this role.
+ Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
+variables when a tenant ID is provided.
 
 Args:
-    role_id (str):
-    group_id (str):
+    body (EvaluateExpressionData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.EvaluateExpressionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.EvaluateExpressionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.EvaluateExpressionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.EvaluateExpressionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | AssignRoleToGroupResponse400 | AssignRoleToGroupResponse403 | AssignRoleToGroupResponse404 | AssignRoleToGroupResponse409 | AssignRoleToGroupResponse500 | AssignRoleToGroupResponse503]"""
-        from .api.role.assign_role_to_group import asyncio as assign_role_to_group_asyncio
+    EvaluateExpressionResponse200"""
+        from .api.expression.evaluate_expression import asyncio as evaluate_expression_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await assign_role_to_group_asyncio(**_kwargs)
+        return await evaluate_expression_asyncio(**_kwargs)
 
 
-    def assign_role_to_mapping_rule(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Assign a role to a mapping rule
+    async def unassign_user_task(self, user_task_key: str, **kwargs: Any) -> Any:
+        """Unassign user task
 
- Assigns a role to a mapping rule.
+ Removes the assignee of a task with the given key.
 
 Args:
-    role_id (str):
-    mapping_rule_id (str):
+    user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UnassignUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.UnassignUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.UnassignUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | AssignRoleToMappingRuleResponse400 | AssignRoleToMappingRuleResponse403 | AssignRoleToMappingRuleResponse404 | AssignRoleToMappingRuleResponse409 | AssignRoleToMappingRuleResponse500 | AssignRoleToMappingRuleResponse503]"""
-        from .api.role.assign_role_to_mapping_rule import sync as assign_role_to_mapping_rule_sync
+    Any"""
+        from .api.user_task.unassign_user_task import asyncio as unassign_user_task_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return assign_role_to_mapping_rule_sync(**_kwargs)
+        return await unassign_user_task_asyncio(**_kwargs)
 
 
-    async def assign_role_to_mapping_rule_async(self, role_id: str, mapping_rule_id: str, **kwargs: Any) -> Any:
-        """Assign a role to a mapping rule
+    async def search_user_task_variables(self, user_task_key: str, *, data: SearchUserTaskVariablesData | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> SearchUserTaskVariablesResponse200:
+        """Search user task variables
 
- Assigns a role to a mapping rule.
+ Search for user task variables based on given criteria. By default, long variable values in the
+response are truncated.
 
 Args:
-    role_id (str):
-    mapping_rule_id (str):
+    user_task_key (str): System-generated key for a user task.
+    truncate_values (bool | Unset):
+    body (SearchUserTaskVariablesData | Unset): User task search query request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchUserTaskVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | AssignRoleToMappingRuleResponse400 | AssignRoleToMappingRuleResponse403 | AssignRoleToMappingRuleResponse404 | AssignRoleToMappingRuleResponse409 | AssignRoleToMappingRuleResponse500 | AssignRoleToMappingRuleResponse503]"""
-        from .api.role.assign_role_to_mapping_rule import asyncio as assign_role_to_mapping_rule_asyncio
+    SearchUserTaskVariablesResponse200"""
+        from .api.user_task.search_user_task_variables import asyncio as search_user_task_variables_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await assign_role_to_mapping_rule_asyncio(**_kwargs)
+        return await search_user_task_variables_asyncio(**_kwargs)
 
 
-    def unassign_role_from_client(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Unassign a role from a client
+    async def assign_user_task(self, user_task_key: str, *, data: AssignUserTaskData, **kwargs: Any) -> Any:
+        """Assign user task
 
- Unassigns the specified role from the client. The client will no longer inherit the authorizations
-associated with this role.
+ Assigns a user task with the given key to the given assignee.
 
 Args:
-    role_id (str):
-    client_id (str):
+    user_task_key (str): System-generated key for a user task.
+    body (AssignUserTaskData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.AssignUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.AssignUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.AssignUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | UnassignRoleFromClientResponse400 | UnassignRoleFromClientResponse403 | UnassignRoleFromClientResponse404 | UnassignRoleFromClientResponse500 | UnassignRoleFromClientResponse503]"""
-        from .api.role.unassign_role_from_client import sync as unassign_role_from_client_sync
+    Any"""
+        from .api.user_task.assign_user_task import asyncio as assign_user_task_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return unassign_role_from_client_sync(**_kwargs)
+        return await assign_user_task_asyncio(**_kwargs)
 
 
-    async def unassign_role_from_client_async(self, role_id: str, client_id: str, **kwargs: Any) -> Any:
-        """Unassign a role from a client
+    async def update_user_task(self, user_task_key: str, *, data: UpdateUserTaskData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Update user task
 
- Unassigns the specified role from the client. The client will no longer inherit the authorizations
-associated with this role.
+ Update a user task with the given key.
 
 Args:
-    role_id (str):
-    client_id (str):
+    user_task_key (str): System-generated key for a user task.
+    body (UpdateUserTaskData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UpdateUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.UpdateUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.UpdateUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | UnassignRoleFromClientResponse400 | UnassignRoleFromClientResponse403 | UnassignRoleFromClientResponse404 | UnassignRoleFromClientResponse500 | UnassignRoleFromClientResponse503]"""
-        from .api.role.unassign_role_from_client import asyncio as unassign_role_from_client_asyncio
+    Any"""
+        from .api.user_task.update_user_task import asyncio as update_user_task_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_role_from_client_asyncio(**_kwargs)
+        return await update_user_task_asyncio(**_kwargs)
 
 
-    def delete_role(self, role_id: str, **kwargs: Any) -> Any:
-        """Delete role
+    async def get_user_task_form(self, user_task_key: str, **kwargs: Any) -> Any:
+        """Get user task form
 
- Deletes the role with the given ID.
+ Get the form of a user task.
+Note that this endpoint will only return linked forms. This endpoint does not support embedded
+forms.
 
 Args:
-    role_id (str):
+    user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetUserTaskFormBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUserTaskFormUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserTaskFormForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserTaskFormNotFound: If the response status code is 404. Not found
+    errors.GetUserTaskFormInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | DeleteRoleResponse401 | DeleteRoleResponse404 | DeleteRoleResponse500 | DeleteRoleResponse503]"""
-        from .api.role.delete_role import sync as delete_role_sync
+    Any"""
+        from .api.user_task.get_user_task_form import asyncio as get_user_task_form_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return delete_role_sync(**_kwargs)
+        return await get_user_task_form_asyncio(**_kwargs)
 
 
-    async def delete_role_async(self, role_id: str, **kwargs: Any) -> Any:
-        """Delete role
+    async def get_user_task(self, user_task_key: str, **kwargs: Any) -> GetUserTaskResponse200:
+        """Get user task
 
- Deletes the role with the given ID.
+ Get the user task by the user task key.
 
 Args:
-    role_id (str):
+    user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUserTaskUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserTaskForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.GetUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | DeleteRoleResponse401 | DeleteRoleResponse404 | DeleteRoleResponse500 | DeleteRoleResponse503]"""
-        from .api.role.delete_role import asyncio as delete_role_asyncio
+    GetUserTaskResponse200"""
+        from .api.user_task.get_user_task import asyncio as get_user_task_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await delete_role_asyncio(**_kwargs)
+        return await get_user_task_asyncio(**_kwargs)
 
 
-    def assign_role_to_user(self, role_id: str, username: str, **kwargs: Any) -> Any:
-        """Assign a role to a user
+    async def search_user_task_audit_logs(self, user_task_key: str, *, data: SearchUserTaskAuditLogsData | Unset = UNSET, **kwargs: Any) -> SearchUserTaskAuditLogsResponse200:
+        """Search user task audit logs
 
- Assigns the specified role to the user. The user will inherit the authorizations associated with
-this role.
+ Search for user task audit logs based on given criteria.
 
 Args:
-    role_id (str):
-    username (str): The unique name of a user. Example: swillis.
+    user_task_key (str): System-generated key for a user task.
+    body (SearchUserTaskAuditLogsData | Unset): User task search query request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchUserTaskAuditLogsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUserTaskAuditLogsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | AssignRoleToUserResponse400 | AssignRoleToUserResponse403 | AssignRoleToUserResponse404 | AssignRoleToUserResponse409 | AssignRoleToUserResponse500 | AssignRoleToUserResponse503]"""
-        from .api.role.assign_role_to_user import sync as assign_role_to_user_sync
+    SearchUserTaskAuditLogsResponse200"""
+        from .api.user_task.search_user_task_audit_logs import asyncio as search_user_task_audit_logs_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return assign_role_to_user_sync(**_kwargs)
+        return await search_user_task_audit_logs_asyncio(**_kwargs)
 
 
-    async def assign_role_to_user_async(self, role_id: str, username: str, **kwargs: Any) -> Any:
-        """Assign a role to a user
+    async def search_user_tasks(self, *, data: SearchUserTasksData | Unset = UNSET, **kwargs: Any) -> SearchUserTasksResponse200:
+        """Search user tasks
 
- Assigns the specified role to the user. The user will inherit the authorizations associated with
-this role.
+ Search for user tasks based on given criteria.
 
 Args:
-    role_id (str):
-    username (str): The unique name of a user. Example: swillis.
+    body (SearchUserTasksData | Unset): User task search query request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchUserTasksBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUserTasksUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUserTasksForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUserTasksInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | AssignRoleToUserResponse400 | AssignRoleToUserResponse403 | AssignRoleToUserResponse404 | AssignRoleToUserResponse409 | AssignRoleToUserResponse500 | AssignRoleToUserResponse503]"""
-        from .api.role.assign_role_to_user import asyncio as assign_role_to_user_asyncio
+    SearchUserTasksResponse200"""
+        from .api.user_task.search_user_tasks import asyncio as search_user_tasks_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await assign_role_to_user_asyncio(**_kwargs)
+        return await search_user_tasks_asyncio(**_kwargs)
 
 
-    def unassign_role_from_group(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
-        """Unassign a role from a group
+    async def complete_user_task(self, user_task_key: str, *, data: CompleteUserTaskData | Unset = UNSET, **kwargs: Any) -> Any:
+        """Complete user task
 
- Unassigns the specified role from the group. All group members (user or client) no longer inherit
-the authorizations associated with this role.
+ Completes a user task with the given key.
 
 Args:
-    role_id (str):
-    group_id (str):
+    user_task_key (str): System-generated key for a user task.
+    body (CompleteUserTaskData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CompleteUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CompleteUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.CompleteUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.CompleteUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CompleteUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | UnassignRoleFromGroupResponse400 | UnassignRoleFromGroupResponse403 | UnassignRoleFromGroupResponse404 | UnassignRoleFromGroupResponse500 | UnassignRoleFromGroupResponse503]"""
-        from .api.role.unassign_role_from_group import sync as unassign_role_from_group_sync
+    Any"""
+        from .api.user_task.complete_user_task import asyncio as complete_user_task_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return unassign_role_from_group_sync(**_kwargs)
+        return await complete_user_task_asyncio(**_kwargs)
 
 
-    async def unassign_role_from_group_async(self, role_id: str, group_id: str, **kwargs: Any) -> Any:
-        """Unassign a role from a group
+    async def delete_resource(self, resource_key: str, *, data: DeleteResourceDataType0 | None | Unset = UNSET, **kwargs: Any) -> Any:
+        """Delete resource
 
- Unassigns the specified role from the group. All group members (user or client) no longer inherit
-the authorizations associated with this role.
+ Deletes a deployed resource.
+This can be a process definition, decision requirements definition, or form definition
+deployed using the deploy resources endpoint. Specify the resource you want to delete in the
+`resourceKey` parameter.
 
 Args:
-    role_id (str):
-    group_id (str):
+    resource_key (str): The system-assigned key for this resource.
+    body (DeleteResourceDataType0 | None | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.DeleteResourceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteResourceNotFound: If the response status code is 404. The resource is not found.
+    errors.DeleteResourceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteResourceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | UnassignRoleFromGroupResponse400 | UnassignRoleFromGroupResponse403 | UnassignRoleFromGroupResponse404 | UnassignRoleFromGroupResponse500 | UnassignRoleFromGroupResponse503]"""
-        from .api.role.unassign_role_from_group import asyncio as unassign_role_from_group_asyncio
+    Any"""
+        from .api.resource.delete_resource import asyncio as delete_resource_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_role_from_group_asyncio(**_kwargs)
+        return await delete_resource_asyncio(**_kwargs)
 
 
-    def unassign_role_from_user(self, role_id: str, username: str, **kwargs: Any) -> Any:
-        """Unassign a role from a user
+    async def get_resource_content(self, resource_key: str, **kwargs: Any) -> File:
+        """Get resource content
 
- Unassigns a role from a user. The user will no longer inherit the authorizations associated with
-this role.
+ Returns the content of a deployed resource.
+:::info
+Currently, this endpoint only supports RPA resources.
+:::
 
 Args:
-    role_id (str):
-    username (str): The unique name of a user. Example: swillis.
+    resource_key (str): The system-assigned key for this resource.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetResourceContentNotFound: If the response status code is 404. A resource with the given key was not found.
+    errors.GetResourceContentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | UnassignRoleFromUserResponse400 | UnassignRoleFromUserResponse403 | UnassignRoleFromUserResponse404 | UnassignRoleFromUserResponse500 | UnassignRoleFromUserResponse503]"""
-        from .api.role.unassign_role_from_user import sync as unassign_role_from_user_sync
+    File"""
+        from .api.resource.get_resource_content import asyncio as get_resource_content_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return unassign_role_from_user_sync(**_kwargs)
+        return await get_resource_content_asyncio(**_kwargs)
 
 
-    async def unassign_role_from_user_async(self, role_id: str, username: str, **kwargs: Any) -> Any:
-        """Unassign a role from a user
+    async def create_deployment(self, *, data: CreateDeploymentData, **kwargs: Any) -> CreateDeploymentResponse200:
+        """Deploy resources
 
- Unassigns a role from a user. The user will no longer inherit the authorizations associated with
-this role.
+ Deploys one or more resources (e.g. processes, decision models, or forms).
+This is an atomic call, i.e. either all resources are deployed or none of them are.
 
 Args:
-    role_id (str):
-    username (str): The unique name of a user. Example: swillis.
+    body (CreateDeploymentData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateDeploymentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateDeploymentServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | UnassignRoleFromUserResponse400 | UnassignRoleFromUserResponse403 | UnassignRoleFromUserResponse404 | UnassignRoleFromUserResponse500 | UnassignRoleFromUserResponse503]"""
-        from .api.role.unassign_role_from_user import asyncio as unassign_role_from_user_asyncio
+    CreateDeploymentResponse200"""
+        from .api.resource.create_deployment import asyncio as create_deployment_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await unassign_role_from_user_asyncio(**_kwargs)
+        return await create_deployment_asyncio(**_kwargs)
 
 
-    def get_license(self, **kwargs: Any) -> GetLicenseResponse200:
-        """Get license status
+    async def get_resource(self, resource_key: str, **kwargs: Any) -> GetResourceResponse200:
+        """Get resource
 
- Obtains the status of the current Camunda license.
+ Returns a deployed resource.
+:::info
+Currently, this endpoint only supports RPA resources.
+:::
+
+Args:
+    resource_key (str): The system-assigned key for this resource.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetResourceNotFound: If the response status code is 404. A resource with the given key was not found.
+    errors.GetResourceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetLicenseResponse200 | GetLicenseResponse500]"""
-        from .api.license_.get_license import sync as get_license_sync
+    GetResourceResponse200"""
+        from .api.resource.get_resource import asyncio as get_resource_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return get_license_sync(**_kwargs)
+        return await get_resource_asyncio(**_kwargs)
 
 
-    async def get_license_async(self, **kwargs: Any) -> GetLicenseResponse200:
-        """Get license status
+    async def update_authorization(self, authorization_key: str, *, data: Object | Object1, **kwargs: Any) -> Any:
+        """Update authorization
 
- Obtains the status of the current Camunda license.
+ Update the authorization with the given key.
+
+Args:
+    authorization_key (str): System-generated key for an authorization. Example:
+        2251799813684332.
+    body (Object | Object1): Defines an authorization request.
+        Either an id-based or a property-based authorization can be provided.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UpdateAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateAuthorizationNotFound: If the response status code is 404. The authorization with the authorizationKey was not found.
+    errors.UpdateAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateAuthorizationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetLicenseResponse200 | GetLicenseResponse500]"""
-        from .api.license_.get_license import asyncio as get_license_asyncio
+    Any"""
+        from .api.authorization.update_authorization import asyncio as update_authorization_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await get_license_asyncio(**_kwargs)
+        return await update_authorization_asyncio(**_kwargs)
 
 
-    def broadcast_signal(self, *, data: BroadcastSignalData, **kwargs: Any) -> BroadcastSignalResponse200:
+    async def create_authorization(self, *, data: Object | Object1, **kwargs: Any) -> CreateAuthorizationResponse201:
+        """Create authorization
+
+ Create the authorization.
+
+Args:
+    body (Object | Object1): Defines an authorization request.
+        Either an id-based or a property-based authorization can be provided.
+
+Raises:
+    errors.CreateAuthorizationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateAuthorizationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateAuthorizationNotFound: If the response status code is 404. The owner was not found.
+    errors.CreateAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateAuthorizationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateAuthorizationResponse201"""
+        from .api.authorization.create_authorization import asyncio as create_authorization_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_authorization_asyncio(**_kwargs)
+
+
+    async def search_authorizations(self, *, data: SearchAuthorizationsData | Unset = UNSET, **kwargs: Any) -> SearchAuthorizationsResponse200:
+        """Search authorizations
+
+ Search for authorizations based on given criteria.
+
+Args:
+    body (SearchAuthorizationsData | Unset):
+
+Raises:
+    errors.SearchAuthorizationsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchAuthorizationsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchAuthorizationsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchAuthorizationsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchAuthorizationsResponse200"""
+        from .api.authorization.search_authorizations import asyncio as search_authorizations_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_authorizations_asyncio(**_kwargs)
+
+
+    async def get_authorization(self, authorization_key: str, **kwargs: Any) -> GetAuthorizationResponse200:
+        """Get authorization
+
+ Get authorization by the given key.
+
+Args:
+    authorization_key (str): System-generated key for an authorization. Example:
+        2251799813684332.
+
+Raises:
+    errors.GetAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuthorizationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuthorizationNotFound: If the response status code is 404. The authorization with the given key was not found.
+    errors.GetAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetAuthorizationResponse200"""
+        from .api.authorization.get_authorization import asyncio as get_authorization_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_authorization_asyncio(**_kwargs)
+
+
+    async def delete_authorization(self, authorization_key: str, **kwargs: Any) -> Any:
+        """Delete authorization
+
+ Deletes the authorization with the given key.
+
+Args:
+    authorization_key (str): System-generated key for an authorization. Example:
+        2251799813684332.
+
+Raises:
+    errors.DeleteAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteAuthorizationNotFound: If the response status code is 404. The authorization with the authorizationKey was not found.
+    errors.DeleteAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteAuthorizationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.authorization.delete_authorization import asyncio as delete_authorization_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_authorization_asyncio(**_kwargs)
+
+
+    async def get_decision_requirements_xml(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsXMLResponse400:
+        """Get decision requirements XML
+
+ Returns decision requirements as XML.
+
+Args:
+    decision_requirements_key (str): System-generated key for a deployed decision requirements
+        definition. Example: 2251799813683346.
+
+Raises:
+    errors.GetDecisionRequirementsXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionRequirementsXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionRequirementsXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionRequirementsXmlNotFound: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionRequirementsXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetDecisionRequirementsXMLResponse400"""
+        from .api.decision_requirements.get_decision_requirements_xml import asyncio as get_decision_requirements_xml_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_decision_requirements_xml_asyncio(**_kwargs)
+
+
+    async def search_decision_requirements(self, *, data: SearchDecisionRequirementsData | Unset = UNSET, **kwargs: Any) -> SearchDecisionRequirementsResponse200:
+        """Search decision requirements
+
+ Search for decision requirements based on given criteria.
+
+Args:
+    body (SearchDecisionRequirementsData | Unset):
+
+Raises:
+    errors.SearchDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchDecisionRequirementsResponse200"""
+        from .api.decision_requirements.search_decision_requirements import asyncio as search_decision_requirements_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_decision_requirements_asyncio(**_kwargs)
+
+
+    async def get_decision_requirements(self, decision_requirements_key: str, **kwargs: Any) -> GetDecisionRequirementsResponse200:
+        """Get decision requirements
+
+ Returns Decision Requirements as JSON.
+
+Args:
+    decision_requirements_key (str): System-generated key for a deployed decision requirements
+        definition. Example: 2251799813683346.
+
+Raises:
+    errors.GetDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionRequirementsNotFound: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetDecisionRequirementsResponse200"""
+        from .api.decision_requirements.get_decision_requirements import asyncio as get_decision_requirements_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_decision_requirements_asyncio(**_kwargs)
+
+
+    async def get_authentication(self, **kwargs: Any) -> GetAuthenticationResponse200:
+        """Get current user
+
+ Retrieves the current authenticated user.
+
+Raises:
+    errors.GetAuthenticationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuthenticationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuthenticationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetAuthenticationResponse200"""
+        from .api.authentication.get_authentication import asyncio as get_authentication_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_authentication_asyncio(**_kwargs)
+
+
+    async def broadcast_signal(self, *, data: BroadcastSignalData, **kwargs: Any) -> BroadcastSignalResponse200:
         """Broadcast signal
 
  Broadcasts a signal.
@@ -9394,34 +9668,14 @@ Args:
     body (BroadcastSignalData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.BroadcastSignalBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.BroadcastSignalNotFound: If the response status code is 404. The signal is not found.
+    errors.BroadcastSignalInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.BroadcastSignalServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[BroadcastSignalResponse200 | BroadcastSignalResponse400 | BroadcastSignalResponse404 | BroadcastSignalResponse500 | BroadcastSignalResponse503]"""
-        from .api.signal.broadcast_signal import sync as broadcast_signal_sync
-        _kwargs = locals()
-        _kwargs.pop("self")
-        _kwargs["client"] = self.client
-        if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
-        return broadcast_signal_sync(**_kwargs)
-
-
-    async def broadcast_signal_async(self, *, data: BroadcastSignalData, **kwargs: Any) -> BroadcastSignalResponse200:
-        """Broadcast signal
-
- Broadcasts a signal.
-
-Args:
-    body (BroadcastSignalData):
-
-Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-
-Returns:
-    Response[BroadcastSignalResponse200 | BroadcastSignalResponse400 | BroadcastSignalResponse404 | BroadcastSignalResponse500 | BroadcastSignalResponse503]"""
+    BroadcastSignalResponse200"""
         from .api.signal.broadcast_signal import asyncio as broadcast_signal_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
@@ -9431,56 +9685,934 @@ Returns:
         return await broadcast_signal_asyncio(**_kwargs)
 
 
-    def evaluate_conditionals(self, *, data: EvaluateConditionalsData, **kwargs: Any) -> EvaluateConditionalsResponse200:
-        """Evaluate root level conditional start events
+    async def update_mapping_rule(self, mapping_rule_id: str, *, data: UpdateMappingRuleData | Unset = UNSET, **kwargs: Any) -> UpdateMappingRuleResponse200:
+        """Update mapping rule
 
- Evaluates root-level conditional start events for process definitions.
-If the evaluation is successful, it will return the keys of all created process instances, along
-with their associated process definition key.
-Multiple root-level conditional start events of the same process definition can trigger if their
-conditions evaluate to true.
+ Update a mapping rule.
 
 Args:
-    body (EvaluateConditionalsData):
+    mapping_rule_id (str):
+    body (UpdateMappingRuleData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UpdateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateMappingRuleForbidden: If the response status code is 403. The request to update a mapping rule was denied. More details are provided in the response body.
+    errors.UpdateMappingRuleNotFound: If the response status code is 404. The request to update a mapping rule was denied.
+    errors.UpdateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[EvaluateConditionalsResponse200 | EvaluateConditionalsResponse400 | EvaluateConditionalsResponse403 | EvaluateConditionalsResponse404 | EvaluateConditionalsResponse500 | EvaluateConditionalsResponse503]"""
-        from .api.conditional.evaluate_conditionals import sync as evaluate_conditionals_sync
+    UpdateMappingRuleResponse200"""
+        from .api.mapping_rule.update_mapping_rule import asyncio as update_mapping_rule_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return evaluate_conditionals_sync(**_kwargs)
+        return await update_mapping_rule_asyncio(**_kwargs)
 
 
-    async def evaluate_conditionals_async(self, *, data: EvaluateConditionalsData, **kwargs: Any) -> EvaluateConditionalsResponse200:
-        """Evaluate root level conditional start events
+    async def delete_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> Any:
+        """Delete a mapping rule
 
- Evaluates root-level conditional start events for process definitions.
-If the evaluation is successful, it will return the keys of all created process instances, along
-with their associated process definition key.
-Multiple root-level conditional start events of the same process definition can trigger if their
-conditions evaluate to true.
+ Deletes the mapping rule with the given ID.
 
 Args:
-    body (EvaluateConditionalsData):
+    mapping_rule_id (str):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.DeleteMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+    errors.DeleteMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[EvaluateConditionalsResponse200 | EvaluateConditionalsResponse400 | EvaluateConditionalsResponse403 | EvaluateConditionalsResponse404 | EvaluateConditionalsResponse500 | EvaluateConditionalsResponse503]"""
-        from .api.conditional.evaluate_conditionals import asyncio as evaluate_conditionals_asyncio
+    Any"""
+        from .api.mapping_rule.delete_mapping_rule import asyncio as delete_mapping_rule_asyncio
         _kwargs = locals()
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        return await evaluate_conditionals_asyncio(**_kwargs)
+        return await delete_mapping_rule_asyncio(**_kwargs)
+
+
+    async def create_mapping_rule(self, *, data: CreateMappingRuleData | Unset = UNSET, **kwargs: Any) -> CreateMappingRuleResponse201:
+        """Create mapping rule
+
+ Create a new mapping rule
+
+Args:
+    body (CreateMappingRuleData | Unset):
+
+Raises:
+    errors.CreateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateMappingRuleForbidden: If the response status code is 403. The request to create a mapping rule was denied. More details are provided in the response body.
+    errors.CreateMappingRuleNotFound: If the response status code is 404. The request to create a mapping rule was denied.
+    errors.CreateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateMappingRuleResponse201"""
+        from .api.mapping_rule.create_mapping_rule import asyncio as create_mapping_rule_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_mapping_rule_asyncio(**_kwargs)
+
+
+    async def search_mapping_rule(self, *, data: SearchMappingRuleData | Unset = UNSET, **kwargs: Any) -> SearchMappingRuleResponse200:
+        """Search mapping rules
+
+ Search for mapping rules based on given criteria.
+
+Args:
+    body (SearchMappingRuleData | Unset):
+
+Raises:
+    errors.SearchMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMappingRuleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchMappingRuleResponse200"""
+        from .api.mapping_rule.search_mapping_rule import asyncio as search_mapping_rule_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_mapping_rule_asyncio(**_kwargs)
+
+
+    async def get_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> GetMappingRuleResponse200:
+        """Get a mapping rule
+
+ Gets the mapping rule with the given ID.
+
+Args:
+    mapping_rule_id (str):
+
+Raises:
+    errors.GetMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+    errors.GetMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetMappingRuleResponse200"""
+        from .api.mapping_rule.get_mapping_rule import asyncio as get_mapping_rule_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_mapping_rule_asyncio(**_kwargs)
+
+
+    async def get_process_instance_sequence_flows(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceSequenceFlowsResponse200:
+        """Get sequence flows
+
+ Get sequence flows taken by the process instance.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.GetProcessInstanceSequenceFlowsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceSequenceFlowsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceSequenceFlowsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceSequenceFlowsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessInstanceSequenceFlowsResponse200"""
+        from .api.process_instance.get_process_instance_sequence_flows import asyncio as get_process_instance_sequence_flows_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_instance_sequence_flows_asyncio(**_kwargs)
+
+
+    async def get_process_instance_call_hierarchy(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceCallHierarchyResponse400:
+        """Get call hierarchy
+
+ Returns the call hierarchy for a given process instance, showing its ancestry up to the root
+instance.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.GetProcessInstanceCallHierarchyBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceCallHierarchyUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceCallHierarchyForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceCallHierarchyNotFound: If the response status code is 404. The process instance is not found.
+    errors.GetProcessInstanceCallHierarchyInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessInstanceCallHierarchyResponse400"""
+        from .api.process_instance.get_process_instance_call_hierarchy import asyncio as get_process_instance_call_hierarchy_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_instance_call_hierarchy_asyncio(**_kwargs)
+
+
+    async def modify_process_instance(self, process_instance_key: str, *, data: ModifyProcessInstanceData, **kwargs: Any) -> Any:
+        """Modify process instance
+
+ Modifies a running process instance.
+This request can contain multiple instructions to activate an element of the process or
+to terminate an active instance of an element.
+
+Use this to repair a process instance that is stuck on an element or took an unintended path.
+For example, because an external system is not available or doesn't respond as expected.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (ModifyProcessInstanceData):
+
+Raises:
+    errors.ModifyProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ModifyProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.ModifyProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ModifyProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.process_instance.modify_process_instance import asyncio as modify_process_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await modify_process_instance_asyncio(**_kwargs)
+
+
+    async def get_process_instance_statistics(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceStatisticsResponse200:
+        """Get element instance statistics
+
+ Get statistics about elements by the process instance key.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.GetProcessInstanceStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessInstanceStatisticsResponse200"""
+        from .api.process_instance.get_process_instance_statistics import asyncio as get_process_instance_statistics_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_instance_statistics_asyncio(**_kwargs)
+
+
+    async def migrate_process_instances_batch_operation(self, *, data: MigrateProcessInstancesBatchOperationData, **kwargs: Any) -> MigrateProcessInstancesBatchOperationResponse200:
+        """Migrate process instances (batch)
+
+ Migrate multiple process instances.
+Since only process instances with ACTIVE state can be migrated, any given
+filters for state are ignored and overridden during this batch operation.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (MigrateProcessInstancesBatchOperationData):
+
+Raises:
+    errors.MigrateProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.MigrateProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.MigrateProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.MigrateProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    MigrateProcessInstancesBatchOperationResponse200"""
+        from .api.process_instance.migrate_process_instances_batch_operation import asyncio as migrate_process_instances_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await migrate_process_instances_batch_operation_asyncio(**_kwargs)
+
+
+    async def get_process_instance(self, process_instance_key: str, **kwargs: Any) -> GetProcessInstanceResponse200:
+        """Get process instance
+
+ Get the process instance by the process instance key.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.GetProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceNotFound: If the response status code is 404. The process instance with the given key was not found.
+    errors.GetProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessInstanceResponse200"""
+        from .api.process_instance.get_process_instance import asyncio as get_process_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_instance_asyncio(**_kwargs)
+
+
+    async def resolve_incidents_batch_operation(self, *, data: ResolveIncidentsBatchOperationData | Unset = UNSET, **kwargs: Any) -> ResolveIncidentsBatchOperationResponse200:
+        """Resolve related incidents (batch)
+
+ Resolves multiple instances of process instances.
+Since only process instances with ACTIVE state can have unresolved incidents, any given
+filters for state are ignored and overridden during this batch operation.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (ResolveIncidentsBatchOperationData | Unset): The process instance filter that
+        defines which process instances should have their incidents resolved.
+
+Raises:
+    errors.ResolveIncidentsBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.ResolveIncidentsBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ResolveIncidentsBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.ResolveIncidentsBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ResolveIncidentsBatchOperationResponse200"""
+        from .api.process_instance.resolve_incidents_batch_operation import asyncio as resolve_incidents_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await resolve_incidents_batch_operation_asyncio(**_kwargs)
+
+
+    async def modify_process_instances_batch_operation(self, *, data: ModifyProcessInstancesBatchOperationData, **kwargs: Any) -> ModifyProcessInstancesBatchOperationResponse200:
+        """Modify process instances (batch)
+
+ Modify multiple process instances.
+Since only process instances with ACTIVE state can be modified, any given
+filters for state are ignored and overridden during this batch operation.
+In contrast to single modification operation, it is not possible to add variable instructions or
+modify by element key.
+It is only possible to use the element id of the source and target.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (ModifyProcessInstancesBatchOperationData): The process instance filter to define on
+        which process instances tokens should be moved,
+        and new element instances should be activated or terminated.
+
+Raises:
+    errors.ModifyProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.ModifyProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ModifyProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.ModifyProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ModifyProcessInstancesBatchOperationResponse200"""
+        from .api.process_instance.modify_process_instances_batch_operation import asyncio as modify_process_instances_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await modify_process_instances_batch_operation_asyncio(**_kwargs)
+
+
+    async def delete_process_instance(self, process_instance_key: str, *, data: DeleteProcessInstanceDataType0 | None | Unset = UNSET, **kwargs: Any) -> DeleteProcessInstanceResponse200:
+        """Delete process instance
+
+ Deletes a process instance. Only instances that are completed or terminated can be deleted.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (DeleteProcessInstanceDataType0 | None | Unset):
+
+Raises:
+    errors.DeleteProcessInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteProcessInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.DeleteProcessInstanceConflict: If the response status code is 409. The process instance is not in a completed or terminated state and cannot be deleted.
+    errors.DeleteProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    DeleteProcessInstanceResponse200"""
+        from .api.process_instance.delete_process_instance import asyncio as delete_process_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_process_instance_asyncio(**_kwargs)
+
+
+    async def delete_process_instances_batch_operation(self, *, data: DeleteProcessInstancesBatchOperationData, **kwargs: Any) -> DeleteProcessInstancesBatchOperationResponse200:
+        """Delete process instances (batch)
+
+ Delete multiple process instances. This will delete the historic data from secondary storage.
+Only process instances in a final state (COMPLETED or TERMINATED) can be deleted.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (DeleteProcessInstancesBatchOperationData): The process instance filter that defines
+        which process instances should be deleted.
+
+Raises:
+    errors.DeleteProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.DeleteProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    DeleteProcessInstancesBatchOperationResponse200"""
+        from .api.process_instance.delete_process_instances_batch_operation import asyncio as delete_process_instances_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_process_instances_batch_operation_asyncio(**_kwargs)
+
+
+    async def cancel_process_instances_batch_operation(self, *, data: CancelProcessInstancesBatchOperationData, **kwargs: Any) -> CancelProcessInstancesBatchOperationResponse200:
+        """Cancel process instances (batch)
+
+ Cancels multiple running process instances.
+Since only ACTIVE root instances can be cancelled, any given filters for state and
+parentProcessInstanceKey are ignored and overridden during this batch operation.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (CancelProcessInstancesBatchOperationData): The process instance filter that defines
+        which process instances should be canceled.
+
+Raises:
+    errors.CancelProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.CancelProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CancelProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CancelProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CancelProcessInstancesBatchOperationResponse200"""
+        from .api.process_instance.cancel_process_instances_batch_operation import asyncio as cancel_process_instances_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await cancel_process_instances_batch_operation_asyncio(**_kwargs)
+
+
+    async def create_process_instance(self, *, data: Processcreationbyid | Processcreationbykey, **kwargs: Any) -> CreateProcessInstanceResponse200:
+        """Create process instance
+
+ Creates and starts an instance of the specified process.
+The process definition to use to create the instance can be specified either using its unique key
+(as returned by Deploy resources), or using the BPMN process id and a version.
+
+Waits for the completion of the process instance before returning a result
+when awaitCompletion is enabled.
+
+Args:
+    body (Processcreationbyid | Processcreationbykey): Instructions for creating a process
+        instance. The process definition can be specified
+        either by id or by key.
+
+Raises:
+    errors.CreateProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.CreateProcessInstanceGatewayTimeout: If the response status code is 504. The process instance creation request timed out in the gateway. This can happen if the `awaitCompletion` request parameter is set to `true` and the created process instance did not complete within the defined request timeout. This often happens when the created instance is not fully automated or contains wait states.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateProcessInstanceResponse200"""
+        from .api.process_instance.create_process_instance import asyncio as create_process_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await create_process_instance_asyncio(**_kwargs)
+
+
+    async def cancel_process_instance(self, process_instance_key: str, *, data: CancelProcessInstanceDataType0 | None | Unset = UNSET, **kwargs: Any) -> Any:
+        """Cancel process instance
+
+ Cancels a running process instance. As a cancellation includes more than just the removal of the
+process instance resource, the cancellation resource must be posted.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (CancelProcessInstanceDataType0 | None | Unset):
+
+Raises:
+    errors.CancelProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CancelProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.CancelProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CancelProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.process_instance.cancel_process_instance import asyncio as cancel_process_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await cancel_process_instance_asyncio(**_kwargs)
+
+
+    async def search_process_instance_incidents(self, process_instance_key: str, *, data: SearchProcessInstanceIncidentsData | Unset = UNSET, **kwargs: Any) -> SearchProcessInstanceIncidentsResponse200:
+        """Search related incidents
+
+ Search for incidents caused by the process instance or any of its called process or decision
+instances.
+
+Although the `processInstanceKey` is provided as a path parameter to indicate the root process
+instance,
+you may also include a `processInstanceKey` within the filter object to narrow results to specific
+child process instances. This is useful, for example, if you want to isolate incidents associated
+with
+subprocesses or called processes under the root instance while excluding incidents directly tied to
+the root.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (SearchProcessInstanceIncidentsData | Unset):
+
+Raises:
+    errors.SearchProcessInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchProcessInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchProcessInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchProcessInstanceIncidentsNotFound: If the response status code is 404. The process instance with the given key was not found.
+    errors.SearchProcessInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchProcessInstanceIncidentsResponse200"""
+        from .api.process_instance.search_process_instance_incidents import asyncio as search_process_instance_incidents_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_process_instance_incidents_asyncio(**_kwargs)
+
+
+    async def migrate_process_instance(self, process_instance_key: str, *, data: MigrateProcessInstanceData, **kwargs: Any) -> Any:
+        """Migrate process instance
+
+ Migrates a process instance to a new process definition.
+This request can contain multiple mapping instructions to define mapping between the active
+process instance's elements and target process definition elements.
+
+Use this to upgrade a process instance to a new version of a process or to
+a different process definition, e.g. to keep your running instances up-to-date with the
+latest process improvements.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (MigrateProcessInstanceData): The migration instructions describe how to migrate a
+        process instance from one process definition to another.
+
+Raises:
+    errors.MigrateProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.MigrateProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.MigrateProcessInstanceConflict: If the response status code is 409. The process instance migration failed. More details are provided in the response body.
+    errors.MigrateProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.MigrateProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.process_instance.migrate_process_instance import asyncio as migrate_process_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await migrate_process_instance_asyncio(**_kwargs)
+
+
+    async def search_process_instances(self, *, data: SearchProcessInstancesData | Unset = UNSET, **kwargs: Any) -> SearchProcessInstancesResponse200:
+        """Search process instances
+
+ Search for process instances based on given criteria.
+
+Args:
+    body (SearchProcessInstancesData | Unset): Process instance search request.
+
+Raises:
+    errors.SearchProcessInstancesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchProcessInstancesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchProcessInstancesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchProcessInstancesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchProcessInstancesResponse200"""
+        from .api.process_instance.search_process_instances import asyncio as search_process_instances_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_process_instances_asyncio(**_kwargs)
+
+
+    async def resolve_process_instance_incidents(self, process_instance_key: str, **kwargs: Any) -> ResolveProcessInstanceIncidentsResponse200:
+        """Resolve related incidents
+
+ Creates a batch operation to resolve multiple incidents of a process instance.
+
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+
+Raises:
+    errors.ResolveProcessInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ResolveProcessInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ResolveProcessInstanceIncidentsNotFound: If the response status code is 404. The process instance is not found.
+    errors.ResolveProcessInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResolveProcessInstanceIncidentsServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    ResolveProcessInstanceIncidentsResponse200"""
+        from .api.process_instance.resolve_process_instance_incidents import asyncio as resolve_process_instance_incidents_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await resolve_process_instance_incidents_asyncio(**_kwargs)
+
+
+    async def pin_clock(self, *, data: PinClockData, **kwargs: Any) -> Any:
+        """Pin internal clock (alpha)
+
+ Set a precise, static time for the Zeebe engine's internal clock.
+When the clock is pinned, it remains at the specified time and does not advance.
+To change the time, the clock must be pinned again with a new timestamp.
+
+This endpoint is an alpha feature and may be subject to change
+in future releases.
+
+Args:
+    body (PinClockData):
+
+Raises:
+    errors.PinClockBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.PinClockInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.PinClockServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.clock.pin_clock import asyncio as pin_clock_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await pin_clock_asyncio(**_kwargs)
+
+
+    async def reset_clock(self, **kwargs: Any) -> Any:
+        """Reset internal clock (alpha)
+
+ Resets the Zeebe engine's internal clock to the current system time, enabling it to tick in real-
+time.
+This operation is useful for returning the clock to
+normal behavior after it has been pinned to a specific time.
+
+This endpoint is an alpha feature and may be subject to change
+in future releases.
+
+Raises:
+    errors.ResetClockInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResetClockServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.clock.reset_clock import asyncio as reset_clock_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await reset_clock_asyncio(**_kwargs)
+
+
+    async def get_process_definition_instance_version_statistics(self, process_definition_id: str, *, data: GetProcessDefinitionInstanceVersionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
+        """Get process instance statistics by version
+
+ Get statistics about process instances, grouped by version for a given process definition.
+
+Args:
+    process_definition_id (str): Id of a process definition, from the model. Only ids of
+        process definitions that are deployed are useful. Example: new-account-onboarding-
+        workflow.
+    body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
+
+Raises:
+    errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionInstanceVersionStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionInstanceVersionStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionInstanceVersionStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessDefinitionInstanceVersionStatisticsResponse200"""
+        from .api.process_definition.get_process_definition_instance_version_statistics import asyncio as get_process_definition_instance_version_statistics_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_definition_instance_version_statistics_asyncio(**_kwargs)
+
+
+    async def get_process_definition_instance_statistics(self, *, data: GetProcessDefinitionInstanceStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionInstanceStatisticsResponse200:
+        """Get process instance statistics
+
+ Get statistics about process instances, grouped by process definition and tenant.
+
+Args:
+    body (GetProcessDefinitionInstanceStatisticsData | Unset):
+
+Raises:
+    errors.GetProcessDefinitionInstanceStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionInstanceStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionInstanceStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionInstanceStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessDefinitionInstanceStatisticsResponse200"""
+        from .api.process_definition.get_process_definition_instance_statistics import asyncio as get_process_definition_instance_statistics_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_definition_instance_statistics_asyncio(**_kwargs)
+
+
+    async def search_process_definitions(self, *, data: SearchProcessDefinitionsData | Unset = UNSET, **kwargs: Any) -> SearchProcessDefinitionsResponse200:
+        """Search process definitions
+
+ Search for process definitions based on given criteria.
+
+Args:
+    body (SearchProcessDefinitionsData | Unset):
+
+Raises:
+    errors.SearchProcessDefinitionsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchProcessDefinitionsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchProcessDefinitionsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchProcessDefinitionsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchProcessDefinitionsResponse200"""
+        from .api.process_definition.search_process_definitions import asyncio as search_process_definitions_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_process_definitions_asyncio(**_kwargs)
+
+
+    async def get_process_definition_message_subscription_statistics(self, *, data: GetProcessDefinitionMessageSubscriptionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionMessageSubscriptionStatisticsResponse200:
+        """Get message subscription statistics
+
+ Get message subscription statistics, grouped by process definition.
+
+Args:
+    body (GetProcessDefinitionMessageSubscriptionStatisticsData | Unset):
+
+Raises:
+    errors.GetProcessDefinitionMessageSubscriptionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionMessageSubscriptionStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionMessageSubscriptionStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionMessageSubscriptionStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessDefinitionMessageSubscriptionStatisticsResponse200"""
+        from .api.process_definition.get_process_definition_message_subscription_statistics import asyncio as get_process_definition_message_subscription_statistics_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_definition_message_subscription_statistics_asyncio(**_kwargs)
+
+
+    async def get_start_process_form(self, process_definition_key: str, **kwargs: Any) -> Any:
+        """Get process start form
+
+ Get the start form of a process.
+Note that this endpoint will only return linked forms. This endpoint does not support embedded
+forms.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+
+Raises:
+    errors.GetStartProcessFormBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetStartProcessFormUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetStartProcessFormForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetStartProcessFormNotFound: If the response status code is 404. Not found
+    errors.GetStartProcessFormInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    Any"""
+        from .api.process_definition.get_start_process_form import asyncio as get_start_process_form_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_start_process_form_asyncio(**_kwargs)
+
+
+    async def get_process_definition_xml(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionXMLResponse400:
+        """Get process definition XML
+
+ Returns process definition as XML.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+
+Raises:
+    errors.GetProcessDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionXmlNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+    errors.GetProcessDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessDefinitionXMLResponse400"""
+        from .api.process_definition.get_process_definition_xml import asyncio as get_process_definition_xml_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_definition_xml_asyncio(**_kwargs)
+
+
+    async def get_process_definition(self, process_definition_key: str, **kwargs: Any) -> GetProcessDefinitionResponse200:
+        """Get process definition
+
+ Returns process definition as JSON.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+
+Raises:
+    errors.GetProcessDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+    errors.GetProcessDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessDefinitionResponse200"""
+        from .api.process_definition.get_process_definition import asyncio as get_process_definition_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_definition_asyncio(**_kwargs)
+
+
+    async def get_process_definition_statistics(self, process_definition_key: str, *, data: GetProcessDefinitionStatisticsData | Unset = UNSET, **kwargs: Any) -> GetProcessDefinitionStatisticsResponse200:
+        """Get process definition statistics
+
+ Get statistics about elements in currently running process instances by process definition key and
+search filter.
+
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
+    body (GetProcessDefinitionStatisticsData | Unset): Process definition element statistics
+        request.
+
+Raises:
+    errors.GetProcessDefinitionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessDefinitionStatisticsResponse200"""
+        from .api.process_definition.get_process_definition_statistics import asyncio as get_process_definition_statistics_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_process_definition_statistics_asyncio(**_kwargs)
 

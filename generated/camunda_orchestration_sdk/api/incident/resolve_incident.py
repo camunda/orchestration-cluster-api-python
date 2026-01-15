@@ -76,13 +76,24 @@ Args:
     body (ResolveIncidentData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.ResolveIncidentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ResolveIncidentNotFound: If the response status code is 404. The incident with the incidentKey is not found.
+    errors.ResolveIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResolveIncidentServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]"""
+    Any"""
     response = sync_detailed(incident_key=incident_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.ResolveIncidentBadRequest(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.ResolveIncidentNotFound(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.ResolveIncidentInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.ResolveIncidentServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -118,12 +129,23 @@ Args:
     body (ResolveIncidentData | Unset):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.ResolveIncidentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ResolveIncidentNotFound: If the response status code is 404. The incident with the incidentKey is not found.
+    errors.ResolveIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResolveIncidentServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]"""
+    Any"""
     response = await asyncio_detailed(incident_key=incident_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.ResolveIncidentBadRequest(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse400, response.parsed))
+        if response.status_code == 404:
+            raise errors.ResolveIncidentNotFound(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.ResolveIncidentInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.ResolveIncidentServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(ResolveIncidentResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

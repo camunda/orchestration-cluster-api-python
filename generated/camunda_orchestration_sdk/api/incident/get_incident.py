@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -71,13 +71,27 @@ Args:
     incident_key (str): System-generated key for a incident. Example: 2251799813689432.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetIncidentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetIncidentUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetIncidentForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetIncidentNotFound: If the response status code is 404. The incident with the given key was not found.
+    errors.GetIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetIncidentResponse200 | GetIncidentResponse400 | GetIncidentResponse401 | GetIncidentResponse403 | GetIncidentResponse404 | GetIncidentResponse500]"""
+    GetIncidentResponse200"""
     response = sync_detailed(incident_key=incident_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetIncidentBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetIncidentResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetIncidentUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetIncidentResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetIncidentForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetIncidentResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetIncidentNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetIncidentResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetIncidentInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetIncidentResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -109,12 +123,26 @@ Args:
     incident_key (str): System-generated key for a incident. Example: 2251799813689432.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetIncidentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetIncidentUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetIncidentForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetIncidentNotFound: If the response status code is 404. The incident with the given key was not found.
+    errors.GetIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetIncidentResponse200 | GetIncidentResponse400 | GetIncidentResponse401 | GetIncidentResponse403 | GetIncidentResponse404 | GetIncidentResponse500]"""
+    GetIncidentResponse200"""
     response = await asyncio_detailed(incident_key=incident_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetIncidentBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetIncidentResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetIncidentUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetIncidentResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetIncidentForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetIncidentResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetIncidentNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetIncidentResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetIncidentInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetIncidentResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -71,13 +71,27 @@ Args:
     variable_key (str): System-generated key for a variable. Example: 2251799813683287.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetVariableNotFound: If the response status code is 404. Not found
+    errors.GetVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetVariableResponse200 | GetVariableResponse400 | GetVariableResponse401 | GetVariableResponse403 | GetVariableResponse404 | GetVariableResponse500]"""
+    GetVariableResponse200"""
     response = sync_detailed(variable_key=variable_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetVariableBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetVariableUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetVariableForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetVariableNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetVariableInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -109,12 +123,26 @@ Args:
     variable_key (str): System-generated key for a variable. Example: 2251799813683287.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetVariableNotFound: If the response status code is 404. Not found
+    errors.GetVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetVariableResponse200 | GetVariableResponse400 | GetVariableResponse401 | GetVariableResponse403 | GetVariableResponse404 | GetVariableResponse500]"""
+    GetVariableResponse200"""
     response = await asyncio_detailed(variable_key=variable_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetVariableBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetVariableUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetVariableForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetVariableNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetVariableInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

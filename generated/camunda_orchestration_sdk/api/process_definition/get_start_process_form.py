@@ -80,13 +80,27 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetStartProcessFormBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetStartProcessFormUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetStartProcessFormForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetStartProcessFormNotFound: If the response status code is 404. Not found
+    errors.GetStartProcessFormInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | GetStartProcessFormResponse200 | GetStartProcessFormResponse400 | GetStartProcessFormResponse401 | GetStartProcessFormResponse403 | GetStartProcessFormResponse404 | GetStartProcessFormResponse500]"""
+    Any"""
     response = sync_detailed(process_definition_key=process_definition_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetStartProcessFormBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetStartProcessFormUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetStartProcessFormForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetStartProcessFormNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetStartProcessFormInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -124,12 +138,26 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetStartProcessFormBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetStartProcessFormUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetStartProcessFormForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetStartProcessFormNotFound: If the response status code is 404. Not found
+    errors.GetStartProcessFormInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | GetStartProcessFormResponse200 | GetStartProcessFormResponse400 | GetStartProcessFormResponse401 | GetStartProcessFormResponse403 | GetStartProcessFormResponse404 | GetStartProcessFormResponse500]"""
+    Any"""
     response = await asyncio_detailed(process_definition_key=process_definition_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetStartProcessFormBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetStartProcessFormUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetStartProcessFormForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetStartProcessFormNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetStartProcessFormInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetStartProcessFormResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

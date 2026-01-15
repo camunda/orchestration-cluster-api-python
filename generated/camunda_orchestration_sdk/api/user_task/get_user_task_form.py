@@ -78,13 +78,27 @@ Args:
     user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetUserTaskFormBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUserTaskFormUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserTaskFormForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserTaskFormNotFound: If the response status code is 404. Not found
+    errors.GetUserTaskFormInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | GetUserTaskFormResponse200 | GetUserTaskFormResponse400 | GetUserTaskFormResponse401 | GetUserTaskFormResponse403 | GetUserTaskFormResponse404 | GetUserTaskFormResponse500]"""
+    Any"""
     response = sync_detailed(user_task_key=user_task_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetUserTaskFormBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskFormResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetUserTaskFormUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskFormResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetUserTaskFormForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskFormResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetUserTaskFormNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskFormResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetUserTaskFormInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskFormResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -120,12 +134,26 @@ Args:
     user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetUserTaskFormBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUserTaskFormUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserTaskFormForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserTaskFormNotFound: If the response status code is 404. Not found
+    errors.GetUserTaskFormInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[Any | GetUserTaskFormResponse200 | GetUserTaskFormResponse400 | GetUserTaskFormResponse401 | GetUserTaskFormResponse403 | GetUserTaskFormResponse404 | GetUserTaskFormResponse500]"""
+    Any"""
     response = await asyncio_detailed(user_task_key=user_task_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetUserTaskFormBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskFormResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetUserTaskFormUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskFormResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetUserTaskFormForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskFormResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetUserTaskFormNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskFormResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetUserTaskFormInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskFormResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

@@ -1,6 +1,6 @@
 from http import HTTPStatus
 from io import BytesIO
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -65,13 +65,18 @@ Args:
     resource_key (str): The system-assigned key for this resource.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetResourceContentNotFound: If the response status code is 404. A resource with the given key was not found.
+    errors.GetResourceContentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[File | GetResourceContentResponse404 | GetResourceContentResponse500]"""
+    File"""
     response = sync_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 404:
+            raise errors.GetResourceContentNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetResourceContentResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetResourceContentInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetResourceContentResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -109,12 +114,17 @@ Args:
     resource_key (str): The system-assigned key for this resource.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetResourceContentNotFound: If the response status code is 404. A resource with the given key was not found.
+    errors.GetResourceContentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[File | GetResourceContentResponse404 | GetResourceContentResponse500]"""
+    File"""
     response = await asyncio_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 404:
+            raise errors.GetResourceContentNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetResourceContentResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetResourceContentInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetResourceContentResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

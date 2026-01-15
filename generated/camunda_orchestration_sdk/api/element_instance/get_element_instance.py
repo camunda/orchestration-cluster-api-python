@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -73,13 +73,27 @@ Args:
         2251799813686789.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetElementInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetElementInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetElementInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetElementInstanceNotFound: If the response status code is 404. The element instance with the given key was not found. More details are provided in the response body.
+    errors.GetElementInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]"""
+    GetElementInstanceResponse200"""
     response = sync_detailed(element_instance_key=element_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetElementInstanceBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetElementInstanceUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetElementInstanceForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetElementInstanceNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetElementInstanceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -113,12 +127,26 @@ Args:
         2251799813686789.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetElementInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetElementInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetElementInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetElementInstanceNotFound: If the response status code is 404. The element instance with the given key was not found. More details are provided in the response body.
+    errors.GetElementInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]"""
+    GetElementInstanceResponse200"""
     response = await asyncio_detailed(element_instance_key=element_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetElementInstanceBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetElementInstanceUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetElementInstanceForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetElementInstanceNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetElementInstanceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

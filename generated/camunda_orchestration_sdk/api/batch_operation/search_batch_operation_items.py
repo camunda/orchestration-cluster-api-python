@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -64,13 +64,18 @@ Args:
     body (SearchBatchOperationItemsData | Unset): Batch operation item search request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchBatchOperationItemsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchBatchOperationItemsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchBatchOperationItemsResponse200 | SearchBatchOperationItemsResponse400 | SearchBatchOperationItemsResponse500]"""
+    SearchBatchOperationItemsResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchBatchOperationItemsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchBatchOperationItemsResponse400, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchBatchOperationItemsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchBatchOperationItemsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -102,12 +107,17 @@ Args:
     body (SearchBatchOperationItemsData | Unset): Batch operation item search request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchBatchOperationItemsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchBatchOperationItemsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchBatchOperationItemsResponse200 | SearchBatchOperationItemsResponse400 | SearchBatchOperationItemsResponse500]"""
+    SearchBatchOperationItemsResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchBatchOperationItemsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchBatchOperationItemsResponse400, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchBatchOperationItemsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchBatchOperationItemsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

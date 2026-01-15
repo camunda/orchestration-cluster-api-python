@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -67,13 +67,18 @@ Args:
     body (SearchUserTaskAuditLogsData | Unset): User task search query request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchUserTaskAuditLogsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUserTaskAuditLogsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchUserTaskAuditLogsResponse200 | SearchUserTaskAuditLogsResponse400 | SearchUserTaskAuditLogsResponse500]"""
+    SearchUserTaskAuditLogsResponse200"""
     response = sync_detailed(user_task_key=user_task_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchUserTaskAuditLogsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchUserTaskAuditLogsResponse400, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchUserTaskAuditLogsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchUserTaskAuditLogsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -107,12 +112,17 @@ Args:
     body (SearchUserTaskAuditLogsData | Unset): User task search query request.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.SearchUserTaskAuditLogsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUserTaskAuditLogsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[SearchUserTaskAuditLogsResponse200 | SearchUserTaskAuditLogsResponse400 | SearchUserTaskAuditLogsResponse500]"""
+    SearchUserTaskAuditLogsResponse200"""
     response = await asyncio_detailed(user_task_key=user_task_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.SearchUserTaskAuditLogsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchUserTaskAuditLogsResponse400, response.parsed))
+        if response.status_code == 500:
+            raise errors.SearchUserTaskAuditLogsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchUserTaskAuditLogsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

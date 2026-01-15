@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -78,13 +78,27 @@ Args:
     body (UpdateUserData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UpdateUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UpdateUserNotFound: If the response status code is 404. The user was not found.
+    errors.UpdateUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[UpdateUserResponse200 | UpdateUserResponse400 | UpdateUserResponse403 | UpdateUserResponse404 | UpdateUserResponse500 | UpdateUserResponse503]"""
+    UpdateUserResponse200"""
     response = sync_detailed(username=username, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UpdateUserBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.UpdateUserForbidden(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.UpdateUserNotFound(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UpdateUserInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UpdateUserServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -118,12 +132,26 @@ Args:
     body (UpdateUserData):
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.UpdateUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UpdateUserNotFound: If the response status code is 404. The user was not found.
+    errors.UpdateUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[UpdateUserResponse200 | UpdateUserResponse400 | UpdateUserResponse403 | UpdateUserResponse404 | UpdateUserResponse500 | UpdateUserResponse503]"""
+    UpdateUserResponse200"""
     response = await asyncio_detailed(username=username, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.UpdateUserBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserResponse400, response.parsed))
+        if response.status_code == 403:
+            raise errors.UpdateUserForbidden(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.UpdateUserNotFound(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.UpdateUserInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.UpdateUserServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UpdateUserResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

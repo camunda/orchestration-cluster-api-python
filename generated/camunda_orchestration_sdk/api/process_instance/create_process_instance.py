@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -89,13 +89,24 @@ Args:
         either by id or by key.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.CreateProcessInstanceGatewayTimeout: If the response status code is 504. The process instance creation request timed out in the gateway. This can happen if the `awaitCompletion` request parameter is set to `true` and the created process instance did not complete within the defined request timeout. This often happens when the created instance is not fully automated or contains wait states.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[CreateProcessInstanceResponse200 | CreateProcessInstanceResponse400 | CreateProcessInstanceResponse500 | CreateProcessInstanceResponse503 | CreateProcessInstanceResponse504]"""
+    CreateProcessInstanceResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateProcessInstanceBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateProcessInstanceResponse400, response.parsed))
+        if response.status_code == 500:
+            raise errors.CreateProcessInstanceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateProcessInstanceResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.CreateProcessInstanceServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(CreateProcessInstanceResponse503, response.parsed))
+        if response.status_code == 504:
+            raise errors.CreateProcessInstanceGatewayTimeout(status_code=response.status_code, content=response.content, parsed=cast(CreateProcessInstanceResponse504, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -141,12 +152,23 @@ Args:
         either by id or by key.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.CreateProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.CreateProcessInstanceGatewayTimeout: If the response status code is 504. The process instance creation request timed out in the gateway. This can happen if the `awaitCompletion` request parameter is set to `true` and the created process instance did not complete within the defined request timeout. This often happens when the created instance is not fully automated or contains wait states.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[CreateProcessInstanceResponse200 | CreateProcessInstanceResponse400 | CreateProcessInstanceResponse500 | CreateProcessInstanceResponse503 | CreateProcessInstanceResponse504]"""
+    CreateProcessInstanceResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.CreateProcessInstanceBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateProcessInstanceResponse400, response.parsed))
+        if response.status_code == 500:
+            raise errors.CreateProcessInstanceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateProcessInstanceResponse500, response.parsed))
+        if response.status_code == 503:
+            raise errors.CreateProcessInstanceServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(CreateProcessInstanceResponse503, response.parsed))
+        if response.status_code == 504:
+            raise errors.CreateProcessInstanceGatewayTimeout(status_code=response.status_code, content=response.content, parsed=cast(CreateProcessInstanceResponse504, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

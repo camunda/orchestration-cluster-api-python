@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 from urllib.parse import quote
 import httpx
 from ... import errors
@@ -67,13 +67,24 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetUserUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserNotFound: If the response status code is 404. The user with the given username was not found.
+    errors.GetUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetUserResponse200 | GetUserResponse401 | GetUserResponse403 | GetUserResponse404 | GetUserResponse500]"""
+    GetUserResponse200"""
     response = sync_detailed(username=username, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetUserUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetUserForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetUserNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetUserInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -105,12 +116,23 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetUserUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserNotFound: If the response status code is 404. The user with the given username was not found.
+    errors.GetUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetUserResponse200 | GetUserResponse401 | GetUserResponse403 | GetUserResponse404 | GetUserResponse500]"""
+    GetUserResponse200"""
     response = await asyncio_detailed(username=username, client=client)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 401:
+            raise errors.GetUserUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetUserForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse403, response.parsed))
+        if response.status_code == 404:
+            raise errors.GetUserNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse404, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetUserInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetUserResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed

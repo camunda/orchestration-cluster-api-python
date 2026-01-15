@@ -1,6 +1,6 @@
 import datetime
 from http import HTTPStatus
-from typing import Any
+from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -81,13 +81,24 @@ Args:
     with_tenants (bool | Unset):  Default: False.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetUsageMetricsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUsageMetricsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUsageMetricsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUsageMetricsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetUsageMetricsResponse200 | GetUsageMetricsResponse400 | GetUsageMetricsResponse401 | GetUsageMetricsResponse403 | GetUsageMetricsResponse500]"""
+    GetUsageMetricsResponse200"""
     response = sync_detailed(client=client, start_time=start_time, end_time=end_time, tenant_id=tenant_id, with_tenants=with_tenants)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetUsageMetricsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetUsageMetricsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetUsageMetricsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetUsageMetricsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetUsageMetricsForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetUsageMetricsResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetUsageMetricsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetUsageMetricsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
@@ -125,12 +136,23 @@ Args:
     with_tenants (bool | Unset):  Default: False.
 
 Raises:
-    errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+    errors.GetUsageMetricsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUsageMetricsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUsageMetricsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUsageMetricsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
-
 Returns:
-    Response[GetUsageMetricsResponse200 | GetUsageMetricsResponse400 | GetUsageMetricsResponse401 | GetUsageMetricsResponse403 | GetUsageMetricsResponse500]"""
+    GetUsageMetricsResponse200"""
     response = await asyncio_detailed(client=client, start_time=start_time, end_time=end_time, tenant_id=tenant_id, with_tenants=with_tenants)
     if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 400:
+            raise errors.GetUsageMetricsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetUsageMetricsResponse400, response.parsed))
+        if response.status_code == 401:
+            raise errors.GetUsageMetricsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetUsageMetricsResponse401, response.parsed))
+        if response.status_code == 403:
+            raise errors.GetUsageMetricsForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetUsageMetricsResponse403, response.parsed))
+        if response.status_code == 500:
+            raise errors.GetUsageMetricsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetUsageMetricsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
