@@ -6,7 +6,7 @@ Do not import from ``generated/`` directly; edit this package and re-run generat
 from .auth import AuthProvider, NullAuthProvider, inject_auth_event_hooks
 
 __all__ = [
-	"AuthProvider",
-	"NullAuthProvider",
-	"inject_auth_event_hooks",
+    "AuthProvider",
+    "NullAuthProvider",
+    "inject_auth_event_hooks",
 ]
