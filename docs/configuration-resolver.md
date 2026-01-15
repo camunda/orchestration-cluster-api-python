@@ -72,3 +72,17 @@ Here is the logic for aliases:
 ## Testing 
 
 We need comprehensive unit tests in the tests/acceptance directory to prove the operation of the resolver.
+
+-----
+
+We don't wire it into init.py. We will copy it into the generated SDK during post-processing.
+
+The method of wiring it in will be this:
+
+The CamundaClient and CamundaAsyncClient will take an optional configuration partial as a parameter in their constructor.
+
+We pass this and the concrete environment to a configuration resolver instance and get back the effective configuration of the client which is stored as a property.
+
+----
+
+Let's remove the base_url and token parameters from the CamundaClient and CamundaAsyncClient and use the configuration resolver to configure the base_url via the CAMUNDA_REST_ADDRESS property

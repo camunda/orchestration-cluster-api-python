@@ -260,6 +260,7 @@ def generate_flat_client(package_path: str):
     imports_content += "\nfrom typing import Callable"
     imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, JobHandler"
     imports_content += "\nfrom .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
+    imports_content += "\nfrom .runtime.auth import AuthProvider, NullAuthProvider, inject_auth_event_hooks"
     imports_content += "\nfrom pathlib import Path"
     imports_content += "\nfrom .models.create_deployment_response_200 import CreateDeploymentResponse200"
     imports_content += "\nfrom .models.create_deployment_response_200_deployments_item_process_definition import CreateDeploymentResponse200DeploymentsItemProcessDefinition"
@@ -299,8 +300,9 @@ class ExtendedDeploymentResult(CreateDeploymentResponse200):
 class CamundaClient:
     client: Client | AuthenticatedClient
     configuration: CamundaSdkConfiguration
+    auth_provider: AuthProvider
 
-    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, **kwargs):
+    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, **kwargs):
         resolved = ConfigurationResolver(
             environment=read_environment(),
             explicit_configuration=configuration,
@@ -315,6 +317,20 @@ class CamundaClient:
             raise TypeError(
                 "CamundaClient no longer accepts token; use configuration-based auth (CAMUNDA_AUTH_STRATEGY) instead."
             )
+
+        if auth_provider is None:
+            if self.configuration.CAMUNDA_AUTH_STRATEGY != "NONE":
+                raise NotImplementedError(
+                    "Built-in auth providers are not implemented yet; pass auth_provider=... to CamundaClient (or set CAMUNDA_AUTH_STRATEGY=NONE)."
+                )
+            auth_provider = NullAuthProvider()
+
+        self.auth_provider = auth_provider
+
+        # Ensure every request gets auth headers via httpx event hooks.
+        kwargs["httpx_args"] = inject_auth_event_hooks(
+            kwargs.get("httpx_args"), auth_provider, async_client=False
+        )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
 
@@ -373,9 +389,10 @@ class CamundaClient:
 class CamundaAsyncClient:
     client: Client | AuthenticatedClient
     configuration: CamundaSdkConfiguration
+    auth_provider: AuthProvider
     _workers: list[JobWorker]
 
-    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, **kwargs):
+    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, **kwargs):
         resolved = ConfigurationResolver(
             environment=read_environment(),
             explicit_configuration=configuration,
@@ -390,6 +407,20 @@ class CamundaAsyncClient:
             raise TypeError(
                 "CamundaAsyncClient no longer accepts token; use configuration-based auth (CAMUNDA_AUTH_STRATEGY) instead."
             )
+
+        if auth_provider is None:
+            if self.configuration.CAMUNDA_AUTH_STRATEGY != "NONE":
+                raise NotImplementedError(
+                    "Built-in auth providers are not implemented yet; pass auth_provider=... to CamundaAsyncClient (or set CAMUNDA_AUTH_STRATEGY=NONE)."
+                )
+            auth_provider = NullAuthProvider()
+
+        self.auth_provider = auth_provider
+
+        # Ensure every request gets auth headers via httpx event hooks.
+        kwargs["httpx_args"] = inject_auth_event_hooks(
+            kwargs.get("httpx_args"), auth_provider, async_client=True
+        )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
         self._workers = []
