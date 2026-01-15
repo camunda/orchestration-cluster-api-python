@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Any, Optional
 from contextlib import asynccontextmanager
@@ -33,7 +33,10 @@ process_definition_key: ProcessDefinitionKey
 
 
 class Settings(BaseSettings):
-    camunda_base_url: str = "http://localhost:8080/v2"
+    camunda_rest_address: str = Field(
+        default="http://localhost:8080/v2",
+        validation_alias="CAMUNDA_REST_ADDRESS",
+    )
 
     model_config = SettingsConfigDict(
         env_file=str(Path(__file__).parent / ".env"),
@@ -53,8 +56,12 @@ async def lifespan(app: FastAPI):
     global process_definition_key
 
     # Startup: Initialize Camunda client
-    camunda_client = CamundaAsyncClient(base_url=settings.camunda_base_url)
-    logger.info(f"Camunda client initialized (base_url: {settings.camunda_base_url})")
+    camunda_client = CamundaAsyncClient(
+        configuration={"CAMUNDA_REST_ADDRESS": settings.camunda_rest_address}
+    )
+    logger.info(
+        f"Camunda client initialized (CAMUNDA_REST_ADDRESS: {settings.camunda_rest_address})"
+    )
 
     process_definition_key = await deploy_loan_process(camunda_client)
 

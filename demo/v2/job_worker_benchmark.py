@@ -40,10 +40,10 @@ def make_client(base_url: str | None = None) -> CamundaClient:
     """Create a new Camunda client instance.
 
     Args:
-        base_url: Override the base URL. Defaults to CAMUNDA_BASE_URL env var or localhost.
+        base_url: Override the base URL. Defaults to CAMUNDA_REST_ADDRESS env var or localhost.
     """
-    host = base_url or os.environ.get("CAMUNDA_BASE_URL", "http://localhost:8080/v2")
-    return CamundaClient(base_url=host)
+    host = base_url or os.environ.get("CAMUNDA_REST_ADDRESS", "http://localhost:8080/v2")
+    return CamundaClient(configuration={"CAMUNDA_REST_ADDRESS": host})
 
 
 def get_process_memory_mb() -> tuple[float, float]:

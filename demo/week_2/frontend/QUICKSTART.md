@@ -99,18 +99,20 @@ import asyncio
 from camunda_orchestration_sdk import CamundaAsyncClient
 
 async def deploy_process():
-  camunda = CamundaAsyncClient(base_url="http://localhost:8080/v2")
+  camunda = CamundaAsyncClient(
+      configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"}
+  )
 
-    # Deploy your BPMN file
-    result = await camunda.deploy_resources_from_files(
-        files=["./path/to/your/process.bpmn"]
-    )
+  # Deploy your BPMN file
+  result = await camunda.deploy_resources_from_files(
+      files=["./path/to/your/process.bpmn"]
+  )
 
-    # Print the process definition key
-    print(f"Process Definition Key: {result.processes[0].process_definition_key}")
-    print(f"Process ID: {result.processes[0].process_definition_id}")
+  # Print the process definition key
+  print(f"Process Definition Key: {result.processes[0].process_definition_key}")
+  print(f"Process ID: {result.processes[0].process_definition_id}")
 
-    return result.processes[0].process_definition_key
+  return result.processes[0].process_definition_key
 
 if __name__ == "__main__":
     key = asyncio.run(deploy_process())

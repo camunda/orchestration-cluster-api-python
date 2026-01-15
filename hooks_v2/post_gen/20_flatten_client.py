@@ -259,6 +259,7 @@ def generate_flat_client(package_path: str):
     imports_content += "\nimport asyncio"
     imports_content += "\nfrom typing import Callable"
     imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, JobHandler"
+    imports_content += "\nfrom .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
     imports_content += "\nfrom pathlib import Path"
     imports_content += "\nfrom .models.create_deployment_response_200 import CreateDeploymentResponse200"
     imports_content += "\nfrom .models.create_deployment_response_200_deployments_item_process_definition import CreateDeploymentResponse200DeploymentsItemProcessDefinition"
@@ -297,12 +298,25 @@ class ExtendedDeploymentResult(CreateDeploymentResponse200):
     camunda_client_code = f'''
 class CamundaClient:
     client: Client | AuthenticatedClient
+    configuration: CamundaSdkConfiguration
 
-    def __init__(self, base_url: str = "http://localhost:8080/v2", token: str | None = None, **kwargs):
-        if token:
-            self.client = AuthenticatedClient(base_url=base_url, token=token, **kwargs)
-        else:
-            self.client = Client(base_url=base_url, **kwargs)
+    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, **kwargs):
+        resolved = ConfigurationResolver(
+            environment=read_environment(),
+            explicit_configuration=configuration,
+        ).resolve()
+        self.configuration = resolved.effective
+
+        if "base_url" in kwargs:
+            raise TypeError(
+                "CamundaClient no longer accepts base_url; set CAMUNDA_REST_ADDRESS (or ZEEBE_REST_ADDRESS) via configuration/environment instead."
+            )
+        if "token" in kwargs:
+            raise TypeError(
+                "CamundaClient no longer accepts token; use configuration-based auth (CAMUNDA_AUTH_STRATEGY) instead."
+            )
+
+        self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
 
     def __enter__(self):
         self.client.__enter__()
@@ -358,13 +372,26 @@ class CamundaClient:
 
 class CamundaAsyncClient:
     client: Client | AuthenticatedClient
+    configuration: CamundaSdkConfiguration
     _workers: list[JobWorker]
 
-    def __init__(self, base_url: str = "http://localhost:8080/v2", token: str | None = None, **kwargs):
-        if token:
-            self.client = AuthenticatedClient(base_url=base_url, token=token, **kwargs)
-        else:
-            self.client = Client(base_url=base_url, **kwargs)
+    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, **kwargs):
+        resolved = ConfigurationResolver(
+            environment=read_environment(),
+            explicit_configuration=configuration,
+        ).resolve()
+        self.configuration = resolved.effective
+
+        if "base_url" in kwargs:
+            raise TypeError(
+                "CamundaAsyncClient no longer accepts base_url; set CAMUNDA_REST_ADDRESS (or ZEEBE_REST_ADDRESS) via configuration/environment instead."
+            )
+        if "token" in kwargs:
+            raise TypeError(
+                "CamundaAsyncClient no longer accepts token; use configuration-based auth (CAMUNDA_AUTH_STRATEGY) instead."
+            )
+
+        self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
         self._workers = []
 
     async def __aenter__(self):

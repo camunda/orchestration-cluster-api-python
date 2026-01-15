@@ -205,8 +205,7 @@ curl -X POST http://localhost:8000/process-instance/create \
 You can configure the Camunda connection using environment variables:
 
 ```bash
-export CAMUNDA_BASE_URL="http://localhost:8080/v2"
-export CAMUNDA_TOKEN="your-token-here"  # Optional
+export CAMUNDA_REST_ADDRESS="http://localhost:8080/v2"
 
 python -m demo.week_2.main
 ```

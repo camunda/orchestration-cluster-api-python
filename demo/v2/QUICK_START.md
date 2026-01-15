@@ -85,7 +85,7 @@ All scenarios use:
 ### If it fails immediately:
 ```bash
 # Check Camunda connection
-export CAMUNDA_BASE_URL="http://localhost:8080/v2"
+export CAMUNDA_REST_ADDRESS="http://localhost:8080/v2"
 
 # Test with just one scenario
 uv run demo/v2/run_benchmark_scenarios.py scenarios_fast.json --limit 1

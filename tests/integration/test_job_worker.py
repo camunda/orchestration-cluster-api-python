@@ -29,8 +29,7 @@ pytestmark = pytest.mark.skipif(
 
 
 def _make_client():
-    host = os.environ.get("CAMUNDA_BASE_URL", "http://localhost:8080/v2")
-    return CamundaAsyncClient(base_url=host)
+    return CamundaAsyncClient()
 
 
 # TODO: workloads (maybe multiple with different scenarios)

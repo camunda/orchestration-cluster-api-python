@@ -7,7 +7,7 @@ This directory contains a comprehensive demonstration and benchmarking tool for 
 *   Python 3.10+
 *   A running Camunda 8 instance (Self-Managed or SaaS).
 *   The `camunda-orchestration-sdk` package installed.
-*   Environment variables configured for Camunda connection (e.g., `CAMUNDA_BASE_URL` or `ZEEBE_ADDRESS`, `ZEEBE_CLIENT_ID`, etc.).
+*   Environment variables configured for Camunda connection (e.g., `CAMUNDA_REST_ADDRESS` or `ZEEBE_REST_ADDRESS`, plus any auth-related variables if needed).
 
 ## Usage
 

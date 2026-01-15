@@ -23676,8 +23676,8 @@ paths:
                 description: Process instance search response.
                 type: object
                 required:
-                - items
                 - page
+                - items
                 properties:
                   items:
                     description: The matching process instances.
@@ -36252,8 +36252,8 @@ paths:
               schema:
                 type: object
                 required:
-                - items
                 - page
+                - items
                 properties:
                   items:
                     description: The matching users.
@@ -45899,10 +45899,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimName
-      - mappingRuleId
-      - name
       - claimValue
+      - name
+      - mappingRuleId
+      - claimName
     SearchMappingRuleData:
       additionalProperties: false
       type: object
@@ -45970,9 +45970,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimName
-      - name
       - claimValue
+      - name
+      - claimName
     SearchMessageSubscriptionsData:
       type: object
       additionalProperties: false

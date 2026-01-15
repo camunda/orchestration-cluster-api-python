@@ -22,8 +22,10 @@ from camunda_orchestration_sdk.runtime.job_worker import ExecutionHint, JobConte
 
 
 def _make_client():
-    host = os.environ.get("CAMUNDA_BASE_URL", "http://localhost:8080/v2")
-    return CamundaClient(base_url=host)
+    host = os.environ.get("CAMUNDA_REST_ADDRESS")
+    if host:
+        return CamundaClient(configuration={"CAMUNDA_REST_ADDRESS": host})
+    return CamundaClient()
 
 
 # TODO: workloads (maybe multiple with different scenarios)

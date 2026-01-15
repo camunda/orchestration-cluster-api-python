@@ -65,8 +65,7 @@ pip install fastapi uvicorn[standard]
 Set environment variables for Camunda connection (optional, defaults shown):
 
 ```bash
-export CAMUNDA_BASE_URL="http://localhost:8080"  # Default Camunda cluster URL
-export CAMUNDA_TOKEN="your-token-here"           # Optional: for authenticated clusters
+export CAMUNDA_REST_ADDRESS="http://localhost:8080/v2"  # Default Camunda REST API base (must include /v2)
 ```
 
 ## Running the App
@@ -82,7 +81,7 @@ python -m demo.week_2.main
 With custom Camunda URL:
 
 ```bash
-CAMUNDA_BASE_URL="http://your-camunda:8080" python -m demo.week_2.main
+CAMUNDA_REST_ADDRESS="http://your-camunda:8080/v2" python -m demo.week_2.main
 ```
 
 ### Access the Demo Application
