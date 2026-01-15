@@ -35,12 +35,18 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
- 
+      - name: Set up virtual environment
+        run: uv venv .venv
+
       - name: Generate SDK
-        run: make generate
+        run: |
+          source .venv/bin/activate
+          make generate
 
       - name: Build Docs
-        run: make docs-api
+        run: |
+          source .venv/bin/activate
+          make docs-api
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
