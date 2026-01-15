@@ -71,11 +71,11 @@ Args:
     incident_key (str): System-generated key for a incident. Example: 2251799813689432.
 
 Raises:
-    errors.GetIncidentBadRequest: If the response status code is 400.
-    errors.GetIncidentUnauthorized: If the response status code is 401.
-    errors.GetIncidentForbidden: If the response status code is 403.
-    errors.GetIncidentNotFound: If the response status code is 404.
-    errors.GetIncidentInternalServerError: If the response status code is 500.
+    errors.GetIncidentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetIncidentUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetIncidentForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetIncidentNotFound: If the response status code is 404. The incident with the given key was not found.
+    errors.GetIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -123,11 +123,11 @@ Args:
     incident_key (str): System-generated key for a incident. Example: 2251799813689432.
 
 Raises:
-    errors.GetIncidentBadRequest: If the response status code is 400.
-    errors.GetIncidentUnauthorized: If the response status code is 401.
-    errors.GetIncidentForbidden: If the response status code is 403.
-    errors.GetIncidentNotFound: If the response status code is 404.
-    errors.GetIncidentInternalServerError: If the response status code is 500.
+    errors.GetIncidentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetIncidentUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetIncidentForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetIncidentNotFound: If the response status code is 404. The incident with the given key was not found.
+    errors.GetIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

@@ -72,11 +72,11 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnassignMappingRuleFromTenantBadRequest: If the response status code is 400.
-    errors.UnassignMappingRuleFromTenantForbidden: If the response status code is 403.
-    errors.UnassignMappingRuleFromTenantNotFound: If the response status code is 404.
-    errors.UnassignMappingRuleFromTenantInternalServerError: If the response status code is 500.
-    errors.UnassignMappingRuleFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnassignMappingRuleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignMappingRuleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignMappingRuleFromTenantNotFound: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+    errors.UnassignMappingRuleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignMappingRuleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -126,11 +126,11 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnassignMappingRuleFromTenantBadRequest: If the response status code is 400.
-    errors.UnassignMappingRuleFromTenantForbidden: If the response status code is 403.
-    errors.UnassignMappingRuleFromTenantNotFound: If the response status code is 404.
-    errors.UnassignMappingRuleFromTenantInternalServerError: If the response status code is 500.
-    errors.UnassignMappingRuleFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnassignMappingRuleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignMappingRuleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignMappingRuleFromTenantNotFound: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+    errors.UnassignMappingRuleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignMappingRuleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

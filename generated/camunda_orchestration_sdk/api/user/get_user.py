@@ -67,10 +67,10 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.GetUserUnauthorized: If the response status code is 401.
-    errors.GetUserForbidden: If the response status code is 403.
-    errors.GetUserNotFound: If the response status code is 404.
-    errors.GetUserInternalServerError: If the response status code is 500.
+    errors.GetUserUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserNotFound: If the response status code is 404. The user with the given username was not found.
+    errors.GetUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -116,10 +116,10 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.GetUserUnauthorized: If the response status code is 401.
-    errors.GetUserForbidden: If the response status code is 403.
-    errors.GetUserNotFound: If the response status code is 404.
-    errors.GetUserInternalServerError: If the response status code is 500.
+    errors.GetUserUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserNotFound: If the response status code is 404. The user with the given username was not found.
+    errors.GetUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

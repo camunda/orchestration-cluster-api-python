@@ -71,11 +71,11 @@ Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
 
 Raises:
-    errors.GetTenantBadRequest: If the response status code is 400.
-    errors.GetTenantUnauthorized: If the response status code is 401.
-    errors.GetTenantForbidden: If the response status code is 403.
-    errors.GetTenantNotFound: If the response status code is 404.
-    errors.GetTenantInternalServerError: If the response status code is 500.
+    errors.GetTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetTenantUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetTenantNotFound: If the response status code is 404. Tenant not found.
+    errors.GetTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -123,11 +123,11 @@ Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
 
 Raises:
-    errors.GetTenantBadRequest: If the response status code is 400.
-    errors.GetTenantUnauthorized: If the response status code is 401.
-    errors.GetTenantForbidden: If the response status code is 403.
-    errors.GetTenantNotFound: If the response status code is 404.
-    errors.GetTenantInternalServerError: If the response status code is 500.
+    errors.GetTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetTenantUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetTenantNotFound: If the response status code is 404. Tenant not found.
+    errors.GetTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

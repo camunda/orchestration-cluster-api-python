@@ -79,11 +79,11 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.GetProcessInstanceCallHierarchyBadRequest: If the response status code is 400.
-    errors.GetProcessInstanceCallHierarchyUnauthorized: If the response status code is 401.
-    errors.GetProcessInstanceCallHierarchyForbidden: If the response status code is 403.
-    errors.GetProcessInstanceCallHierarchyNotFound: If the response status code is 404.
-    errors.GetProcessInstanceCallHierarchyInternalServerError: If the response status code is 500.
+    errors.GetProcessInstanceCallHierarchyBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceCallHierarchyUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceCallHierarchyForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceCallHierarchyNotFound: If the response status code is 404. The process instance is not found.
+    errors.GetProcessInstanceCallHierarchyInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -135,11 +135,11 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.GetProcessInstanceCallHierarchyBadRequest: If the response status code is 400.
-    errors.GetProcessInstanceCallHierarchyUnauthorized: If the response status code is 401.
-    errors.GetProcessInstanceCallHierarchyForbidden: If the response status code is 403.
-    errors.GetProcessInstanceCallHierarchyNotFound: If the response status code is 404.
-    errors.GetProcessInstanceCallHierarchyInternalServerError: If the response status code is 500.
+    errors.GetProcessInstanceCallHierarchyBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceCallHierarchyUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceCallHierarchyForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceCallHierarchyNotFound: If the response status code is 404. The process instance is not found.
+    errors.GetProcessInstanceCallHierarchyInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

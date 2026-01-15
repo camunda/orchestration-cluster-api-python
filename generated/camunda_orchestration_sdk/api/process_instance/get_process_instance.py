@@ -73,11 +73,11 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.GetProcessInstanceBadRequest: If the response status code is 400.
-    errors.GetProcessInstanceUnauthorized: If the response status code is 401.
-    errors.GetProcessInstanceForbidden: If the response status code is 403.
-    errors.GetProcessInstanceNotFound: If the response status code is 404.
-    errors.GetProcessInstanceInternalServerError: If the response status code is 500.
+    errors.GetProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceNotFound: If the response status code is 404. The process instance with the given key was not found.
+    errors.GetProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -127,11 +127,11 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.GetProcessInstanceBadRequest: If the response status code is 400.
-    errors.GetProcessInstanceUnauthorized: If the response status code is 401.
-    errors.GetProcessInstanceForbidden: If the response status code is 403.
-    errors.GetProcessInstanceNotFound: If the response status code is 404.
-    errors.GetProcessInstanceInternalServerError: If the response status code is 500.
+    errors.GetProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceNotFound: If the response status code is 404. The process instance with the given key was not found.
+    errors.GetProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

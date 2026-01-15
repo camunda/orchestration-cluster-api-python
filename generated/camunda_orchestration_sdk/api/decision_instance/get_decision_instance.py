@@ -73,11 +73,11 @@ Args:
         instance. Example: 22517998136843567.
 
 Raises:
-    errors.GetDecisionInstanceBadRequest: If the response status code is 400.
-    errors.GetDecisionInstanceUnauthorized: If the response status code is 401.
-    errors.GetDecisionInstanceForbidden: If the response status code is 403.
-    errors.GetDecisionInstanceNotFound: If the response status code is 404.
-    errors.GetDecisionInstanceInternalServerError: If the response status code is 500.
+    errors.GetDecisionInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionInstanceNotFound: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -127,11 +127,11 @@ Args:
         instance. Example: 22517998136843567.
 
 Raises:
-    errors.GetDecisionInstanceBadRequest: If the response status code is 400.
-    errors.GetDecisionInstanceUnauthorized: If the response status code is 401.
-    errors.GetDecisionInstanceForbidden: If the response status code is 403.
-    errors.GetDecisionInstanceNotFound: If the response status code is 404.
-    errors.GetDecisionInstanceInternalServerError: If the response status code is 500.
+    errors.GetDecisionInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionInstanceNotFound: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

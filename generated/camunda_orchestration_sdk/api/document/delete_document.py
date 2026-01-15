@@ -69,8 +69,8 @@ Args:
     store_id (str | Unset):
 
 Raises:
-    errors.DeleteDocumentNotFound: If the response status code is 404.
-    errors.DeleteDocumentInternalServerError: If the response status code is 500.
+    errors.DeleteDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
+    errors.DeleteDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -120,8 +120,8 @@ Args:
     store_id (str | Unset):
 
 Raises:
-    errors.DeleteDocumentNotFound: If the response status code is 404.
-    errors.DeleteDocumentInternalServerError: If the response status code is 500.
+    errors.DeleteDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
+    errors.DeleteDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

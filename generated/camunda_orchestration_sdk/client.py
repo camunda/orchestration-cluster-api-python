@@ -1263,11 +1263,11 @@ Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
 
 Raises:
-    errors.DeleteTenantBadRequest: If the response status code is 400.
-    errors.DeleteTenantForbidden: If the response status code is 403.
-    errors.DeleteTenantNotFound: If the response status code is 404.
-    errors.DeleteTenantInternalServerError: If the response status code is 500.
-    errors.DeleteTenantServiceUnavailable: If the response status code is 503.
+    errors.DeleteTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteTenantNotFound: If the response status code is 404. Not found. The tenant was not found.
+    errors.DeleteTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1292,11 +1292,11 @@ Args:
     group_id (str):
 
 Raises:
-    errors.AssignGroupToTenantBadRequest: If the response status code is 400.
-    errors.AssignGroupToTenantForbidden: If the response status code is 403.
-    errors.AssignGroupToTenantNotFound: If the response status code is 404.
-    errors.AssignGroupToTenantInternalServerError: If the response status code is 500.
-    errors.AssignGroupToTenantServiceUnavailable: If the response status code is 503.
+    errors.AssignGroupToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignGroupToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignGroupToTenantNotFound: If the response status code is 404. Not found. The tenant or group was not found.
+    errors.AssignGroupToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignGroupToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1322,11 +1322,11 @@ Args:
     role_id (str):
 
 Raises:
-    errors.UnassignRoleFromTenantBadRequest: If the response status code is 400.
-    errors.UnassignRoleFromTenantForbidden: If the response status code is 403.
-    errors.UnassignRoleFromTenantNotFound: If the response status code is 404.
-    errors.UnassignRoleFromTenantInternalServerError: If the response status code is 500.
-    errors.UnassignRoleFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnassignRoleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromTenantNotFound: If the response status code is 404. Not found. The tenant or role was not found.
+    errors.UnassignRoleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1397,11 +1397,11 @@ Args:
     client_id (str):
 
 Raises:
-    errors.UnassignClientFromTenantBadRequest: If the response status code is 400.
-    errors.UnassignClientFromTenantForbidden: If the response status code is 403.
-    errors.UnassignClientFromTenantNotFound: If the response status code is 404.
-    errors.UnassignClientFromTenantInternalServerError: If the response status code is 500.
-    errors.UnassignClientFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnassignClientFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignClientFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignClientFromTenantNotFound: If the response status code is 404. The tenant does not exist or the client was not assigned to it.
+    errors.UnassignClientFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignClientFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1426,11 +1426,11 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnassignUserFromTenantBadRequest: If the response status code is 400.
-    errors.UnassignUserFromTenantForbidden: If the response status code is 403.
-    errors.UnassignUserFromTenantNotFound: If the response status code is 404.
-    errors.UnassignUserFromTenantInternalServerError: If the response status code is 500.
-    errors.UnassignUserFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnassignUserFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignUserFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignUserFromTenantNotFound: If the response status code is 404. Not found. The tenant or user was not found.
+    errors.UnassignUserFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignUserFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1479,11 +1479,11 @@ Args:
     group_id (str):
 
 Raises:
-    errors.UnassignGroupFromTenantBadRequest: If the response status code is 400.
-    errors.UnassignGroupFromTenantForbidden: If the response status code is 403.
-    errors.UnassignGroupFromTenantNotFound: If the response status code is 404.
-    errors.UnassignGroupFromTenantInternalServerError: If the response status code is 500.
-    errors.UnassignGroupFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnassignGroupFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignGroupFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignGroupFromTenantNotFound: If the response status code is 404. Not found. The tenant or group was not found.
+    errors.UnassignGroupFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignGroupFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1558,11 +1558,11 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.AssignUserToTenantBadRequest: If the response status code is 400.
-    errors.AssignUserToTenantForbidden: If the response status code is 403.
-    errors.AssignUserToTenantNotFound: If the response status code is 404.
-    errors.AssignUserToTenantInternalServerError: If the response status code is 500.
-    errors.AssignUserToTenantServiceUnavailable: If the response status code is 503.
+    errors.AssignUserToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignUserToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignUserToTenantNotFound: If the response status code is 404. Not found. The tenant or user was not found.
+    errors.AssignUserToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignUserToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1588,11 +1588,11 @@ Args:
     role_id (str):
 
 Raises:
-    errors.AssignRoleToTenantBadRequest: If the response status code is 400.
-    errors.AssignRoleToTenantForbidden: If the response status code is 403.
-    errors.AssignRoleToTenantNotFound: If the response status code is 404.
-    errors.AssignRoleToTenantInternalServerError: If the response status code is 500.
-    errors.AssignRoleToTenantServiceUnavailable: If the response status code is 503.
+    errors.AssignRoleToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToTenantNotFound: If the response status code is 404. Not found. The tenant or role was not found.
+    errors.AssignRoleToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1639,11 +1639,11 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.AssignMappingRuleToTenantBadRequest: If the response status code is 400.
-    errors.AssignMappingRuleToTenantForbidden: If the response status code is 403.
-    errors.AssignMappingRuleToTenantNotFound: If the response status code is 404.
-    errors.AssignMappingRuleToTenantInternalServerError: If the response status code is 500.
-    errors.AssignMappingRuleToTenantServiceUnavailable: If the response status code is 503.
+    errors.AssignMappingRuleToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignMappingRuleToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignMappingRuleToTenantNotFound: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+    errors.AssignMappingRuleToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignMappingRuleToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1667,11 +1667,11 @@ Args:
     body (UpdateTenantData):
 
 Raises:
-    errors.UpdateTenantBadRequest: If the response status code is 400.
-    errors.UpdateTenantForbidden: If the response status code is 403.
-    errors.UpdateTenantNotFound: If the response status code is 404.
-    errors.UpdateTenantInternalServerError: If the response status code is 500.
-    errors.UpdateTenantServiceUnavailable: If the response status code is 503.
+    errors.UpdateTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UpdateTenantNotFound: If the response status code is 404. Not found. The tenant was not found.
+    errors.UpdateTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1696,11 +1696,11 @@ Args:
     client_id (str):
 
 Raises:
-    errors.AssignClientToTenantBadRequest: If the response status code is 400.
-    errors.AssignClientToTenantForbidden: If the response status code is 403.
-    errors.AssignClientToTenantNotFound: If the response status code is 404.
-    errors.AssignClientToTenantInternalServerError: If the response status code is 500.
-    errors.AssignClientToTenantServiceUnavailable: If the response status code is 503.
+    errors.AssignClientToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignClientToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignClientToTenantNotFound: If the response status code is 404. The tenant was not found.
+    errors.AssignClientToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignClientToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1723,11 +1723,11 @@ Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
 
 Raises:
-    errors.GetTenantBadRequest: If the response status code is 400.
-    errors.GetTenantUnauthorized: If the response status code is 401.
-    errors.GetTenantForbidden: If the response status code is 403.
-    errors.GetTenantNotFound: If the response status code is 404.
-    errors.GetTenantInternalServerError: If the response status code is 500.
+    errors.GetTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetTenantUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetTenantNotFound: If the response status code is 404. Tenant not found.
+    errors.GetTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1779,11 +1779,11 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnassignMappingRuleFromTenantBadRequest: If the response status code is 400.
-    errors.UnassignMappingRuleFromTenantForbidden: If the response status code is 403.
-    errors.UnassignMappingRuleFromTenantNotFound: If the response status code is 404.
-    errors.UnassignMappingRuleFromTenantInternalServerError: If the response status code is 500.
-    errors.UnassignMappingRuleFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnassignMappingRuleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignMappingRuleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignMappingRuleFromTenantNotFound: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+    errors.UnassignMappingRuleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignMappingRuleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1810,10 +1810,10 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.CancelBatchOperationBadRequest: If the response status code is 400.
-    errors.CancelBatchOperationForbidden: If the response status code is 403.
-    errors.CancelBatchOperationNotFound: If the response status code is 404.
-    errors.CancelBatchOperationInternalServerError: If the response status code is 500.
+    errors.CancelBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CancelBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CancelBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.CancelBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1840,11 +1840,11 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.ResumeBatchOperationBadRequest: If the response status code is 400.
-    errors.ResumeBatchOperationForbidden: If the response status code is 403.
-    errors.ResumeBatchOperationNotFound: If the response status code is 404.
-    errors.ResumeBatchOperationInternalServerError: If the response status code is 500.
-    errors.ResumeBatchOperationServiceUnavailable: If the response status code is 503.
+    errors.ResumeBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ResumeBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.ResumeBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.ResumeBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResumeBatchOperationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1871,11 +1871,11 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.SuspendBatchOperationBadRequest: If the response status code is 400.
-    errors.SuspendBatchOperationForbidden: If the response status code is 403.
-    errors.SuspendBatchOperationNotFound: If the response status code is 404.
-    errors.SuspendBatchOperationInternalServerError: If the response status code is 500.
-    errors.SuspendBatchOperationServiceUnavailable: If the response status code is 503.
+    errors.SuspendBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SuspendBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SuspendBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.SuspendBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.SuspendBatchOperationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1923,9 +1923,9 @@ Args:
         2251799813684321.
 
 Raises:
-    errors.GetBatchOperationBadRequest: If the response status code is 400.
-    errors.GetBatchOperationNotFound: If the response status code is 404.
-    errors.GetBatchOperationInternalServerError: If the response status code is 500.
+    errors.GetBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetBatchOperationNotFound: If the response status code is 404. The batch operation is not found.
+    errors.GetBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -1995,11 +1995,11 @@ Args:
     group_id (str):
 
 Raises:
-    errors.UnassignRoleFromGroupBadRequest: If the response status code is 400.
-    errors.UnassignRoleFromGroupForbidden: If the response status code is 403.
-    errors.UnassignRoleFromGroupNotFound: If the response status code is 404.
-    errors.UnassignRoleFromGroupInternalServerError: If the response status code is 500.
-    errors.UnassignRoleFromGroupServiceUnavailable: If the response status code is 503.
+    errors.UnassignRoleFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromGroupNotFound: If the response status code is 404. The role or group with the given ID was not found.
+    errors.UnassignRoleFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2023,11 +2023,11 @@ Args:
     body (SearchUsersForRoleData | Unset):
 
 Raises:
-    errors.SearchUsersForRoleBadRequest: If the response status code is 400.
-    errors.SearchUsersForRoleUnauthorized: If the response status code is 401.
-    errors.SearchUsersForRoleForbidden: If the response status code is 403.
-    errors.SearchUsersForRoleNotFound: If the response status code is 404.
-    errors.SearchUsersForRoleInternalServerError: If the response status code is 500.
+    errors.SearchUsersForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchUsersForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2051,11 +2051,11 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnassignRoleFromMappingRuleBadRequest: If the response status code is 400.
-    errors.UnassignRoleFromMappingRuleForbidden: If the response status code is 403.
-    errors.UnassignRoleFromMappingRuleNotFound: If the response status code is 404.
-    errors.UnassignRoleFromMappingRuleInternalServerError: If the response status code is 500.
-    errors.UnassignRoleFromMappingRuleServiceUnavailable: If the response status code is 503.
+    errors.UnassignRoleFromMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromMappingRuleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromMappingRuleNotFound: If the response status code is 404. The role or mapping rule with the given ID was not found.
+    errors.UnassignRoleFromMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2106,11 +2106,11 @@ Args:
     client_id (str):
 
 Raises:
-    errors.UnassignRoleFromClientBadRequest: If the response status code is 400.
-    errors.UnassignRoleFromClientForbidden: If the response status code is 403.
-    errors.UnassignRoleFromClientNotFound: If the response status code is 404.
-    errors.UnassignRoleFromClientInternalServerError: If the response status code is 500.
-    errors.UnassignRoleFromClientServiceUnavailable: If the response status code is 503.
+    errors.UnassignRoleFromClientBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromClientForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromClientNotFound: If the response status code is 404. The role or client with the given ID or username was not found.
+    errors.UnassignRoleFromClientInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromClientServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2135,11 +2135,11 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnassignRoleFromUserBadRequest: If the response status code is 400.
-    errors.UnassignRoleFromUserForbidden: If the response status code is 403.
-    errors.UnassignRoleFromUserNotFound: If the response status code is 404.
-    errors.UnassignRoleFromUserInternalServerError: If the response status code is 500.
-    errors.UnassignRoleFromUserServiceUnavailable: If the response status code is 503.
+    errors.UnassignRoleFromUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromUserNotFound: If the response status code is 404. The role or user with the given ID or username was not found.
+    errors.UnassignRoleFromUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2190,11 +2190,11 @@ Args:
     body (SearchClientsForRoleData | Unset):
 
 Raises:
-    errors.SearchClientsForRoleBadRequest: If the response status code is 400.
-    errors.SearchClientsForRoleUnauthorized: If the response status code is 401.
-    errors.SearchClientsForRoleForbidden: If the response status code is 403.
-    errors.SearchClientsForRoleNotFound: If the response status code is 404.
-    errors.SearchClientsForRoleInternalServerError: If the response status code is 500.
+    errors.SearchClientsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchClientsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchClientsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchClientsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchClientsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2219,12 +2219,12 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.AssignRoleToUserBadRequest: If the response status code is 400.
-    errors.AssignRoleToUserForbidden: If the response status code is 403.
-    errors.AssignRoleToUserNotFound: If the response status code is 404.
-    errors.AssignRoleToUserConflict: If the response status code is 409.
-    errors.AssignRoleToUserInternalServerError: If the response status code is 500.
-    errors.AssignRoleToUserServiceUnavailable: If the response status code is 503.
+    errors.AssignRoleToUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToUserNotFound: If the response status code is 404. The role or user with the given ID or username was not found.
+    errors.AssignRoleToUserConflict: If the response status code is 409. The role is already assigned to the user with the given ID.
+    errors.AssignRoleToUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2248,11 +2248,11 @@ Args:
     body (SearchGroupsForRoleData | Unset):
 
 Raises:
-    errors.SearchGroupsForRoleBadRequest: If the response status code is 400.
-    errors.SearchGroupsForRoleUnauthorized: If the response status code is 401.
-    errors.SearchGroupsForRoleForbidden: If the response status code is 403.
-    errors.SearchGroupsForRoleNotFound: If the response status code is 404.
-    errors.SearchGroupsForRoleInternalServerError: If the response status code is 500.
+    errors.SearchGroupsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchGroupsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchGroupsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchGroupsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchGroupsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2276,11 +2276,11 @@ Args:
     body (UpdateRoleData):
 
 Raises:
-    errors.UpdateRoleBadRequest: If the response status code is 400.
-    errors.UpdateRoleUnauthorized: If the response status code is 401.
-    errors.UpdateRoleNotFound: If the response status code is 404.
-    errors.UpdateRoleInternalServerError: If the response status code is 500.
-    errors.UpdateRoleServiceUnavailable: If the response status code is 503.
+    errors.UpdateRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateRoleNotFound: If the response status code is 404. The role with the ID is not found.
+    errors.UpdateRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateRoleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2305,12 +2305,12 @@ Args:
     group_id (str):
 
 Raises:
-    errors.AssignRoleToGroupBadRequest: If the response status code is 400.
-    errors.AssignRoleToGroupForbidden: If the response status code is 403.
-    errors.AssignRoleToGroupNotFound: If the response status code is 404.
-    errors.AssignRoleToGroupConflict: If the response status code is 409.
-    errors.AssignRoleToGroupInternalServerError: If the response status code is 500.
-    errors.AssignRoleToGroupServiceUnavailable: If the response status code is 503.
+    errors.AssignRoleToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToGroupNotFound: If the response status code is 404. The role or group with the given ID was not found.
+    errors.AssignRoleToGroupConflict: If the response status code is 409. The role is already assigned to the group with the given ID.
+    errors.AssignRoleToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2334,11 +2334,11 @@ Args:
     body (SearchMappingRulesForRoleData | Unset):
 
 Raises:
-    errors.SearchMappingRulesForRoleBadRequest: If the response status code is 400.
-    errors.SearchMappingRulesForRoleUnauthorized: If the response status code is 401.
-    errors.SearchMappingRulesForRoleForbidden: If the response status code is 403.
-    errors.SearchMappingRulesForRoleNotFound: If the response status code is 404.
-    errors.SearchMappingRulesForRoleInternalServerError: If the response status code is 500.
+    errors.SearchMappingRulesForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMappingRulesForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMappingRulesForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMappingRulesForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchMappingRulesForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2363,12 +2363,12 @@ Args:
     client_id (str):
 
 Raises:
-    errors.AssignRoleToClientBadRequest: If the response status code is 400.
-    errors.AssignRoleToClientForbidden: If the response status code is 403.
-    errors.AssignRoleToClientNotFound: If the response status code is 404.
-    errors.AssignRoleToClientConflict: If the response status code is 409.
-    errors.AssignRoleToClientInternalServerError: If the response status code is 500.
-    errors.AssignRoleToClientServiceUnavailable: If the response status code is 503.
+    errors.AssignRoleToClientBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToClientForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToClientNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.AssignRoleToClientConflict: If the response status code is 409. The role was already assigned to the client with the given ID.
+    errors.AssignRoleToClientInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToClientServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2391,10 +2391,10 @@ Args:
     role_id (str):
 
 Raises:
-    errors.DeleteRoleUnauthorized: If the response status code is 401.
-    errors.DeleteRoleNotFound: If the response status code is 404.
-    errors.DeleteRoleInternalServerError: If the response status code is 500.
-    errors.DeleteRoleServiceUnavailable: If the response status code is 503.
+    errors.DeleteRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteRoleNotFound: If the response status code is 404. The role with the ID was not found.
+    errors.DeleteRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteRoleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2418,12 +2418,12 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.AssignRoleToMappingRuleBadRequest: If the response status code is 400.
-    errors.AssignRoleToMappingRuleForbidden: If the response status code is 403.
-    errors.AssignRoleToMappingRuleNotFound: If the response status code is 404.
-    errors.AssignRoleToMappingRuleConflict: If the response status code is 409.
-    errors.AssignRoleToMappingRuleInternalServerError: If the response status code is 500.
-    errors.AssignRoleToMappingRuleServiceUnavailable: If the response status code is 503.
+    errors.AssignRoleToMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToMappingRuleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToMappingRuleNotFound: If the response status code is 404. The role or mapping rule with the given ID was not found.
+    errors.AssignRoleToMappingRuleConflict: If the response status code is 409. The role is already assigned to the mapping rule with the given ID.
+    errors.AssignRoleToMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2446,10 +2446,10 @@ Args:
     role_id (str):
 
 Raises:
-    errors.GetRoleUnauthorized: If the response status code is 401.
-    errors.GetRoleForbidden: If the response status code is 403.
-    errors.GetRoleNotFound: If the response status code is 404.
-    errors.GetRoleInternalServerError: If the response status code is 500.
+    errors.GetRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.GetRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2550,11 +2550,11 @@ Args:
         instance. Example: 22517998136843567.
 
 Raises:
-    errors.GetDecisionInstanceBadRequest: If the response status code is 400.
-    errors.GetDecisionInstanceUnauthorized: If the response status code is 401.
-    errors.GetDecisionInstanceForbidden: If the response status code is 403.
-    errors.GetDecisionInstanceNotFound: If the response status code is 404.
-    errors.GetDecisionInstanceInternalServerError: If the response status code is 500.
+    errors.GetDecisionInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionInstanceNotFound: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2577,11 +2577,11 @@ Args:
     variable_key (str): System-generated key for a variable. Example: 2251799813683287.
 
 Raises:
-    errors.GetVariableBadRequest: If the response status code is 400.
-    errors.GetVariableUnauthorized: If the response status code is 401.
-    errors.GetVariableForbidden: If the response status code is 403.
-    errors.GetVariableNotFound: If the response status code is 404.
-    errors.GetVariableInternalServerError: If the response status code is 500.
+    errors.GetVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetVariableNotFound: If the response status code is 404. Not found
+    errors.GetVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2631,11 +2631,11 @@ Args:
     name (str):
 
 Raises:
-    errors.GetTenantClusterVariableBadRequest: If the response status code is 400.
-    errors.GetTenantClusterVariableUnauthorized: If the response status code is 401.
-    errors.GetTenantClusterVariableForbidden: If the response status code is 403.
-    errors.GetTenantClusterVariableNotFound: If the response status code is 404.
-    errors.GetTenantClusterVariableInternalServerError: If the response status code is 500.
+    errors.GetTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetTenantClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.GetTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2706,11 +2706,11 @@ Args:
     name (str):
 
 Raises:
-    errors.DeleteGlobalClusterVariableBadRequest: If the response status code is 400.
-    errors.DeleteGlobalClusterVariableUnauthorized: If the response status code is 401.
-    errors.DeleteGlobalClusterVariableForbidden: If the response status code is 403.
-    errors.DeleteGlobalClusterVariableNotFound: If the response status code is 404.
-    errors.DeleteGlobalClusterVariableInternalServerError: If the response status code is 500.
+    errors.DeleteGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.DeleteGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2732,11 +2732,11 @@ Args:
     name (str):
 
 Raises:
-    errors.DeleteTenantClusterVariableBadRequest: If the response status code is 400.
-    errors.DeleteTenantClusterVariableUnauthorized: If the response status code is 401.
-    errors.DeleteTenantClusterVariableForbidden: If the response status code is 403.
-    errors.DeleteTenantClusterVariableNotFound: If the response status code is 404.
-    errors.DeleteTenantClusterVariableInternalServerError: If the response status code is 500.
+    errors.DeleteTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteTenantClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.DeleteTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2758,10 +2758,10 @@ Args:
     body (CreateTenantClusterVariableData):
 
 Raises:
-    errors.CreateTenantClusterVariableBadRequest: If the response status code is 400.
-    errors.CreateTenantClusterVariableUnauthorized: If the response status code is 401.
-    errors.CreateTenantClusterVariableForbidden: If the response status code is 403.
-    errors.CreateTenantClusterVariableInternalServerError: If the response status code is 500.
+    errors.CreateTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2782,11 +2782,11 @@ Args:
     name (str):
 
 Raises:
-    errors.GetGlobalClusterVariableBadRequest: If the response status code is 400.
-    errors.GetGlobalClusterVariableUnauthorized: If the response status code is 401.
-    errors.GetGlobalClusterVariableForbidden: If the response status code is 403.
-    errors.GetGlobalClusterVariableNotFound: If the response status code is 404.
-    errors.GetGlobalClusterVariableInternalServerError: If the response status code is 500.
+    errors.GetGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.GetGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2810,11 +2810,11 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnassignMappingRuleFromGroupBadRequest: If the response status code is 400.
-    errors.UnassignMappingRuleFromGroupForbidden: If the response status code is 403.
-    errors.UnassignMappingRuleFromGroupNotFound: If the response status code is 404.
-    errors.UnassignMappingRuleFromGroupInternalServerError: If the response status code is 500.
-    errors.UnassignMappingRuleFromGroupServiceUnavailable: If the response status code is 503.
+    errors.UnassignMappingRuleFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignMappingRuleFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignMappingRuleFromGroupNotFound: If the response status code is 404. The group or mapping rule with the given ID was not found, or the mapping rule is not assigned to this group.
+    errors.UnassignMappingRuleFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignMappingRuleFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2838,11 +2838,11 @@ Args:
     body (SearchRolesForGroupData | Unset): Role search request.
 
 Raises:
-    errors.SearchRolesForGroupBadRequest: If the response status code is 400.
-    errors.SearchRolesForGroupUnauthorized: If the response status code is 401.
-    errors.SearchRolesForGroupForbidden: If the response status code is 403.
-    errors.SearchRolesForGroupNotFound: If the response status code is 404.
-    errors.SearchRolesForGroupInternalServerError: If the response status code is 500.
+    errors.SearchRolesForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchRolesForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchRolesForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchRolesForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchRolesForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2867,12 +2867,12 @@ Args:
     client_id (str):
 
 Raises:
-    errors.AssignClientToGroupBadRequest: If the response status code is 400.
-    errors.AssignClientToGroupForbidden: If the response status code is 403.
-    errors.AssignClientToGroupNotFound: If the response status code is 404.
-    errors.AssignClientToGroupConflict: If the response status code is 409.
-    errors.AssignClientToGroupInternalServerError: If the response status code is 500.
-    errors.AssignClientToGroupServiceUnavailable: If the response status code is 503.
+    errors.AssignClientToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignClientToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignClientToGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.AssignClientToGroupConflict: If the response status code is 409. The client with the given ID is already assigned to the group.
+    errors.AssignClientToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignClientToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2898,11 +2898,11 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnassignUserFromGroupBadRequest: If the response status code is 400.
-    errors.UnassignUserFromGroupForbidden: If the response status code is 403.
-    errors.UnassignUserFromGroupNotFound: If the response status code is 404.
-    errors.UnassignUserFromGroupInternalServerError: If the response status code is 500.
-    errors.UnassignUserFromGroupServiceUnavailable: If the response status code is 503.
+    errors.UnassignUserFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignUserFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignUserFromGroupNotFound: If the response status code is 404. The group or user with the given ID was not found, or the user is not assigned to this group.
+    errors.UnassignUserFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignUserFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2926,11 +2926,11 @@ Args:
     body (SearchUsersForGroupData | Unset):
 
 Raises:
-    errors.SearchUsersForGroupBadRequest: If the response status code is 400.
-    errors.SearchUsersForGroupUnauthorized: If the response status code is 401.
-    errors.SearchUsersForGroupForbidden: If the response status code is 403.
-    errors.SearchUsersForGroupNotFound: If the response status code is 404.
-    errors.SearchUsersForGroupInternalServerError: If the response status code is 500.
+    errors.SearchUsersForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchUsersForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2953,10 +2953,10 @@ Args:
     group_id (str):
 
 Raises:
-    errors.GetGroupUnauthorized: If the response status code is 401.
-    errors.GetGroupForbidden: If the response status code is 403.
-    errors.GetGroupNotFound: If the response status code is 404.
-    errors.GetGroupInternalServerError: If the response status code is 500.
+    errors.GetGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.GetGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -2982,11 +2982,11 @@ Args:
     client_id (str):
 
 Raises:
-    errors.UnassignClientFromGroupBadRequest: If the response status code is 400.
-    errors.UnassignClientFromGroupForbidden: If the response status code is 403.
-    errors.UnassignClientFromGroupNotFound: If the response status code is 404.
-    errors.UnassignClientFromGroupInternalServerError: If the response status code is 500.
-    errors.UnassignClientFromGroupServiceUnavailable: If the response status code is 503.
+    errors.UnassignClientFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignClientFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignClientFromGroupNotFound: If the response status code is 404. The group with the given ID was not found, or the client is not assigned to this group.
+    errors.UnassignClientFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignClientFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3010,11 +3010,11 @@ Args:
     body (UpdateGroupData):
 
 Raises:
-    errors.UpdateGroupBadRequest: If the response status code is 400.
-    errors.UpdateGroupUnauthorized: If the response status code is 401.
-    errors.UpdateGroupNotFound: If the response status code is 404.
-    errors.UpdateGroupInternalServerError: If the response status code is 500.
-    errors.UpdateGroupServiceUnavailable: If the response status code is 503.
+    errors.UpdateGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.UpdateGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3064,12 +3064,12 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.AssignMappingRuleToGroupBadRequest: If the response status code is 400.
-    errors.AssignMappingRuleToGroupForbidden: If the response status code is 403.
-    errors.AssignMappingRuleToGroupNotFound: If the response status code is 404.
-    errors.AssignMappingRuleToGroupConflict: If the response status code is 409.
-    errors.AssignMappingRuleToGroupInternalServerError: If the response status code is 500.
-    errors.AssignMappingRuleToGroupServiceUnavailable: If the response status code is 503.
+    errors.AssignMappingRuleToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignMappingRuleToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignMappingRuleToGroupNotFound: If the response status code is 404. The group or mapping rule with the given ID was not found.
+    errors.AssignMappingRuleToGroupConflict: If the response status code is 409. The mapping rule with the given ID is already assigned to the group.
+    errors.AssignMappingRuleToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignMappingRuleToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3093,11 +3093,11 @@ Args:
     body (SearchMappingRulesForGroupData | Unset):
 
 Raises:
-    errors.SearchMappingRulesForGroupBadRequest: If the response status code is 400.
-    errors.SearchMappingRulesForGroupUnauthorized: If the response status code is 401.
-    errors.SearchMappingRulesForGroupForbidden: If the response status code is 403.
-    errors.SearchMappingRulesForGroupNotFound: If the response status code is 404.
-    errors.SearchMappingRulesForGroupInternalServerError: If the response status code is 500.
+    errors.SearchMappingRulesForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMappingRulesForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMappingRulesForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMappingRulesForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchMappingRulesForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3147,10 +3147,10 @@ Args:
     group_id (str):
 
 Raises:
-    errors.DeleteGroupUnauthorized: If the response status code is 401.
-    errors.DeleteGroupNotFound: If the response status code is 404.
-    errors.DeleteGroupInternalServerError: If the response status code is 500.
-    errors.DeleteGroupServiceUnavailable: If the response status code is 503.
+    errors.DeleteGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.DeleteGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3175,12 +3175,12 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.AssignUserToGroupBadRequest: If the response status code is 400.
-    errors.AssignUserToGroupForbidden: If the response status code is 403.
-    errors.AssignUserToGroupNotFound: If the response status code is 404.
-    errors.AssignUserToGroupConflict: If the response status code is 409.
-    errors.AssignUserToGroupInternalServerError: If the response status code is 500.
-    errors.AssignUserToGroupServiceUnavailable: If the response status code is 503.
+    errors.AssignUserToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignUserToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignUserToGroupNotFound: If the response status code is 404. The group or user with the given ID or username was not found.
+    errors.AssignUserToGroupConflict: If the response status code is 409. The user with the given ID is already assigned to the group.
+    errors.AssignUserToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignUserToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3204,11 +3204,11 @@ Args:
     body (SearchClientsForGroupData | Unset):
 
 Raises:
-    errors.SearchClientsForGroupBadRequest: If the response status code is 400.
-    errors.SearchClientsForGroupUnauthorized: If the response status code is 401.
-    errors.SearchClientsForGroupForbidden: If the response status code is 403.
-    errors.SearchClientsForGroupNotFound: If the response status code is 404.
-    errors.SearchClientsForGroupInternalServerError: If the response status code is 500.
+    errors.SearchClientsForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchClientsForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchClientsForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchClientsForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchClientsForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3424,10 +3424,10 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.DeleteUserBadRequest: If the response status code is 400.
-    errors.DeleteUserNotFound: If the response status code is 404.
-    errors.DeleteUserInternalServerError: If the response status code is 500.
-    errors.DeleteUserServiceUnavailable: If the response status code is 503.
+    errors.DeleteUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteUserNotFound: If the response status code is 404. The user is not found.
+    errors.DeleteUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3450,10 +3450,10 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.GetUserUnauthorized: If the response status code is 401.
-    errors.GetUserForbidden: If the response status code is 403.
-    errors.GetUserNotFound: If the response status code is 404.
-    errors.GetUserInternalServerError: If the response status code is 500.
+    errors.GetUserUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserNotFound: If the response status code is 404. The user with the given username was not found.
+    errors.GetUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3477,11 +3477,11 @@ Args:
     body (UpdateUserData):
 
 Raises:
-    errors.UpdateUserBadRequest: If the response status code is 400.
-    errors.UpdateUserForbidden: If the response status code is 403.
-    errors.UpdateUserNotFound: If the response status code is 404.
-    errors.UpdateUserInternalServerError: If the response status code is 500.
-    errors.UpdateUserServiceUnavailable: If the response status code is 503.
+    errors.UpdateUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UpdateUserNotFound: If the response status code is 404. The user was not found.
+    errors.UpdateUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3509,8 +3509,8 @@ Args:
     content_hash (str | Unset):
 
 Raises:
-    errors.GetDocumentNotFound: If the response status code is 404.
-    errors.GetDocumentInternalServerError: If the response status code is 500.
+    errors.GetDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
+    errors.GetDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3584,7 +3584,7 @@ Args:
     body (CreateDocumentLinkData | Unset):
 
 Raises:
-    errors.CreateDocumentLinkBadRequest: If the response status code is 400.
+    errors.CreateDocumentLinkBadRequest: If the response status code is 400. The provided data is not valid.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3611,8 +3611,8 @@ Args:
     store_id (str | Unset):
 
 Raises:
-    errors.DeleteDocumentNotFound: If the response status code is 404.
-    errors.DeleteDocumentInternalServerError: If the response status code is 500.
+    errors.DeleteDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
+    errors.DeleteDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3665,10 +3665,10 @@ Args:
         22517998136843567.
 
 Raises:
-    errors.GetAuditLogUnauthorized: If the response status code is 401.
-    errors.GetAuditLogForbidden: If the response status code is 403.
-    errors.GetAuditLogNotFound: If the response status code is 404.
-    errors.GetAuditLogInternalServerError: If the response status code is 500.
+    errors.GetAuditLogUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuditLogForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuditLogNotFound: If the response status code is 404. The audit log with the given key was not found.
+    errors.GetAuditLogInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3758,11 +3758,11 @@ Args:
     body (SearchElementInstanceIncidentsData):
 
 Raises:
-    errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400.
-    errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401.
-    errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403.
-    errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404.
-    errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500.
+    errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404. The element instance with the given key was not found.
+    errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3786,11 +3786,11 @@ Args:
         2251799813686789.
 
 Raises:
-    errors.GetElementInstanceBadRequest: If the response status code is 400.
-    errors.GetElementInstanceUnauthorized: If the response status code is 401.
-    errors.GetElementInstanceForbidden: If the response status code is 403.
-    errors.GetElementInstanceNotFound: If the response status code is 404.
-    errors.GetElementInstanceInternalServerError: If the response status code is 500.
+    errors.GetElementInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetElementInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetElementInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetElementInstanceNotFound: If the response status code is 404. The element instance with the given key was not found. More details are provided in the response body.
+    errors.GetElementInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3817,9 +3817,9 @@ Args:
     body (CreateElementInstanceVariablesData):
 
 Raises:
-    errors.CreateElementInstanceVariablesBadRequest: If the response status code is 400.
-    errors.CreateElementInstanceVariablesInternalServerError: If the response status code is 500.
-    errors.CreateElementInstanceVariablesServiceUnavailable: If the response status code is 503.
+    errors.CreateElementInstanceVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateElementInstanceVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateElementInstanceVariablesServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3872,12 +3872,12 @@ Args:
     body (ActivateAdHocSubProcessActivitiesData):
 
 Raises:
-    errors.ActivateAdHocSubProcessActivitiesBadRequest: If the response status code is 400.
-    errors.ActivateAdHocSubProcessActivitiesUnauthorized: If the response status code is 401.
-    errors.ActivateAdHocSubProcessActivitiesForbidden: If the response status code is 403.
-    errors.ActivateAdHocSubProcessActivitiesNotFound: If the response status code is 404.
-    errors.ActivateAdHocSubProcessActivitiesInternalServerError: If the response status code is 500.
-    errors.ActivateAdHocSubProcessActivitiesServiceUnavailable: If the response status code is 503.
+    errors.ActivateAdHocSubProcessActivitiesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ActivateAdHocSubProcessActivitiesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ActivateAdHocSubProcessActivitiesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.ActivateAdHocSubProcessActivitiesNotFound: If the response status code is 404. The ad-hoc sub-process instance is not found or the provided key does not identify an ad-hoc sub-process.
+    errors.ActivateAdHocSubProcessActivitiesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ActivateAdHocSubProcessActivitiesServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3901,11 +3901,11 @@ Args:
     body (FailJobData | Unset):
 
 Raises:
-    errors.FailJobBadRequest: If the response status code is 400.
-    errors.FailJobNotFound: If the response status code is 404.
-    errors.FailJobConflict: If the response status code is 409.
-    errors.FailJobInternalServerError: If the response status code is 500.
-    errors.FailJobServiceUnavailable: If the response status code is 503.
+    errors.FailJobBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.FailJobNotFound: If the response status code is 404. The job with the given jobKey is not found. It was completed by another worker, or the process instance itself was canceled.
+    errors.FailJobConflict: If the response status code is 409. The job with the given key is in the wrong state (i.e: not ACTIVATED or ACTIVATABLE). The job was failed by another worker with retries = 0, and the process is now in an incident state.
+    errors.FailJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.FailJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -3981,11 +3981,11 @@ Args:
     body (ThrowJobErrorData):
 
 Raises:
-    errors.ThrowJobErrorBadRequest: If the response status code is 400.
-    errors.ThrowJobErrorNotFound: If the response status code is 404.
-    errors.ThrowJobErrorConflict: If the response status code is 409.
-    errors.ThrowJobErrorInternalServerError: If the response status code is 500.
-    errors.ThrowJobErrorServiceUnavailable: If the response status code is 503.
+    errors.ThrowJobErrorBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ThrowJobErrorNotFound: If the response status code is 404. The job with the given key was not found or is not activated.
+    errors.ThrowJobErrorConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.ThrowJobErrorInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ThrowJobErrorServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4009,11 +4009,11 @@ Args:
     body (CompleteJobData | Unset):
 
 Raises:
-    errors.CompleteJobBadRequest: If the response status code is 400.
-    errors.CompleteJobNotFound: If the response status code is 404.
-    errors.CompleteJobConflict: If the response status code is 409.
-    errors.CompleteJobInternalServerError: If the response status code is 500.
-    errors.CompleteJobServiceUnavailable: If the response status code is 503.
+    errors.CompleteJobBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CompleteJobNotFound: If the response status code is 404. The job with the given key was not found.
+    errors.CompleteJobConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.CompleteJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CompleteJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4037,11 +4037,11 @@ Args:
     body (UpdateJobData):
 
 Raises:
-    errors.UpdateJobBadRequest: If the response status code is 400.
-    errors.UpdateJobNotFound: If the response status code is 404.
-    errors.UpdateJobConflict: If the response status code is 409.
-    errors.UpdateJobInternalServerError: If the response status code is 500.
-    errors.UpdateJobServiceUnavailable: If the response status code is 503.
+    errors.UpdateJobBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateJobNotFound: If the response status code is 404. The job with the jobKey is not found.
+    errors.UpdateJobConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.UpdateJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4094,10 +4094,10 @@ Args:
     body (ResolveIncidentData | Unset):
 
 Raises:
-    errors.ResolveIncidentBadRequest: If the response status code is 400.
-    errors.ResolveIncidentNotFound: If the response status code is 404.
-    errors.ResolveIncidentInternalServerError: If the response status code is 500.
-    errors.ResolveIncidentServiceUnavailable: If the response status code is 503.
+    errors.ResolveIncidentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ResolveIncidentNotFound: If the response status code is 404. The incident with the incidentKey is not found.
+    errors.ResolveIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResolveIncidentServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4173,11 +4173,11 @@ Args:
     incident_key (str): System-generated key for a incident. Example: 2251799813689432.
 
 Raises:
-    errors.GetIncidentBadRequest: If the response status code is 400.
-    errors.GetIncidentUnauthorized: If the response status code is 401.
-    errors.GetIncidentForbidden: If the response status code is 403.
-    errors.GetIncidentNotFound: If the response status code is 404.
-    errors.GetIncidentInternalServerError: If the response status code is 500.
+    errors.GetIncidentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetIncidentUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetIncidentForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetIncidentNotFound: If the response status code is 404. The incident with the given key was not found.
+    errors.GetIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4201,11 +4201,11 @@ Args:
         2251799813326547.
 
 Raises:
-    errors.GetDecisionDefinitionBadRequest: If the response status code is 400.
-    errors.GetDecisionDefinitionUnauthorized: If the response status code is 401.
-    errors.GetDecisionDefinitionForbidden: If the response status code is 403.
-    errors.GetDecisionDefinitionNotFound: If the response status code is 404.
-    errors.GetDecisionDefinitionInternalServerError: If the response status code is 500.
+    errors.GetDecisionDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionDefinitionNotFound: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4284,11 +4284,11 @@ Args:
         2251799813326547.
 
 Raises:
-    errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400.
-    errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401.
-    errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403.
-    errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404.
-    errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500.
+    errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4338,11 +4338,11 @@ Args:
     user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.UnassignUserTaskBadRequest: If the response status code is 400.
-    errors.UnassignUserTaskNotFound: If the response status code is 404.
-    errors.UnassignUserTaskConflict: If the response status code is 409.
-    errors.UnassignUserTaskInternalServerError: If the response status code is 500.
-    errors.UnassignUserTaskServiceUnavailable: If the response status code is 503.
+    errors.UnassignUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.UnassignUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.UnassignUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4368,8 +4368,8 @@ Args:
     body (SearchUserTaskVariablesData | Unset): User task search query request.
 
 Raises:
-    errors.SearchUserTaskVariablesBadRequest: If the response status code is 400.
-    errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500.
+    errors.SearchUserTaskVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4393,11 +4393,11 @@ Args:
     body (AssignUserTaskData):
 
 Raises:
-    errors.AssignUserTaskBadRequest: If the response status code is 400.
-    errors.AssignUserTaskNotFound: If the response status code is 404.
-    errors.AssignUserTaskConflict: If the response status code is 409.
-    errors.AssignUserTaskInternalServerError: If the response status code is 500.
-    errors.AssignUserTaskServiceUnavailable: If the response status code is 503.
+    errors.AssignUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.AssignUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.AssignUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4421,11 +4421,11 @@ Args:
     body (UpdateUserTaskData | Unset):
 
 Raises:
-    errors.UpdateUserTaskBadRequest: If the response status code is 400.
-    errors.UpdateUserTaskNotFound: If the response status code is 404.
-    errors.UpdateUserTaskConflict: If the response status code is 409.
-    errors.UpdateUserTaskInternalServerError: If the response status code is 500.
-    errors.UpdateUserTaskServiceUnavailable: If the response status code is 503.
+    errors.UpdateUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.UpdateUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.UpdateUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4450,11 +4450,11 @@ Args:
     user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.GetUserTaskFormBadRequest: If the response status code is 400.
-    errors.GetUserTaskFormUnauthorized: If the response status code is 401.
-    errors.GetUserTaskFormForbidden: If the response status code is 403.
-    errors.GetUserTaskFormNotFound: If the response status code is 404.
-    errors.GetUserTaskFormInternalServerError: If the response status code is 500.
+    errors.GetUserTaskFormBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUserTaskFormUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserTaskFormForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserTaskFormNotFound: If the response status code is 404. Not found
+    errors.GetUserTaskFormInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4477,11 +4477,11 @@ Args:
     user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.GetUserTaskBadRequest: If the response status code is 400.
-    errors.GetUserTaskUnauthorized: If the response status code is 401.
-    errors.GetUserTaskForbidden: If the response status code is 403.
-    errors.GetUserTaskNotFound: If the response status code is 404.
-    errors.GetUserTaskInternalServerError: If the response status code is 500.
+    errors.GetUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUserTaskUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserTaskForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.GetUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4505,8 +4505,8 @@ Args:
     body (SearchUserTaskAuditLogsData | Unset): User task search query request.
 
 Raises:
-    errors.SearchUserTaskAuditLogsBadRequest: If the response status code is 400.
-    errors.SearchUserTaskAuditLogsInternalServerError: If the response status code is 500.
+    errors.SearchUserTaskAuditLogsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUserTaskAuditLogsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4556,11 +4556,11 @@ Args:
     body (CompleteUserTaskData | Unset):
 
 Raises:
-    errors.CompleteUserTaskBadRequest: If the response status code is 400.
-    errors.CompleteUserTaskNotFound: If the response status code is 404.
-    errors.CompleteUserTaskConflict: If the response status code is 409.
-    errors.CompleteUserTaskInternalServerError: If the response status code is 500.
-    errors.CompleteUserTaskServiceUnavailable: If the response status code is 503.
+    errors.CompleteUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CompleteUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.CompleteUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.CompleteUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CompleteUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4587,10 +4587,10 @@ Args:
     body (DeleteResourceDataType0 | None | Unset):
 
 Raises:
-    errors.DeleteResourceBadRequest: If the response status code is 400.
-    errors.DeleteResourceNotFound: If the response status code is 404.
-    errors.DeleteResourceInternalServerError: If the response status code is 500.
-    errors.DeleteResourceServiceUnavailable: If the response status code is 503.
+    errors.DeleteResourceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteResourceNotFound: If the response status code is 404. The resource is not found.
+    errors.DeleteResourceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteResourceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4616,8 +4616,8 @@ Args:
     resource_key (str): The system-assigned key for this resource.
 
 Raises:
-    errors.GetResourceContentNotFound: If the response status code is 404.
-    errors.GetResourceContentInternalServerError: If the response status code is 500.
+    errors.GetResourceContentNotFound: If the response status code is 404. A resource with the given key was not found.
+    errors.GetResourceContentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4668,8 +4668,8 @@ Args:
     resource_key (str): The system-assigned key for this resource.
 
 Raises:
-    errors.GetResourceNotFound: If the response status code is 404.
-    errors.GetResourceInternalServerError: If the response status code is 500.
+    errors.GetResourceNotFound: If the response status code is 404. A resource with the given key was not found.
+    errors.GetResourceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4695,10 +4695,10 @@ Args:
         Either an id-based or a property-based authorization can be provided.
 
 Raises:
-    errors.UpdateAuthorizationUnauthorized: If the response status code is 401.
-    errors.UpdateAuthorizationNotFound: If the response status code is 404.
-    errors.UpdateAuthorizationInternalServerError: If the response status code is 500.
-    errors.UpdateAuthorizationServiceUnavailable: If the response status code is 503.
+    errors.UpdateAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateAuthorizationNotFound: If the response status code is 404. The authorization with the authorizationKey was not found.
+    errors.UpdateAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateAuthorizationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4777,10 +4777,10 @@ Args:
         2251799813684332.
 
 Raises:
-    errors.GetAuthorizationUnauthorized: If the response status code is 401.
-    errors.GetAuthorizationForbidden: If the response status code is 403.
-    errors.GetAuthorizationNotFound: If the response status code is 404.
-    errors.GetAuthorizationInternalServerError: If the response status code is 500.
+    errors.GetAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuthorizationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuthorizationNotFound: If the response status code is 404. The authorization with the given key was not found.
+    errors.GetAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4804,10 +4804,10 @@ Args:
         2251799813684332.
 
 Raises:
-    errors.DeleteAuthorizationUnauthorized: If the response status code is 401.
-    errors.DeleteAuthorizationNotFound: If the response status code is 404.
-    errors.DeleteAuthorizationInternalServerError: If the response status code is 500.
-    errors.DeleteAuthorizationServiceUnavailable: If the response status code is 503.
+    errors.DeleteAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteAuthorizationNotFound: If the response status code is 404. The authorization with the authorizationKey was not found.
+    errors.DeleteAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteAuthorizationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4831,11 +4831,11 @@ Args:
         definition. Example: 2251799813683346.
 
 Raises:
-    errors.GetDecisionRequirementsXmlBadRequest: If the response status code is 400.
-    errors.GetDecisionRequirementsXmlUnauthorized: If the response status code is 401.
-    errors.GetDecisionRequirementsXmlForbidden: If the response status code is 403.
-    errors.GetDecisionRequirementsXmlNotFound: If the response status code is 404.
-    errors.GetDecisionRequirementsXmlInternalServerError: If the response status code is 500.
+    errors.GetDecisionRequirementsXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionRequirementsXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionRequirementsXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionRequirementsXmlNotFound: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionRequirementsXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4885,11 +4885,11 @@ Args:
         definition. Example: 2251799813683346.
 
 Raises:
-    errors.GetDecisionRequirementsBadRequest: If the response status code is 400.
-    errors.GetDecisionRequirementsUnauthorized: If the response status code is 401.
-    errors.GetDecisionRequirementsForbidden: If the response status code is 403.
-    errors.GetDecisionRequirementsNotFound: If the response status code is 404.
-    errors.GetDecisionRequirementsInternalServerError: If the response status code is 500.
+    errors.GetDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionRequirementsNotFound: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4961,11 +4961,11 @@ Args:
     body (UpdateMappingRuleData | Unset):
 
 Raises:
-    errors.UpdateMappingRuleBadRequest: If the response status code is 400.
-    errors.UpdateMappingRuleForbidden: If the response status code is 403.
-    errors.UpdateMappingRuleNotFound: If the response status code is 404.
-    errors.UpdateMappingRuleInternalServerError: If the response status code is 500.
-    errors.UpdateMappingRuleServiceUnavailable: If the response status code is 503.
+    errors.UpdateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateMappingRuleForbidden: If the response status code is 403. The request to update a mapping rule was denied. More details are provided in the response body.
+    errors.UpdateMappingRuleNotFound: If the response status code is 404. The request to update a mapping rule was denied.
+    errors.UpdateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -4988,10 +4988,10 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.DeleteMappingRuleUnauthorized: If the response status code is 401.
-    errors.DeleteMappingRuleNotFound: If the response status code is 404.
-    errors.DeleteMappingRuleInternalServerError: If the response status code is 500.
-    errors.DeleteMappingRuleServiceUnavailable: If the response status code is 503.
+    errors.DeleteMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+    errors.DeleteMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5066,9 +5066,9 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.GetMappingRuleUnauthorized: If the response status code is 401.
-    errors.GetMappingRuleNotFound: If the response status code is 404.
-    errors.GetMappingRuleInternalServerError: If the response status code is 500.
+    errors.GetMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+    errors.GetMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5092,10 +5092,10 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.GetProcessInstanceSequenceFlowsBadRequest: If the response status code is 400.
-    errors.GetProcessInstanceSequenceFlowsUnauthorized: If the response status code is 401.
-    errors.GetProcessInstanceSequenceFlowsForbidden: If the response status code is 403.
-    errors.GetProcessInstanceSequenceFlowsInternalServerError: If the response status code is 500.
+    errors.GetProcessInstanceSequenceFlowsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceSequenceFlowsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceSequenceFlowsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceSequenceFlowsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5120,11 +5120,11 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.GetProcessInstanceCallHierarchyBadRequest: If the response status code is 400.
-    errors.GetProcessInstanceCallHierarchyUnauthorized: If the response status code is 401.
-    errors.GetProcessInstanceCallHierarchyForbidden: If the response status code is 403.
-    errors.GetProcessInstanceCallHierarchyNotFound: If the response status code is 404.
-    errors.GetProcessInstanceCallHierarchyInternalServerError: If the response status code is 500.
+    errors.GetProcessInstanceCallHierarchyBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceCallHierarchyUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceCallHierarchyForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceCallHierarchyNotFound: If the response status code is 404. The process instance is not found.
+    errors.GetProcessInstanceCallHierarchyInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5154,10 +5154,10 @@ Args:
     body (ModifyProcessInstanceData):
 
 Raises:
-    errors.ModifyProcessInstanceBadRequest: If the response status code is 400.
-    errors.ModifyProcessInstanceNotFound: If the response status code is 404.
-    errors.ModifyProcessInstanceInternalServerError: If the response status code is 500.
-    errors.ModifyProcessInstanceServiceUnavailable: If the response status code is 503.
+    errors.ModifyProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ModifyProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.ModifyProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ModifyProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5181,10 +5181,10 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.GetProcessInstanceStatisticsBadRequest: If the response status code is 400.
-    errors.GetProcessInstanceStatisticsUnauthorized: If the response status code is 401.
-    errors.GetProcessInstanceStatisticsForbidden: If the response status code is 403.
-    errors.GetProcessInstanceStatisticsInternalServerError: If the response status code is 500.
+    errors.GetProcessInstanceStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5238,11 +5238,11 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.GetProcessInstanceBadRequest: If the response status code is 400.
-    errors.GetProcessInstanceUnauthorized: If the response status code is 401.
-    errors.GetProcessInstanceForbidden: If the response status code is 403.
-    errors.GetProcessInstanceNotFound: If the response status code is 404.
-    errors.GetProcessInstanceInternalServerError: If the response status code is 500.
+    errors.GetProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceNotFound: If the response status code is 404. The process instance with the given key was not found.
+    errors.GetProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5333,12 +5333,12 @@ Args:
     body (DeleteProcessInstanceDataType0 | None | Unset):
 
 Raises:
-    errors.DeleteProcessInstanceUnauthorized: If the response status code is 401.
-    errors.DeleteProcessInstanceForbidden: If the response status code is 403.
-    errors.DeleteProcessInstanceNotFound: If the response status code is 404.
-    errors.DeleteProcessInstanceConflict: If the response status code is 409.
-    errors.DeleteProcessInstanceInternalServerError: If the response status code is 500.
-    errors.DeleteProcessInstanceServiceUnavailable: If the response status code is 503.
+    errors.DeleteProcessInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteProcessInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.DeleteProcessInstanceConflict: If the response status code is 409. The process instance is not in a completed or terminated state and cannot be deleted.
+    errors.DeleteProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5458,10 +5458,10 @@ Args:
     body (CancelProcessInstanceDataType0 | None | Unset):
 
 Raises:
-    errors.CancelProcessInstanceBadRequest: If the response status code is 400.
-    errors.CancelProcessInstanceNotFound: If the response status code is 404.
-    errors.CancelProcessInstanceInternalServerError: If the response status code is 500.
-    errors.CancelProcessInstanceServiceUnavailable: If the response status code is 503.
+    errors.CancelProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CancelProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.CancelProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CancelProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5495,11 +5495,11 @@ Args:
     body (SearchProcessInstanceIncidentsData | Unset):
 
 Raises:
-    errors.SearchProcessInstanceIncidentsBadRequest: If the response status code is 400.
-    errors.SearchProcessInstanceIncidentsUnauthorized: If the response status code is 401.
-    errors.SearchProcessInstanceIncidentsForbidden: If the response status code is 403.
-    errors.SearchProcessInstanceIncidentsNotFound: If the response status code is 404.
-    errors.SearchProcessInstanceIncidentsInternalServerError: If the response status code is 500.
+    errors.SearchProcessInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchProcessInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchProcessInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchProcessInstanceIncidentsNotFound: If the response status code is 404. The process instance with the given key was not found.
+    errors.SearchProcessInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5531,11 +5531,11 @@ Args:
         process instance from one process definition to another.
 
 Raises:
-    errors.MigrateProcessInstanceBadRequest: If the response status code is 400.
-    errors.MigrateProcessInstanceNotFound: If the response status code is 404.
-    errors.MigrateProcessInstanceConflict: If the response status code is 409.
-    errors.MigrateProcessInstanceInternalServerError: If the response status code is 500.
-    errors.MigrateProcessInstanceServiceUnavailable: If the response status code is 503.
+    errors.MigrateProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.MigrateProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.MigrateProcessInstanceConflict: If the response status code is 409. The process instance migration failed. More details are provided in the response body.
+    errors.MigrateProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.MigrateProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5585,11 +5585,11 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.ResolveProcessInstanceIncidentsBadRequest: If the response status code is 400.
-    errors.ResolveProcessInstanceIncidentsUnauthorized: If the response status code is 401.
-    errors.ResolveProcessInstanceIncidentsNotFound: If the response status code is 404.
-    errors.ResolveProcessInstanceIncidentsInternalServerError: If the response status code is 500.
-    errors.ResolveProcessInstanceIncidentsServiceUnavailable: If the response status code is 503.
+    errors.ResolveProcessInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ResolveProcessInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ResolveProcessInstanceIncidentsNotFound: If the response status code is 404. The process instance is not found.
+    errors.ResolveProcessInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResolveProcessInstanceIncidentsServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5672,10 +5672,10 @@ Args:
     body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
 
 Raises:
-    errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest: If the response status code is 400.
-    errors.GetProcessDefinitionInstanceVersionStatisticsUnauthorized: If the response status code is 401.
-    errors.GetProcessDefinitionInstanceVersionStatisticsForbidden: If the response status code is 403.
-    errors.GetProcessDefinitionInstanceVersionStatisticsInternalServerError: If the response status code is 500.
+    errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionInstanceVersionStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionInstanceVersionStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionInstanceVersionStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5779,11 +5779,11 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.GetStartProcessFormBadRequest: If the response status code is 400.
-    errors.GetStartProcessFormUnauthorized: If the response status code is 401.
-    errors.GetStartProcessFormForbidden: If the response status code is 403.
-    errors.GetStartProcessFormNotFound: If the response status code is 404.
-    errors.GetStartProcessFormInternalServerError: If the response status code is 500.
+    errors.GetStartProcessFormBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetStartProcessFormUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetStartProcessFormForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetStartProcessFormNotFound: If the response status code is 404. Not found
+    errors.GetStartProcessFormInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5807,11 +5807,11 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.GetProcessDefinitionXmlBadRequest: If the response status code is 400.
-    errors.GetProcessDefinitionXmlUnauthorized: If the response status code is 401.
-    errors.GetProcessDefinitionXmlForbidden: If the response status code is 403.
-    errors.GetProcessDefinitionXmlNotFound: If the response status code is 404.
-    errors.GetProcessDefinitionXmlInternalServerError: If the response status code is 500.
+    errors.GetProcessDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionXmlNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+    errors.GetProcessDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5835,11 +5835,11 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.GetProcessDefinitionBadRequest: If the response status code is 400.
-    errors.GetProcessDefinitionUnauthorized: If the response status code is 401.
-    errors.GetProcessDefinitionForbidden: If the response status code is 403.
-    errors.GetProcessDefinitionNotFound: If the response status code is 404.
-    errors.GetProcessDefinitionInternalServerError: If the response status code is 500.
+    errors.GetProcessDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+    errors.GetProcessDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5866,10 +5866,10 @@ Args:
         request.
 
 Raises:
-    errors.GetProcessDefinitionStatisticsBadRequest: If the response status code is 400.
-    errors.GetProcessDefinitionStatisticsUnauthorized: If the response status code is 401.
-    errors.GetProcessDefinitionStatisticsForbidden: If the response status code is 403.
-    errors.GetProcessDefinitionStatisticsInternalServerError: If the response status code is 500.
+    errors.GetProcessDefinitionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5944,11 +5944,11 @@ Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
 
 Raises:
-    errors.DeleteTenantBadRequest: If the response status code is 400.
-    errors.DeleteTenantForbidden: If the response status code is 403.
-    errors.DeleteTenantNotFound: If the response status code is 404.
-    errors.DeleteTenantInternalServerError: If the response status code is 500.
-    errors.DeleteTenantServiceUnavailable: If the response status code is 503.
+    errors.DeleteTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteTenantNotFound: If the response status code is 404. Not found. The tenant was not found.
+    errors.DeleteTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -5973,11 +5973,11 @@ Args:
     group_id (str):
 
 Raises:
-    errors.AssignGroupToTenantBadRequest: If the response status code is 400.
-    errors.AssignGroupToTenantForbidden: If the response status code is 403.
-    errors.AssignGroupToTenantNotFound: If the response status code is 404.
-    errors.AssignGroupToTenantInternalServerError: If the response status code is 500.
-    errors.AssignGroupToTenantServiceUnavailable: If the response status code is 503.
+    errors.AssignGroupToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignGroupToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignGroupToTenantNotFound: If the response status code is 404. Not found. The tenant or group was not found.
+    errors.AssignGroupToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignGroupToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6003,11 +6003,11 @@ Args:
     role_id (str):
 
 Raises:
-    errors.UnassignRoleFromTenantBadRequest: If the response status code is 400.
-    errors.UnassignRoleFromTenantForbidden: If the response status code is 403.
-    errors.UnassignRoleFromTenantNotFound: If the response status code is 404.
-    errors.UnassignRoleFromTenantInternalServerError: If the response status code is 500.
-    errors.UnassignRoleFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnassignRoleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromTenantNotFound: If the response status code is 404. Not found. The tenant or role was not found.
+    errors.UnassignRoleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6078,11 +6078,11 @@ Args:
     client_id (str):
 
 Raises:
-    errors.UnassignClientFromTenantBadRequest: If the response status code is 400.
-    errors.UnassignClientFromTenantForbidden: If the response status code is 403.
-    errors.UnassignClientFromTenantNotFound: If the response status code is 404.
-    errors.UnassignClientFromTenantInternalServerError: If the response status code is 500.
-    errors.UnassignClientFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnassignClientFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignClientFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignClientFromTenantNotFound: If the response status code is 404. The tenant does not exist or the client was not assigned to it.
+    errors.UnassignClientFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignClientFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6107,11 +6107,11 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnassignUserFromTenantBadRequest: If the response status code is 400.
-    errors.UnassignUserFromTenantForbidden: If the response status code is 403.
-    errors.UnassignUserFromTenantNotFound: If the response status code is 404.
-    errors.UnassignUserFromTenantInternalServerError: If the response status code is 500.
-    errors.UnassignUserFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnassignUserFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignUserFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignUserFromTenantNotFound: If the response status code is 404. Not found. The tenant or user was not found.
+    errors.UnassignUserFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignUserFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6160,11 +6160,11 @@ Args:
     group_id (str):
 
 Raises:
-    errors.UnassignGroupFromTenantBadRequest: If the response status code is 400.
-    errors.UnassignGroupFromTenantForbidden: If the response status code is 403.
-    errors.UnassignGroupFromTenantNotFound: If the response status code is 404.
-    errors.UnassignGroupFromTenantInternalServerError: If the response status code is 500.
-    errors.UnassignGroupFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnassignGroupFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignGroupFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignGroupFromTenantNotFound: If the response status code is 404. Not found. The tenant or group was not found.
+    errors.UnassignGroupFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignGroupFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6239,11 +6239,11 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.AssignUserToTenantBadRequest: If the response status code is 400.
-    errors.AssignUserToTenantForbidden: If the response status code is 403.
-    errors.AssignUserToTenantNotFound: If the response status code is 404.
-    errors.AssignUserToTenantInternalServerError: If the response status code is 500.
-    errors.AssignUserToTenantServiceUnavailable: If the response status code is 503.
+    errors.AssignUserToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignUserToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignUserToTenantNotFound: If the response status code is 404. Not found. The tenant or user was not found.
+    errors.AssignUserToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignUserToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6269,11 +6269,11 @@ Args:
     role_id (str):
 
 Raises:
-    errors.AssignRoleToTenantBadRequest: If the response status code is 400.
-    errors.AssignRoleToTenantForbidden: If the response status code is 403.
-    errors.AssignRoleToTenantNotFound: If the response status code is 404.
-    errors.AssignRoleToTenantInternalServerError: If the response status code is 500.
-    errors.AssignRoleToTenantServiceUnavailable: If the response status code is 503.
+    errors.AssignRoleToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToTenantNotFound: If the response status code is 404. Not found. The tenant or role was not found.
+    errors.AssignRoleToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6320,11 +6320,11 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.AssignMappingRuleToTenantBadRequest: If the response status code is 400.
-    errors.AssignMappingRuleToTenantForbidden: If the response status code is 403.
-    errors.AssignMappingRuleToTenantNotFound: If the response status code is 404.
-    errors.AssignMappingRuleToTenantInternalServerError: If the response status code is 500.
-    errors.AssignMappingRuleToTenantServiceUnavailable: If the response status code is 503.
+    errors.AssignMappingRuleToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignMappingRuleToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignMappingRuleToTenantNotFound: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+    errors.AssignMappingRuleToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignMappingRuleToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6348,11 +6348,11 @@ Args:
     body (UpdateTenantData):
 
 Raises:
-    errors.UpdateTenantBadRequest: If the response status code is 400.
-    errors.UpdateTenantForbidden: If the response status code is 403.
-    errors.UpdateTenantNotFound: If the response status code is 404.
-    errors.UpdateTenantInternalServerError: If the response status code is 500.
-    errors.UpdateTenantServiceUnavailable: If the response status code is 503.
+    errors.UpdateTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UpdateTenantNotFound: If the response status code is 404. Not found. The tenant was not found.
+    errors.UpdateTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6377,11 +6377,11 @@ Args:
     client_id (str):
 
 Raises:
-    errors.AssignClientToTenantBadRequest: If the response status code is 400.
-    errors.AssignClientToTenantForbidden: If the response status code is 403.
-    errors.AssignClientToTenantNotFound: If the response status code is 404.
-    errors.AssignClientToTenantInternalServerError: If the response status code is 500.
-    errors.AssignClientToTenantServiceUnavailable: If the response status code is 503.
+    errors.AssignClientToTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignClientToTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignClientToTenantNotFound: If the response status code is 404. The tenant was not found.
+    errors.AssignClientToTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignClientToTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6404,11 +6404,11 @@ Args:
     tenant_id (str): The unique identifier of the tenant. Example: customer-service.
 
 Raises:
-    errors.GetTenantBadRequest: If the response status code is 400.
-    errors.GetTenantUnauthorized: If the response status code is 401.
-    errors.GetTenantForbidden: If the response status code is 403.
-    errors.GetTenantNotFound: If the response status code is 404.
-    errors.GetTenantInternalServerError: If the response status code is 500.
+    errors.GetTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetTenantUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetTenantNotFound: If the response status code is 404. Tenant not found.
+    errors.GetTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6460,11 +6460,11 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnassignMappingRuleFromTenantBadRequest: If the response status code is 400.
-    errors.UnassignMappingRuleFromTenantForbidden: If the response status code is 403.
-    errors.UnassignMappingRuleFromTenantNotFound: If the response status code is 404.
-    errors.UnassignMappingRuleFromTenantInternalServerError: If the response status code is 500.
-    errors.UnassignMappingRuleFromTenantServiceUnavailable: If the response status code is 503.
+    errors.UnassignMappingRuleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignMappingRuleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignMappingRuleFromTenantNotFound: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+    errors.UnassignMappingRuleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignMappingRuleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6491,10 +6491,10 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.CancelBatchOperationBadRequest: If the response status code is 400.
-    errors.CancelBatchOperationForbidden: If the response status code is 403.
-    errors.CancelBatchOperationNotFound: If the response status code is 404.
-    errors.CancelBatchOperationInternalServerError: If the response status code is 500.
+    errors.CancelBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CancelBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CancelBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.CancelBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6521,11 +6521,11 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.ResumeBatchOperationBadRequest: If the response status code is 400.
-    errors.ResumeBatchOperationForbidden: If the response status code is 403.
-    errors.ResumeBatchOperationNotFound: If the response status code is 404.
-    errors.ResumeBatchOperationInternalServerError: If the response status code is 500.
-    errors.ResumeBatchOperationServiceUnavailable: If the response status code is 503.
+    errors.ResumeBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ResumeBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.ResumeBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.ResumeBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResumeBatchOperationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6552,11 +6552,11 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.SuspendBatchOperationBadRequest: If the response status code is 400.
-    errors.SuspendBatchOperationForbidden: If the response status code is 403.
-    errors.SuspendBatchOperationNotFound: If the response status code is 404.
-    errors.SuspendBatchOperationInternalServerError: If the response status code is 500.
-    errors.SuspendBatchOperationServiceUnavailable: If the response status code is 503.
+    errors.SuspendBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SuspendBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SuspendBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.SuspendBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.SuspendBatchOperationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6604,9 +6604,9 @@ Args:
         2251799813684321.
 
 Raises:
-    errors.GetBatchOperationBadRequest: If the response status code is 400.
-    errors.GetBatchOperationNotFound: If the response status code is 404.
-    errors.GetBatchOperationInternalServerError: If the response status code is 500.
+    errors.GetBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetBatchOperationNotFound: If the response status code is 404. The batch operation is not found.
+    errors.GetBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6676,11 +6676,11 @@ Args:
     group_id (str):
 
 Raises:
-    errors.UnassignRoleFromGroupBadRequest: If the response status code is 400.
-    errors.UnassignRoleFromGroupForbidden: If the response status code is 403.
-    errors.UnassignRoleFromGroupNotFound: If the response status code is 404.
-    errors.UnassignRoleFromGroupInternalServerError: If the response status code is 500.
-    errors.UnassignRoleFromGroupServiceUnavailable: If the response status code is 503.
+    errors.UnassignRoleFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromGroupNotFound: If the response status code is 404. The role or group with the given ID was not found.
+    errors.UnassignRoleFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6704,11 +6704,11 @@ Args:
     body (SearchUsersForRoleData | Unset):
 
 Raises:
-    errors.SearchUsersForRoleBadRequest: If the response status code is 400.
-    errors.SearchUsersForRoleUnauthorized: If the response status code is 401.
-    errors.SearchUsersForRoleForbidden: If the response status code is 403.
-    errors.SearchUsersForRoleNotFound: If the response status code is 404.
-    errors.SearchUsersForRoleInternalServerError: If the response status code is 500.
+    errors.SearchUsersForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchUsersForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6732,11 +6732,11 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnassignRoleFromMappingRuleBadRequest: If the response status code is 400.
-    errors.UnassignRoleFromMappingRuleForbidden: If the response status code is 403.
-    errors.UnassignRoleFromMappingRuleNotFound: If the response status code is 404.
-    errors.UnassignRoleFromMappingRuleInternalServerError: If the response status code is 500.
-    errors.UnassignRoleFromMappingRuleServiceUnavailable: If the response status code is 503.
+    errors.UnassignRoleFromMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromMappingRuleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromMappingRuleNotFound: If the response status code is 404. The role or mapping rule with the given ID was not found.
+    errors.UnassignRoleFromMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6787,11 +6787,11 @@ Args:
     client_id (str):
 
 Raises:
-    errors.UnassignRoleFromClientBadRequest: If the response status code is 400.
-    errors.UnassignRoleFromClientForbidden: If the response status code is 403.
-    errors.UnassignRoleFromClientNotFound: If the response status code is 404.
-    errors.UnassignRoleFromClientInternalServerError: If the response status code is 500.
-    errors.UnassignRoleFromClientServiceUnavailable: If the response status code is 503.
+    errors.UnassignRoleFromClientBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromClientForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromClientNotFound: If the response status code is 404. The role or client with the given ID or username was not found.
+    errors.UnassignRoleFromClientInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromClientServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6816,11 +6816,11 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnassignRoleFromUserBadRequest: If the response status code is 400.
-    errors.UnassignRoleFromUserForbidden: If the response status code is 403.
-    errors.UnassignRoleFromUserNotFound: If the response status code is 404.
-    errors.UnassignRoleFromUserInternalServerError: If the response status code is 500.
-    errors.UnassignRoleFromUserServiceUnavailable: If the response status code is 503.
+    errors.UnassignRoleFromUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignRoleFromUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignRoleFromUserNotFound: If the response status code is 404. The role or user with the given ID or username was not found.
+    errors.UnassignRoleFromUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignRoleFromUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6871,11 +6871,11 @@ Args:
     body (SearchClientsForRoleData | Unset):
 
 Raises:
-    errors.SearchClientsForRoleBadRequest: If the response status code is 400.
-    errors.SearchClientsForRoleUnauthorized: If the response status code is 401.
-    errors.SearchClientsForRoleForbidden: If the response status code is 403.
-    errors.SearchClientsForRoleNotFound: If the response status code is 404.
-    errors.SearchClientsForRoleInternalServerError: If the response status code is 500.
+    errors.SearchClientsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchClientsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchClientsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchClientsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchClientsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6900,12 +6900,12 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.AssignRoleToUserBadRequest: If the response status code is 400.
-    errors.AssignRoleToUserForbidden: If the response status code is 403.
-    errors.AssignRoleToUserNotFound: If the response status code is 404.
-    errors.AssignRoleToUserConflict: If the response status code is 409.
-    errors.AssignRoleToUserInternalServerError: If the response status code is 500.
-    errors.AssignRoleToUserServiceUnavailable: If the response status code is 503.
+    errors.AssignRoleToUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToUserNotFound: If the response status code is 404. The role or user with the given ID or username was not found.
+    errors.AssignRoleToUserConflict: If the response status code is 409. The role is already assigned to the user with the given ID.
+    errors.AssignRoleToUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6929,11 +6929,11 @@ Args:
     body (SearchGroupsForRoleData | Unset):
 
 Raises:
-    errors.SearchGroupsForRoleBadRequest: If the response status code is 400.
-    errors.SearchGroupsForRoleUnauthorized: If the response status code is 401.
-    errors.SearchGroupsForRoleForbidden: If the response status code is 403.
-    errors.SearchGroupsForRoleNotFound: If the response status code is 404.
-    errors.SearchGroupsForRoleInternalServerError: If the response status code is 500.
+    errors.SearchGroupsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchGroupsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchGroupsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchGroupsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchGroupsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6957,11 +6957,11 @@ Args:
     body (UpdateRoleData):
 
 Raises:
-    errors.UpdateRoleBadRequest: If the response status code is 400.
-    errors.UpdateRoleUnauthorized: If the response status code is 401.
-    errors.UpdateRoleNotFound: If the response status code is 404.
-    errors.UpdateRoleInternalServerError: If the response status code is 500.
-    errors.UpdateRoleServiceUnavailable: If the response status code is 503.
+    errors.UpdateRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateRoleNotFound: If the response status code is 404. The role with the ID is not found.
+    errors.UpdateRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateRoleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -6986,12 +6986,12 @@ Args:
     group_id (str):
 
 Raises:
-    errors.AssignRoleToGroupBadRequest: If the response status code is 400.
-    errors.AssignRoleToGroupForbidden: If the response status code is 403.
-    errors.AssignRoleToGroupNotFound: If the response status code is 404.
-    errors.AssignRoleToGroupConflict: If the response status code is 409.
-    errors.AssignRoleToGroupInternalServerError: If the response status code is 500.
-    errors.AssignRoleToGroupServiceUnavailable: If the response status code is 503.
+    errors.AssignRoleToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToGroupNotFound: If the response status code is 404. The role or group with the given ID was not found.
+    errors.AssignRoleToGroupConflict: If the response status code is 409. The role is already assigned to the group with the given ID.
+    errors.AssignRoleToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7015,11 +7015,11 @@ Args:
     body (SearchMappingRulesForRoleData | Unset):
 
 Raises:
-    errors.SearchMappingRulesForRoleBadRequest: If the response status code is 400.
-    errors.SearchMappingRulesForRoleUnauthorized: If the response status code is 401.
-    errors.SearchMappingRulesForRoleForbidden: If the response status code is 403.
-    errors.SearchMappingRulesForRoleNotFound: If the response status code is 404.
-    errors.SearchMappingRulesForRoleInternalServerError: If the response status code is 500.
+    errors.SearchMappingRulesForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMappingRulesForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMappingRulesForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMappingRulesForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchMappingRulesForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7044,12 +7044,12 @@ Args:
     client_id (str):
 
 Raises:
-    errors.AssignRoleToClientBadRequest: If the response status code is 400.
-    errors.AssignRoleToClientForbidden: If the response status code is 403.
-    errors.AssignRoleToClientNotFound: If the response status code is 404.
-    errors.AssignRoleToClientConflict: If the response status code is 409.
-    errors.AssignRoleToClientInternalServerError: If the response status code is 500.
-    errors.AssignRoleToClientServiceUnavailable: If the response status code is 503.
+    errors.AssignRoleToClientBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToClientForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToClientNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.AssignRoleToClientConflict: If the response status code is 409. The role was already assigned to the client with the given ID.
+    errors.AssignRoleToClientInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToClientServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7072,10 +7072,10 @@ Args:
     role_id (str):
 
 Raises:
-    errors.DeleteRoleUnauthorized: If the response status code is 401.
-    errors.DeleteRoleNotFound: If the response status code is 404.
-    errors.DeleteRoleInternalServerError: If the response status code is 500.
-    errors.DeleteRoleServiceUnavailable: If the response status code is 503.
+    errors.DeleteRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteRoleNotFound: If the response status code is 404. The role with the ID was not found.
+    errors.DeleteRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteRoleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7099,12 +7099,12 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.AssignRoleToMappingRuleBadRequest: If the response status code is 400.
-    errors.AssignRoleToMappingRuleForbidden: If the response status code is 403.
-    errors.AssignRoleToMappingRuleNotFound: If the response status code is 404.
-    errors.AssignRoleToMappingRuleConflict: If the response status code is 409.
-    errors.AssignRoleToMappingRuleInternalServerError: If the response status code is 500.
-    errors.AssignRoleToMappingRuleServiceUnavailable: If the response status code is 503.
+    errors.AssignRoleToMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToMappingRuleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToMappingRuleNotFound: If the response status code is 404. The role or mapping rule with the given ID was not found.
+    errors.AssignRoleToMappingRuleConflict: If the response status code is 409. The role is already assigned to the mapping rule with the given ID.
+    errors.AssignRoleToMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7127,10 +7127,10 @@ Args:
     role_id (str):
 
 Raises:
-    errors.GetRoleUnauthorized: If the response status code is 401.
-    errors.GetRoleForbidden: If the response status code is 403.
-    errors.GetRoleNotFound: If the response status code is 404.
-    errors.GetRoleInternalServerError: If the response status code is 500.
+    errors.GetRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.GetRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7231,11 +7231,11 @@ Args:
         instance. Example: 22517998136843567.
 
 Raises:
-    errors.GetDecisionInstanceBadRequest: If the response status code is 400.
-    errors.GetDecisionInstanceUnauthorized: If the response status code is 401.
-    errors.GetDecisionInstanceForbidden: If the response status code is 403.
-    errors.GetDecisionInstanceNotFound: If the response status code is 404.
-    errors.GetDecisionInstanceInternalServerError: If the response status code is 500.
+    errors.GetDecisionInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionInstanceNotFound: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7258,11 +7258,11 @@ Args:
     variable_key (str): System-generated key for a variable. Example: 2251799813683287.
 
 Raises:
-    errors.GetVariableBadRequest: If the response status code is 400.
-    errors.GetVariableUnauthorized: If the response status code is 401.
-    errors.GetVariableForbidden: If the response status code is 403.
-    errors.GetVariableNotFound: If the response status code is 404.
-    errors.GetVariableInternalServerError: If the response status code is 500.
+    errors.GetVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetVariableNotFound: If the response status code is 404. Not found
+    errors.GetVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7312,11 +7312,11 @@ Args:
     name (str):
 
 Raises:
-    errors.GetTenantClusterVariableBadRequest: If the response status code is 400.
-    errors.GetTenantClusterVariableUnauthorized: If the response status code is 401.
-    errors.GetTenantClusterVariableForbidden: If the response status code is 403.
-    errors.GetTenantClusterVariableNotFound: If the response status code is 404.
-    errors.GetTenantClusterVariableInternalServerError: If the response status code is 500.
+    errors.GetTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetTenantClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.GetTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7387,11 +7387,11 @@ Args:
     name (str):
 
 Raises:
-    errors.DeleteGlobalClusterVariableBadRequest: If the response status code is 400.
-    errors.DeleteGlobalClusterVariableUnauthorized: If the response status code is 401.
-    errors.DeleteGlobalClusterVariableForbidden: If the response status code is 403.
-    errors.DeleteGlobalClusterVariableNotFound: If the response status code is 404.
-    errors.DeleteGlobalClusterVariableInternalServerError: If the response status code is 500.
+    errors.DeleteGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.DeleteGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7413,11 +7413,11 @@ Args:
     name (str):
 
 Raises:
-    errors.DeleteTenantClusterVariableBadRequest: If the response status code is 400.
-    errors.DeleteTenantClusterVariableUnauthorized: If the response status code is 401.
-    errors.DeleteTenantClusterVariableForbidden: If the response status code is 403.
-    errors.DeleteTenantClusterVariableNotFound: If the response status code is 404.
-    errors.DeleteTenantClusterVariableInternalServerError: If the response status code is 500.
+    errors.DeleteTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteTenantClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.DeleteTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7439,10 +7439,10 @@ Args:
     body (CreateTenantClusterVariableData):
 
 Raises:
-    errors.CreateTenantClusterVariableBadRequest: If the response status code is 400.
-    errors.CreateTenantClusterVariableUnauthorized: If the response status code is 401.
-    errors.CreateTenantClusterVariableForbidden: If the response status code is 403.
-    errors.CreateTenantClusterVariableInternalServerError: If the response status code is 500.
+    errors.CreateTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7463,11 +7463,11 @@ Args:
     name (str):
 
 Raises:
-    errors.GetGlobalClusterVariableBadRequest: If the response status code is 400.
-    errors.GetGlobalClusterVariableUnauthorized: If the response status code is 401.
-    errors.GetGlobalClusterVariableForbidden: If the response status code is 403.
-    errors.GetGlobalClusterVariableNotFound: If the response status code is 404.
-    errors.GetGlobalClusterVariableInternalServerError: If the response status code is 500.
+    errors.GetGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.GetGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7491,11 +7491,11 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.UnassignMappingRuleFromGroupBadRequest: If the response status code is 400.
-    errors.UnassignMappingRuleFromGroupForbidden: If the response status code is 403.
-    errors.UnassignMappingRuleFromGroupNotFound: If the response status code is 404.
-    errors.UnassignMappingRuleFromGroupInternalServerError: If the response status code is 500.
-    errors.UnassignMappingRuleFromGroupServiceUnavailable: If the response status code is 503.
+    errors.UnassignMappingRuleFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignMappingRuleFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignMappingRuleFromGroupNotFound: If the response status code is 404. The group or mapping rule with the given ID was not found, or the mapping rule is not assigned to this group.
+    errors.UnassignMappingRuleFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignMappingRuleFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7519,11 +7519,11 @@ Args:
     body (SearchRolesForGroupData | Unset): Role search request.
 
 Raises:
-    errors.SearchRolesForGroupBadRequest: If the response status code is 400.
-    errors.SearchRolesForGroupUnauthorized: If the response status code is 401.
-    errors.SearchRolesForGroupForbidden: If the response status code is 403.
-    errors.SearchRolesForGroupNotFound: If the response status code is 404.
-    errors.SearchRolesForGroupInternalServerError: If the response status code is 500.
+    errors.SearchRolesForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchRolesForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchRolesForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchRolesForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchRolesForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7548,12 +7548,12 @@ Args:
     client_id (str):
 
 Raises:
-    errors.AssignClientToGroupBadRequest: If the response status code is 400.
-    errors.AssignClientToGroupForbidden: If the response status code is 403.
-    errors.AssignClientToGroupNotFound: If the response status code is 404.
-    errors.AssignClientToGroupConflict: If the response status code is 409.
-    errors.AssignClientToGroupInternalServerError: If the response status code is 500.
-    errors.AssignClientToGroupServiceUnavailable: If the response status code is 503.
+    errors.AssignClientToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignClientToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignClientToGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.AssignClientToGroupConflict: If the response status code is 409. The client with the given ID is already assigned to the group.
+    errors.AssignClientToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignClientToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7579,11 +7579,11 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.UnassignUserFromGroupBadRequest: If the response status code is 400.
-    errors.UnassignUserFromGroupForbidden: If the response status code is 403.
-    errors.UnassignUserFromGroupNotFound: If the response status code is 404.
-    errors.UnassignUserFromGroupInternalServerError: If the response status code is 500.
-    errors.UnassignUserFromGroupServiceUnavailable: If the response status code is 503.
+    errors.UnassignUserFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignUserFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignUserFromGroupNotFound: If the response status code is 404. The group or user with the given ID was not found, or the user is not assigned to this group.
+    errors.UnassignUserFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignUserFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7607,11 +7607,11 @@ Args:
     body (SearchUsersForGroupData | Unset):
 
 Raises:
-    errors.SearchUsersForGroupBadRequest: If the response status code is 400.
-    errors.SearchUsersForGroupUnauthorized: If the response status code is 401.
-    errors.SearchUsersForGroupForbidden: If the response status code is 403.
-    errors.SearchUsersForGroupNotFound: If the response status code is 404.
-    errors.SearchUsersForGroupInternalServerError: If the response status code is 500.
+    errors.SearchUsersForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchUsersForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7634,10 +7634,10 @@ Args:
     group_id (str):
 
 Raises:
-    errors.GetGroupUnauthorized: If the response status code is 401.
-    errors.GetGroupForbidden: If the response status code is 403.
-    errors.GetGroupNotFound: If the response status code is 404.
-    errors.GetGroupInternalServerError: If the response status code is 500.
+    errors.GetGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.GetGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7663,11 +7663,11 @@ Args:
     client_id (str):
 
 Raises:
-    errors.UnassignClientFromGroupBadRequest: If the response status code is 400.
-    errors.UnassignClientFromGroupForbidden: If the response status code is 403.
-    errors.UnassignClientFromGroupNotFound: If the response status code is 404.
-    errors.UnassignClientFromGroupInternalServerError: If the response status code is 500.
-    errors.UnassignClientFromGroupServiceUnavailable: If the response status code is 503.
+    errors.UnassignClientFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignClientFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UnassignClientFromGroupNotFound: If the response status code is 404. The group with the given ID was not found, or the client is not assigned to this group.
+    errors.UnassignClientFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignClientFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7691,11 +7691,11 @@ Args:
     body (UpdateGroupData):
 
 Raises:
-    errors.UpdateGroupBadRequest: If the response status code is 400.
-    errors.UpdateGroupUnauthorized: If the response status code is 401.
-    errors.UpdateGroupNotFound: If the response status code is 404.
-    errors.UpdateGroupInternalServerError: If the response status code is 500.
-    errors.UpdateGroupServiceUnavailable: If the response status code is 503.
+    errors.UpdateGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.UpdateGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7745,12 +7745,12 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.AssignMappingRuleToGroupBadRequest: If the response status code is 400.
-    errors.AssignMappingRuleToGroupForbidden: If the response status code is 403.
-    errors.AssignMappingRuleToGroupNotFound: If the response status code is 404.
-    errors.AssignMappingRuleToGroupConflict: If the response status code is 409.
-    errors.AssignMappingRuleToGroupInternalServerError: If the response status code is 500.
-    errors.AssignMappingRuleToGroupServiceUnavailable: If the response status code is 503.
+    errors.AssignMappingRuleToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignMappingRuleToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignMappingRuleToGroupNotFound: If the response status code is 404. The group or mapping rule with the given ID was not found.
+    errors.AssignMappingRuleToGroupConflict: If the response status code is 409. The mapping rule with the given ID is already assigned to the group.
+    errors.AssignMappingRuleToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignMappingRuleToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7774,11 +7774,11 @@ Args:
     body (SearchMappingRulesForGroupData | Unset):
 
 Raises:
-    errors.SearchMappingRulesForGroupBadRequest: If the response status code is 400.
-    errors.SearchMappingRulesForGroupUnauthorized: If the response status code is 401.
-    errors.SearchMappingRulesForGroupForbidden: If the response status code is 403.
-    errors.SearchMappingRulesForGroupNotFound: If the response status code is 404.
-    errors.SearchMappingRulesForGroupInternalServerError: If the response status code is 500.
+    errors.SearchMappingRulesForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMappingRulesForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMappingRulesForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMappingRulesForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchMappingRulesForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7828,10 +7828,10 @@ Args:
     group_id (str):
 
 Raises:
-    errors.DeleteGroupUnauthorized: If the response status code is 401.
-    errors.DeleteGroupNotFound: If the response status code is 404.
-    errors.DeleteGroupInternalServerError: If the response status code is 500.
-    errors.DeleteGroupServiceUnavailable: If the response status code is 503.
+    errors.DeleteGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.DeleteGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7856,12 +7856,12 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.AssignUserToGroupBadRequest: If the response status code is 400.
-    errors.AssignUserToGroupForbidden: If the response status code is 403.
-    errors.AssignUserToGroupNotFound: If the response status code is 404.
-    errors.AssignUserToGroupConflict: If the response status code is 409.
-    errors.AssignUserToGroupInternalServerError: If the response status code is 500.
-    errors.AssignUserToGroupServiceUnavailable: If the response status code is 503.
+    errors.AssignUserToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignUserToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignUserToGroupNotFound: If the response status code is 404. The group or user with the given ID or username was not found.
+    errors.AssignUserToGroupConflict: If the response status code is 409. The user with the given ID is already assigned to the group.
+    errors.AssignUserToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignUserToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -7885,11 +7885,11 @@ Args:
     body (SearchClientsForGroupData | Unset):
 
 Raises:
-    errors.SearchClientsForGroupBadRequest: If the response status code is 400.
-    errors.SearchClientsForGroupUnauthorized: If the response status code is 401.
-    errors.SearchClientsForGroupForbidden: If the response status code is 403.
-    errors.SearchClientsForGroupNotFound: If the response status code is 404.
-    errors.SearchClientsForGroupInternalServerError: If the response status code is 500.
+    errors.SearchClientsForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchClientsForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchClientsForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchClientsForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+    errors.SearchClientsForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8105,10 +8105,10 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.DeleteUserBadRequest: If the response status code is 400.
-    errors.DeleteUserNotFound: If the response status code is 404.
-    errors.DeleteUserInternalServerError: If the response status code is 500.
-    errors.DeleteUserServiceUnavailable: If the response status code is 503.
+    errors.DeleteUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteUserNotFound: If the response status code is 404. The user is not found.
+    errors.DeleteUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8131,10 +8131,10 @@ Args:
     username (str): The unique name of a user. Example: swillis.
 
 Raises:
-    errors.GetUserUnauthorized: If the response status code is 401.
-    errors.GetUserForbidden: If the response status code is 403.
-    errors.GetUserNotFound: If the response status code is 404.
-    errors.GetUserInternalServerError: If the response status code is 500.
+    errors.GetUserUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserNotFound: If the response status code is 404. The user with the given username was not found.
+    errors.GetUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8158,11 +8158,11 @@ Args:
     body (UpdateUserData):
 
 Raises:
-    errors.UpdateUserBadRequest: If the response status code is 400.
-    errors.UpdateUserForbidden: If the response status code is 403.
-    errors.UpdateUserNotFound: If the response status code is 404.
-    errors.UpdateUserInternalServerError: If the response status code is 500.
-    errors.UpdateUserServiceUnavailable: If the response status code is 503.
+    errors.UpdateUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UpdateUserNotFound: If the response status code is 404. The user was not found.
+    errors.UpdateUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8190,8 +8190,8 @@ Args:
     content_hash (str | Unset):
 
 Raises:
-    errors.GetDocumentNotFound: If the response status code is 404.
-    errors.GetDocumentInternalServerError: If the response status code is 500.
+    errors.GetDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
+    errors.GetDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8265,7 +8265,7 @@ Args:
     body (CreateDocumentLinkData | Unset):
 
 Raises:
-    errors.CreateDocumentLinkBadRequest: If the response status code is 400.
+    errors.CreateDocumentLinkBadRequest: If the response status code is 400. The provided data is not valid.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8292,8 +8292,8 @@ Args:
     store_id (str | Unset):
 
 Raises:
-    errors.DeleteDocumentNotFound: If the response status code is 404.
-    errors.DeleteDocumentInternalServerError: If the response status code is 500.
+    errors.DeleteDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
+    errors.DeleteDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8346,10 +8346,10 @@ Args:
         22517998136843567.
 
 Raises:
-    errors.GetAuditLogUnauthorized: If the response status code is 401.
-    errors.GetAuditLogForbidden: If the response status code is 403.
-    errors.GetAuditLogNotFound: If the response status code is 404.
-    errors.GetAuditLogInternalServerError: If the response status code is 500.
+    errors.GetAuditLogUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuditLogForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuditLogNotFound: If the response status code is 404. The audit log with the given key was not found.
+    errors.GetAuditLogInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8439,11 +8439,11 @@ Args:
     body (SearchElementInstanceIncidentsData):
 
 Raises:
-    errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400.
-    errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401.
-    errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403.
-    errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404.
-    errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500.
+    errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404. The element instance with the given key was not found.
+    errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8467,11 +8467,11 @@ Args:
         2251799813686789.
 
 Raises:
-    errors.GetElementInstanceBadRequest: If the response status code is 400.
-    errors.GetElementInstanceUnauthorized: If the response status code is 401.
-    errors.GetElementInstanceForbidden: If the response status code is 403.
-    errors.GetElementInstanceNotFound: If the response status code is 404.
-    errors.GetElementInstanceInternalServerError: If the response status code is 500.
+    errors.GetElementInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetElementInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetElementInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetElementInstanceNotFound: If the response status code is 404. The element instance with the given key was not found. More details are provided in the response body.
+    errors.GetElementInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8498,9 +8498,9 @@ Args:
     body (CreateElementInstanceVariablesData):
 
 Raises:
-    errors.CreateElementInstanceVariablesBadRequest: If the response status code is 400.
-    errors.CreateElementInstanceVariablesInternalServerError: If the response status code is 500.
-    errors.CreateElementInstanceVariablesServiceUnavailable: If the response status code is 503.
+    errors.CreateElementInstanceVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateElementInstanceVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CreateElementInstanceVariablesServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8553,12 +8553,12 @@ Args:
     body (ActivateAdHocSubProcessActivitiesData):
 
 Raises:
-    errors.ActivateAdHocSubProcessActivitiesBadRequest: If the response status code is 400.
-    errors.ActivateAdHocSubProcessActivitiesUnauthorized: If the response status code is 401.
-    errors.ActivateAdHocSubProcessActivitiesForbidden: If the response status code is 403.
-    errors.ActivateAdHocSubProcessActivitiesNotFound: If the response status code is 404.
-    errors.ActivateAdHocSubProcessActivitiesInternalServerError: If the response status code is 500.
-    errors.ActivateAdHocSubProcessActivitiesServiceUnavailable: If the response status code is 503.
+    errors.ActivateAdHocSubProcessActivitiesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ActivateAdHocSubProcessActivitiesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ActivateAdHocSubProcessActivitiesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.ActivateAdHocSubProcessActivitiesNotFound: If the response status code is 404. The ad-hoc sub-process instance is not found or the provided key does not identify an ad-hoc sub-process.
+    errors.ActivateAdHocSubProcessActivitiesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ActivateAdHocSubProcessActivitiesServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8582,11 +8582,11 @@ Args:
     body (FailJobData | Unset):
 
 Raises:
-    errors.FailJobBadRequest: If the response status code is 400.
-    errors.FailJobNotFound: If the response status code is 404.
-    errors.FailJobConflict: If the response status code is 409.
-    errors.FailJobInternalServerError: If the response status code is 500.
-    errors.FailJobServiceUnavailable: If the response status code is 503.
+    errors.FailJobBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.FailJobNotFound: If the response status code is 404. The job with the given jobKey is not found. It was completed by another worker, or the process instance itself was canceled.
+    errors.FailJobConflict: If the response status code is 409. The job with the given key is in the wrong state (i.e: not ACTIVATED or ACTIVATABLE). The job was failed by another worker with retries = 0, and the process is now in an incident state.
+    errors.FailJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.FailJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8662,11 +8662,11 @@ Args:
     body (ThrowJobErrorData):
 
 Raises:
-    errors.ThrowJobErrorBadRequest: If the response status code is 400.
-    errors.ThrowJobErrorNotFound: If the response status code is 404.
-    errors.ThrowJobErrorConflict: If the response status code is 409.
-    errors.ThrowJobErrorInternalServerError: If the response status code is 500.
-    errors.ThrowJobErrorServiceUnavailable: If the response status code is 503.
+    errors.ThrowJobErrorBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ThrowJobErrorNotFound: If the response status code is 404. The job with the given key was not found or is not activated.
+    errors.ThrowJobErrorConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.ThrowJobErrorInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ThrowJobErrorServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8690,11 +8690,11 @@ Args:
     body (CompleteJobData | Unset):
 
 Raises:
-    errors.CompleteJobBadRequest: If the response status code is 400.
-    errors.CompleteJobNotFound: If the response status code is 404.
-    errors.CompleteJobConflict: If the response status code is 409.
-    errors.CompleteJobInternalServerError: If the response status code is 500.
-    errors.CompleteJobServiceUnavailable: If the response status code is 503.
+    errors.CompleteJobBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CompleteJobNotFound: If the response status code is 404. The job with the given key was not found.
+    errors.CompleteJobConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.CompleteJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CompleteJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8718,11 +8718,11 @@ Args:
     body (UpdateJobData):
 
 Raises:
-    errors.UpdateJobBadRequest: If the response status code is 400.
-    errors.UpdateJobNotFound: If the response status code is 404.
-    errors.UpdateJobConflict: If the response status code is 409.
-    errors.UpdateJobInternalServerError: If the response status code is 500.
-    errors.UpdateJobServiceUnavailable: If the response status code is 503.
+    errors.UpdateJobBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateJobNotFound: If the response status code is 404. The job with the jobKey is not found.
+    errors.UpdateJobConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.UpdateJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8775,10 +8775,10 @@ Args:
     body (ResolveIncidentData | Unset):
 
 Raises:
-    errors.ResolveIncidentBadRequest: If the response status code is 400.
-    errors.ResolveIncidentNotFound: If the response status code is 404.
-    errors.ResolveIncidentInternalServerError: If the response status code is 500.
-    errors.ResolveIncidentServiceUnavailable: If the response status code is 503.
+    errors.ResolveIncidentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ResolveIncidentNotFound: If the response status code is 404. The incident with the incidentKey is not found.
+    errors.ResolveIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResolveIncidentServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8854,11 +8854,11 @@ Args:
     incident_key (str): System-generated key for a incident. Example: 2251799813689432.
 
 Raises:
-    errors.GetIncidentBadRequest: If the response status code is 400.
-    errors.GetIncidentUnauthorized: If the response status code is 401.
-    errors.GetIncidentForbidden: If the response status code is 403.
-    errors.GetIncidentNotFound: If the response status code is 404.
-    errors.GetIncidentInternalServerError: If the response status code is 500.
+    errors.GetIncidentBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetIncidentUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetIncidentForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetIncidentNotFound: If the response status code is 404. The incident with the given key was not found.
+    errors.GetIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8882,11 +8882,11 @@ Args:
         2251799813326547.
 
 Raises:
-    errors.GetDecisionDefinitionBadRequest: If the response status code is 400.
-    errors.GetDecisionDefinitionUnauthorized: If the response status code is 401.
-    errors.GetDecisionDefinitionForbidden: If the response status code is 403.
-    errors.GetDecisionDefinitionNotFound: If the response status code is 404.
-    errors.GetDecisionDefinitionInternalServerError: If the response status code is 500.
+    errors.GetDecisionDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionDefinitionNotFound: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -8965,11 +8965,11 @@ Args:
         2251799813326547.
 
 Raises:
-    errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400.
-    errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401.
-    errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403.
-    errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404.
-    errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500.
+    errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9019,11 +9019,11 @@ Args:
     user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.UnassignUserTaskBadRequest: If the response status code is 400.
-    errors.UnassignUserTaskNotFound: If the response status code is 404.
-    errors.UnassignUserTaskConflict: If the response status code is 409.
-    errors.UnassignUserTaskInternalServerError: If the response status code is 500.
-    errors.UnassignUserTaskServiceUnavailable: If the response status code is 503.
+    errors.UnassignUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UnassignUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.UnassignUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.UnassignUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnassignUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9049,8 +9049,8 @@ Args:
     body (SearchUserTaskVariablesData | Unset): User task search query request.
 
 Raises:
-    errors.SearchUserTaskVariablesBadRequest: If the response status code is 400.
-    errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500.
+    errors.SearchUserTaskVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9074,11 +9074,11 @@ Args:
     body (AssignUserTaskData):
 
 Raises:
-    errors.AssignUserTaskBadRequest: If the response status code is 400.
-    errors.AssignUserTaskNotFound: If the response status code is 404.
-    errors.AssignUserTaskConflict: If the response status code is 409.
-    errors.AssignUserTaskInternalServerError: If the response status code is 500.
-    errors.AssignUserTaskServiceUnavailable: If the response status code is 503.
+    errors.AssignUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.AssignUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.AssignUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9102,11 +9102,11 @@ Args:
     body (UpdateUserTaskData | Unset):
 
 Raises:
-    errors.UpdateUserTaskBadRequest: If the response status code is 400.
-    errors.UpdateUserTaskNotFound: If the response status code is 404.
-    errors.UpdateUserTaskConflict: If the response status code is 409.
-    errors.UpdateUserTaskInternalServerError: If the response status code is 500.
-    errors.UpdateUserTaskServiceUnavailable: If the response status code is 503.
+    errors.UpdateUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.UpdateUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.UpdateUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9131,11 +9131,11 @@ Args:
     user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.GetUserTaskFormBadRequest: If the response status code is 400.
-    errors.GetUserTaskFormUnauthorized: If the response status code is 401.
-    errors.GetUserTaskFormForbidden: If the response status code is 403.
-    errors.GetUserTaskFormNotFound: If the response status code is 404.
-    errors.GetUserTaskFormInternalServerError: If the response status code is 500.
+    errors.GetUserTaskFormBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUserTaskFormUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserTaskFormForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserTaskFormNotFound: If the response status code is 404. Not found
+    errors.GetUserTaskFormInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9158,11 +9158,11 @@ Args:
     user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.GetUserTaskBadRequest: If the response status code is 400.
-    errors.GetUserTaskUnauthorized: If the response status code is 401.
-    errors.GetUserTaskForbidden: If the response status code is 403.
-    errors.GetUserTaskNotFound: If the response status code is 404.
-    errors.GetUserTaskInternalServerError: If the response status code is 500.
+    errors.GetUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUserTaskUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserTaskForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.GetUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9186,8 +9186,8 @@ Args:
     body (SearchUserTaskAuditLogsData | Unset): User task search query request.
 
 Raises:
-    errors.SearchUserTaskAuditLogsBadRequest: If the response status code is 400.
-    errors.SearchUserTaskAuditLogsInternalServerError: If the response status code is 500.
+    errors.SearchUserTaskAuditLogsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUserTaskAuditLogsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9237,11 +9237,11 @@ Args:
     body (CompleteUserTaskData | Unset):
 
 Raises:
-    errors.CompleteUserTaskBadRequest: If the response status code is 400.
-    errors.CompleteUserTaskNotFound: If the response status code is 404.
-    errors.CompleteUserTaskConflict: If the response status code is 409.
-    errors.CompleteUserTaskInternalServerError: If the response status code is 500.
-    errors.CompleteUserTaskServiceUnavailable: If the response status code is 503.
+    errors.CompleteUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CompleteUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.CompleteUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.CompleteUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CompleteUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9268,10 +9268,10 @@ Args:
     body (DeleteResourceDataType0 | None | Unset):
 
 Raises:
-    errors.DeleteResourceBadRequest: If the response status code is 400.
-    errors.DeleteResourceNotFound: If the response status code is 404.
-    errors.DeleteResourceInternalServerError: If the response status code is 500.
-    errors.DeleteResourceServiceUnavailable: If the response status code is 503.
+    errors.DeleteResourceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteResourceNotFound: If the response status code is 404. The resource is not found.
+    errors.DeleteResourceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteResourceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9297,8 +9297,8 @@ Args:
     resource_key (str): The system-assigned key for this resource.
 
 Raises:
-    errors.GetResourceContentNotFound: If the response status code is 404.
-    errors.GetResourceContentInternalServerError: If the response status code is 500.
+    errors.GetResourceContentNotFound: If the response status code is 404. A resource with the given key was not found.
+    errors.GetResourceContentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9349,8 +9349,8 @@ Args:
     resource_key (str): The system-assigned key for this resource.
 
 Raises:
-    errors.GetResourceNotFound: If the response status code is 404.
-    errors.GetResourceInternalServerError: If the response status code is 500.
+    errors.GetResourceNotFound: If the response status code is 404. A resource with the given key was not found.
+    errors.GetResourceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9376,10 +9376,10 @@ Args:
         Either an id-based or a property-based authorization can be provided.
 
 Raises:
-    errors.UpdateAuthorizationUnauthorized: If the response status code is 401.
-    errors.UpdateAuthorizationNotFound: If the response status code is 404.
-    errors.UpdateAuthorizationInternalServerError: If the response status code is 500.
-    errors.UpdateAuthorizationServiceUnavailable: If the response status code is 503.
+    errors.UpdateAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateAuthorizationNotFound: If the response status code is 404. The authorization with the authorizationKey was not found.
+    errors.UpdateAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateAuthorizationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9458,10 +9458,10 @@ Args:
         2251799813684332.
 
 Raises:
-    errors.GetAuthorizationUnauthorized: If the response status code is 401.
-    errors.GetAuthorizationForbidden: If the response status code is 403.
-    errors.GetAuthorizationNotFound: If the response status code is 404.
-    errors.GetAuthorizationInternalServerError: If the response status code is 500.
+    errors.GetAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuthorizationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuthorizationNotFound: If the response status code is 404. The authorization with the given key was not found.
+    errors.GetAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9485,10 +9485,10 @@ Args:
         2251799813684332.
 
 Raises:
-    errors.DeleteAuthorizationUnauthorized: If the response status code is 401.
-    errors.DeleteAuthorizationNotFound: If the response status code is 404.
-    errors.DeleteAuthorizationInternalServerError: If the response status code is 500.
-    errors.DeleteAuthorizationServiceUnavailable: If the response status code is 503.
+    errors.DeleteAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteAuthorizationNotFound: If the response status code is 404. The authorization with the authorizationKey was not found.
+    errors.DeleteAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteAuthorizationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9512,11 +9512,11 @@ Args:
         definition. Example: 2251799813683346.
 
 Raises:
-    errors.GetDecisionRequirementsXmlBadRequest: If the response status code is 400.
-    errors.GetDecisionRequirementsXmlUnauthorized: If the response status code is 401.
-    errors.GetDecisionRequirementsXmlForbidden: If the response status code is 403.
-    errors.GetDecisionRequirementsXmlNotFound: If the response status code is 404.
-    errors.GetDecisionRequirementsXmlInternalServerError: If the response status code is 500.
+    errors.GetDecisionRequirementsXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionRequirementsXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionRequirementsXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionRequirementsXmlNotFound: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionRequirementsXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9566,11 +9566,11 @@ Args:
         definition. Example: 2251799813683346.
 
 Raises:
-    errors.GetDecisionRequirementsBadRequest: If the response status code is 400.
-    errors.GetDecisionRequirementsUnauthorized: If the response status code is 401.
-    errors.GetDecisionRequirementsForbidden: If the response status code is 403.
-    errors.GetDecisionRequirementsNotFound: If the response status code is 404.
-    errors.GetDecisionRequirementsInternalServerError: If the response status code is 500.
+    errors.GetDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionRequirementsNotFound: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9642,11 +9642,11 @@ Args:
     body (UpdateMappingRuleData | Unset):
 
 Raises:
-    errors.UpdateMappingRuleBadRequest: If the response status code is 400.
-    errors.UpdateMappingRuleForbidden: If the response status code is 403.
-    errors.UpdateMappingRuleNotFound: If the response status code is 404.
-    errors.UpdateMappingRuleInternalServerError: If the response status code is 500.
-    errors.UpdateMappingRuleServiceUnavailable: If the response status code is 503.
+    errors.UpdateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateMappingRuleForbidden: If the response status code is 403. The request to update a mapping rule was denied. More details are provided in the response body.
+    errors.UpdateMappingRuleNotFound: If the response status code is 404. The request to update a mapping rule was denied.
+    errors.UpdateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9669,10 +9669,10 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.DeleteMappingRuleUnauthorized: If the response status code is 401.
-    errors.DeleteMappingRuleNotFound: If the response status code is 404.
-    errors.DeleteMappingRuleInternalServerError: If the response status code is 500.
-    errors.DeleteMappingRuleServiceUnavailable: If the response status code is 503.
+    errors.DeleteMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+    errors.DeleteMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9747,9 +9747,9 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.GetMappingRuleUnauthorized: If the response status code is 401.
-    errors.GetMappingRuleNotFound: If the response status code is 404.
-    errors.GetMappingRuleInternalServerError: If the response status code is 500.
+    errors.GetMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+    errors.GetMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9773,10 +9773,10 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.GetProcessInstanceSequenceFlowsBadRequest: If the response status code is 400.
-    errors.GetProcessInstanceSequenceFlowsUnauthorized: If the response status code is 401.
-    errors.GetProcessInstanceSequenceFlowsForbidden: If the response status code is 403.
-    errors.GetProcessInstanceSequenceFlowsInternalServerError: If the response status code is 500.
+    errors.GetProcessInstanceSequenceFlowsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceSequenceFlowsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceSequenceFlowsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceSequenceFlowsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9801,11 +9801,11 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.GetProcessInstanceCallHierarchyBadRequest: If the response status code is 400.
-    errors.GetProcessInstanceCallHierarchyUnauthorized: If the response status code is 401.
-    errors.GetProcessInstanceCallHierarchyForbidden: If the response status code is 403.
-    errors.GetProcessInstanceCallHierarchyNotFound: If the response status code is 404.
-    errors.GetProcessInstanceCallHierarchyInternalServerError: If the response status code is 500.
+    errors.GetProcessInstanceCallHierarchyBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceCallHierarchyUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceCallHierarchyForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceCallHierarchyNotFound: If the response status code is 404. The process instance is not found.
+    errors.GetProcessInstanceCallHierarchyInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9835,10 +9835,10 @@ Args:
     body (ModifyProcessInstanceData):
 
 Raises:
-    errors.ModifyProcessInstanceBadRequest: If the response status code is 400.
-    errors.ModifyProcessInstanceNotFound: If the response status code is 404.
-    errors.ModifyProcessInstanceInternalServerError: If the response status code is 500.
-    errors.ModifyProcessInstanceServiceUnavailable: If the response status code is 503.
+    errors.ModifyProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ModifyProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.ModifyProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ModifyProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9862,10 +9862,10 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.GetProcessInstanceStatisticsBadRequest: If the response status code is 400.
-    errors.GetProcessInstanceStatisticsUnauthorized: If the response status code is 401.
-    errors.GetProcessInstanceStatisticsForbidden: If the response status code is 403.
-    errors.GetProcessInstanceStatisticsInternalServerError: If the response status code is 500.
+    errors.GetProcessInstanceStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -9919,11 +9919,11 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.GetProcessInstanceBadRequest: If the response status code is 400.
-    errors.GetProcessInstanceUnauthorized: If the response status code is 401.
-    errors.GetProcessInstanceForbidden: If the response status code is 403.
-    errors.GetProcessInstanceNotFound: If the response status code is 404.
-    errors.GetProcessInstanceInternalServerError: If the response status code is 500.
+    errors.GetProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessInstanceNotFound: If the response status code is 404. The process instance with the given key was not found.
+    errors.GetProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -10014,12 +10014,12 @@ Args:
     body (DeleteProcessInstanceDataType0 | None | Unset):
 
 Raises:
-    errors.DeleteProcessInstanceUnauthorized: If the response status code is 401.
-    errors.DeleteProcessInstanceForbidden: If the response status code is 403.
-    errors.DeleteProcessInstanceNotFound: If the response status code is 404.
-    errors.DeleteProcessInstanceConflict: If the response status code is 409.
-    errors.DeleteProcessInstanceInternalServerError: If the response status code is 500.
-    errors.DeleteProcessInstanceServiceUnavailable: If the response status code is 503.
+    errors.DeleteProcessInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteProcessInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.DeleteProcessInstanceConflict: If the response status code is 409. The process instance is not in a completed or terminated state and cannot be deleted.
+    errors.DeleteProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -10139,10 +10139,10 @@ Args:
     body (CancelProcessInstanceDataType0 | None | Unset):
 
 Raises:
-    errors.CancelProcessInstanceBadRequest: If the response status code is 400.
-    errors.CancelProcessInstanceNotFound: If the response status code is 404.
-    errors.CancelProcessInstanceInternalServerError: If the response status code is 500.
-    errors.CancelProcessInstanceServiceUnavailable: If the response status code is 503.
+    errors.CancelProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CancelProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.CancelProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CancelProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -10176,11 +10176,11 @@ Args:
     body (SearchProcessInstanceIncidentsData | Unset):
 
 Raises:
-    errors.SearchProcessInstanceIncidentsBadRequest: If the response status code is 400.
-    errors.SearchProcessInstanceIncidentsUnauthorized: If the response status code is 401.
-    errors.SearchProcessInstanceIncidentsForbidden: If the response status code is 403.
-    errors.SearchProcessInstanceIncidentsNotFound: If the response status code is 404.
-    errors.SearchProcessInstanceIncidentsInternalServerError: If the response status code is 500.
+    errors.SearchProcessInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchProcessInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchProcessInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchProcessInstanceIncidentsNotFound: If the response status code is 404. The process instance with the given key was not found.
+    errors.SearchProcessInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -10212,11 +10212,11 @@ Args:
         process instance from one process definition to another.
 
 Raises:
-    errors.MigrateProcessInstanceBadRequest: If the response status code is 400.
-    errors.MigrateProcessInstanceNotFound: If the response status code is 404.
-    errors.MigrateProcessInstanceConflict: If the response status code is 409.
-    errors.MigrateProcessInstanceInternalServerError: If the response status code is 500.
-    errors.MigrateProcessInstanceServiceUnavailable: If the response status code is 503.
+    errors.MigrateProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.MigrateProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.MigrateProcessInstanceConflict: If the response status code is 409. The process instance migration failed. More details are provided in the response body.
+    errors.MigrateProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.MigrateProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -10266,11 +10266,11 @@ Args:
         2251799813690746.
 
 Raises:
-    errors.ResolveProcessInstanceIncidentsBadRequest: If the response status code is 400.
-    errors.ResolveProcessInstanceIncidentsUnauthorized: If the response status code is 401.
-    errors.ResolveProcessInstanceIncidentsNotFound: If the response status code is 404.
-    errors.ResolveProcessInstanceIncidentsInternalServerError: If the response status code is 500.
-    errors.ResolveProcessInstanceIncidentsServiceUnavailable: If the response status code is 503.
+    errors.ResolveProcessInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ResolveProcessInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.ResolveProcessInstanceIncidentsNotFound: If the response status code is 404. The process instance is not found.
+    errors.ResolveProcessInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ResolveProcessInstanceIncidentsServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -10353,10 +10353,10 @@ Args:
     body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
 
 Raises:
-    errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest: If the response status code is 400.
-    errors.GetProcessDefinitionInstanceVersionStatisticsUnauthorized: If the response status code is 401.
-    errors.GetProcessDefinitionInstanceVersionStatisticsForbidden: If the response status code is 403.
-    errors.GetProcessDefinitionInstanceVersionStatisticsInternalServerError: If the response status code is 500.
+    errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionInstanceVersionStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionInstanceVersionStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionInstanceVersionStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -10460,11 +10460,11 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.GetStartProcessFormBadRequest: If the response status code is 400.
-    errors.GetStartProcessFormUnauthorized: If the response status code is 401.
-    errors.GetStartProcessFormForbidden: If the response status code is 403.
-    errors.GetStartProcessFormNotFound: If the response status code is 404.
-    errors.GetStartProcessFormInternalServerError: If the response status code is 500.
+    errors.GetStartProcessFormBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetStartProcessFormUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetStartProcessFormForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetStartProcessFormNotFound: If the response status code is 404. Not found
+    errors.GetStartProcessFormInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -10488,11 +10488,11 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.GetProcessDefinitionXmlBadRequest: If the response status code is 400.
-    errors.GetProcessDefinitionXmlUnauthorized: If the response status code is 401.
-    errors.GetProcessDefinitionXmlForbidden: If the response status code is 403.
-    errors.GetProcessDefinitionXmlNotFound: If the response status code is 404.
-    errors.GetProcessDefinitionXmlInternalServerError: If the response status code is 500.
+    errors.GetProcessDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionXmlNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+    errors.GetProcessDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -10516,11 +10516,11 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.GetProcessDefinitionBadRequest: If the response status code is 400.
-    errors.GetProcessDefinitionUnauthorized: If the response status code is 401.
-    errors.GetProcessDefinitionForbidden: If the response status code is 403.
-    errors.GetProcessDefinitionNotFound: If the response status code is 404.
-    errors.GetProcessDefinitionInternalServerError: If the response status code is 500.
+    errors.GetProcessDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+    errors.GetProcessDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -10547,10 +10547,10 @@ Args:
         request.
 
 Raises:
-    errors.GetProcessDefinitionStatisticsBadRequest: If the response status code is 400.
-    errors.GetProcessDefinitionStatisticsUnauthorized: If the response status code is 401.
-    errors.GetProcessDefinitionStatisticsForbidden: If the response status code is 403.
-    errors.GetProcessDefinitionStatisticsInternalServerError: If the response status code is 500.
+    errors.GetProcessDefinitionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

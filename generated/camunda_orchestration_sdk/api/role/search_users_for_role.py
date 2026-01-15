@@ -79,11 +79,11 @@ Args:
     body (SearchUsersForRoleData | Unset):
 
 Raises:
-    errors.SearchUsersForRoleBadRequest: If the response status code is 400.
-    errors.SearchUsersForRoleUnauthorized: If the response status code is 401.
-    errors.SearchUsersForRoleForbidden: If the response status code is 403.
-    errors.SearchUsersForRoleNotFound: If the response status code is 404.
-    errors.SearchUsersForRoleInternalServerError: If the response status code is 500.
+    errors.SearchUsersForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchUsersForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -133,11 +133,11 @@ Args:
     body (SearchUsersForRoleData | Unset):
 
 Raises:
-    errors.SearchUsersForRoleBadRequest: If the response status code is 400.
-    errors.SearchUsersForRoleUnauthorized: If the response status code is 401.
-    errors.SearchUsersForRoleForbidden: If the response status code is 403.
-    errors.SearchUsersForRoleNotFound: If the response status code is 404.
-    errors.SearchUsersForRoleInternalServerError: If the response status code is 500.
+    errors.SearchUsersForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchUsersForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

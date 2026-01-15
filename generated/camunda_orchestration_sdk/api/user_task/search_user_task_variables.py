@@ -74,8 +74,8 @@ Args:
     body (SearchUserTaskVariablesData | Unset): User task search query request.
 
 Raises:
-    errors.SearchUserTaskVariablesBadRequest: If the response status code is 400.
-    errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500.
+    errors.SearchUserTaskVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -123,8 +123,8 @@ Args:
     body (SearchUserTaskVariablesData | Unset): User task search query request.
 
 Raises:
-    errors.SearchUserTaskVariablesBadRequest: If the response status code is 400.
-    errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500.
+    errors.SearchUserTaskVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

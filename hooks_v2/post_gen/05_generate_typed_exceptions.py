@@ -133,6 +133,35 @@ def _extract_method_and_url(tree: ast.Module) -> tuple[str, str] | None:
     if get_kwargs is None:
         return None
 
+    def _string_template_from_node(node: ast.AST) -> str | None:
+        """Best-effort extraction of a URL template string from an AST node.
+
+        Handles:
+        - string literals: "/foo"
+        - "...".format(...)
+        - f-strings: f"/foo/{bar}" (returns "/foo/{}")
+        """
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            return node.value
+
+        # Pattern: '/path/{x}'.format(x=...)
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "format":
+            base = node.func.value
+            if isinstance(base, ast.Constant) and isinstance(base.value, str):
+                return base.value
+
+        # Pattern: f"/path/{x}/..." -> "/path/{}/..."
+        if isinstance(node, ast.JoinedStr):
+            parts: list[str] = []
+            for value in node.values:
+                if isinstance(value, ast.Constant) and isinstance(value.value, str):
+                    parts.append(value.value)
+                elif isinstance(value, ast.FormattedValue):
+                    parts.append("{}")
+            return "".join(parts)
+
+        return None
+
     method: str | None = None
     url: str | None = None
 
@@ -162,31 +191,39 @@ def _extract_method_and_url(tree: ast.Module) -> tuple[str, str] | None:
             for k, v in zip(dict_value.keys, dict_value.values, strict=False):
                 if not isinstance(k, ast.Constant) or not isinstance(k.value, str):
                     continue
-                if not isinstance(v, ast.Constant) or not isinstance(v.value, str):
-                    continue
-                if k.value == "method":
+                if k.value == "method" and isinstance(v, ast.Constant) and isinstance(v.value, str):
                     method = v.value
                 elif k.value == "url":
-                    url = v.value
+                    url = _string_template_from_node(v)
 
         # Pattern 2: _kwargs['method'] = 'post' / _kwargs['url'] = '/...'
         if isinstance(stmt, ast.Assign) and len(stmt.targets) == 1 and isinstance(stmt.targets[0], ast.Subscript):
             target = stmt.targets[0]
             if not (isinstance(target.value, ast.Name) and target.value.id == "_kwargs"):
                 continue
-            if not isinstance(stmt.value, ast.Constant) or not isinstance(stmt.value.value, str):
-                continue
+            value_str = _string_template_from_node(stmt.value)
 
             key_node = target.slice
             if isinstance(key_node, ast.Constant) and isinstance(key_node.value, str):
                 if key_node.value == "method":
-                    method = stmt.value.value
+                    if isinstance(stmt.value, ast.Constant) and isinstance(stmt.value.value, str):
+                        method = stmt.value.value
                 elif key_node.value == "url":
-                    url = stmt.value.value
+                    url = value_str
 
     if method and url:
         return method.lower(), url
     return None
+
+
+def _normalize_path_template(path: str) -> str:
+    """Normalize path templates so param names don't matter.
+
+    Example:
+        "/tenants/{tenantId}/users/{username}" -> "/tenants/{}/users/{}"
+        "/tenants/{tenant_id}/users/{username}" -> "/tenants/{}/users/{}"
+    """
+    return re.sub(r"\{[^}]+\}", "{}", path)
 
 
 def _resolve_ref(spec: dict, ref: str) -> dict | None:
@@ -211,7 +248,23 @@ def _get_response_descriptions_for_endpoint(
 ) -> dict[int, str]:
     """Return mapping HTTP status code -> description for a given operation."""
 
-    operation = (((spec.get("paths") or {}).get(url) or {}).get(method))
+    paths = spec.get("paths") or {}
+    if not isinstance(paths, dict):
+        return {}
+
+    # Try direct match first.
+    operation = ((paths.get(url) or {}).get(method))
+
+    # Fallback: match normalized templates (handles generated snake_case params).
+    if not isinstance(operation, dict):
+        normalized_url = _normalize_path_template(url)
+        for candidate_url, candidate_ops in paths.items():
+            if not isinstance(candidate_url, str) or not isinstance(candidate_ops, dict):
+                continue
+            if _normalize_path_template(candidate_url) == normalized_url:
+                operation = candidate_ops.get(method)
+                break
+
     if not isinstance(operation, dict):
         return {}
 

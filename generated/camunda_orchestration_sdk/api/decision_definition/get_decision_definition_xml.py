@@ -72,11 +72,11 @@ Args:
         2251799813326547.
 
 Raises:
-    errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400.
-    errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401.
-    errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403.
-    errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404.
-    errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500.
+    errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -126,11 +126,11 @@ Args:
         2251799813326547.
 
 Raises:
-    errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400.
-    errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401.
-    errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403.
-    errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404.
-    errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500.
+    errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

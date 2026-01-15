@@ -79,11 +79,11 @@ Args:
     body (SearchGroupsForRoleData | Unset):
 
 Raises:
-    errors.SearchGroupsForRoleBadRequest: If the response status code is 400.
-    errors.SearchGroupsForRoleUnauthorized: If the response status code is 401.
-    errors.SearchGroupsForRoleForbidden: If the response status code is 403.
-    errors.SearchGroupsForRoleNotFound: If the response status code is 404.
-    errors.SearchGroupsForRoleInternalServerError: If the response status code is 500.
+    errors.SearchGroupsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchGroupsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchGroupsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchGroupsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchGroupsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -133,11 +133,11 @@ Args:
     body (SearchGroupsForRoleData | Unset):
 
 Raises:
-    errors.SearchGroupsForRoleBadRequest: If the response status code is 400.
-    errors.SearchGroupsForRoleUnauthorized: If the response status code is 401.
-    errors.SearchGroupsForRoleForbidden: If the response status code is 403.
-    errors.SearchGroupsForRoleNotFound: If the response status code is 404.
-    errors.SearchGroupsForRoleInternalServerError: If the response status code is 500.
+    errors.SearchGroupsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchGroupsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchGroupsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchGroupsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchGroupsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

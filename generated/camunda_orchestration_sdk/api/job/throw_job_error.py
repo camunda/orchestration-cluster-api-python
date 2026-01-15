@@ -77,11 +77,11 @@ Args:
     body (ThrowJobErrorData):
 
 Raises:
-    errors.ThrowJobErrorBadRequest: If the response status code is 400.
-    errors.ThrowJobErrorNotFound: If the response status code is 404.
-    errors.ThrowJobErrorConflict: If the response status code is 409.
-    errors.ThrowJobErrorInternalServerError: If the response status code is 500.
-    errors.ThrowJobErrorServiceUnavailable: If the response status code is 503.
+    errors.ThrowJobErrorBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ThrowJobErrorNotFound: If the response status code is 404. The job with the given key was not found or is not activated.
+    errors.ThrowJobErrorConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.ThrowJobErrorInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ThrowJobErrorServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -131,11 +131,11 @@ Args:
     body (ThrowJobErrorData):
 
 Raises:
-    errors.ThrowJobErrorBadRequest: If the response status code is 400.
-    errors.ThrowJobErrorNotFound: If the response status code is 404.
-    errors.ThrowJobErrorConflict: If the response status code is 409.
-    errors.ThrowJobErrorInternalServerError: If the response status code is 500.
-    errors.ThrowJobErrorServiceUnavailable: If the response status code is 503.
+    errors.ThrowJobErrorBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.ThrowJobErrorNotFound: If the response status code is 404. The job with the given key was not found or is not activated.
+    errors.ThrowJobErrorConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+    errors.ThrowJobErrorInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.ThrowJobErrorServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

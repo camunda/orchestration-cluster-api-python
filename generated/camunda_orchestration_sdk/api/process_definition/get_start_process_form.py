@@ -80,11 +80,11 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.GetStartProcessFormBadRequest: If the response status code is 400.
-    errors.GetStartProcessFormUnauthorized: If the response status code is 401.
-    errors.GetStartProcessFormForbidden: If the response status code is 403.
-    errors.GetStartProcessFormNotFound: If the response status code is 404.
-    errors.GetStartProcessFormInternalServerError: If the response status code is 500.
+    errors.GetStartProcessFormBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetStartProcessFormUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetStartProcessFormForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetStartProcessFormNotFound: If the response status code is 404. Not found
+    errors.GetStartProcessFormInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -138,11 +138,11 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.GetStartProcessFormBadRequest: If the response status code is 400.
-    errors.GetStartProcessFormUnauthorized: If the response status code is 401.
-    errors.GetStartProcessFormForbidden: If the response status code is 403.
-    errors.GetStartProcessFormNotFound: If the response status code is 404.
-    errors.GetStartProcessFormInternalServerError: If the response status code is 500.
+    errors.GetStartProcessFormBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetStartProcessFormUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetStartProcessFormForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetStartProcessFormNotFound: If the response status code is 404. Not found
+    errors.GetStartProcessFormInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

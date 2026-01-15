@@ -68,10 +68,10 @@ Args:
         2251799813684332.
 
 Raises:
-    errors.DeleteAuthorizationUnauthorized: If the response status code is 401.
-    errors.DeleteAuthorizationNotFound: If the response status code is 404.
-    errors.DeleteAuthorizationInternalServerError: If the response status code is 500.
-    errors.DeleteAuthorizationServiceUnavailable: If the response status code is 503.
+    errors.DeleteAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteAuthorizationNotFound: If the response status code is 404. The authorization with the authorizationKey was not found.
+    errors.DeleteAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteAuthorizationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -119,10 +119,10 @@ Args:
         2251799813684332.
 
 Raises:
-    errors.DeleteAuthorizationUnauthorized: If the response status code is 401.
-    errors.DeleteAuthorizationNotFound: If the response status code is 404.
-    errors.DeleteAuthorizationInternalServerError: If the response status code is 500.
-    errors.DeleteAuthorizationServiceUnavailable: If the response status code is 503.
+    errors.DeleteAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteAuthorizationNotFound: If the response status code is 404. The authorization with the authorizationKey was not found.
+    errors.DeleteAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteAuthorizationServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

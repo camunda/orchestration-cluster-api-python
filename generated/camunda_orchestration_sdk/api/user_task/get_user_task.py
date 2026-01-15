@@ -71,11 +71,11 @@ Args:
     user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.GetUserTaskBadRequest: If the response status code is 400.
-    errors.GetUserTaskUnauthorized: If the response status code is 401.
-    errors.GetUserTaskForbidden: If the response status code is 403.
-    errors.GetUserTaskNotFound: If the response status code is 404.
-    errors.GetUserTaskInternalServerError: If the response status code is 500.
+    errors.GetUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUserTaskUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserTaskForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.GetUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -123,11 +123,11 @@ Args:
     user_task_key (str): System-generated key for a user task.
 
 Raises:
-    errors.GetUserTaskBadRequest: If the response status code is 400.
-    errors.GetUserTaskUnauthorized: If the response status code is 401.
-    errors.GetUserTaskForbidden: If the response status code is 403.
-    errors.GetUserTaskNotFound: If the response status code is 404.
-    errors.GetUserTaskInternalServerError: If the response status code is 500.
+    errors.GetUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUserTaskUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserTaskForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.GetUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

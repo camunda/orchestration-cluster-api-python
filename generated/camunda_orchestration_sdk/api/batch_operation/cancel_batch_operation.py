@@ -79,10 +79,10 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.CancelBatchOperationBadRequest: If the response status code is 400.
-    errors.CancelBatchOperationForbidden: If the response status code is 403.
-    errors.CancelBatchOperationNotFound: If the response status code is 404.
-    errors.CancelBatchOperationInternalServerError: If the response status code is 500.
+    errors.CancelBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CancelBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CancelBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.CancelBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -136,10 +136,10 @@ Args:
     body (Any | Unset):
 
 Raises:
-    errors.CancelBatchOperationBadRequest: If the response status code is 400.
-    errors.CancelBatchOperationForbidden: If the response status code is 403.
-    errors.CancelBatchOperationNotFound: If the response status code is 404.
-    errors.CancelBatchOperationInternalServerError: If the response status code is 500.
+    errors.CancelBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CancelBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CancelBatchOperationNotFound: If the response status code is 404. Not found. The batch operation was not found.
+    errors.CancelBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

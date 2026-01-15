@@ -65,9 +65,9 @@ Args:
         2251799813684321.
 
 Raises:
-    errors.GetBatchOperationBadRequest: If the response status code is 400.
-    errors.GetBatchOperationNotFound: If the response status code is 404.
-    errors.GetBatchOperationInternalServerError: If the response status code is 500.
+    errors.GetBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetBatchOperationNotFound: If the response status code is 404. The batch operation is not found.
+    errors.GetBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -113,9 +113,9 @@ Args:
         2251799813684321.
 
 Raises:
-    errors.GetBatchOperationBadRequest: If the response status code is 400.
-    errors.GetBatchOperationNotFound: If the response status code is 404.
-    errors.GetBatchOperationInternalServerError: If the response status code is 500.
+    errors.GetBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetBatchOperationNotFound: If the response status code is 404. The batch operation is not found.
+    errors.GetBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

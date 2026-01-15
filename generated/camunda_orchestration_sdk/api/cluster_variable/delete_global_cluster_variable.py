@@ -66,11 +66,11 @@ Args:
     name (str):
 
 Raises:
-    errors.DeleteGlobalClusterVariableBadRequest: If the response status code is 400.
-    errors.DeleteGlobalClusterVariableUnauthorized: If the response status code is 401.
-    errors.DeleteGlobalClusterVariableForbidden: If the response status code is 403.
-    errors.DeleteGlobalClusterVariableNotFound: If the response status code is 404.
-    errors.DeleteGlobalClusterVariableInternalServerError: If the response status code is 500.
+    errors.DeleteGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.DeleteGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -114,11 +114,11 @@ Args:
     name (str):
 
 Raises:
-    errors.DeleteGlobalClusterVariableBadRequest: If the response status code is 400.
-    errors.DeleteGlobalClusterVariableUnauthorized: If the response status code is 401.
-    errors.DeleteGlobalClusterVariableForbidden: If the response status code is 403.
-    errors.DeleteGlobalClusterVariableNotFound: If the response status code is 404.
-    errors.DeleteGlobalClusterVariableInternalServerError: If the response status code is 500.
+    errors.DeleteGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.DeleteGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.DeleteGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

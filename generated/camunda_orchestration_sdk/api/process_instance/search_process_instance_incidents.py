@@ -99,11 +99,11 @@ Args:
     body (SearchProcessInstanceIncidentsData | Unset):
 
 Raises:
-    errors.SearchProcessInstanceIncidentsBadRequest: If the response status code is 400.
-    errors.SearchProcessInstanceIncidentsUnauthorized: If the response status code is 401.
-    errors.SearchProcessInstanceIncidentsForbidden: If the response status code is 403.
-    errors.SearchProcessInstanceIncidentsNotFound: If the response status code is 404.
-    errors.SearchProcessInstanceIncidentsInternalServerError: If the response status code is 500.
+    errors.SearchProcessInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchProcessInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchProcessInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchProcessInstanceIncidentsNotFound: If the response status code is 404. The process instance with the given key was not found.
+    errors.SearchProcessInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -173,11 +173,11 @@ Args:
     body (SearchProcessInstanceIncidentsData | Unset):
 
 Raises:
-    errors.SearchProcessInstanceIncidentsBadRequest: If the response status code is 400.
-    errors.SearchProcessInstanceIncidentsUnauthorized: If the response status code is 401.
-    errors.SearchProcessInstanceIncidentsForbidden: If the response status code is 403.
-    errors.SearchProcessInstanceIncidentsNotFound: If the response status code is 404.
-    errors.SearchProcessInstanceIncidentsInternalServerError: If the response status code is 500.
+    errors.SearchProcessInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchProcessInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchProcessInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchProcessInstanceIncidentsNotFound: If the response status code is 404. The process instance with the given key was not found.
+    errors.SearchProcessInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

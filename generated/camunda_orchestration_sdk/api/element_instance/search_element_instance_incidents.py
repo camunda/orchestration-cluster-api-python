@@ -100,11 +100,11 @@ Args:
     body (SearchElementInstanceIncidentsData):
 
 Raises:
-    errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400.
-    errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401.
-    errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403.
-    errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404.
-    errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500.
+    errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404. The element instance with the given key was not found.
+    errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -176,11 +176,11 @@ Args:
     body (SearchElementInstanceIncidentsData):
 
 Raises:
-    errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400.
-    errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401.
-    errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403.
-    errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404.
-    errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500.
+    errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404. The element instance with the given key was not found.
+    errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

@@ -79,11 +79,11 @@ Args:
     body (UpdateMappingRuleData | Unset):
 
 Raises:
-    errors.UpdateMappingRuleBadRequest: If the response status code is 400.
-    errors.UpdateMappingRuleForbidden: If the response status code is 403.
-    errors.UpdateMappingRuleNotFound: If the response status code is 404.
-    errors.UpdateMappingRuleInternalServerError: If the response status code is 500.
-    errors.UpdateMappingRuleServiceUnavailable: If the response status code is 503.
+    errors.UpdateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateMappingRuleForbidden: If the response status code is 403. The request to update a mapping rule was denied. More details are provided in the response body.
+    errors.UpdateMappingRuleNotFound: If the response status code is 404. The request to update a mapping rule was denied.
+    errors.UpdateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -133,11 +133,11 @@ Args:
     body (UpdateMappingRuleData | Unset):
 
 Raises:
-    errors.UpdateMappingRuleBadRequest: If the response status code is 400.
-    errors.UpdateMappingRuleForbidden: If the response status code is 403.
-    errors.UpdateMappingRuleNotFound: If the response status code is 404.
-    errors.UpdateMappingRuleInternalServerError: If the response status code is 500.
-    errors.UpdateMappingRuleServiceUnavailable: If the response status code is 503.
+    errors.UpdateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateMappingRuleForbidden: If the response status code is 403. The request to update a mapping rule was denied. More details are provided in the response body.
+    errors.UpdateMappingRuleNotFound: If the response status code is 404. The request to update a mapping rule was denied.
+    errors.UpdateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UpdateMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

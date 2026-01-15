@@ -73,11 +73,11 @@ Args:
         definition. Example: 2251799813683346.
 
 Raises:
-    errors.GetDecisionRequirementsBadRequest: If the response status code is 400.
-    errors.GetDecisionRequirementsUnauthorized: If the response status code is 401.
-    errors.GetDecisionRequirementsForbidden: If the response status code is 403.
-    errors.GetDecisionRequirementsNotFound: If the response status code is 404.
-    errors.GetDecisionRequirementsInternalServerError: If the response status code is 500.
+    errors.GetDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionRequirementsNotFound: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -127,11 +127,11 @@ Args:
         definition. Example: 2251799813683346.
 
 Raises:
-    errors.GetDecisionRequirementsBadRequest: If the response status code is 400.
-    errors.GetDecisionRequirementsUnauthorized: If the response status code is 401.
-    errors.GetDecisionRequirementsForbidden: If the response status code is 403.
-    errors.GetDecisionRequirementsNotFound: If the response status code is 404.
-    errors.GetDecisionRequirementsInternalServerError: If the response status code is 500.
+    errors.GetDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetDecisionRequirementsNotFound: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+    errors.GetDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

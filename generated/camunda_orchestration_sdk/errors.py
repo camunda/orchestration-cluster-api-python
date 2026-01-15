@@ -31,7 +31,7 @@ class UnexpectedStatus(ApiError):
 
 
 class ActivateAdHocSubProcessActivitiesBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: ActivateAdHocSubProcessActivitiesResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ActivateAdHocSubProcessActivitiesResponse400):
@@ -39,7 +39,7 @@ class ActivateAdHocSubProcessActivitiesBadRequest(ApiError):
 
 
 class ActivateAdHocSubProcessActivitiesForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: ActivateAdHocSubProcessActivitiesResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ActivateAdHocSubProcessActivitiesResponse403):
@@ -47,7 +47,7 @@ class ActivateAdHocSubProcessActivitiesForbidden(ApiError):
 
 
 class ActivateAdHocSubProcessActivitiesInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: ActivateAdHocSubProcessActivitiesResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ActivateAdHocSubProcessActivitiesResponse500):
@@ -55,7 +55,7 @@ class ActivateAdHocSubProcessActivitiesInternalServerError(ApiError):
 
 
 class ActivateAdHocSubProcessActivitiesNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The ad-hoc sub-process instance is not found or the provided key does not identify an ad-hoc sub-process."""
     parsed: ActivateAdHocSubProcessActivitiesResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ActivateAdHocSubProcessActivitiesResponse404):
@@ -63,7 +63,7 @@ class ActivateAdHocSubProcessActivitiesNotFound(ApiError):
 
 
 class ActivateAdHocSubProcessActivitiesServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: ActivateAdHocSubProcessActivitiesResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ActivateAdHocSubProcessActivitiesResponse503):
@@ -71,7 +71,7 @@ class ActivateAdHocSubProcessActivitiesServiceUnavailable(ApiError):
 
 
 class ActivateAdHocSubProcessActivitiesUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: ActivateAdHocSubProcessActivitiesResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ActivateAdHocSubProcessActivitiesResponse401):
@@ -111,7 +111,7 @@ class ActivateJobsUnauthorized(ApiError):
 
 
 class AssignClientToGroupBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: AssignClientToGroupResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignClientToGroupResponse400):
@@ -119,7 +119,7 @@ class AssignClientToGroupBadRequest(ApiError):
 
 
 class AssignClientToGroupConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The client with the given ID is already assigned to the group."""
     parsed: AssignClientToGroupResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignClientToGroupResponse409):
@@ -127,7 +127,7 @@ class AssignClientToGroupConflict(ApiError):
 
 
 class AssignClientToGroupForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: AssignClientToGroupResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignClientToGroupResponse403):
@@ -135,7 +135,7 @@ class AssignClientToGroupForbidden(ApiError):
 
 
 class AssignClientToGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: AssignClientToGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignClientToGroupResponse500):
@@ -143,7 +143,7 @@ class AssignClientToGroupInternalServerError(ApiError):
 
 
 class AssignClientToGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The group with the given ID was not found."""
     parsed: AssignClientToGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignClientToGroupResponse404):
@@ -151,7 +151,7 @@ class AssignClientToGroupNotFound(ApiError):
 
 
 class AssignClientToGroupServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: AssignClientToGroupResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignClientToGroupResponse503):
@@ -159,7 +159,7 @@ class AssignClientToGroupServiceUnavailable(ApiError):
 
 
 class AssignClientToTenantBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: AssignClientToTenantResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignClientToTenantResponse400):
@@ -167,7 +167,7 @@ class AssignClientToTenantBadRequest(ApiError):
 
 
 class AssignClientToTenantForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: AssignClientToTenantResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignClientToTenantResponse403):
@@ -175,7 +175,7 @@ class AssignClientToTenantForbidden(ApiError):
 
 
 class AssignClientToTenantInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: AssignClientToTenantResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignClientToTenantResponse500):
@@ -183,7 +183,7 @@ class AssignClientToTenantInternalServerError(ApiError):
 
 
 class AssignClientToTenantNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The tenant was not found."""
     parsed: AssignClientToTenantResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignClientToTenantResponse404):
@@ -191,7 +191,7 @@ class AssignClientToTenantNotFound(ApiError):
 
 
 class AssignClientToTenantServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: AssignClientToTenantResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignClientToTenantResponse503):
@@ -199,7 +199,7 @@ class AssignClientToTenantServiceUnavailable(ApiError):
 
 
 class AssignGroupToTenantBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: AssignGroupToTenantResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignGroupToTenantResponse400):
@@ -207,7 +207,7 @@ class AssignGroupToTenantBadRequest(ApiError):
 
 
 class AssignGroupToTenantForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: AssignGroupToTenantResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignGroupToTenantResponse403):
@@ -215,7 +215,7 @@ class AssignGroupToTenantForbidden(ApiError):
 
 
 class AssignGroupToTenantInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: AssignGroupToTenantResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignGroupToTenantResponse500):
@@ -223,7 +223,7 @@ class AssignGroupToTenantInternalServerError(ApiError):
 
 
 class AssignGroupToTenantNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found. The tenant or group was not found."""
     parsed: AssignGroupToTenantResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignGroupToTenantResponse404):
@@ -231,7 +231,7 @@ class AssignGroupToTenantNotFound(ApiError):
 
 
 class AssignGroupToTenantServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: AssignGroupToTenantResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignGroupToTenantResponse503):
@@ -239,7 +239,7 @@ class AssignGroupToTenantServiceUnavailable(ApiError):
 
 
 class AssignMappingRuleToGroupBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: AssignMappingRuleToGroupResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignMappingRuleToGroupResponse400):
@@ -247,7 +247,7 @@ class AssignMappingRuleToGroupBadRequest(ApiError):
 
 
 class AssignMappingRuleToGroupConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The mapping rule with the given ID is already assigned to the group."""
     parsed: AssignMappingRuleToGroupResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignMappingRuleToGroupResponse409):
@@ -255,7 +255,7 @@ class AssignMappingRuleToGroupConflict(ApiError):
 
 
 class AssignMappingRuleToGroupForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: AssignMappingRuleToGroupResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignMappingRuleToGroupResponse403):
@@ -263,7 +263,7 @@ class AssignMappingRuleToGroupForbidden(ApiError):
 
 
 class AssignMappingRuleToGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: AssignMappingRuleToGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignMappingRuleToGroupResponse500):
@@ -271,7 +271,7 @@ class AssignMappingRuleToGroupInternalServerError(ApiError):
 
 
 class AssignMappingRuleToGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The group or mapping rule with the given ID was not found."""
     parsed: AssignMappingRuleToGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignMappingRuleToGroupResponse404):
@@ -279,7 +279,7 @@ class AssignMappingRuleToGroupNotFound(ApiError):
 
 
 class AssignMappingRuleToGroupServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: AssignMappingRuleToGroupResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignMappingRuleToGroupResponse503):
@@ -287,7 +287,7 @@ class AssignMappingRuleToGroupServiceUnavailable(ApiError):
 
 
 class AssignMappingRuleToTenantBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: AssignMappingRuleToTenantResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignMappingRuleToTenantResponse400):
@@ -295,7 +295,7 @@ class AssignMappingRuleToTenantBadRequest(ApiError):
 
 
 class AssignMappingRuleToTenantForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: AssignMappingRuleToTenantResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignMappingRuleToTenantResponse403):
@@ -303,7 +303,7 @@ class AssignMappingRuleToTenantForbidden(ApiError):
 
 
 class AssignMappingRuleToTenantInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: AssignMappingRuleToTenantResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignMappingRuleToTenantResponse500):
@@ -311,7 +311,7 @@ class AssignMappingRuleToTenantInternalServerError(ApiError):
 
 
 class AssignMappingRuleToTenantNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found. The tenant or mapping rule was not found."""
     parsed: AssignMappingRuleToTenantResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignMappingRuleToTenantResponse404):
@@ -319,7 +319,7 @@ class AssignMappingRuleToTenantNotFound(ApiError):
 
 
 class AssignMappingRuleToTenantServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: AssignMappingRuleToTenantResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignMappingRuleToTenantResponse503):
@@ -327,7 +327,7 @@ class AssignMappingRuleToTenantServiceUnavailable(ApiError):
 
 
 class AssignRoleToClientBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: AssignRoleToClientResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToClientResponse400):
@@ -335,7 +335,7 @@ class AssignRoleToClientBadRequest(ApiError):
 
 
 class AssignRoleToClientConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The role was already assigned to the client with the given ID."""
     parsed: AssignRoleToClientResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToClientResponse409):
@@ -343,7 +343,7 @@ class AssignRoleToClientConflict(ApiError):
 
 
 class AssignRoleToClientForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: AssignRoleToClientResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToClientResponse403):
@@ -351,7 +351,7 @@ class AssignRoleToClientForbidden(ApiError):
 
 
 class AssignRoleToClientInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: AssignRoleToClientResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToClientResponse500):
@@ -359,7 +359,7 @@ class AssignRoleToClientInternalServerError(ApiError):
 
 
 class AssignRoleToClientNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role with the given ID was not found."""
     parsed: AssignRoleToClientResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToClientResponse404):
@@ -367,7 +367,7 @@ class AssignRoleToClientNotFound(ApiError):
 
 
 class AssignRoleToClientServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: AssignRoleToClientResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToClientResponse503):
@@ -375,7 +375,7 @@ class AssignRoleToClientServiceUnavailable(ApiError):
 
 
 class AssignRoleToGroupBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: AssignRoleToGroupResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToGroupResponse400):
@@ -383,7 +383,7 @@ class AssignRoleToGroupBadRequest(ApiError):
 
 
 class AssignRoleToGroupConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The role is already assigned to the group with the given ID."""
     parsed: AssignRoleToGroupResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToGroupResponse409):
@@ -391,7 +391,7 @@ class AssignRoleToGroupConflict(ApiError):
 
 
 class AssignRoleToGroupForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: AssignRoleToGroupResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToGroupResponse403):
@@ -399,7 +399,7 @@ class AssignRoleToGroupForbidden(ApiError):
 
 
 class AssignRoleToGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: AssignRoleToGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToGroupResponse500):
@@ -407,7 +407,7 @@ class AssignRoleToGroupInternalServerError(ApiError):
 
 
 class AssignRoleToGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role or group with the given ID was not found."""
     parsed: AssignRoleToGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToGroupResponse404):
@@ -415,7 +415,7 @@ class AssignRoleToGroupNotFound(ApiError):
 
 
 class AssignRoleToGroupServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: AssignRoleToGroupResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToGroupResponse503):
@@ -423,7 +423,7 @@ class AssignRoleToGroupServiceUnavailable(ApiError):
 
 
 class AssignRoleToMappingRuleBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: AssignRoleToMappingRuleResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToMappingRuleResponse400):
@@ -431,7 +431,7 @@ class AssignRoleToMappingRuleBadRequest(ApiError):
 
 
 class AssignRoleToMappingRuleConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The role is already assigned to the mapping rule with the given ID."""
     parsed: AssignRoleToMappingRuleResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToMappingRuleResponse409):
@@ -439,7 +439,7 @@ class AssignRoleToMappingRuleConflict(ApiError):
 
 
 class AssignRoleToMappingRuleForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: AssignRoleToMappingRuleResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToMappingRuleResponse403):
@@ -447,7 +447,7 @@ class AssignRoleToMappingRuleForbidden(ApiError):
 
 
 class AssignRoleToMappingRuleInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: AssignRoleToMappingRuleResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToMappingRuleResponse500):
@@ -455,7 +455,7 @@ class AssignRoleToMappingRuleInternalServerError(ApiError):
 
 
 class AssignRoleToMappingRuleNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role or mapping rule with the given ID was not found."""
     parsed: AssignRoleToMappingRuleResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToMappingRuleResponse404):
@@ -463,7 +463,7 @@ class AssignRoleToMappingRuleNotFound(ApiError):
 
 
 class AssignRoleToMappingRuleServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: AssignRoleToMappingRuleResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToMappingRuleResponse503):
@@ -471,7 +471,7 @@ class AssignRoleToMappingRuleServiceUnavailable(ApiError):
 
 
 class AssignRoleToTenantBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: AssignRoleToTenantResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToTenantResponse400):
@@ -479,7 +479,7 @@ class AssignRoleToTenantBadRequest(ApiError):
 
 
 class AssignRoleToTenantForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: AssignRoleToTenantResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToTenantResponse403):
@@ -487,7 +487,7 @@ class AssignRoleToTenantForbidden(ApiError):
 
 
 class AssignRoleToTenantInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: AssignRoleToTenantResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToTenantResponse500):
@@ -495,7 +495,7 @@ class AssignRoleToTenantInternalServerError(ApiError):
 
 
 class AssignRoleToTenantNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found. The tenant or role was not found."""
     parsed: AssignRoleToTenantResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToTenantResponse404):
@@ -503,7 +503,7 @@ class AssignRoleToTenantNotFound(ApiError):
 
 
 class AssignRoleToTenantServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: AssignRoleToTenantResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToTenantResponse503):
@@ -511,7 +511,7 @@ class AssignRoleToTenantServiceUnavailable(ApiError):
 
 
 class AssignRoleToUserBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: AssignRoleToUserResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToUserResponse400):
@@ -519,7 +519,7 @@ class AssignRoleToUserBadRequest(ApiError):
 
 
 class AssignRoleToUserConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The role is already assigned to the user with the given ID."""
     parsed: AssignRoleToUserResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToUserResponse409):
@@ -527,7 +527,7 @@ class AssignRoleToUserConflict(ApiError):
 
 
 class AssignRoleToUserForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: AssignRoleToUserResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToUserResponse403):
@@ -535,7 +535,7 @@ class AssignRoleToUserForbidden(ApiError):
 
 
 class AssignRoleToUserInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: AssignRoleToUserResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToUserResponse500):
@@ -543,7 +543,7 @@ class AssignRoleToUserInternalServerError(ApiError):
 
 
 class AssignRoleToUserNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role or user with the given ID or username was not found."""
     parsed: AssignRoleToUserResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToUserResponse404):
@@ -551,7 +551,7 @@ class AssignRoleToUserNotFound(ApiError):
 
 
 class AssignRoleToUserServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: AssignRoleToUserResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignRoleToUserResponse503):
@@ -559,7 +559,7 @@ class AssignRoleToUserServiceUnavailable(ApiError):
 
 
 class AssignUserTaskBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: AssignUserTaskResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserTaskResponse400):
@@ -567,7 +567,7 @@ class AssignUserTaskBadRequest(ApiError):
 
 
 class AssignUserTaskConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The user task with the given key is in the wrong state currently. More details are provided in the response body."""
     parsed: AssignUserTaskResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserTaskResponse409):
@@ -575,7 +575,7 @@ class AssignUserTaskConflict(ApiError):
 
 
 class AssignUserTaskInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: AssignUserTaskResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserTaskResponse500):
@@ -583,7 +583,7 @@ class AssignUserTaskInternalServerError(ApiError):
 
 
 class AssignUserTaskNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The user task with the given key was not found."""
     parsed: AssignUserTaskResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserTaskResponse404):
@@ -591,7 +591,7 @@ class AssignUserTaskNotFound(ApiError):
 
 
 class AssignUserTaskServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: AssignUserTaskResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserTaskResponse503):
@@ -599,7 +599,7 @@ class AssignUserTaskServiceUnavailable(ApiError):
 
 
 class AssignUserToGroupBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: AssignUserToGroupResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserToGroupResponse400):
@@ -607,7 +607,7 @@ class AssignUserToGroupBadRequest(ApiError):
 
 
 class AssignUserToGroupConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The user with the given ID is already assigned to the group."""
     parsed: AssignUserToGroupResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserToGroupResponse409):
@@ -615,7 +615,7 @@ class AssignUserToGroupConflict(ApiError):
 
 
 class AssignUserToGroupForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: AssignUserToGroupResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserToGroupResponse403):
@@ -623,7 +623,7 @@ class AssignUserToGroupForbidden(ApiError):
 
 
 class AssignUserToGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: AssignUserToGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserToGroupResponse500):
@@ -631,7 +631,7 @@ class AssignUserToGroupInternalServerError(ApiError):
 
 
 class AssignUserToGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The group or user with the given ID or username was not found."""
     parsed: AssignUserToGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserToGroupResponse404):
@@ -639,7 +639,7 @@ class AssignUserToGroupNotFound(ApiError):
 
 
 class AssignUserToGroupServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: AssignUserToGroupResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserToGroupResponse503):
@@ -647,7 +647,7 @@ class AssignUserToGroupServiceUnavailable(ApiError):
 
 
 class AssignUserToTenantBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: AssignUserToTenantResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserToTenantResponse400):
@@ -655,7 +655,7 @@ class AssignUserToTenantBadRequest(ApiError):
 
 
 class AssignUserToTenantForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: AssignUserToTenantResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserToTenantResponse403):
@@ -663,7 +663,7 @@ class AssignUserToTenantForbidden(ApiError):
 
 
 class AssignUserToTenantInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: AssignUserToTenantResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserToTenantResponse500):
@@ -671,7 +671,7 @@ class AssignUserToTenantInternalServerError(ApiError):
 
 
 class AssignUserToTenantNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found. The tenant or user was not found."""
     parsed: AssignUserToTenantResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserToTenantResponse404):
@@ -679,7 +679,7 @@ class AssignUserToTenantNotFound(ApiError):
 
 
 class AssignUserToTenantServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: AssignUserToTenantResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: AssignUserToTenantResponse503):
@@ -719,7 +719,7 @@ class BroadcastSignalServiceUnavailable(ApiError):
 
 
 class CancelBatchOperationBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: CancelBatchOperationResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CancelBatchOperationResponse400):
@@ -727,7 +727,7 @@ class CancelBatchOperationBadRequest(ApiError):
 
 
 class CancelBatchOperationForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: CancelBatchOperationResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CancelBatchOperationResponse403):
@@ -735,7 +735,7 @@ class CancelBatchOperationForbidden(ApiError):
 
 
 class CancelBatchOperationInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: CancelBatchOperationResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CancelBatchOperationResponse500):
@@ -743,7 +743,7 @@ class CancelBatchOperationInternalServerError(ApiError):
 
 
 class CancelBatchOperationNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found. The batch operation was not found."""
     parsed: CancelBatchOperationResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CancelBatchOperationResponse404):
@@ -751,7 +751,7 @@ class CancelBatchOperationNotFound(ApiError):
 
 
 class CancelProcessInstanceBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: CancelProcessInstanceResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CancelProcessInstanceResponse400):
@@ -759,7 +759,7 @@ class CancelProcessInstanceBadRequest(ApiError):
 
 
 class CancelProcessInstanceInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: CancelProcessInstanceResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CancelProcessInstanceResponse500):
@@ -767,7 +767,7 @@ class CancelProcessInstanceInternalServerError(ApiError):
 
 
 class CancelProcessInstanceNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The process instance is not found."""
     parsed: CancelProcessInstanceResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CancelProcessInstanceResponse404):
@@ -775,7 +775,7 @@ class CancelProcessInstanceNotFound(ApiError):
 
 
 class CancelProcessInstanceServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: CancelProcessInstanceResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CancelProcessInstanceResponse503):
@@ -815,7 +815,7 @@ class CancelProcessInstancesBatchOperationUnauthorized(ApiError):
 
 
 class CompleteJobBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: CompleteJobResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CompleteJobResponse400):
@@ -823,7 +823,7 @@ class CompleteJobBadRequest(ApiError):
 
 
 class CompleteJobConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The job with the given key is in the wrong state currently. More details are provided in the response body."""
     parsed: CompleteJobResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CompleteJobResponse409):
@@ -831,7 +831,7 @@ class CompleteJobConflict(ApiError):
 
 
 class CompleteJobInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: CompleteJobResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CompleteJobResponse500):
@@ -839,7 +839,7 @@ class CompleteJobInternalServerError(ApiError):
 
 
 class CompleteJobNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The job with the given key was not found."""
     parsed: CompleteJobResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CompleteJobResponse404):
@@ -847,7 +847,7 @@ class CompleteJobNotFound(ApiError):
 
 
 class CompleteJobServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: CompleteJobResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CompleteJobResponse503):
@@ -855,7 +855,7 @@ class CompleteJobServiceUnavailable(ApiError):
 
 
 class CompleteUserTaskBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: CompleteUserTaskResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CompleteUserTaskResponse400):
@@ -863,7 +863,7 @@ class CompleteUserTaskBadRequest(ApiError):
 
 
 class CompleteUserTaskConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The user task with the given key is in the wrong state currently. More details are provided in the response body."""
     parsed: CompleteUserTaskResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CompleteUserTaskResponse409):
@@ -871,7 +871,7 @@ class CompleteUserTaskConflict(ApiError):
 
 
 class CompleteUserTaskInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: CompleteUserTaskResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CompleteUserTaskResponse500):
@@ -879,7 +879,7 @@ class CompleteUserTaskInternalServerError(ApiError):
 
 
 class CompleteUserTaskNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The user task with the given key was not found."""
     parsed: CompleteUserTaskResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CompleteUserTaskResponse404):
@@ -887,7 +887,7 @@ class CompleteUserTaskNotFound(ApiError):
 
 
 class CompleteUserTaskServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: CompleteUserTaskResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CompleteUserTaskResponse503):
@@ -1039,7 +1039,7 @@ class CreateDocumentBadRequest(ApiError):
 
 
 class CreateDocumentLinkBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: CreateDocumentLinkResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CreateDocumentLinkResponse400):
@@ -1071,7 +1071,7 @@ class CreateDocumentsUnsupportedMediaType(ApiError):
 
 
 class CreateElementInstanceVariablesBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: CreateElementInstanceVariablesResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CreateElementInstanceVariablesResponse400):
@@ -1079,7 +1079,7 @@ class CreateElementInstanceVariablesBadRequest(ApiError):
 
 
 class CreateElementInstanceVariablesInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: CreateElementInstanceVariablesResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CreateElementInstanceVariablesResponse500):
@@ -1087,7 +1087,7 @@ class CreateElementInstanceVariablesInternalServerError(ApiError):
 
 
 class CreateElementInstanceVariablesServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: CreateElementInstanceVariablesResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CreateElementInstanceVariablesResponse503):
@@ -1279,7 +1279,7 @@ class CreateTenantBadRequest(ApiError):
 
 
 class CreateTenantClusterVariableBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: CreateTenantClusterVariableResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CreateTenantClusterVariableResponse400):
@@ -1287,7 +1287,7 @@ class CreateTenantClusterVariableBadRequest(ApiError):
 
 
 class CreateTenantClusterVariableForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: CreateTenantClusterVariableResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CreateTenantClusterVariableResponse403):
@@ -1295,7 +1295,7 @@ class CreateTenantClusterVariableForbidden(ApiError):
 
 
 class CreateTenantClusterVariableInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: CreateTenantClusterVariableResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CreateTenantClusterVariableResponse500):
@@ -1303,7 +1303,7 @@ class CreateTenantClusterVariableInternalServerError(ApiError):
 
 
 class CreateTenantClusterVariableUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: CreateTenantClusterVariableResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: CreateTenantClusterVariableResponse401):
@@ -1399,7 +1399,7 @@ class CreateUserUnauthorized(ApiError):
 
 
 class DeleteAuthorizationInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: DeleteAuthorizationResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteAuthorizationResponse500):
@@ -1407,7 +1407,7 @@ class DeleteAuthorizationInternalServerError(ApiError):
 
 
 class DeleteAuthorizationNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The authorization with the authorizationKey was not found."""
     parsed: DeleteAuthorizationResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteAuthorizationResponse404):
@@ -1415,7 +1415,7 @@ class DeleteAuthorizationNotFound(ApiError):
 
 
 class DeleteAuthorizationServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: DeleteAuthorizationResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteAuthorizationResponse503):
@@ -1423,7 +1423,7 @@ class DeleteAuthorizationServiceUnavailable(ApiError):
 
 
 class DeleteAuthorizationUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: DeleteAuthorizationResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteAuthorizationResponse401):
@@ -1431,7 +1431,7 @@ class DeleteAuthorizationUnauthorized(ApiError):
 
 
 class DeleteDocumentInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: DeleteDocumentResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteDocumentResponse500):
@@ -1439,7 +1439,7 @@ class DeleteDocumentInternalServerError(ApiError):
 
 
 class DeleteDocumentNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The document with the given ID was not found."""
     parsed: DeleteDocumentResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteDocumentResponse404):
@@ -1447,7 +1447,7 @@ class DeleteDocumentNotFound(ApiError):
 
 
 class DeleteGlobalClusterVariableBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: DeleteGlobalClusterVariableResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteGlobalClusterVariableResponse400):
@@ -1455,7 +1455,7 @@ class DeleteGlobalClusterVariableBadRequest(ApiError):
 
 
 class DeleteGlobalClusterVariableForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: DeleteGlobalClusterVariableResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteGlobalClusterVariableResponse403):
@@ -1463,7 +1463,7 @@ class DeleteGlobalClusterVariableForbidden(ApiError):
 
 
 class DeleteGlobalClusterVariableInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: DeleteGlobalClusterVariableResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteGlobalClusterVariableResponse500):
@@ -1471,7 +1471,7 @@ class DeleteGlobalClusterVariableInternalServerError(ApiError):
 
 
 class DeleteGlobalClusterVariableNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Cluster variable not found"""
     parsed: DeleteGlobalClusterVariableResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteGlobalClusterVariableResponse404):
@@ -1479,7 +1479,7 @@ class DeleteGlobalClusterVariableNotFound(ApiError):
 
 
 class DeleteGlobalClusterVariableUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: DeleteGlobalClusterVariableResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteGlobalClusterVariableResponse401):
@@ -1487,7 +1487,7 @@ class DeleteGlobalClusterVariableUnauthorized(ApiError):
 
 
 class DeleteGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: DeleteGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteGroupResponse500):
@@ -1495,7 +1495,7 @@ class DeleteGroupInternalServerError(ApiError):
 
 
 class DeleteGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The group with the given ID was not found."""
     parsed: DeleteGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteGroupResponse404):
@@ -1503,7 +1503,7 @@ class DeleteGroupNotFound(ApiError):
 
 
 class DeleteGroupServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: DeleteGroupResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteGroupResponse503):
@@ -1511,7 +1511,7 @@ class DeleteGroupServiceUnavailable(ApiError):
 
 
 class DeleteGroupUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: DeleteGroupResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteGroupResponse401):
@@ -1519,7 +1519,7 @@ class DeleteGroupUnauthorized(ApiError):
 
 
 class DeleteMappingRuleInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: DeleteMappingRuleResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteMappingRuleResponse500):
@@ -1527,7 +1527,7 @@ class DeleteMappingRuleInternalServerError(ApiError):
 
 
 class DeleteMappingRuleNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The mapping rule with the mappingRuleId was not found."""
     parsed: DeleteMappingRuleResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteMappingRuleResponse404):
@@ -1535,7 +1535,7 @@ class DeleteMappingRuleNotFound(ApiError):
 
 
 class DeleteMappingRuleServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: DeleteMappingRuleResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteMappingRuleResponse503):
@@ -1543,7 +1543,7 @@ class DeleteMappingRuleServiceUnavailable(ApiError):
 
 
 class DeleteMappingRuleUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: DeleteMappingRuleResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteMappingRuleResponse401):
@@ -1551,7 +1551,7 @@ class DeleteMappingRuleUnauthorized(ApiError):
 
 
 class DeleteProcessInstanceConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The process instance is not in a completed or terminated state and cannot be deleted."""
     parsed: DeleteProcessInstanceResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteProcessInstanceResponse409):
@@ -1559,7 +1559,7 @@ class DeleteProcessInstanceConflict(ApiError):
 
 
 class DeleteProcessInstanceForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: DeleteProcessInstanceResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteProcessInstanceResponse403):
@@ -1567,7 +1567,7 @@ class DeleteProcessInstanceForbidden(ApiError):
 
 
 class DeleteProcessInstanceInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: DeleteProcessInstanceResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteProcessInstanceResponse500):
@@ -1575,7 +1575,7 @@ class DeleteProcessInstanceInternalServerError(ApiError):
 
 
 class DeleteProcessInstanceNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The process instance is not found."""
     parsed: DeleteProcessInstanceResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteProcessInstanceResponse404):
@@ -1583,7 +1583,7 @@ class DeleteProcessInstanceNotFound(ApiError):
 
 
 class DeleteProcessInstanceServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: DeleteProcessInstanceResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteProcessInstanceResponse503):
@@ -1591,7 +1591,7 @@ class DeleteProcessInstanceServiceUnavailable(ApiError):
 
 
 class DeleteProcessInstanceUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: DeleteProcessInstanceResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteProcessInstanceResponse401):
@@ -1631,7 +1631,7 @@ class DeleteProcessInstancesBatchOperationUnauthorized(ApiError):
 
 
 class DeleteResourceBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: DeleteResourceResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteResourceResponse400):
@@ -1639,7 +1639,7 @@ class DeleteResourceBadRequest(ApiError):
 
 
 class DeleteResourceInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: DeleteResourceResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteResourceResponse500):
@@ -1647,7 +1647,7 @@ class DeleteResourceInternalServerError(ApiError):
 
 
 class DeleteResourceNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The resource is not found."""
     parsed: DeleteResourceResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteResourceResponse404):
@@ -1655,7 +1655,7 @@ class DeleteResourceNotFound(ApiError):
 
 
 class DeleteResourceServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: DeleteResourceResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteResourceResponse503):
@@ -1663,7 +1663,7 @@ class DeleteResourceServiceUnavailable(ApiError):
 
 
 class DeleteRoleInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: DeleteRoleResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteRoleResponse500):
@@ -1671,7 +1671,7 @@ class DeleteRoleInternalServerError(ApiError):
 
 
 class DeleteRoleNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role with the ID was not found."""
     parsed: DeleteRoleResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteRoleResponse404):
@@ -1679,7 +1679,7 @@ class DeleteRoleNotFound(ApiError):
 
 
 class DeleteRoleServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: DeleteRoleResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteRoleResponse503):
@@ -1687,7 +1687,7 @@ class DeleteRoleServiceUnavailable(ApiError):
 
 
 class DeleteRoleUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: DeleteRoleResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteRoleResponse401):
@@ -1695,7 +1695,7 @@ class DeleteRoleUnauthorized(ApiError):
 
 
 class DeleteTenantBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: DeleteTenantResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteTenantResponse400):
@@ -1703,7 +1703,7 @@ class DeleteTenantBadRequest(ApiError):
 
 
 class DeleteTenantClusterVariableBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: DeleteTenantClusterVariableResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteTenantClusterVariableResponse400):
@@ -1711,7 +1711,7 @@ class DeleteTenantClusterVariableBadRequest(ApiError):
 
 
 class DeleteTenantClusterVariableForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: DeleteTenantClusterVariableResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteTenantClusterVariableResponse403):
@@ -1719,7 +1719,7 @@ class DeleteTenantClusterVariableForbidden(ApiError):
 
 
 class DeleteTenantClusterVariableInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: DeleteTenantClusterVariableResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteTenantClusterVariableResponse500):
@@ -1727,7 +1727,7 @@ class DeleteTenantClusterVariableInternalServerError(ApiError):
 
 
 class DeleteTenantClusterVariableNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Cluster variable not found"""
     parsed: DeleteTenantClusterVariableResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteTenantClusterVariableResponse404):
@@ -1735,7 +1735,7 @@ class DeleteTenantClusterVariableNotFound(ApiError):
 
 
 class DeleteTenantClusterVariableUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: DeleteTenantClusterVariableResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteTenantClusterVariableResponse401):
@@ -1743,7 +1743,7 @@ class DeleteTenantClusterVariableUnauthorized(ApiError):
 
 
 class DeleteTenantForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: DeleteTenantResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteTenantResponse403):
@@ -1751,7 +1751,7 @@ class DeleteTenantForbidden(ApiError):
 
 
 class DeleteTenantInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: DeleteTenantResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteTenantResponse500):
@@ -1759,7 +1759,7 @@ class DeleteTenantInternalServerError(ApiError):
 
 
 class DeleteTenantNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found. The tenant was not found."""
     parsed: DeleteTenantResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteTenantResponse404):
@@ -1767,7 +1767,7 @@ class DeleteTenantNotFound(ApiError):
 
 
 class DeleteTenantServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: DeleteTenantResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteTenantResponse503):
@@ -1775,7 +1775,7 @@ class DeleteTenantServiceUnavailable(ApiError):
 
 
 class DeleteUserBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: DeleteUserResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteUserResponse400):
@@ -1783,7 +1783,7 @@ class DeleteUserBadRequest(ApiError):
 
 
 class DeleteUserInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: DeleteUserResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteUserResponse500):
@@ -1791,7 +1791,7 @@ class DeleteUserInternalServerError(ApiError):
 
 
 class DeleteUserNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The user is not found."""
     parsed: DeleteUserResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteUserResponse404):
@@ -1799,7 +1799,7 @@ class DeleteUserNotFound(ApiError):
 
 
 class DeleteUserServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: DeleteUserResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: DeleteUserResponse503):
@@ -1911,7 +1911,7 @@ class EvaluateExpressionUnauthorized(ApiError):
 
 
 class FailJobBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: FailJobResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: FailJobResponse400):
@@ -1919,7 +1919,7 @@ class FailJobBadRequest(ApiError):
 
 
 class FailJobConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The job with the given key is in the wrong state (i.e: not ACTIVATED or ACTIVATABLE). The job was failed by another worker with retries = 0, and the process is now in an incident state."""
     parsed: FailJobResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: FailJobResponse409):
@@ -1927,7 +1927,7 @@ class FailJobConflict(ApiError):
 
 
 class FailJobInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: FailJobResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: FailJobResponse500):
@@ -1935,7 +1935,7 @@ class FailJobInternalServerError(ApiError):
 
 
 class FailJobNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The job with the given jobKey is not found. It was completed by another worker, or the process instance itself was canceled."""
     parsed: FailJobResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: FailJobResponse404):
@@ -1943,7 +1943,7 @@ class FailJobNotFound(ApiError):
 
 
 class FailJobServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: FailJobResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: FailJobResponse503):
@@ -1951,7 +1951,7 @@ class FailJobServiceUnavailable(ApiError):
 
 
 class GetAuditLogForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetAuditLogResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetAuditLogResponse403):
@@ -1959,7 +1959,7 @@ class GetAuditLogForbidden(ApiError):
 
 
 class GetAuditLogInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetAuditLogResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetAuditLogResponse500):
@@ -1967,7 +1967,7 @@ class GetAuditLogInternalServerError(ApiError):
 
 
 class GetAuditLogNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The audit log with the given key was not found."""
     parsed: GetAuditLogResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetAuditLogResponse404):
@@ -1975,7 +1975,7 @@ class GetAuditLogNotFound(ApiError):
 
 
 class GetAuditLogUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetAuditLogResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetAuditLogResponse401):
@@ -2007,7 +2007,7 @@ class GetAuthenticationUnauthorized(ApiError):
 
 
 class GetAuthorizationForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetAuthorizationResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetAuthorizationResponse403):
@@ -2015,7 +2015,7 @@ class GetAuthorizationForbidden(ApiError):
 
 
 class GetAuthorizationInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetAuthorizationResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetAuthorizationResponse500):
@@ -2023,7 +2023,7 @@ class GetAuthorizationInternalServerError(ApiError):
 
 
 class GetAuthorizationNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The authorization with the given key was not found."""
     parsed: GetAuthorizationResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetAuthorizationResponse404):
@@ -2031,7 +2031,7 @@ class GetAuthorizationNotFound(ApiError):
 
 
 class GetAuthorizationUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetAuthorizationResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetAuthorizationResponse401):
@@ -2039,7 +2039,7 @@ class GetAuthorizationUnauthorized(ApiError):
 
 
 class GetBatchOperationBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetBatchOperationResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetBatchOperationResponse400):
@@ -2047,7 +2047,7 @@ class GetBatchOperationBadRequest(ApiError):
 
 
 class GetBatchOperationInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetBatchOperationResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetBatchOperationResponse500):
@@ -2055,7 +2055,7 @@ class GetBatchOperationInternalServerError(ApiError):
 
 
 class GetBatchOperationNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The batch operation is not found."""
     parsed: GetBatchOperationResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetBatchOperationResponse404):
@@ -2063,7 +2063,7 @@ class GetBatchOperationNotFound(ApiError):
 
 
 class GetDecisionDefinitionBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetDecisionDefinitionResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionDefinitionResponse400):
@@ -2071,7 +2071,7 @@ class GetDecisionDefinitionBadRequest(ApiError):
 
 
 class GetDecisionDefinitionForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetDecisionDefinitionResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionDefinitionResponse403):
@@ -2079,7 +2079,7 @@ class GetDecisionDefinitionForbidden(ApiError):
 
 
 class GetDecisionDefinitionInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetDecisionDefinitionResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionDefinitionResponse500):
@@ -2087,7 +2087,7 @@ class GetDecisionDefinitionInternalServerError(ApiError):
 
 
 class GetDecisionDefinitionNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The decision definition with the given key was not found. More details are provided in the response body."""
     parsed: GetDecisionDefinitionResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionDefinitionResponse404):
@@ -2095,7 +2095,7 @@ class GetDecisionDefinitionNotFound(ApiError):
 
 
 class GetDecisionDefinitionUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetDecisionDefinitionResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionDefinitionResponse401):
@@ -2103,7 +2103,7 @@ class GetDecisionDefinitionUnauthorized(ApiError):
 
 
 class GetDecisionDefinitionXmlBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetDecisionDefinitionXMLResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionDefinitionXMLResponse400):
@@ -2111,7 +2111,7 @@ class GetDecisionDefinitionXmlBadRequest(ApiError):
 
 
 class GetDecisionDefinitionXmlForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetDecisionDefinitionXMLResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionDefinitionXMLResponse403):
@@ -2119,7 +2119,7 @@ class GetDecisionDefinitionXmlForbidden(ApiError):
 
 
 class GetDecisionDefinitionXmlInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetDecisionDefinitionXMLResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionDefinitionXMLResponse500):
@@ -2127,7 +2127,7 @@ class GetDecisionDefinitionXmlInternalServerError(ApiError):
 
 
 class GetDecisionDefinitionXmlNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The decision definition with the given key was not found. More details are provided in the response body."""
     parsed: GetDecisionDefinitionXMLResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionDefinitionXMLResponse404):
@@ -2135,7 +2135,7 @@ class GetDecisionDefinitionXmlNotFound(ApiError):
 
 
 class GetDecisionDefinitionXmlUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetDecisionDefinitionXMLResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionDefinitionXMLResponse401):
@@ -2143,7 +2143,7 @@ class GetDecisionDefinitionXmlUnauthorized(ApiError):
 
 
 class GetDecisionInstanceBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetDecisionInstanceResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionInstanceResponse400):
@@ -2151,7 +2151,7 @@ class GetDecisionInstanceBadRequest(ApiError):
 
 
 class GetDecisionInstanceForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetDecisionInstanceResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionInstanceResponse403):
@@ -2159,7 +2159,7 @@ class GetDecisionInstanceForbidden(ApiError):
 
 
 class GetDecisionInstanceInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetDecisionInstanceResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionInstanceResponse500):
@@ -2167,7 +2167,7 @@ class GetDecisionInstanceInternalServerError(ApiError):
 
 
 class GetDecisionInstanceNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The decision instance with the given key was not found. More details are provided in the response body."""
     parsed: GetDecisionInstanceResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionInstanceResponse404):
@@ -2175,7 +2175,7 @@ class GetDecisionInstanceNotFound(ApiError):
 
 
 class GetDecisionInstanceUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetDecisionInstanceResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionInstanceResponse401):
@@ -2183,7 +2183,7 @@ class GetDecisionInstanceUnauthorized(ApiError):
 
 
 class GetDecisionRequirementsBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetDecisionRequirementsResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionRequirementsResponse400):
@@ -2191,7 +2191,7 @@ class GetDecisionRequirementsBadRequest(ApiError):
 
 
 class GetDecisionRequirementsForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetDecisionRequirementsResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionRequirementsResponse403):
@@ -2199,7 +2199,7 @@ class GetDecisionRequirementsForbidden(ApiError):
 
 
 class GetDecisionRequirementsInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetDecisionRequirementsResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionRequirementsResponse500):
@@ -2207,7 +2207,7 @@ class GetDecisionRequirementsInternalServerError(ApiError):
 
 
 class GetDecisionRequirementsNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The decision requirements with the given key was not found. More details are provided in the response body."""
     parsed: GetDecisionRequirementsResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionRequirementsResponse404):
@@ -2215,7 +2215,7 @@ class GetDecisionRequirementsNotFound(ApiError):
 
 
 class GetDecisionRequirementsUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetDecisionRequirementsResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionRequirementsResponse401):
@@ -2223,7 +2223,7 @@ class GetDecisionRequirementsUnauthorized(ApiError):
 
 
 class GetDecisionRequirementsXmlBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetDecisionRequirementsXMLResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionRequirementsXMLResponse400):
@@ -2231,7 +2231,7 @@ class GetDecisionRequirementsXmlBadRequest(ApiError):
 
 
 class GetDecisionRequirementsXmlForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetDecisionRequirementsXMLResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionRequirementsXMLResponse403):
@@ -2239,7 +2239,7 @@ class GetDecisionRequirementsXmlForbidden(ApiError):
 
 
 class GetDecisionRequirementsXmlInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetDecisionRequirementsXMLResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionRequirementsXMLResponse500):
@@ -2247,7 +2247,7 @@ class GetDecisionRequirementsXmlInternalServerError(ApiError):
 
 
 class GetDecisionRequirementsXmlNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The decision requirements with the given key was not found. More details are provided in the response body."""
     parsed: GetDecisionRequirementsXMLResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionRequirementsXMLResponse404):
@@ -2255,7 +2255,7 @@ class GetDecisionRequirementsXmlNotFound(ApiError):
 
 
 class GetDecisionRequirementsXmlUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetDecisionRequirementsXMLResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDecisionRequirementsXMLResponse401):
@@ -2263,7 +2263,7 @@ class GetDecisionRequirementsXmlUnauthorized(ApiError):
 
 
 class GetDocumentInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetDocumentResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDocumentResponse500):
@@ -2271,7 +2271,7 @@ class GetDocumentInternalServerError(ApiError):
 
 
 class GetDocumentNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The document with the given ID was not found."""
     parsed: GetDocumentResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetDocumentResponse404):
@@ -2279,7 +2279,7 @@ class GetDocumentNotFound(ApiError):
 
 
 class GetElementInstanceBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetElementInstanceResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetElementInstanceResponse400):
@@ -2287,7 +2287,7 @@ class GetElementInstanceBadRequest(ApiError):
 
 
 class GetElementInstanceForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetElementInstanceResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetElementInstanceResponse403):
@@ -2295,7 +2295,7 @@ class GetElementInstanceForbidden(ApiError):
 
 
 class GetElementInstanceInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetElementInstanceResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetElementInstanceResponse500):
@@ -2303,7 +2303,7 @@ class GetElementInstanceInternalServerError(ApiError):
 
 
 class GetElementInstanceNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The element instance with the given key was not found. More details are provided in the response body."""
     parsed: GetElementInstanceResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetElementInstanceResponse404):
@@ -2311,7 +2311,7 @@ class GetElementInstanceNotFound(ApiError):
 
 
 class GetElementInstanceUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetElementInstanceResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetElementInstanceResponse401):
@@ -2319,7 +2319,7 @@ class GetElementInstanceUnauthorized(ApiError):
 
 
 class GetGlobalClusterVariableBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetGlobalClusterVariableResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetGlobalClusterVariableResponse400):
@@ -2327,7 +2327,7 @@ class GetGlobalClusterVariableBadRequest(ApiError):
 
 
 class GetGlobalClusterVariableForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetGlobalClusterVariableResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetGlobalClusterVariableResponse403):
@@ -2335,7 +2335,7 @@ class GetGlobalClusterVariableForbidden(ApiError):
 
 
 class GetGlobalClusterVariableInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetGlobalClusterVariableResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetGlobalClusterVariableResponse500):
@@ -2343,7 +2343,7 @@ class GetGlobalClusterVariableInternalServerError(ApiError):
 
 
 class GetGlobalClusterVariableNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Cluster variable not found"""
     parsed: GetGlobalClusterVariableResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetGlobalClusterVariableResponse404):
@@ -2351,7 +2351,7 @@ class GetGlobalClusterVariableNotFound(ApiError):
 
 
 class GetGlobalClusterVariableUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetGlobalClusterVariableResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetGlobalClusterVariableResponse401):
@@ -2359,7 +2359,7 @@ class GetGlobalClusterVariableUnauthorized(ApiError):
 
 
 class GetGroupForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetGroupResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetGroupResponse403):
@@ -2367,7 +2367,7 @@ class GetGroupForbidden(ApiError):
 
 
 class GetGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetGroupResponse500):
@@ -2375,7 +2375,7 @@ class GetGroupInternalServerError(ApiError):
 
 
 class GetGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The group with the given ID was not found."""
     parsed: GetGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetGroupResponse404):
@@ -2383,7 +2383,7 @@ class GetGroupNotFound(ApiError):
 
 
 class GetGroupUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetGroupResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetGroupResponse401):
@@ -2391,7 +2391,7 @@ class GetGroupUnauthorized(ApiError):
 
 
 class GetIncidentBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetIncidentResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetIncidentResponse400):
@@ -2399,7 +2399,7 @@ class GetIncidentBadRequest(ApiError):
 
 
 class GetIncidentForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetIncidentResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetIncidentResponse403):
@@ -2407,7 +2407,7 @@ class GetIncidentForbidden(ApiError):
 
 
 class GetIncidentInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetIncidentResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetIncidentResponse500):
@@ -2415,7 +2415,7 @@ class GetIncidentInternalServerError(ApiError):
 
 
 class GetIncidentNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The incident with the given key was not found."""
     parsed: GetIncidentResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetIncidentResponse404):
@@ -2423,7 +2423,7 @@ class GetIncidentNotFound(ApiError):
 
 
 class GetIncidentUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetIncidentResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetIncidentResponse401):
@@ -2439,7 +2439,7 @@ class GetLicenseInternalServerError(ApiError):
 
 
 class GetMappingRuleInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetMappingRuleResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetMappingRuleResponse500):
@@ -2447,7 +2447,7 @@ class GetMappingRuleInternalServerError(ApiError):
 
 
 class GetMappingRuleNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The mapping rule with the mappingRuleId was not found."""
     parsed: GetMappingRuleResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetMappingRuleResponse404):
@@ -2455,7 +2455,7 @@ class GetMappingRuleNotFound(ApiError):
 
 
 class GetMappingRuleUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetMappingRuleResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetMappingRuleResponse401):
@@ -2463,7 +2463,7 @@ class GetMappingRuleUnauthorized(ApiError):
 
 
 class GetProcessDefinitionBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetProcessDefinitionResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionResponse400):
@@ -2471,7 +2471,7 @@ class GetProcessDefinitionBadRequest(ApiError):
 
 
 class GetProcessDefinitionForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetProcessDefinitionResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionResponse403):
@@ -2511,7 +2511,7 @@ class GetProcessDefinitionInstanceStatisticsUnauthorized(ApiError):
 
 
 class GetProcessDefinitionInstanceVersionStatisticsBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetProcessDefinitionInstanceVersionStatisticsResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionInstanceVersionStatisticsResponse400):
@@ -2519,7 +2519,7 @@ class GetProcessDefinitionInstanceVersionStatisticsBadRequest(ApiError):
 
 
 class GetProcessDefinitionInstanceVersionStatisticsForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetProcessDefinitionInstanceVersionStatisticsResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionInstanceVersionStatisticsResponse403):
@@ -2527,7 +2527,7 @@ class GetProcessDefinitionInstanceVersionStatisticsForbidden(ApiError):
 
 
 class GetProcessDefinitionInstanceVersionStatisticsInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetProcessDefinitionInstanceVersionStatisticsResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionInstanceVersionStatisticsResponse500):
@@ -2535,7 +2535,7 @@ class GetProcessDefinitionInstanceVersionStatisticsInternalServerError(ApiError)
 
 
 class GetProcessDefinitionInstanceVersionStatisticsUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetProcessDefinitionInstanceVersionStatisticsResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionInstanceVersionStatisticsResponse401):
@@ -2543,7 +2543,7 @@ class GetProcessDefinitionInstanceVersionStatisticsUnauthorized(ApiError):
 
 
 class GetProcessDefinitionInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetProcessDefinitionResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionResponse500):
@@ -2583,7 +2583,7 @@ class GetProcessDefinitionMessageSubscriptionStatisticsUnauthorized(ApiError):
 
 
 class GetProcessDefinitionNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The process definition with the given key was not found. More details are provided in the response body."""
     parsed: GetProcessDefinitionResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionResponse404):
@@ -2591,7 +2591,7 @@ class GetProcessDefinitionNotFound(ApiError):
 
 
 class GetProcessDefinitionStatisticsBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetProcessDefinitionStatisticsResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionStatisticsResponse400):
@@ -2599,7 +2599,7 @@ class GetProcessDefinitionStatisticsBadRequest(ApiError):
 
 
 class GetProcessDefinitionStatisticsForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetProcessDefinitionStatisticsResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionStatisticsResponse403):
@@ -2607,7 +2607,7 @@ class GetProcessDefinitionStatisticsForbidden(ApiError):
 
 
 class GetProcessDefinitionStatisticsInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetProcessDefinitionStatisticsResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionStatisticsResponse500):
@@ -2615,7 +2615,7 @@ class GetProcessDefinitionStatisticsInternalServerError(ApiError):
 
 
 class GetProcessDefinitionStatisticsUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetProcessDefinitionStatisticsResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionStatisticsResponse401):
@@ -2623,7 +2623,7 @@ class GetProcessDefinitionStatisticsUnauthorized(ApiError):
 
 
 class GetProcessDefinitionUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetProcessDefinitionResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionResponse401):
@@ -2631,7 +2631,7 @@ class GetProcessDefinitionUnauthorized(ApiError):
 
 
 class GetProcessDefinitionXmlBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetProcessDefinitionXMLResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionXMLResponse400):
@@ -2639,7 +2639,7 @@ class GetProcessDefinitionXmlBadRequest(ApiError):
 
 
 class GetProcessDefinitionXmlForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetProcessDefinitionXMLResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionXMLResponse403):
@@ -2647,7 +2647,7 @@ class GetProcessDefinitionXmlForbidden(ApiError):
 
 
 class GetProcessDefinitionXmlInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetProcessDefinitionXMLResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionXMLResponse500):
@@ -2655,7 +2655,7 @@ class GetProcessDefinitionXmlInternalServerError(ApiError):
 
 
 class GetProcessDefinitionXmlNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The process definition with the given key was not found. More details are provided in the response body."""
     parsed: GetProcessDefinitionXMLResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionXMLResponse404):
@@ -2663,7 +2663,7 @@ class GetProcessDefinitionXmlNotFound(ApiError):
 
 
 class GetProcessDefinitionXmlUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetProcessDefinitionXMLResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessDefinitionXMLResponse401):
@@ -2671,7 +2671,7 @@ class GetProcessDefinitionXmlUnauthorized(ApiError):
 
 
 class GetProcessInstanceBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetProcessInstanceResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceResponse400):
@@ -2679,7 +2679,7 @@ class GetProcessInstanceBadRequest(ApiError):
 
 
 class GetProcessInstanceCallHierarchyBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetProcessInstanceCallHierarchyResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceCallHierarchyResponse400):
@@ -2687,7 +2687,7 @@ class GetProcessInstanceCallHierarchyBadRequest(ApiError):
 
 
 class GetProcessInstanceCallHierarchyForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetProcessInstanceCallHierarchyResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceCallHierarchyResponse403):
@@ -2695,7 +2695,7 @@ class GetProcessInstanceCallHierarchyForbidden(ApiError):
 
 
 class GetProcessInstanceCallHierarchyInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetProcessInstanceCallHierarchyResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceCallHierarchyResponse500):
@@ -2703,7 +2703,7 @@ class GetProcessInstanceCallHierarchyInternalServerError(ApiError):
 
 
 class GetProcessInstanceCallHierarchyNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The process instance is not found."""
     parsed: GetProcessInstanceCallHierarchyResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceCallHierarchyResponse404):
@@ -2711,7 +2711,7 @@ class GetProcessInstanceCallHierarchyNotFound(ApiError):
 
 
 class GetProcessInstanceCallHierarchyUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetProcessInstanceCallHierarchyResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceCallHierarchyResponse401):
@@ -2719,7 +2719,7 @@ class GetProcessInstanceCallHierarchyUnauthorized(ApiError):
 
 
 class GetProcessInstanceForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetProcessInstanceResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceResponse403):
@@ -2727,7 +2727,7 @@ class GetProcessInstanceForbidden(ApiError):
 
 
 class GetProcessInstanceInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetProcessInstanceResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceResponse500):
@@ -2735,7 +2735,7 @@ class GetProcessInstanceInternalServerError(ApiError):
 
 
 class GetProcessInstanceNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The process instance with the given key was not found."""
     parsed: GetProcessInstanceResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceResponse404):
@@ -2743,7 +2743,7 @@ class GetProcessInstanceNotFound(ApiError):
 
 
 class GetProcessInstanceSequenceFlowsBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetProcessInstanceSequenceFlowsResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceSequenceFlowsResponse400):
@@ -2751,7 +2751,7 @@ class GetProcessInstanceSequenceFlowsBadRequest(ApiError):
 
 
 class GetProcessInstanceSequenceFlowsForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetProcessInstanceSequenceFlowsResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceSequenceFlowsResponse403):
@@ -2759,7 +2759,7 @@ class GetProcessInstanceSequenceFlowsForbidden(ApiError):
 
 
 class GetProcessInstanceSequenceFlowsInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetProcessInstanceSequenceFlowsResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceSequenceFlowsResponse500):
@@ -2767,7 +2767,7 @@ class GetProcessInstanceSequenceFlowsInternalServerError(ApiError):
 
 
 class GetProcessInstanceSequenceFlowsUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetProcessInstanceSequenceFlowsResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceSequenceFlowsResponse401):
@@ -2775,7 +2775,7 @@ class GetProcessInstanceSequenceFlowsUnauthorized(ApiError):
 
 
 class GetProcessInstanceStatisticsBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetProcessInstanceStatisticsResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceStatisticsResponse400):
@@ -2847,7 +2847,7 @@ class GetProcessInstanceStatisticsByErrorUnauthorized(ApiError):
 
 
 class GetProcessInstanceStatisticsForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetProcessInstanceStatisticsResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceStatisticsResponse403):
@@ -2855,7 +2855,7 @@ class GetProcessInstanceStatisticsForbidden(ApiError):
 
 
 class GetProcessInstanceStatisticsInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetProcessInstanceStatisticsResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceStatisticsResponse500):
@@ -2863,7 +2863,7 @@ class GetProcessInstanceStatisticsInternalServerError(ApiError):
 
 
 class GetProcessInstanceStatisticsUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetProcessInstanceStatisticsResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceStatisticsResponse401):
@@ -2871,7 +2871,7 @@ class GetProcessInstanceStatisticsUnauthorized(ApiError):
 
 
 class GetProcessInstanceUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetProcessInstanceResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetProcessInstanceResponse401):
@@ -2879,7 +2879,7 @@ class GetProcessInstanceUnauthorized(ApiError):
 
 
 class GetResourceContentInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetResourceContentResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetResourceContentResponse500):
@@ -2887,7 +2887,7 @@ class GetResourceContentInternalServerError(ApiError):
 
 
 class GetResourceContentNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. A resource with the given key was not found."""
     parsed: GetResourceContentResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetResourceContentResponse404):
@@ -2895,7 +2895,7 @@ class GetResourceContentNotFound(ApiError):
 
 
 class GetResourceInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetResourceResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetResourceResponse500):
@@ -2903,7 +2903,7 @@ class GetResourceInternalServerError(ApiError):
 
 
 class GetResourceNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. A resource with the given key was not found."""
     parsed: GetResourceResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetResourceResponse404):
@@ -2911,7 +2911,7 @@ class GetResourceNotFound(ApiError):
 
 
 class GetRoleForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetRoleResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetRoleResponse403):
@@ -2919,7 +2919,7 @@ class GetRoleForbidden(ApiError):
 
 
 class GetRoleInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetRoleResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetRoleResponse500):
@@ -2927,7 +2927,7 @@ class GetRoleInternalServerError(ApiError):
 
 
 class GetRoleNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role with the given ID was not found."""
     parsed: GetRoleResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetRoleResponse404):
@@ -2935,7 +2935,7 @@ class GetRoleNotFound(ApiError):
 
 
 class GetRoleUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetRoleResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetRoleResponse401):
@@ -2943,7 +2943,7 @@ class GetRoleUnauthorized(ApiError):
 
 
 class GetStartProcessFormBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetStartProcessFormResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetStartProcessFormResponse400):
@@ -2951,7 +2951,7 @@ class GetStartProcessFormBadRequest(ApiError):
 
 
 class GetStartProcessFormForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetStartProcessFormResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetStartProcessFormResponse403):
@@ -2959,7 +2959,7 @@ class GetStartProcessFormForbidden(ApiError):
 
 
 class GetStartProcessFormInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetStartProcessFormResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetStartProcessFormResponse500):
@@ -2967,7 +2967,7 @@ class GetStartProcessFormInternalServerError(ApiError):
 
 
 class GetStartProcessFormNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found"""
     parsed: GetStartProcessFormResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetStartProcessFormResponse404):
@@ -2975,7 +2975,7 @@ class GetStartProcessFormNotFound(ApiError):
 
 
 class GetStartProcessFormUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetStartProcessFormResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetStartProcessFormResponse401):
@@ -2991,7 +2991,7 @@ class GetStatusServiceUnavailable(ApiError):
 
 
 class GetTenantBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetTenantResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetTenantResponse400):
@@ -2999,7 +2999,7 @@ class GetTenantBadRequest(ApiError):
 
 
 class GetTenantClusterVariableBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetTenantClusterVariableResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetTenantClusterVariableResponse400):
@@ -3007,7 +3007,7 @@ class GetTenantClusterVariableBadRequest(ApiError):
 
 
 class GetTenantClusterVariableForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetTenantClusterVariableResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetTenantClusterVariableResponse403):
@@ -3015,7 +3015,7 @@ class GetTenantClusterVariableForbidden(ApiError):
 
 
 class GetTenantClusterVariableInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetTenantClusterVariableResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetTenantClusterVariableResponse500):
@@ -3023,7 +3023,7 @@ class GetTenantClusterVariableInternalServerError(ApiError):
 
 
 class GetTenantClusterVariableNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Cluster variable not found"""
     parsed: GetTenantClusterVariableResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetTenantClusterVariableResponse404):
@@ -3031,7 +3031,7 @@ class GetTenantClusterVariableNotFound(ApiError):
 
 
 class GetTenantClusterVariableUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetTenantClusterVariableResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetTenantClusterVariableResponse401):
@@ -3039,7 +3039,7 @@ class GetTenantClusterVariableUnauthorized(ApiError):
 
 
 class GetTenantForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetTenantResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetTenantResponse403):
@@ -3047,7 +3047,7 @@ class GetTenantForbidden(ApiError):
 
 
 class GetTenantInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetTenantResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetTenantResponse500):
@@ -3055,7 +3055,7 @@ class GetTenantInternalServerError(ApiError):
 
 
 class GetTenantNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Tenant not found."""
     parsed: GetTenantResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetTenantResponse404):
@@ -3063,7 +3063,7 @@ class GetTenantNotFound(ApiError):
 
 
 class GetTenantUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetTenantResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetTenantResponse401):
@@ -3119,7 +3119,7 @@ class GetUsageMetricsUnauthorized(ApiError):
 
 
 class GetUserForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetUserResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetUserResponse403):
@@ -3127,7 +3127,7 @@ class GetUserForbidden(ApiError):
 
 
 class GetUserInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetUserResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetUserResponse500):
@@ -3135,7 +3135,7 @@ class GetUserInternalServerError(ApiError):
 
 
 class GetUserNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The user with the given username was not found."""
     parsed: GetUserResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetUserResponse404):
@@ -3143,7 +3143,7 @@ class GetUserNotFound(ApiError):
 
 
 class GetUserTaskBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetUserTaskResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetUserTaskResponse400):
@@ -3151,7 +3151,7 @@ class GetUserTaskBadRequest(ApiError):
 
 
 class GetUserTaskForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetUserTaskResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetUserTaskResponse403):
@@ -3159,7 +3159,7 @@ class GetUserTaskForbidden(ApiError):
 
 
 class GetUserTaskFormBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetUserTaskFormResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetUserTaskFormResponse400):
@@ -3167,7 +3167,7 @@ class GetUserTaskFormBadRequest(ApiError):
 
 
 class GetUserTaskFormForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetUserTaskFormResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetUserTaskFormResponse403):
@@ -3175,7 +3175,7 @@ class GetUserTaskFormForbidden(ApiError):
 
 
 class GetUserTaskFormInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetUserTaskFormResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetUserTaskFormResponse500):
@@ -3183,7 +3183,7 @@ class GetUserTaskFormInternalServerError(ApiError):
 
 
 class GetUserTaskFormNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found"""
     parsed: GetUserTaskFormResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetUserTaskFormResponse404):
@@ -3191,7 +3191,7 @@ class GetUserTaskFormNotFound(ApiError):
 
 
 class GetUserTaskFormUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetUserTaskFormResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetUserTaskFormResponse401):
@@ -3199,7 +3199,7 @@ class GetUserTaskFormUnauthorized(ApiError):
 
 
 class GetUserTaskInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetUserTaskResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetUserTaskResponse500):
@@ -3207,7 +3207,7 @@ class GetUserTaskInternalServerError(ApiError):
 
 
 class GetUserTaskNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The user task with the given key was not found."""
     parsed: GetUserTaskResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetUserTaskResponse404):
@@ -3215,7 +3215,7 @@ class GetUserTaskNotFound(ApiError):
 
 
 class GetUserTaskUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetUserTaskResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetUserTaskResponse401):
@@ -3223,7 +3223,7 @@ class GetUserTaskUnauthorized(ApiError):
 
 
 class GetUserUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetUserResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetUserResponse401):
@@ -3231,7 +3231,7 @@ class GetUserUnauthorized(ApiError):
 
 
 class GetVariableBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: GetVariableResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetVariableResponse400):
@@ -3239,7 +3239,7 @@ class GetVariableBadRequest(ApiError):
 
 
 class GetVariableForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: GetVariableResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetVariableResponse403):
@@ -3247,7 +3247,7 @@ class GetVariableForbidden(ApiError):
 
 
 class GetVariableInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: GetVariableResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetVariableResponse500):
@@ -3255,7 +3255,7 @@ class GetVariableInternalServerError(ApiError):
 
 
 class GetVariableNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found"""
     parsed: GetVariableResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetVariableResponse404):
@@ -3263,7 +3263,7 @@ class GetVariableNotFound(ApiError):
 
 
 class GetVariableUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: GetVariableResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: GetVariableResponse401):
@@ -3271,7 +3271,7 @@ class GetVariableUnauthorized(ApiError):
 
 
 class MigrateProcessInstanceBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: MigrateProcessInstanceResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: MigrateProcessInstanceResponse400):
@@ -3279,7 +3279,7 @@ class MigrateProcessInstanceBadRequest(ApiError):
 
 
 class MigrateProcessInstanceConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The process instance migration failed. More details are provided in the response body."""
     parsed: MigrateProcessInstanceResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: MigrateProcessInstanceResponse409):
@@ -3287,7 +3287,7 @@ class MigrateProcessInstanceConflict(ApiError):
 
 
 class MigrateProcessInstanceInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: MigrateProcessInstanceResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: MigrateProcessInstanceResponse500):
@@ -3295,7 +3295,7 @@ class MigrateProcessInstanceInternalServerError(ApiError):
 
 
 class MigrateProcessInstanceNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The process instance is not found."""
     parsed: MigrateProcessInstanceResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: MigrateProcessInstanceResponse404):
@@ -3303,7 +3303,7 @@ class MigrateProcessInstanceNotFound(ApiError):
 
 
 class MigrateProcessInstanceServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: MigrateProcessInstanceResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: MigrateProcessInstanceResponse503):
@@ -3343,7 +3343,7 @@ class MigrateProcessInstancesBatchOperationUnauthorized(ApiError):
 
 
 class ModifyProcessInstanceBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: ModifyProcessInstanceResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ModifyProcessInstanceResponse400):
@@ -3351,7 +3351,7 @@ class ModifyProcessInstanceBadRequest(ApiError):
 
 
 class ModifyProcessInstanceInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: ModifyProcessInstanceResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ModifyProcessInstanceResponse500):
@@ -3359,7 +3359,7 @@ class ModifyProcessInstanceInternalServerError(ApiError):
 
 
 class ModifyProcessInstanceNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The process instance is not found."""
     parsed: ModifyProcessInstanceResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ModifyProcessInstanceResponse404):
@@ -3367,7 +3367,7 @@ class ModifyProcessInstanceNotFound(ApiError):
 
 
 class ModifyProcessInstanceServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: ModifyProcessInstanceResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ModifyProcessInstanceResponse503):
@@ -3471,7 +3471,7 @@ class ResetClockServiceUnavailable(ApiError):
 
 
 class ResolveIncidentBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: ResolveIncidentResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ResolveIncidentResponse400):
@@ -3479,7 +3479,7 @@ class ResolveIncidentBadRequest(ApiError):
 
 
 class ResolveIncidentInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: ResolveIncidentResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ResolveIncidentResponse500):
@@ -3487,7 +3487,7 @@ class ResolveIncidentInternalServerError(ApiError):
 
 
 class ResolveIncidentNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The incident with the incidentKey is not found."""
     parsed: ResolveIncidentResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ResolveIncidentResponse404):
@@ -3495,7 +3495,7 @@ class ResolveIncidentNotFound(ApiError):
 
 
 class ResolveIncidentServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: ResolveIncidentResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ResolveIncidentResponse503):
@@ -3535,7 +3535,7 @@ class ResolveIncidentsBatchOperationUnauthorized(ApiError):
 
 
 class ResolveProcessInstanceIncidentsBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: ResolveProcessInstanceIncidentsResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ResolveProcessInstanceIncidentsResponse400):
@@ -3543,7 +3543,7 @@ class ResolveProcessInstanceIncidentsBadRequest(ApiError):
 
 
 class ResolveProcessInstanceIncidentsInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: ResolveProcessInstanceIncidentsResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ResolveProcessInstanceIncidentsResponse500):
@@ -3551,7 +3551,7 @@ class ResolveProcessInstanceIncidentsInternalServerError(ApiError):
 
 
 class ResolveProcessInstanceIncidentsNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The process instance is not found."""
     parsed: ResolveProcessInstanceIncidentsResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ResolveProcessInstanceIncidentsResponse404):
@@ -3559,7 +3559,7 @@ class ResolveProcessInstanceIncidentsNotFound(ApiError):
 
 
 class ResolveProcessInstanceIncidentsServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: ResolveProcessInstanceIncidentsResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ResolveProcessInstanceIncidentsResponse503):
@@ -3567,7 +3567,7 @@ class ResolveProcessInstanceIncidentsServiceUnavailable(ApiError):
 
 
 class ResolveProcessInstanceIncidentsUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: ResolveProcessInstanceIncidentsResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ResolveProcessInstanceIncidentsResponse401):
@@ -3575,7 +3575,7 @@ class ResolveProcessInstanceIncidentsUnauthorized(ApiError):
 
 
 class ResumeBatchOperationBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: ResumeBatchOperationResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ResumeBatchOperationResponse400):
@@ -3583,7 +3583,7 @@ class ResumeBatchOperationBadRequest(ApiError):
 
 
 class ResumeBatchOperationForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: ResumeBatchOperationResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ResumeBatchOperationResponse403):
@@ -3591,7 +3591,7 @@ class ResumeBatchOperationForbidden(ApiError):
 
 
 class ResumeBatchOperationInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: ResumeBatchOperationResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ResumeBatchOperationResponse500):
@@ -3599,7 +3599,7 @@ class ResumeBatchOperationInternalServerError(ApiError):
 
 
 class ResumeBatchOperationNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found. The batch operation was not found."""
     parsed: ResumeBatchOperationResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ResumeBatchOperationResponse404):
@@ -3607,7 +3607,7 @@ class ResumeBatchOperationNotFound(ApiError):
 
 
 class ResumeBatchOperationServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: ResumeBatchOperationResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ResumeBatchOperationResponse503):
@@ -3711,7 +3711,7 @@ class SearchBatchOperationsInternalServerError(ApiError):
 
 
 class SearchClientsForGroupBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: SearchClientsForGroupResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchClientsForGroupResponse400):
@@ -3719,7 +3719,7 @@ class SearchClientsForGroupBadRequest(ApiError):
 
 
 class SearchClientsForGroupForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: SearchClientsForGroupResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchClientsForGroupResponse403):
@@ -3727,7 +3727,7 @@ class SearchClientsForGroupForbidden(ApiError):
 
 
 class SearchClientsForGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: SearchClientsForGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchClientsForGroupResponse500):
@@ -3735,7 +3735,7 @@ class SearchClientsForGroupInternalServerError(ApiError):
 
 
 class SearchClientsForGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The group with the given ID was not found."""
     parsed: SearchClientsForGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchClientsForGroupResponse404):
@@ -3743,7 +3743,7 @@ class SearchClientsForGroupNotFound(ApiError):
 
 
 class SearchClientsForGroupUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: SearchClientsForGroupResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchClientsForGroupResponse401):
@@ -3751,7 +3751,7 @@ class SearchClientsForGroupUnauthorized(ApiError):
 
 
 class SearchClientsForRoleBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: SearchClientsForRoleResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchClientsForRoleResponse400):
@@ -3759,7 +3759,7 @@ class SearchClientsForRoleBadRequest(ApiError):
 
 
 class SearchClientsForRoleForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: SearchClientsForRoleResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchClientsForRoleResponse403):
@@ -3767,7 +3767,7 @@ class SearchClientsForRoleForbidden(ApiError):
 
 
 class SearchClientsForRoleInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: SearchClientsForRoleResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchClientsForRoleResponse500):
@@ -3775,7 +3775,7 @@ class SearchClientsForRoleInternalServerError(ApiError):
 
 
 class SearchClientsForRoleNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role with the given ID was not found."""
     parsed: SearchClientsForRoleResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchClientsForRoleResponse404):
@@ -3783,7 +3783,7 @@ class SearchClientsForRoleNotFound(ApiError):
 
 
 class SearchClientsForRoleUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: SearchClientsForRoleResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchClientsForRoleResponse401):
@@ -3951,7 +3951,7 @@ class SearchDecisionRequirementsUnauthorized(ApiError):
 
 
 class SearchElementInstanceIncidentsBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: SearchElementInstanceIncidentsResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchElementInstanceIncidentsResponse400):
@@ -3959,7 +3959,7 @@ class SearchElementInstanceIncidentsBadRequest(ApiError):
 
 
 class SearchElementInstanceIncidentsForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: SearchElementInstanceIncidentsResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchElementInstanceIncidentsResponse403):
@@ -3967,7 +3967,7 @@ class SearchElementInstanceIncidentsForbidden(ApiError):
 
 
 class SearchElementInstanceIncidentsInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: SearchElementInstanceIncidentsResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchElementInstanceIncidentsResponse500):
@@ -3975,7 +3975,7 @@ class SearchElementInstanceIncidentsInternalServerError(ApiError):
 
 
 class SearchElementInstanceIncidentsNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The element instance with the given key was not found."""
     parsed: SearchElementInstanceIncidentsResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchElementInstanceIncidentsResponse404):
@@ -3983,7 +3983,7 @@ class SearchElementInstanceIncidentsNotFound(ApiError):
 
 
 class SearchElementInstanceIncidentsUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: SearchElementInstanceIncidentsResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchElementInstanceIncidentsResponse401):
@@ -4031,7 +4031,7 @@ class SearchGroupsBadRequest(ApiError):
 
 
 class SearchGroupsForRoleBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: SearchGroupsForRoleResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchGroupsForRoleResponse400):
@@ -4039,7 +4039,7 @@ class SearchGroupsForRoleBadRequest(ApiError):
 
 
 class SearchGroupsForRoleForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: SearchGroupsForRoleResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchGroupsForRoleResponse403):
@@ -4047,7 +4047,7 @@ class SearchGroupsForRoleForbidden(ApiError):
 
 
 class SearchGroupsForRoleInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: SearchGroupsForRoleResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchGroupsForRoleResponse500):
@@ -4055,7 +4055,7 @@ class SearchGroupsForRoleInternalServerError(ApiError):
 
 
 class SearchGroupsForRoleNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role with the given ID was not found."""
     parsed: SearchGroupsForRoleResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchGroupsForRoleResponse404):
@@ -4063,7 +4063,7 @@ class SearchGroupsForRoleNotFound(ApiError):
 
 
 class SearchGroupsForRoleUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: SearchGroupsForRoleResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchGroupsForRoleResponse401):
@@ -4191,7 +4191,7 @@ class SearchMappingRuleUnauthorized(ApiError):
 
 
 class SearchMappingRulesForGroupBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: SearchMappingRulesForGroupResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchMappingRulesForGroupResponse400):
@@ -4199,7 +4199,7 @@ class SearchMappingRulesForGroupBadRequest(ApiError):
 
 
 class SearchMappingRulesForGroupForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: SearchMappingRulesForGroupResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchMappingRulesForGroupResponse403):
@@ -4207,7 +4207,7 @@ class SearchMappingRulesForGroupForbidden(ApiError):
 
 
 class SearchMappingRulesForGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: SearchMappingRulesForGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchMappingRulesForGroupResponse500):
@@ -4215,7 +4215,7 @@ class SearchMappingRulesForGroupInternalServerError(ApiError):
 
 
 class SearchMappingRulesForGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The group with the given ID was not found."""
     parsed: SearchMappingRulesForGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchMappingRulesForGroupResponse404):
@@ -4223,7 +4223,7 @@ class SearchMappingRulesForGroupNotFound(ApiError):
 
 
 class SearchMappingRulesForGroupUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: SearchMappingRulesForGroupResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchMappingRulesForGroupResponse401):
@@ -4231,7 +4231,7 @@ class SearchMappingRulesForGroupUnauthorized(ApiError):
 
 
 class SearchMappingRulesForRoleBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: SearchMappingRulesForRoleResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchMappingRulesForRoleResponse400):
@@ -4239,7 +4239,7 @@ class SearchMappingRulesForRoleBadRequest(ApiError):
 
 
 class SearchMappingRulesForRoleForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: SearchMappingRulesForRoleResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchMappingRulesForRoleResponse403):
@@ -4247,7 +4247,7 @@ class SearchMappingRulesForRoleForbidden(ApiError):
 
 
 class SearchMappingRulesForRoleInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: SearchMappingRulesForRoleResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchMappingRulesForRoleResponse500):
@@ -4255,7 +4255,7 @@ class SearchMappingRulesForRoleInternalServerError(ApiError):
 
 
 class SearchMappingRulesForRoleNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role with the given ID was not found."""
     parsed: SearchMappingRulesForRoleResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchMappingRulesForRoleResponse404):
@@ -4263,7 +4263,7 @@ class SearchMappingRulesForRoleNotFound(ApiError):
 
 
 class SearchMappingRulesForRoleUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: SearchMappingRulesForRoleResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchMappingRulesForRoleResponse401):
@@ -4335,7 +4335,7 @@ class SearchProcessDefinitionsUnauthorized(ApiError):
 
 
 class SearchProcessInstanceIncidentsBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: SearchProcessInstanceIncidentsResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchProcessInstanceIncidentsResponse400):
@@ -4343,7 +4343,7 @@ class SearchProcessInstanceIncidentsBadRequest(ApiError):
 
 
 class SearchProcessInstanceIncidentsForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: SearchProcessInstanceIncidentsResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchProcessInstanceIncidentsResponse403):
@@ -4351,7 +4351,7 @@ class SearchProcessInstanceIncidentsForbidden(ApiError):
 
 
 class SearchProcessInstanceIncidentsInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: SearchProcessInstanceIncidentsResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchProcessInstanceIncidentsResponse500):
@@ -4359,7 +4359,7 @@ class SearchProcessInstanceIncidentsInternalServerError(ApiError):
 
 
 class SearchProcessInstanceIncidentsNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The process instance with the given key was not found."""
     parsed: SearchProcessInstanceIncidentsResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchProcessInstanceIncidentsResponse404):
@@ -4367,7 +4367,7 @@ class SearchProcessInstanceIncidentsNotFound(ApiError):
 
 
 class SearchProcessInstanceIncidentsUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: SearchProcessInstanceIncidentsResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchProcessInstanceIncidentsResponse401):
@@ -4415,7 +4415,7 @@ class SearchRolesBadRequest(ApiError):
 
 
 class SearchRolesForGroupBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: SearchRolesForGroupResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchRolesForGroupResponse400):
@@ -4423,7 +4423,7 @@ class SearchRolesForGroupBadRequest(ApiError):
 
 
 class SearchRolesForGroupForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: SearchRolesForGroupResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchRolesForGroupResponse403):
@@ -4431,7 +4431,7 @@ class SearchRolesForGroupForbidden(ApiError):
 
 
 class SearchRolesForGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: SearchRolesForGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchRolesForGroupResponse500):
@@ -4439,7 +4439,7 @@ class SearchRolesForGroupInternalServerError(ApiError):
 
 
 class SearchRolesForGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The group with the given ID was not found."""
     parsed: SearchRolesForGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchRolesForGroupResponse404):
@@ -4447,7 +4447,7 @@ class SearchRolesForGroupNotFound(ApiError):
 
 
 class SearchRolesForGroupUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: SearchRolesForGroupResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchRolesForGroupResponse401):
@@ -4519,7 +4519,7 @@ class SearchTenantsUnauthorized(ApiError):
 
 
 class SearchUserTaskAuditLogsBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: SearchUserTaskAuditLogsResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchUserTaskAuditLogsResponse400):
@@ -4527,7 +4527,7 @@ class SearchUserTaskAuditLogsBadRequest(ApiError):
 
 
 class SearchUserTaskAuditLogsInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: SearchUserTaskAuditLogsResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchUserTaskAuditLogsResponse500):
@@ -4535,7 +4535,7 @@ class SearchUserTaskAuditLogsInternalServerError(ApiError):
 
 
 class SearchUserTaskVariablesBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: SearchUserTaskVariablesResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchUserTaskVariablesResponse400):
@@ -4543,7 +4543,7 @@ class SearchUserTaskVariablesBadRequest(ApiError):
 
 
 class SearchUserTaskVariablesInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: SearchUserTaskVariablesResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchUserTaskVariablesResponse500):
@@ -4591,7 +4591,7 @@ class SearchUsersBadRequest(ApiError):
 
 
 class SearchUsersForGroupBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: SearchUsersForGroupResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchUsersForGroupResponse400):
@@ -4599,7 +4599,7 @@ class SearchUsersForGroupBadRequest(ApiError):
 
 
 class SearchUsersForGroupForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: SearchUsersForGroupResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchUsersForGroupResponse403):
@@ -4607,7 +4607,7 @@ class SearchUsersForGroupForbidden(ApiError):
 
 
 class SearchUsersForGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: SearchUsersForGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchUsersForGroupResponse500):
@@ -4615,7 +4615,7 @@ class SearchUsersForGroupInternalServerError(ApiError):
 
 
 class SearchUsersForGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The group with the given ID was not found."""
     parsed: SearchUsersForGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchUsersForGroupResponse404):
@@ -4623,7 +4623,7 @@ class SearchUsersForGroupNotFound(ApiError):
 
 
 class SearchUsersForGroupUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: SearchUsersForGroupResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchUsersForGroupResponse401):
@@ -4631,7 +4631,7 @@ class SearchUsersForGroupUnauthorized(ApiError):
 
 
 class SearchUsersForRoleBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: SearchUsersForRoleResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchUsersForRoleResponse400):
@@ -4639,7 +4639,7 @@ class SearchUsersForRoleBadRequest(ApiError):
 
 
 class SearchUsersForRoleForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: SearchUsersForRoleResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchUsersForRoleResponse403):
@@ -4647,7 +4647,7 @@ class SearchUsersForRoleForbidden(ApiError):
 
 
 class SearchUsersForRoleInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: SearchUsersForRoleResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchUsersForRoleResponse500):
@@ -4655,7 +4655,7 @@ class SearchUsersForRoleInternalServerError(ApiError):
 
 
 class SearchUsersForRoleNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role with the given ID was not found."""
     parsed: SearchUsersForRoleResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchUsersForRoleResponse404):
@@ -4663,7 +4663,7 @@ class SearchUsersForRoleNotFound(ApiError):
 
 
 class SearchUsersForRoleUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: SearchUsersForRoleResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SearchUsersForRoleResponse401):
@@ -4727,7 +4727,7 @@ class SearchVariablesUnauthorized(ApiError):
 
 
 class SuspendBatchOperationBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: SuspendBatchOperationResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SuspendBatchOperationResponse400):
@@ -4735,7 +4735,7 @@ class SuspendBatchOperationBadRequest(ApiError):
 
 
 class SuspendBatchOperationForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: SuspendBatchOperationResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SuspendBatchOperationResponse403):
@@ -4743,7 +4743,7 @@ class SuspendBatchOperationForbidden(ApiError):
 
 
 class SuspendBatchOperationInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: SuspendBatchOperationResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SuspendBatchOperationResponse500):
@@ -4751,7 +4751,7 @@ class SuspendBatchOperationInternalServerError(ApiError):
 
 
 class SuspendBatchOperationNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found. The batch operation was not found."""
     parsed: SuspendBatchOperationResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SuspendBatchOperationResponse404):
@@ -4759,7 +4759,7 @@ class SuspendBatchOperationNotFound(ApiError):
 
 
 class SuspendBatchOperationServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: SuspendBatchOperationResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: SuspendBatchOperationResponse503):
@@ -4767,7 +4767,7 @@ class SuspendBatchOperationServiceUnavailable(ApiError):
 
 
 class ThrowJobErrorBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: ThrowJobErrorResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ThrowJobErrorResponse400):
@@ -4775,7 +4775,7 @@ class ThrowJobErrorBadRequest(ApiError):
 
 
 class ThrowJobErrorConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The job with the given key is in the wrong state currently. More details are provided in the response body."""
     parsed: ThrowJobErrorResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ThrowJobErrorResponse409):
@@ -4783,7 +4783,7 @@ class ThrowJobErrorConflict(ApiError):
 
 
 class ThrowJobErrorInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: ThrowJobErrorResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ThrowJobErrorResponse500):
@@ -4791,7 +4791,7 @@ class ThrowJobErrorInternalServerError(ApiError):
 
 
 class ThrowJobErrorNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The job with the given key was not found or is not activated."""
     parsed: ThrowJobErrorResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ThrowJobErrorResponse404):
@@ -4799,7 +4799,7 @@ class ThrowJobErrorNotFound(ApiError):
 
 
 class ThrowJobErrorServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: ThrowJobErrorResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ThrowJobErrorResponse503):
@@ -4807,7 +4807,7 @@ class ThrowJobErrorServiceUnavailable(ApiError):
 
 
 class UnassignClientFromGroupBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UnassignClientFromGroupResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignClientFromGroupResponse400):
@@ -4815,7 +4815,7 @@ class UnassignClientFromGroupBadRequest(ApiError):
 
 
 class UnassignClientFromGroupForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: UnassignClientFromGroupResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignClientFromGroupResponse403):
@@ -4823,7 +4823,7 @@ class UnassignClientFromGroupForbidden(ApiError):
 
 
 class UnassignClientFromGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UnassignClientFromGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignClientFromGroupResponse500):
@@ -4831,7 +4831,7 @@ class UnassignClientFromGroupInternalServerError(ApiError):
 
 
 class UnassignClientFromGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The group with the given ID was not found, or the client is not assigned to this group."""
     parsed: UnassignClientFromGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignClientFromGroupResponse404):
@@ -4839,7 +4839,7 @@ class UnassignClientFromGroupNotFound(ApiError):
 
 
 class UnassignClientFromGroupServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UnassignClientFromGroupResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignClientFromGroupResponse503):
@@ -4847,7 +4847,7 @@ class UnassignClientFromGroupServiceUnavailable(ApiError):
 
 
 class UnassignClientFromTenantBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UnassignClientFromTenantResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignClientFromTenantResponse400):
@@ -4855,7 +4855,7 @@ class UnassignClientFromTenantBadRequest(ApiError):
 
 
 class UnassignClientFromTenantForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: UnassignClientFromTenantResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignClientFromTenantResponse403):
@@ -4863,7 +4863,7 @@ class UnassignClientFromTenantForbidden(ApiError):
 
 
 class UnassignClientFromTenantInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UnassignClientFromTenantResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignClientFromTenantResponse500):
@@ -4871,7 +4871,7 @@ class UnassignClientFromTenantInternalServerError(ApiError):
 
 
 class UnassignClientFromTenantNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The tenant does not exist or the client was not assigned to it."""
     parsed: UnassignClientFromTenantResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignClientFromTenantResponse404):
@@ -4879,7 +4879,7 @@ class UnassignClientFromTenantNotFound(ApiError):
 
 
 class UnassignClientFromTenantServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UnassignClientFromTenantResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignClientFromTenantResponse503):
@@ -4887,7 +4887,7 @@ class UnassignClientFromTenantServiceUnavailable(ApiError):
 
 
 class UnassignGroupFromTenantBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UnassignGroupFromTenantResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignGroupFromTenantResponse400):
@@ -4895,7 +4895,7 @@ class UnassignGroupFromTenantBadRequest(ApiError):
 
 
 class UnassignGroupFromTenantForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: UnassignGroupFromTenantResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignGroupFromTenantResponse403):
@@ -4903,7 +4903,7 @@ class UnassignGroupFromTenantForbidden(ApiError):
 
 
 class UnassignGroupFromTenantInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UnassignGroupFromTenantResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignGroupFromTenantResponse500):
@@ -4911,7 +4911,7 @@ class UnassignGroupFromTenantInternalServerError(ApiError):
 
 
 class UnassignGroupFromTenantNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found. The tenant or group was not found."""
     parsed: UnassignGroupFromTenantResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignGroupFromTenantResponse404):
@@ -4919,7 +4919,7 @@ class UnassignGroupFromTenantNotFound(ApiError):
 
 
 class UnassignGroupFromTenantServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UnassignGroupFromTenantResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignGroupFromTenantResponse503):
@@ -4927,7 +4927,7 @@ class UnassignGroupFromTenantServiceUnavailable(ApiError):
 
 
 class UnassignMappingRuleFromGroupBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UnassignMappingRuleFromGroupResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignMappingRuleFromGroupResponse400):
@@ -4935,7 +4935,7 @@ class UnassignMappingRuleFromGroupBadRequest(ApiError):
 
 
 class UnassignMappingRuleFromGroupForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: UnassignMappingRuleFromGroupResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignMappingRuleFromGroupResponse403):
@@ -4943,7 +4943,7 @@ class UnassignMappingRuleFromGroupForbidden(ApiError):
 
 
 class UnassignMappingRuleFromGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UnassignMappingRuleFromGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignMappingRuleFromGroupResponse500):
@@ -4951,7 +4951,7 @@ class UnassignMappingRuleFromGroupInternalServerError(ApiError):
 
 
 class UnassignMappingRuleFromGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The group or mapping rule with the given ID was not found, or the mapping rule is not assigned to this group."""
     parsed: UnassignMappingRuleFromGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignMappingRuleFromGroupResponse404):
@@ -4959,7 +4959,7 @@ class UnassignMappingRuleFromGroupNotFound(ApiError):
 
 
 class UnassignMappingRuleFromGroupServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UnassignMappingRuleFromGroupResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignMappingRuleFromGroupResponse503):
@@ -4967,7 +4967,7 @@ class UnassignMappingRuleFromGroupServiceUnavailable(ApiError):
 
 
 class UnassignMappingRuleFromTenantBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UnassignMappingRuleFromTenantResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignMappingRuleFromTenantResponse400):
@@ -4975,7 +4975,7 @@ class UnassignMappingRuleFromTenantBadRequest(ApiError):
 
 
 class UnassignMappingRuleFromTenantForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: UnassignMappingRuleFromTenantResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignMappingRuleFromTenantResponse403):
@@ -4983,7 +4983,7 @@ class UnassignMappingRuleFromTenantForbidden(ApiError):
 
 
 class UnassignMappingRuleFromTenantInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UnassignMappingRuleFromTenantResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignMappingRuleFromTenantResponse500):
@@ -4991,7 +4991,7 @@ class UnassignMappingRuleFromTenantInternalServerError(ApiError):
 
 
 class UnassignMappingRuleFromTenantNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found. The tenant or mapping rule was not found."""
     parsed: UnassignMappingRuleFromTenantResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignMappingRuleFromTenantResponse404):
@@ -4999,7 +4999,7 @@ class UnassignMappingRuleFromTenantNotFound(ApiError):
 
 
 class UnassignMappingRuleFromTenantServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UnassignMappingRuleFromTenantResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignMappingRuleFromTenantResponse503):
@@ -5007,7 +5007,7 @@ class UnassignMappingRuleFromTenantServiceUnavailable(ApiError):
 
 
 class UnassignRoleFromClientBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UnassignRoleFromClientResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromClientResponse400):
@@ -5015,7 +5015,7 @@ class UnassignRoleFromClientBadRequest(ApiError):
 
 
 class UnassignRoleFromClientForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: UnassignRoleFromClientResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromClientResponse403):
@@ -5023,7 +5023,7 @@ class UnassignRoleFromClientForbidden(ApiError):
 
 
 class UnassignRoleFromClientInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UnassignRoleFromClientResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromClientResponse500):
@@ -5031,7 +5031,7 @@ class UnassignRoleFromClientInternalServerError(ApiError):
 
 
 class UnassignRoleFromClientNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role or client with the given ID or username was not found."""
     parsed: UnassignRoleFromClientResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromClientResponse404):
@@ -5039,7 +5039,7 @@ class UnassignRoleFromClientNotFound(ApiError):
 
 
 class UnassignRoleFromClientServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UnassignRoleFromClientResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromClientResponse503):
@@ -5047,7 +5047,7 @@ class UnassignRoleFromClientServiceUnavailable(ApiError):
 
 
 class UnassignRoleFromGroupBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UnassignRoleFromGroupResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromGroupResponse400):
@@ -5055,7 +5055,7 @@ class UnassignRoleFromGroupBadRequest(ApiError):
 
 
 class UnassignRoleFromGroupForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: UnassignRoleFromGroupResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromGroupResponse403):
@@ -5063,7 +5063,7 @@ class UnassignRoleFromGroupForbidden(ApiError):
 
 
 class UnassignRoleFromGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UnassignRoleFromGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromGroupResponse500):
@@ -5071,7 +5071,7 @@ class UnassignRoleFromGroupInternalServerError(ApiError):
 
 
 class UnassignRoleFromGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role or group with the given ID was not found."""
     parsed: UnassignRoleFromGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromGroupResponse404):
@@ -5079,7 +5079,7 @@ class UnassignRoleFromGroupNotFound(ApiError):
 
 
 class UnassignRoleFromGroupServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UnassignRoleFromGroupResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromGroupResponse503):
@@ -5087,7 +5087,7 @@ class UnassignRoleFromGroupServiceUnavailable(ApiError):
 
 
 class UnassignRoleFromMappingRuleBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UnassignRoleFromMappingRuleResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromMappingRuleResponse400):
@@ -5095,7 +5095,7 @@ class UnassignRoleFromMappingRuleBadRequest(ApiError):
 
 
 class UnassignRoleFromMappingRuleForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: UnassignRoleFromMappingRuleResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromMappingRuleResponse403):
@@ -5103,7 +5103,7 @@ class UnassignRoleFromMappingRuleForbidden(ApiError):
 
 
 class UnassignRoleFromMappingRuleInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UnassignRoleFromMappingRuleResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromMappingRuleResponse500):
@@ -5111,7 +5111,7 @@ class UnassignRoleFromMappingRuleInternalServerError(ApiError):
 
 
 class UnassignRoleFromMappingRuleNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role or mapping rule with the given ID was not found."""
     parsed: UnassignRoleFromMappingRuleResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromMappingRuleResponse404):
@@ -5119,7 +5119,7 @@ class UnassignRoleFromMappingRuleNotFound(ApiError):
 
 
 class UnassignRoleFromMappingRuleServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UnassignRoleFromMappingRuleResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromMappingRuleResponse503):
@@ -5127,7 +5127,7 @@ class UnassignRoleFromMappingRuleServiceUnavailable(ApiError):
 
 
 class UnassignRoleFromTenantBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UnassignRoleFromTenantResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromTenantResponse400):
@@ -5135,7 +5135,7 @@ class UnassignRoleFromTenantBadRequest(ApiError):
 
 
 class UnassignRoleFromTenantForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: UnassignRoleFromTenantResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromTenantResponse403):
@@ -5143,7 +5143,7 @@ class UnassignRoleFromTenantForbidden(ApiError):
 
 
 class UnassignRoleFromTenantInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UnassignRoleFromTenantResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromTenantResponse500):
@@ -5151,7 +5151,7 @@ class UnassignRoleFromTenantInternalServerError(ApiError):
 
 
 class UnassignRoleFromTenantNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found. The tenant or role was not found."""
     parsed: UnassignRoleFromTenantResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromTenantResponse404):
@@ -5159,7 +5159,7 @@ class UnassignRoleFromTenantNotFound(ApiError):
 
 
 class UnassignRoleFromTenantServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UnassignRoleFromTenantResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromTenantResponse503):
@@ -5167,7 +5167,7 @@ class UnassignRoleFromTenantServiceUnavailable(ApiError):
 
 
 class UnassignRoleFromUserBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UnassignRoleFromUserResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromUserResponse400):
@@ -5175,7 +5175,7 @@ class UnassignRoleFromUserBadRequest(ApiError):
 
 
 class UnassignRoleFromUserForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: UnassignRoleFromUserResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromUserResponse403):
@@ -5183,7 +5183,7 @@ class UnassignRoleFromUserForbidden(ApiError):
 
 
 class UnassignRoleFromUserInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UnassignRoleFromUserResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromUserResponse500):
@@ -5191,7 +5191,7 @@ class UnassignRoleFromUserInternalServerError(ApiError):
 
 
 class UnassignRoleFromUserNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role or user with the given ID or username was not found."""
     parsed: UnassignRoleFromUserResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromUserResponse404):
@@ -5199,7 +5199,7 @@ class UnassignRoleFromUserNotFound(ApiError):
 
 
 class UnassignRoleFromUserServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UnassignRoleFromUserResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignRoleFromUserResponse503):
@@ -5207,7 +5207,7 @@ class UnassignRoleFromUserServiceUnavailable(ApiError):
 
 
 class UnassignUserFromGroupBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UnassignUserFromGroupResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserFromGroupResponse400):
@@ -5215,7 +5215,7 @@ class UnassignUserFromGroupBadRequest(ApiError):
 
 
 class UnassignUserFromGroupForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: UnassignUserFromGroupResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserFromGroupResponse403):
@@ -5223,7 +5223,7 @@ class UnassignUserFromGroupForbidden(ApiError):
 
 
 class UnassignUserFromGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UnassignUserFromGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserFromGroupResponse500):
@@ -5231,7 +5231,7 @@ class UnassignUserFromGroupInternalServerError(ApiError):
 
 
 class UnassignUserFromGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The group or user with the given ID was not found, or the user is not assigned to this group."""
     parsed: UnassignUserFromGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserFromGroupResponse404):
@@ -5239,7 +5239,7 @@ class UnassignUserFromGroupNotFound(ApiError):
 
 
 class UnassignUserFromGroupServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UnassignUserFromGroupResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserFromGroupResponse503):
@@ -5247,7 +5247,7 @@ class UnassignUserFromGroupServiceUnavailable(ApiError):
 
 
 class UnassignUserFromTenantBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UnassignUserFromTenantResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserFromTenantResponse400):
@@ -5255,7 +5255,7 @@ class UnassignUserFromTenantBadRequest(ApiError):
 
 
 class UnassignUserFromTenantForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: UnassignUserFromTenantResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserFromTenantResponse403):
@@ -5263,7 +5263,7 @@ class UnassignUserFromTenantForbidden(ApiError):
 
 
 class UnassignUserFromTenantInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UnassignUserFromTenantResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserFromTenantResponse500):
@@ -5271,7 +5271,7 @@ class UnassignUserFromTenantInternalServerError(ApiError):
 
 
 class UnassignUserFromTenantNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found. The tenant or user was not found."""
     parsed: UnassignUserFromTenantResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserFromTenantResponse404):
@@ -5279,7 +5279,7 @@ class UnassignUserFromTenantNotFound(ApiError):
 
 
 class UnassignUserFromTenantServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UnassignUserFromTenantResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserFromTenantResponse503):
@@ -5287,7 +5287,7 @@ class UnassignUserFromTenantServiceUnavailable(ApiError):
 
 
 class UnassignUserTaskBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UnassignUserTaskResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserTaskResponse400):
@@ -5295,7 +5295,7 @@ class UnassignUserTaskBadRequest(ApiError):
 
 
 class UnassignUserTaskConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The user task with the given key is in the wrong state currently. More details are provided in the response body."""
     parsed: UnassignUserTaskResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserTaskResponse409):
@@ -5303,7 +5303,7 @@ class UnassignUserTaskConflict(ApiError):
 
 
 class UnassignUserTaskInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UnassignUserTaskResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserTaskResponse500):
@@ -5311,7 +5311,7 @@ class UnassignUserTaskInternalServerError(ApiError):
 
 
 class UnassignUserTaskNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The user task with the given key was not found."""
     parsed: UnassignUserTaskResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserTaskResponse404):
@@ -5319,7 +5319,7 @@ class UnassignUserTaskNotFound(ApiError):
 
 
 class UnassignUserTaskServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UnassignUserTaskResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UnassignUserTaskResponse503):
@@ -5327,7 +5327,7 @@ class UnassignUserTaskServiceUnavailable(ApiError):
 
 
 class UpdateAuthorizationInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UpdateAuthorizationResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateAuthorizationResponse500):
@@ -5335,7 +5335,7 @@ class UpdateAuthorizationInternalServerError(ApiError):
 
 
 class UpdateAuthorizationNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The authorization with the authorizationKey was not found."""
     parsed: UpdateAuthorizationResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateAuthorizationResponse404):
@@ -5343,7 +5343,7 @@ class UpdateAuthorizationNotFound(ApiError):
 
 
 class UpdateAuthorizationServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UpdateAuthorizationResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateAuthorizationResponse503):
@@ -5351,7 +5351,7 @@ class UpdateAuthorizationServiceUnavailable(ApiError):
 
 
 class UpdateAuthorizationUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: UpdateAuthorizationResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateAuthorizationResponse401):
@@ -5359,7 +5359,7 @@ class UpdateAuthorizationUnauthorized(ApiError):
 
 
 class UpdateGroupBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UpdateGroupResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateGroupResponse400):
@@ -5367,7 +5367,7 @@ class UpdateGroupBadRequest(ApiError):
 
 
 class UpdateGroupInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UpdateGroupResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateGroupResponse500):
@@ -5375,7 +5375,7 @@ class UpdateGroupInternalServerError(ApiError):
 
 
 class UpdateGroupNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The group with the given ID was not found."""
     parsed: UpdateGroupResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateGroupResponse404):
@@ -5383,7 +5383,7 @@ class UpdateGroupNotFound(ApiError):
 
 
 class UpdateGroupServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UpdateGroupResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateGroupResponse503):
@@ -5391,7 +5391,7 @@ class UpdateGroupServiceUnavailable(ApiError):
 
 
 class UpdateGroupUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: UpdateGroupResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateGroupResponse401):
@@ -5399,7 +5399,7 @@ class UpdateGroupUnauthorized(ApiError):
 
 
 class UpdateJobBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UpdateJobResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateJobResponse400):
@@ -5407,7 +5407,7 @@ class UpdateJobBadRequest(ApiError):
 
 
 class UpdateJobConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The job with the given key is in the wrong state currently. More details are provided in the response body."""
     parsed: UpdateJobResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateJobResponse409):
@@ -5415,7 +5415,7 @@ class UpdateJobConflict(ApiError):
 
 
 class UpdateJobInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UpdateJobResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateJobResponse500):
@@ -5423,7 +5423,7 @@ class UpdateJobInternalServerError(ApiError):
 
 
 class UpdateJobNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The job with the jobKey is not found."""
     parsed: UpdateJobResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateJobResponse404):
@@ -5431,7 +5431,7 @@ class UpdateJobNotFound(ApiError):
 
 
 class UpdateJobServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UpdateJobResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateJobResponse503):
@@ -5439,7 +5439,7 @@ class UpdateJobServiceUnavailable(ApiError):
 
 
 class UpdateMappingRuleBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UpdateMappingRuleResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateMappingRuleResponse400):
@@ -5447,7 +5447,7 @@ class UpdateMappingRuleBadRequest(ApiError):
 
 
 class UpdateMappingRuleForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. The request to update a mapping rule was denied. More details are provided in the response body."""
     parsed: UpdateMappingRuleResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateMappingRuleResponse403):
@@ -5455,7 +5455,7 @@ class UpdateMappingRuleForbidden(ApiError):
 
 
 class UpdateMappingRuleInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UpdateMappingRuleResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateMappingRuleResponse500):
@@ -5463,7 +5463,7 @@ class UpdateMappingRuleInternalServerError(ApiError):
 
 
 class UpdateMappingRuleNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The request to update a mapping rule was denied."""
     parsed: UpdateMappingRuleResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateMappingRuleResponse404):
@@ -5471,7 +5471,7 @@ class UpdateMappingRuleNotFound(ApiError):
 
 
 class UpdateMappingRuleServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UpdateMappingRuleResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateMappingRuleResponse503):
@@ -5479,7 +5479,7 @@ class UpdateMappingRuleServiceUnavailable(ApiError):
 
 
 class UpdateRoleBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UpdateRoleResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateRoleResponse400):
@@ -5487,7 +5487,7 @@ class UpdateRoleBadRequest(ApiError):
 
 
 class UpdateRoleInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UpdateRoleResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateRoleResponse500):
@@ -5495,7 +5495,7 @@ class UpdateRoleInternalServerError(ApiError):
 
 
 class UpdateRoleNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The role with the ID is not found."""
     parsed: UpdateRoleResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateRoleResponse404):
@@ -5503,7 +5503,7 @@ class UpdateRoleNotFound(ApiError):
 
 
 class UpdateRoleServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UpdateRoleResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateRoleResponse503):
@@ -5511,7 +5511,7 @@ class UpdateRoleServiceUnavailable(ApiError):
 
 
 class UpdateRoleUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401."""
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
     parsed: UpdateRoleResponse401
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateRoleResponse401):
@@ -5519,7 +5519,7 @@ class UpdateRoleUnauthorized(ApiError):
 
 
 class UpdateTenantBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UpdateTenantResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateTenantResponse400):
@@ -5527,7 +5527,7 @@ class UpdateTenantBadRequest(ApiError):
 
 
 class UpdateTenantForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: UpdateTenantResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateTenantResponse403):
@@ -5535,7 +5535,7 @@ class UpdateTenantForbidden(ApiError):
 
 
 class UpdateTenantInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UpdateTenantResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateTenantResponse500):
@@ -5543,7 +5543,7 @@ class UpdateTenantInternalServerError(ApiError):
 
 
 class UpdateTenantNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. Not found. The tenant was not found."""
     parsed: UpdateTenantResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateTenantResponse404):
@@ -5551,7 +5551,7 @@ class UpdateTenantNotFound(ApiError):
 
 
 class UpdateTenantServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UpdateTenantResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateTenantResponse503):
@@ -5559,7 +5559,7 @@ class UpdateTenantServiceUnavailable(ApiError):
 
 
 class UpdateUserBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UpdateUserResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateUserResponse400):
@@ -5567,7 +5567,7 @@ class UpdateUserBadRequest(ApiError):
 
 
 class UpdateUserForbidden(ApiError):
-    """Raised when the server returns HTTP 403."""
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
     parsed: UpdateUserResponse403
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateUserResponse403):
@@ -5575,7 +5575,7 @@ class UpdateUserForbidden(ApiError):
 
 
 class UpdateUserInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UpdateUserResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateUserResponse500):
@@ -5583,7 +5583,7 @@ class UpdateUserInternalServerError(ApiError):
 
 
 class UpdateUserNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The user was not found."""
     parsed: UpdateUserResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateUserResponse404):
@@ -5591,7 +5591,7 @@ class UpdateUserNotFound(ApiError):
 
 
 class UpdateUserServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UpdateUserResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateUserResponse503):
@@ -5599,7 +5599,7 @@ class UpdateUserServiceUnavailable(ApiError):
 
 
 class UpdateUserTaskBadRequest(ApiError):
-    """Raised when the server returns HTTP 400."""
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
     parsed: UpdateUserTaskResponse400
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateUserTaskResponse400):
@@ -5607,7 +5607,7 @@ class UpdateUserTaskBadRequest(ApiError):
 
 
 class UpdateUserTaskConflict(ApiError):
-    """Raised when the server returns HTTP 409."""
+    """Raised when the server returns HTTP 409. The user task with the given key is in the wrong state currently. More details are provided in the response body."""
     parsed: UpdateUserTaskResponse409
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateUserTaskResponse409):
@@ -5615,7 +5615,7 @@ class UpdateUserTaskConflict(ApiError):
 
 
 class UpdateUserTaskInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
     parsed: UpdateUserTaskResponse500
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateUserTaskResponse500):
@@ -5623,7 +5623,7 @@ class UpdateUserTaskInternalServerError(ApiError):
 
 
 class UpdateUserTaskNotFound(ApiError):
-    """Raised when the server returns HTTP 404."""
+    """Raised when the server returns HTTP 404. The user task with the given key was not found."""
     parsed: UpdateUserTaskResponse404
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateUserTaskResponse404):
@@ -5631,7 +5631,7 @@ class UpdateUserTaskNotFound(ApiError):
 
 
 class UpdateUserTaskServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503."""
+    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
     parsed: UpdateUserTaskResponse503
 
     def __init__(self, *, status_code: int, content: bytes, parsed: UpdateUserTaskResponse503):

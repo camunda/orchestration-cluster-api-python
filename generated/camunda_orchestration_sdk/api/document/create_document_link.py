@@ -75,7 +75,7 @@ Args:
     body (CreateDocumentLinkData | Unset):
 
 Raises:
-    errors.CreateDocumentLinkBadRequest: If the response status code is 400.
+    errors.CreateDocumentLinkBadRequest: If the response status code is 400. The provided data is not valid.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -125,7 +125,7 @@ Args:
     body (CreateDocumentLinkData | Unset):
 
 Raises:
-    errors.CreateDocumentLinkBadRequest: If the response status code is 400.
+    errors.CreateDocumentLinkBadRequest: If the response status code is 400. The provided data is not valid.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

@@ -63,9 +63,9 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.GetMappingRuleUnauthorized: If the response status code is 401.
-    errors.GetMappingRuleNotFound: If the response status code is 404.
-    errors.GetMappingRuleInternalServerError: If the response status code is 500.
+    errors.GetMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+    errors.GetMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -109,9 +109,9 @@ Args:
     mapping_rule_id (str):
 
 Raises:
-    errors.GetMappingRuleUnauthorized: If the response status code is 401.
-    errors.GetMappingRuleNotFound: If the response status code is 404.
-    errors.GetMappingRuleInternalServerError: If the response status code is 500.
+    errors.GetMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+    errors.GetMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

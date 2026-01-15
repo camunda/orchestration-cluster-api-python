@@ -67,11 +67,11 @@ Args:
     name (str):
 
 Raises:
-    errors.GetGlobalClusterVariableBadRequest: If the response status code is 400.
-    errors.GetGlobalClusterVariableUnauthorized: If the response status code is 401.
-    errors.GetGlobalClusterVariableForbidden: If the response status code is 403.
-    errors.GetGlobalClusterVariableNotFound: If the response status code is 404.
-    errors.GetGlobalClusterVariableInternalServerError: If the response status code is 500.
+    errors.GetGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.GetGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -115,11 +115,11 @@ Args:
     name (str):
 
 Raises:
-    errors.GetGlobalClusterVariableBadRequest: If the response status code is 400.
-    errors.GetGlobalClusterVariableUnauthorized: If the response status code is 401.
-    errors.GetGlobalClusterVariableForbidden: If the response status code is 403.
-    errors.GetGlobalClusterVariableNotFound: If the response status code is 404.
-    errors.GetGlobalClusterVariableInternalServerError: If the response status code is 500.
+    errors.GetGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.GetGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

@@ -69,10 +69,10 @@ Args:
         2251799813684332.
 
 Raises:
-    errors.GetAuthorizationUnauthorized: If the response status code is 401.
-    errors.GetAuthorizationForbidden: If the response status code is 403.
-    errors.GetAuthorizationNotFound: If the response status code is 404.
-    errors.GetAuthorizationInternalServerError: If the response status code is 500.
+    errors.GetAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuthorizationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuthorizationNotFound: If the response status code is 404. The authorization with the given key was not found.
+    errors.GetAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -120,10 +120,10 @@ Args:
         2251799813684332.
 
 Raises:
-    errors.GetAuthorizationUnauthorized: If the response status code is 401.
-    errors.GetAuthorizationForbidden: If the response status code is 403.
-    errors.GetAuthorizationNotFound: If the response status code is 404.
-    errors.GetAuthorizationInternalServerError: If the response status code is 500.
+    errors.GetAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetAuthorizationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetAuthorizationNotFound: If the response status code is 404. The authorization with the given key was not found.
+    errors.GetAuthorizationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

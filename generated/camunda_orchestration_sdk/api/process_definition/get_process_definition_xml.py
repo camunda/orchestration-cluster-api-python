@@ -75,11 +75,11 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.GetProcessDefinitionXmlBadRequest: If the response status code is 400.
-    errors.GetProcessDefinitionXmlUnauthorized: If the response status code is 401.
-    errors.GetProcessDefinitionXmlForbidden: If the response status code is 403.
-    errors.GetProcessDefinitionXmlNotFound: If the response status code is 404.
-    errors.GetProcessDefinitionXmlInternalServerError: If the response status code is 500.
+    errors.GetProcessDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionXmlNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+    errors.GetProcessDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -129,11 +129,11 @@ Args:
         Example: 2251799813686749.
 
 Raises:
-    errors.GetProcessDefinitionXmlBadRequest: If the response status code is 400.
-    errors.GetProcessDefinitionXmlUnauthorized: If the response status code is 401.
-    errors.GetProcessDefinitionXmlForbidden: If the response status code is 403.
-    errors.GetProcessDefinitionXmlNotFound: If the response status code is 404.
-    errors.GetProcessDefinitionXmlInternalServerError: If the response status code is 500.
+    errors.GetProcessDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionXmlNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+    errors.GetProcessDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

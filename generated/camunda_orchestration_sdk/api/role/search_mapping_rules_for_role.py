@@ -79,11 +79,11 @@ Args:
     body (SearchMappingRulesForRoleData | Unset):
 
 Raises:
-    errors.SearchMappingRulesForRoleBadRequest: If the response status code is 400.
-    errors.SearchMappingRulesForRoleUnauthorized: If the response status code is 401.
-    errors.SearchMappingRulesForRoleForbidden: If the response status code is 403.
-    errors.SearchMappingRulesForRoleNotFound: If the response status code is 404.
-    errors.SearchMappingRulesForRoleInternalServerError: If the response status code is 500.
+    errors.SearchMappingRulesForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMappingRulesForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMappingRulesForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMappingRulesForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchMappingRulesForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -133,11 +133,11 @@ Args:
     body (SearchMappingRulesForRoleData | Unset):
 
 Raises:
-    errors.SearchMappingRulesForRoleBadRequest: If the response status code is 400.
-    errors.SearchMappingRulesForRoleUnauthorized: If the response status code is 401.
-    errors.SearchMappingRulesForRoleForbidden: If the response status code is 403.
-    errors.SearchMappingRulesForRoleNotFound: If the response status code is 404.
-    errors.SearchMappingRulesForRoleInternalServerError: If the response status code is 500.
+    errors.SearchMappingRulesForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchMappingRulesForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchMappingRulesForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchMappingRulesForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+    errors.SearchMappingRulesForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

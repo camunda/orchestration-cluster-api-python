@@ -71,11 +71,11 @@ Args:
     variable_key (str): System-generated key for a variable. Example: 2251799813683287.
 
 Raises:
-    errors.GetVariableBadRequest: If the response status code is 400.
-    errors.GetVariableUnauthorized: If the response status code is 401.
-    errors.GetVariableForbidden: If the response status code is 403.
-    errors.GetVariableNotFound: If the response status code is 404.
-    errors.GetVariableInternalServerError: If the response status code is 500.
+    errors.GetVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetVariableNotFound: If the response status code is 404. Not found
+    errors.GetVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -123,11 +123,11 @@ Args:
     variable_key (str): System-generated key for a variable. Example: 2251799813683287.
 
 Raises:
-    errors.GetVariableBadRequest: If the response status code is 400.
-    errors.GetVariableUnauthorized: If the response status code is 401.
-    errors.GetVariableForbidden: If the response status code is 403.
-    errors.GetVariableNotFound: If the response status code is 404.
-    errors.GetVariableInternalServerError: If the response status code is 500.
+    errors.GetVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetVariableNotFound: If the response status code is 404. Not found
+    errors.GetVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:

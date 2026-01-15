@@ -65,8 +65,8 @@ Args:
     resource_key (str): The system-assigned key for this resource.
 
 Raises:
-    errors.GetResourceContentNotFound: If the response status code is 404.
-    errors.GetResourceContentInternalServerError: If the response status code is 500.
+    errors.GetResourceContentNotFound: If the response status code is 404. A resource with the given key was not found.
+    errors.GetResourceContentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
@@ -114,8 +114,8 @@ Args:
     resource_key (str): The system-assigned key for this resource.
 
 Raises:
-    errors.GetResourceContentNotFound: If the response status code is 404.
-    errors.GetResourceContentInternalServerError: If the response status code is 500.
+    errors.GetResourceContentNotFound: If the response status code is 404. A resource with the given key was not found.
+    errors.GetResourceContentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
