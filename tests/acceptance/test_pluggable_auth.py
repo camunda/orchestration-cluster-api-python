@@ -133,6 +133,122 @@ def test_builtin_oauth_strategy_applies_bearer_header_sync():
     assert token_calls["count"] == 1
 
 
+def test_oauth_401_is_memoized_to_avoid_repeated_token_requests_sync() -> None:
+    from camunda_orchestration_sdk.runtime.auth import OAuthClientCredentialsAuthProvider
+
+    calls = {"count": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["count"] += 1
+        return httpx.Response(401, json={"error": "invalid_client"}, request=request)
+
+    transport = httpx.MockTransport(handler)
+    provider = OAuthClientCredentialsAuthProvider(
+        oauth_url="https://login.cloud.camunda.io/oauth/token",
+        client_id="id",
+        client_secret="secret",
+        audience="aud",
+        transport=transport,
+    )
+
+    with pytest.raises(httpx.HTTPStatusError):
+        provider.get_headers()
+    with pytest.raises(httpx.HTTPStatusError):
+        provider.get_headers()
+
+    assert calls["count"] == 1
+
+
+def test_oauth_401_tarpit_file_prevents_subsequent_requests_when_file_cache_enabled_sync(tmp_path) -> None:
+    from camunda_orchestration_sdk.runtime.auth import OAuthClientCredentialsAuthProvider
+
+    calls = {"count": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["count"] += 1
+        return httpx.Response(401, json={"error": "invalid_client"}, request=request)
+
+    transport = httpx.MockTransport(handler)
+    provider = OAuthClientCredentialsAuthProvider(
+        oauth_url="https://login.cloud.camunda.io/oauth/token",
+        client_id="id",
+        client_secret="secret",
+        audience="aud",
+        cache_dir=str(tmp_path),
+        disk_cache_disable=False,
+        transport=transport,
+    )
+
+    with pytest.raises(httpx.HTTPStatusError):
+        provider.get_headers()
+
+    tarpit_files = list(tmp_path.glob("oauth-401-tarpit-*.json"))
+    assert len(tarpit_files) >= 1
+
+    calls["count"] = 0
+
+    def handler_should_not_run(request: httpx.Request) -> httpx.Response:
+        calls["count"] += 1
+        return httpx.Response(500, json={"unexpected": True}, request=request)
+
+    provider2 = OAuthClientCredentialsAuthProvider(
+        oauth_url="https://login.cloud.camunda.io/oauth/token",
+        client_id="id",
+        client_secret="secret",
+        audience="aud",
+        cache_dir=str(tmp_path),
+        disk_cache_disable=False,
+        transport=httpx.MockTransport(handler_should_not_run),
+    )
+
+    with pytest.raises(RuntimeError):
+        provider2.get_headers()
+
+    assert calls["count"] == 0
+
+
+def test_oauth_token_is_cached_to_disk_and_reused_sync(tmp_path) -> None:
+    from camunda_orchestration_sdk.runtime.auth import OAuthClientCredentialsAuthProvider
+
+    calls = {"count": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["count"] += 1
+        return httpx.Response(200, json={"access_token": "t1", "expires_in": 3600}, request=request)
+
+    provider = OAuthClientCredentialsAuthProvider(
+        oauth_url="http://auth.local/oauth/token",
+        client_id="id",
+        client_secret="secret",
+        audience="aud",
+        cache_dir=str(tmp_path),
+        disk_cache_disable=False,
+        transport=httpx.MockTransport(handler),
+    )
+
+    assert provider.get_headers()["Authorization"] == "Bearer t1"
+    assert calls["count"] == 1
+
+    calls["count"] = 0
+
+    def handler_should_not_run(request: httpx.Request) -> httpx.Response:
+        calls["count"] += 1
+        return httpx.Response(500, json={"unexpected": True}, request=request)
+
+    provider2 = OAuthClientCredentialsAuthProvider(
+        oauth_url="http://auth.local/oauth/token",
+        client_id="id",
+        client_secret="secret",
+        audience="aud",
+        cache_dir=str(tmp_path),
+        disk_cache_disable=False,
+        transport=httpx.MockTransport(handler_should_not_run),
+    )
+
+    assert provider2.get_headers()["Authorization"] == "Bearer t1"
+    assert calls["count"] == 0
+
+
 @pytest.mark.asyncio
 async def test_builtin_oauth_strategy_applies_bearer_header_async():
     from camunda_orchestration_sdk import CamundaAsyncClient

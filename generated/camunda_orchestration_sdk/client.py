@@ -1260,6 +1260,8 @@ class CamundaClient:
                     client_id=self.configuration.CAMUNDA_CLIENT_ID or "",
                     client_secret=self.configuration.CAMUNDA_CLIENT_SECRET or "",
                     audience=self.configuration.CAMUNDA_TOKEN_AUDIENCE,
+                    cache_dir=self.configuration.CAMUNDA_TOKEN_CACHE_DIR,
+                    disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
                     transport=transport,
                 )
             else:
@@ -5994,6 +5996,8 @@ class CamundaAsyncClient:
                     client_id=self.configuration.CAMUNDA_CLIENT_ID or "",
                     client_secret=self.configuration.CAMUNDA_CLIENT_SECRET or "",
                     audience=self.configuration.CAMUNDA_TOKEN_AUDIENCE,
+                    cache_dir=self.configuration.CAMUNDA_TOKEN_CACHE_DIR,
+                    disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
                     transport=transport,
                 )
             else:

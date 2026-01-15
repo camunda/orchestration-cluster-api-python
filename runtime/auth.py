@@ -2,6 +2,11 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
 import threading
 import time
 from dataclasses import dataclass
@@ -24,6 +29,54 @@ _LOG_LEVEL_ORDER: dict[str, int] = {
     "trace": 5,
     "silly": 6,
 }
+
+
+_SAAS_OAUTH_HOST = "login.cloud.camunda.io"
+_SAAS_401_COOLDOWN_S_DEFAULT = 30.0
+_TARPIT_FILENAME_SALT = "camunda-oauth-tarpit-filename-salt-v1"
+
+
+def _is_saas_oauth_url(oauth_url: str) -> bool:
+    try:
+        return httpx.URL(oauth_url).host == _SAAS_OAUTH_HOST
+    except Exception:
+        return False
+
+
+def _safe_filename_component(value: str) -> str:
+    # Keep filenames readable and portable.
+    value = value.strip()
+    if not value:
+        return "empty"
+    value = re.sub(r"[^A-Za-z0-9._-]+", "_", value)
+    return value[:120]
+
+
+def _hash_secret_for_filename(secret: str) -> str:
+    # Deterministic, computationally expensive derivation.
+    # This is NOT for secure storage; it's only to avoid writing the raw secret
+    # into tarpit filenames.
+    derived = hashlib.pbkdf2_hmac(
+        "sha256",
+        secret.encode("utf-8"),
+        _TARPIT_FILENAME_SALT.encode("utf-8"),
+        100_000,
+        dklen=32,
+    )
+    return derived.hex()[:16]
+
+
+def _ensure_dir(path: Path) -> bool:
+    try:
+        path.mkdir(parents=True, exist_ok=True)
+        # Best-effort writeability check.
+        test_file = path / f".write-test-{os.getpid()}.tmp"
+        test_file.write_text("test", encoding="utf-8")
+        test_file.unlink(missing_ok=True)
+        return True
+    except Exception as e:
+        _log_warning("OAuth cache dir is not writable; disabling file cache: dir={dir} err={err}", dir=str(path), err=str(e))
+        return False
 
 
 def _should_log_http(log_level: str | None) -> bool:
@@ -80,23 +133,31 @@ class NullAuthProvider:
 
 
 def _resolve_auth_headers(provider: object) -> Mapping[str, str]:
+    from collections.abc import Callable
+    from typing import cast
+
     get_headers = getattr(provider, "get_headers", None)
     if not callable(get_headers):
         raise TypeError("auth_provider must implement get_headers() -> Mapping[str, str]")
 
-    headers = get_headers()
+    typed_get_headers = cast(Callable[[], object], get_headers)
+    headers = typed_get_headers()
     if not isinstance(headers, Mapping):
         raise TypeError("auth_provider.get_headers() must return a mapping")
-    return headers
+    return cast(Mapping[str, str], headers)
 
 
 async def _resolve_async_auth_headers(provider: object) -> Mapping[str, str]:
+    from collections.abc import Awaitable, Callable
+    from typing import cast
+
     aget_headers = getattr(provider, "aget_headers", None)
     if callable(aget_headers):
-        headers = await aget_headers()
+        typed_aget_headers = cast(Callable[[], Awaitable[object]], aget_headers)
+        headers = await typed_aget_headers()
         if not isinstance(headers, Mapping):
             raise TypeError("auth_provider.aget_headers() must return a mapping")
-        return headers
+        return cast(Mapping[str, str], headers)
 
     return _resolve_auth_headers(provider)
 
@@ -135,6 +196,9 @@ class OAuthClientCredentialsAuthProvider:
         client_id: str,
         client_secret: str,
         audience: str,
+        cache_dir: str | None = None,
+        disk_cache_disable: bool = False,
+        saas_401_cooldown_s: float = _SAAS_401_COOLDOWN_S_DEFAULT,
         transport: httpx.BaseTransport | None = None,
         timeout: float | None = None,
     ):
@@ -145,12 +209,127 @@ class OAuthClientCredentialsAuthProvider:
         self._client = httpx.Client(transport=transport, timeout=timeout)
         self._lock = threading.Lock()
         self._token: _OAuthToken | None = None
+        self._is_saas = _is_saas_oauth_url(oauth_url)
+        self._saas_401_cooldown_s = float(saas_401_cooldown_s)
+        self._memoized_401: tuple[float, Exception] | None = None
+
+        self._cache_dir = Path(cache_dir).expanduser() if cache_dir else None
+        self._use_file_cache = bool(self._cache_dir) and (not disk_cache_disable)
+        if self._use_file_cache and self._cache_dir is not None:
+            self._use_file_cache = _ensure_dir(self._cache_dir)
+
+    def _token_cache_file(self) -> Path | None:
+        if not self._use_file_cache or self._cache_dir is None:
+            return None
+        host = "unknown"
+        try:
+            host = httpx.URL(self._oauth_url).host or "unknown"
+        except Exception:
+            host = "unknown"
+        filename = "oauth-token-{client_id}-{audience}-{host}.json".format(
+            client_id=_safe_filename_component(self._client_id),
+            audience=_safe_filename_component(self._audience),
+            host=_safe_filename_component(host),
+        )
+        return self._cache_dir / filename
+
+    def _tarpit_file(self) -> Path | None:
+        if not (self._use_file_cache and self._cache_dir and self._is_saas):
+            return None
+        filename = "oauth-401-tarpit-{client_id}-{audience}-{secret_hash}.json".format(
+            client_id=_safe_filename_component(self._client_id),
+            audience=_safe_filename_component(self._audience),
+            secret_hash=_hash_secret_for_filename(self._client_secret),
+        )
+        return self._cache_dir / filename
 
     def _now(self) -> float:
         return time.time()
 
     def _is_valid(self, token: _OAuthToken) -> bool:
         return self._now() < token.expires_at_epoch_s
+
+    def _try_load_file_cached_token(self) -> _OAuthToken | None:
+        token_file = self._token_cache_file()
+        if token_file is None:
+            return None
+        try:
+            if not token_file.exists():
+                return None
+            payload = json.loads(token_file.read_text(encoding="utf-8"))
+            access_token = payload.get("access_token")
+            expires_at = payload.get("expires_at_epoch_s")
+            if not access_token or expires_at is None:
+                return None
+            token = _OAuthToken(access_token=str(access_token), expires_at_epoch_s=float(expires_at))
+            if not self._is_valid(token):
+                try:
+                    token_file.unlink(missing_ok=True)
+                except Exception:
+                    pass
+                return None
+            return token
+        except Exception:
+            return None
+
+    def _try_save_file_cached_token(self, token: _OAuthToken) -> None:
+        token_file = self._token_cache_file()
+        if token_file is None:
+            return
+        try:
+            token_file.write_text(
+                json.dumps(
+                    {
+                        "access_token": token.access_token,
+                        "expires_at_epoch_s": token.expires_at_epoch_s,
+                        "client_id": self._client_id,
+                        "audience": self._audience,
+                        "oauth_url": self._oauth_url,
+                    },
+                    indent=2,
+                    sort_keys=True,
+                ),
+                encoding="utf-8",
+            )
+            try:
+                os.chmod(token_file, 0o600)
+            except Exception:
+                pass
+        except Exception:
+            # Best-effort only.
+            return
+
+    def _is_tarpitted(self) -> bool:
+        tarpit = self._tarpit_file()
+        return bool(tarpit and tarpit.exists())
+
+    def _create_tarpit_file(self, *, reason: str) -> None:
+        tarpit = self._tarpit_file()
+        if tarpit is None:
+            return
+        if tarpit.exists():
+            return
+        try:
+            tarpit.write_text(
+                json.dumps(
+                    {
+                        "createdAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                        "clientId": self._client_id,
+                        "audience": self._audience,
+                        "reason": reason,
+                        "message": "Persistent 401 tarpit – clear manually to retry",
+                    },
+                    indent=2,
+                    sort_keys=True,
+                ),
+                encoding="utf-8",
+            )
+            try:
+                os.chmod(tarpit, 0o600)
+            except Exception:
+                pass
+        except Exception:
+            return
 
     def _fetch_token(self) -> _OAuthToken:
         data = {
@@ -173,7 +352,16 @@ class OAuthClientCredentialsAuthProvider:
             data=data,
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
-        resp.raise_for_status()
+        try:
+            resp.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 401:
+                # SaaS token endpoint has a 30s cooldown on repeated invalid credentials.
+                # Memoize the error to avoid repeatedly hitting the endpoint.
+                self._memoized_401 = (self._now(), e)
+                if self._is_saas:
+                    self._create_tarpit_file(reason=str(e))
+            raise
         payload = resp.json()
         access_token = payload.get("access_token")
         expires_in = payload.get("expires_in")
@@ -188,8 +376,28 @@ class OAuthClientCredentialsAuthProvider:
 
     def get_headers(self) -> Mapping[str, str]:
         with self._lock:
+            # Persistent SaaS tarpit check (if enabled).
+            if self._is_tarpitted():
+                raise RuntimeError(
+                    "OAuth token requests are tarpitted due to a previous 401 Unauthorized for this client_id/audience/secret. "
+                    "Delete the tarpit file in the configured cache_dir (or rotate credentials) to retry."
+                )
+
+            # In-memory SaaS 401 cooldown memoization.
+            if self._memoized_401 is not None:
+                ts, err = self._memoized_401
+                if (self._now() - ts) < self._saas_401_cooldown_s:
+                    raise err
+                self._memoized_401 = None
+
             if self._token is None or not self._is_valid(self._token):
-                self._token = self._fetch_token()
+                # Try file cache first (if enabled).
+                cached = self._try_load_file_cached_token()
+                if cached is not None:
+                    self._token = cached
+                else:
+                    self._token = self._fetch_token()
+                    self._try_save_file_cached_token(self._token)
             return {"Authorization": f"Bearer {self._token.access_token}"}
 
 
@@ -206,6 +414,9 @@ class AsyncOAuthClientCredentialsAuthProvider:
         client_id: str,
         client_secret: str,
         audience: str,
+        cache_dir: str | None = None,
+        disk_cache_disable: bool = False,
+        saas_401_cooldown_s: float = _SAAS_401_COOLDOWN_S_DEFAULT,
         transport: httpx.AsyncBaseTransport | None = None,
         timeout: float | None = None,
     ):
@@ -216,12 +427,126 @@ class AsyncOAuthClientCredentialsAuthProvider:
         self._client = httpx.AsyncClient(transport=transport, timeout=timeout)
         self._lock = asyncio.Lock()
         self._token: _OAuthToken | None = None
+        self._is_saas = _is_saas_oauth_url(oauth_url)
+        self._saas_401_cooldown_s = float(saas_401_cooldown_s)
+        self._memoized_401: tuple[float, Exception] | None = None
+
+        self._cache_dir = Path(cache_dir).expanduser() if cache_dir else None
+        self._use_file_cache = bool(self._cache_dir) and (not disk_cache_disable)
+        if self._use_file_cache and self._cache_dir is not None:
+            self._use_file_cache = _ensure_dir(self._cache_dir)
+
+    def _token_cache_file(self) -> Path | None:
+        if not self._use_file_cache or self._cache_dir is None:
+            return None
+        host = "unknown"
+        try:
+            host = httpx.URL(self._oauth_url).host or "unknown"
+        except Exception:
+            host = "unknown"
+        filename = "oauth-token-{client_id}-{audience}-{host}.json".format(
+            client_id=_safe_filename_component(self._client_id),
+            audience=_safe_filename_component(self._audience),
+            host=_safe_filename_component(host),
+        )
+        return self._cache_dir / filename
+
+    def _tarpit_file(self) -> Path | None:
+        if not (self._use_file_cache and self._cache_dir and self._is_saas):
+            return None
+        filename = "oauth-401-tarpit-{client_id}-{audience}-{secret_hash}.json".format(
+            client_id=_safe_filename_component(self._client_id),
+            audience=_safe_filename_component(self._audience),
+            secret_hash=_hash_secret_for_filename(self._client_secret),
+        )
+        return self._cache_dir / filename
 
     def _now(self) -> float:
         return time.time()
 
     def _is_valid(self, token: _OAuthToken) -> bool:
         return self._now() < token.expires_at_epoch_s
+
+    def _try_load_file_cached_token(self) -> _OAuthToken | None:
+        token_file = self._token_cache_file()
+        if token_file is None:
+            return None
+        try:
+            if not token_file.exists():
+                return None
+            payload = json.loads(token_file.read_text(encoding="utf-8"))
+            access_token = payload.get("access_token")
+            expires_at = payload.get("expires_at_epoch_s")
+            if not access_token or expires_at is None:
+                return None
+            token = _OAuthToken(access_token=str(access_token), expires_at_epoch_s=float(expires_at))
+            if not self._is_valid(token):
+                try:
+                    token_file.unlink(missing_ok=True)
+                except Exception:
+                    pass
+                return None
+            return token
+        except Exception:
+            return None
+
+    def _try_save_file_cached_token(self, token: _OAuthToken) -> None:
+        token_file = self._token_cache_file()
+        if token_file is None:
+            return
+        try:
+            token_file.write_text(
+                json.dumps(
+                    {
+                        "access_token": token.access_token,
+                        "expires_at_epoch_s": token.expires_at_epoch_s,
+                        "client_id": self._client_id,
+                        "audience": self._audience,
+                        "oauth_url": self._oauth_url,
+                    },
+                    indent=2,
+                    sort_keys=True,
+                ),
+                encoding="utf-8",
+            )
+            try:
+                os.chmod(token_file, 0o600)
+            except Exception:
+                pass
+        except Exception:
+            return
+
+    def _is_tarpitted(self) -> bool:
+        tarpit = self._tarpit_file()
+        return bool(tarpit and tarpit.exists())
+
+    def _create_tarpit_file(self, *, reason: str) -> None:
+        tarpit = self._tarpit_file()
+        if tarpit is None:
+            return
+        if tarpit.exists():
+            return
+        try:
+            tarpit.write_text(
+                json.dumps(
+                    {
+                        "createdAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                        "clientId": self._client_id,
+                        "audience": self._audience,
+                        "reason": reason,
+                        "message": "Persistent 401 tarpit – clear manually to retry",
+                    },
+                    indent=2,
+                    sort_keys=True,
+                ),
+                encoding="utf-8",
+            )
+            try:
+                os.chmod(tarpit, 0o600)
+            except Exception:
+                pass
+        except Exception:
+            return
 
     async def _fetch_token(self) -> _OAuthToken:
         data = {
@@ -244,7 +569,14 @@ class AsyncOAuthClientCredentialsAuthProvider:
             data=data,
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
-        resp.raise_for_status()
+        try:
+            resp.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 401:
+                self._memoized_401 = (self._now(), e)
+                if self._is_saas:
+                    self._create_tarpit_file(reason=str(e))
+            raise
         payload = resp.json()
         access_token = payload.get("access_token")
         expires_in = payload.get("expires_in")
@@ -258,8 +590,25 @@ class AsyncOAuthClientCredentialsAuthProvider:
 
     async def aget_headers(self) -> Mapping[str, str]:
         async with self._lock:
+            if self._is_tarpitted():
+                raise RuntimeError(
+                    "OAuth token requests are tarpitted due to a previous 401 Unauthorized for this client_id/audience/secret. "
+                    "Delete the tarpit file in the configured cache_dir (or rotate credentials) to retry."
+                )
+
+            if self._memoized_401 is not None:
+                ts, err = self._memoized_401
+                if (self._now() - ts) < self._saas_401_cooldown_s:
+                    raise err
+                self._memoized_401 = None
+
             if self._token is None or not self._is_valid(self._token):
-                self._token = await self._fetch_token()
+                cached = self._try_load_file_cached_token()
+                if cached is not None:
+                    self._token = cached
+                else:
+                    self._token = await self._fetch_token()
+                    self._try_save_file_cached_token(self._token)
             return {"Authorization": f"Bearer {self._token.access_token}"}
 
 
@@ -278,9 +627,12 @@ def inject_auth_event_hooks(
     log_http = _should_log_http(log_level)
     log_http_body = _should_log_http_body(log_level)
 
+    request_hook: Any
+    response_hook: Any
+
     if async_client:
 
-        async def _request_hook(request: httpx.Request) -> None:
+        async def _request_hook_async(request: httpx.Request) -> None:
             headers = await _resolve_async_auth_headers(auth_provider)
             if headers:
                 request.headers.update(headers)
@@ -293,7 +645,7 @@ def inject_auth_event_hooks(
                     has_auth=("authorization" in request.headers),
                 )
 
-        async def _response_hook(response: httpx.Response) -> None:
+        async def _response_hook_async(response: httpx.Response) -> None:
             if not log_http:
                 return
 
@@ -326,9 +678,12 @@ def inject_auth_event_hooks(
                     url=str(request.url),
                 )
 
+        request_hook = _request_hook_async
+        response_hook = _response_hook_async
+
     else:
 
-        def _request_hook(request: httpx.Request) -> None:
+        def _request_hook_sync(request: httpx.Request) -> None:
             headers = _resolve_auth_headers(auth_provider)
             if headers:
                 request.headers.update(headers)
@@ -341,7 +696,7 @@ def inject_auth_event_hooks(
                     has_auth=("authorization" in request.headers),
                 )
 
-        def _response_hook(response: httpx.Response) -> None:
+        def _response_hook_sync(response: httpx.Response) -> None:
             if not log_http:
                 return
 
@@ -374,6 +729,9 @@ def inject_auth_event_hooks(
                     url=str(request.url),
                 )
 
+        request_hook = _request_hook_sync
+        response_hook = _response_hook_sync
+
     out: dict[str, Any] = dict(httpx_args or {})
 
     # Normalize event_hooks to a writable dict.
@@ -382,7 +740,7 @@ def inject_auth_event_hooks(
     if existing_event_hooks is None:
         event_hooks = {}
     elif isinstance(existing_event_hooks, dict):
-        event_hooks = dict(existing_event_hooks)
+        event_hooks = dict(existing_event_hooks)  # type: ignore[arg-type]
     else:
         raise TypeError("httpx_args['event_hooks'] must be a dict")
 
@@ -391,13 +749,13 @@ def inject_auth_event_hooks(
     if existing_request_hooks is None:
         request_hooks: list[Any] = []
     elif isinstance(existing_request_hooks, list):
-        request_hooks = list(existing_request_hooks)
+        request_hooks = list(existing_request_hooks)  # type: ignore[arg-type]
     elif isinstance(existing_request_hooks, tuple):
-        request_hooks = list(existing_request_hooks)
+        request_hooks = list(existing_request_hooks)  # type: ignore[arg-type]
     else:
         raise TypeError("httpx_args['event_hooks']['request'] must be a list or tuple")
 
-    request_hooks.append(_request_hook)
+    request_hooks.append(request_hook)
     event_hooks["request"] = request_hooks
 
     # Normalize response hooks to a list.
@@ -405,13 +763,13 @@ def inject_auth_event_hooks(
     if existing_response_hooks is None:
         response_hooks: list[Any] = []
     elif isinstance(existing_response_hooks, list):
-        response_hooks = list(existing_response_hooks)
+        response_hooks = list(existing_response_hooks)  # type: ignore[arg-type]
     elif isinstance(existing_response_hooks, tuple):
-        response_hooks = list(existing_response_hooks)
+        response_hooks = list(existing_response_hooks)  # type: ignore[arg-type]
     else:
         raise TypeError("httpx_args['event_hooks']['response'] must be a list or tuple")
 
-    response_hooks.append(_response_hook)
+    response_hooks.append(response_hook)
     event_hooks["response"] = response_hooks
     out["event_hooks"] = event_hooks
 

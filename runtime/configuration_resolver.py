@@ -40,6 +40,10 @@ class CamundaSdkConfigPartial(TypedDict, total=False):
 
     CAMUNDA_SDK_LOG_LEVEL: CamundaSdkLogLevel
 
+    # Optional OAuth disk cache / tarpit persistence
+    CAMUNDA_TOKEN_CACHE_DIR: str
+    CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool
+
 
 CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "ZEEBE_REST_ADDRESS",
@@ -54,6 +58,10 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "CAMUNDA_CLIENT_AUTH_CLIENTID",
     "CAMUNDA_CLIENT_AUTH_CLIENTSECRET",
     "CAMUNDA_SDK_LOG_LEVEL",
+
+    # Optional OAuth disk cache / tarpit persistence
+    "CAMUNDA_TOKEN_CACHE_DIR",
+    "CAMUNDA_TOKEN_DISK_CACHE_DISABLE",
 )
 
 
@@ -91,6 +99,11 @@ class CamundaSdkConfiguration(BaseModel):
 
     # Logging
     CAMUNDA_SDK_LOG_LEVEL: CamundaSdkLogLevel = Field(default="error")
+
+    # OAuth disk cache / tarpit persistence
+    # If CAMUNDA_TOKEN_CACHE_DIR is unset/None, the SDK will not write tokens to disk.
+    CAMUNDA_TOKEN_CACHE_DIR: str | None = None
+    CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool = Field(default=False)
 
     @staticmethod
     def _normalize_rest_address(value: str) -> str:
