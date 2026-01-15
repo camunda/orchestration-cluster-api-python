@@ -14,5 +14,11 @@ demo/.DS_Store
 
 # Generated documentation
 public/
+website/docs/api/
+
+# Docusaurus test site
+demo/docusaurus-test/node_modules/
+demo/docusaurus-test/build/
+demo/docusaurus-test/.docusaurus/
+
 .DS_Store
-website/docs/api/index.md

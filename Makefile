@@ -59,7 +59,16 @@ docs-api:
 	# 5. Build Markdown for Docusaurus integration
 	PYTHONPATH=./generated sphinx-build -M markdown docs-sphinx public
 
-	# 6. Add Docusaurus frontmatter to markdown
+	# 6. Post-process markdown for Docusaurus compatibility
+	@# Escape <...> and {...} to prevent MDX parsing as JSX
+	perl -i -pe 's/<([a-zA-Z_][^>]*)>/`<$$1>`/g' ./public/markdown/index.md
+	perl -i -pe 's/\{([a-zA-Z_][^}]*)\}/`{$$1}`/g' ./public/markdown/index.md
+	@# Remove malformed code blocks with :param/:type (RST leftovers)
+	perl -i -pe 's/^```default\n//g; s/^:param\s+(\w+):\s*(.*)/* **$$1**: $$2/g; s/^:type\s+\w+:.*\n//g; s/^```\n//g if /^```$$/;' ./public/markdown/index.md
+	@# Fix broken admonition syntax (:: at end of :::info blocks)
+	perl -i -pe 's/^::\s*$$/:::/g' ./public/markdown/index.md
+
+	# 7. Add Docusaurus frontmatter to markdown
 	@echo '---\nid: api-reference\ntitle: Python SDK API Reference\nsidebar_label: API Reference\n---\n' | cat - ./public/markdown/index.md > ./public/markdown/index.md.tmp && mv ./public/markdown/index.md.tmp ./public/markdown/index.md
 
 	# 7. Copy markdown into HTML folder for GitHub Pages access at /markdown/
