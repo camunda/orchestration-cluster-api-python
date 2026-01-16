@@ -44,6 +44,9 @@ class CamundaSdkConfigPartial(TypedDict, total=False):
     CAMUNDA_TOKEN_CACHE_DIR: str
     CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool
 
+    # Optional .env file loading
+    CAMUNDA_LOAD_ENVFILE: str
+
 
 CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "ZEEBE_REST_ADDRESS",
@@ -65,8 +68,60 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
 )
 
 
+def _dotenv_values_for(load_envfile: Any) -> dict[str, str]:
+    """Return values from a .env file, without mutating os.environ.
+
+    This is a resolver-only feature flag; it must not leak into the validated
+    Pydantic configuration model.
+    """
+
+    if load_envfile in (None, "", False):
+        return {}
+
+    try:
+        from dotenv import dotenv_values
+        from pathlib import Path
+
+        if load_envfile is True:
+            value = "true"
+        else:
+            value = str(load_envfile).strip()
+
+        if not value:
+            return {}
+
+        if value.lower() in ("true", "1", "yes"):
+            envfile_path = Path.cwd() / ".env"
+        else:
+            envfile_path = Path(value).expanduser().resolve()
+
+        if not envfile_path.exists():
+            return {}
+
+        raw = dotenv_values(envfile_path)
+        return {k: v for k, v in raw.items() if k and v is not None}
+    except ImportError:
+        # python-dotenv not installed, silently skip
+        return {}
+    except Exception:
+        # Any other error loading .env file, silently skip
+        return {}
+
+
 def read_environment(environ: Mapping[str, str] | None = None) -> CamundaSdkConfigPartial:
-    env = os.environ if environ is None else environ
+    # Always operate on a copy to avoid mutating global process state while still
+    # allowing us to merge .env-derived values.
+    env: dict[str, str] = dict(os.environ) if environ is None else dict(environ)
+    
+    # Check if we should load a .env file
+    load_envfile = env.get("CAMUNDA_LOAD_ENVFILE", "").strip()
+    if load_envfile:
+        dotenv_dict = _dotenv_values_for(load_envfile)
+        # Merge with existing env, giving precedence to existing env vars
+        for key, value in dotenv_dict.items():
+            if key not in env:
+                env[key] = value
+    
     out: dict[str, str] = {}
     for key in CAMUNDA_SDK_CONFIG_KEYS:
         if key in env:
@@ -175,8 +230,24 @@ class ConfigurationResolver:
         )
 
     def resolve(self) -> ResolvedCamundaSdkConfiguration:
-        merged: dict[str, Any] = {**self._environment, **(self._explicit or {})}
-        merged = self._apply_alias_resolution(merged, self._environment, self._explicit)
+        explicit_envfile = None
+        if self._explicit is not None and "CAMUNDA_LOAD_ENVFILE" in self._explicit:
+            explicit_envfile = self._explicit.get("CAMUNDA_LOAD_ENVFILE")
+
+        envfile_values = _dotenv_values_for(
+            explicit_envfile
+            if explicit_envfile not in (None, "")
+            else self._environment.get("CAMUNDA_LOAD_ENVFILE")
+        )
+
+        # Precedence: .env < environment < explicit
+        merged: dict[str, Any] = {**envfile_values, **self._environment, **(self._explicit or {})}
+        merged.pop("CAMUNDA_LOAD_ENVFILE", None)
+
+        # Alias resolution needs to consider .env-provided values as "environment"
+        # input, otherwise it may incorrectly drop them.
+        env_for_alias = {**envfile_values, **self._environment}
+        merged = self._apply_alias_resolution(merged, env_for_alias, self._explicit)
 
         # Infer an auth strategy only if the user did NOT explicitly set one.
         # (Defaults do not count as explicit.)
