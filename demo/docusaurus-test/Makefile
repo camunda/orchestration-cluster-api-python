@@ -1,4 +1,4 @@
-.PHONY: install sync start build clean camunda-docs
+.PHONY: install sync start build clean camunda-docs sync-python-sdk
 
 # Install npm dependencies
 install:
@@ -26,8 +26,12 @@ build: sync
 clean:
 	rm -rf docs/api build .docusaurus
 
+# Sync Python SDK docs to Camunda docs
+sync-python-sdk:
+	./sync-python-sdk.sh
+
 # Start Camunda docs locally (runs on port 3001)
-camunda-docs:
+camunda-docs: sync-python-sdk
 	@if [ ! -d ../camunda-docs/node_modules ]; then \
 		echo "Installing Camunda docs dependencies..."; \
 		cd ../camunda-docs && npm install; \
