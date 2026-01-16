@@ -89,6 +89,7 @@ dependencies = [
     { name = "loguru" },
     { name = "pydantic" },
     { name = "python-dateutil" },
+    { name = "python-dotenv" },
     { name = "typing-extensions" },
 ]
 
@@ -116,6 +117,7 @@ requires-dist = [
     { name = "loguru", specifier = ">=0.7.2" },
     { name = "pydantic", specifier = ">=2" },
     { name = "python-dateutil", specifier = ">=2.8.2" },
+    { name = "python-dotenv", specifier = ">=1.0.0" },
     { name = "typing-extensions", specifier = ">=4.7.1" },
 ]
 
