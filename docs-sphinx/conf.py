@@ -32,3 +32,8 @@ autodoc_typehints = "description"
 
 # Simplify signature display
 autodoc_typehints_format = "short"
+
+# Class signature display: "mixed" keeps signature with class name (default).
+# Sphinx is handling everything it can here, so our post-processing script
+# is needed to handle simplifying headings for Docusaurus TOC.
+autodoc_class_signature = "mixed"
