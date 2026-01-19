@@ -62,6 +62,9 @@ docs-api:
 	# 6. Post-process markdown for Docusaurus compatibility
 	@# Simplify class headings (strip parameters for cleaner TOC)
 	perl -i -pe 's/^(### \*class\* [\w.]+)\([^)]*\)\s*$$/$$1/g' ./public/markdown/index.md
+	@# Promote heading levels for proper Docusaurus TOC hierarchy (H3->H2, H4->H3)
+	perl -i -pe 's/^### \*class\*/## *class*/g' ./public/markdown/index.md
+	perl -i -pe 's/^#### /### /g' ./public/markdown/index.md
 	@# Escape <...> and {...} to prevent MDX parsing as JSX
 	perl -i -pe 's/<([a-zA-Z_][^>]*)>/`<$$1>`/g' ./public/markdown/index.md
 	perl -i -pe 's/\{([a-zA-Z_][^}]*)\}/`{$$1}`/g' ./public/markdown/index.md
