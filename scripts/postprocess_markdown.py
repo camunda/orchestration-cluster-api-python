@@ -9,19 +9,16 @@ from pathlib import Path
 def simplify_class_heading(match: re.Match) -> str:
     """Transform class heading: keep simple name, move full signature to code block."""
     hashes = match.group(1)
-    full_name = match.group(2)  # e.g., "camunda_orchestration_sdk.AuthenticatedClient"
+    class_name = match.group(2)  # e.g., "AuthenticatedClient" (module prefix removed by Sphinx)
     params = match.group(3) or ""  # constructor parameters, may be empty
-
-    # Extract just the class name
-    simple_name = full_name.split(".")[-1]
 
     # Build the full signature for the code block
     if params:
-        signature = f"class {full_name}({params})"
+        signature = f"class {class_name}({params})"
     else:
-        signature = f"class {full_name}"
+        signature = f"class {class_name}"
 
-    return f"{hashes} {simple_name}\n\n```python\n{signature}\n```"
+    return f"{hashes} {class_name}\n\n```python\n{signature}\n```"
 
 
 def simplify_method_heading(match: re.Match) -> str:

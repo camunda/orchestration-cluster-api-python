@@ -21,5 +21,14 @@ html_theme_options = {
     "navigation_with_keys": True,
 }
 
+# Cleaner display - remove module prefixes from class/function names
+add_module_names = False
+
 # Cleaner display of nested items in TOC
 toc_object_entries_show_parents = "hide"
+
+# Move type hints from signatures to description section
+autodoc_typehints = "description"
+
+# Simplify signature display
+autodoc_typehints_format = "short"
