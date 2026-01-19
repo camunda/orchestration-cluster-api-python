@@ -1,29 +1,12 @@
-## Camunda Orchestration Cluster API – Python SDK Generator
+## Camunda Orchestration Cluster API – Python SDK
 
-This project generates a Python SDK for the Camunda 8 Orchestration Cluster REST API from the OpenAPI specification.
+[![PyPI - Version](https://img.shields.io/pypi/v/camunda-orchestration-sdk)](https://pypi.org/project/camunda-orchestration-sdk/)
 
-### Overview
-
-- Fetches the OpenAPI spec via shallow clone from the public repository (fallback to local checked-out repo if offline).
-- Generates the SDK using OpenAPI Generator (prefers `npx`, falls back to Docker).
-- Provides an extensible hooks system for post-processing tasks.
-
-### Requirements
-
-- Python 3.9+
-- One of:
-  - Node.js with `npx` available; or
-  - Docker (for `openapitools/openapi-generator-cli`)
-
-### Quick start
+## Installing the SDK to your project
 
 ```bash
-cd orchestration-cluster-api-python
-# Install deps and run generation (defaults to output in ./generated)
-make generate
+pip install camunda-orchestration-sdk
 ```
-
-Generated SDK will be placed in `generated/` by default. You can change this with `--out-dir`.
 
 ### Using the generated SDK
 
@@ -32,21 +15,82 @@ The generated SDK provides two convenience clients:
 - `CamundaClient`: sync-only convenience client.
 - `CamundaAsyncClient`: async-only convenience client.
 
-#### Initialization
+#### Quick start (Zero-config – recommended)
+
+Keep configuration out of application code. Let the client read `CAMUNDA_*` variables from the environment (12-factor style). This makes secret rotation, environment promotion (dev → staging → prod), and operational tooling (vaults / secret managers) safer and simpler.
+
+If no configuration is present, the SDK defaults to a local Camunda 8 Run-style endpoint at `http://localhost:8080/v2`.
 
 ```python
 from camunda_orchestration_sdk import CamundaClient, CamundaAsyncClient
 
-# Unauthenticated (for local development)
-client = CamundaClient(configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"})
-async_client = CamundaAsyncClient(
-    configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"}
-)
+# Zero-config construction: reads CAMUNDA_* from the environment
+client = CamundaClient()
+async_client = CamundaAsyncClient()
+```
 
-# Or configure via environment (preferred for apps)
-# export CAMUNDA_REST_ADDRESS="http://localhost:8080/v2"
-# client = CamundaClient()
-# async_client = CamundaAsyncClient()
+Typical `.env` (example):
+
+```bash
+CAMUNDA_REST_ADDRESS=https://cluster.example/v2
+CAMUNDA_AUTH_STRATEGY=OAUTH
+CAMUNDA_CLIENT_ID=***
+CAMUNDA_CLIENT_SECRET=***
+```
+
+#### Advanced: Programmatic configuration (use sparingly)
+
+Only use `configuration={...}` when you must supply or mutate configuration dynamically (e.g. tests, multi-tenant routing, or ephemeral preview environments). Keys mirror their `CAMUNDA_*` environment names.
+
+```python
+from camunda_orchestration_sdk import CamundaClient
+
+client = CamundaClient(
+    configuration={
+        "CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2",
+        "CAMUNDA_AUTH_STRATEGY": "NONE",
+    }
+)
+```
+
+#### Loading configuration from a `.env` file (`CAMUNDA_LOAD_ENVFILE`)
+
+The SDK can optionally load configuration values from a dotenv file.
+
+- Set `CAMUNDA_LOAD_ENVFILE=true` (or `1` / `yes`) to load `.env` from the current working directory.
+- Set `CAMUNDA_LOAD_ENVFILE=/path/to/file.env` to load from an explicit path.
+- If the file does not exist, it is silently ignored.
+- Precedence is: `.env` < environment variables < explicit `configuration={...}` passed to the client.
+- The resolver reads dotenv values without mutating `os.environ`.
+
+Example `.env`:
+
+```bash
+CAMUNDA_REST_ADDRESS=http://localhost:8080/v2
+CAMUNDA_CLIENT_ID=your-client-id
+CAMUNDA_CLIENT_SECRET=your-client-secret
+```
+
+Enable loading from the current directory:
+
+```bash
+export CAMUNDA_LOAD_ENVFILE=true
+python your_script.py
+```
+
+Or enable loading from a specific file:
+
+```bash
+export CAMUNDA_LOAD_ENVFILE=~/camunda/dev.env
+python your_script.py
+```
+
+You can also enable it via the explicit configuration dict:
+
+```python
+from camunda_orchestration_sdk import CamundaClient
+
+client = CamundaClient(configuration={"CAMUNDA_LOAD_ENVFILE": "true"})
 ```
 
 #### Synchronous Usage
@@ -54,7 +98,8 @@ async_client = CamundaAsyncClient(
 ```python
 from camunda_orchestration_sdk import CamundaClient
 
-with CamundaClient(configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"}) as client:
+# Configure via environment (recommended): CAMUNDA_REST_ADDRESS / auth vars
+with CamundaClient() as client:
     topology = client.get_topology()
     print(topology)
 ```
@@ -66,10 +111,9 @@ import asyncio
 from camunda_orchestration_sdk import CamundaAsyncClient
 
 async def main():
-  async with CamundaAsyncClient(
-      configuration={"CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2"}
-  ) as client:
-    topology = await client.get_topology()
+    # Configure via environment (recommended): CAMUNDA_REST_ADDRESS / auth vars
+    async with CamundaAsyncClient() as client:
+        topology = await client.get_topology()
         print(topology)
 
 asyncio.run(main())
@@ -89,68 +133,6 @@ LOGURU_LEVEL=WARNING python your_script.py
 # Run with TRACE level (more verbose than DEBUG)
 LOGURU_LEVEL=TRACE python your_script.py
 ```
-
-### Local fallback of the spec
-
-If the network is not available or the remote repository cannot be reached, the generator will use the locally cloned spec at:
-
-- `../camunda-orchestration-cluster-api/specification/rest-api.yaml`
-
-Ensure that repository is present in the workspace if you need offline generation.
-
-### Configuration
-
-`generator-config.yaml` holds OpenAPI Generator options such as package name. You may add or tweak options there.
-
-You can also pass CLI arguments:
-
-```bash
-python3 generate.py \
-  --out-dir ./generated \
-  --generator python \
-  --spec-ref main \
-  --package-name camunda_orchestration_sdk
-```
-
-Run `python3 generate.py --help` for all options.
-
-### Hooks (post-processing)
-
-Add Python files under `hooks/` exporting a `run(context)` function. Hooks are executed in sorted order after generation.
-
-`context` includes:
-
-- `out_dir`: path to the generated SDK directory
-- `spec_path`: path to the spec used for generation
-- `config_path`: path to the generator config file
-- `generator`: the generator type used (default `python`)
-
-Example hook: see `hooks/postprocess_example.py`.
-
-### Acceptance tests (post-generation)
-
-After generation and post-processing, acceptance tests run automatically unless `--skip-tests` is provided. Tests live under `tests/acceptance/` and run against the generated package by injecting `PYTHONPATH`.
-
-Run tests manually:
-
-```bash
-make test
-```
-
-### Integration tests (opt-in)
-
-Integration tests live in `tests/integration` and require a running server. They are skipped unless `CAMUNDA_INTEGRATION=1` is set. By default, the client points to `http://localhost:8080/v2`; override with `CAMUNDA_REST_ADDRESS`.
-
-Run manually:
-
-```bash
-make itest
-```
-
-### Make targets
-
-- `make generate` – run the generator (uses Python script)
-- `make clean` – remove the `generated/` directory and cache
 
 ### License
 

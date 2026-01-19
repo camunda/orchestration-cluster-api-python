@@ -3935,9 +3935,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
+                - name
                 - value
                 - scope
-                - name
         '400':
           description: The provided data is not valid.
           content:
@@ -4129,9 +4129,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
+                - name
                 - value
                 - scope
-                - name
         '400':
           description: The provided data is not valid.
           content:
@@ -4585,9 +4585,9 @@ paths:
                           description: Only provided if the cluster variable scope
                             is TENANT.
                       required:
+                      - name
                       - value
                       - scope
-                      - name
                   page:
                     description: Pagination information about the search results.
                     type: object
@@ -4840,9 +4840,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
+                - name
                 - value
                 - scope
-                - name
         '400':
           description: The provided data is not valid.
           content:
@@ -5047,9 +5047,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
+                - name
                 - value
                 - scope
-                - name
         '400':
           description: The provided data is not valid.
           content:
@@ -44340,6 +44340,18 @@ components:
             name:
               type: string
               description: The DMN name of the decision definition.
+            isLatestVersion:
+              description: 'Whether to only return the latest version of each decision
+                definition.
+
+                When using this filter, pagination functionality is limited, you can
+                only paginate forward using `after` and `limit`.
+
+                The response contains no `startCursor` in the `page`, and requests
+                ignore the `from` and `before` in the `page`.
+
+                '
+              type: boolean
             version:
               type: integer
               description: The assigned version of the decision definition.
@@ -45899,10 +45911,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - mappingRuleId
+      - name
       - claimName
       - claimValue
-      - name
+      - mappingRuleId
     SearchMappingRuleData:
       additionalProperties: false
       type: object
@@ -45970,9 +45982,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimValue
-      - claimName
       - name
+      - claimName
+      - claimValue
     SearchMessageSubscriptionsData:
       type: object
       additionalProperties: false
@@ -47771,8 +47783,8 @@ components:
                 - targetElementId
               description: The mapping instructions.
           required:
-          - mappingInstructions
           - targetProcessDefinitionKey
+          - mappingInstructions
         operationReference:
           description: 'A reference key chosen by the user that will be part of all
             records resulting from this operation.
