@@ -54,3 +54,42 @@ build_command = "uv build"
 commit_message = "chore(release): {version} [skip ci]"
 upload_to_pypi = false
 upload_to_release = true
+tag_format = "v{version}"
+
+# Branch configuration for multi-stream releases
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = true
+prerelease_token = "alpha"
+
+[tool.semantic_release.branches.latest]
+match = "latest"
+prerelease = false
+
+[tool.semantic_release.branches."stable/*"]
+match = "stable/*"
+prerelease = false
+
+# Commit parsing rules - modified semver aligned with Camunda versions
+# Patch: fix, feat, perf, revert (features are patches in this scheme)
+# Minor: server (Camunda server minor bump)
+# Major: server-major (Camunda server major bump)
+[tool.semantic_release.commit_parser_options]
+allowed_tags = [
+    "build",
+    "chore",
+    "ci",
+    "docs",
+    "feat",
+    "fix",
+    "perf",
+    "style",
+    "refactor",
+    "test",
+    "revert",
+    "server",
+    "server-major",
+]
+minor_tags = ["server"]
+major_tags = ["server-major"]
+patch_tags = ["fix", "feat", "perf", "revert"]
