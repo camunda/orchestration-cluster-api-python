@@ -1,0 +1,191 @@
+name: Release (Maintenance)
+
+on:
+  push:
+    branches:
+      - 'stable/**'
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Start Docker Compose
+        run: docker compose -f docker/docker-compose.yaml up -d --wait
+
+      - name: Run integration tests
+        run: make itest
+
+  generate:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.check_changes.outputs.has_changes }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Generate SDK
+        run: uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if [[ -n $(git status -s) ]]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit generated changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore(generation): update generated SDK [skip ci]"
+          git push
+
+  release:
+    needs: generate
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    environment: pypi
+    outputs:
+      release_needed: ${{ steps.check_release.outputs.release_needed }}
+      new_version: ${{ steps.check_release.outputs.new_version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+
+      - name: Fetch latest branch for comparison
+        run: |
+          git fetch origin latest:latest || echo "latest branch does not exist yet"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check if release needed (dry run)
+        id: check_release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          OUTPUT=$(uv run semantic-release version --print 2>&1) || true
+          if echo "$OUTPUT" | grep -q "No release will be made"; then
+            echo "release_needed=false" >> $GITHUB_OUTPUT
+          else
+            echo "release_needed=true" >> $GITHUB_OUTPUT
+            # Extract the new version
+            NEW_VERSION=$(uv run semantic-release version --print 2>/dev/null | tail -1)
+            echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create release
+        if: steps.check_release.outputs.release_needed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          uv run semantic-release version
+          uv run semantic-release publish
+
+      - name: Build package
+        if: steps.check_release.outputs.release_needed == 'true'
+        run: uv build
+
+      - name: Publish to PyPI
+        if: steps.check_release.outputs.release_needed == 'true'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
+
+      - name: Check if this is the current stable line
+        id: check_latest
+        if: steps.check_release.outputs.release_needed == 'true'
+        run: |
+          # Check if latest branch exists and if current stable branch is an ancestor
+          if git rev-parse --verify latest >/dev/null 2>&1; then
+            LATEST_SHA=$(git rev-parse latest)
+            CURRENT_SHA=$(git rev-parse HEAD~1)  # Before the release commit
+
+            # Check if latest is on this branch's history (meaning this is the promoted stable line)
+            if git merge-base --is-ancestor $LATEST_SHA $CURRENT_SHA 2>/dev/null || [ "$LATEST_SHA" = "$CURRENT_SHA" ]; then
+              echo "is_current_stable=true" >> $GITHUB_OUTPUT
+              echo "This stable branch is the currently promoted line (latest points here)"
+            else
+              echo "is_current_stable=false" >> $GITHUB_OUTPUT
+              echo "This is a maintenance branch for an older stable line"
+            fi
+          else
+            echo "is_current_stable=false" >> $GITHUB_OUTPUT
+            echo "latest branch does not exist"
+          fi
+
+      - name: Summary
+        run: |
+          if [[ "${{ steps.check_release.outputs.release_needed }}" == "true" ]]; then
+            echo "### Maintenance Release Published :wrench:" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Version:** ${{ steps.check_release.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Type:** Maintenance release" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            # Extract version for install command (e.g., stable/8.8 -> 8.8)
+            STABLE_VERSION=$(echo "${{ github.ref_name }}" | sed 's|stable/||')
+            echo "Install with: \`pip install \"camunda-orchestration-sdk~=${STABLE_VERSION}.0\"\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### No Release Needed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "No commits requiring a release were found." >> $GITHUB_STEP_SUMMARY
+          fi
