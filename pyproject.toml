@@ -60,7 +60,7 @@ tag_format = "v{version}"
 [tool.semantic_release.branches.main]
 match = "main"
 prerelease = true
-prerelease_token = "alpha"
+prerelease_token = "dev"
 
 [tool.semantic_release.branches.latest]
 match = "latest"
