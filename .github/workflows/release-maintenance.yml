@@ -132,6 +132,22 @@ jobs:
             echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
           fi
 
+      - name: Validate version matches branch
+        if: steps.check_release.outputs.release_needed == 'true'
+        run: |
+          # Extract expected version prefix from branch name (e.g., stable/8.8 -> 8.8)
+          BRANCH_VERSION=$(echo "${{ github.ref_name }}" | sed 's|stable/||')
+          NEW_VERSION="${{ steps.check_release.outputs.new_version }}"
+
+          if [[ ! "$NEW_VERSION" =~ ^${BRANCH_VERSION}\. ]]; then
+            echo "::error::Version $NEW_VERSION doesn't match branch constraint ${BRANCH_VERSION}.x"
+            echo "This can happen if a 'server:' or 'server-major:' commit was pushed to a stable branch."
+            echo "Stable branches should only receive patch releases (fix:, feat:, perf:, revert:)."
+            exit 1
+          fi
+
+          echo "Version $NEW_VERSION matches branch constraint ${BRANCH_VERSION}.x"
+
       - name: Create release
         if: steps.check_release.outputs.release_needed == 'true'
         env:
