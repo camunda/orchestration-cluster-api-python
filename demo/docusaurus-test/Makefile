@@ -32,8 +32,8 @@ sync-python-sdk:
 
 # Start Camunda docs locally (runs on port 3001)
 camunda-docs: sync-python-sdk
-	@if [ ! -d ../camunda-docs/node_modules ]; then \
+	@if [ ! -d ../../../camunda-docs/node_modules ]; then \
 		echo "Installing Camunda docs dependencies..."; \
-		cd ../camunda-docs && npm install; \
+		cd ../../../camunda-docs && npm install; \
 	fi
-	cd ../camunda-docs && NODE_OPTIONS=--max-old-space-size=10248 npm run start -- --port 3001
+	cd ../../../camunda-docs && NODE_OPTIONS=--max-old-space-size=10248 npm run start -- --port 3001

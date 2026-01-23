@@ -6,7 +6,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-CAMUNDA_DOCS="$SCRIPT_DIR/../camunda-docs"
+CAMUNDA_DOCS="$PROJECT_ROOT/../camunda-docs"
 
 # Source markdown from Sphinx build
 SOURCE_MD="$PROJECT_ROOT/public/markdown/index.md"
@@ -25,7 +25,7 @@ fi
 
 if [ ! -d "$CAMUNDA_DOCS" ]; then
     echo "Error: Camunda docs not found at $CAMUNDA_DOCS"
-    echo "Clone it first with: cd demo && git clone https://github.com/camunda/camunda-docs.git"
+    echo "Clone it first with: cd .. && git clone https://github.com/camunda/camunda-docs.git"
     exit 1
 fi
 

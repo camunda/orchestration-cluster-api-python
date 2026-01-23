@@ -48,8 +48,43 @@ def simplify_property_heading(match: re.Match) -> str:
     return f"{hashes} {prop_name}\n\n```python\n{prop_name}: {prop_type}\n```"
 
 
+def fix_anchor_links(content: str) -> str:
+    """Fix Sphinx-generated anchor links to match Docusaurus heading anchors.
+
+    Sphinx generates links like #camunda_orchestration_sdk.ClassName but Docusaurus
+    creates anchors from headings by lowercasing (e.g., ## ClassName -> #classname).
+    """
+    def fix_anchor(match: re.Match) -> str:
+        link_text = match.group(1)
+        anchor = match.group(2)
+
+        # Extract the last component (class or method name)
+        # e.g., "camunda_orchestration_sdk.CamundaClient.method" -> "method"
+        # e.g., "camunda_orchestration_sdk.AuthenticatedClient" -> "AuthenticatedClient"
+        parts = anchor.split('.')
+        name = parts[-1]
+
+        # Docusaurus lowercases heading anchors
+        new_anchor = name.lower()
+
+        return f"[{link_text}](#{new_anchor})"
+
+    # Match markdown links with module-prefixed anchors
+    # Pattern: [link text](#camunda_orchestration_sdk.Something.something)
+    content = re.sub(
+        r'\[([^\]]+)\]\(#(camunda_orchestration_sdk\.[^)]+)\)',
+        fix_anchor,
+        content
+    )
+
+    return content
+
+
 def postprocess_markdown(content: str) -> str:
     """Apply all post-processing transformations to markdown content."""
+
+    # Fix anchor links before other transformations
+    content = fix_anchor_links(content)
 
     # Promote heading levels for proper Docusaurus TOC hierarchy (H3->H2, H4->H3)
     content = re.sub(r'^### \*class\*', '## *class*', content, flags=re.MULTILINE)
