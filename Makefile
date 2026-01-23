@@ -51,16 +51,16 @@ docs-api:
 	rm -rf public
 
 	# 3. Build HTML for GitHub Pages preview
-	PYTHONPATH=./generated sphinx-build -M html docs-sphinx public
+	PYTHONPATH=./generated uv run sphinx-build -M html docs-sphinx public
 
 	# 4. Add .nojekyll to prevent GitHub Pages from ignoring _static folder
 	touch ./public/html/.nojekyll
 
 	# 5. Build Markdown for Docusaurus integration
-	PYTHONPATH=./generated sphinx-build -M markdown docs-sphinx public
+	PYTHONPATH=./generated uv run sphinx-build -M markdown docs-sphinx public
 
 	# 6. Post-process markdown for Docusaurus compatibility
-	python scripts/postprocess_markdown.py ./public/markdown/index.md
+	uv run python scripts/postprocess_markdown.py ./public/markdown/index.md
 
 	# 7. Copy markdown into HTML folder for GitHub Pages access at /markdown/
 	cp -R ./public/markdown ./public/html/markdown
