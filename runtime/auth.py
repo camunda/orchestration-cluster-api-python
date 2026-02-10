@@ -547,8 +547,12 @@ class AsyncOAuthClientCredentialsAuthProvider:
             )
             try:
                 os.chmod(token_file, 0o600)
-            except Exception:
-                pass
+            except Exception as exc:
+                _logger.debug(
+                    "Failed to set permissions on token cache file {}: {}",
+                    token_file,
+                    exc,
+                )
         except Exception:
             return
 
