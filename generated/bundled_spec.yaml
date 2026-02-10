@@ -3953,9 +3953,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - value
-                - scope
                 - name
+                - scope
+                - value
         '400':
           description: The provided data is not valid.
           content:
@@ -4147,9 +4147,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - value
-                - scope
                 - name
+                - scope
+                - value
         '400':
           description: The provided data is not valid.
           content:
@@ -4388,9 +4388,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - value
-                - scope
                 - name
+                - scope
+                - value
         '400':
           description: The provided data is not valid.
           content:
@@ -4844,9 +4844,9 @@ paths:
                           description: Only provided if the cluster variable scope
                             is TENANT.
                       required:
-                      - value
-                      - scope
                       - name
+                      - scope
+                      - value
                   page:
                     description: Pagination information about the search results.
                     type: object
@@ -5099,9 +5099,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - value
-                - scope
                 - name
+                - scope
+                - value
         '400':
           description: The provided data is not valid.
           content:
@@ -5306,9 +5306,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - value
-                - scope
                 - name
+                - scope
+                - value
         '400':
           description: The provided data is not valid.
           content:
@@ -5560,9 +5560,9 @@ paths:
                     type: string
                     description: Only provided if the cluster variable scope is TENANT.
                 required:
-                - value
-                - scope
                 - name
+                - scope
+                - value
         '400':
           description: The provided data is not valid.
           content:
@@ -47567,8 +47567,8 @@ components:
           description: The name of the mapping rule.
       required:
       - claimName
-      - mappingRuleId
       - claimValue
+      - mappingRuleId
       - name
     SearchMappingRuleData:
       additionalProperties: false
@@ -49438,8 +49438,8 @@ components:
                 - targetElementId
               description: The mapping instructions.
           required:
-          - targetProcessDefinitionKey
           - mappingInstructions
+          - targetProcessDefinitionKey
         operationReference:
           description: 'A reference key chosen by the user that will be part of all
             records resulting from this operation.

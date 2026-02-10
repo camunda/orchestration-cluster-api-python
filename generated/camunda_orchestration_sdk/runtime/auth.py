@@ -345,6 +345,9 @@ class OAuthClientCredentialsAuthProvider:
             try:
                 os.chmod(tarpit, 0o600)
             except Exception:
+                # Best-effort permission hardening; ignore chmod failures (e.g. on non-POSIX
+                # filesystems or when permissions cannot be changed). The tarpit file
+                # still serves its purpose even without strict mode.
                 pass
         except Exception:
             return
@@ -544,8 +547,12 @@ class AsyncOAuthClientCredentialsAuthProvider:
             )
             try:
                 os.chmod(token_file, 0o600)
-            except Exception:
-                pass
+            except Exception as exc:
+                _logger.debug(
+                    "Failed to set permissions on token cache file {}: {}",
+                    token_file,
+                    exc,
+                )
         except Exception:
             return
 
