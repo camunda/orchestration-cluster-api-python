@@ -5,6 +5,9 @@ __pycache__/
 *.log
 .env
 
+# Packaging/build artifacts
+*.egg-info/
+
 # Benchmark results (old location - now stored in demo/v2/results/)
 benchmark_results.json
 scenarios_*.json
