@@ -67,6 +67,16 @@ Or via Make:
 make generate SPEC_REF=45369-fix-spec
 ```
 
+### CI: temporary spec ref override
+
+GitHub Actions defaults to generating against the upstream spec `main`. If the upstream spec `main` is temporarily broken and you need CI to use a different ref, workflows support a guarded override via **repo variables**:
+
+- `SPEC_REF_OVERRIDE`: the upstream spec ref to use (branch/tag/SHA)
+- `SPEC_REF_OVERRIDE_ACK`: must be set to `true`
+- `SPEC_REF_OVERRIDE_EXPIRES`: must be set to a date in `YYYY-MM-DD` format
+
+The guard will fail CI after the expiry date to prevent accidentally leaving a non-`main` spec pinned indefinitely.
+
 ### Hooks (post-processing)
 
 Add Python files under `hooks/` exporting a `run(context)` function. Hooks are executed in sorted order after generation.
