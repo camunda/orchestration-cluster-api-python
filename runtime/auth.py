@@ -345,6 +345,9 @@ class OAuthClientCredentialsAuthProvider:
             try:
                 os.chmod(tarpit, 0o600)
             except Exception:
+                # Best-effort permission hardening; ignore chmod failures (e.g. on non-POSIX
+                # filesystems or when permissions cannot be changed). The tarpit file
+                # still serves its purpose even without strict mode.
                 pass
         except Exception:
             return
