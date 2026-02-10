@@ -2,6 +2,22 @@
 
 <!-- version list -->
 
+## v1.1.2 (2026-02-10)
+
+### Bug Fixes
+
+- Correctly set version during publish
+  ([`ec19cd8`](https://github.com/camunda/orchestration-cluster-api-python/commit/ec19cd875adc798506c5111381130d217e009850))
+
+### Chores
+
+- Ignore egg-info
+  ([`b460431`](https://github.com/camunda/orchestration-cluster-api-python/commit/b46043154fd90e8551fe79980b9879a89f119d92))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`62ae279`](https://github.com/camunda/orchestration-cluster-api-python/commit/62ae2793f9e907c51e3b1be459fedf9a68495c83))
+
+
 ## v1.1.1 (2026-02-10)
 
 ### Bug Fixes
