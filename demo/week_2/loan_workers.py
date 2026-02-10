@@ -32,8 +32,7 @@ class WorkerDefinition(TypedDict):
     callback: AsyncJobHandler
     description: str
 
-# Configuration
-CAMUNDA_REST_ADDRESS = os.getenv("CAMUNDA_REST_ADDRESS", "http://localhost:8080/v2")
+
 
 # Worker 1: Validate Loan Application
 async def validate_application(job_context: JobContext) -> dict[str, Any]:
@@ -343,7 +342,7 @@ async def run_workers(camunda: CamundaAsyncClient):
     print("=" * 70)
     print("🚀 STARTING LOAN APPLICATION WORKERS")
     print("=" * 70)
-    print(f"Camunda URL: {CAMUNDA_REST_ADDRESS}")
+    print(f"Camunda URL: {camunda.configuration.CAMUNDA_REST_ADDRESS}")
     print()
 
     # Define workers configuration

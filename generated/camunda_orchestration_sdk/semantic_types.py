@@ -114,20 +114,6 @@ def try_lift_authorization_key(value: Any) -> Tuple[bool, AuthorizationKey | Exc
 	except Exception as e:
 		return False, e
 
-BatchOperationActorTypeEnum = NewType('BatchOperationActorTypeEnum', str)
-def lift_batch_operation_actor_type_enum(value: Any) -> BatchOperationActorTypeEnum:
-	if not isinstance(value, str):
-		raise TypeError(f"BatchOperationActorTypeEnum must be str, got {type(value).__name__}: {value!r}")
-	if value not in ['CLIENT', 'USER']:
-		raise ValueError(f"BatchOperationActorTypeEnum must be one of ['CLIENT', 'USER'], got {value!r}")
-	return BatchOperationActorTypeEnum(value)
-
-def try_lift_batch_operation_actor_type_enum(value: Any) -> Tuple[bool, BatchOperationActorTypeEnum | Exception]:
-	try:
-		return True, lift_batch_operation_actor_type_enum(value)
-	except Exception as e:
-		return False, e
-
 BatchOperationItemStateEnum = NewType('BatchOperationItemStateEnum', str)
 def lift_batch_operation_item_state_enum(value: Any) -> BatchOperationItemStateEnum:
 	if not isinstance(value, str):
@@ -172,8 +158,8 @@ BatchOperationTypeEnum = NewType('BatchOperationTypeEnum', str)
 def lift_batch_operation_type_enum(value: Any) -> BatchOperationTypeEnum:
 	if not isinstance(value, str):
 		raise TypeError(f"BatchOperationTypeEnum must be str, got {type(value).__name__}: {value!r}")
-	if value not in ['ADD_VARIABLE', 'CANCEL_PROCESS_INSTANCE', 'DELETE_DECISION_DEFINITION', 'DELETE_PROCESS_DEFINITION', 'DELETE_PROCESS_INSTANCE', 'MIGRATE_PROCESS_INSTANCE', 'MODIFY_PROCESS_INSTANCE', 'RESOLVE_INCIDENT', 'UPDATE_VARIABLE']:
-		raise ValueError(f"BatchOperationTypeEnum must be one of ['ADD_VARIABLE', 'CANCEL_PROCESS_INSTANCE', 'DELETE_DECISION_DEFINITION', 'DELETE_PROCESS_DEFINITION', 'DELETE_PROCESS_INSTANCE', 'MIGRATE_PROCESS_INSTANCE', 'MODIFY_PROCESS_INSTANCE', 'RESOLVE_INCIDENT', 'UPDATE_VARIABLE'], got {value!r}")
+	if value not in ['ADD_VARIABLE', 'CANCEL_PROCESS_INSTANCE', 'DELETE_DECISION_DEFINITION', 'DELETE_DECISION_INSTANCE', 'DELETE_PROCESS_DEFINITION', 'DELETE_PROCESS_INSTANCE', 'MIGRATE_PROCESS_INSTANCE', 'MODIFY_PROCESS_INSTANCE', 'RESOLVE_INCIDENT', 'UPDATE_VARIABLE']:
+		raise ValueError(f"BatchOperationTypeEnum must be one of ['ADD_VARIABLE', 'CANCEL_PROCESS_INSTANCE', 'DELETE_DECISION_DEFINITION', 'DELETE_DECISION_INSTANCE', 'DELETE_PROCESS_DEFINITION', 'DELETE_PROCESS_INSTANCE', 'MIGRATE_PROCESS_INSTANCE', 'MODIFY_PROCESS_INSTANCE', 'RESOLVE_INCIDENT', 'UPDATE_VARIABLE'], got {value!r}")
 	return BatchOperationTypeEnum(value)
 
 def try_lift_batch_operation_type_enum(value: Any) -> Tuple[bool, BatchOperationTypeEnum | Exception]:
@@ -193,6 +179,18 @@ def lift_cluster_variable_scope_enum(value: Any) -> ClusterVariableScopeEnum:
 def try_lift_cluster_variable_scope_enum(value: Any) -> Tuple[bool, ClusterVariableScopeEnum | Exception]:
 	try:
 		return True, lift_cluster_variable_scope_enum(value)
+	except Exception as e:
+		return False, e
+
+ConditionalEvaluationKey = NewType('ConditionalEvaluationKey', str)
+def lift_conditional_evaluation_key(value: Any) -> ConditionalEvaluationKey:
+	if not isinstance(value, str):
+		raise TypeError(f"ConditionalEvaluationKey must be str, got {type(value).__name__}: {value!r}")
+	return ConditionalEvaluationKey(value)
+
+def try_lift_conditional_evaluation_key(value: Any) -> Tuple[bool, ConditionalEvaluationKey | Exception]:
+	try:
+		return True, lift_conditional_evaluation_key(value)
 	except Exception as e:
 		return False, e
 
@@ -556,18 +554,6 @@ def try_lift_long_key(value: Any) -> Tuple[bool, LongKey | Exception]:
 	except Exception as e:
 		return False, e
 
-MessageCorrelationKey = NewType('MessageCorrelationKey', str)
-def lift_message_correlation_key(value: Any) -> MessageCorrelationKey:
-	if not isinstance(value, str):
-		raise TypeError(f"MessageCorrelationKey must be str, got {type(value).__name__}: {value!r}")
-	return MessageCorrelationKey(value)
-
-def try_lift_message_correlation_key(value: Any) -> Tuple[bool, MessageCorrelationKey | Exception]:
-	try:
-		return True, lift_message_correlation_key(value)
-	except Exception as e:
-		return False, e
-
 MessageKey = NewType('MessageKey', str)
 def lift_message_key(value: Any) -> MessageKey:
 	if not isinstance(value, str):
@@ -638,8 +624,8 @@ PermissionTypeEnum = NewType('PermissionTypeEnum', str)
 def lift_permission_type_enum(value: Any) -> PermissionTypeEnum:
 	if not isinstance(value, str):
 		raise TypeError(f"PermissionTypeEnum must be str, got {type(value).__name__}: {value!r}")
-	if value not in ['ACCESS', 'CANCEL_PROCESS_INSTANCE', 'CLAIM', 'COMPLETE', 'CREATE', 'CREATE_BATCH_OPERATION_CANCEL_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_DELETE_DECISION_DEFINITION', 'CREATE_BATCH_OPERATION_DELETE_DECISION_INSTANCE', 'CREATE_BATCH_OPERATION_DELETE_PROCESS_DEFINITION', 'CREATE_BATCH_OPERATION_DELETE_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_MIGRATE_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_MODIFY_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_RESOLVE_INCIDENT', 'CREATE_DECISION_INSTANCE', 'CREATE_PROCESS_INSTANCE', 'DELETE', 'DELETE_DECISION_INSTANCE', 'DELETE_DRD', 'DELETE_FORM', 'DELETE_PROCESS', 'DELETE_PROCESS_INSTANCE', 'DELETE_RESOURCE', 'EVALUATE', 'MODIFY_PROCESS_INSTANCE', 'READ', 'READ_DECISION_DEFINITION', 'READ_DECISION_INSTANCE', 'READ_JOB_METRIC', 'READ_PROCESS_DEFINITION', 'READ_PROCESS_INSTANCE', 'READ_USAGE_METRIC', 'READ_USER_TASK', 'UPDATE', 'UPDATE_PROCESS_INSTANCE', 'UPDATE_USER_TASK']:
-		raise ValueError(f"PermissionTypeEnum must be one of ['ACCESS', 'CANCEL_PROCESS_INSTANCE', 'CLAIM', 'COMPLETE', 'CREATE', 'CREATE_BATCH_OPERATION_CANCEL_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_DELETE_DECISION_DEFINITION', 'CREATE_BATCH_OPERATION_DELETE_DECISION_INSTANCE', 'CREATE_BATCH_OPERATION_DELETE_PROCESS_DEFINITION', 'CREATE_BATCH_OPERATION_DELETE_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_MIGRATE_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_MODIFY_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_RESOLVE_INCIDENT', 'CREATE_DECISION_INSTANCE', 'CREATE_PROCESS_INSTANCE', 'DELETE', 'DELETE_DECISION_INSTANCE', 'DELETE_DRD', 'DELETE_FORM', 'DELETE_PROCESS', 'DELETE_PROCESS_INSTANCE', 'DELETE_RESOURCE', 'EVALUATE', 'MODIFY_PROCESS_INSTANCE', 'READ', 'READ_DECISION_DEFINITION', 'READ_DECISION_INSTANCE', 'READ_JOB_METRIC', 'READ_PROCESS_DEFINITION', 'READ_PROCESS_INSTANCE', 'READ_USAGE_METRIC', 'READ_USER_TASK', 'UPDATE', 'UPDATE_PROCESS_INSTANCE', 'UPDATE_USER_TASK'], got {value!r}")
+	if value not in ['ACCESS', 'CANCEL_PROCESS_INSTANCE', 'CLAIM', 'COMPLETE', 'CREATE', 'CREATE_BATCH_OPERATION_CANCEL_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_DELETE_DECISION_DEFINITION', 'CREATE_BATCH_OPERATION_DELETE_DECISION_INSTANCE', 'CREATE_BATCH_OPERATION_DELETE_PROCESS_DEFINITION', 'CREATE_BATCH_OPERATION_DELETE_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_MIGRATE_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_MODIFY_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_RESOLVE_INCIDENT', 'CREATE_DECISION_INSTANCE', 'CREATE_PROCESS_INSTANCE', 'CREATE_TASK_LISTENER', 'DELETE', 'DELETE_DECISION_INSTANCE', 'DELETE_DRD', 'DELETE_FORM', 'DELETE_PROCESS', 'DELETE_PROCESS_INSTANCE', 'DELETE_RESOURCE', 'DELETE_TASK_LISTENER', 'EVALUATE', 'MODIFY_PROCESS_INSTANCE', 'READ', 'READ_DECISION_DEFINITION', 'READ_DECISION_INSTANCE', 'READ_JOB_METRIC', 'READ_PROCESS_DEFINITION', 'READ_PROCESS_INSTANCE', 'READ_USAGE_METRIC', 'READ_USER_TASK', 'READ_TASK_LISTENER', 'UPDATE', 'UPDATE_PROCESS_INSTANCE', 'UPDATE_USER_TASK', 'UPDATE_TASK_LISTENER']:
+		raise ValueError(f"PermissionTypeEnum must be one of ['ACCESS', 'CANCEL_PROCESS_INSTANCE', 'CLAIM', 'COMPLETE', 'CREATE', 'CREATE_BATCH_OPERATION_CANCEL_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_DELETE_DECISION_DEFINITION', 'CREATE_BATCH_OPERATION_DELETE_DECISION_INSTANCE', 'CREATE_BATCH_OPERATION_DELETE_PROCESS_DEFINITION', 'CREATE_BATCH_OPERATION_DELETE_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_MIGRATE_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_MODIFY_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_RESOLVE_INCIDENT', 'CREATE_DECISION_INSTANCE', 'CREATE_PROCESS_INSTANCE', 'CREATE_TASK_LISTENER', 'DELETE', 'DELETE_DECISION_INSTANCE', 'DELETE_DRD', 'DELETE_FORM', 'DELETE_PROCESS', 'DELETE_PROCESS_INSTANCE', 'DELETE_RESOURCE', 'DELETE_TASK_LISTENER', 'EVALUATE', 'MODIFY_PROCESS_INSTANCE', 'READ', 'READ_DECISION_DEFINITION', 'READ_DECISION_INSTANCE', 'READ_JOB_METRIC', 'READ_PROCESS_DEFINITION', 'READ_PROCESS_INSTANCE', 'READ_USAGE_METRIC', 'READ_USER_TASK', 'READ_TASK_LISTENER', 'UPDATE', 'UPDATE_PROCESS_INSTANCE', 'UPDATE_USER_TASK', 'UPDATE_TASK_LISTENER'], got {value!r}")
 	return PermissionTypeEnum(value)
 
 def try_lift_permission_type_enum(value: Any) -> Tuple[bool, PermissionTypeEnum | Exception]:
@@ -730,8 +716,8 @@ ResourceTypeEnum = NewType('ResourceTypeEnum', str)
 def lift_resource_type_enum(value: Any) -> ResourceTypeEnum:
 	if not isinstance(value, str):
 		raise TypeError(f"ResourceTypeEnum must be str, got {type(value).__name__}: {value!r}")
-	if value not in ['AUDIT_LOG', 'AUTHORIZATION', 'BATCH', 'CLUSTER_VARIABLE', 'COMPONENT', 'DECISION_DEFINITION', 'DECISION_REQUIREMENTS_DEFINITION', 'DOCUMENT', 'EXPRESSION', 'GROUP', 'MAPPING_RULE', 'MESSAGE', 'PROCESS_DEFINITION', 'RESOURCE', 'ROLE', 'SYSTEM', 'TENANT', 'USER', 'USER_TASK']:
-		raise ValueError(f"ResourceTypeEnum must be one of ['AUDIT_LOG', 'AUTHORIZATION', 'BATCH', 'CLUSTER_VARIABLE', 'COMPONENT', 'DECISION_DEFINITION', 'DECISION_REQUIREMENTS_DEFINITION', 'DOCUMENT', 'EXPRESSION', 'GROUP', 'MAPPING_RULE', 'MESSAGE', 'PROCESS_DEFINITION', 'RESOURCE', 'ROLE', 'SYSTEM', 'TENANT', 'USER', 'USER_TASK'], got {value!r}")
+	if value not in ['AUDIT_LOG', 'AUTHORIZATION', 'BATCH', 'CLUSTER_VARIABLE', 'COMPONENT', 'DECISION_DEFINITION', 'DECISION_REQUIREMENTS_DEFINITION', 'DOCUMENT', 'EXPRESSION', 'GLOBAL_LISTENER', 'GROUP', 'MAPPING_RULE', 'MESSAGE', 'PROCESS_DEFINITION', 'RESOURCE', 'ROLE', 'SYSTEM', 'TENANT', 'USER', 'USER_TASK']:
+		raise ValueError(f"ResourceTypeEnum must be one of ['AUDIT_LOG', 'AUTHORIZATION', 'BATCH', 'CLUSTER_VARIABLE', 'COMPONENT', 'DECISION_DEFINITION', 'DECISION_REQUIREMENTS_DEFINITION', 'DOCUMENT', 'EXPRESSION', 'GLOBAL_LISTENER', 'GROUP', 'MAPPING_RULE', 'MESSAGE', 'PROCESS_DEFINITION', 'RESOURCE', 'ROLE', 'SYSTEM', 'TENANT', 'USER', 'USER_TASK'], got {value!r}")
 	return ResourceTypeEnum(value)
 
 def try_lift_resource_type_enum(value: Any) -> Tuple[bool, ResourceTypeEnum | Exception]:

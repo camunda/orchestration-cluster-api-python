@@ -40,8 +40,8 @@ class SearchBatchOperationsResponse200ItemsItem:
             batch operation.
         start_date (datetime.datetime | Unset): The start date of the batch operation.
         end_date (datetime.datetime | Unset): The end date of the batch operation.
-        actor_type (SearchBatchOperationsResponse200ItemsItemActorType | Unset): The type of the actor. Available for
-            batch operations created since 8.9.
+        actor_type (SearchBatchOperationsResponse200ItemsItemActorType | Unset): The type of actor who performed the
+            operation.
         actor_id (str | Unset): The ID of the actor who performed the operation. Available for batch operations created
             since 8.9.
         operations_total_count (int | Unset): The total number of items contained in this batch operation.

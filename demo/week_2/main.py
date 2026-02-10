@@ -57,10 +57,10 @@ async def lifespan(app: FastAPI):
 
     # Startup: Initialize Camunda client
     camunda_client = CamundaAsyncClient(
-        configuration={"CAMUNDA_REST_ADDRESS": settings.camunda_rest_address}
+        # configuration={"CAMUNDA_REST_ADDRESS": settings.camunda_rest_address}
     )
     logger.info(
-        f"Camunda client initialized (CAMUNDA_REST_ADDRESS: {settings.camunda_rest_address})"
+        f"Camunda client initialized (CAMUNDA_REST_ADDRESS: {camunda_client.configuration.CAMUNDA_REST_ADDRESS})"
     )
 
     process_definition_key = await deploy_loan_process(camunda_client)

@@ -12,7 +12,7 @@ import asyncio
 from typing import Callable
 from .runtime.job_worker import JobWorker, WorkerConfig, JobHandler
 from .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment
-from .runtime.auth import AuthProvider, NullAuthProvider, inject_auth_event_hooks
+from .runtime.auth import AuthProvider, BasicAuthProvider, NullAuthProvider, OAuthClientCredentialsAuthProvider, AsyncOAuthClientCredentialsAuthProvider, inject_auth_event_hooks
 from pathlib import Path
 from .models.create_deployment_response_200 import CreateDeploymentResponse200
 from .models.create_deployment_response_200_deployments_item_process_definition import CreateDeploymentResponse200DeploymentsItemProcessDefinition
@@ -238,6 +238,19 @@ if TYPE_CHECKING:
     from .models.delete_authorization_response_404 import DeleteAuthorizationResponse404
     from .models.delete_authorization_response_500 import DeleteAuthorizationResponse500
     from .models.delete_authorization_response_503 import DeleteAuthorizationResponse503
+    from .models.delete_decision_instance_data_type_0 import DeleteDecisionInstanceDataType0
+    from .models.delete_decision_instance_response_200 import DeleteDecisionInstanceResponse200
+    from .models.delete_decision_instance_response_401 import DeleteDecisionInstanceResponse401
+    from .models.delete_decision_instance_response_403 import DeleteDecisionInstanceResponse403
+    from .models.delete_decision_instance_response_404 import DeleteDecisionInstanceResponse404
+    from .models.delete_decision_instance_response_500 import DeleteDecisionInstanceResponse500
+    from .models.delete_decision_instance_response_503 import DeleteDecisionInstanceResponse503
+    from .models.delete_decision_instances_batch_operation_data import DeleteDecisionInstancesBatchOperationData
+    from .models.delete_decision_instances_batch_operation_response_200 import DeleteDecisionInstancesBatchOperationResponse200
+    from .models.delete_decision_instances_batch_operation_response_400 import DeleteDecisionInstancesBatchOperationResponse400
+    from .models.delete_decision_instances_batch_operation_response_401 import DeleteDecisionInstancesBatchOperationResponse401
+    from .models.delete_decision_instances_batch_operation_response_403 import DeleteDecisionInstancesBatchOperationResponse403
+    from .models.delete_decision_instances_batch_operation_response_500 import DeleteDecisionInstancesBatchOperationResponse500
     from .models.delete_document_response_404 import DeleteDocumentResponse404
     from .models.delete_document_response_500 import DeleteDocumentResponse500
     from .models.delete_global_cluster_variable_response_400 import DeleteGlobalClusterVariableResponse400
@@ -268,6 +281,7 @@ if TYPE_CHECKING:
     from .models.delete_process_instances_batch_operation_response_403 import DeleteProcessInstancesBatchOperationResponse403
     from .models.delete_process_instances_batch_operation_response_500 import DeleteProcessInstancesBatchOperationResponse500
     from .models.delete_resource_data_type_0 import DeleteResourceDataType0
+    from .models.delete_resource_response_200 import DeleteResourceResponse200
     from .models.delete_resource_response_400 import DeleteResourceResponse400
     from .models.delete_resource_response_404 import DeleteResourceResponse404
     from .models.delete_resource_response_500 import DeleteResourceResponse500
@@ -373,6 +387,11 @@ if TYPE_CHECKING:
     from .models.get_global_cluster_variable_response_403 import GetGlobalClusterVariableResponse403
     from .models.get_global_cluster_variable_response_404 import GetGlobalClusterVariableResponse404
     from .models.get_global_cluster_variable_response_500 import GetGlobalClusterVariableResponse500
+    from .models.get_global_job_statistics_response_200 import GetGlobalJobStatisticsResponse200
+    from .models.get_global_job_statistics_response_400 import GetGlobalJobStatisticsResponse400
+    from .models.get_global_job_statistics_response_401 import GetGlobalJobStatisticsResponse401
+    from .models.get_global_job_statistics_response_403 import GetGlobalJobStatisticsResponse403
+    from .models.get_global_job_statistics_response_500 import GetGlobalJobStatisticsResponse500
     from .models.get_group_response_200 import GetGroupResponse200
     from .models.get_group_response_401 import GetGroupResponse401
     from .models.get_group_response_403 import GetGroupResponse403
@@ -871,6 +890,13 @@ if TYPE_CHECKING:
     from .models.update_authorization_response_404 import UpdateAuthorizationResponse404
     from .models.update_authorization_response_500 import UpdateAuthorizationResponse500
     from .models.update_authorization_response_503 import UpdateAuthorizationResponse503
+    from .models.update_global_cluster_variable_data import UpdateGlobalClusterVariableData
+    from .models.update_global_cluster_variable_response_200 import UpdateGlobalClusterVariableResponse200
+    from .models.update_global_cluster_variable_response_400 import UpdateGlobalClusterVariableResponse400
+    from .models.update_global_cluster_variable_response_401 import UpdateGlobalClusterVariableResponse401
+    from .models.update_global_cluster_variable_response_403 import UpdateGlobalClusterVariableResponse403
+    from .models.update_global_cluster_variable_response_404 import UpdateGlobalClusterVariableResponse404
+    from .models.update_global_cluster_variable_response_500 import UpdateGlobalClusterVariableResponse500
     from .models.update_group_data import UpdateGroupData
     from .models.update_group_response_200 import UpdateGroupResponse200
     from .models.update_group_response_400 import UpdateGroupResponse400
@@ -898,6 +924,13 @@ if TYPE_CHECKING:
     from .models.update_role_response_404 import UpdateRoleResponse404
     from .models.update_role_response_500 import UpdateRoleResponse500
     from .models.update_role_response_503 import UpdateRoleResponse503
+    from .models.update_tenant_cluster_variable_data import UpdateTenantClusterVariableData
+    from .models.update_tenant_cluster_variable_response_200 import UpdateTenantClusterVariableResponse200
+    from .models.update_tenant_cluster_variable_response_400 import UpdateTenantClusterVariableResponse400
+    from .models.update_tenant_cluster_variable_response_401 import UpdateTenantClusterVariableResponse401
+    from .models.update_tenant_cluster_variable_response_403 import UpdateTenantClusterVariableResponse403
+    from .models.update_tenant_cluster_variable_response_404 import UpdateTenantClusterVariableResponse404
+    from .models.update_tenant_cluster_variable_response_500 import UpdateTenantClusterVariableResponse500
     from .models.update_tenant_data import UpdateTenantData
     from .models.update_tenant_response_200 import UpdateTenantResponse200
     from .models.update_tenant_response_400 import UpdateTenantResponse400
@@ -1246,17 +1279,35 @@ class CamundaClient:
             )
 
         if auth_provider is None:
-            if self.configuration.CAMUNDA_AUTH_STRATEGY != "NONE":
-                raise NotImplementedError(
-                    "Built-in auth providers are not implemented yet; pass auth_provider=... to CamundaClient (or set CAMUNDA_AUTH_STRATEGY=NONE)."
+            if self.configuration.CAMUNDA_AUTH_STRATEGY == "NONE":
+                auth_provider = NullAuthProvider()
+            elif self.configuration.CAMUNDA_AUTH_STRATEGY == "BASIC":
+                auth_provider = BasicAuthProvider(
+                    username=self.configuration.CAMUNDA_BASIC_AUTH_USERNAME or "",
+                    password=self.configuration.CAMUNDA_BASIC_AUTH_PASSWORD or "",
                 )
-            auth_provider = NullAuthProvider()
+            elif self.configuration.CAMUNDA_AUTH_STRATEGY == "OAUTH":
+                transport = (kwargs.get("httpx_args") or dict()).get("transport")
+                auth_provider = OAuthClientCredentialsAuthProvider(
+                    oauth_url=self.configuration.CAMUNDA_OAUTH_URL,
+                    client_id=self.configuration.CAMUNDA_CLIENT_ID or "",
+                    client_secret=self.configuration.CAMUNDA_CLIENT_SECRET or "",
+                    audience=self.configuration.CAMUNDA_TOKEN_AUDIENCE,
+                    cache_dir=self.configuration.CAMUNDA_TOKEN_CACHE_DIR,
+                    disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
+                    transport=transport,
+                )
+            else:
+                auth_provider = NullAuthProvider()
 
         self.auth_provider = auth_provider
 
         # Ensure every request gets auth headers via httpx event hooks.
         kwargs["httpx_args"] = inject_auth_event_hooks(
-            kwargs.get("httpx_args"), auth_provider, async_client=False
+            kwargs.get("httpx_args"),
+            auth_provider,
+            async_client=False,
+            log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -1266,7 +1317,29 @@ class CamundaClient:
         return self
 
     def __exit__(self, *args, **kwargs):
-        return self.client.__exit__(*args, **kwargs)
+        try:
+            return self.client.__exit__(*args, **kwargs)
+        finally:
+            close = getattr(self.auth_provider, "close", None)
+            if callable(close):
+                close()
+
+    def close(self) -> None:
+        """Close underlying HTTP clients.
+
+        This closes both the API client's httpx client and, when available, the
+        auth provider's token client.
+        """
+
+        try:
+            close = getattr(self.auth_provider, "close", None)
+            if callable(close):
+                close()
+        finally:
+            try:
+                self.client.get_httpx_client().close()
+            except Exception:
+                return
 
     def deploy_resources_from_files(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
         """Deploy BPMN/DMN/Form resources from local files.
@@ -2625,6 +2698,64 @@ Returns:
         return get_decision_instance_sync(**_kwargs)
 
 
+    def delete_decision_instance(self, decision_instance_key: str, *, data: DeleteDecisionInstanceDataType0 | None | Unset = UNSET, **kwargs: Any) -> DeleteDecisionInstanceResponse200:
+        """Delete decision instance
+
+ Delete all associated decision evaluations based on provided key.
+
+Args:
+    decision_instance_key (str): System-generated key for a deployed decision instance.
+        Example: 22517998136843567.
+    body (DeleteDecisionInstanceDataType0 | None | Unset):
+
+Raises:
+    errors.DeleteDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteDecisionInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteDecisionInstanceNotFound: If the response status code is 404. The decision instance is not found.
+    errors.DeleteDecisionInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteDecisionInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    DeleteDecisionInstanceResponse200"""
+        from .api.decision_instance.delete_decision_instance import sync as delete_decision_instance_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_decision_instance_sync(**_kwargs)
+
+
+    def delete_decision_instances_batch_operation(self, *, data: DeleteDecisionInstancesBatchOperationData, **kwargs: Any) -> DeleteDecisionInstancesBatchOperationResponse200:
+        """Delete decision instances (batch)
+
+ Delete multiple decision instances. This will delete the historic data from secondary storage.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (DeleteDecisionInstancesBatchOperationData): The decision instance filter that
+        defines which decision instances should be deleted.
+
+Raises:
+    errors.DeleteDecisionInstancesBatchOperationBadRequest: If the response status code is 400. The decision instance batch operation failed. More details are provided in the response body.
+    errors.DeleteDecisionInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteDecisionInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteDecisionInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    DeleteDecisionInstancesBatchOperationResponse200"""
+        from .api.decision_instance.delete_decision_instances_batch_operation import sync as delete_decision_instances_batch_operation_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return delete_decision_instances_batch_operation_sync(**_kwargs)
+
+
     def get_variable(self, variable_key: str, **kwargs: Any) -> GetVariableResponse200:
         """Get variable
 
@@ -2756,6 +2887,36 @@ Returns:
         return create_global_cluster_variable_sync(**_kwargs)
 
 
+    def update_tenant_cluster_variable(self, tenant_id: str, name: str, *, data: UpdateTenantClusterVariableData, **kwargs: Any) -> UpdateTenantClusterVariableResponse200:
+        """Update a tenant-scoped cluster variable
+
+ Updates the value of an existing tenant-scoped cluster variable.
+The variable must exist, otherwise a 404 error is returned.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    name (str):
+    body (UpdateTenantClusterVariableData):
+
+Raises:
+    errors.UpdateTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UpdateTenantClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.UpdateTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    UpdateTenantClusterVariableResponse200"""
+        from .api.cluster_variable.update_tenant_cluster_variable import sync as update_tenant_cluster_variable_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return update_tenant_cluster_variable_sync(**_kwargs)
+
+
     def delete_global_cluster_variable(self, name: str, **kwargs: Any) -> Any:
         """Delete a global-scoped cluster variable
 
@@ -2805,6 +2966,35 @@ Returns:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return delete_tenant_cluster_variable_sync(**_kwargs)
+
+
+    def update_global_cluster_variable(self, name: str, *, data: UpdateGlobalClusterVariableData, **kwargs: Any) -> UpdateGlobalClusterVariableResponse200:
+        """Update a global-scoped cluster variable
+
+ Updates the value of an existing global cluster variable.
+The variable must exist, otherwise a 404 error is returned.
+
+Args:
+    name (str):
+    body (UpdateGlobalClusterVariableData):
+
+Raises:
+    errors.UpdateGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UpdateGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.UpdateGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    UpdateGlobalClusterVariableResponse200"""
+        from .api.cluster_variable.update_global_cluster_variable import sync as update_global_cluster_variable_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return update_global_cluster_variable_sync(**_kwargs)
 
 
     def create_tenant_cluster_variable(self, tenant_id: str, *, data: CreateTenantClusterVariableData, **kwargs: Any) -> CreateTenantClusterVariableResponse200:
@@ -4028,6 +4218,35 @@ Returns:
         return activate_jobs_sync(**_kwargs)
 
 
+    def get_global_job_statistics(self, *, from_: datetime.datetime, to: datetime.datetime, job_type: str | Unset = UNSET, **kwargs: Any) -> GetGlobalJobStatisticsResponse200:
+        """Global job statistics
+
+ Returns global aggregated counts for jobs. Optionally filter by the creation time window and/or
+jobType.
+
+Args:
+    from_ (datetime.datetime):
+    to (datetime.datetime):
+    job_type (str | Unset):
+
+Raises:
+    errors.GetGlobalJobStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetGlobalJobStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetGlobalJobStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetGlobalJobStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetGlobalJobStatisticsResponse200"""
+        from .api.job.get_global_job_statistics import sync as get_global_job_statistics_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_global_job_statistics_sync(**_kwargs)
+
+
     def throw_job_error(self, job_key: str, *, data: ThrowJobErrorData, **kwargs: Any) -> Any:
         """Throw error for job
 
@@ -4631,13 +4850,22 @@ Returns:
         return complete_user_task_sync(**_kwargs)
 
 
-    def delete_resource(self, resource_key: str, *, data: DeleteResourceDataType0 | None | Unset = UNSET, **kwargs: Any) -> Any:
+    def delete_resource(self, resource_key: str, *, data: DeleteResourceDataType0 | None | Unset = UNSET, **kwargs: Any) -> DeleteResourceResponse200:
         """Delete resource
 
- Deletes a deployed resource.
-This can be a process definition, decision requirements definition, or form definition
-deployed using the deploy resources endpoint. Specify the resource you want to delete in the
-`resourceKey` parameter.
+ Deletes a deployed resource. This can be a process definition, decision requirements
+definition, or form definition deployed using the deploy resources endpoint. Specify the
+resource you want to delete in the `resourceKey` parameter.
+
+Once a resource has been deleted it cannot be recovered. If the resource needs to be
+available again, a new deployment of the resource is required.
+
+By default, only the resource itself is deleted from the runtime state. To also delete the
+historic data associated with a resource, set the `deleteHistory` flag in the request body
+to `true`. The historic data is deleted asynchronously via a batch operation. The details of
+the created batch operation are included in the response. Note that history deletion is only
+supported for process resources; for other resource types this flag is ignored and no history
+will be deleted.
 
 Args:
     resource_key (str): The system-assigned key for this resource.
@@ -4651,7 +4879,7 @@ Raises:
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
-    Any"""
+    DeleteResourceResponse200"""
         from .api.resource.delete_resource import sync as delete_resource_sync
         _kwargs = locals()
         _kwargs.pop("self")
@@ -5964,17 +6192,35 @@ class CamundaAsyncClient:
             )
 
         if auth_provider is None:
-            if self.configuration.CAMUNDA_AUTH_STRATEGY != "NONE":
-                raise NotImplementedError(
-                    "Built-in auth providers are not implemented yet; pass auth_provider=... to CamundaAsyncClient (or set CAMUNDA_AUTH_STRATEGY=NONE)."
+            if self.configuration.CAMUNDA_AUTH_STRATEGY == "NONE":
+                auth_provider = NullAuthProvider()
+            elif self.configuration.CAMUNDA_AUTH_STRATEGY == "BASIC":
+                auth_provider = BasicAuthProvider(
+                    username=self.configuration.CAMUNDA_BASIC_AUTH_USERNAME or "",
+                    password=self.configuration.CAMUNDA_BASIC_AUTH_PASSWORD or "",
                 )
-            auth_provider = NullAuthProvider()
+            elif self.configuration.CAMUNDA_AUTH_STRATEGY == "OAUTH":
+                transport = (kwargs.get("httpx_args") or dict()).get("transport")
+                auth_provider = AsyncOAuthClientCredentialsAuthProvider(
+                    oauth_url=self.configuration.CAMUNDA_OAUTH_URL,
+                    client_id=self.configuration.CAMUNDA_CLIENT_ID or "",
+                    client_secret=self.configuration.CAMUNDA_CLIENT_SECRET or "",
+                    audience=self.configuration.CAMUNDA_TOKEN_AUDIENCE,
+                    cache_dir=self.configuration.CAMUNDA_TOKEN_CACHE_DIR,
+                    disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
+                    transport=transport,
+                )
+            else:
+                auth_provider = NullAuthProvider()
 
         self.auth_provider = auth_provider
 
         # Ensure every request gets auth headers via httpx event hooks.
         kwargs["httpx_args"] = inject_auth_event_hooks(
-            kwargs.get("httpx_args"), auth_provider, async_client=True
+            kwargs.get("httpx_args"),
+            auth_provider,
+            async_client=True,
+            log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -5985,7 +6231,50 @@ class CamundaAsyncClient:
         return self
 
     async def __aexit__(self, *args, **kwargs):
-        await self.client.__aexit__(*args, **kwargs)
+        result = None
+        try:
+            result = await self.client.__aexit__(*args, **kwargs)
+            return result
+        finally:
+            aclose = getattr(self.auth_provider, "aclose", None)
+            if callable(aclose):
+                try:
+                    await aclose()
+                except Exception:
+                    pass
+            else:
+                close = getattr(self.auth_provider, "close", None)
+                if callable(close):
+                    try:
+                        close()
+                    except Exception:
+                        pass
+
+    async def aclose(self) -> None:
+        """Close underlying HTTP clients.
+
+        This closes both the API client's async httpx client and, when available,
+        the auth provider's token client.
+        """
+
+        aclose = getattr(self.auth_provider, "aclose", None)
+        if callable(aclose):
+            try:
+                await aclose()
+            except Exception:
+                pass
+        else:
+            close = getattr(self.auth_provider, "close", None)
+            if callable(close):
+                try:
+                    close()
+                except Exception:
+                    pass
+
+        try:
+            await self.client.get_async_httpx_client().aclose()
+        except Exception:
+            return
 
     def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True) -> JobWorker:
         worker = JobWorker(self, callback, config)
@@ -7360,6 +7649,64 @@ Returns:
         return await get_decision_instance_asyncio(**_kwargs)
 
 
+    async def delete_decision_instance(self, decision_instance_key: str, *, data: DeleteDecisionInstanceDataType0 | None | Unset = UNSET, **kwargs: Any) -> DeleteDecisionInstanceResponse200:
+        """Delete decision instance
+
+ Delete all associated decision evaluations based on provided key.
+
+Args:
+    decision_instance_key (str): System-generated key for a deployed decision instance.
+        Example: 22517998136843567.
+    body (DeleteDecisionInstanceDataType0 | None | Unset):
+
+Raises:
+    errors.DeleteDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteDecisionInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteDecisionInstanceNotFound: If the response status code is 404. The decision instance is not found.
+    errors.DeleteDecisionInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.DeleteDecisionInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    DeleteDecisionInstanceResponse200"""
+        from .api.decision_instance.delete_decision_instance import asyncio as delete_decision_instance_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_decision_instance_asyncio(**_kwargs)
+
+
+    async def delete_decision_instances_batch_operation(self, *, data: DeleteDecisionInstancesBatchOperationData, **kwargs: Any) -> DeleteDecisionInstancesBatchOperationResponse200:
+        """Delete decision instances (batch)
+
+ Delete multiple decision instances. This will delete the historic data from secondary storage.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+Args:
+    body (DeleteDecisionInstancesBatchOperationData): The decision instance filter that
+        defines which decision instances should be deleted.
+
+Raises:
+    errors.DeleteDecisionInstancesBatchOperationBadRequest: If the response status code is 400. The decision instance batch operation failed. More details are provided in the response body.
+    errors.DeleteDecisionInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.DeleteDecisionInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.DeleteDecisionInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    DeleteDecisionInstancesBatchOperationResponse200"""
+        from .api.decision_instance.delete_decision_instances_batch_operation import asyncio as delete_decision_instances_batch_operation_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await delete_decision_instances_batch_operation_asyncio(**_kwargs)
+
+
     async def get_variable(self, variable_key: str, **kwargs: Any) -> GetVariableResponse200:
         """Get variable
 
@@ -7491,6 +7838,36 @@ Returns:
         return await create_global_cluster_variable_asyncio(**_kwargs)
 
 
+    async def update_tenant_cluster_variable(self, tenant_id: str, name: str, *, data: UpdateTenantClusterVariableData, **kwargs: Any) -> UpdateTenantClusterVariableResponse200:
+        """Update a tenant-scoped cluster variable
+
+ Updates the value of an existing tenant-scoped cluster variable.
+The variable must exist, otherwise a 404 error is returned.
+
+Args:
+    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+    name (str):
+    body (UpdateTenantClusterVariableData):
+
+Raises:
+    errors.UpdateTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UpdateTenantClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.UpdateTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    UpdateTenantClusterVariableResponse200"""
+        from .api.cluster_variable.update_tenant_cluster_variable import asyncio as update_tenant_cluster_variable_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await update_tenant_cluster_variable_asyncio(**_kwargs)
+
+
     async def delete_global_cluster_variable(self, name: str, **kwargs: Any) -> Any:
         """Delete a global-scoped cluster variable
 
@@ -7540,6 +7917,35 @@ Returns:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return await delete_tenant_cluster_variable_asyncio(**_kwargs)
+
+
+    async def update_global_cluster_variable(self, name: str, *, data: UpdateGlobalClusterVariableData, **kwargs: Any) -> UpdateGlobalClusterVariableResponse200:
+        """Update a global-scoped cluster variable
+
+ Updates the value of an existing global cluster variable.
+The variable must exist, otherwise a 404 error is returned.
+
+Args:
+    name (str):
+    body (UpdateGlobalClusterVariableData):
+
+Raises:
+    errors.UpdateGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.UpdateGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.UpdateGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.UpdateGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+    errors.UpdateGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    UpdateGlobalClusterVariableResponse200"""
+        from .api.cluster_variable.update_global_cluster_variable import asyncio as update_global_cluster_variable_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await update_global_cluster_variable_asyncio(**_kwargs)
 
 
     async def create_tenant_cluster_variable(self, tenant_id: str, *, data: CreateTenantClusterVariableData, **kwargs: Any) -> CreateTenantClusterVariableResponse200:
@@ -8763,6 +9169,35 @@ Returns:
         return await activate_jobs_asyncio(**_kwargs)
 
 
+    async def get_global_job_statistics(self, *, from_: datetime.datetime, to: datetime.datetime, job_type: str | Unset = UNSET, **kwargs: Any) -> GetGlobalJobStatisticsResponse200:
+        """Global job statistics
+
+ Returns global aggregated counts for jobs. Optionally filter by the creation time window and/or
+jobType.
+
+Args:
+    from_ (datetime.datetime):
+    to (datetime.datetime):
+    job_type (str | Unset):
+
+Raises:
+    errors.GetGlobalJobStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetGlobalJobStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetGlobalJobStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetGlobalJobStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetGlobalJobStatisticsResponse200"""
+        from .api.job.get_global_job_statistics import asyncio as get_global_job_statistics_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_global_job_statistics_asyncio(**_kwargs)
+
+
     async def throw_job_error(self, job_key: str, *, data: ThrowJobErrorData, **kwargs: Any) -> Any:
         """Throw error for job
 
@@ -9366,13 +9801,22 @@ Returns:
         return await complete_user_task_asyncio(**_kwargs)
 
 
-    async def delete_resource(self, resource_key: str, *, data: DeleteResourceDataType0 | None | Unset = UNSET, **kwargs: Any) -> Any:
+    async def delete_resource(self, resource_key: str, *, data: DeleteResourceDataType0 | None | Unset = UNSET, **kwargs: Any) -> DeleteResourceResponse200:
         """Delete resource
 
- Deletes a deployed resource.
-This can be a process definition, decision requirements definition, or form definition
-deployed using the deploy resources endpoint. Specify the resource you want to delete in the
-`resourceKey` parameter.
+ Deletes a deployed resource. This can be a process definition, decision requirements
+definition, or form definition deployed using the deploy resources endpoint. Specify the
+resource you want to delete in the `resourceKey` parameter.
+
+Once a resource has been deleted it cannot be recovered. If the resource needs to be
+available again, a new deployment of the resource is required.
+
+By default, only the resource itself is deleted from the runtime state. To also delete the
+historic data associated with a resource, set the `deleteHistory` flag in the request body
+to `true`. The historic data is deleted asynchronously via a batch operation. The details of
+the created batch operation are included in the response. Note that history deletion is only
+supported for process resources; for other resource types this flag is ignored and no history
+will be deleted.
 
 Args:
     resource_key (str): The system-assigned key for this resource.
@@ -9386,7 +9830,7 @@ Raises:
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
-    Any"""
+    DeleteResourceResponse200"""
         from .api.resource.delete_resource import asyncio as delete_resource_asyncio
         _kwargs = locals()
         _kwargs.pop("self")

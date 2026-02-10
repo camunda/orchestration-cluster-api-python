@@ -13,9 +13,21 @@ This repository contains the Python SDK Generator for the Camunda 8 Orchestratio
     - **Testing**: `pytest`, `pytest-asyncio`
 - **Output**: Generates the `camunda_orchestration_sdk` package in the `generated/` directory.
 
+## Documentation (Audiences)
+
+This repo serves two audiences. When updating documentation, choose the correct file:
+
+- **End users of the published SDK**: document in `README.md` (installation, configuration, and how to use `CamundaClient` / `CamundaAsyncClient`). Keep generator internals out of the README.
+- **Contributors / SDK generator maintainers**: document in `CONTRIBUTING.md` (generation workflow, hooks, runtime injection, testing, release/build details).
+- **Deep technical reference**: use `docs/*.md` for focused design notes and longer-form explanations.
+
+If the user request is ambiguous (e.g., "update the docs"), clarify which audience they mean before editing.
+
 ## Build Instructions
 
 Always use `uv` for package management and running scripts. The `Makefile` provides convenient shortcuts, but understanding the underlying `uv` commands is helpful depending on the task.
+
+Note: Contributor workflows (generation, hooks, testing) are documented in `CONTRIBUTING.md`. Prefer keeping this file focused on execution conventions for the coding agent.
 
 ### 1. Bootstrap & Install
 Ensure `uv` is installed. Then install dependencies:

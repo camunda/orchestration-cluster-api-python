@@ -36,7 +36,7 @@ class SearchCorrelatedMessageSubscriptionsResponse200ItemsItem:
             subscription. Example: 2251799813686749.
     """
 
-    correlation_key: MessageCorrelationKey
+    correlation_key: str
     correlation_time: datetime.datetime
     element_id: ElementId
     message_key: MessageKey
@@ -101,7 +101,7 @@ class SearchCorrelatedMessageSubscriptionsResponse200ItemsItem:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        correlation_key = lift_message_correlation_key(d.pop("correlationKey"))
+        correlation_key = d.pop("correlationKey")
 
         correlation_time = isoparse(d.pop("correlationTime"))
 

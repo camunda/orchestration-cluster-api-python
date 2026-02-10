@@ -4,12 +4,43 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      spec_ref:
+        description: "Git ref/branch/tag/SHA in camunda/camunda.git to fetch the OpenAPI spec from (temporary override)."
+        required: false
+        default: ""
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      SPEC_REF: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
+      SPEC_REF_OVERRIDE_ACK: ${{ vars.SPEC_REF_OVERRIDE_ACK || '' }}
+      SPEC_REF_OVERRIDE_EXPIRES: ${{ vars.SPEC_REF_OVERRIDE_EXPIRES || '' }}
     steps:
       - uses: actions/checkout@v4
+      - name: Guard spec ref override
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "SPEC_REF=${SPEC_REF}"
+
+          if [[ "${SPEC_REF}" != "main" ]]; then
+            if [[ "${SPEC_REF_OVERRIDE_ACK}" != "true" ]]; then
+              echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_ACK is not 'true'. Set the repo variable to acknowledge this is temporary."
+              exit 1
+            fi
+            if [[ -z "${SPEC_REF_OVERRIDE_EXPIRES}" ]]; then
+              echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_EXPIRES is not set (expected YYYY-MM-DD)."
+              exit 1
+            fi
+            today="$(date -u +%F)"
+            if [[ "${today}" > "${SPEC_REF_OVERRIDE_EXPIRES}" ]]; then
+              echo "::error::SPEC_REF override expired on ${SPEC_REF_OVERRIDE_EXPIRES}. Remove SPEC_REF_OVERRIDE (or extend expiry) now that upstream main should be fixed."
+              exit 1
+            fi
+          fi
       - name: Install uv
         uses: astral-sh/setup-uv@v5
       - name: Set up Python
@@ -31,10 +62,35 @@ jobs:
       id-token: write
       contents: write
     environment: pypi
+    env:
+      SPEC_REF: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
+      SPEC_REF_OVERRIDE_ACK: ${{ vars.SPEC_REF_OVERRIDE_ACK || '' }}
+      SPEC_REF_OVERRIDE_EXPIRES: ${{ vars.SPEC_REF_OVERRIDE_EXPIRES || '' }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Guard spec ref override
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "SPEC_REF=${SPEC_REF}"
+
+          if [[ "${SPEC_REF}" != "main" ]]; then
+            if [[ "${SPEC_REF_OVERRIDE_ACK}" != "true" ]]; then
+              echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_ACK is not 'true'. Set the repo variable to acknowledge this is temporary."
+              exit 1
+            fi
+            if [[ -z "${SPEC_REF_OVERRIDE_EXPIRES}" ]]; then
+              echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_EXPIRES is not set (expected YYYY-MM-DD)."
+              exit 1
+            fi
+            today="$(date -u +%F)"
+            if [[ "${today}" > "${SPEC_REF_OVERRIDE_EXPIRES}" ]]; then
+              echo "::error::SPEC_REF override expired on ${SPEC_REF_OVERRIDE_EXPIRES}. Remove SPEC_REF_OVERRIDE (or extend expiry) now that upstream main should be fixed."
+              exit 1
+            fi
+          fi
       - name: Install uv
         uses: astral-sh/setup-uv@v5
       - name: Set up Python
@@ -51,7 +107,7 @@ jobs:
             git config user.email "github-actions[bot]@users.noreply.github.com"
             
             # Generate the SDK
-            uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests
+            uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests --spec-ref "${SPEC_REF}"
             
             # Check for changes and commit if found
             if [[ -n $(git status -s) ]]; then

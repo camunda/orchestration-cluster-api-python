@@ -60,6 +60,18 @@ CAMUNDA_AUTH_STRATEGY: {
     doc: 'SDK log level. "silly" adds unsafe deep diagnostics including HTTP request and response bodies.',
   }
 
+  CAMUNDA_TOKEN_CACHE_DIR: {
+    type: 'string',
+    required: false,
+    doc: 'Optional directory for OAuth token disk cache. If unset, tokens are cached in-memory only.',
+  }
+
+  CAMUNDA_TOKEN_DISK_CACHE_DISABLE: {
+    type: 'boolean',
+    default: false,
+    doc: 'Disable OAuth disk caching even if CAMUNDA_TOKEN_CACHE_DIR is set.',
+  }
+
 ## Resolution logic
 
 Here is the logic for aliases: 

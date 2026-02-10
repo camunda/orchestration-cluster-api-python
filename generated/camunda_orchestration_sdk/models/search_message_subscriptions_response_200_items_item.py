@@ -36,7 +36,7 @@ class SearchMessageSubscriptionsResponse200ItemsItem:
             state of message subscription.
         last_updated_date (datetime.datetime | Unset): The last updated date of the message subscription.
         message_name (str | Unset): The name of the message associated with the message subscription.
-        correlation_key (str | Unset): The correlation key of the message subscription. Example: 2251799813634265.
+        correlation_key (str | Unset): The correlation key of the message subscription.
         tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
     """
 
@@ -51,7 +51,7 @@ class SearchMessageSubscriptionsResponse200ItemsItem:
     ) = UNSET
     last_updated_date: datetime.datetime | Unset = UNSET
     message_name: str | Unset = UNSET
-    correlation_key: MessageCorrelationKey | Unset = UNSET
+    correlation_key: str | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
@@ -148,7 +148,7 @@ class SearchMessageSubscriptionsResponse200ItemsItem:
 
         message_name = d.pop("messageName", UNSET)
 
-        correlation_key = lift_message_correlation_key(_val) if (_val := d.pop("correlationKey", UNSET)) is not UNSET else UNSET
+        correlation_key = d.pop("correlationKey", UNSET)
 
         tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
 

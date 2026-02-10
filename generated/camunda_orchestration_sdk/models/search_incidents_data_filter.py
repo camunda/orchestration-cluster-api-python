@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import *
 
 import datetime
 from collections.abc import Mapping
@@ -14,9 +15,6 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
-    from ..models.batchoperationkey_advancedfilter import (
-        BatchoperationkeyAdvancedfilter,
-    )
     from ..models.elementinstancekey_advancedfilter import (
         ElementinstancekeyAdvancedfilter,
     )
@@ -30,6 +28,7 @@ if TYPE_CHECKING:
     )
     from ..models.state_advancedfilter_4 import StateAdvancedfilter4
     from ..models.timestamp_advancedfilter import TimestampAdvancedfilter
+    from ..models.usertaskkey_advancedfilter import UsertaskkeyAdvancedfilter
 
 
 T = TypeVar("T", bound="SearchIncidentsDataFilter")
@@ -47,7 +46,7 @@ class SearchIncidentsDataFilter:
         creation_time (datetime.datetime | TimestampAdvancedfilter | Unset):
         state (StateAdvancedfilter4 | StateExactmatch4 | Unset):
         tenant_id (ActoridAdvancedfilter | str | Unset):
-        incident_key (BatchoperationkeyAdvancedfilter | str | Unset):
+        incident_key (str | Unset | UsertaskkeyAdvancedfilter):
         process_definition_key (ProcessdefinitionkeyAdvancedfilter | str | Unset):
         process_instance_key (ProcessinstancekeyAdvancedfilter | str | Unset):
         element_instance_key (ElementinstancekeyAdvancedfilter | str | Unset):
@@ -61,7 +60,7 @@ class SearchIncidentsDataFilter:
     creation_time: datetime.datetime | TimestampAdvancedfilter | Unset = UNSET
     state: StateAdvancedfilter4 | StateExactmatch4 | Unset = UNSET
     tenant_id: ActoridAdvancedfilter | str | Unset = UNSET
-    incident_key: BatchoperationkeyAdvancedfilter | str | Unset = UNSET
+    incident_key: IncidentKey | Unset | UsertaskkeyAdvancedfilter = UNSET
     process_definition_key: ProcessdefinitionkeyAdvancedfilter | str | Unset = UNSET
     process_instance_key: ProcessinstancekeyAdvancedfilter | str | Unset = UNSET
     element_instance_key: ElementinstancekeyAdvancedfilter | str | Unset = UNSET
@@ -70,9 +69,6 @@ class SearchIncidentsDataFilter:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
-        from ..models.batchoperationkey_advancedfilter import (
-            BatchoperationkeyAdvancedfilter,
-        )
         from ..models.elementinstancekey_advancedfilter import (
             ElementinstancekeyAdvancedfilter,
         )
@@ -83,6 +79,7 @@ class SearchIncidentsDataFilter:
         from ..models.processinstancekey_advancedfilter import (
             ProcessinstancekeyAdvancedfilter,
         )
+        from ..models.usertaskkey_advancedfilter import UsertaskkeyAdvancedfilter
 
         process_definition_id: dict[str, Any] | str | Unset
         if isinstance(self.process_definition_id, Unset):
@@ -143,7 +140,7 @@ class SearchIncidentsDataFilter:
         incident_key: dict[str, Any] | str | Unset
         if isinstance(self.incident_key, Unset):
             incident_key = UNSET
-        elif isinstance(self.incident_key, BatchoperationkeyAdvancedfilter):
+        elif isinstance(self.incident_key, UsertaskkeyAdvancedfilter):
             incident_key = self.incident_key.to_dict()
         else:
             incident_key = self.incident_key
@@ -215,9 +212,6 @@ class SearchIncidentsDataFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
-        from ..models.batchoperationkey_advancedfilter import (
-            BatchoperationkeyAdvancedfilter,
-        )
         from ..models.elementinstancekey_advancedfilter import (
             ElementinstancekeyAdvancedfilter,
         )
@@ -231,6 +225,7 @@ class SearchIncidentsDataFilter:
         )
         from ..models.state_advancedfilter_4 import StateAdvancedfilter4
         from ..models.timestamp_advancedfilter import TimestampAdvancedfilter
+        from ..models.usertaskkey_advancedfilter import UsertaskkeyAdvancedfilter
 
         d = dict(src_dict)
 
@@ -363,18 +358,18 @@ class SearchIncidentsDataFilter:
 
         def _parse_incident_key(
             data: object,
-        ) -> BatchoperationkeyAdvancedfilter | str | Unset:
+        ) -> str | Unset | UsertaskkeyAdvancedfilter:
             if isinstance(data, Unset):
                 return data
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
-                incident_key_type_1 = BatchoperationkeyAdvancedfilter.from_dict(data)
+                incident_key_type_1 = UsertaskkeyAdvancedfilter.from_dict(data)
 
                 return incident_key_type_1
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(BatchoperationkeyAdvancedfilter | str | Unset, data)
+            return cast(str | Unset | UsertaskkeyAdvancedfilter, data)
 
         incident_key = _parse_incident_key(d.pop("incidentKey", UNSET))
 

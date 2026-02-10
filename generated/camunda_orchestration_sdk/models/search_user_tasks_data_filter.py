@@ -37,8 +37,7 @@ class SearchUserTasksDataFilter:
         assignee (ActoridAdvancedfilter | str | Unset):
         priority (int | PartitionidAdvancedfilter | Unset):
         element_id (str | Unset): The element ID of the user task. Example: Activity_106kosb.
-        name (str | Unset): The task name. This only works for data created with 8.8 and onwards. Instances from prior
-            versions don't contain this data and cannot be found.
+        name (ActoridAdvancedfilter | str | Unset):
         candidate_group (ActoridAdvancedfilter | str | Unset):
         candidate_user (ActoridAdvancedfilter | str | Unset):
         tenant_id (ActoridAdvancedfilter | str | Unset):
@@ -61,7 +60,7 @@ class SearchUserTasksDataFilter:
     assignee: ActoridAdvancedfilter | str | Unset = UNSET
     priority: int | PartitionidAdvancedfilter | Unset = UNSET
     element_id: ElementId | Unset = UNSET
-    name: str | Unset = UNSET
+    name: ActoridAdvancedfilter | str | Unset = UNSET
     candidate_group: ActoridAdvancedfilter | str | Unset = UNSET
     candidate_user: ActoridAdvancedfilter | str | Unset = UNSET
     tenant_id: ActoridAdvancedfilter | str | Unset = UNSET
@@ -111,7 +110,13 @@ class SearchUserTasksDataFilter:
 
         element_id = self.element_id
 
-        name = self.name
+        name: dict[str, Any] | str | Unset
+        if isinstance(self.name, Unset):
+            name = UNSET
+        elif isinstance(self.name, ActoridAdvancedfilter):
+            name = self.name.to_dict()
+        else:
+            name = self.name
 
         candidate_group: dict[str, Any] | str | Unset
         if isinstance(self.candidate_group, Unset):
@@ -313,7 +318,20 @@ class SearchUserTasksDataFilter:
 
         element_id = lift_element_id(_val) if (_val := d.pop("elementId", UNSET)) is not UNSET else UNSET
 
-        name = d.pop("name", UNSET)
+        def _parse_name(data: object) -> ActoridAdvancedfilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                name_type_1 = ActoridAdvancedfilter.from_dict(data)
+
+                return name_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(ActoridAdvancedfilter | str | Unset, data)
+
+        name = _parse_name(d.pop("name", UNSET))
 
         def _parse_candidate_group(data: object) -> ActoridAdvancedfilter | str | Unset:
             if isinstance(data, Unset):

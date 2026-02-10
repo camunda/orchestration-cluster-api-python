@@ -1,14 +1,18 @@
 .PHONY: install generate clean test itest docs-api
 
+# Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
+# Override like: `make generate SPEC_REF=45369-fix-spec`
+SPEC_REF ?= main
+
 install:
 	mkdir -p generated
 	uv sync
 
 generate-v1: clean install
-	uv run generate.py 
+	uv run generate.py --spec-ref $(SPEC_REF)
 
 generate: clean install
-	uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests
+	uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests --spec-ref $(SPEC_REF)
 	uv run pytest -q tests/acceptance
 
 clean:

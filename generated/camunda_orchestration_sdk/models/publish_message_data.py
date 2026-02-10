@@ -30,7 +30,7 @@ class PublishMessageData:
     """
 
     name: str
-    correlation_key: MessageCorrelationKey | Unset = ""
+    correlation_key: str | Unset = ""
     time_to_live: int | Unset = 0
     message_id: str | Unset = UNSET
     variables: PublishMessageDataVariables | Unset = UNSET
@@ -78,7 +78,7 @@ class PublishMessageData:
         d = dict(src_dict)
         name = d.pop("name")
 
-        correlation_key = lift_message_correlation_key(_val) if (_val := d.pop("correlationKey", UNSET)) is not UNSET else UNSET
+        correlation_key = d.pop("correlationKey", UNSET)
 
         time_to_live = d.pop("timeToLive", UNSET)
 

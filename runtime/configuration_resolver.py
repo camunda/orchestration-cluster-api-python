@@ -40,6 +40,13 @@ class CamundaSdkConfigPartial(TypedDict, total=False):
 
     CAMUNDA_SDK_LOG_LEVEL: CamundaSdkLogLevel
 
+    # Optional OAuth disk cache / tarpit persistence
+    CAMUNDA_TOKEN_CACHE_DIR: str
+    CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool
+
+    # Optional .env file loading
+    CAMUNDA_LOAD_ENVFILE: str
+
 
 CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "ZEEBE_REST_ADDRESS",
@@ -54,11 +61,67 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "CAMUNDA_CLIENT_AUTH_CLIENTID",
     "CAMUNDA_CLIENT_AUTH_CLIENTSECRET",
     "CAMUNDA_SDK_LOG_LEVEL",
+
+    # Optional OAuth disk cache / tarpit persistence
+    "CAMUNDA_TOKEN_CACHE_DIR",
+    "CAMUNDA_TOKEN_DISK_CACHE_DISABLE",
 )
 
 
+def _dotenv_values_for(load_envfile: Any) -> dict[str, str]:
+    """Return values from a .env file, without mutating os.environ.
+
+    This is a resolver-only feature flag; it must not leak into the validated
+    Pydantic configuration model.
+    """
+
+    if load_envfile in (None, "", False):
+        return {}
+
+    try:
+        from dotenv import dotenv_values
+        from pathlib import Path
+
+        if load_envfile is True:
+            value = "true"
+        else:
+            value = str(load_envfile).strip()
+
+        if not value:
+            return {}
+
+        if value.lower() in ("true", "1", "yes"):
+            envfile_path = Path.cwd() / ".env"
+        else:
+            envfile_path = Path(value).expanduser().resolve()
+
+        if not envfile_path.exists():
+            return {}
+
+        raw = dotenv_values(envfile_path)
+        return {k: v for k, v in raw.items() if k and v is not None}
+    except ImportError:
+        # python-dotenv not installed, silently skip
+        return {}
+    except Exception:
+        # Any other error loading .env file, silently skip
+        return {}
+
+
 def read_environment(environ: Mapping[str, str] | None = None) -> CamundaSdkConfigPartial:
-    env = os.environ if environ is None else environ
+    # Always operate on a copy to avoid mutating global process state while still
+    # allowing us to merge .env-derived values.
+    env: dict[str, str] = dict(os.environ) if environ is None else dict(environ)
+    
+    # Check if we should load a .env file
+    load_envfile = env.get("CAMUNDA_LOAD_ENVFILE", "").strip()
+    if load_envfile:
+        dotenv_dict = _dotenv_values_for(load_envfile)
+        # Merge with existing env, giving precedence to existing env vars
+        for key, value in dotenv_dict.items():
+            if key not in env:
+                env[key] = value
+    
     out: dict[str, str] = {}
     for key in CAMUNDA_SDK_CONFIG_KEYS:
         if key in env:
@@ -92,8 +155,31 @@ class CamundaSdkConfiguration(BaseModel):
     # Logging
     CAMUNDA_SDK_LOG_LEVEL: CamundaSdkLogLevel = Field(default="error")
 
+    # OAuth disk cache / tarpit persistence
+    # If CAMUNDA_TOKEN_CACHE_DIR is unset/None, the SDK will not write tokens to disk.
+    CAMUNDA_TOKEN_CACHE_DIR: str | None = None
+    CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool = Field(default=False)
+
+    @staticmethod
+    def _normalize_rest_address(value: str) -> str:
+        value = value.strip()
+        if not value:
+            return value
+        normalized = value.rstrip("/")
+        if normalized.endswith("/v2"):
+            return normalized
+        return normalized + "/v2"
+
     @model_validator(mode="after")
     def _validate_required_when(self) -> "CamundaSdkConfiguration":
+        # Normalize REST endpoints so users can supply either
+        #   https://host/<clusterId>
+        # or
+        #   https://host/<clusterId>/v2
+        # and the SDK will consistently call /v2/...
+        self.ZEEBE_REST_ADDRESS = self._normalize_rest_address(self.ZEEBE_REST_ADDRESS) # pyright: ignore[reportConstantRedefinition]
+        self.CAMUNDA_REST_ADDRESS = self._normalize_rest_address(self.CAMUNDA_REST_ADDRESS) # pyright: ignore[reportConstantRedefinition]
+
         if self.CAMUNDA_AUTH_STRATEGY == "BASIC":
             if not self.CAMUNDA_BASIC_AUTH_USERNAME:
                 raise ValueError(
@@ -144,8 +230,55 @@ class ConfigurationResolver:
         )
 
     def resolve(self) -> ResolvedCamundaSdkConfiguration:
-        merged: dict[str, Any] = {**self._environment, **(self._explicit or {})}
-        merged = self._apply_alias_resolution(merged, self._environment, self._explicit)
+        explicit_envfile = None
+        if self._explicit is not None and "CAMUNDA_LOAD_ENVFILE" in self._explicit:
+            explicit_envfile = self._explicit.get("CAMUNDA_LOAD_ENVFILE")
+
+        envfile_values = _dotenv_values_for(
+            explicit_envfile
+            if explicit_envfile not in (None, "")
+            else self._environment.get("CAMUNDA_LOAD_ENVFILE")
+        )
+
+        # Precedence: .env < environment < explicit
+        merged: dict[str, Any] = {**envfile_values, **self._environment, **(self._explicit or {})}
+        merged.pop("CAMUNDA_LOAD_ENVFILE", None)
+
+        # Alias resolution needs to consider .env-provided values as "environment"
+        # input, otherwise it may incorrectly drop them.
+        env_for_alias = {**envfile_values, **self._environment}
+        merged = self._apply_alias_resolution(merged, env_for_alias, self._explicit)
+
+        # Infer an auth strategy only if the user did NOT explicitly set one.
+        # (Defaults do not count as explicit.)
+        if "CAMUNDA_AUTH_STRATEGY" not in merged:
+            def _non_empty(value: Any) -> bool:
+                if value is None:
+                    return False
+                if isinstance(value, str):
+                    return bool(value.strip())
+                return True
+
+            has_oauth_creds = _non_empty(merged.get("CAMUNDA_CLIENT_ID")) and _non_empty(
+                merged.get("CAMUNDA_CLIENT_SECRET")
+            )
+            has_basic_creds = _non_empty(merged.get("CAMUNDA_BASIC_AUTH_USERNAME")) and _non_empty(
+                merged.get("CAMUNDA_BASIC_AUTH_PASSWORD")
+            )
+
+              # If both OAuth and Basic credentials are present, require an explicit strategy  
+            # instead of silently picking one to avoid surprising behavior.  
+            if has_oauth_creds and has_basic_creds:  
+                raise ValueError(  
+                    "Both OAuth (CAMUNDA_CLIENT_ID/SECRET) and Basic auth "  
+                    "(CAMUNDA_BASIC_AUTH_USERNAME/PASSWORD) credentials are set, "  
+                    "but CAMUNDA_AUTH_STRATEGY is not explicitly configured. "  
+                    "Please set CAMUNDA_AUTH_STRATEGY to either 'OAUTH' or 'BASIC'."  
+                )  
+            elif has_oauth_creds:  
+                merged["CAMUNDA_AUTH_STRATEGY"] = "OAUTH"
+            elif has_basic_creds:
+                merged["CAMUNDA_AUTH_STRATEGY"] = "BASIC"
 
         try:
             effective = CamundaSdkConfiguration.model_validate(merged)

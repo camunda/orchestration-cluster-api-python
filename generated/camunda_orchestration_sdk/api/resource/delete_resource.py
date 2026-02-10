@@ -5,6 +5,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.delete_resource_data_type_0 import DeleteResourceDataType0
+from ...models.delete_resource_response_200 import DeleteResourceResponse200
 from ...models.delete_resource_response_400 import DeleteResourceResponse400
 from ...models.delete_resource_response_404 import DeleteResourceResponse404
 from ...models.delete_resource_response_500 import DeleteResourceResponse500
@@ -22,9 +23,9 @@ def _get_kwargs(resource_key: str, *, body: DeleteResourceDataType0 | None | Uns
     _kwargs['headers'] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503 | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> DeleteResourceResponse200 | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503 | None:
     if response.status_code == 200:
-        response_200 = cast(Any, None)
+        response_200 = DeleteResourceResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = DeleteResourceResponse400.from_dict(response.json())
@@ -43,16 +44,25 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]:
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[DeleteResourceResponse200 | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]:
     return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None | Unset=UNSET) -> Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]:
+def sync_detailed(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None | Unset=UNSET) -> Response[DeleteResourceResponse200 | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]:
     """Delete resource
 
-     Deletes a deployed resource.
-    This can be a process definition, decision requirements definition, or form definition
-    deployed using the deploy resources endpoint. Specify the resource you want to delete in the
-    `resourceKey` parameter.
+     Deletes a deployed resource. This can be a process definition, decision requirements
+    definition, or form definition deployed using the deploy resources endpoint. Specify the
+    resource you want to delete in the `resourceKey` parameter.
+
+    Once a resource has been deleted it cannot be recovered. If the resource needs to be
+    available again, a new deployment of the resource is required.
+
+    By default, only the resource itself is deleted from the runtime state. To also delete the
+    historic data associated with a resource, set the `deleteHistory` flag in the request body
+    to `true`. The historic data is deleted asynchronously via a batch operation. The details of
+    the created batch operation are included in the response. Note that history deletion is only
+    supported for process resources; for other resource types this flag is ignored and no history
+    will be deleted.
 
     Args:
         resource_key (str): The system-assigned key for this resource.
@@ -63,19 +73,28 @@ def sync_detailed(resource_key: str, *, client: AuthenticatedClient | Client, bo
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]
+        Response[DeleteResourceResponse200 | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]
     """
     kwargs = _get_kwargs(resource_key=resource_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None | Unset=UNSET, **kwargs) -> Any:
+def sync(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None | Unset=UNSET, **kwargs) -> DeleteResourceResponse200:
     """Delete resource
 
- Deletes a deployed resource.
-This can be a process definition, decision requirements definition, or form definition
-deployed using the deploy resources endpoint. Specify the resource you want to delete in the
-`resourceKey` parameter.
+ Deletes a deployed resource. This can be a process definition, decision requirements
+definition, or form definition deployed using the deploy resources endpoint. Specify the
+resource you want to delete in the `resourceKey` parameter.
+
+Once a resource has been deleted it cannot be recovered. If the resource needs to be
+available again, a new deployment of the resource is required.
+
+By default, only the resource itself is deleted from the runtime state. To also delete the
+historic data associated with a resource, set the `deleteHistory` flag in the request body
+to `true`. The historic data is deleted asynchronously via a batch operation. The details of
+the created batch operation are included in the response. Note that history deletion is only
+supported for process resources; for other resource types this flag is ignored and no history
+will be deleted.
 
 Args:
     resource_key (str): The system-assigned key for this resource.
@@ -89,7 +108,7 @@ Raises:
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
-    Any"""
+    DeleteResourceResponse200"""
     response = sync_detailed(resource_key=resource_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -103,13 +122,22 @@ Returns:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return response.parsed
 
-async def asyncio_detailed(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None | Unset=UNSET) -> Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]:
+async def asyncio_detailed(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None | Unset=UNSET) -> Response[DeleteResourceResponse200 | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]:
     """Delete resource
 
-     Deletes a deployed resource.
-    This can be a process definition, decision requirements definition, or form definition
-    deployed using the deploy resources endpoint. Specify the resource you want to delete in the
-    `resourceKey` parameter.
+     Deletes a deployed resource. This can be a process definition, decision requirements
+    definition, or form definition deployed using the deploy resources endpoint. Specify the
+    resource you want to delete in the `resourceKey` parameter.
+
+    Once a resource has been deleted it cannot be recovered. If the resource needs to be
+    available again, a new deployment of the resource is required.
+
+    By default, only the resource itself is deleted from the runtime state. To also delete the
+    historic data associated with a resource, set the `deleteHistory` flag in the request body
+    to `true`. The historic data is deleted asynchronously via a batch operation. The details of
+    the created batch operation are included in the response. Note that history deletion is only
+    supported for process resources; for other resource types this flag is ignored and no history
+    will be deleted.
 
     Args:
         resource_key (str): The system-assigned key for this resource.
@@ -120,19 +148,28 @@ async def asyncio_detailed(resource_key: str, *, client: AuthenticatedClient | C
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]
+        Response[DeleteResourceResponse200 | DeleteResourceResponse400 | DeleteResourceResponse404 | DeleteResourceResponse500 | DeleteResourceResponse503]
     """
     kwargs = _get_kwargs(resource_key=resource_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None | Unset=UNSET, **kwargs) -> Any:
+async def asyncio(resource_key: str, *, client: AuthenticatedClient | Client, body: DeleteResourceDataType0 | None | Unset=UNSET, **kwargs) -> DeleteResourceResponse200:
     """Delete resource
 
- Deletes a deployed resource.
-This can be a process definition, decision requirements definition, or form definition
-deployed using the deploy resources endpoint. Specify the resource you want to delete in the
-`resourceKey` parameter.
+ Deletes a deployed resource. This can be a process definition, decision requirements
+definition, or form definition deployed using the deploy resources endpoint. Specify the
+resource you want to delete in the `resourceKey` parameter.
+
+Once a resource has been deleted it cannot be recovered. If the resource needs to be
+available again, a new deployment of the resource is required.
+
+By default, only the resource itself is deleted from the runtime state. To also delete the
+historic data associated with a resource, set the `deleteHistory` flag in the request body
+to `true`. The historic data is deleted asynchronously via a batch operation. The details of
+the created batch operation are included in the response. Note that history deletion is only
+supported for process resources; for other resource types this flag is ignored and no history
+will be deleted.
 
 Args:
     resource_key (str): The system-assigned key for this resource.
@@ -146,7 +183,7 @@ Raises:
     errors.UnexpectedStatus: If the response status code is not documented.
     httpx.TimeoutException: If the request takes longer than Client.timeout.
 Returns:
-    Any"""
+    DeleteResourceResponse200"""
     response = await asyncio_detailed(resource_key=resource_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:

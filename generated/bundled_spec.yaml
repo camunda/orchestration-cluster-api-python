@@ -43,6 +43,7 @@ tags:
 - name: Group
 - name: Incident
 - name: Job
+- name: Job metrics
 - name: License
 - name: Mapping rule
 - name: Message
@@ -154,6 +155,7 @@ paths:
                           - ADD_VARIABLE
                           - CANCEL_PROCESS_INSTANCE
                           - DELETE_DECISION_DEFINITION
+                          - DELETE_DECISION_INSTANCE
                           - DELETE_PROCESS_DEFINITION
                           - DELETE_PROCESS_INSTANCE
                           - MIGRATE_PROCESS_INSTANCE
@@ -577,6 +579,7 @@ paths:
                     - ADD_VARIABLE
                     - CANCEL_PROCESS_INSTANCE
                     - DELETE_DECISION_DEFINITION
+                    - DELETE_DECISION_INSTANCE
                     - DELETE_PROCESS_DEFINITION
                     - DELETE_PROCESS_INSTANCE
                     - MIGRATE_PROCESS_INSTANCE
@@ -1430,6 +1433,7 @@ paths:
                           - DECISION_REQUIREMENTS_DEFINITION
                           - DOCUMENT
                           - EXPRESSION
+                          - GLOBAL_LISTENER
                           - GROUP
                           - MAPPING_RULE
                           - MESSAGE
@@ -1470,6 +1474,7 @@ paths:
                             - CREATE_BATCH_OPERATION_RESOLVE_INCIDENT
                             - CREATE_DECISION_INSTANCE
                             - CREATE_PROCESS_INSTANCE
+                            - CREATE_TASK_LISTENER
                             - DELETE
                             - DELETE_DECISION_INSTANCE
                             - DELETE_DRD
@@ -1477,6 +1482,7 @@ paths:
                             - DELETE_PROCESS
                             - DELETE_PROCESS_INSTANCE
                             - DELETE_RESOURCE
+                            - DELETE_TASK_LISTENER
                             - EVALUATE
                             - MODIFY_PROCESS_INSTANCE
                             - READ
@@ -1487,9 +1493,11 @@ paths:
                             - READ_PROCESS_INSTANCE
                             - READ_USAGE_METRIC
                             - READ_USER_TASK
+                            - READ_TASK_LISTENER
                             - UPDATE
                             - UPDATE_PROCESS_INSTANCE
                             - UPDATE_USER_TASK
+                            - UPDATE_TASK_LISTENER
                         authorizationKey:
                           description: The key of the authorization.
                           format: AuthorizationKey
@@ -1946,6 +1954,7 @@ paths:
                     - DECISION_REQUIREMENTS_DEFINITION
                     - DOCUMENT
                     - EXPRESSION
+                    - GLOBAL_LISTENER
                     - GROUP
                     - MAPPING_RULE
                     - MESSAGE
@@ -1986,6 +1995,7 @@ paths:
                       - CREATE_BATCH_OPERATION_RESOLVE_INCIDENT
                       - CREATE_DECISION_INSTANCE
                       - CREATE_PROCESS_INSTANCE
+                      - CREATE_TASK_LISTENER
                       - DELETE
                       - DELETE_DECISION_INSTANCE
                       - DELETE_DRD
@@ -1993,6 +2003,7 @@ paths:
                       - DELETE_PROCESS
                       - DELETE_PROCESS_INSTANCE
                       - DELETE_RESOURCE
+                      - DELETE_TASK_LISTENER
                       - EVALUATE
                       - MODIFY_PROCESS_INSTANCE
                       - READ
@@ -2003,9 +2014,11 @@ paths:
                       - READ_PROCESS_INSTANCE
                       - READ_USAGE_METRIC
                       - READ_USER_TASK
+                      - READ_TASK_LISTENER
                       - UPDATE
                       - UPDATE_PROCESS_INSTANCE
                       - UPDATE_USER_TASK
+                      - UPDATE_TASK_LISTENER
                   authorizationKey:
                     description: The key of the authorization.
                     format: AuthorizationKey
@@ -2386,6 +2399,7 @@ paths:
                           - ADD_VARIABLE
                           - CANCEL_PROCESS_INSTANCE
                           - DELETE_DECISION_DEFINITION
+                          - DELETE_DECISION_INSTANCE
                           - DELETE_PROCESS_DEFINITION
                           - DELETE_PROCESS_INSTANCE
                           - MIGRATE_PROCESS_INSTANCE
@@ -2604,6 +2618,7 @@ paths:
                           - ADD_VARIABLE
                           - CANCEL_PROCESS_INSTANCE
                           - DELETE_DECISION_DEFINITION
+                          - DELETE_DECISION_INSTANCE
                           - DELETE_PROCESS_DEFINITION
                           - DELETE_PROCESS_INSTANCE
                           - MIGRATE_PROCESS_INSTANCE
@@ -2619,11 +2634,12 @@ paths:
                           description: The end date of the batch operation.
                           format: date-time
                         actorType:
-                          description: The type of the actor. Available for batch
-                            operations created since 8.9.
                           type: string
+                          description: The type of actor who performed the operation.
                           enum:
+                          - ANONYMOUS
                           - CLIENT
+                          - UNKNOWN
                           - USER
                         actorId:
                           type: string
@@ -2839,6 +2855,7 @@ paths:
                     - ADD_VARIABLE
                     - CANCEL_PROCESS_INSTANCE
                     - DELETE_DECISION_DEFINITION
+                    - DELETE_DECISION_INSTANCE
                     - DELETE_PROCESS_DEFINITION
                     - DELETE_PROCESS_INSTANCE
                     - MIGRATE_PROCESS_INSTANCE
@@ -2854,11 +2871,12 @@ paths:
                     description: The end date of the batch operation.
                     format: date-time
                   actorType:
-                    description: The type of the actor. Available for batch operations
-                      created since 8.9.
                     type: string
+                    description: The type of actor who performed the operation.
                     enum:
+                    - ANONYMOUS
                     - CLIENT
+                    - UNKNOWN
                     - USER
                   actorId:
                     type: string
@@ -4321,6 +4339,247 @@ paths:
                     format: uri
                     description: A URI path identifying the origin of the problem.
                     example: /v2/jobs/activation
+    put:
+      operationId: updateGlobalClusterVariable
+      x-eventually-consistent: false
+      tags:
+      - Cluster Variable
+      summary: Update a global-scoped cluster variable
+      description: 'Updates the value of an existing global cluster variable.
+
+        The variable must exist, otherwise a 404 error is returned.
+
+        '
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The name of the cluster variable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGlobalClusterVariableData'
+      responses:
+        '200':
+          description: Cluster variable updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  value:
+                    description: Full value of this cluster variable.
+                    type: string
+                  name:
+                    type: string
+                    description: The name of the cluster variable. Unique within its
+                      scope (global or tenant-specific).
+                  scope:
+                    type: string
+                    enum:
+                    - GLOBAL
+                    - TENANT
+                    description: The scope of a cluster variable.
+                  tenantId:
+                    type: string
+                    description: Only provided if the cluster variable scope is TENANT.
+                required:
+                - value
+                - scope
+                - name
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '404':
+          description: Cluster variable not found
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
     delete:
       operationId: deleteGlobalClusterVariable
       x-eventually-consistent: false
@@ -5239,6 +5498,260 @@ paths:
                     format: uri
                     description: A URI path identifying the origin of the problem.
                     example: /v2/jobs/activation
+    put:
+      operationId: updateTenantClusterVariable
+      x-eventually-consistent: false
+      tags:
+      - Cluster Variable
+      summary: Update a tenant-scoped cluster variable
+      description: 'Updates the value of an existing tenant-scoped cluster variable.
+
+        The variable must exist, otherwise a 404 error is returned.
+
+        '
+      parameters:
+      - name: tenantId
+        in: path
+        required: true
+        schema:
+          example: customer-service
+          description: The unique identifier of the tenant.
+          format: TenantId
+          type: string
+          x-semantic-type: TenantId
+          minLength: 1
+          maxLength: 256
+          pattern: ^(<default>|[A-Za-z0-9_@.+-]+)$
+        description: The tenant ID
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The name of the cluster variable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTenantClusterVariableData'
+      responses:
+        '200':
+          description: Cluster variable updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  value:
+                    description: Full value of this cluster variable.
+                    type: string
+                  name:
+                    type: string
+                    description: The name of the cluster variable. Unique within its
+                      scope (global or tenant-specific).
+                  scope:
+                    type: string
+                    enum:
+                    - GLOBAL
+                    - TENANT
+                    description: The scope of a cluster variable.
+                  tenantId:
+                    type: string
+                    description: Only provided if the cluster variable scope is TENANT.
+                required:
+                - value
+                - scope
+                - name
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '404':
+          description: Cluster variable not found
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
     delete:
       operationId: deleteTenantClusterVariable
       x-eventually-consistent: false
@@ -5510,7 +6023,29 @@ paths:
                 type: object
                 required:
                 - processInstances
+                - conditionalEvaluationKey
+                - tenantId
+                x-semantic-provider:
+                - conditionalEvaluationKey
                 properties:
+                  conditionalEvaluationKey:
+                    description: The unique key of the conditional evaluation operation.
+                    format: ConditionalEvaluationKey
+                    x-semantic-type: ConditionalEvaluationKey
+                    example: '2251799813687654'
+                    type: string
+                    pattern: ^-?[0-9]+$
+                    minLength: 1
+                    maxLength: 25
+                  tenantId:
+                    description: The tenant ID of the conditional evaluation operation.
+                    example: customer-service
+                    format: TenantId
+                    type: string
+                    x-semantic-type: TenantId
+                    minLength: 1
+                    maxLength: 256
+                    pattern: ^(<default>|[A-Za-z0-9_@.+-]+)$
                   processInstances:
                     type: array
                     items:
@@ -7884,6 +8419,464 @@ paths:
             details are provided in the response body.
 
             '
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+  /decision-instances/{decisionInstanceKey}/deletion:
+    post:
+      x-eventually-consistent: true
+      tags:
+      - Decision instance
+      operationId: deleteDecisionInstance
+      summary: Delete decision instance
+      description: Delete all associated decision evaluations based on provided key.
+      parameters:
+      - name: decisionInstanceKey
+        in: path
+        required: true
+        description: The key of the decision instance to delete.
+        schema:
+          description: System-generated key for a deployed decision instance.
+          format: DecisionInstanceKey
+          x-semantic-type: DecisionInstanceKey
+          example: '22517998136843567'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteDecisionInstanceData'
+      responses:
+        '200':
+          description: The operation to delete the decision instance was created.
+          content:
+            application/json:
+              schema:
+                description: The created batch operation.
+                type: object
+                properties:
+                  batchOperationKey:
+                    description: Key of the batch operation.
+                    x-semantic-type: BatchOperationKey
+                    format: BatchOperationKey | uuid
+                    type: string
+                    example: '2251799813684321'
+                  batchOperationType:
+                    description: The type of the batch operation.
+                    type: string
+                    enum:
+                    - ADD_VARIABLE
+                    - CANCEL_PROCESS_INSTANCE
+                    - DELETE_DECISION_DEFINITION
+                    - DELETE_DECISION_INSTANCE
+                    - DELETE_PROCESS_DEFINITION
+                    - DELETE_PROCESS_INSTANCE
+                    - MIGRATE_PROCESS_INSTANCE
+                    - MODIFY_PROCESS_INSTANCE
+                    - RESOLVE_INCIDENT
+                    - UPDATE_VARIABLE
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '404':
+          description: The decision instance is not found.
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+  /decision-instances/deletion:
+    post:
+      x-eventually-consistent: true
+      tags:
+      - Decision instance
+      operationId: deleteDecisionInstancesBatchOperation
+      summary: Delete decision instances (batch)
+      description: 'Delete multiple decision instances. This will delete the historic
+        data from secondary storage.
+
+        This is done asynchronously, the progress can be tracked using the batchOperationKey
+        from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteDecisionInstancesBatchOperationData'
+      responses:
+        '200':
+          description: The batch operation request was created.
+          content:
+            application/json:
+              schema:
+                description: The created batch operation.
+                type: object
+                properties:
+                  batchOperationKey:
+                    description: Key of the batch operation.
+                    x-semantic-type: BatchOperationKey
+                    format: BatchOperationKey | uuid
+                    type: string
+                    example: '2251799813684321'
+                  batchOperationType:
+                    description: The type of the batch operation.
+                    type: string
+                    enum:
+                    - ADD_VARIABLE
+                    - CANCEL_PROCESS_INSTANCE
+                    - DELETE_DECISION_DEFINITION
+                    - DELETE_DECISION_INSTANCE
+                    - DELETE_PROCESS_DEFINITION
+                    - DELETE_PROCESS_INSTANCE
+                    - MIGRATE_PROCESS_INSTANCE
+                    - MODIFY_PROCESS_INSTANCE
+                    - RESOLVE_INCIDENT
+                    - UPDATE_VARIABLE
+        '400':
+          description: 'The decision instance batch operation failed. More details
+            are provided in the response body.
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '403':
+          description: Forbidden. The request is not allowed.
           content:
             application/problem+json:
               schema:
@@ -18404,6 +19397,272 @@ paths:
                     format: uri
                     description: A URI path identifying the origin of the problem.
                     example: /v2/jobs/activation
+  /jobs/statistics/global:
+    get:
+      x-eventually-consistent: true
+      tags:
+      - Job
+      operationId: getGlobalJobStatistics
+      summary: Global job statistics
+      description: 'Returns global aggregated counts for jobs. Optionally filter by
+        the creation time window and/or jobType.
+
+        '
+      parameters:
+      - name: from
+        in: query
+        required: true
+        description: 'Start of the time window to filter metrics. ISO 8601 date-time
+          format.
+
+          '
+        schema:
+          type: string
+          format: date-time
+        example: '2024-07-28T15:51:28.071Z'
+      - name: to
+        in: query
+        required: true
+        description: 'End of the time window to filter metrics. ISO 8601 date-time
+          format.
+
+          '
+        schema:
+          type: string
+          format: date-time
+        example: '2024-07-29T15:51:28.071Z'
+      - name: jobType
+        in: query
+        required: false
+        description: Optional job type to limit the aggregation to a single job type.
+        schema:
+          type: string
+        example: fetch-customer-data
+      responses:
+        '200':
+          description: Global job metrics
+          content:
+            application/json:
+              schema:
+                description: Global job statistics query result.
+                type: object
+                required:
+                - created
+                - completed
+                - failed
+                - isIncomplete
+                properties:
+                  created:
+                    description: Metric for a single job status.
+                    type: object
+                    required:
+                    - count
+                    - lastUpdatedAt
+                    properties:
+                      count:
+                        description: Number of jobs in this status.
+                        type: integer
+                        format: int64
+                        example: 145
+                      lastUpdatedAt:
+                        description: ISO 8601 timestamp of the last update for this
+                          status.
+                        type: string
+                        format: date-time
+                        example: '2024-07-29T15:51:28.071Z'
+                  completed:
+                    description: Metric for a single job status.
+                    type: object
+                    required:
+                    - count
+                    - lastUpdatedAt
+                    properties:
+                      count:
+                        description: Number of jobs in this status.
+                        type: integer
+                        format: int64
+                        example: 145
+                      lastUpdatedAt:
+                        description: ISO 8601 timestamp of the last update for this
+                          status.
+                        type: string
+                        format: date-time
+                        example: '2024-07-29T15:51:28.071Z'
+                  failed:
+                    description: Metric for a single job status.
+                    type: object
+                    required:
+                    - count
+                    - lastUpdatedAt
+                    properties:
+                      count:
+                        description: Number of jobs in this status.
+                        type: integer
+                        format: int64
+                        example: 145
+                      lastUpdatedAt:
+                        description: ISO 8601 timestamp of the last update for this
+                          status.
+                        type: string
+                        format: date-time
+                        example: '2024-07-29T15:51:28.071Z'
+                  isIncomplete:
+                    description: True if some data is missing because internal limits
+                      were reached and some metrics were not recorded.
+                    type: boolean
+                    example: false
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                description: 'A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457).
+                  There may be additional properties specific to the problem type.
+
+                  '
+                type: object
+                properties:
+                  type:
+                    type: string
+                    format: uri
+                    description: A URI identifying the problem type.
+                    default: about:blank
+                    example: about:blank
+                  title:
+                    type: string
+                    description: A summary of the problem type.
+                    example: Bad Request
+                  status:
+                    type: integer
+                    format: int32
+                    description: The HTTP status code for this problem.
+                    example: 400
+                    minimum: 400
+                    maximum: 600
+                  detail:
+                    type: string
+                    description: An explanation of the problem in more detail.
+                    example: Request property [maxJobsToActivates] cannot be parsed
+                  instance:
+                    type: string
+                    format: uri
+                    description: A URI path identifying the origin of the problem.
+                    example: /v2/jobs/activation
   /license:
     get:
       x-eventually-consistent: false
@@ -19578,14 +20837,8 @@ paths:
                             message subscription.
                           type: string
                         correlationKey:
-                          description: The correlation key of the message subscription.
-                          format: MessageCorrelationKey
-                          x-semantic-type: MessageCorrelationKey
-                          example: '2251799813634265'
                           type: string
-                          pattern: ^-?[0-9]+$
-                          minLength: 1
-                          maxLength: 25
+                          description: The correlation key of the message subscription.
                         tenantId:
                           example: customer-service
                           description: The unique identifier of the tenant.
@@ -22663,6 +23916,7 @@ paths:
                     - ADD_VARIABLE
                     - CANCEL_PROCESS_INSTANCE
                     - DELETE_DECISION_DEFINITION
+                    - DELETE_DECISION_INSTANCE
                     - DELETE_PROCESS_DEFINITION
                     - DELETE_PROCESS_INSTANCE
                     - MIGRATE_PROCESS_INSTANCE
@@ -22868,6 +24122,7 @@ paths:
                     - ADD_VARIABLE
                     - CANCEL_PROCESS_INSTANCE
                     - DELETE_DECISION_DEFINITION
+                    - DELETE_DECISION_INSTANCE
                     - DELETE_PROCESS_DEFINITION
                     - DELETE_PROCESS_INSTANCE
                     - MIGRATE_PROCESS_INSTANCE
@@ -23075,6 +24330,7 @@ paths:
                     - ADD_VARIABLE
                     - CANCEL_PROCESS_INSTANCE
                     - DELETE_DECISION_DEFINITION
+                    - DELETE_DECISION_INSTANCE
                     - DELETE_PROCESS_DEFINITION
                     - DELETE_PROCESS_INSTANCE
                     - MIGRATE_PROCESS_INSTANCE
@@ -23281,6 +24537,7 @@ paths:
                     - ADD_VARIABLE
                     - CANCEL_PROCESS_INSTANCE
                     - DELETE_DECISION_DEFINITION
+                    - DELETE_DECISION_INSTANCE
                     - DELETE_PROCESS_DEFINITION
                     - DELETE_PROCESS_INSTANCE
                     - MIGRATE_PROCESS_INSTANCE
@@ -23492,6 +24749,7 @@ paths:
                     - ADD_VARIABLE
                     - CANCEL_PROCESS_INSTANCE
                     - DELETE_DECISION_DEFINITION
+                    - DELETE_DECISION_INSTANCE
                     - DELETE_PROCESS_DEFINITION
                     - DELETE_PROCESS_INSTANCE
                     - MIGRATE_PROCESS_INSTANCE
@@ -24815,6 +26073,7 @@ paths:
                     - ADD_VARIABLE
                     - CANCEL_PROCESS_INSTANCE
                     - DELETE_DECISION_DEFINITION
+                    - DELETE_DECISION_INSTANCE
                     - DELETE_PROCESS_DEFINITION
                     - DELETE_PROCESS_INSTANCE
                     - MIGRATE_PROCESS_INSTANCE
@@ -25101,6 +26360,7 @@ paths:
                     - ADD_VARIABLE
                     - CANCEL_PROCESS_INSTANCE
                     - DELETE_DECISION_DEFINITION
+                    - DELETE_DECISION_INSTANCE
                     - DELETE_PROCESS_DEFINITION
                     - DELETE_PROCESS_INSTANCE
                     - MIGRATE_PROCESS_INSTANCE
@@ -26925,15 +28185,37 @@ paths:
       - Resource
       operationId: deleteResource
       summary: Delete resource
-      description: 'Deletes a deployed resource.
+      description: 'Deletes a deployed resource. This can be a process definition,
+        decision requirements
 
-        This can be a process definition, decision requirements definition, or form
-        definition
+        definition, or form definition deployed using the deploy resources endpoint.
+        Specify the
 
-        deployed using the deploy resources endpoint. Specify the resource you want
-        to delete in the `resourceKey` parameter.
+        resource you want to delete in the `resourceKey` parameter.
 
-        '
+
+        Once a resource has been deleted it cannot be recovered. If the resource needs
+        to be
+
+        available again, a new deployment of the resource is required.
+
+
+        By default, only the resource itself is deleted from the runtime state. To
+        also delete the
+
+        historic data associated with a resource, set the `deleteHistory` flag in
+        the request body
+
+        to `true`. The historic data is deleted asynchronously via a batch operation.
+        The details of
+
+        the created batch operation are included in the response. Note that history
+        deletion is only
+
+        supported for process resources; for other resource types this flag is ignored
+        and no history
+
+        will be deleted.'
       parameters:
       - name: resourceKey
         in: path
@@ -26992,6 +28274,59 @@ paths:
       responses:
         '200':
           description: The resource is deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - resourceKey
+                properties:
+                  resourceKey:
+                    description: The system-assigned key for this resource, requested
+                      to be deleted.
+                    type: string
+                    oneOf:
+                    - $ref: '#/components/schemas/ResourcekeyObject'
+                    - $ref: '#/components/schemas/ResourcekeyObject1'
+                    - $ref: '#/components/schemas/ResourcekeyObject2'
+                    - $ref: '#/components/schemas/ResourcekeyObject3'
+                    format: ResourceKey
+                  batchOperation:
+                    description: 'The batch operation created for asynchronously deleting
+                      the historic data.
+
+
+                      This field is only populated when the request `deleteHistory`
+                      is set to `true` and the resource
+
+                      is a process definition. For other resource types (decisions,
+                      forms, generic resources),
+
+                      this field will not be present in the response.
+
+                      '
+                    type: object
+                    properties:
+                      batchOperationKey:
+                        description: Key of the batch operation.
+                        x-semantic-type: BatchOperationKey
+                        format: BatchOperationKey | uuid
+                        type: string
+                        example: '2251799813684321'
+                      batchOperationType:
+                        description: The type of the batch operation.
+                        type: string
+                        enum:
+                        - ADD_VARIABLE
+                        - CANCEL_PROCESS_INSTANCE
+                        - DELETE_DECISION_DEFINITION
+                        - DELETE_DECISION_INSTANCE
+                        - DELETE_PROCESS_DEFINITION
+                        - DELETE_PROCESS_INSTANCE
+                        - MIGRATE_PROCESS_INSTANCE
+                        - MODIFY_PROCESS_INSTANCE
+                        - RESOLVE_INCIDENT
+                        - UPDATE_VARIABLE
         '400':
           description: The provided data is not valid.
           content:
@@ -38630,6 +39965,7 @@ paths:
                           - ADD_VARIABLE
                           - CANCEL_PROCESS_INSTANCE
                           - DELETE_DECISION_DEFINITION
+                          - DELETE_DECISION_INSTANCE
                           - DELETE_PROCESS_DEFINITION
                           - DELETE_PROCESS_INSTANCE
                           - MIGRATE_PROCESS_INSTANCE
@@ -41230,6 +42566,356 @@ components:
               maxLength: 25
             description: The system-assigned key for this resource.
             format: ResourceKey
+    BatchoperationtypeExactmatch:
+      type: string
+      title: BatchoperationtypeExactmatch
+      description: Matches the value exactly.
+      enum:
+      - ADD_VARIABLE
+      - CANCEL_PROCESS_INSTANCE
+      - DELETE_DECISION_DEFINITION
+      - DELETE_DECISION_INSTANCE
+      - DELETE_PROCESS_DEFINITION
+      - DELETE_PROCESS_INSTANCE
+      - MIGRATE_PROCESS_INSTANCE
+      - MODIFY_PROCESS_INSTANCE
+      - RESOLVE_INCIDENT
+      - UPDATE_VARIABLE
+    BatchoperationtypeAdvancedfilter:
+      title: BatchoperationtypeAdvancedfilter
+      description: Advanced BatchOperationTypeEnum filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          type: string
+          enum:
+          - ADD_VARIABLE
+          - CANCEL_PROCESS_INSTANCE
+          - DELETE_DECISION_DEFINITION
+          - DELETE_DECISION_INSTANCE
+          - DELETE_PROCESS_DEFINITION
+          - DELETE_PROCESS_INSTANCE
+          - MIGRATE_PROCESS_INSTANCE
+          - MODIFY_PROCESS_INSTANCE
+          - RESOLVE_INCIDENT
+          - UPDATE_VARIABLE
+        $neq:
+          description: Checks for inequality with the provided value.
+          type: string
+          enum:
+          - ADD_VARIABLE
+          - CANCEL_PROCESS_INSTANCE
+          - DELETE_DECISION_DEFINITION
+          - DELETE_DECISION_INSTANCE
+          - DELETE_PROCESS_DEFINITION
+          - DELETE_PROCESS_INSTANCE
+          - MIGRATE_PROCESS_INSTANCE
+          - MODIFY_PROCESS_INSTANCE
+          - RESOLVE_INCIDENT
+          - UPDATE_VARIABLE
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            description: The type of the batch operation.
+            type: string
+            enum:
+            - ADD_VARIABLE
+            - CANCEL_PROCESS_INSTANCE
+            - DELETE_DECISION_DEFINITION
+            - DELETE_DECISION_INSTANCE
+            - DELETE_PROCESS_DEFINITION
+            - DELETE_PROCESS_INSTANCE
+            - MIGRATE_PROCESS_INSTANCE
+            - MODIFY_PROCESS_INSTANCE
+            - RESOLVE_INCIDENT
+            - UPDATE_VARIABLE
+        $like:
+          type: string
+          description: 'Checks if the property matches the provided like value.
+
+
+            Supported wildcard characters are:
+
+
+            * `*`: matches zero, one, or multiple characters.
+
+            * `?`: matches one, single character.
+
+
+            Wildcard characters can be escaped with backslash, for instance: `\*`.
+
+            '
+    JobkeyExactmatch:
+      type: string
+      title: JobkeyExactmatch
+      description: Matches the value exactly.
+      format: JobKey
+      x-semantic-type: JobKey
+      example: '2251799813653498'
+      pattern: ^-?[0-9]+$
+      minLength: 1
+      maxLength: 25
+    JobkeyAdvancedfilter:
+      title: JobkeyAdvancedfilter
+      description: Advanced JobKey filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          format: JobKey
+          x-semantic-type: JobKey
+          example: '2251799813653498'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        $neq:
+          description: Checks for inequality with the provided value.
+          format: JobKey
+          x-semantic-type: JobKey
+          example: '2251799813653498'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            description: System-generated key for a job.
+            format: JobKey
+            x-semantic-type: JobKey
+            example: '2251799813653498'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+        $notIn:
+          description: Checks if the property matches none of the provided values.
+          type: array
+          items:
+            description: System-generated key for a job.
+            format: JobKey
+            x-semantic-type: JobKey
+            example: '2251799813653498'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+    UsertaskkeyAdvancedfilter:
+      title: UsertaskkeyAdvancedfilter
+      description: Basic advanced string filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          type: string
+        $neq:
+          description: Checks for inequality with the provided value.
+          type: string
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            type: string
+        $notIn:
+          description: Checks if the property matches none of the provided values.
+          type: array
+          items:
+            type: string
+    DecisionrequirementskeyExactmatch:
+      type: string
+      title: DecisionrequirementskeyExactmatch
+      description: Matches the value exactly.
+      format: DecisionRequirementsKey
+      x-semantic-type: DecisionRequirementsKey
+      example: '2251799813683346'
+      pattern: ^-?[0-9]+$
+      minLength: 1
+      maxLength: 25
+    DecisionrequirementskeyAdvancedfilter:
+      title: DecisionrequirementskeyAdvancedfilter
+      description: Advanced DecisionRequirementsKey filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          format: DecisionRequirementsKey
+          x-semantic-type: DecisionRequirementsKey
+          example: '2251799813683346'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        $neq:
+          description: Checks for inequality with the provided value.
+          format: DecisionRequirementsKey
+          x-semantic-type: DecisionRequirementsKey
+          example: '2251799813683346'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            description: System-generated key for a deployed decision requirements
+              definition.
+            format: DecisionRequirementsKey
+            x-semantic-type: DecisionRequirementsKey
+            example: '2251799813683346'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+        $notIn:
+          description: Checks if the property matches none of the provided values.
+          type: array
+          items:
+            description: System-generated key for a deployed decision requirements
+              definition.
+            format: DecisionRequirementsKey
+            x-semantic-type: DecisionRequirementsKey
+            example: '2251799813683346'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+    DecisiondefinitionkeyExactmatch:
+      type: string
+      title: DecisiondefinitionkeyExactmatch
+      description: Matches the value exactly.
+      format: DecisionDefinitionKey
+      x-semantic-type: DecisionDefinitionKey
+      example: '2251799813326547'
+      pattern: ^-?[0-9]+$
+      minLength: 1
+      maxLength: 25
+    DecisiondefinitionkeyAdvancedfilter:
+      title: DecisiondefinitionkeyAdvancedfilter
+      description: Advanced DecisionDefinitionKey filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          format: DecisionDefinitionKey
+          x-semantic-type: DecisionDefinitionKey
+          example: '2251799813326547'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        $neq:
+          description: Checks for inequality with the provided value.
+          format: DecisionDefinitionKey
+          x-semantic-type: DecisionDefinitionKey
+          example: '2251799813326547'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            description: System-generated key for a decision definition.
+            format: DecisionDefinitionKey
+            x-semantic-type: DecisionDefinitionKey
+            example: '2251799813326547'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+        $notIn:
+          description: Checks if the property matches none of the provided values.
+          type: array
+          items:
+            description: System-generated key for a decision definition.
+            format: DecisionDefinitionKey
+            x-semantic-type: DecisionDefinitionKey
+            example: '2251799813326547'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+    DecisionevaluationkeyExactmatch:
+      type: string
+      title: DecisionevaluationkeyExactmatch
+      description: Matches the value exactly.
+      format: DecisionEvaluationKey
+      x-semantic-type: DecisionEvaluationKey
+      example: '2251792362345323'
+      pattern: ^-?[0-9]+$
+      minLength: 1
+      maxLength: 25
+    DecisionevaluationkeyAdvancedfilter:
+      title: DecisionevaluationkeyAdvancedfilter
+      description: Advanced DecisionEvaluationKey filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          format: DecisionEvaluationKey
+          x-semantic-type: DecisionEvaluationKey
+          example: '2251792362345323'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        $neq:
+          description: Checks for inequality with the provided value.
+          format: DecisionEvaluationKey
+          x-semantic-type: DecisionEvaluationKey
+          example: '2251792362345323'
+          type: string
+          pattern: ^-?[0-9]+$
+          minLength: 1
+          maxLength: 25
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            description: System-generated key for a decision evaluation.
+            format: DecisionEvaluationKey
+            x-semantic-type: DecisionEvaluationKey
+            example: '2251792362345323'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
+        $notIn:
+          description: Checks if the property matches none of the provided values.
+          type: array
+          items:
+            description: System-generated key for a decision evaluation.
+            format: DecisionEvaluationKey
+            x-semantic-type: DecisionEvaluationKey
+            example: '2251792362345323'
+            type: string
+            pattern: ^-?[0-9]+$
+            minLength: 1
+            maxLength: 25
     PageLimit-basedpagination:
       type: object
       title: PageLimit-basedpagination
@@ -41375,6 +43061,7 @@ components:
           - DECISION_REQUIREMENTS_DEFINITION
           - DOCUMENT
           - EXPRESSION
+          - GLOBAL_LISTENER
           - GROUP
           - MAPPING_RULE
           - MESSAGE
@@ -41407,6 +43094,7 @@ components:
             - CREATE_BATCH_OPERATION_RESOLVE_INCIDENT
             - CREATE_DECISION_INSTANCE
             - CREATE_PROCESS_INSTANCE
+            - CREATE_TASK_LISTENER
             - DELETE
             - DELETE_DECISION_INSTANCE
             - DELETE_DRD
@@ -41414,6 +43102,7 @@ components:
             - DELETE_PROCESS
             - DELETE_PROCESS_INSTANCE
             - DELETE_RESOURCE
+            - DELETE_TASK_LISTENER
             - EVALUATE
             - MODIFY_PROCESS_INSTANCE
             - READ
@@ -41424,9 +43113,11 @@ components:
             - READ_PROCESS_INSTANCE
             - READ_USAGE_METRIC
             - READ_USER_TASK
+            - READ_TASK_LISTENER
             - UPDATE
             - UPDATE_PROCESS_INSTANCE
             - UPDATE_USER_TASK
+            - UPDATE_TASK_LISTENER
       required:
       - ownerId
       - ownerType
@@ -41468,6 +43159,7 @@ components:
           - DECISION_REQUIREMENTS_DEFINITION
           - DOCUMENT
           - EXPRESSION
+          - GLOBAL_LISTENER
           - GROUP
           - MAPPING_RULE
           - MESSAGE
@@ -41500,6 +43192,7 @@ components:
             - CREATE_BATCH_OPERATION_RESOLVE_INCIDENT
             - CREATE_DECISION_INSTANCE
             - CREATE_PROCESS_INSTANCE
+            - CREATE_TASK_LISTENER
             - DELETE
             - DELETE_DECISION_INSTANCE
             - DELETE_DRD
@@ -41507,6 +43200,7 @@ components:
             - DELETE_PROCESS
             - DELETE_PROCESS_INSTANCE
             - DELETE_RESOURCE
+            - DELETE_TASK_LISTENER
             - EVALUATE
             - MODIFY_PROCESS_INSTANCE
             - READ
@@ -41517,9 +43211,11 @@ components:
             - READ_PROCESS_INSTANCE
             - READ_USAGE_METRIC
             - READ_USER_TASK
+            - READ_TASK_LISTENER
             - UPDATE
             - UPDATE_PROCESS_INSTANCE
             - UPDATE_USER_TASK
+            - UPDATE_TASK_LISTENER
       required:
       - ownerId
       - ownerType
@@ -41527,30 +43223,6 @@ components:
       - resourceType
       - permissionTypes
       title: Object1
-    BatchoperationkeyAdvancedfilter:
-      title: BatchoperationkeyAdvancedfilter
-      description: Basic advanced string filter.
-      type: object
-      properties:
-        $eq:
-          description: Checks for equality with the provided value.
-          type: string
-        $neq:
-          description: Checks for inequality with the provided value.
-          type: string
-        $exists:
-          description: Checks if the current property exists.
-          type: boolean
-        $in:
-          description: Checks if the property matches any of the provided values.
-          type: array
-          items:
-            type: string
-        $notIn:
-          description: Checks if the property matches none of the provided values.
-          type: array
-          items:
-            type: string
     StateExactmatch:
       type: string
       title: StateExactmatch
@@ -41595,86 +43267,6 @@ components:
             - COMPLETED
             - CANCELED
             - FAILED
-        $like:
-          type: string
-          description: 'Checks if the property matches the provided like value.
-
-
-            Supported wildcard characters are:
-
-
-            * `*`: matches zero, one, or multiple characters.
-
-            * `?`: matches one, single character.
-
-
-            Wildcard characters can be escaped with backslash, for instance: `\*`.
-
-            '
-    OperationtypeExactmatch1:
-      type: string
-      title: OperationtypeExactmatch1
-      description: Matches the value exactly.
-      enum:
-      - ADD_VARIABLE
-      - CANCEL_PROCESS_INSTANCE
-      - DELETE_DECISION_DEFINITION
-      - DELETE_PROCESS_DEFINITION
-      - DELETE_PROCESS_INSTANCE
-      - MIGRATE_PROCESS_INSTANCE
-      - MODIFY_PROCESS_INSTANCE
-      - RESOLVE_INCIDENT
-      - UPDATE_VARIABLE
-    OperationtypeAdvancedfilter1:
-      title: OperationtypeAdvancedfilter1
-      description: Advanced BatchOperationTypeEnum filter.
-      type: object
-      properties:
-        $eq:
-          description: Checks for equality with the provided value.
-          type: string
-          enum:
-          - ADD_VARIABLE
-          - CANCEL_PROCESS_INSTANCE
-          - DELETE_DECISION_DEFINITION
-          - DELETE_PROCESS_DEFINITION
-          - DELETE_PROCESS_INSTANCE
-          - MIGRATE_PROCESS_INSTANCE
-          - MODIFY_PROCESS_INSTANCE
-          - RESOLVE_INCIDENT
-          - UPDATE_VARIABLE
-        $neq:
-          description: Checks for inequality with the provided value.
-          type: string
-          enum:
-          - ADD_VARIABLE
-          - CANCEL_PROCESS_INSTANCE
-          - DELETE_DECISION_DEFINITION
-          - DELETE_PROCESS_DEFINITION
-          - DELETE_PROCESS_INSTANCE
-          - MIGRATE_PROCESS_INSTANCE
-          - MODIFY_PROCESS_INSTANCE
-          - RESOLVE_INCIDENT
-          - UPDATE_VARIABLE
-        $exists:
-          description: Checks if the current property exists.
-          type: boolean
-        $in:
-          description: Checks if the property matches any of the provided values.
-          type: array
-          items:
-            description: The type of the batch operation.
-            type: string
-            enum:
-            - ADD_VARIABLE
-            - CANCEL_PROCESS_INSTANCE
-            - DELETE_DECISION_DEFINITION
-            - DELETE_PROCESS_DEFINITION
-            - DELETE_PROCESS_INSTANCE
-            - MIGRATE_PROCESS_INSTANCE
-            - MODIFY_PROCESS_INSTANCE
-            - RESOLVE_INCIDENT
-            - UPDATE_VARIABLE
         $like:
           type: string
           description: 'Checks if the property matches the provided like value.
@@ -42104,66 +43696,6 @@ components:
             Wildcard characters can be escaped with backslash, for instance: `\*`.
 
             '
-    DecisiondefinitionkeyExactmatch:
-      type: string
-      title: DecisiondefinitionkeyExactmatch
-      description: Matches the value exactly.
-      format: DecisionDefinitionKey
-      x-semantic-type: DecisionDefinitionKey
-      example: '2251799813326547'
-      pattern: ^-?[0-9]+$
-      minLength: 1
-      maxLength: 25
-    DecisiondefinitionkeyAdvancedfilter:
-      title: DecisiondefinitionkeyAdvancedfilter
-      description: Advanced DecisionDefinitionKey filter.
-      type: object
-      properties:
-        $eq:
-          description: Checks for equality with the provided value.
-          format: DecisionDefinitionKey
-          x-semantic-type: DecisionDefinitionKey
-          example: '2251799813326547'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
-        $neq:
-          description: Checks for inequality with the provided value.
-          format: DecisionDefinitionKey
-          x-semantic-type: DecisionDefinitionKey
-          example: '2251799813326547'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
-        $exists:
-          description: Checks if the current property exists.
-          type: boolean
-        $in:
-          description: Checks if the property matches any of the provided values.
-          type: array
-          items:
-            description: System-generated key for a decision definition.
-            format: DecisionDefinitionKey
-            x-semantic-type: DecisionDefinitionKey
-            example: '2251799813326547'
-            type: string
-            pattern: ^-?[0-9]+$
-            minLength: 1
-            maxLength: 25
-        $notIn:
-          description: Checks if the property matches none of the provided values.
-          type: array
-          items:
-            description: System-generated key for a decision definition.
-            format: DecisionDefinitionKey
-            x-semantic-type: DecisionDefinitionKey
-            example: '2251799813326547'
-            type: string
-            pattern: ^-?[0-9]+$
-            minLength: 1
-            maxLength: 25
     StateExactmatch3:
       type: string
       title: StateExactmatch3
@@ -42442,66 +43974,6 @@ components:
             Wildcard characters can be escaped with backslash, for instance: `\*`.
 
             '
-    JobkeyExactmatch:
-      type: string
-      title: JobkeyExactmatch
-      description: Matches the value exactly.
-      format: JobKey
-      x-semantic-type: JobKey
-      example: '2251799813653498'
-      pattern: ^-?[0-9]+$
-      minLength: 1
-      maxLength: 25
-    JobkeyAdvancedfilter:
-      title: JobkeyAdvancedfilter
-      description: Advanced JobKey filter.
-      type: object
-      properties:
-        $eq:
-          description: Checks for equality with the provided value.
-          format: JobKey
-          x-semantic-type: JobKey
-          example: '2251799813653498'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
-        $neq:
-          description: Checks for inequality with the provided value.
-          format: JobKey
-          x-semantic-type: JobKey
-          example: '2251799813653498'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
-        $exists:
-          description: Checks if the current property exists.
-          type: boolean
-        $in:
-          description: Checks if the property matches any of the provided values.
-          type: array
-          items:
-            description: System-generated key for a job.
-            format: JobKey
-            x-semantic-type: JobKey
-            example: '2251799813653498'
-            type: string
-            pattern: ^-?[0-9]+$
-            minLength: 1
-            maxLength: 25
-        $notIn:
-          description: Checks if the property matches none of the provided values.
-          type: array
-          items:
-            description: System-generated key for a job.
-            format: JobKey
-            x-semantic-type: JobKey
-            example: '2251799813653498'
-            type: string
-            pattern: ^-?[0-9]+$
-            minLength: 1
-            maxLength: 25
     KindExactmatch:
       type: string
       title: KindExactmatch
@@ -43781,6 +45253,42 @@ components:
               oneOf:
               - $ref: '#/components/schemas/ResourcekeyExactmatch'
               - $ref: '#/components/schemas/ResourcekeyAdvancedfilter'
+            batchOperationType:
+              oneOf:
+              - $ref: '#/components/schemas/BatchoperationtypeExactmatch'
+              - $ref: '#/components/schemas/BatchoperationtypeAdvancedfilter'
+            processDefinitionId:
+              oneOf:
+              - $ref: '#/components/schemas/ActoridExactmatch'
+              - $ref: '#/components/schemas/ActoridAdvancedfilter'
+            jobKey:
+              oneOf:
+              - $ref: '#/components/schemas/JobkeyExactmatch'
+              - $ref: '#/components/schemas/JobkeyAdvancedfilter'
+            userTaskKey:
+              oneOf:
+              - $ref: '#/components/schemas/ActoridExactmatch'
+              - $ref: '#/components/schemas/UsertaskkeyAdvancedfilter'
+            decisionRequirementsId:
+              oneOf:
+              - $ref: '#/components/schemas/ActoridExactmatch'
+              - $ref: '#/components/schemas/ActoridAdvancedfilter'
+            decisionRequirementsKey:
+              oneOf:
+              - $ref: '#/components/schemas/DecisionrequirementskeyExactmatch'
+              - $ref: '#/components/schemas/DecisionrequirementskeyAdvancedfilter'
+            decisionDefinitionId:
+              oneOf:
+              - $ref: '#/components/schemas/ActoridExactmatch'
+              - $ref: '#/components/schemas/ActoridAdvancedfilter'
+            decisionDefinitionKey:
+              oneOf:
+              - $ref: '#/components/schemas/DecisiondefinitionkeyExactmatch'
+              - $ref: '#/components/schemas/DecisiondefinitionkeyAdvancedfilter'
+            decisionEvaluationKey:
+              oneOf:
+              - $ref: '#/components/schemas/DecisionevaluationkeyExactmatch'
+              - $ref: '#/components/schemas/DecisionevaluationkeyAdvancedfilter'
         page:
           description: Pagination criteria.
           allOf:
@@ -43872,6 +45380,7 @@ components:
               - DECISION_REQUIREMENTS_DEFINITION
               - DOCUMENT
               - EXPRESSION
+              - GLOBAL_LISTENER
               - GROUP
               - MAPPING_RULE
               - MESSAGE
@@ -43940,11 +45449,11 @@ components:
             batchOperationKey:
               oneOf:
               - $ref: '#/components/schemas/ActoridExactmatch'
-              - $ref: '#/components/schemas/BatchoperationkeyAdvancedfilter'
+              - $ref: '#/components/schemas/UsertaskkeyAdvancedfilter'
             itemKey:
               oneOf:
               - $ref: '#/components/schemas/ActoridExactmatch'
-              - $ref: '#/components/schemas/BatchoperationkeyAdvancedfilter'
+              - $ref: '#/components/schemas/UsertaskkeyAdvancedfilter'
             processInstanceKey:
               oneOf:
               - $ref: '#/components/schemas/ProcessinstancekeyExactmatch'
@@ -43957,8 +45466,8 @@ components:
               - $ref: '#/components/schemas/StateAdvancedfilter'
             operationType:
               oneOf:
-              - $ref: '#/components/schemas/OperationtypeExactmatch1'
-              - $ref: '#/components/schemas/OperationtypeAdvancedfilter1'
+              - $ref: '#/components/schemas/BatchoperationtypeExactmatch'
+              - $ref: '#/components/schemas/BatchoperationtypeAdvancedfilter'
         page:
           description: Pagination criteria.
           allOf:
@@ -44008,11 +45517,11 @@ components:
             batchOperationKey:
               oneOf:
               - $ref: '#/components/schemas/ActoridExactmatch'
-              - $ref: '#/components/schemas/BatchoperationkeyAdvancedfilter'
+              - $ref: '#/components/schemas/UsertaskkeyAdvancedfilter'
             operationType:
               oneOf:
-              - $ref: '#/components/schemas/OperationtypeExactmatch1'
-              - $ref: '#/components/schemas/OperationtypeAdvancedfilter1'
+              - $ref: '#/components/schemas/BatchoperationtypeExactmatch'
+              - $ref: '#/components/schemas/BatchoperationtypeAdvancedfilter'
             state:
               oneOf:
               - $ref: '#/components/schemas/StateExactmatch1'
@@ -44021,7 +45530,9 @@ components:
               description: The type of the actor who performed the operation.
               type: string
               enum:
+              - ANONYMOUS
               - CLIENT
+              - UNKNOWN
               - USER
             actorId:
               oneOf:
@@ -44063,6 +45574,15 @@ components:
           type: object
           description: The value of the cluster variable. Can be any JSON object or
             primitive value. Will be serialized as a JSON string in responses.
+    UpdateGlobalClusterVariableData:
+      type: object
+      required:
+      - value
+      properties:
+        value:
+          type: object
+          description: The new value of the cluster variable. Can be any JSON object
+            or primitive value. Will be serialized as a JSON string in responses.
     SearchClusterVariablesData:
       description: Cluster variable search query request.
       additionalProperties: false
@@ -44146,6 +45666,15 @@ components:
           type: object
           description: The value of the cluster variable. Can be any JSON object or
             primitive value. Will be serialized as a JSON string in responses.
+    UpdateTenantClusterVariableData:
+      type: object
+      required:
+      - value
+      properties:
+        value:
+          type: object
+          description: The new value of the cluster variable. Can be any JSON object
+            or primitive value. Will be serialized as a JSON string in responses.
     EvaluateConditionalsData:
       type: object
       required:
@@ -44246,7 +45775,7 @@ components:
             messageKey:
               oneOf:
               - $ref: '#/components/schemas/ActoridExactmatch'
-              - $ref: '#/components/schemas/BatchoperationkeyAdvancedfilter'
+              - $ref: '#/components/schemas/UsertaskkeyAdvancedfilter'
             messageName:
               oneOf:
               - $ref: '#/components/schemas/ActoridExactmatch'
@@ -44340,6 +45869,18 @@ components:
             name:
               type: string
               description: The DMN name of the decision definition.
+            isLatestVersion:
+              description: 'Whether to only return the latest version of each decision
+                definition.
+
+                When using this filter, pagination functionality is limited, you can
+                only paginate forward using `after` and `limit`.
+
+                The response contains no `startCursor` in the `page`, and requests
+                ignore the `from` and `before` in the `page`.
+
+                '
+              type: boolean
             version:
               type: integer
               description: The assigned version of the decision definition.
@@ -44538,6 +46079,133 @@ components:
             - $ref: '#/components/schemas/PageOffset-basedpagination'
             - $ref: '#/components/schemas/PageCursor-basedforwardpagination'
             - $ref: '#/components/schemas/PageCursor-basedbackwardpagination'
+    DeleteDecisionInstanceData:
+      type: object
+      nullable: true
+      additionalProperties: false
+      properties:
+        operationReference:
+          description: 'A reference key chosen by the user that will be part of all
+            records resulting from this operation.
+
+            Must be > 0 if provided.
+
+            '
+          type: integer
+          format: int64
+          minimum: 1
+    DeleteDecisionInstancesBatchOperationData:
+      type: object
+      additionalProperties: false
+      description: The decision instance filter that defines which decision instances
+        should be deleted.
+      properties:
+        filter:
+          description: The decision instance filter.
+          type: object
+          properties:
+            decisionEvaluationInstanceKey:
+              oneOf:
+              - $ref: '#/components/schemas/DecisionevaluationinstancekeyExactmatch'
+              - $ref: '#/components/schemas/DecisionevaluationinstancekeyAdvancedfilter'
+            state:
+              oneOf:
+              - $ref: '#/components/schemas/StateExactmatch2'
+              - $ref: '#/components/schemas/StateAdvancedfilter2'
+            evaluationFailure:
+              type: string
+              description: The evaluation failure of the decision instance.
+            evaluationDate:
+              oneOf:
+              - $ref: '#/components/schemas/TimestampExactmatch'
+              - $ref: '#/components/schemas/TimestampAdvancedfilter'
+            decisionDefinitionId:
+              description: The ID of the DMN decision.
+              format: DecisionDefinitionId
+              x-semantic-type: DecisionDefinitionId
+              type: string
+              minLength: 1
+              maxLength: 256
+              pattern: ^[A-Za-z0-9_@.+-]+$
+              example: new-hire-onboarding-workflow
+            decisionDefinitionName:
+              type: string
+              description: The name of the DMN decision.
+            decisionDefinitionVersion:
+              type: integer
+              format: int32
+              description: The version of the decision.
+            decisionDefinitionType:
+              description: The type of the decision.
+              type: string
+              enum:
+              - DECISION_TABLE
+              - LITERAL_EXPRESSION
+              - UNKNOWN
+            tenantId:
+              description: The tenant ID of the decision instance.
+              example: customer-service
+              format: TenantId
+              type: string
+              x-semantic-type: TenantId
+              minLength: 1
+              maxLength: 256
+              pattern: ^(<default>|[A-Za-z0-9_@.+-]+)$
+            decisionEvaluationKey:
+              description: 'The key of the parent decision evaluation. Note that this
+                is not the identifier of an individual decision instance; the `decisionEvaluationInstanceKey`
+                is the identifier for a decision instance.
+
+                '
+              format: DecisionEvaluationKey
+              x-semantic-type: DecisionEvaluationKey
+              example: '2251792362345323'
+              type: string
+              pattern: ^-?[0-9]+$
+              minLength: 1
+              maxLength: 25
+            processDefinitionKey:
+              description: The key of the process definition.
+              format: ProcessDefinitionKey
+              x-semantic-type: ProcessDefinitionKey
+              example: '2251799813686749'
+              type: string
+              pattern: ^-?[0-9]+$
+              minLength: 1
+              maxLength: 25
+            processInstanceKey:
+              description: The key of the process instance.
+              format: ProcessInstanceKey
+              x-semantic-type: ProcessInstanceKey
+              example: '2251799813690746'
+              type: string
+              pattern: ^-?[0-9]+$
+              minLength: 1
+              maxLength: 25
+            decisionDefinitionKey:
+              oneOf:
+              - $ref: '#/components/schemas/DecisiondefinitionkeyExactmatch'
+              - $ref: '#/components/schemas/DecisiondefinitionkeyAdvancedfilter'
+            elementInstanceKey:
+              oneOf:
+              - $ref: '#/components/schemas/ElementinstancekeyExactmatch'
+              - $ref: '#/components/schemas/ElementinstancekeyAdvancedfilter'
+            rootDecisionDefinitionKey:
+              oneOf:
+              - $ref: '#/components/schemas/DecisiondefinitionkeyExactmatch'
+              - $ref: '#/components/schemas/DecisiondefinitionkeyAdvancedfilter'
+        operationReference:
+          description: 'A reference key chosen by the user that will be part of all
+            records resulting from this operation.
+
+            Must be > 0 if provided.
+
+            '
+          type: integer
+          format: int64
+          minimum: 1
+      required:
+      - filter
     SearchDecisionRequirementsData:
       type: object
       additionalProperties: false
@@ -45028,7 +46696,7 @@ components:
             incidentKey:
               oneOf:
               - $ref: '#/components/schemas/ActoridExactmatch'
-              - $ref: '#/components/schemas/BatchoperationkeyAdvancedfilter'
+              - $ref: '#/components/schemas/UsertaskkeyAdvancedfilter'
             processDefinitionKey:
               oneOf:
               - $ref: '#/components/schemas/ProcessdefinitionkeyExactmatch'
@@ -45181,7 +46849,6 @@ components:
           description: The new description of the group.
       required:
       - name
-      - description
     SearchClientsForGroupData:
       type: object
       properties:
@@ -45421,7 +47088,7 @@ components:
             incidentKey:
               oneOf:
               - $ref: '#/components/schemas/ActoridExactmatch'
-              - $ref: '#/components/schemas/BatchoperationkeyAdvancedfilter'
+              - $ref: '#/components/schemas/UsertaskkeyAdvancedfilter'
             processDefinitionKey:
               oneOf:
               - $ref: '#/components/schemas/ProcessdefinitionkeyExactmatch'
@@ -45899,8 +47566,8 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - mappingRuleId
       - claimName
+      - mappingRuleId
       - claimValue
       - name
     SearchMappingRuleData:
@@ -45970,8 +47637,8 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimValue
       - claimName
+      - claimValue
       - name
     SearchMessageSubscriptionsData:
       type: object
@@ -47771,8 +49438,8 @@ components:
                 - targetElementId
               description: The mapping instructions.
           required:
-          - mappingInstructions
           - targetProcessDefinitionKey
+          - mappingInstructions
         operationReference:
           description: 'A reference key chosen by the user that will be part of all
             records resulting from this operation.
@@ -48508,7 +50175,7 @@ components:
             incidentKey:
               oneOf:
               - $ref: '#/components/schemas/ActoridExactmatch'
-              - $ref: '#/components/schemas/BatchoperationkeyAdvancedfilter'
+              - $ref: '#/components/schemas/UsertaskkeyAdvancedfilter'
             processDefinitionKey:
               oneOf:
               - $ref: '#/components/schemas/ProcessdefinitionkeyExactmatch'
@@ -48787,6 +50454,25 @@ components:
           type: integer
           format: int64
           minimum: 1
+        deleteHistory:
+          description: 'Indicates if the historic data of a process resource should
+            be deleted via a
+
+            batch operation asynchronously.
+
+
+            This flag is only effective for process resources. For other resource
+            types
+
+            (decisions, forms, generic resources), this flag is ignored and no history
+
+            will be deleted. In those cases, the `batchOperation` field in the response
+
+            will not be populated.
+
+            '
+          type: boolean
+          default: false
     CreateRoleData:
       additionalProperties: false
       type: object
@@ -48861,7 +50547,6 @@ components:
           description: The description of the new role.
       required:
       - name
-      - description
     SearchClientsForRoleData:
       type: object
       properties:
@@ -49145,7 +50830,6 @@ components:
           description: The new description of the tenant.
       required:
       - name
-      - description
     SearchClientsForTenantData:
       additionalProperties: false
       type: object
@@ -49490,12 +51174,9 @@ components:
               x-semantic-type: ElementId
               example: Activity_106kosb
             name:
-              type: string
-              description: 'The task name. This only works for data created with 8.8
-                and onwards. Instances from prior versions don''t contain this data
-                and cannot be found.
-
-                '
+              oneOf:
+              - $ref: '#/components/schemas/ActoridExactmatch'
+              - $ref: '#/components/schemas/ActoridAdvancedfilter'
             candidateGroup:
               oneOf:
               - $ref: '#/components/schemas/ActoridExactmatch'
@@ -49745,14 +51426,36 @@ components:
           type: array
           items:
             type: object
+            additionalProperties: false
             properties:
               field:
                 description: The field to sort by.
                 type: string
                 enum:
+                - actorId
+                - actorType
+                - annotation
+                - auditLogKey
+                - batchOperationKey
+                - batchOperationType
+                - category
+                - decisionDefinitionId
+                - decisionDefinitionKey
+                - decisionEvaluationKey
+                - decisionRequirementsId
+                - decisionRequirementsKey
+                - elementInstanceKey
+                - entityKey
+                - entityType
+                - jobKey
                 - operationType
+                - processDefinitionId
+                - processDefinitionKey
+                - processInstanceKey
                 - result
+                - tenantId
                 - timestamp
+                - userTaskKey
               order:
                 description: The order in which to sort the related field.
                 type: string

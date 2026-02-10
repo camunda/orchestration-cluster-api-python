@@ -1,5 +1,6 @@
 import ast
 import os
+from collections.abc import Mapping
 from pathlib import Path
 import re
 
@@ -7,68 +8,69 @@ def to_camel_case(snake_str: str) -> str:
     components = snake_str.split('_')
     return components[0] + ''.join(x.title() for x in components[1:])
 
-def get_imports_and_signature(file_path: Path, package_root: str):
+ImportNode = ast.Import | ast.ImportFrom
+
+
+def get_imports_and_signature(
+    file_path: Path,
+    package_root: Path,
+) -> tuple[list[ImportNode], ast.FunctionDef | None, ast.AsyncFunctionDef | None]:
     with open(file_path, "r") as f:
         code = f.read()
     
     tree = ast.parse(code)
     
-    imports: list[ast.stmt] = []
-    sync_func = None
-    async_func = None
+    imports: list[ImportNode] = []
+    sync_func: ast.FunctionDef | None = None
+    async_func: ast.AsyncFunctionDef | None = None
     
     for node in tree.body:
         if isinstance(node, (ast.Import, ast.ImportFrom)):
             imports.append(node)
-        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            if node.name == "sync":
-                sync_func = node
-            elif node.name == "asyncio":
-                async_func = node
+        elif isinstance(node, ast.FunctionDef) and node.name == "sync":
+            sync_func = node
+        elif isinstance(node, ast.AsyncFunctionDef) and node.name == "asyncio":
+            async_func = node
                 
     rel_path = file_path.relative_to(package_root)
     # depth = number of parts in parent directory
     # e.g. api/group/module.py -> api/group -> depth=2
-    depth = len(rel_path.parent.parts)
     
-    adjusted_imports: list[ast.stmt] = []
+    adjusted_imports: list[ImportNode] = []
     for node in imports:
-        if isinstance(node, ast.ImportFrom):
-            if node.level > 0:
-                steps_up = node.level - 1
-                current_parts = list(rel_path.parent.parts)
-                
-                if steps_up > len(current_parts):
-                    continue
-                
-                target_parts = current_parts[:len(current_parts) - steps_up]
-                base_module = ".".join(target_parts)
-                
-                if node.module:
-                    if base_module:
-                        final_module = f"{base_module}.{node.module}"
-                    else:
-                        final_module = node.module
+        if isinstance(node, ast.ImportFrom) and node.level > 0:
+            steps_up = node.level - 1
+            current_parts = list(rel_path.parent.parts)
+
+            if steps_up > len(current_parts):
+                continue
+
+            target_parts = current_parts[: len(current_parts) - steps_up]
+            base_module = ".".join(target_parts)
+
+            if node.module:
+                if base_module:
+                    final_module = f"{base_module}.{node.module}"
                 else:
-                    final_module = base_module
-                
-                if final_module == "client" or (final_module and final_module.startswith("client.")):
-                    continue
-                
-                new_node = ast.ImportFrom(
-                    module=final_module,
-                    names=node.names,
-                    level=1
-                )
-                adjusted_imports.append(new_node)
+                    final_module = node.module
             else:
-                adjusted_imports.append(node)
+                final_module = base_module
+
+            if final_module == "client" or (final_module and final_module.startswith("client.")):
+                continue
+
+            new_node = ast.ImportFrom(
+                module=final_module,
+                names=node.names,
+                level=1,
+            )
+            adjusted_imports.append(new_node)
         else:
             adjusted_imports.append(node)
             
     return adjusted_imports, sync_func, async_func
 
-def generate_flat_client(package_path: str):
+def generate_flat_client(package_path: Path) -> None:
     api_dir = package_path / "api"
     if not api_dir.exists():
         print(f"API directory not found at {api_dir}")
@@ -76,9 +78,9 @@ def generate_flat_client(package_path: str):
 
     sync_methods: list[str] = []
     async_methods: list[str] = []
-    all_imports: set[ast.stmt] = set()
+    all_imports: set[str] = set()
 
-    for root, dirs, files in os.walk(api_dir):
+    for root, _dirs, files in os.walk(api_dir):
         for file in files:
             if file == "__init__.py" or not file.endswith(".py"):
                 continue
@@ -105,7 +107,7 @@ def generate_flat_client(package_path: str):
             
             if sync_func:
                 args = sync_func.args
-                new_args = []
+                new_args: list[ast.arg] = []
                 for arg in args.posonlyargs:
                     if arg.arg != 'client':
                         new_args.append(arg)
@@ -113,14 +115,14 @@ def generate_flat_client(package_path: str):
                     if arg.arg != 'client':
                         new_args.append(arg)
                 
-                new_kwonlyargs = []
-                new_kw_defaults = []
+                new_kwonlyargs: list[ast.arg] = []
+                new_kw_defaults: list[ast.expr | None] = []
                 for arg, default in zip(args.kwonlyargs, args.kw_defaults):
                     if arg.arg != 'client':
                         new_kwonlyargs.append(arg)
                         new_kw_defaults.append(default)
                 
-                arg_strs = ["self"]
+                arg_strs: list[str] = ["self"]
                 for arg in new_args:
                     arg_name = "data" if arg.arg == "body" else arg.arg
                     ann = f": {ast.unparse(arg.annotation)}" if arg.annotation else ""
@@ -162,7 +164,7 @@ def generate_flat_client(package_path: str):
 
             if async_func:
                 args = async_func.args
-                new_args = []
+                new_args: list[ast.arg] = []
                 for arg in args.posonlyargs:
                     if arg.arg != 'client':
                         new_args.append(arg)
@@ -170,14 +172,14 @@ def generate_flat_client(package_path: str):
                     if arg.arg != 'client':
                         new_args.append(arg)
                 
-                new_kwonlyargs = []
-                new_kw_defaults = []
+                new_kwonlyargs: list[ast.arg] = []
+                new_kw_defaults: list[ast.expr | None] = []
                 for arg, default in zip(args.kwonlyargs, args.kw_defaults):
                     if arg.arg != 'client':
                         new_kwonlyargs.append(arg)
                         new_kw_defaults.append(default)
                 
-                arg_strs = ["self"]
+                arg_strs: list[str] = ["self"]
                 for arg in new_args:
                     arg_name = "data" if arg.arg == "body" else arg.arg
                     ann = f": {ast.unparse(arg.annotation)}" if arg.annotation else ""
@@ -227,8 +229,8 @@ def generate_flat_client(package_path: str):
 
     # Split content
     lines = content.splitlines()
-    import_lines = []
-    class_lines = []
+    import_lines: list[str] = []
+    class_lines: list[str] = []
     in_classes = False
     
     for line in lines:
@@ -260,7 +262,7 @@ def generate_flat_client(package_path: str):
     imports_content += "\nfrom typing import Callable"
     imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, JobHandler"
     imports_content += "\nfrom .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
-    imports_content += "\nfrom .runtime.auth import AuthProvider, NullAuthProvider, inject_auth_event_hooks"
+    imports_content += "\nfrom .runtime.auth import AuthProvider, BasicAuthProvider, NullAuthProvider, OAuthClientCredentialsAuthProvider, AsyncOAuthClientCredentialsAuthProvider, inject_auth_event_hooks"
     imports_content += "\nfrom pathlib import Path"
     imports_content += "\nfrom .models.create_deployment_response_200 import CreateDeploymentResponse200"
     imports_content += "\nfrom .models.create_deployment_response_200_deployments_item_process_definition import CreateDeploymentResponse200DeploymentsItemProcessDefinition"
@@ -319,17 +321,35 @@ class CamundaClient:
             )
 
         if auth_provider is None:
-            if self.configuration.CAMUNDA_AUTH_STRATEGY != "NONE":
-                raise NotImplementedError(
-                    "Built-in auth providers are not implemented yet; pass auth_provider=... to CamundaClient (or set CAMUNDA_AUTH_STRATEGY=NONE)."
+            if self.configuration.CAMUNDA_AUTH_STRATEGY == "NONE":
+                auth_provider = NullAuthProvider()
+            elif self.configuration.CAMUNDA_AUTH_STRATEGY == "BASIC":
+                auth_provider = BasicAuthProvider(
+                    username=self.configuration.CAMUNDA_BASIC_AUTH_USERNAME or "",
+                    password=self.configuration.CAMUNDA_BASIC_AUTH_PASSWORD or "",
                 )
-            auth_provider = NullAuthProvider()
+            elif self.configuration.CAMUNDA_AUTH_STRATEGY == "OAUTH":
+                transport = (kwargs.get("httpx_args") or dict()).get("transport")
+                auth_provider = OAuthClientCredentialsAuthProvider(
+                    oauth_url=self.configuration.CAMUNDA_OAUTH_URL,
+                    client_id=self.configuration.CAMUNDA_CLIENT_ID or "",
+                    client_secret=self.configuration.CAMUNDA_CLIENT_SECRET or "",
+                    audience=self.configuration.CAMUNDA_TOKEN_AUDIENCE,
+                    cache_dir=self.configuration.CAMUNDA_TOKEN_CACHE_DIR,
+                    disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
+                    transport=transport,
+                )
+            else:
+                auth_provider = NullAuthProvider()
 
         self.auth_provider = auth_provider
 
         # Ensure every request gets auth headers via httpx event hooks.
         kwargs["httpx_args"] = inject_auth_event_hooks(
-            kwargs.get("httpx_args"), auth_provider, async_client=False
+            kwargs.get("httpx_args"),
+            auth_provider,
+            async_client=False,
+            log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -339,7 +359,29 @@ class CamundaClient:
         return self
 
     def __exit__(self, *args, **kwargs):
-        return self.client.__exit__(*args, **kwargs)
+        try:
+            return self.client.__exit__(*args, **kwargs)
+        finally:
+            close = getattr(self.auth_provider, "close", None)
+            if callable(close):
+                close()
+
+    def close(self) -> None:
+        """Close underlying HTTP clients.
+
+        This closes both the API client's httpx client and, when available, the
+        auth provider's token client.
+        """
+
+        try:
+            close = getattr(self.auth_provider, "close", None)
+            if callable(close):
+                close()
+        finally:
+            try:
+                self.client.get_httpx_client().close()
+            except Exception:
+                return
 
     def deploy_resources_from_files(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
         """Deploy BPMN/DMN/Form resources from local files.
@@ -409,17 +451,35 @@ class CamundaAsyncClient:
             )
 
         if auth_provider is None:
-            if self.configuration.CAMUNDA_AUTH_STRATEGY != "NONE":
-                raise NotImplementedError(
-                    "Built-in auth providers are not implemented yet; pass auth_provider=... to CamundaAsyncClient (or set CAMUNDA_AUTH_STRATEGY=NONE)."
+            if self.configuration.CAMUNDA_AUTH_STRATEGY == "NONE":
+                auth_provider = NullAuthProvider()
+            elif self.configuration.CAMUNDA_AUTH_STRATEGY == "BASIC":
+                auth_provider = BasicAuthProvider(
+                    username=self.configuration.CAMUNDA_BASIC_AUTH_USERNAME or "",
+                    password=self.configuration.CAMUNDA_BASIC_AUTH_PASSWORD or "",
                 )
-            auth_provider = NullAuthProvider()
+            elif self.configuration.CAMUNDA_AUTH_STRATEGY == "OAUTH":
+                transport = (kwargs.get("httpx_args") or dict()).get("transport")
+                auth_provider = AsyncOAuthClientCredentialsAuthProvider(
+                    oauth_url=self.configuration.CAMUNDA_OAUTH_URL,
+                    client_id=self.configuration.CAMUNDA_CLIENT_ID or "",
+                    client_secret=self.configuration.CAMUNDA_CLIENT_SECRET or "",
+                    audience=self.configuration.CAMUNDA_TOKEN_AUDIENCE,
+                    cache_dir=self.configuration.CAMUNDA_TOKEN_CACHE_DIR,
+                    disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
+                    transport=transport,
+                )
+            else:
+                auth_provider = NullAuthProvider()
 
         self.auth_provider = auth_provider
 
         # Ensure every request gets auth headers via httpx event hooks.
         kwargs["httpx_args"] = inject_auth_event_hooks(
-            kwargs.get("httpx_args"), auth_provider, async_client=True
+            kwargs.get("httpx_args"),
+            auth_provider,
+            async_client=True,
+            log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -430,7 +490,50 @@ class CamundaAsyncClient:
         return self
 
     async def __aexit__(self, *args, **kwargs):
-        await self.client.__aexit__(*args, **kwargs)
+        result = None
+        try:
+            result = await self.client.__aexit__(*args, **kwargs)
+            return result
+        finally:
+            aclose = getattr(self.auth_provider, "aclose", None)
+            if callable(aclose):
+                try:
+                    await aclose()
+                except Exception:
+                    pass
+            else:
+                close = getattr(self.auth_provider, "close", None)
+                if callable(close):
+                    try:
+                        close()
+                    except Exception:
+                        pass
+
+    async def aclose(self) -> None:
+        """Close underlying HTTP clients.
+
+        This closes both the API client's async httpx client and, when available,
+        the auth provider's token client.
+        """
+
+        aclose = getattr(self.auth_provider, "aclose", None)
+        if callable(aclose):
+            try:
+                await aclose()
+            except Exception:
+                pass
+        else:
+            close = getattr(self.auth_provider, "close", None)
+            if callable(close):
+                try:
+                    close()
+                except Exception:
+                    pass
+
+        try:
+            await self.client.get_async_httpx_client().aclose()
+        except Exception:
+            return
 
     def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True) -> JobWorker:
         worker = JobWorker(self, callback, config)
@@ -574,7 +677,7 @@ class CamundaAsyncClient:
             f.write(init_content)
         print(f"Successfully exported CamundaClient, CamundaAsyncClient, and WorkerConfig in {init_file}")
 
-def run(context):
+def run(context: Mapping[str, str]) -> None:
     out_dir = Path(context["out_dir"])
     package_dir = out_dir / "camunda_orchestration_sdk"
     if not package_dir.exists():

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import *
 
 import datetime
 from collections.abc import Mapping
@@ -9,6 +10,7 @@ from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
 from ..models.actortype_exactmatch import ActortypeExactmatch
+from ..models.batchoperationtype_exactmatch import BatchoperationtypeExactmatch
 from ..models.category_exactmatch import CategoryExactmatch
 from ..models.entitytype_exactmatch import EntitytypeExactmatch
 from ..models.operationtype_exactmatch import OperationtypeExactmatch
@@ -19,7 +21,19 @@ if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
     from ..models.actortype_advancedfilter import ActortypeAdvancedfilter
     from ..models.auditlogkey_advancedfilter import AuditlogkeyAdvancedfilter
+    from ..models.batchoperationtype_advancedfilter import (
+        BatchoperationtypeAdvancedfilter,
+    )
     from ..models.category_advancedfilter import CategoryAdvancedfilter
+    from ..models.decisiondefinitionkey_advancedfilter import (
+        DecisiondefinitionkeyAdvancedfilter,
+    )
+    from ..models.decisionevaluationkey_advancedfilter import (
+        DecisionevaluationkeyAdvancedfilter,
+    )
+    from ..models.decisionrequirementskey_advancedfilter import (
+        DecisionrequirementskeyAdvancedfilter,
+    )
     from ..models.deploymentkey_advancedfilter import DeploymentkeyAdvancedfilter
     from ..models.elementinstancekey_advancedfilter import (
         ElementinstancekeyAdvancedfilter,
@@ -27,6 +41,7 @@ if TYPE_CHECKING:
     from ..models.entitykey_advancedfilter import EntitykeyAdvancedfilter
     from ..models.entitytype_advancedfilter import EntitytypeAdvancedfilter
     from ..models.formkey_advancedfilter import FormkeyAdvancedfilter
+    from ..models.jobkey_advancedfilter import JobkeyAdvancedfilter
     from ..models.operationtype_advancedfilter import OperationtypeAdvancedfilter
     from ..models.processdefinitionkey_advancedfilter import (
         ProcessdefinitionkeyAdvancedfilter,
@@ -37,6 +52,7 @@ if TYPE_CHECKING:
     from ..models.resourcekey_advancedfilter import ResourcekeyAdvancedfilter
     from ..models.result_advancedfilter import ResultAdvancedfilter
     from ..models.timestamp_advancedfilter import TimestampAdvancedfilter
+    from ..models.usertaskkey_advancedfilter import UsertaskkeyAdvancedfilter
 
 
 T = TypeVar("T", bound="SearchAuditLogsDataFilter")
@@ -63,6 +79,15 @@ class SearchAuditLogsDataFilter:
         deployment_key (DeploymentkeyAdvancedfilter | str | Unset):
         form_key (FormkeyAdvancedfilter | str | Unset):
         resource_key (ResourcekeyAdvancedfilter | str | Unset):
+        batch_operation_type (BatchoperationtypeAdvancedfilter | BatchoperationtypeExactmatch | Unset):
+        process_definition_id (ActoridAdvancedfilter | str | Unset):
+        job_key (JobkeyAdvancedfilter | str | Unset):
+        user_task_key (str | Unset | UsertaskkeyAdvancedfilter):
+        decision_requirements_id (ActoridAdvancedfilter | str | Unset):
+        decision_requirements_key (DecisionrequirementskeyAdvancedfilter | str | Unset):
+        decision_definition_id (ActoridAdvancedfilter | str | Unset):
+        decision_definition_key (DecisiondefinitionkeyAdvancedfilter | str | Unset):
+        decision_evaluation_key (DecisionevaluationkeyAdvancedfilter | str | Unset):
     """
 
     audit_log_key: AuditlogkeyAdvancedfilter | str | Unset = UNSET
@@ -83,17 +108,40 @@ class SearchAuditLogsDataFilter:
     deployment_key: DeploymentkeyAdvancedfilter | str | Unset = UNSET
     form_key: FormkeyAdvancedfilter | str | Unset = UNSET
     resource_key: ResourcekeyAdvancedfilter | str | Unset = UNSET
+    batch_operation_type: (
+        BatchoperationtypeAdvancedfilter | BatchoperationtypeExactmatch | Unset
+    ) = UNSET
+    process_definition_id: ActoridAdvancedfilter | str | Unset = UNSET
+    job_key: JobkeyAdvancedfilter | str | Unset = UNSET
+    user_task_key: UserTaskKey | Unset | UsertaskkeyAdvancedfilter = UNSET
+    decision_requirements_id: ActoridAdvancedfilter | str | Unset = UNSET
+    decision_requirements_key: DecisionrequirementskeyAdvancedfilter | str | Unset = (
+        UNSET
+    )
+    decision_definition_id: ActoridAdvancedfilter | str | Unset = UNSET
+    decision_definition_key: DecisiondefinitionkeyAdvancedfilter | str | Unset = UNSET
+    decision_evaluation_key: DecisionevaluationkeyAdvancedfilter | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
         from ..models.auditlogkey_advancedfilter import AuditlogkeyAdvancedfilter
+        from ..models.decisiondefinitionkey_advancedfilter import (
+            DecisiondefinitionkeyAdvancedfilter,
+        )
+        from ..models.decisionevaluationkey_advancedfilter import (
+            DecisionevaluationkeyAdvancedfilter,
+        )
+        from ..models.decisionrequirementskey_advancedfilter import (
+            DecisionrequirementskeyAdvancedfilter,
+        )
         from ..models.deploymentkey_advancedfilter import DeploymentkeyAdvancedfilter
         from ..models.elementinstancekey_advancedfilter import (
             ElementinstancekeyAdvancedfilter,
         )
         from ..models.entitykey_advancedfilter import EntitykeyAdvancedfilter
         from ..models.formkey_advancedfilter import FormkeyAdvancedfilter
+        from ..models.jobkey_advancedfilter import JobkeyAdvancedfilter
         from ..models.processdefinitionkey_advancedfilter import (
             ProcessdefinitionkeyAdvancedfilter,
         )
@@ -101,6 +149,7 @@ class SearchAuditLogsDataFilter:
             ProcessinstancekeyAdvancedfilter,
         )
         from ..models.resourcekey_advancedfilter import ResourcekeyAdvancedfilter
+        from ..models.usertaskkey_advancedfilter import UsertaskkeyAdvancedfilter
 
         audit_log_key: dict[str, Any] | str | Unset
         if isinstance(self.audit_log_key, Unset):
@@ -232,6 +281,84 @@ class SearchAuditLogsDataFilter:
         else:
             resource_key = self.resource_key
 
+        batch_operation_type: dict[str, Any] | str | Unset
+        if isinstance(self.batch_operation_type, Unset):
+            batch_operation_type = UNSET
+        elif isinstance(self.batch_operation_type, BatchoperationtypeExactmatch):
+            batch_operation_type = self.batch_operation_type.value
+        else:
+            batch_operation_type = self.batch_operation_type.to_dict()
+
+        process_definition_id: dict[str, Any] | str | Unset
+        if isinstance(self.process_definition_id, Unset):
+            process_definition_id = UNSET
+        elif isinstance(self.process_definition_id, ActoridAdvancedfilter):
+            process_definition_id = self.process_definition_id.to_dict()
+        else:
+            process_definition_id = self.process_definition_id
+
+        job_key: dict[str, Any] | str | Unset
+        if isinstance(self.job_key, Unset):
+            job_key = UNSET
+        elif isinstance(self.job_key, JobkeyAdvancedfilter):
+            job_key = self.job_key.to_dict()
+        else:
+            job_key = self.job_key
+
+        user_task_key: dict[str, Any] | str | Unset
+        if isinstance(self.user_task_key, Unset):
+            user_task_key = UNSET
+        elif isinstance(self.user_task_key, UsertaskkeyAdvancedfilter):
+            user_task_key = self.user_task_key.to_dict()
+        else:
+            user_task_key = self.user_task_key
+
+        decision_requirements_id: dict[str, Any] | str | Unset
+        if isinstance(self.decision_requirements_id, Unset):
+            decision_requirements_id = UNSET
+        elif isinstance(self.decision_requirements_id, ActoridAdvancedfilter):
+            decision_requirements_id = self.decision_requirements_id.to_dict()
+        else:
+            decision_requirements_id = self.decision_requirements_id
+
+        decision_requirements_key: dict[str, Any] | str | Unset
+        if isinstance(self.decision_requirements_key, Unset):
+            decision_requirements_key = UNSET
+        elif isinstance(
+            self.decision_requirements_key, DecisionrequirementskeyAdvancedfilter
+        ):
+            decision_requirements_key = self.decision_requirements_key.to_dict()
+        else:
+            decision_requirements_key = self.decision_requirements_key
+
+        decision_definition_id: dict[str, Any] | str | Unset
+        if isinstance(self.decision_definition_id, Unset):
+            decision_definition_id = UNSET
+        elif isinstance(self.decision_definition_id, ActoridAdvancedfilter):
+            decision_definition_id = self.decision_definition_id.to_dict()
+        else:
+            decision_definition_id = self.decision_definition_id
+
+        decision_definition_key: dict[str, Any] | str | Unset
+        if isinstance(self.decision_definition_key, Unset):
+            decision_definition_key = UNSET
+        elif isinstance(
+            self.decision_definition_key, DecisiondefinitionkeyAdvancedfilter
+        ):
+            decision_definition_key = self.decision_definition_key.to_dict()
+        else:
+            decision_definition_key = self.decision_definition_key
+
+        decision_evaluation_key: dict[str, Any] | str | Unset
+        if isinstance(self.decision_evaluation_key, Unset):
+            decision_evaluation_key = UNSET
+        elif isinstance(
+            self.decision_evaluation_key, DecisionevaluationkeyAdvancedfilter
+        ):
+            decision_evaluation_key = self.decision_evaluation_key.to_dict()
+        else:
+            decision_evaluation_key = self.decision_evaluation_key
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -267,6 +394,24 @@ class SearchAuditLogsDataFilter:
             field_dict["formKey"] = form_key
         if resource_key is not UNSET:
             field_dict["resourceKey"] = resource_key
+        if batch_operation_type is not UNSET:
+            field_dict["batchOperationType"] = batch_operation_type
+        if process_definition_id is not UNSET:
+            field_dict["processDefinitionId"] = process_definition_id
+        if job_key is not UNSET:
+            field_dict["jobKey"] = job_key
+        if user_task_key is not UNSET:
+            field_dict["userTaskKey"] = user_task_key
+        if decision_requirements_id is not UNSET:
+            field_dict["decisionRequirementsId"] = decision_requirements_id
+        if decision_requirements_key is not UNSET:
+            field_dict["decisionRequirementsKey"] = decision_requirements_key
+        if decision_definition_id is not UNSET:
+            field_dict["decisionDefinitionId"] = decision_definition_id
+        if decision_definition_key is not UNSET:
+            field_dict["decisionDefinitionKey"] = decision_definition_key
+        if decision_evaluation_key is not UNSET:
+            field_dict["decisionEvaluationKey"] = decision_evaluation_key
 
         return field_dict
 
@@ -275,7 +420,19 @@ class SearchAuditLogsDataFilter:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
         from ..models.actortype_advancedfilter import ActortypeAdvancedfilter
         from ..models.auditlogkey_advancedfilter import AuditlogkeyAdvancedfilter
+        from ..models.batchoperationtype_advancedfilter import (
+            BatchoperationtypeAdvancedfilter,
+        )
         from ..models.category_advancedfilter import CategoryAdvancedfilter
+        from ..models.decisiondefinitionkey_advancedfilter import (
+            DecisiondefinitionkeyAdvancedfilter,
+        )
+        from ..models.decisionevaluationkey_advancedfilter import (
+            DecisionevaluationkeyAdvancedfilter,
+        )
+        from ..models.decisionrequirementskey_advancedfilter import (
+            DecisionrequirementskeyAdvancedfilter,
+        )
         from ..models.deploymentkey_advancedfilter import DeploymentkeyAdvancedfilter
         from ..models.elementinstancekey_advancedfilter import (
             ElementinstancekeyAdvancedfilter,
@@ -283,6 +440,7 @@ class SearchAuditLogsDataFilter:
         from ..models.entitykey_advancedfilter import EntitykeyAdvancedfilter
         from ..models.entitytype_advancedfilter import EntitytypeAdvancedfilter
         from ..models.formkey_advancedfilter import FormkeyAdvancedfilter
+        from ..models.jobkey_advancedfilter import JobkeyAdvancedfilter
         from ..models.operationtype_advancedfilter import OperationtypeAdvancedfilter
         from ..models.processdefinitionkey_advancedfilter import (
             ProcessdefinitionkeyAdvancedfilter,
@@ -293,6 +451,7 @@ class SearchAuditLogsDataFilter:
         from ..models.resourcekey_advancedfilter import ResourcekeyAdvancedfilter
         from ..models.result_advancedfilter import ResultAdvancedfilter
         from ..models.timestamp_advancedfilter import TimestampAdvancedfilter
+        from ..models.usertaskkey_advancedfilter import UsertaskkeyAdvancedfilter
 
         d = dict(src_dict)
 
@@ -596,6 +755,183 @@ class SearchAuditLogsDataFilter:
 
         resource_key = _parse_resource_key(d.pop("resourceKey", UNSET))
 
+        def _parse_batch_operation_type(
+            data: object,
+        ) -> BatchoperationtypeAdvancedfilter | BatchoperationtypeExactmatch | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                batch_operation_type_type_0 = BatchoperationtypeExactmatch(data)
+
+                return batch_operation_type_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+            batch_operation_type_type_1 = BatchoperationtypeAdvancedfilter.from_dict(
+                data
+            )
+
+            return batch_operation_type_type_1
+
+        batch_operation_type = _parse_batch_operation_type(
+            d.pop("batchOperationType", UNSET)
+        )
+
+        def _parse_process_definition_id(
+            data: object,
+        ) -> ActoridAdvancedfilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                process_definition_id_type_1 = ActoridAdvancedfilter.from_dict(data)
+
+                return process_definition_id_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(ActoridAdvancedfilter | str | Unset, data)
+
+        process_definition_id = _parse_process_definition_id(
+            d.pop("processDefinitionId", UNSET)
+        )
+
+        def _parse_job_key(data: object) -> JobkeyAdvancedfilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                job_key_type_1 = JobkeyAdvancedfilter.from_dict(data)
+
+                return job_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(JobkeyAdvancedfilter | str | Unset, data)
+
+        job_key = _parse_job_key(d.pop("jobKey", UNSET))
+
+        def _parse_user_task_key(
+            data: object,
+        ) -> str | Unset | UsertaskkeyAdvancedfilter:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                user_task_key_type_1 = UsertaskkeyAdvancedfilter.from_dict(data)
+
+                return user_task_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(str | Unset | UsertaskkeyAdvancedfilter, data)
+
+        user_task_key = _parse_user_task_key(d.pop("userTaskKey", UNSET))
+
+        def _parse_decision_requirements_id(
+            data: object,
+        ) -> ActoridAdvancedfilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                decision_requirements_id_type_1 = ActoridAdvancedfilter.from_dict(data)
+
+                return decision_requirements_id_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(ActoridAdvancedfilter | str | Unset, data)
+
+        decision_requirements_id = _parse_decision_requirements_id(
+            d.pop("decisionRequirementsId", UNSET)
+        )
+
+        def _parse_decision_requirements_key(
+            data: object,
+        ) -> DecisionrequirementskeyAdvancedfilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                decision_requirements_key_type_1 = (
+                    DecisionrequirementskeyAdvancedfilter.from_dict(data)
+                )
+
+                return decision_requirements_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(DecisionrequirementskeyAdvancedfilter | str | Unset, data)
+
+        decision_requirements_key = _parse_decision_requirements_key(
+            d.pop("decisionRequirementsKey", UNSET)
+        )
+
+        def _parse_decision_definition_id(
+            data: object,
+        ) -> ActoridAdvancedfilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                decision_definition_id_type_1 = ActoridAdvancedfilter.from_dict(data)
+
+                return decision_definition_id_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(ActoridAdvancedfilter | str | Unset, data)
+
+        decision_definition_id = _parse_decision_definition_id(
+            d.pop("decisionDefinitionId", UNSET)
+        )
+
+        def _parse_decision_definition_key(
+            data: object,
+        ) -> DecisiondefinitionkeyAdvancedfilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                decision_definition_key_type_1 = (
+                    DecisiondefinitionkeyAdvancedfilter.from_dict(data)
+                )
+
+                return decision_definition_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(DecisiondefinitionkeyAdvancedfilter | str | Unset, data)
+
+        decision_definition_key = _parse_decision_definition_key(
+            d.pop("decisionDefinitionKey", UNSET)
+        )
+
+        def _parse_decision_evaluation_key(
+            data: object,
+        ) -> DecisionevaluationkeyAdvancedfilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                decision_evaluation_key_type_1 = (
+                    DecisionevaluationkeyAdvancedfilter.from_dict(data)
+                )
+
+                return decision_evaluation_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(DecisionevaluationkeyAdvancedfilter | str | Unset, data)
+
+        decision_evaluation_key = _parse_decision_evaluation_key(
+            d.pop("decisionEvaluationKey", UNSET)
+        )
+
         search_audit_logs_data_filter = cls(
             audit_log_key=audit_log_key,
             process_definition_key=process_definition_key,
@@ -613,6 +949,15 @@ class SearchAuditLogsDataFilter:
             deployment_key=deployment_key,
             form_key=form_key,
             resource_key=resource_key,
+            batch_operation_type=batch_operation_type,
+            process_definition_id=process_definition_id,
+            job_key=job_key,
+            user_task_key=user_task_key,
+            decision_requirements_id=decision_requirements_id,
+            decision_requirements_key=decision_requirements_key,
+            decision_definition_id=decision_definition_id,
+            decision_definition_key=decision_definition_key,
+            decision_evaluation_key=decision_evaluation_key,
         )
 
         search_audit_logs_data_filter.additional_properties = d

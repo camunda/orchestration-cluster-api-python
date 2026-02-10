@@ -5,6 +5,8 @@ from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
 
+from ..types import UNSET, Unset
+
 T = TypeVar("T", bound="UpdateTenantData")
 
 
@@ -13,11 +15,11 @@ class UpdateTenantData:
     """
     Attributes:
         name (str): The new name of the tenant.
-        description (str): The new description of the tenant.
+        description (str | Unset): The new description of the tenant.
     """
 
     name: str
-    description: str
+    description: str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         name = self.name
@@ -29,9 +31,10 @@ class UpdateTenantData:
         field_dict.update(
             {
                 "name": name,
-                "description": description,
             }
         )
+        if description is not UNSET:
+            field_dict["description"] = description
 
         return field_dict
 
@@ -40,7 +43,7 @@ class UpdateTenantData:
         d = dict(src_dict)
         name = d.pop("name")
 
-        description = d.pop("description")
+        description = d.pop("description", UNSET)
 
         update_tenant_data = cls(
             name=name,

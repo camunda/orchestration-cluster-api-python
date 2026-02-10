@@ -8,11 +8,11 @@ from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="BatchoperationkeyAdvancedfilter")
+T = TypeVar("T", bound="UsertaskkeyAdvancedfilter")
 
 
 @_attrs_define
-class BatchoperationkeyAdvancedfilter:
+class UsertaskkeyAdvancedfilter:
     """Basic advanced string filter.
 
     Attributes:
@@ -74,7 +74,7 @@ class BatchoperationkeyAdvancedfilter:
 
         not_in = cast(list[str], d.pop("$notIn", UNSET))
 
-        batchoperationkey_advancedfilter = cls(
+        usertaskkey_advancedfilter = cls(
             eq=eq,
             neq=neq,
             exists=exists,
@@ -82,8 +82,8 @@ class BatchoperationkeyAdvancedfilter:
             not_in=not_in,
         )
 
-        batchoperationkey_advancedfilter.additional_properties = d
-        return batchoperationkey_advancedfilter
+        usertaskkey_advancedfilter.additional_properties = d
+        return usertaskkey_advancedfilter
 
     @property
     def additional_keys(self) -> list[str]:

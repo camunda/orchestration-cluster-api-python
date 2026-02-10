@@ -26,7 +26,7 @@ class CorrelateMessageData:
     """
 
     name: str
-    correlation_key: MessageCorrelationKey | Unset = ""
+    correlation_key: str | Unset = ""
     variables: CorrelateMessageDataVariables | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
 
@@ -66,7 +66,7 @@ class CorrelateMessageData:
         d = dict(src_dict)
         name = d.pop("name")
 
-        correlation_key = lift_message_correlation_key(_val) if (_val := d.pop("correlationKey", UNSET)) is not UNSET else UNSET
+        correlation_key = d.pop("correlationKey", UNSET)
 
         _variables = d.pop("variables", UNSET)
         variables: CorrelateMessageDataVariables | Unset
