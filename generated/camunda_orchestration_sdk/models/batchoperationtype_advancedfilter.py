@@ -6,25 +6,29 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.operationtype_advancedfilter_1_eq import OperationtypeAdvancedfilter1Eq
-from ..models.operationtype_advancedfilter_1_in_item import (
-    OperationtypeAdvancedfilter1InItem,
+from ..models.batchoperationtype_advancedfilter_eq import (
+    BatchoperationtypeAdvancedfilterEq,
 )
-from ..models.operationtype_advancedfilter_1_neq import OperationtypeAdvancedfilter1Neq
+from ..models.batchoperationtype_advancedfilter_in_item import (
+    BatchoperationtypeAdvancedfilterInItem,
+)
+from ..models.batchoperationtype_advancedfilter_neq import (
+    BatchoperationtypeAdvancedfilterNeq,
+)
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="OperationtypeAdvancedfilter1")
+T = TypeVar("T", bound="BatchoperationtypeAdvancedfilter")
 
 
 @_attrs_define
-class OperationtypeAdvancedfilter1:
+class BatchoperationtypeAdvancedfilter:
     r"""Advanced BatchOperationTypeEnum filter.
 
     Attributes:
-        eq (OperationtypeAdvancedfilter1Eq | Unset): Checks for equality with the provided value.
-        neq (OperationtypeAdvancedfilter1Neq | Unset): Checks for inequality with the provided value.
+        eq (BatchoperationtypeAdvancedfilterEq | Unset): Checks for equality with the provided value.
+        neq (BatchoperationtypeAdvancedfilterNeq | Unset): Checks for inequality with the provided value.
         exists (bool | Unset): Checks if the current property exists.
-        in_ (list[OperationtypeAdvancedfilter1InItem] | Unset): Checks if the property matches any of the provided
+        in_ (list[BatchoperationtypeAdvancedfilterInItem] | Unset): Checks if the property matches any of the provided
             values.
         like (str | Unset): Checks if the property matches the provided like value.
 
@@ -36,10 +40,10 @@ class OperationtypeAdvancedfilter1:
             Wildcard characters can be escaped with backslash, for instance: `\*`.
     """
 
-    eq: OperationtypeAdvancedfilter1Eq | Unset = UNSET
-    neq: OperationtypeAdvancedfilter1Neq | Unset = UNSET
+    eq: BatchoperationtypeAdvancedfilterEq | Unset = UNSET
+    neq: BatchoperationtypeAdvancedfilterNeq | Unset = UNSET
     exists: bool | Unset = UNSET
-    in_: list[OperationtypeAdvancedfilter1InItem] | Unset = UNSET
+    in_: list[BatchoperationtypeAdvancedfilterInItem] | Unset = UNSET
     like: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
@@ -83,33 +87,33 @@ class OperationtypeAdvancedfilter1:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
         _eq = d.pop("$eq", UNSET)
-        eq: OperationtypeAdvancedfilter1Eq | Unset
+        eq: BatchoperationtypeAdvancedfilterEq | Unset
         if isinstance(_eq, Unset):
             eq = UNSET
         else:
-            eq = OperationtypeAdvancedfilter1Eq(_eq)
+            eq = BatchoperationtypeAdvancedfilterEq(_eq)
 
         _neq = d.pop("$neq", UNSET)
-        neq: OperationtypeAdvancedfilter1Neq | Unset
+        neq: BatchoperationtypeAdvancedfilterNeq | Unset
         if isinstance(_neq, Unset):
             neq = UNSET
         else:
-            neq = OperationtypeAdvancedfilter1Neq(_neq)
+            neq = BatchoperationtypeAdvancedfilterNeq(_neq)
 
         exists = d.pop("$exists", UNSET)
 
         _in_ = d.pop("$in", UNSET)
-        in_: list[OperationtypeAdvancedfilter1InItem] | Unset = UNSET
+        in_: list[BatchoperationtypeAdvancedfilterInItem] | Unset = UNSET
         if _in_ is not UNSET:
             in_ = []
             for in_item_data in _in_:
-                in_item = OperationtypeAdvancedfilter1InItem(in_item_data)
+                in_item = BatchoperationtypeAdvancedfilterInItem(in_item_data)
 
                 in_.append(in_item)
 
         like = d.pop("$like", UNSET)
 
-        operationtype_advancedfilter_1 = cls(
+        batchoperationtype_advancedfilter = cls(
             eq=eq,
             neq=neq,
             exists=exists,
@@ -117,8 +121,8 @@ class OperationtypeAdvancedfilter1:
             like=like,
         )
 
-        operationtype_advancedfilter_1.additional_properties = d
-        return operationtype_advancedfilter_1
+        batchoperationtype_advancedfilter.additional_properties = d
+        return batchoperationtype_advancedfilter
 
     @property
     def additional_keys(self) -> list[str]:

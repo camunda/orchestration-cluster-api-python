@@ -218,10 +218,28 @@ class OAuthClientCredentialsAuthProvider:
         if self._use_file_cache and self._cache_dir is not None:
             self._use_file_cache = _ensure_dir(self._cache_dir)
 
+    def close(self) -> None:
+        """Close the underlying HTTP client used for token requests.
+
+        Call this when the application is shutting down if you created a provider
+        instance yourself (or if you want deterministic cleanup in tests).
+        """
+
+        try:
+            self._client.close()
+        except Exception:
+            # Best-effort cleanup.
+            return
+
+    def __enter__(self) -> "OAuthClientCredentialsAuthProvider":
+        return self
+
+    def __exit__(self, *args: Any, **kwargs: Any) -> None:
+        self.close()
+
     def _token_cache_file(self) -> Path | None:
         if not self._use_file_cache or self._cache_dir is None:
             return None
-        host = "unknown"
         try:
             host = httpx.URL(self._oauth_url).host or "unknown"
         except Exception:
@@ -435,6 +453,21 @@ class AsyncOAuthClientCredentialsAuthProvider:
         self._use_file_cache = bool(self._cache_dir) and (not disk_cache_disable)
         if self._use_file_cache and self._cache_dir is not None:
             self._use_file_cache = _ensure_dir(self._cache_dir)
+
+    async def aclose(self) -> None:
+        """Close the underlying async HTTP client used for token requests."""
+
+        try:
+            await self._client.aclose()
+        except Exception:
+            # Best-effort cleanup.
+            return
+
+    async def __aenter__(self) -> "AsyncOAuthClientCredentialsAuthProvider":
+        return self
+
+    async def __aexit__(self, *args: Any, **kwargs: Any) -> None:
+        await self.aclose()
 
     def _token_cache_file(self) -> Path | None:
         if not self._use_file_cache or self._cache_dir is None:

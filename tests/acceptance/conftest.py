@@ -2,7 +2,7 @@ import pytest
 
 
 @pytest.fixture(autouse=True)
-def _clear_sdk_env(monkeypatch: pytest.MonkeyPatch) -> None:
+def _clear_sdk_env(monkeypatch: pytest.MonkeyPatch) -> None: # pyright: ignore[reportUnusedFunction]
     """Acceptance tests must not depend on the developer shell environment.
 
     This clears any SDK-related env vars so defaults are deterministic.
@@ -22,5 +22,7 @@ def _clear_sdk_env(monkeypatch: pytest.MonkeyPatch) -> None:
         "CAMUNDA_BASIC_AUTH_USERNAME",
         "CAMUNDA_BASIC_AUTH_PASSWORD",
         "CAMUNDA_SDK_LOG_LEVEL",
+        "CAMUNDA_TOKEN_CACHE_DIR",  
+        "CAMUNDA_TOKEN_DISK_CACHE_DISABLE",  
     ):
         monkeypatch.delenv(key, raising=False)

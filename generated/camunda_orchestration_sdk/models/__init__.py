@@ -154,7 +154,13 @@ from .assign_user_to_tenant_response_404 import AssignUserToTenantResponse404
 from .assign_user_to_tenant_response_500 import AssignUserToTenantResponse500
 from .assign_user_to_tenant_response_503 import AssignUserToTenantResponse503
 from .auditlogkey_advancedfilter import AuditlogkeyAdvancedfilter
-from .batchoperationkey_advancedfilter import BatchoperationkeyAdvancedfilter
+from .batchoperationtype_advancedfilter import BatchoperationtypeAdvancedfilter
+from .batchoperationtype_advancedfilter_eq import BatchoperationtypeAdvancedfilterEq
+from .batchoperationtype_advancedfilter_in_item import (
+    BatchoperationtypeAdvancedfilterInItem,
+)
+from .batchoperationtype_advancedfilter_neq import BatchoperationtypeAdvancedfilterNeq
+from .batchoperationtype_exactmatch import BatchoperationtypeExactmatch
 from .broadcast_signal_data import BroadcastSignalData
 from .broadcast_signal_data_variables import BroadcastSignalDataVariables
 from .broadcast_signal_response_200 import BroadcastSignalResponse200
@@ -431,10 +437,51 @@ from .decisionevaluationbykey import Decisionevaluationbykey
 from .decisionevaluationinstancekey_advancedfilter import (
     DecisionevaluationinstancekeyAdvancedfilter,
 )
+from .decisionevaluationkey_advancedfilter import DecisionevaluationkeyAdvancedfilter
+from .decisionrequirementskey_advancedfilter import (
+    DecisionrequirementskeyAdvancedfilter,
+)
 from .delete_authorization_response_401 import DeleteAuthorizationResponse401
 from .delete_authorization_response_404 import DeleteAuthorizationResponse404
 from .delete_authorization_response_500 import DeleteAuthorizationResponse500
 from .delete_authorization_response_503 import DeleteAuthorizationResponse503
+from .delete_decision_instance_data_type_0 import DeleteDecisionInstanceDataType0
+from .delete_decision_instance_response_200 import DeleteDecisionInstanceResponse200
+from .delete_decision_instance_response_200_batch_operation_type import (
+    DeleteDecisionInstanceResponse200BatchOperationType,
+)
+from .delete_decision_instance_response_401 import DeleteDecisionInstanceResponse401
+from .delete_decision_instance_response_403 import DeleteDecisionInstanceResponse403
+from .delete_decision_instance_response_404 import DeleteDecisionInstanceResponse404
+from .delete_decision_instance_response_500 import DeleteDecisionInstanceResponse500
+from .delete_decision_instance_response_503 import DeleteDecisionInstanceResponse503
+from .delete_decision_instances_batch_operation_data import (
+    DeleteDecisionInstancesBatchOperationData,
+)
+from .delete_decision_instances_batch_operation_data_filter import (
+    DeleteDecisionInstancesBatchOperationDataFilter,
+)
+from .delete_decision_instances_batch_operation_data_filter_decision_definition_type import (
+    DeleteDecisionInstancesBatchOperationDataFilterDecisionDefinitionType,
+)
+from .delete_decision_instances_batch_operation_response_200 import (
+    DeleteDecisionInstancesBatchOperationResponse200,
+)
+from .delete_decision_instances_batch_operation_response_200_batch_operation_type import (
+    DeleteDecisionInstancesBatchOperationResponse200BatchOperationType,
+)
+from .delete_decision_instances_batch_operation_response_400 import (
+    DeleteDecisionInstancesBatchOperationResponse400,
+)
+from .delete_decision_instances_batch_operation_response_401 import (
+    DeleteDecisionInstancesBatchOperationResponse401,
+)
+from .delete_decision_instances_batch_operation_response_403 import (
+    DeleteDecisionInstancesBatchOperationResponse403,
+)
+from .delete_decision_instances_batch_operation_response_500 import (
+    DeleteDecisionInstancesBatchOperationResponse500,
+)
 from .delete_document_response_404 import DeleteDocumentResponse404
 from .delete_document_response_500 import DeleteDocumentResponse500
 from .delete_global_cluster_variable_response_400 import (
@@ -505,6 +552,13 @@ from .delete_process_instances_batch_operation_response_500 import (
     DeleteProcessInstancesBatchOperationResponse500,
 )
 from .delete_resource_data_type_0 import DeleteResourceDataType0
+from .delete_resource_response_200 import DeleteResourceResponse200
+from .delete_resource_response_200_batch_operation import (
+    DeleteResourceResponse200BatchOperation,
+)
+from .delete_resource_response_200_batch_operation_batch_operation_type import (
+    DeleteResourceResponse200BatchOperationBatchOperationType,
+)
 from .delete_resource_response_400 import DeleteResourceResponse400
 from .delete_resource_response_404 import DeleteResourceResponse404
 from .delete_resource_response_500 import DeleteResourceResponse500
@@ -741,6 +795,20 @@ from .get_global_cluster_variable_response_404 import (
 from .get_global_cluster_variable_response_500 import (
     GetGlobalClusterVariableResponse500,
 )
+from .get_global_job_statistics_response_200 import GetGlobalJobStatisticsResponse200
+from .get_global_job_statistics_response_200_completed import (
+    GetGlobalJobStatisticsResponse200Completed,
+)
+from .get_global_job_statistics_response_200_created import (
+    GetGlobalJobStatisticsResponse200Created,
+)
+from .get_global_job_statistics_response_200_failed import (
+    GetGlobalJobStatisticsResponse200Failed,
+)
+from .get_global_job_statistics_response_400 import GetGlobalJobStatisticsResponse400
+from .get_global_job_statistics_response_401 import GetGlobalJobStatisticsResponse401
+from .get_global_job_statistics_response_403 import GetGlobalJobStatisticsResponse403
+from .get_global_job_statistics_response_500 import GetGlobalJobStatisticsResponse500
 from .get_group_response_200 import GetGroupResponse200
 from .get_group_response_401 import GetGroupResponse401
 from .get_group_response_403 import GetGroupResponse403
@@ -1281,15 +1349,10 @@ from .object_owner_type import ObjectOwnerType
 from .object_permission_types_item import ObjectPermissionTypesItem
 from .object_resource_type import ObjectResourceType
 from .operationtype_advancedfilter import OperationtypeAdvancedfilter
-from .operationtype_advancedfilter_1 import OperationtypeAdvancedfilter1
-from .operationtype_advancedfilter_1_eq import OperationtypeAdvancedfilter1Eq
-from .operationtype_advancedfilter_1_in_item import OperationtypeAdvancedfilter1InItem
-from .operationtype_advancedfilter_1_neq import OperationtypeAdvancedfilter1Neq
 from .operationtype_advancedfilter_eq import OperationtypeAdvancedfilterEq
 from .operationtype_advancedfilter_in_item import OperationtypeAdvancedfilterInItem
 from .operationtype_advancedfilter_neq import OperationtypeAdvancedfilterNeq
 from .operationtype_exactmatch import OperationtypeExactmatch
-from .operationtype_exactmatch_1 import OperationtypeExactmatch1
 from .page_cursor_basedbackwardpagination import PageCursorBasedbackwardpagination
 from .page_cursor_basedforwardpagination import PageCursorBasedforwardpagination
 from .page_limit_basedpagination import PageLimitBasedpagination
@@ -2570,6 +2633,31 @@ from .update_authorization_response_401 import UpdateAuthorizationResponse401
 from .update_authorization_response_404 import UpdateAuthorizationResponse404
 from .update_authorization_response_500 import UpdateAuthorizationResponse500
 from .update_authorization_response_503 import UpdateAuthorizationResponse503
+from .update_global_cluster_variable_data import UpdateGlobalClusterVariableData
+from .update_global_cluster_variable_data_value import (
+    UpdateGlobalClusterVariableDataValue,
+)
+from .update_global_cluster_variable_response_200 import (
+    UpdateGlobalClusterVariableResponse200,
+)
+from .update_global_cluster_variable_response_200_scope import (
+    UpdateGlobalClusterVariableResponse200Scope,
+)
+from .update_global_cluster_variable_response_400 import (
+    UpdateGlobalClusterVariableResponse400,
+)
+from .update_global_cluster_variable_response_401 import (
+    UpdateGlobalClusterVariableResponse401,
+)
+from .update_global_cluster_variable_response_403 import (
+    UpdateGlobalClusterVariableResponse403,
+)
+from .update_global_cluster_variable_response_404 import (
+    UpdateGlobalClusterVariableResponse404,
+)
+from .update_global_cluster_variable_response_500 import (
+    UpdateGlobalClusterVariableResponse500,
+)
 from .update_group_data import UpdateGroupData
 from .update_group_response_200 import UpdateGroupResponse200
 from .update_group_response_400 import UpdateGroupResponse400
@@ -2598,6 +2686,31 @@ from .update_role_response_401 import UpdateRoleResponse401
 from .update_role_response_404 import UpdateRoleResponse404
 from .update_role_response_500 import UpdateRoleResponse500
 from .update_role_response_503 import UpdateRoleResponse503
+from .update_tenant_cluster_variable_data import UpdateTenantClusterVariableData
+from .update_tenant_cluster_variable_data_value import (
+    UpdateTenantClusterVariableDataValue,
+)
+from .update_tenant_cluster_variable_response_200 import (
+    UpdateTenantClusterVariableResponse200,
+)
+from .update_tenant_cluster_variable_response_200_scope import (
+    UpdateTenantClusterVariableResponse200Scope,
+)
+from .update_tenant_cluster_variable_response_400 import (
+    UpdateTenantClusterVariableResponse400,
+)
+from .update_tenant_cluster_variable_response_401 import (
+    UpdateTenantClusterVariableResponse401,
+)
+from .update_tenant_cluster_variable_response_403 import (
+    UpdateTenantClusterVariableResponse403,
+)
+from .update_tenant_cluster_variable_response_404 import (
+    UpdateTenantClusterVariableResponse404,
+)
+from .update_tenant_cluster_variable_response_500 import (
+    UpdateTenantClusterVariableResponse500,
+)
 from .update_tenant_data import UpdateTenantData
 from .update_tenant_response_200 import UpdateTenantResponse200
 from .update_tenant_response_400 import UpdateTenantResponse400
@@ -2619,6 +2732,7 @@ from .update_user_task_response_404 import UpdateUserTaskResponse404
 from .update_user_task_response_409 import UpdateUserTaskResponse409
 from .update_user_task_response_500 import UpdateUserTaskResponse500
 from .update_user_task_response_503 import UpdateUserTaskResponse503
+from .usertaskkey_advancedfilter import UsertaskkeyAdvancedfilter
 from .variablekey_advancedfilter import VariablekeyAdvancedfilter
 
 __all__ = (
@@ -2726,7 +2840,11 @@ __all__ = (
     "AssignUserToTenantResponse500",
     "AssignUserToTenantResponse503",
     "AuditlogkeyAdvancedfilter",
-    "BatchoperationkeyAdvancedfilter",
+    "BatchoperationtypeAdvancedfilter",
+    "BatchoperationtypeAdvancedfilterEq",
+    "BatchoperationtypeAdvancedfilterInItem",
+    "BatchoperationtypeAdvancedfilterNeq",
+    "BatchoperationtypeExactmatch",
     "BroadcastSignalData",
     "BroadcastSignalDataVariables",
     "BroadcastSignalResponse200",
@@ -2899,10 +3017,29 @@ __all__ = (
     "DecisionevaluationbyIDVariables",
     "Decisionevaluationbykey",
     "DecisionevaluationinstancekeyAdvancedfilter",
+    "DecisionevaluationkeyAdvancedfilter",
+    "DecisionrequirementskeyAdvancedfilter",
     "DeleteAuthorizationResponse401",
     "DeleteAuthorizationResponse404",
     "DeleteAuthorizationResponse500",
     "DeleteAuthorizationResponse503",
+    "DeleteDecisionInstanceDataType0",
+    "DeleteDecisionInstanceResponse200",
+    "DeleteDecisionInstanceResponse200BatchOperationType",
+    "DeleteDecisionInstanceResponse401",
+    "DeleteDecisionInstanceResponse403",
+    "DeleteDecisionInstanceResponse404",
+    "DeleteDecisionInstanceResponse500",
+    "DeleteDecisionInstanceResponse503",
+    "DeleteDecisionInstancesBatchOperationData",
+    "DeleteDecisionInstancesBatchOperationDataFilter",
+    "DeleteDecisionInstancesBatchOperationDataFilterDecisionDefinitionType",
+    "DeleteDecisionInstancesBatchOperationResponse200",
+    "DeleteDecisionInstancesBatchOperationResponse200BatchOperationType",
+    "DeleteDecisionInstancesBatchOperationResponse400",
+    "DeleteDecisionInstancesBatchOperationResponse401",
+    "DeleteDecisionInstancesBatchOperationResponse403",
+    "DeleteDecisionInstancesBatchOperationResponse500",
     "DeleteDocumentResponse404",
     "DeleteDocumentResponse500",
     "DeleteGlobalClusterVariableResponse400",
@@ -2939,6 +3076,9 @@ __all__ = (
     "DeleteProcessInstancesBatchOperationResponse403",
     "DeleteProcessInstancesBatchOperationResponse500",
     "DeleteResourceDataType0",
+    "DeleteResourceResponse200",
+    "DeleteResourceResponse200BatchOperation",
+    "DeleteResourceResponse200BatchOperationBatchOperationType",
     "DeleteResourceResponse400",
     "DeleteResourceResponse404",
     "DeleteResourceResponse500",
@@ -3091,6 +3231,14 @@ __all__ = (
     "GetGlobalClusterVariableResponse403",
     "GetGlobalClusterVariableResponse404",
     "GetGlobalClusterVariableResponse500",
+    "GetGlobalJobStatisticsResponse200",
+    "GetGlobalJobStatisticsResponse200Completed",
+    "GetGlobalJobStatisticsResponse200Created",
+    "GetGlobalJobStatisticsResponse200Failed",
+    "GetGlobalJobStatisticsResponse400",
+    "GetGlobalJobStatisticsResponse401",
+    "GetGlobalJobStatisticsResponse403",
+    "GetGlobalJobStatisticsResponse500",
     "GetGroupResponse200",
     "GetGroupResponse401",
     "GetGroupResponse403",
@@ -3355,15 +3503,10 @@ __all__ = (
     "ObjectPermissionTypesItem",
     "ObjectResourceType",
     "OperationtypeAdvancedfilter",
-    "OperationtypeAdvancedfilter1",
-    "OperationtypeAdvancedfilter1Eq",
-    "OperationtypeAdvancedfilter1InItem",
-    "OperationtypeAdvancedfilter1Neq",
     "OperationtypeAdvancedfilterEq",
     "OperationtypeAdvancedfilterInItem",
     "OperationtypeAdvancedfilterNeq",
     "OperationtypeExactmatch",
-    "OperationtypeExactmatch1",
     "PageCursorBasedbackwardpagination",
     "PageCursorBasedforwardpagination",
     "PageLimitBasedpagination",
@@ -4086,6 +4229,15 @@ __all__ = (
     "UpdateAuthorizationResponse404",
     "UpdateAuthorizationResponse500",
     "UpdateAuthorizationResponse503",
+    "UpdateGlobalClusterVariableData",
+    "UpdateGlobalClusterVariableDataValue",
+    "UpdateGlobalClusterVariableResponse200",
+    "UpdateGlobalClusterVariableResponse200Scope",
+    "UpdateGlobalClusterVariableResponse400",
+    "UpdateGlobalClusterVariableResponse401",
+    "UpdateGlobalClusterVariableResponse403",
+    "UpdateGlobalClusterVariableResponse404",
+    "UpdateGlobalClusterVariableResponse500",
     "UpdateGroupData",
     "UpdateGroupResponse200",
     "UpdateGroupResponse400",
@@ -4114,6 +4266,15 @@ __all__ = (
     "UpdateRoleResponse404",
     "UpdateRoleResponse500",
     "UpdateRoleResponse503",
+    "UpdateTenantClusterVariableData",
+    "UpdateTenantClusterVariableDataValue",
+    "UpdateTenantClusterVariableResponse200",
+    "UpdateTenantClusterVariableResponse200Scope",
+    "UpdateTenantClusterVariableResponse400",
+    "UpdateTenantClusterVariableResponse401",
+    "UpdateTenantClusterVariableResponse403",
+    "UpdateTenantClusterVariableResponse404",
+    "UpdateTenantClusterVariableResponse500",
     "UpdateTenantData",
     "UpdateTenantResponse200",
     "UpdateTenantResponse400",
@@ -4135,5 +4296,6 @@ __all__ = (
     "UpdateUserTaskResponse409",
     "UpdateUserTaskResponse500",
     "UpdateUserTaskResponse503",
+    "UsertaskkeyAdvancedfilter",
     "VariablekeyAdvancedfilter",
 )

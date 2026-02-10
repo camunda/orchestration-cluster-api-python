@@ -6,6 +6,8 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..types import UNSET, Unset
+
 T = TypeVar("T", bound="UpdateGroupData")
 
 
@@ -14,11 +16,11 @@ class UpdateGroupData:
     """
     Attributes:
         name (str): The new name of the group.
-        description (str): The new description of the group.
+        description (str | Unset): The new description of the group.
     """
 
     name: str
-    description: str
+    description: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -31,9 +33,10 @@ class UpdateGroupData:
         field_dict.update(
             {
                 "name": name,
-                "description": description,
             }
         )
+        if description is not UNSET:
+            field_dict["description"] = description
 
         return field_dict
 
@@ -42,7 +45,7 @@ class UpdateGroupData:
         d = dict(src_dict)
         name = d.pop("name")
 
-        description = d.pop("description")
+        description = d.pop("description", UNSET)
 
         update_group_data = cls(
             name=name,

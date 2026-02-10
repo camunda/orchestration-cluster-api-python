@@ -1,9 +1,7 @@
 import pytest
 from pydantic import ValidationError
-
-
 @pytest.fixture(autouse=True)
-def _clear_camunda_env(monkeypatch: pytest.MonkeyPatch) -> None:
+def _clear_camunda_env(monkeypatch: pytest.MonkeyPatch) -> None:  # pyright: ignore[reportUnusedFunction]
     """Acceptance tests must not depend on the developer shell environment."""
 
     for key in (
@@ -103,18 +101,18 @@ def test_auth_strategy_infers_oauth_when_credentials_present():
 
     assert resolved.effective.CAMUNDA_AUTH_STRATEGY == "OAUTH"
 
-    def test_auth_strategy_is_not_inferred_when_explicitly_set_none_even_if_oauth_credentials_present() -> None:
-        from camunda_orchestration_sdk.runtime.configuration_resolver import ConfigurationResolver
+def test_auth_strategy_is_not_inferred_when_explicitly_set_none_even_if_oauth_credentials_present() -> None:
+    from camunda_orchestration_sdk.runtime.configuration_resolver import ConfigurationResolver
 
-        resolver = ConfigurationResolver(
-            environment={
-                "CAMUNDA_AUTH_STRATEGY": "NONE",
-                "CAMUNDA_CLIENT_ID": "my-client-id",
-                "CAMUNDA_CLIENT_SECRET": "my-client-secret",
-            }
-        )
-        resolved = resolver.resolve()
-        assert resolved.effective.CAMUNDA_AUTH_STRATEGY == "NONE"
+    resolver = ConfigurationResolver(
+        environment={
+            "CAMUNDA_AUTH_STRATEGY": "NONE",
+            "CAMUNDA_CLIENT_ID": "my-client-id",
+            "CAMUNDA_CLIENT_SECRET": "my-client-secret",
+        }
+    )
+    resolved = resolver.resolve()
+    assert resolved.effective.CAMUNDA_AUTH_STRATEGY == "NONE"
 
 def test_auth_strategy_infers_basic_when_credentials_present():
     from camunda_orchestration_sdk.runtime.configuration_resolver import ConfigurationResolver

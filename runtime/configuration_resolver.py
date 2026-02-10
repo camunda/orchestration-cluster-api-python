@@ -177,8 +177,8 @@ class CamundaSdkConfiguration(BaseModel):
         # or
         #   https://host/<clusterId>/v2
         # and the SDK will consistently call /v2/...
-        self.ZEEBE_REST_ADDRESS = self._normalize_rest_address(self.ZEEBE_REST_ADDRESS)
-        self.CAMUNDA_REST_ADDRESS = self._normalize_rest_address(self.CAMUNDA_REST_ADDRESS)
+        self.ZEEBE_REST_ADDRESS = self._normalize_rest_address(self.ZEEBE_REST_ADDRESS) # pyright: ignore[reportConstantRedefinition]
+        self.CAMUNDA_REST_ADDRESS = self._normalize_rest_address(self.CAMUNDA_REST_ADDRESS) # pyright: ignore[reportConstantRedefinition]
 
         if self.CAMUNDA_AUTH_STRATEGY == "BASIC":
             if not self.CAMUNDA_BASIC_AUTH_USERNAME:
@@ -266,7 +266,16 @@ class ConfigurationResolver:
                 merged.get("CAMUNDA_BASIC_AUTH_PASSWORD")
             )
 
-            if has_oauth_creds:
+              # If both OAuth and Basic credentials are present, require an explicit strategy  
+            # instead of silently picking one to avoid surprising behavior.  
+            if has_oauth_creds and has_basic_creds:  
+                raise ValueError(  
+                    "Both OAuth (CAMUNDA_CLIENT_ID/SECRET) and Basic auth "  
+                    "(CAMUNDA_BASIC_AUTH_USERNAME/PASSWORD) credentials are set, "  
+                    "but CAMUNDA_AUTH_STRATEGY is not explicitly configured. "  
+                    "Please set CAMUNDA_AUTH_STRATEGY to either 'OAUTH' or 'BASIC'."  
+                )  
+            elif has_oauth_creds:  
                 merged["CAMUNDA_AUTH_STRATEGY"] = "OAUTH"
             elif has_basic_creds:
                 merged["CAMUNDA_AUTH_STRATEGY"] = "BASIC"

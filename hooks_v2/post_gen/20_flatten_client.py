@@ -327,7 +327,7 @@ class CamundaClient:
                     password=self.configuration.CAMUNDA_BASIC_AUTH_PASSWORD or "",
                 )
             elif self.configuration.CAMUNDA_AUTH_STRATEGY == "OAUTH":
-                transport = (kwargs.get("httpx_args") or {{}}).get("transport")
+                transport = (kwargs.get("httpx_args") or dict()).get("transport")
                 auth_provider = OAuthClientCredentialsAuthProvider(
                     oauth_url=self.configuration.CAMUNDA_OAUTH_URL,
                     client_id=self.configuration.CAMUNDA_CLIENT_ID or "",
@@ -357,7 +357,29 @@ class CamundaClient:
         return self
 
     def __exit__(self, *args, **kwargs):
-        return self.client.__exit__(*args, **kwargs)
+        try:
+            return self.client.__exit__(*args, **kwargs)
+        finally:
+            close = getattr(self.auth_provider, "close", None)
+            if callable(close):
+                close()
+
+    def close(self) -> None:
+        """Close underlying HTTP clients.
+
+        This closes both the API client's httpx client and, when available, the
+        auth provider's token client.
+        """
+
+        try:
+            close = getattr(self.auth_provider, "close", None)
+            if callable(close):
+                close()
+        finally:
+            try:
+                self.client.get_httpx_client().close()
+            except Exception:
+                return
 
     def deploy_resources_from_files(self, files: list[str | Path], tenant_id: str | None = None) -> ExtendedDeploymentResult:
         """Deploy BPMN/DMN/Form resources from local files.
@@ -435,7 +457,7 @@ class CamundaAsyncClient:
                     password=self.configuration.CAMUNDA_BASIC_AUTH_PASSWORD or "",
                 )
             elif self.configuration.CAMUNDA_AUTH_STRATEGY == "OAUTH":
-                transport = (kwargs.get("httpx_args") or {{}}).get("transport")
+                transport = (kwargs.get("httpx_args") or dict()).get("transport")
                 auth_provider = AsyncOAuthClientCredentialsAuthProvider(
                     oauth_url=self.configuration.CAMUNDA_OAUTH_URL,
                     client_id=self.configuration.CAMUNDA_CLIENT_ID or "",
@@ -466,7 +488,50 @@ class CamundaAsyncClient:
         return self
 
     async def __aexit__(self, *args, **kwargs):
-        await self.client.__aexit__(*args, **kwargs)
+        result = None
+        try:
+            result = await self.client.__aexit__(*args, **kwargs)
+            return result
+        finally:
+            aclose = getattr(self.auth_provider, "aclose", None)
+            if callable(aclose):
+                try:
+                    await aclose()
+                except Exception:
+                    pass
+            else:
+                close = getattr(self.auth_provider, "close", None)
+                if callable(close):
+                    try:
+                        close()
+                    except Exception:
+                        pass
+
+    async def aclose(self) -> None:
+        """Close underlying HTTP clients.
+
+        This closes both the API client's async httpx client and, when available,
+        the auth provider's token client.
+        """
+
+        aclose = getattr(self.auth_provider, "aclose", None)
+        if callable(aclose):
+            try:
+                await aclose()
+            except Exception:
+                pass
+        else:
+            close = getattr(self.auth_provider, "close", None)
+            if callable(close):
+                try:
+                    close()
+                except Exception:
+                    pass
+
+        try:
+            await self.client.get_async_httpx_client().aclose()
+        except Exception:
+            return
 
     def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True) -> JobWorker:
         worker = JobWorker(self, callback, config)

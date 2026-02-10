@@ -13,9 +13,6 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
-    from ..models.batchoperationkey_advancedfilter import (
-        BatchoperationkeyAdvancedfilter,
-    )
     from ..models.elementinstancekey_advancedfilter import (
         ElementinstancekeyAdvancedfilter,
     )
@@ -28,6 +25,7 @@ if TYPE_CHECKING:
     )
     from ..models.subscriptionkey_advancedfilter import SubscriptionkeyAdvancedfilter
     from ..models.timestamp_advancedfilter import TimestampAdvancedfilter
+    from ..models.usertaskkey_advancedfilter import UsertaskkeyAdvancedfilter
 
 
 T = TypeVar("T", bound="SearchCorrelatedMessageSubscriptionsDataFilter")
@@ -42,7 +40,7 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
         correlation_time (datetime.datetime | TimestampAdvancedfilter | Unset):
         element_id (ActoridAdvancedfilter | str | Unset):
         element_instance_key (ElementinstancekeyAdvancedfilter | str | Unset):
-        message_key (BatchoperationkeyAdvancedfilter | str | Unset):
+        message_key (str | Unset | UsertaskkeyAdvancedfilter):
         message_name (ActoridAdvancedfilter | str | Unset):
         partition_id (int | PartitionidAdvancedfilter | Unset):
         process_definition_id (ActoridAdvancedfilter | str | Unset):
@@ -56,7 +54,7 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
     correlation_time: datetime.datetime | TimestampAdvancedfilter | Unset = UNSET
     element_id: ActoridAdvancedfilter | str | Unset = UNSET
     element_instance_key: ElementinstancekeyAdvancedfilter | str | Unset = UNSET
-    message_key: BatchoperationkeyAdvancedfilter | str | Unset = UNSET
+    message_key: MessageKey | Unset | UsertaskkeyAdvancedfilter = UNSET
     message_name: ActoridAdvancedfilter | str | Unset = UNSET
     partition_id: int | PartitionidAdvancedfilter | Unset = UNSET
     process_definition_id: ActoridAdvancedfilter | str | Unset = UNSET
@@ -68,9 +66,6 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
-        from ..models.batchoperationkey_advancedfilter import (
-            BatchoperationkeyAdvancedfilter,
-        )
         from ..models.elementinstancekey_advancedfilter import (
             ElementinstancekeyAdvancedfilter,
         )
@@ -84,6 +79,7 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
         from ..models.subscriptionkey_advancedfilter import (
             SubscriptionkeyAdvancedfilter,
         )
+        from ..models.usertaskkey_advancedfilter import UsertaskkeyAdvancedfilter
 
         correlation_key: dict[str, Any] | str | Unset
         if isinstance(self.correlation_key, Unset):
@@ -120,7 +116,7 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
         message_key: dict[str, Any] | str | Unset
         if isinstance(self.message_key, Unset):
             message_key = UNSET
-        elif isinstance(self.message_key, BatchoperationkeyAdvancedfilter):
+        elif isinstance(self.message_key, UsertaskkeyAdvancedfilter):
             message_key = self.message_key.to_dict()
         else:
             message_key = self.message_key
@@ -216,9 +212,6 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
-        from ..models.batchoperationkey_advancedfilter import (
-            BatchoperationkeyAdvancedfilter,
-        )
         from ..models.elementinstancekey_advancedfilter import (
             ElementinstancekeyAdvancedfilter,
         )
@@ -233,6 +226,7 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
             SubscriptionkeyAdvancedfilter,
         )
         from ..models.timestamp_advancedfilter import TimestampAdvancedfilter
+        from ..models.usertaskkey_advancedfilter import UsertaskkeyAdvancedfilter
 
         d = dict(src_dict)
 
@@ -308,20 +302,18 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
             d.pop("elementInstanceKey", UNSET)
         )
 
-        def _parse_message_key(
-            data: object,
-        ) -> BatchoperationkeyAdvancedfilter | str | Unset:
+        def _parse_message_key(data: object) -> str | Unset | UsertaskkeyAdvancedfilter:
             if isinstance(data, Unset):
                 return data
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
-                message_key_type_1 = BatchoperationkeyAdvancedfilter.from_dict(data)
+                message_key_type_1 = UsertaskkeyAdvancedfilter.from_dict(data)
 
                 return message_key_type_1
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(BatchoperationkeyAdvancedfilter | str | Unset, data)
+            return cast(str | Unset | UsertaskkeyAdvancedfilter, data)
 
         message_key = _parse_message_key(d.pop("messageKey", UNSET))
 

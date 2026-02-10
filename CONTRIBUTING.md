@@ -49,6 +49,24 @@ python3 generate.py \
 
 Run `python3 generate.py --help` for all options.
 
+To temporarily generate against a different spec branch/tag/SHA from the upstream Camunda repo, set `--spec-ref` (default is `main`).
+
+For the default v2 generator flow (used by `make generate`):
+
+```bash
+uv run generate.py \
+  --generator openapi-python-client \
+  --config generator-config-python-client.yaml \
+  --spec-ref 45369-fix-spec \
+  --skip-tests
+```
+
+Or via Make:
+
+```bash
+make generate SPEC_REF=45369-fix-spec
+```
+
 ### Hooks (post-processing)
 
 Add Python files under `hooks/` exporting a `run(context)` function. Hooks are executed in sorted order after generation.

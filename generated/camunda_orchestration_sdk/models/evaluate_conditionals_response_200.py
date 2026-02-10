@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import *
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -19,14 +20,23 @@ T = TypeVar("T", bound="EvaluateConditionalsResponse200")
 class EvaluateConditionalsResponse200:
     """
     Attributes:
+        conditional_evaluation_key (str): The unique key of the conditional evaluation operation. Example:
+            2251799813687654.
+        tenant_id (str): The tenant ID of the conditional evaluation operation. Example: customer-service.
         process_instances (list[EvaluateConditionalsResponse200ProcessInstancesItem]): List of process instances
             created. If no root-level conditional start events evaluated to true, the list will be empty.
     """
 
+    conditional_evaluation_key: ConditionalEvaluationKey
+    tenant_id: TenantId
     process_instances: list[EvaluateConditionalsResponse200ProcessInstancesItem]
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        conditional_evaluation_key = self.conditional_evaluation_key
+
+        tenant_id = self.tenant_id
+
         process_instances = []
         for process_instances_item_data in self.process_instances:
             process_instances_item = process_instances_item_data.to_dict()
@@ -36,6 +46,8 @@ class EvaluateConditionalsResponse200:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "conditionalEvaluationKey": conditional_evaluation_key,
+                "tenantId": tenant_id,
                 "processInstances": process_instances,
             }
         )
@@ -49,6 +61,10 @@ class EvaluateConditionalsResponse200:
         )
 
         d = dict(src_dict)
+        conditional_evaluation_key = lift_conditional_evaluation_key(d.pop("conditionalEvaluationKey"))
+
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
+
         process_instances = []
         _process_instances = d.pop("processInstances")
         for process_instances_item_data in _process_instances:
@@ -61,6 +77,8 @@ class EvaluateConditionalsResponse200:
             process_instances.append(process_instances_item)
 
         evaluate_conditionals_response_200 = cls(
+            conditional_evaluation_key=conditional_evaluation_key,
+            tenant_id=tenant_id,
             process_instances=process_instances,
         )
 

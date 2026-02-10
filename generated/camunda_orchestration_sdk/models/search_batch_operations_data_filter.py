@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import *
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -6,7 +7,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..models.operationtype_exactmatch_1 import OperationtypeExactmatch1
+from ..models.batchoperationtype_exactmatch import BatchoperationtypeExactmatch
 from ..models.search_batch_operations_data_filter_actor_type import (
     SearchBatchOperationsDataFilterActorType,
 )
@@ -15,11 +16,11 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
-    from ..models.batchoperationkey_advancedfilter import (
-        BatchoperationkeyAdvancedfilter,
+    from ..models.batchoperationtype_advancedfilter import (
+        BatchoperationtypeAdvancedfilter,
     )
-    from ..models.operationtype_advancedfilter_1 import OperationtypeAdvancedfilter1
     from ..models.state_advancedfilter_1 import StateAdvancedfilter1
+    from ..models.usertaskkey_advancedfilter import UsertaskkeyAdvancedfilter
 
 
 T = TypeVar("T", bound="SearchBatchOperationsDataFilter")
@@ -30,18 +31,18 @@ class SearchBatchOperationsDataFilter:
     """The batch operation search filters.
 
     Attributes:
-        batch_operation_key (BatchoperationkeyAdvancedfilter | str | Unset):
-        operation_type (OperationtypeAdvancedfilter1 | OperationtypeExactmatch1 | Unset):
+        batch_operation_key (str | Unset | UsertaskkeyAdvancedfilter):
+        operation_type (BatchoperationtypeAdvancedfilter | BatchoperationtypeExactmatch | Unset):
         state (StateAdvancedfilter1 | StateExactmatch1 | Unset):
         actor_type (SearchBatchOperationsDataFilterActorType | Unset): The type of the actor who performed the
             operation.
         actor_id (ActoridAdvancedfilter | str | Unset):
     """
 
-    batch_operation_key: BatchoperationkeyAdvancedfilter | str | Unset = UNSET
-    operation_type: OperationtypeAdvancedfilter1 | OperationtypeExactmatch1 | Unset = (
-        UNSET
-    )
+    batch_operation_key: BatchOperationKey | Unset | UsertaskkeyAdvancedfilter = UNSET
+    operation_type: (
+        BatchoperationtypeAdvancedfilter | BatchoperationtypeExactmatch | Unset
+    ) = UNSET
     state: StateAdvancedfilter1 | StateExactmatch1 | Unset = UNSET
     actor_type: SearchBatchOperationsDataFilterActorType | Unset = UNSET
     actor_id: ActoridAdvancedfilter | str | Unset = UNSET
@@ -49,14 +50,12 @@ class SearchBatchOperationsDataFilter:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
-        from ..models.batchoperationkey_advancedfilter import (
-            BatchoperationkeyAdvancedfilter,
-        )
+        from ..models.usertaskkey_advancedfilter import UsertaskkeyAdvancedfilter
 
         batch_operation_key: dict[str, Any] | str | Unset
         if isinstance(self.batch_operation_key, Unset):
             batch_operation_key = UNSET
-        elif isinstance(self.batch_operation_key, BatchoperationkeyAdvancedfilter):
+        elif isinstance(self.batch_operation_key, UsertaskkeyAdvancedfilter):
             batch_operation_key = self.batch_operation_key.to_dict()
         else:
             batch_operation_key = self.batch_operation_key
@@ -64,7 +63,7 @@ class SearchBatchOperationsDataFilter:
         operation_type: dict[str, Any] | str | Unset
         if isinstance(self.operation_type, Unset):
             operation_type = UNSET
-        elif isinstance(self.operation_type, OperationtypeExactmatch1):
+        elif isinstance(self.operation_type, BatchoperationtypeExactmatch):
             operation_type = self.operation_type.value
         else:
             operation_type = self.operation_type.to_dict()
@@ -108,30 +107,28 @@ class SearchBatchOperationsDataFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
-        from ..models.batchoperationkey_advancedfilter import (
-            BatchoperationkeyAdvancedfilter,
+        from ..models.batchoperationtype_advancedfilter import (
+            BatchoperationtypeAdvancedfilter,
         )
-        from ..models.operationtype_advancedfilter_1 import OperationtypeAdvancedfilter1
         from ..models.state_advancedfilter_1 import StateAdvancedfilter1
+        from ..models.usertaskkey_advancedfilter import UsertaskkeyAdvancedfilter
 
         d = dict(src_dict)
 
         def _parse_batch_operation_key(
             data: object,
-        ) -> BatchoperationkeyAdvancedfilter | str | Unset:
+        ) -> str | Unset | UsertaskkeyAdvancedfilter:
             if isinstance(data, Unset):
                 return data
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
-                batch_operation_key_type_1 = BatchoperationkeyAdvancedfilter.from_dict(
-                    data
-                )
+                batch_operation_key_type_1 = UsertaskkeyAdvancedfilter.from_dict(data)
 
                 return batch_operation_key_type_1
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(BatchoperationkeyAdvancedfilter | str | Unset, data)
+            return cast(str | Unset | UsertaskkeyAdvancedfilter, data)
 
         batch_operation_key = _parse_batch_operation_key(
             d.pop("batchOperationKey", UNSET)
@@ -139,20 +136,20 @@ class SearchBatchOperationsDataFilter:
 
         def _parse_operation_type(
             data: object,
-        ) -> OperationtypeAdvancedfilter1 | OperationtypeExactmatch1 | Unset:
+        ) -> BatchoperationtypeAdvancedfilter | BatchoperationtypeExactmatch | Unset:
             if isinstance(data, Unset):
                 return data
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                operation_type_type_0 = OperationtypeExactmatch1(data)
+                operation_type_type_0 = BatchoperationtypeExactmatch(data)
 
                 return operation_type_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
-            operation_type_type_1 = OperationtypeAdvancedfilter1.from_dict(data)
+            operation_type_type_1 = BatchoperationtypeAdvancedfilter.from_dict(data)
 
             return operation_type_type_1
 
