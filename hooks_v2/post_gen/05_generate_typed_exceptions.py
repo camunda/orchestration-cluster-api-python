@@ -2,6 +2,8 @@ import ast
 import os
 import re
 from pathlib import Path
+from collections.abc import Mapping
+from typing import Any, cast
 
 import yaml
 
@@ -226,16 +228,19 @@ def _normalize_path_template(path: str) -> str:
     return re.sub(r"\{[^}]+\}", "{}", path)
 
 
-def _resolve_ref(spec: dict, ref: str) -> dict | None:
+def _resolve_ref(spec: dict[str, Any], ref: str) -> dict[str, Any] | None:
     # Only support local refs like "#/components/responses/Foo"
     if not ref.startswith("#/"):
         return None
-    current: object = spec
+    current: Any = spec
     for part in ref[2:].split("/"):
-        if not isinstance(current, dict) or part not in current:
+        if not isinstance(current, dict):
             return None
-        current = current[part]
-    return current if isinstance(current, dict) else None
+        current_dict = cast(dict[str, Any], current)
+        if part not in current_dict:
+            return None
+        current = current_dict[part]
+    return cast(dict[str, Any], current) if isinstance(current, dict) else None
 
 
 def _normalize_description(desc: str) -> str:
@@ -244,45 +249,62 @@ def _normalize_description(desc: str) -> str:
 
 
 def _get_response_descriptions_for_endpoint(
-    *, spec: dict, method: str, url: str
+    *, spec: dict[str, Any], method: str, url: str
 ) -> dict[int, str]:
     """Return mapping HTTP status code -> description for a given operation."""
 
-    paths = spec.get("paths") or {}
-    if not isinstance(paths, dict):
+    paths_obj = spec.get("paths")
+    if not isinstance(paths_obj, dict):
         return {}
+    paths = cast(dict[str, Any], paths_obj)
 
     # Try direct match first.
-    operation = ((paths.get(url) or {}).get(method))
+    operation: Any = None
+    op_obj = paths.get(url)
+    if isinstance(op_obj, dict):
+        op_dict = cast(dict[str, Any], op_obj)
+        operation = op_dict.get(method)
 
     # Fallback: match normalized templates (handles generated snake_case params).
     if not isinstance(operation, dict):
         normalized_url = _normalize_path_template(url)
         for candidate_url, candidate_ops in paths.items():
-            if not isinstance(candidate_url, str) or not isinstance(candidate_ops, dict):
+            if not isinstance(candidate_ops, dict):
                 continue
             if _normalize_path_template(candidate_url) == normalized_url:
-                operation = candidate_ops.get(method)
+                ops_dict = cast(dict[str, Any], candidate_ops)
+                operation = ops_dict.get(method)
                 break
 
     if not isinstance(operation, dict):
         return {}
 
-    responses = operation.get("responses")
-    if not isinstance(responses, dict):
+    operation_dict = cast(dict[str, Any], operation)
+
+    responses_obj = operation_dict.get("responses")
+    if not isinstance(responses_obj, dict):
         return {}
+    responses = cast(dict[str, Any], responses_obj)
 
     out: dict[int, str] = {}
     for code_str, resp in responses.items():
-        if not isinstance(code_str, str) or not code_str.isdigit():
+        if not code_str.isdigit():
             continue
         code = int(code_str)
-        if isinstance(resp, dict) and "$ref" in resp and isinstance(resp["$ref"], str):
-            resolved = _resolve_ref(spec, resp["$ref"])
-            resp = resolved if resolved is not None else resp
-        if not isinstance(resp, dict):
+        resp_obj: Any = resp
+        if isinstance(resp_obj, dict):
+            resp_obj = cast(dict[str, Any], resp_obj)
+            resp_dict = resp_obj
+            ref_val = resp_dict.get("$ref")
+            if isinstance(ref_val, str):
+                resolved = _resolve_ref(spec, ref_val)
+                if resolved is not None:
+                    resp_obj = resolved
+
+        if not isinstance(resp_obj, dict):
             continue
-        desc = resp.get("description")
+        resp_dict2 = cast(dict[str, Any], resp_obj)
+        desc = resp_dict2.get("description")
         if isinstance(desc, str) and desc.strip():
             out[code] = _normalize_description(desc)
     return out
@@ -348,15 +370,17 @@ def _generate_errors_py(exceptions: list[tuple[str, int, str, str | None]]) -> s
     return "\n".join(lines)
 
 
-def run(context):
+def run(context: Mapping[str, str]) -> None:
     out_dir = Path(context["out_dir"])
     package_dir = out_dir / "camunda_orchestration_sdk"
     api_dir = package_dir / "api"
 
     spec_path = out_dir / "bundled_spec.yaml"
-    spec: dict = {}
+    spec: dict[str, Any] = {}
     if spec_path.exists():
-        spec = yaml.safe_load(spec_path.read_text()) or {}
+        loaded = yaml.safe_load(spec_path.read_text())
+        if isinstance(loaded, dict):
+            spec = cast(dict[str, Any], loaded)
 
     if not api_dir.exists():
         print(f"API directory not found at {api_dir}")

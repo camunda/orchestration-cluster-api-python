@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Set, Tuple
+from typing import Any, Dict, cast
 
 import yaml
 
@@ -17,25 +17,23 @@ def _extract_semantic_mappings(data: Any, mappings: Dict[str, str]) -> None:
     Populates mappings dict with {json_property_name: semantic_type_name}.
     """
     if isinstance(data, dict):
-        # Check if this dict describes a property with x-semantic-type
-        if "x-semantic-type" in data:
-            # We need the property name. 
-            # This function is called on the value of the property, so we don't have the key here directly
-            # unless we pass it down.
-            # However, we are traversing.
-            pass
-
-        for key, value in data.items():
+        data_dict = cast(dict[str, Any], data)
+        for key, value in data_dict.items():
             if key == "properties" and isinstance(value, dict):
-                for prop_name, prop_schema in value.items():
+                props_dict = cast(dict[str, Any], value)
+                for prop_name, prop_schema in props_dict.items():
                     if isinstance(prop_schema, dict) and "x-semantic-type" in prop_schema:
-                        mappings[prop_name] = prop_schema["x-semantic-type"]
+                        prop_schema_dict = cast(dict[str, Any], prop_schema)
+                        semantic_type = prop_schema_dict.get("x-semantic-type")
+                        if isinstance(semantic_type, str):
+                            mappings[prop_name] = semantic_type
                     # Recurse into properties
                     _extract_semantic_mappings(prop_schema, mappings)
             elif isinstance(value, (dict, list)):
                 _extract_semantic_mappings(value, mappings)
     elif isinstance(data, list):
-        for item in data:
+        data_list = cast(list[Any], data)
+        for item in data_list:
             _extract_semantic_mappings(item, mappings)
 
 
@@ -55,7 +53,7 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
     # Or better: we iterate over our known semantic mappings, convert them to snake_case, 
     # and check if they exist in the file as a field definition.
     
-    fields_to_patch = []
+    fields_to_patch: list[tuple[str, str, str]] = []
     
     for json_prop, semantic_type in semantic_mappings.items():
         py_prop = _snake(json_prop)
@@ -87,7 +85,7 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
         # Patch type hint
         type_hint_pattern = re.compile(rf"^(\s+){py_prop}: (str|int|float|bool)(.*)$", re.MULTILINE)
         
-        def type_hint_replacer(match):
+        def type_hint_replacer(match: re.Match[str]) -> str:
             indent = match.group(1)
             # old_type = match.group(2) 
             rest = match.group(3)
@@ -102,7 +100,7 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
         # Note: json_prop in the regex needs to be escaped if it contains special chars, but usually it doesn't.
         pop_pattern = re.compile(rf'(\s+){py_prop} = (d\.pop\("{json_prop}"[^)]*\))')
         
-        def pop_replacer(match):
+        def pop_replacer(match: re.Match[str]) -> str:
             indent = match.group(1)
             pop_call = match.group(2)
             

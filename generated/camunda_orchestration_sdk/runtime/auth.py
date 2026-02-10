@@ -240,7 +240,6 @@ class OAuthClientCredentialsAuthProvider:
     def _token_cache_file(self) -> Path | None:
         if not self._use_file_cache or self._cache_dir is None:
             return None
-        host = "unknown"
         try:
             host = httpx.URL(self._oauth_url).host or "unknown"
         except Exception:
