@@ -5,15 +5,13 @@ This project generates a Python SDK for the Camunda 8 Orchestration Cluster REST
 ### Overview
 
 - Fetches the OpenAPI spec via shallow clone from the public repository (fallback to local checked-out repo if offline).
-- Generates the SDK using OpenAPI Generator (prefers `npx`, falls back to Docker).
-- Provides an extensible hooks system for post-processing tasks.
+- Generates the SDK using `openapi-python-client`.
+- Provides an extensible hooks system for pre- and post-processing tasks.
 
 ### Requirements
 
-- Python 3.9+
-- One of:
-  - Node.js with `npx` available; or
-  - Docker (for `openapitools/openapi-generator-cli`)
+- Python 3.10+
+- `uv` package manager
 
 ### Quick start
 
@@ -35,7 +33,7 @@ Ensure that repository is present in the workspace if you need offline generatio
 
 ### Configuration
 
-`generator-config.yaml` holds OpenAPI Generator options such as package name. You may add or tweak options there.
+`generator-config-python-client.yaml` holds generator options such as package name. You may add or tweak options there.
 
 You can also pass CLI arguments:
 
@@ -113,4 +111,12 @@ make itest
 ### Make targets
 
 - `make generate` – run the generator (uses Python script)
-- `make clean` – remove the `generated/` directory and cache
+- `make test` – run acceptance tests
+- `make itest` – generate SDK and run integration tests (requires running server)
+- `make lint` – run ruff linter
+- `make typecheck` – run pyright type checker
+- `make docs-api` – generate API documentation to `./public/`
+- `make preview-docs` – generate and serve docs locally
+- `make clean` – remove the `generated/` directory
+- `make clean_spec` – remove the `.openapi-cache/` directory
+- `make clean-docs` – remove generated documentation

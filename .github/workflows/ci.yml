@@ -4,12 +4,10 @@ on:
   push:
     branches-ignore:
       - main
-      - latest
       - 'stable/**'
   pull_request:
     branches:
       - main
-      - latest
       - 'stable/**'
   workflow_dispatch:
     inputs:

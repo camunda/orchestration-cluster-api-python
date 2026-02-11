@@ -80,12 +80,8 @@ match = "main"
 prerelease = true
 prerelease_token = "dev"
 
-[tool.semantic_release.branches.latest]
-match = "latest"
-prerelease = false
-
 [tool.semantic_release.branches."stable/*"]
-match = "stable/*"
+match = "^stable/.*$"
 prerelease = false
 
 # Commit parsing rules - modified semver aligned with Camunda versions

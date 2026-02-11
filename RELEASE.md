@@ -8,23 +8,16 @@ The SDK follows a multi-stream release model that aligns with Camunda server ver
 
 | Branch | PyPI Index | Purpose |
 |--------|------------|---------|
-| `main` | `--pre` (alpha) | Development stream, alpha pre-releases |
-| `latest` | Default | Points to current stable release line |
-| `stable/<major>.<minor>` | Version-specific | Maintenance releases for specific versions |
+| `main` | `--pre` (dev) | Development stream, dev pre-releases |
+| `stable/<major>.<minor>` | Default | Stable releases for specific Camunda versions |
 
 ## Branch Model
 
 ### `main` Branch
 
 - **Purpose**: Active development targeting the next Camunda release
-- **Publishes to**: PyPI as alpha pre-releases (e.g., `8.9.0a1`, `8.9.0a2`)
+- **Publishes to**: PyPI as dev pre-releases (e.g., `8.9.0.dev1`, `8.9.0.dev2`)
 - **Installation**: `pip install camunda-orchestration-sdk --pre`
-
-### `latest` Branch
-
-- **Purpose**: Pointer to the currently promoted stable release line
-- **Publishes to**: PyPI default index (what users get with `pip install camunda-orchestration-sdk`)
-- **Mechanism**: Fast-forward merge to the current `stable/<major>.<minor>` branch
 
 ### `stable/<major>.<minor>` Branches
 
@@ -68,7 +61,7 @@ pip install "camunda-orchestration-sdk>=8.8.0,<8.9.0"
 pip install "camunda-orchestration-sdk~=8.8.0"
 ```
 
-### Alpha Pre-releases
+### Dev Pre-releases
 
 For testing upcoming features:
 
@@ -78,18 +71,17 @@ pip install camunda-orchestration-sdk --pre
 
 ## Release Workflows
 
-### Automated Release (Main & Latest)
+### Automated Release (Main)
 
-Triggered on push to `main` or `latest`:
+Triggered on push to `main`:
 
 1. Run tests across Python versions
 2. Generate SDK from OpenAPI spec
 3. Commit any generated changes
 4. Determine next version via semantic-release
 5. Create version bump commit and git tag
-6. Publish to PyPI
+6. Publish to PyPI (dev pre-release)
 7. Create GitHub release
-8. Deploy documentation (latest branch only)
 
 ### Maintenance Release (Stable Branches)
 
@@ -102,9 +94,8 @@ Triggered on push to `stable/**`:
 5. Create version bump commit and git tag
 6. Publish to PyPI
 7. Create GitHub release
-8. Conditionally promote to `latest` if this is the current stable line
 
-## Promotion Process
+## Creating a New Stable Branch
 
 When a new Camunda minor version is released:
 
@@ -118,15 +109,7 @@ git checkout -b stable/8.9
 git push origin stable/8.9
 ```
 
-### 2. Update Latest to Point to New Stable
-
-```bash
-git checkout latest
-git merge --ff-only stable/8.9
-git push origin latest
-```
-
-### 3. Prepare Main for Next Alpha
+### 2. Prepare Main for Next Dev Cycle
 
 Create a commit on `main` with the `server:` prefix to bump the minor version:
 
@@ -194,7 +177,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/):
 2. Add a new trusted publisher:
    - Owner: `camunda`
    - Repository: `orchestration-cluster-api-python`
-   - Workflow: `release.yml` and `release-maintenance.yml`
+   - Workflow: `publish.yml`
    - Environment: `pypi`
 
 ## Troubleshooting
