@@ -70,8 +70,18 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
     if not fields_to_patch:
         return
 
-    # 2. Add imports
-    import_line = "from camunda_orchestration_sdk.semantic_types import *"
+    # 2. Build explicit import for only the semantic types used in this file
+    types_needed: set[str] = set()
+    lifters_needed: set[str] = set()
+    for _json_prop, _py_prop, semantic_type in fields_to_patch:
+        types_needed.add(semantic_type)
+        lifters_needed.add(_snake(f"lift_{semantic_type}"))
+    all_names = sorted(types_needed | lifters_needed)
+    import_line = f"from camunda_orchestration_sdk.semantic_types import {', '.join(all_names)}"
+
+    # Remove any existing wildcard import first
+    content = content.replace("from camunda_orchestration_sdk.semantic_types import *\n", "")
+
     if import_line not in content:
         if "from __future__ import annotations" in content:
             content = content.replace("from __future__ import annotations\n", "from __future__ import annotations\n" + import_line + "\n")
@@ -118,6 +128,29 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
         # Check if already lifted to avoid double patching
         if f"{lifter_name}(d.pop" not in content and f"{lifter_name}(_val)" not in content:
              content = pop_pattern.sub(pop_replacer, content)
+
+        # Also handle _parse_* function pattern:
+        #   py_prop = _parse_py_prop(d.pop("jsonProp", UNSET))
+        # or multi-line:
+        #   py_prop = _parse_py_prop(
+        #       d.pop("jsonProp", UNSET)
+        #   )
+        # The _parse_* returns str | ... | Unset, but the field expects SemanticType | ...
+        # Wrap with lifter only when the value is a str.
+        parse_call_pattern = re.compile(
+            rf'(\s+){re.escape(py_prop)} = (_parse_{re.escape(py_prop)}\(.*?d\.pop\("[^"]*".*?\)[\s)]*\))',
+            re.DOTALL,
+        )
+        parse_match = parse_call_pattern.search(content)
+        if parse_match and f"{lifter_name}(_raw_" not in content:
+            indent = parse_match.group(1)
+            parse_call = parse_match.group(2)
+            raw_var = f"_raw_{py_prop}"
+            replacement = (
+                f"{indent}{raw_var} = {parse_call}\n"
+                f"{indent}{py_prop} = {lifter_name}({raw_var}) if isinstance({raw_var}, str) else {raw_var}"
+            )
+            content = content.replace(parse_match.group(0), replacement, 1)
 
     if content != original_content:
         file_path.write_text(content, encoding="utf-8")

@@ -1,7 +1,7 @@
 from __future__ import annotations
 import re
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, cast
 
 import yaml
 
@@ -84,22 +84,21 @@ def run(context: dict[str, str]) -> None:
     models_dir.mkdir(parents=True, exist_ok=True)
 
     with open(spec_path, "r", encoding="utf-8") as f:
-        spec = yaml.safe_load(f)
+        spec: dict[str, Any] | None = yaml.safe_load(f)
 
-    schemas = (spec or {}).get("components", {}).get("schemas", {})
+    schemas: Dict[str, Any] = (spec or {}).get("components", {}).get("schemas", {})
 
-    for name, schema in schemas.items():
-        if not isinstance(schema, dict):
+    for name, schema_val in schemas.items():
+        if not isinstance(schema_val, dict):
             continue
+        schema = cast(dict[str, Any], schema_val)
         if schema.get("type") == "array" and "items" in schema:
-            items = schema["items"]
+            items: dict[str, Any] = cast(dict[str, Any], schema["items"])
             item_schema: Optional[Dict[str, Any]] = None
             if "$ref" in items:
                 item_schema = _resolve_ref(schemas, items["$ref"]) or {}
-            elif isinstance(items, dict):
-                item_schema = items
             else:
-                continue
+                item_schema = items
             # Only synthesize when item resolves to a primitive alias or primitive
             base_type = item_schema.get("type")
             if base_type in {"string", "integer", "number", "boolean"} or "x-semantic-type" in item_schema:

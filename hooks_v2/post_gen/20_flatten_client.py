@@ -78,6 +78,13 @@ def generate_flat_client(package_path: Path) -> None:
     sync_methods: list[str] = []
     async_methods: list[str] = []
     all_imports: set[str] = set()
+    needed_type_names: set[str] = set()
+
+    def _extract_annotation_names(node: ast.expr | None) -> set[str]:
+        """Extract all Name identifiers from a type annotation AST node."""
+        if node is None:
+            return set()
+        return {n.id for n in ast.walk(node) if isinstance(n, ast.Name)}
 
     for root, _dirs, files in os.walk(api_dir):
         for file in files:
@@ -106,6 +113,10 @@ def generate_flat_client(package_path: Path) -> None:
             
             if sync_func:
                 args = sync_func.args
+                # Track type names used in annotations for TYPE_CHECKING imports
+                needed_type_names.update(_extract_annotation_names(sync_func.returns))
+                for _arg in args.args + args.kwonlyargs + args.posonlyargs:
+                    needed_type_names.update(_extract_annotation_names(_arg.annotation))
                 new_args: list[ast.arg] = []
                 for arg in args.posonlyargs:
                     if arg.arg != 'client':
@@ -163,6 +174,10 @@ def generate_flat_client(package_path: Path) -> None:
 
             if async_func:
                 args = async_func.args
+                # Track type names used in annotations for TYPE_CHECKING imports
+                needed_type_names.update(_extract_annotation_names(async_func.returns))
+                for _arg in args.args + args.kwonlyargs + args.posonlyargs:
+                    needed_type_names.update(_extract_annotation_names(_arg.annotation))
                 new_args: list[ast.arg] = []
                 for arg in args.posonlyargs:
                     if arg.arg != 'client':
@@ -258,7 +273,6 @@ def generate_flat_client(package_path: Path) -> None:
         imports_content += "\nfrom typing import TYPE_CHECKING"
 
     imports_content += "\nimport asyncio"
-    imports_content += "\nfrom typing import Callable"
     imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, JobHandler"
     imports_content += "\nfrom .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
     imports_content += "\nfrom .runtime.auth import AuthProvider, BasicAuthProvider, NullAuthProvider, OAuthClientCredentialsAuthProvider, AsyncOAuthClientCredentialsAuthProvider, inject_auth_event_hooks"
@@ -269,11 +283,47 @@ def generate_flat_client(package_path: Path) -> None:
     imports_content += "\nfrom .models.create_deployment_response_200_deployments_item_decision_requirements import CreateDeploymentResponse200DeploymentsItemDecisionRequirements"
     imports_content += "\nfrom .models.create_deployment_response_200_deployments_item_form import CreateDeploymentResponse200DeploymentsItemForm"
 
-    # Prepare TYPE_CHECKING block
+    # Prepare TYPE_CHECKING block — only include imports that provide type names
+    # actually used in method signatures (return types and parameter types).
+    # Skip imports already available at the top level of this file.
+    top_level_modules = {
+        "UNSET", "Unset",  # from .types
+        "Any",  # from typing
+        "Callable",  # from typing
+        "cast",  # from typing
+        "Response",  # from .types (not needed for annotations)
+        "ssl",  # import ssl
+    }
     type_checking_block = "\nif TYPE_CHECKING:\n"
+    type_checking_has_imports = False
     sorted_imports = sorted(list(all_imports))
     for imp in sorted_imports:
-        type_checking_block += f"    {imp}\n"
+        # Extract imported names from the import statement
+        import_match = re.search(r'import\s+(.+)$', imp)
+        if not import_match:
+            continue
+        imported_names = [n.strip().split(' as ')[-1].strip() for n in import_match.group(1).split(',')]
+        # Skip if all imported names are already available at the top level
+        if all(name in top_level_modules for name in imported_names):
+            continue
+        # Filter out individual top_level_modules names from the import
+        filtered_names = [n for n in imported_names if n not in top_level_modules]
+        if not filtered_names:
+            continue
+        # Only include if at least one filtered name is needed for annotations
+        if any(name in needed_type_names for name in filtered_names):
+            # Rebuild import statement with only needed names
+            module_match = re.match(r'(from\s+\S+\s+import\s+)', imp)
+            if module_match and len(filtered_names) < len(imported_names):
+                # Reconstruct import with filtered names only
+                rebuilt_imp = module_match.group(1) + ", ".join(filtered_names)
+                type_checking_block += f"    {rebuilt_imp}\n"
+            else:
+                type_checking_block += f"    {imp}\n"
+            type_checking_has_imports = True
+
+    if not type_checking_has_imports:
+        type_checking_block = ""
 
     new_sync_methods = "\n".join(sync_methods)
     new_async_methods = "\n".join(async_methods)
@@ -303,7 +353,7 @@ class CamundaClient:
     configuration: CamundaSdkConfiguration
     auth_provider: AuthProvider
 
-    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, **kwargs):
+    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, **kwargs: Any):
         resolved = ConfigurationResolver(
             environment=read_environment(),
             explicit_configuration=configuration,
@@ -328,7 +378,8 @@ class CamundaClient:
                     password=self.configuration.CAMUNDA_BASIC_AUTH_PASSWORD or "",
                 )
             elif self.configuration.CAMUNDA_AUTH_STRATEGY == "OAUTH":
-                transport = (kwargs.get("httpx_args") or dict()).get("transport")
+                httpx_args: dict[str, Any] = kwargs.get("httpx_args") or {{}}
+                transport: Any = httpx_args.get("transport")
                 auth_provider = OAuthClientCredentialsAuthProvider(
                     oauth_url=self.configuration.CAMUNDA_OAUTH_URL,
                     client_id=self.configuration.CAMUNDA_CLIENT_ID or "",
@@ -357,7 +408,7 @@ class CamundaClient:
         self.client.__enter__()
         return self
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, *args: Any, **kwargs: Any):
         try:
             return self.client.__exit__(*args, **kwargs)
         finally:
@@ -411,17 +462,19 @@ class CamundaClient:
                 typed API errors in :mod:`camunda_orchestration_sdk.errors` and ``httpx.TimeoutException``).
         """
         from .models.create_deployment_data import CreateDeploymentData
+        from .semantic_types import TenantId
         from .types import File, UNSET
+        import io
         import os
 
-        resources = []
+        resources: list[File] = []
         for file_path in files:
             file_path = str(file_path)
             with open(file_path, "rb") as f:
                 content = f.read()
-            resources.append(File(payload=content, file_name=os.path.basename(file_path)))
+            resources.append(File(payload=io.BytesIO(content), file_name=os.path.basename(file_path)))
 
-        data = CreateDeploymentData(resources=resources, tenant_id=tenant_id if tenant_id is not None else UNSET)
+        data = CreateDeploymentData(resources=resources, tenant_id=TenantId(tenant_id) if tenant_id is not None else UNSET)
         return ExtendedDeploymentResult(self.create_deployment(data=data))
 
 {new_sync_methods}
@@ -433,7 +486,7 @@ class CamundaAsyncClient:
     auth_provider: AuthProvider
     _workers: list[JobWorker]
 
-    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, **kwargs):
+    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, **kwargs: Any):
         resolved = ConfigurationResolver(
             environment=read_environment(),
             explicit_configuration=configuration,
@@ -458,7 +511,8 @@ class CamundaAsyncClient:
                     password=self.configuration.CAMUNDA_BASIC_AUTH_PASSWORD or "",
                 )
             elif self.configuration.CAMUNDA_AUTH_STRATEGY == "OAUTH":
-                transport = (kwargs.get("httpx_args") or dict()).get("transport")
+                httpx_args: dict[str, Any] = kwargs.get("httpx_args") or {{}}
+                transport: Any = httpx_args.get("transport")
                 auth_provider = AsyncOAuthClientCredentialsAuthProvider(
                     oauth_url=self.configuration.CAMUNDA_OAUTH_URL,
                     client_id=self.configuration.CAMUNDA_CLIENT_ID or "",
@@ -484,20 +538,18 @@ class CamundaAsyncClient:
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
         self._workers = []
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "CamundaAsyncClient":
         await self.client.__aenter__()
         return self
 
-    async def __aexit__(self, *args, **kwargs):
-        result = None
+    async def __aexit__(self, *args: Any, **kwargs: Any) -> None:
         try:
-            result = await self.client.__aexit__(*args, **kwargs)
-            return result
+            await self.client.__aexit__(*args, **kwargs)
         finally:
             aclose = getattr(self.auth_provider, "aclose", None)
             if callable(aclose):
                 try:
-                    await aclose()
+                    await aclose()  # type: ignore[reportGeneralTypeIssues]
                 except Exception:
                     pass
             else:
@@ -518,7 +570,7 @@ class CamundaAsyncClient:
         aclose = getattr(self.auth_provider, "aclose", None)
         if callable(aclose):
             try:
-                await aclose()
+                await aclose()  # type: ignore[reportGeneralTypeIssues]
             except Exception:
                 pass
         else:
@@ -579,17 +631,19 @@ class CamundaAsyncClient:
                 typed API errors in :mod:`camunda_orchestration_sdk.errors` and ``httpx.TimeoutException``).
         """
         from .models.create_deployment_data import CreateDeploymentData
+        from .semantic_types import TenantId
         from .types import File, UNSET
+        import io
         import os
 
-        resources = []
+        resources: list[File] = []
         for file_path in files:
             file_path = str(file_path)
             with open(file_path, "rb") as f:
                 content = f.read()
-            resources.append(File(payload=content, file_name=os.path.basename(file_path)))
+            resources.append(File(payload=io.BytesIO(content), file_name=os.path.basename(file_path)))
 
-        data = CreateDeploymentData(resources=resources, tenant_id=tenant_id if tenant_id is not None else UNSET)
+        data = CreateDeploymentData(resources=resources, tenant_id=TenantId(tenant_id) if tenant_id is not None else UNSET)
         return ExtendedDeploymentResult(await self.create_deployment(data=data))
 
 {new_async_methods}

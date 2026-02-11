@@ -1,0 +1,3 @@
+# Mark generated SDK output so GitHub collapses diffs in PRs by default.
+# Reviewers can still expand them when auditing generated code.
+generated/** linguist-generated=true
