@@ -71,7 +71,7 @@ def test_load_envfile_disabled():
         try:
             os.chdir(tmpdir)
             # Don't set CAMUNDA_LOAD_ENVFILE
-            env = {}
+            env: dict[str, str] = {}
             result = read_environment(env)
             
             # Values should not be loaded from .env

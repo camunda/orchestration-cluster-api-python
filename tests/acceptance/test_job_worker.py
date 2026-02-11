@@ -171,9 +171,12 @@ async def test_worker_concurrency_limit(mock_client: MagicMock):
     worker = JobWorker(mock_client, slow_callback, config)
     
     # Mock poll response to return 2 jobs each time
-    job1 = MagicMock(spec=ActivateJobsResponse200JobsItem); job1.job_key = 1
-    job2 = MagicMock(spec=ActivateJobsResponse200JobsItem); job2.job_key = 2
-    job3 = MagicMock(spec=ActivateJobsResponse200JobsItem); job3.job_key = 3
+    job1 = MagicMock(spec=ActivateJobsResponse200JobsItem)
+    job1.job_key = 1
+    job2 = MagicMock(spec=ActivateJobsResponse200JobsItem)
+    job2.job_key = 2
+    job3 = MagicMock(spec=ActivateJobsResponse200JobsItem)
+    job3.job_key = 3
     
     # First poll returns 2 jobs (filling capacity)
     # Second poll should be skipped or return empty if capacity is full

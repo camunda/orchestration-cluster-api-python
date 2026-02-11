@@ -1,5 +1,5 @@
 import inspect
-from typing import Any
+from typing import Any, cast
 
 
 def _annotation_to_doc_return_text(annotation: Any) -> str:
@@ -46,27 +46,33 @@ def _assert_value_or_throw_doc(func: Any) -> None:
 
 
 def test_api_wrapper_docstrings_match_rewritten_signature():
-    from camunda_orchestration_sdk.api.group.get_group import sync as get_group_sync
-    from camunda_orchestration_sdk.api.job.fail_job import sync as fail_job_sync
+    from camunda_orchestration_sdk.api.group.get_group import sync as get_group_sync  # pyright: ignore[reportUnknownVariableType]
+    from camunda_orchestration_sdk.api.job.fail_job import sync as fail_job_sync  # pyright: ignore[reportUnknownVariableType]
     from camunda_orchestration_sdk.api.process_instance.create_process_instance import (
-        sync as create_process_instance_sync,
+        sync as create_process_instance_sync,  # pyright: ignore[reportUnknownVariableType]
     )
 
-    doc_group = inspect.getdoc(get_group_sync) or ""
+    # Cast generated functions to Any to avoid pyright strict noise from
+    # generated **kwargs: Unknown signatures — we only inspect docstrings here.
+    get_group_fn = cast(Any, get_group_sync)
+    fail_job_fn = cast(Any, fail_job_sync)
+    create_pi_fn = cast(Any, create_process_instance_sync)
+
+    doc_group = inspect.getdoc(get_group_fn) or ""
     assert "errors.GetGroupUnauthorized" in doc_group
     assert "errors.GetGroupForbidden" in doc_group
 
-    doc_fail = inspect.getdoc(fail_job_sync) or ""
+    doc_fail = inspect.getdoc(fail_job_fn) or ""
     assert "errors.FailJobBadRequest" in doc_fail
     assert "errors.FailJobNotFound" in doc_fail
 
-    doc_create_pi = inspect.getdoc(create_process_instance_sync) or ""
+    doc_create_pi = inspect.getdoc(create_pi_fn) or ""
     assert "errors.CreateProcessInstanceServiceUnavailable" in doc_create_pi
     assert "backpressure" in doc_create_pi
 
-    _assert_value_or_throw_doc(get_group_sync)
-    _assert_value_or_throw_doc(fail_job_sync)
-    _assert_value_or_throw_doc(create_process_instance_sync)
+    _assert_value_or_throw_doc(get_group_fn)
+    _assert_value_or_throw_doc(fail_job_fn)
+    _assert_value_or_throw_doc(create_pi_fn)
 
 
 def test_camunda_client_docstrings_match_rewritten_signature():

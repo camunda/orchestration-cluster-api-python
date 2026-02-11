@@ -59,7 +59,7 @@ async def test_job_worker_performance():
         process_definition = cast(CreateDeploymentResponse200DeploymentsItemProcessDefinition, deployed_resources.deployments[0].process_definition)  
 
         process_definition_key = process_definition.process_definition_key
-        process_definition_id = process_definition.process_definition_id # pyright: ignore[reportUnusedVariable]
+        _ = process_definition.process_definition_id
 
         # Cancel all running instances of process
         searchQuery = SearchProcessInstancesData(
@@ -83,7 +83,7 @@ async def test_job_worker_performance():
         )
 
         # Single worker starts and starts working on jobs
-        worker = camunda.create_job_worker(config=config, callback=callback) # pyright: ignore[reportUnusedVariable]
+        _ = camunda.create_job_worker(config=config, callback=callback)
 
         process_instance = await camunda.create_process_instance(
             data=Processcreationbykey(

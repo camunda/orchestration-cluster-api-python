@@ -18,8 +18,26 @@ dependencies = [
 ]
 
 [tool.pyright]
-typeCheckingMode="strict"
-reportMissingTypeStubs=true
+typeCheckingMode = "strict"
+reportMissingTypeStubs = true
+venvPath = "."
+venv = ".venv"
+exclude = [
+    "generated",
+    "demo",
+    "hooks",
+    "hooks_shared",
+    "hooks_v1",
+    "hooks_v2",
+    ".venv",
+    "**/__pycache__",
+]
+
+[tool.ruff]
+extend-exclude = [
+    "generated",
+    "demo",
+]
 
 [build-system]
 requires = ["setuptools>=61.0"]

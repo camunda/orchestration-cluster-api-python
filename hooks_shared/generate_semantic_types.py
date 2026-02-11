@@ -110,10 +110,10 @@ def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -
         # try_lift variant returning (ok, value_or_error)
         try_func_name = _snake(f"try_lift_{alias_name}")
         func.append(f"def {try_func_name}(value: Any) -> Tuple[bool, {alias_name} | Exception]:\n")
-        func.append(f"\ttry:\n")
+        func.append("\ttry:\n")
         func.append(f"\t\treturn True, {func_name}(value)\n")
-        func.append(f"\texcept Exception as e:\n")
-        func.append(f"\t\treturn False, e\n\n")
+        func.append("\texcept Exception as e:\n")
+        func.append("\t\treturn False, e\n\n")
 
         lines.extend(func)
 

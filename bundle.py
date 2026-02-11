@@ -1,23 +1,28 @@
-import json
-import yaml
-import jsonref
+from __future__ import annotations
+
 from pathlib import Path
+from typing import Any, cast
 from urllib.request import urlopen
 
-def yaml_loader(uri, **kwargs):
+import yaml
+import jsonref as _jsonref  # type: ignore[import-untyped]
+
+jsonref: Any = _jsonref
+
+def yaml_loader(uri: str, **kwargs: Any) -> Any:
     """Loader for jsonref that handles YAML files."""
     # Handle file:// URIs or plain paths (though jsonref usually passes URIs)
     if uri.startswith("file://"):
         path = uri[7:]
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, "r", encoding="utf-8") as f:
             return yaml.safe_load(f)
     else:
         # Fallback for http/https if needed, or just fail
         with urlopen(uri) as response:
-             return yaml.safe_load(response.read().decode('utf-8'))
+            return yaml.safe_load(response.read().decode("utf-8"))
 
-def bundle_spec(input_path: Path, output_path: Path):
-    with open(input_path, 'r') as f:
+def bundle_spec(input_path: Path, output_path: Path) -> None:
+    with open(input_path, "r", encoding="utf-8") as f:
         spec = yaml.safe_load(f)
     
     # jsonref resolves references. We need to tell it the base URI so it can find relative files.
@@ -45,17 +50,19 @@ def bundle_spec(input_path: Path, output_path: Path):
     # they are not exactly dicts.
     # Let's try a recursive conversion function instead of json.dumps/loads.
     
-    def unwrap(obj):
+    def unwrap(obj: Any) -> Any:
         if isinstance(obj, dict):
-            return {k: unwrap(v) for k, v in obj.items()}
+            obj_dict = cast(dict[Any, Any], obj)
+            return {k: unwrap(v) for k, v in obj_dict.items()}
         elif isinstance(obj, list):
-            return [unwrap(v) for v in obj]
+            obj_list = cast(list[Any], obj)
+            return [unwrap(v) for v in obj_list]
         else:
             return obj
             
     resolved_dict = unwrap(resolved)
     
-    with open(output_path, 'w') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         yaml.safe_dump(resolved_dict, f, sort_keys=False)
 
 if __name__ == "__main__":

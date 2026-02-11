@@ -364,7 +364,7 @@ def _rewrite_docstring(docstring: str, return_type_str: str, raise_lines: list[s
     indent = "    "
 
     new_raises_block = ["", "Raises:"]
-    new_raises_block.extend([f"{indent}{l}" for l in raise_lines])
+    new_raises_block.extend([f"{indent}{line}" for line in raise_lines])
     new_raises_block.append(f"{indent}httpx.TimeoutException: If the request takes longer than Client.timeout.")
 
     if raises_i is None:

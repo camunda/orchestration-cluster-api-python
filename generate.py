@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
+from __future__ import annotations
+
 import argparse
 import importlib.util
 import os
 import shutil
 import subprocess
 import sys
+from collections.abc import Callable, Mapping
 from pathlib import Path
+from typing import Any
+
 from hooks_shared import patch_bundled_spec
 
 REPO_URL = "https://github.com/camunda/camunda.git"
@@ -140,8 +145,8 @@ def run_python_client_generator(spec: Path, out_dir: Path, config_path: Path) ->
     log(f"Running openapi-python-client with config {config_path}...")
     subprocess.run(cmd, check=True)
 
-def load_hooks(hooks_dir: Path):
-    hooks = []
+def load_hooks(hooks_dir: Path) -> list[Callable[[Mapping[str, str]], None]]:
+    hooks: list[Callable[[Mapping[str, str]], None]] = []
     if not hooks_dir.exists():
         return hooks
     for hook_file in sorted(hooks_dir.glob("*.py")):
@@ -153,7 +158,7 @@ def load_hooks(hooks_dir: Path):
                 hooks.append(module.run)
     return hooks
 
-def run_hooks(hooks, context: dict) -> None:
+def run_hooks(hooks: list[Callable[[Mapping[str, str]], None]], context: dict[str, str]) -> None:
     for hook in hooks:
         log(f"Running hook: {hook.__module__}")
         hook(context)
@@ -201,7 +206,7 @@ def main():
     if args.package_name is not None:
         import yaml  # lazy import
         with open(config_path, "r", encoding="utf-8") as f:
-            cfg = yaml.safe_load(f) or {}
+            cfg: dict[str, Any] = yaml.safe_load(f) or {}
         cfg["packageName"] = args.package_name
         tmp_config = root / ".openapi-cache" / "generator-config.effective.yaml"
         tmp_config.parent.mkdir(parents=True, exist_ok=True)

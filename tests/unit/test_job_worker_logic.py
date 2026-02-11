@@ -35,7 +35,7 @@ async def test_worker_decrements_active_jobs_on_success():
     )
 
     # Callback
-    async def success_callback(job: JobContext):
+    async def success_callback(job: JobContext) -> dict[str, str]:
         return {}
 
     worker = JobWorker(client=mock_client, callback=success_callback, config=config)
