@@ -360,13 +360,12 @@ class OAuthClientCredentialsAuthProvider:
             "audience": self._audience,
         }
 
-        if _logger is not None:
-            _logger.debug(
-                "OAuth token request: url={url} audience={audience} client_id={client_id}",
-                url=self._oauth_url,
-                audience=self._audience,
-                client_id=self._client_id,
-            )
+        _log_debug(
+            "OAuth token request: url={url} audience={audience} client_id={client_id}",
+            url=self._oauth_url,
+            audience=self._audience,
+            client_id=self._client_id,
+        )
 
         resp = self._client.post(
             self._oauth_url,
@@ -548,10 +547,10 @@ class AsyncOAuthClientCredentialsAuthProvider:
             try:
                 os.chmod(token_file, 0o600)
             except Exception as exc:
-                _logger.debug(
-                    "Failed to set permissions on token cache file {}: {}",
-                    token_file,
-                    exc,
+                _log_debug(
+                    "Failed to set permissions on token cache file {file}: {err}",
+                    file=str(token_file),
+                    err=str(exc),
                 )
         except Exception:
             return
@@ -596,13 +595,12 @@ class AsyncOAuthClientCredentialsAuthProvider:
             "audience": self._audience,
         }
 
-        if _logger is not None:
-            _logger.debug(
-                "OAuth token request (async): url={url} audience={audience} client_id={client_id}",
-                url=self._oauth_url,
-                audience=self._audience,
-                client_id=self._client_id,
-            )
+        _log_debug(
+            "OAuth token request (async): url={url} audience={audience} client_id={client_id}",
+            url=self._oauth_url,
+            audience=self._audience,
+            client_id=self._client_id,
+        )
 
         resp = await self._client.post(
             self._oauth_url,

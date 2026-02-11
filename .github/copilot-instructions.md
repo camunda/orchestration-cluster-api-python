@@ -5,7 +5,7 @@
 This repository contains the Python SDK Generator for the Camunda 8 Orchestration Cluster API. It automates the creation of a Python client library from an OpenAPI specification, incorporating custom runtime logic and post-processing hooks to improve usability.
 
 - **Project Type**: Python SDK Generator & Client Library
-- **Source Language**: Python 3.11+
+- **Source Language**: Python 3.10+
 - **Key Frameworks**:
     - **Build/Dependency**: `uv` (primary), `make` (orchestration)
     - **Generation**: `openapi-python-client` with custom python hooks

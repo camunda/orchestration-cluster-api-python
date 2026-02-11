@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "Josh Wulf", email = "josh.wulf@camunda.com" }
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
     "httpx>=0.28.1",
     "attrs>=21.3.0",
