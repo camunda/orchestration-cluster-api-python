@@ -1,5 +1,8 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    BatchOperationKey,
+    lift_batch_operation_key,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -18,7 +21,7 @@ from ..models.search_batch_operations_response_200_items_item_batch_operation_ty
 from ..models.search_batch_operations_response_200_items_item_state import (
     SearchBatchOperationsResponse200ItemsItemState,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.search_batch_operations_response_200_items_item_errors_item import (
@@ -65,7 +68,9 @@ class SearchBatchOperationsResponse200ItemsItem:
     operations_failed_count: int | Unset = UNSET
     operations_completed_count: int | Unset = UNSET
     errors: list[SearchBatchOperationsResponse200ItemsItemErrorsItem] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         batch_operation_key = self.batch_operation_key
@@ -140,7 +145,11 @@ class SearchBatchOperationsResponse200ItemsItem:
         )
 
         d = dict(src_dict)
-        batch_operation_key = lift_batch_operation_key(_val) if (_val := d.pop("batchOperationKey", UNSET)) is not UNSET else UNSET
+        batch_operation_key = (
+            lift_batch_operation_key(_val)
+            if (_val := d.pop("batchOperationKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         _state = d.pop("state", UNSET)
         state: SearchBatchOperationsResponse200ItemsItemState | Unset

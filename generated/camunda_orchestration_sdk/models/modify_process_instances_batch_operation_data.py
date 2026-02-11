@@ -42,7 +42,7 @@ class ModifyProcessInstancesBatchOperationData:
     def to_dict(self) -> dict[str, Any]:
         filter_ = self.filter_.to_dict()
 
-        move_instructions = []
+        move_instructions: list[dict[str, Any]] = []
         for move_instructions_item_data in self.move_instructions:
             move_instructions_item = move_instructions_item_data.to_dict()
             move_instructions.append(move_instructions_item)
@@ -76,7 +76,9 @@ class ModifyProcessInstancesBatchOperationData:
             d.pop("filter")
         )
 
-        move_instructions = []
+        move_instructions: list[
+            ModifyProcessInstancesBatchOperationDataMoveInstructionsItem
+        ] = []
         _move_instructions = d.pop("moveInstructions")
         for move_instructions_item_data in _move_instructions:
             move_instructions_item = (

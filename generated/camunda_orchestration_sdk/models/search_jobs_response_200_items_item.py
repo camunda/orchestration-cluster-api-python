@@ -1,5 +1,20 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ElementInstanceKey,
+    JobKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+    lift_element_id,
+    lift_element_instance_key,
+    lift_job_key,
+    lift_process_definition_id,
+    lift_process_definition_key,
+    lift_process_instance_key,
+    lift_tenant_id,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -18,7 +33,7 @@ from ..models.search_jobs_response_200_items_item_listener_event_type import (
 from ..models.search_jobs_response_200_items_item_state import (
     SearchJobsResponse200ItemsItemState,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.search_jobs_response_200_items_item_custom_headers import (
@@ -86,7 +101,9 @@ class SearchJobsResponse200ItemsItem:
     is_denied: bool | None | Unset = UNSET
     creation_time: datetime.datetime | Unset = UNSET
     last_update_time: datetime.datetime | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         custom_headers = self.custom_headers.to_dict()
@@ -230,7 +247,9 @@ class SearchJobsResponse200ItemsItem:
 
         process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
 
-        process_definition_key = lift_process_definition_key(d.pop("processDefinitionKey"))
+        process_definition_key = lift_process_definition_key(
+            d.pop("processDefinitionKey")
+        )
 
         process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
 

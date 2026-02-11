@@ -1,10 +1,17 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    lift_process_definition_key,
+    lift_process_instance_key,
+)
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="GetProcessInstanceCallHierarchyResponse200Item")
@@ -23,7 +30,9 @@ class GetProcessInstanceCallHierarchyResponse200Item:
     process_instance_key: ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
     process_definition_name: str
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         process_instance_key = self.process_instance_key
@@ -49,7 +58,9 @@ class GetProcessInstanceCallHierarchyResponse200Item:
         d = dict(src_dict)
         process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
 
-        process_definition_key = lift_process_definition_key(d.pop("processDefinitionKey"))
+        process_definition_key = lift_process_definition_key(
+            d.pop("processDefinitionKey")
+        )
 
         process_definition_name = d.pop("processDefinitionName")
 

@@ -11,7 +11,7 @@ from dateutil.parser import isoparse
 from ..models.actortype_exactmatch import ActortypeExactmatch
 from ..models.operationtype_exactmatch import OperationtypeExactmatch
 from ..models.result_exactmatch import ResultExactmatch
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -43,7 +43,9 @@ class SearchUserTaskAuditLogsDataFilter:
     timestamp: datetime.datetime | TimestampAdvancedfilter | Unset = UNSET
     actor_type: ActortypeAdvancedfilter | ActortypeExactmatch | Unset = UNSET
     actor_id: ActoridAdvancedfilter | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -129,6 +131,8 @@ class SearchUserTaskAuditLogsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             operation_type_type_1 = OperationtypeAdvancedfilter.from_dict(data)
 
             return operation_type_type_1
@@ -150,6 +154,8 @@ class SearchUserTaskAuditLogsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             result_type_1 = ResultAdvancedfilter.from_dict(data)
 
             return result_type_1
@@ -171,6 +177,8 @@ class SearchUserTaskAuditLogsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             timestamp_type_1 = TimestampAdvancedfilter.from_dict(data)
 
             return timestamp_type_1
@@ -192,6 +200,8 @@ class SearchUserTaskAuditLogsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             actor_type_type_1 = ActortypeAdvancedfilter.from_dict(data)
 
             return actor_type_type_1
@@ -204,6 +214,8 @@ class SearchUserTaskAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 actor_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return actor_id_type_1

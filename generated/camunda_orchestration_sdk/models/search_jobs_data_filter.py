@@ -11,7 +11,7 @@ from dateutil.parser import isoparse
 from ..models.kind_exactmatch import KindExactmatch
 from ..models.listenereventtype_exactmatch import ListenereventtypeExactmatch
 from ..models.state_exactmatch_5 import StateExactmatch5
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -90,7 +90,9 @@ class SearchJobsDataFilter:
     worker: ActoridAdvancedfilter | str | Unset = UNSET
     creation_time: datetime.datetime | TimestampAdvancedfilter | Unset = UNSET
     last_update_time: datetime.datetime | TimestampAdvancedfilter | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -370,6 +372,8 @@ class SearchJobsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 deadline_type_1 = TimestampAdvancedfilter.from_dict(data)
 
                 return deadline_type_1
@@ -387,6 +391,8 @@ class SearchJobsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 denied_reason_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return denied_reason_type_1
@@ -402,6 +408,8 @@ class SearchJobsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 element_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return element_id_type_1
@@ -419,6 +427,8 @@ class SearchJobsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 element_instance_key_type_1 = (
                     ElementinstancekeyAdvancedfilter.from_dict(data)
                 )
@@ -447,6 +457,8 @@ class SearchJobsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             end_time_type_1 = TimestampAdvancedfilter.from_dict(data)
 
             return end_time_type_1
@@ -459,6 +471,8 @@ class SearchJobsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 error_code_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return error_code_type_1
@@ -474,6 +488,8 @@ class SearchJobsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 error_message_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return error_message_type_1
@@ -500,6 +516,8 @@ class SearchJobsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 job_key_type_1 = JobkeyAdvancedfilter.from_dict(data)
 
                 return job_key_type_1
@@ -522,6 +540,8 @@ class SearchJobsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             kind_type_1 = KindAdvancedfilter.from_dict(data)
 
             return kind_type_1
@@ -543,6 +563,8 @@ class SearchJobsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             listener_event_type_type_1 = ListenereventtypeAdvancedfilter.from_dict(data)
 
             return listener_event_type_type_1
@@ -559,6 +581,8 @@ class SearchJobsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_definition_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return process_definition_id_type_1
@@ -578,6 +602,8 @@ class SearchJobsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_definition_key_type_1 = (
                     ProcessdefinitionkeyAdvancedfilter.from_dict(data)
                 )
@@ -599,6 +625,8 @@ class SearchJobsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_instance_key_type_1 = (
                     ProcessinstancekeyAdvancedfilter.from_dict(data)
                 )
@@ -618,6 +646,8 @@ class SearchJobsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 retries_type_1 = PartitionidAdvancedfilter.from_dict(data)
 
                 return retries_type_1
@@ -642,6 +672,8 @@ class SearchJobsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             state_type_1 = StateAdvancedfilter5.from_dict(data)
 
             return state_type_1
@@ -654,6 +686,8 @@ class SearchJobsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 tenant_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return tenant_id_type_1
@@ -669,6 +703,8 @@ class SearchJobsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 type_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return type_type_1
@@ -684,6 +720,8 @@ class SearchJobsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 worker_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return worker_type_1
@@ -708,6 +746,8 @@ class SearchJobsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             creation_time_type_1 = TimestampAdvancedfilter.from_dict(data)
 
             return creation_time_type_1
@@ -729,6 +769,8 @@ class SearchJobsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             last_update_time_type_1 = TimestampAdvancedfilter.from_dict(data)
 
             return last_update_time_type_1

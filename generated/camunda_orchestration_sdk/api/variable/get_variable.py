@@ -12,11 +12,28 @@ from ...models.get_variable_response_404 import GetVariableResponse404
 from ...models.get_variable_response_500 import GetVariableResponse500
 from ...types import Response
 
+
 def _get_kwargs(variable_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/variables/{variable_key}'.format(variable_key=quote(str(variable_key), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "get",
+        "url": "/variables/{variable_key}".format(
+            variable_key=quote(str(variable_key), safe="")
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetVariableResponse200 | GetVariableResponse400 | GetVariableResponse401 | GetVariableResponse403 | GetVariableResponse404 | GetVariableResponse500 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    GetVariableResponse200
+    | GetVariableResponse400
+    | GetVariableResponse401
+    | GetVariableResponse403
+    | GetVariableResponse404
+    | GetVariableResponse500
+    | None
+):
     if response.status_code == 200:
         response_200 = GetVariableResponse200.from_dict(response.json())
         return response_200
@@ -40,10 +57,35 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[GetVariableResponse200 | GetVariableResponse400 | GetVariableResponse401 | GetVariableResponse403 | GetVariableResponse404 | GetVariableResponse500]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(variable_key: str, *, client: AuthenticatedClient | Client) -> Response[GetVariableResponse200 | GetVariableResponse400 | GetVariableResponse401 | GetVariableResponse403 | GetVariableResponse404 | GetVariableResponse500]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    GetVariableResponse200
+    | GetVariableResponse400
+    | GetVariableResponse401
+    | GetVariableResponse403
+    | GetVariableResponse404
+    | GetVariableResponse500
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    variable_key: str, *, client: AuthenticatedClient | Client
+) -> Response[
+    GetVariableResponse200
+    | GetVariableResponse400
+    | GetVariableResponse401
+    | GetVariableResponse403
+    | GetVariableResponse404
+    | GetVariableResponse500
+]:
     """Get variable
 
      Get the variable by the variable key.
@@ -62,40 +104,74 @@ def sync_detailed(variable_key: str, *, client: AuthenticatedClient | Client) ->
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(variable_key: str, *, client: AuthenticatedClient | Client, **kwargs) -> GetVariableResponse200:
+
+def sync(
+    variable_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> GetVariableResponse200:
     """Get variable
 
- Get the variable by the variable key.
+     Get the variable by the variable key.
 
-Args:
-    variable_key (str): System-generated key for a variable. Example: 2251799813683287.
+    Args:
+        variable_key (str): System-generated key for a variable. Example: 2251799813683287.
 
-Raises:
-    errors.GetVariableBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.GetVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.GetVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.GetVariableNotFound: If the response status code is 404. Not found
-    errors.GetVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    GetVariableResponse200"""
+    Raises:
+        errors.GetVariableBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.GetVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.GetVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.GetVariableNotFound: If the response status code is 404. Not found
+        errors.GetVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        GetVariableResponse200"""
     response = sync_detailed(variable_key=variable_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.GetVariableBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse400, response.parsed))
+            raise errors.GetVariableBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetVariableResponse400, response.parsed),
+            )
         if response.status_code == 401:
-            raise errors.GetVariableUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse401, response.parsed))
+            raise errors.GetVariableUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetVariableResponse401, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.GetVariableForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse403, response.parsed))
+            raise errors.GetVariableForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetVariableResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.GetVariableNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse404, response.parsed))
+            raise errors.GetVariableNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetVariableResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.GetVariableInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse500, response.parsed))
+            raise errors.GetVariableInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetVariableResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+    assert response.parsed is not None
+    return cast(GetVariableResponse200, response.parsed)
 
-async def asyncio_detailed(variable_key: str, *, client: AuthenticatedClient | Client) -> Response[GetVariableResponse200 | GetVariableResponse400 | GetVariableResponse401 | GetVariableResponse403 | GetVariableResponse404 | GetVariableResponse500]:
+
+async def asyncio_detailed(
+    variable_key: str, *, client: AuthenticatedClient | Client
+) -> Response[
+    GetVariableResponse200
+    | GetVariableResponse400
+    | GetVariableResponse401
+    | GetVariableResponse403
+    | GetVariableResponse404
+    | GetVariableResponse500
+]:
     """Get variable
 
      Get the variable by the variable key.
@@ -114,35 +190,59 @@ async def asyncio_detailed(variable_key: str, *, client: AuthenticatedClient | C
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(variable_key: str, *, client: AuthenticatedClient | Client, **kwargs) -> GetVariableResponse200:
+
+async def asyncio(
+    variable_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> GetVariableResponse200:
     """Get variable
 
- Get the variable by the variable key.
+     Get the variable by the variable key.
 
-Args:
-    variable_key (str): System-generated key for a variable. Example: 2251799813683287.
+    Args:
+        variable_key (str): System-generated key for a variable. Example: 2251799813683287.
 
-Raises:
-    errors.GetVariableBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.GetVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.GetVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.GetVariableNotFound: If the response status code is 404. Not found
-    errors.GetVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    GetVariableResponse200"""
+    Raises:
+        errors.GetVariableBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.GetVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.GetVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.GetVariableNotFound: If the response status code is 404. Not found
+        errors.GetVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        GetVariableResponse200"""
     response = await asyncio_detailed(variable_key=variable_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.GetVariableBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse400, response.parsed))
+            raise errors.GetVariableBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetVariableResponse400, response.parsed),
+            )
         if response.status_code == 401:
-            raise errors.GetVariableUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse401, response.parsed))
+            raise errors.GetVariableUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetVariableResponse401, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.GetVariableForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse403, response.parsed))
+            raise errors.GetVariableForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetVariableResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.GetVariableNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse404, response.parsed))
+            raise errors.GetVariableNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetVariableResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.GetVariableInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetVariableResponse500, response.parsed))
+            raise errors.GetVariableInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetVariableResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+    assert response.parsed is not None
+    return cast(GetVariableResponse200, response.parsed)

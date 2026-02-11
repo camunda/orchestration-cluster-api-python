@@ -38,7 +38,7 @@ class Object1:
 
         resource_type = self.resource_type.value
 
-        permission_types = []
+        permission_types: list[Any] = []
         for permission_types_item_data in self.permission_types:
             permission_types_item = permission_types_item_data.value
             permission_types.append(permission_types_item)
@@ -68,7 +68,7 @@ class Object1:
 
         resource_type = Object1ResourceType(d.pop("resourceType"))
 
-        permission_types = []
+        permission_types: list[Object1PermissionTypesItem] = []
         _permission_types = d.pop("permissionTypes")
         for permission_types_item_data in _permission_types:
             permission_types_item = Object1PermissionTypesItem(

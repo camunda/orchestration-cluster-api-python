@@ -1,5 +1,8 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    BatchOperationKey,
+    lift_batch_operation_key,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -12,7 +15,7 @@ from ..models.search_batch_operations_data_filter_actor_type import (
     SearchBatchOperationsDataFilterActorType,
 )
 from ..models.state_exactmatch_1 import StateExactmatch1
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -46,7 +49,9 @@ class SearchBatchOperationsDataFilter:
     state: StateAdvancedfilter1 | StateExactmatch1 | Unset = UNSET
     actor_type: SearchBatchOperationsDataFilterActorType | Unset = UNSET
     actor_id: ActoridAdvancedfilter | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -123,6 +128,8 @@ class SearchBatchOperationsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 batch_operation_key_type_1 = UsertaskkeyAdvancedfilter.from_dict(data)
 
                 return batch_operation_key_type_1
@@ -130,8 +137,14 @@ class SearchBatchOperationsDataFilter:
                 pass
             return cast(str | Unset | UsertaskkeyAdvancedfilter, data)
 
-        batch_operation_key = _parse_batch_operation_key(
+        _raw_batch_operation_key = _parse_batch_operation_key(
             d.pop("batchOperationKey", UNSET)
+        )
+
+        batch_operation_key = (
+            lift_batch_operation_key(_raw_batch_operation_key)
+            if isinstance(_raw_batch_operation_key, str)
+            else _raw_batch_operation_key
         )
 
         def _parse_operation_type(
@@ -149,6 +162,8 @@ class SearchBatchOperationsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             operation_type_type_1 = BatchoperationtypeAdvancedfilter.from_dict(data)
 
             return operation_type_type_1
@@ -170,6 +185,8 @@ class SearchBatchOperationsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             state_type_1 = StateAdvancedfilter1.from_dict(data)
 
             return state_type_1
@@ -189,6 +206,8 @@ class SearchBatchOperationsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 actor_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return actor_id_type_1

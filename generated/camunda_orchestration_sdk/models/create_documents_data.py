@@ -32,7 +32,7 @@ class CreateDocumentsData:
     metadata_list: list[CreateDocumentsDataMetadataListItem] | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        files = []
+        files: list[Any] = []
         for files_item_data in self.files:
             files_item = files_item_data.to_tuple()
 
@@ -85,7 +85,7 @@ class CreateDocumentsData:
         )
 
         d = dict(src_dict)
-        files = []
+        files: list[File] = []
         _files = d.pop("files")
         for files_item_data in _files:
             files_item = File(payload=BytesIO(files_item_data))

@@ -10,11 +10,26 @@ from ...models.get_mapping_rule_response_404 import GetMappingRuleResponse404
 from ...models.get_mapping_rule_response_500 import GetMappingRuleResponse500
 from ...types import Response
 
+
 def _get_kwargs(mapping_rule_id: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/mapping-rules/{mapping_rule_id}'.format(mapping_rule_id=quote(str(mapping_rule_id), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "get",
+        "url": "/mapping-rules/{mapping_rule_id}".format(
+            mapping_rule_id=quote(str(mapping_rule_id), safe="")
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetMappingRuleResponse200 | GetMappingRuleResponse401 | GetMappingRuleResponse404 | GetMappingRuleResponse500 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    GetMappingRuleResponse200
+    | GetMappingRuleResponse401
+    | GetMappingRuleResponse404
+    | GetMappingRuleResponse500
+    | None
+):
     if response.status_code == 200:
         response_200 = GetMappingRuleResponse200.from_dict(response.json())
         return response_200
@@ -32,10 +47,31 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[GetMappingRuleResponse200 | GetMappingRuleResponse401 | GetMappingRuleResponse404 | GetMappingRuleResponse500]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(mapping_rule_id: str, *, client: AuthenticatedClient | Client) -> Response[GetMappingRuleResponse200 | GetMappingRuleResponse401 | GetMappingRuleResponse404 | GetMappingRuleResponse500]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    GetMappingRuleResponse200
+    | GetMappingRuleResponse401
+    | GetMappingRuleResponse404
+    | GetMappingRuleResponse500
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    mapping_rule_id: str, *, client: AuthenticatedClient | Client
+) -> Response[
+    GetMappingRuleResponse200
+    | GetMappingRuleResponse401
+    | GetMappingRuleResponse404
+    | GetMappingRuleResponse500
+]:
     """Get a mapping rule
 
      Gets the mapping rule with the given ID.
@@ -54,34 +90,58 @@ def sync_detailed(mapping_rule_id: str, *, client: AuthenticatedClient | Client)
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(mapping_rule_id: str, *, client: AuthenticatedClient | Client, **kwargs) -> GetMappingRuleResponse200:
+
+def sync(
+    mapping_rule_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> GetMappingRuleResponse200:
     """Get a mapping rule
 
- Gets the mapping rule with the given ID.
+     Gets the mapping rule with the given ID.
 
-Args:
-    mapping_rule_id (str):
+    Args:
+        mapping_rule_id (str):
 
-Raises:
-    errors.GetMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.GetMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
-    errors.GetMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    GetMappingRuleResponse200"""
+    Raises:
+        errors.GetMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.GetMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+        errors.GetMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        GetMappingRuleResponse200"""
     response = sync_detailed(mapping_rule_id=mapping_rule_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
-            raise errors.GetMappingRuleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetMappingRuleResponse401, response.parsed))
+            raise errors.GetMappingRuleUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetMappingRuleResponse401, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.GetMappingRuleNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetMappingRuleResponse404, response.parsed))
+            raise errors.GetMappingRuleNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetMappingRuleResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.GetMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetMappingRuleResponse500, response.parsed))
+            raise errors.GetMappingRuleInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetMappingRuleResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+    assert response.parsed is not None
+    return cast(GetMappingRuleResponse200, response.parsed)
 
-async def asyncio_detailed(mapping_rule_id: str, *, client: AuthenticatedClient | Client) -> Response[GetMappingRuleResponse200 | GetMappingRuleResponse401 | GetMappingRuleResponse404 | GetMappingRuleResponse500]:
+
+async def asyncio_detailed(
+    mapping_rule_id: str, *, client: AuthenticatedClient | Client
+) -> Response[
+    GetMappingRuleResponse200
+    | GetMappingRuleResponse401
+    | GetMappingRuleResponse404
+    | GetMappingRuleResponse500
+]:
     """Get a mapping rule
 
      Gets the mapping rule with the given ID.
@@ -100,29 +160,45 @@ async def asyncio_detailed(mapping_rule_id: str, *, client: AuthenticatedClient 
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(mapping_rule_id: str, *, client: AuthenticatedClient | Client, **kwargs) -> GetMappingRuleResponse200:
+
+async def asyncio(
+    mapping_rule_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> GetMappingRuleResponse200:
     """Get a mapping rule
 
- Gets the mapping rule with the given ID.
+     Gets the mapping rule with the given ID.
 
-Args:
-    mapping_rule_id (str):
+    Args:
+        mapping_rule_id (str):
 
-Raises:
-    errors.GetMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.GetMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
-    errors.GetMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    GetMappingRuleResponse200"""
+    Raises:
+        errors.GetMappingRuleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.GetMappingRuleNotFound: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+        errors.GetMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        GetMappingRuleResponse200"""
     response = await asyncio_detailed(mapping_rule_id=mapping_rule_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
-            raise errors.GetMappingRuleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetMappingRuleResponse401, response.parsed))
+            raise errors.GetMappingRuleUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetMappingRuleResponse401, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.GetMappingRuleNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetMappingRuleResponse404, response.parsed))
+            raise errors.GetMappingRuleNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetMappingRuleResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.GetMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetMappingRuleResponse500, response.parsed))
+            raise errors.GetMappingRuleInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetMappingRuleResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+    assert response.parsed is not None
+    return cast(GetMappingRuleResponse200, response.parsed)

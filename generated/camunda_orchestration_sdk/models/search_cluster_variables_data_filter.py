@@ -7,7 +7,7 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
 from ..models.scope_exactmatch import ScopeExactmatch
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -37,7 +37,9 @@ class SearchClusterVariablesDataFilter:
     scope: ScopeAdvancedfilter | ScopeExactmatch | Unset = UNSET
     tenant_id: ActoridAdvancedfilter | str | Unset = UNSET
     is_truncated: bool | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -105,6 +107,8 @@ class SearchClusterVariablesDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 name_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return name_type_1
@@ -120,6 +124,8 @@ class SearchClusterVariablesDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 value_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return value_type_1
@@ -142,6 +148,8 @@ class SearchClusterVariablesDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             scope_type_1 = ScopeAdvancedfilter.from_dict(data)
 
             return scope_type_1
@@ -154,6 +162,8 @@ class SearchClusterVariablesDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 tenant_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return tenant_id_type_1

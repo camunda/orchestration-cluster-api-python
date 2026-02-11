@@ -4,6 +4,8 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
@@ -20,7 +22,7 @@ class GetUsageMetricsResponse200Tenants:
     """The usage metrics by tenants. Only available if request `withTenants` query parameter was `true`."""
 
     additional_properties: dict[str, GetUsageMetricsResponse200TenantsTheTenantID] = (
-        _attrs_field(init=False, factory=dict)
+        _attrs_field(init=False, factory=str_any_dict_factory)
     )
 
     def to_dict(self) -> dict[str, Any]:

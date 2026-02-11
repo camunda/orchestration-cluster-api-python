@@ -1,5 +1,10 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    DecisionRequirementsKey,
+    TenantId,
+    lift_decision_requirements_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -7,7 +12,7 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="CreateDeploymentResponse200DeploymentsItemDecisionRequirements")
 
@@ -33,7 +38,9 @@ class CreateDeploymentResponse200DeploymentsItemDecisionRequirements:
     resource_name: str | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     decision_requirements_key: DecisionRequirementsKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         decision_requirements_id = self.decision_requirements_id
@@ -77,9 +84,17 @@ class CreateDeploymentResponse200DeploymentsItemDecisionRequirements:
 
         resource_name = d.pop("resourceName", UNSET)
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        decision_requirements_key = lift_decision_requirements_key(_val) if (_val := d.pop("decisionRequirementsKey", UNSET)) is not UNSET else UNSET
+        decision_requirements_key = (
+            lift_decision_requirements_key(_val)
+            if (_val := d.pop("decisionRequirementsKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         create_deployment_response_200_deployments_item_decision_requirements = cls(
             decision_requirements_id=decision_requirements_id,

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 
@@ -167,6 +167,8 @@ class ModifyProcessInstanceData:
                     try:
                         if not isinstance(data, dict):
                             raise TypeError()
+
+                        data = cast(dict[str, Any], data)
                         terminate_instructions_item_type_0 = (
                             TerminateinstructionsItemObject.from_dict(data)
                         )
@@ -176,6 +178,8 @@ class ModifyProcessInstanceData:
                         pass
                     if not isinstance(data, dict):
                         raise TypeError()
+
+                    data = cast(dict[str, Any], data)
                     terminate_instructions_item_type_1 = (
                         TerminateinstructionsItemObject1.from_dict(data)
                     )

@@ -1,10 +1,15 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ElementInstanceKey,
+    lift_element_instance_key,
+)
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="SourceelementinstructionObject1")
@@ -24,7 +29,9 @@ class SourceelementinstructionObject1:
 
     source_type: str
     source_element_instance_key: ElementInstanceKey
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         source_type = self.source_type
@@ -47,7 +54,9 @@ class SourceelementinstructionObject1:
         d = dict(src_dict)
         source_type = d.pop("sourceType")
 
-        source_element_instance_key = lift_element_instance_key(d.pop("sourceElementInstanceKey"))
+        source_element_instance_key = lift_element_instance_key(
+            d.pop("sourceElementInstanceKey")
+        )
 
         sourceelementinstruction_object_1 = cls(
             source_type=source_type,

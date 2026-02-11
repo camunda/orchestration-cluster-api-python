@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 from ..models.search_batch_operations_response_200_items_item_errors_item_type import (
     SearchBatchOperationsResponse200ItemsItemErrorsItemType,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="SearchBatchOperationsResponse200ItemsItemErrorsItem")
 
@@ -27,7 +27,9 @@ class SearchBatchOperationsResponse200ItemsItemErrorsItem:
     partition_id: int | Unset = UNSET
     type_: SearchBatchOperationsResponse200ItemsItemErrorsItemType | Unset = UNSET
     message: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         partition_id = self.partition_id

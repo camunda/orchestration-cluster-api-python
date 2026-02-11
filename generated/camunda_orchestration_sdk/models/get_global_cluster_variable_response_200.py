@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import TenantId, lift_tenant_id
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -10,7 +10,7 @@ from attrs import field as _attrs_field
 from ..models.get_global_cluster_variable_response_200_scope import (
     GetGlobalClusterVariableResponse200Scope,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="GetGlobalClusterVariableResponse200")
 
@@ -29,7 +29,9 @@ class GetGlobalClusterVariableResponse200:
     name: str
     scope: GetGlobalClusterVariableResponse200Scope
     tenant_id: TenantId | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         value = self.value
@@ -63,7 +65,11 @@ class GetGlobalClusterVariableResponse200:
 
         scope = GetGlobalClusterVariableResponse200Scope(d.pop("scope"))
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         get_global_cluster_variable_response_200 = cls(
             value=value,

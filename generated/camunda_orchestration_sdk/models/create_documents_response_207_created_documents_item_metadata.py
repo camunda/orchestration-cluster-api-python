@@ -1,5 +1,10 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessDefinitionId,
+    ProcessInstanceKey,
+    lift_process_definition_id,
+    lift_process_instance_key,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -9,7 +14,7 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.create_documents_response_207_created_documents_item_metadata_custom_properties import (
@@ -46,7 +51,9 @@ class CreateDocumentsResponse207CreatedDocumentsItemMetadata:
     custom_properties: (
         CreateDocumentsResponse207CreatedDocumentsItemMetadataCustomProperties | Unset
     ) = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         content_type = self.content_type
@@ -107,9 +114,17 @@ class CreateDocumentsResponse207CreatedDocumentsItemMetadata:
 
         size = d.pop("size", UNSET)
 
-        process_definition_id = lift_process_definition_id(_val) if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET else UNSET
+        process_definition_id = (
+            lift_process_definition_id(_val)
+            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_instance_key = lift_process_instance_key(_val) if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET else UNSET
+        process_instance_key = (
+            lift_process_instance_key(_val)
+            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         _custom_properties = d.pop("customProperties", UNSET)
         custom_properties: (

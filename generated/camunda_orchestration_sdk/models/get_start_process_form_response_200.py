@@ -1,5 +1,12 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    FormId,
+    FormKey,
+    TenantId,
+    lift_form_id,
+    lift_form_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -7,7 +14,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.get_start_process_form_response_200_schema import (
@@ -35,7 +42,9 @@ class GetStartProcessFormResponse200:
     schema: GetStartProcessFormResponse200Schema | Unset = UNSET
     version: int | Unset = UNSET
     form_key: FormKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         tenant_id = self.tenant_id
@@ -73,9 +82,17 @@ class GetStartProcessFormResponse200:
         )
 
         d = dict(src_dict)
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        form_id = lift_form_id(_val) if (_val := d.pop("formId", UNSET)) is not UNSET else UNSET
+        form_id = (
+            lift_form_id(_val)
+            if (_val := d.pop("formId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         _schema = d.pop("schema", UNSET)
         schema: GetStartProcessFormResponse200Schema | Unset
@@ -86,7 +103,11 @@ class GetStartProcessFormResponse200:
 
         version = d.pop("version", UNSET)
 
-        form_key = lift_form_key(_val) if (_val := d.pop("formKey", UNSET)) is not UNSET else UNSET
+        form_key = (
+            lift_form_key(_val)
+            if (_val := d.pop("formKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         get_start_process_form_response_200 = cls(
             tenant_id=tenant_id,

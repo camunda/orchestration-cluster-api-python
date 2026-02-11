@@ -10,7 +10,7 @@ from ..models.errortype_advancedfilter_in_item import ErrortypeAdvancedfilterInI
 from ..models.errortype_advancedfilter_not_in_item import (
     ErrortypeAdvancedfilterNotInItem,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.errortype_advancedfilter_eq import ErrortypeAdvancedfilterEq
@@ -47,7 +47,9 @@ class ErrortypeAdvancedfilter:
     in_: list[ErrortypeAdvancedfilterInItem] | Unset = UNSET
     not_in: list[ErrortypeAdvancedfilterNotInItem] | Unset = UNSET
     like: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         eq: dict[str, Any] | Unset = UNSET

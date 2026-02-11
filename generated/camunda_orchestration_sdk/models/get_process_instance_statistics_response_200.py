@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.get_process_instance_statistics_response_200_items_item import (
@@ -26,7 +26,9 @@ class GetProcessInstanceStatisticsResponse200:
     """
 
     items: list[GetProcessInstanceStatisticsResponse200ItemsItem] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         items: list[dict[str, Any]] | Unset = UNSET

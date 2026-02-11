@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import DocumentId, lift_document_id
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -10,7 +10,7 @@ from attrs import field as _attrs_field
 from ..models.create_documents_response_201_created_documents_item_camunda_document_type import (
     CreateDocumentsResponse201CreatedDocumentsItemCamundaDocumentType,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.create_documents_response_201_created_documents_item_metadata import (
@@ -40,7 +40,9 @@ class CreateDocumentsResponse201CreatedDocumentsItem:
     document_id: DocumentId | Unset = UNSET
     content_hash: str | Unset = UNSET
     metadata: CreateDocumentsResponse201CreatedDocumentsItemMetadata | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         camunda_document_type: str | Unset = UNSET
@@ -95,7 +97,11 @@ class CreateDocumentsResponse201CreatedDocumentsItem:
 
         store_id = d.pop("storeId", UNSET)
 
-        document_id = lift_document_id(_val) if (_val := d.pop("documentId", UNSET)) is not UNSET else UNSET
+        document_id = (
+            lift_document_id(_val)
+            if (_val := d.pop("documentId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         content_hash = d.pop("contentHash", UNSET)
 

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.get_topology_response_200_brokers_item import (
@@ -38,10 +38,12 @@ class GetTopologyResponse200:
     gateway_version: str
     last_completed_change_id: str
     cluster_id: None | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
-        brokers = []
+        brokers: list[dict[str, Any]] = []
         for brokers_item_data in self.brokers:
             brokers_item = brokers_item_data.to_dict()
             brokers.append(brokers_item)
@@ -86,7 +88,7 @@ class GetTopologyResponse200:
         )
 
         d = dict(src_dict)
-        brokers = []
+        brokers: list[GetTopologyResponse200BrokersItem] = []
         _brokers = d.pop("brokers")
         for brokers_item_data in _brokers:
             brokers_item = GetTopologyResponse200BrokersItem.from_dict(

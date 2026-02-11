@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import UserTaskKey, lift_user_task_key
 
 import datetime
 from collections.abc import Mapping
@@ -15,7 +15,7 @@ from ..models.category_exactmatch import CategoryExactmatch
 from ..models.entitytype_exactmatch import EntitytypeExactmatch
 from ..models.operationtype_exactmatch import OperationtypeExactmatch
 from ..models.result_exactmatch import ResultExactmatch
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -121,7 +121,9 @@ class SearchAuditLogsDataFilter:
     decision_definition_id: ActoridAdvancedfilter | str | Unset = UNSET
     decision_definition_key: DecisiondefinitionkeyAdvancedfilter | str | Unset = UNSET
     decision_evaluation_key: DecisionevaluationkeyAdvancedfilter | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -463,6 +465,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 audit_log_key_type_1 = AuditlogkeyAdvancedfilter.from_dict(data)
 
                 return audit_log_key_type_1
@@ -480,6 +484,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_definition_key_type_1 = (
                     ProcessdefinitionkeyAdvancedfilter.from_dict(data)
                 )
@@ -501,6 +507,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_instance_key_type_1 = (
                     ProcessinstancekeyAdvancedfilter.from_dict(data)
                 )
@@ -522,6 +530,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 element_instance_key_type_1 = (
                     ElementinstancekeyAdvancedfilter.from_dict(data)
                 )
@@ -550,6 +560,8 @@ class SearchAuditLogsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             operation_type_type_1 = OperationtypeAdvancedfilter.from_dict(data)
 
             return operation_type_type_1
@@ -571,6 +583,8 @@ class SearchAuditLogsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             result_type_1 = ResultAdvancedfilter.from_dict(data)
 
             return result_type_1
@@ -592,6 +606,8 @@ class SearchAuditLogsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             timestamp_type_1 = TimestampAdvancedfilter.from_dict(data)
 
             return timestamp_type_1
@@ -604,6 +620,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 actor_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return actor_id_type_1
@@ -628,6 +646,8 @@ class SearchAuditLogsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             actor_type_type_1 = ActortypeAdvancedfilter.from_dict(data)
 
             return actor_type_type_1
@@ -640,6 +660,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 entity_key_type_1 = EntitykeyAdvancedfilter.from_dict(data)
 
                 return entity_key_type_1
@@ -664,6 +686,8 @@ class SearchAuditLogsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             entity_type_type_1 = EntitytypeAdvancedfilter.from_dict(data)
 
             return entity_type_type_1
@@ -676,6 +700,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 tenant_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return tenant_id_type_1
@@ -700,6 +726,8 @@ class SearchAuditLogsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             category_type_1 = CategoryAdvancedfilter.from_dict(data)
 
             return category_type_1
@@ -714,6 +742,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 deployment_key_type_1 = DeploymentkeyAdvancedfilter.from_dict(data)
 
                 return deployment_key_type_1
@@ -729,6 +759,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 form_key_type_1 = FormkeyAdvancedfilter.from_dict(data)
 
                 return form_key_type_1
@@ -746,6 +778,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 resource_key_type_1 = ResourcekeyAdvancedfilter.from_dict(data)
 
                 return resource_key_type_1
@@ -770,6 +804,8 @@ class SearchAuditLogsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             batch_operation_type_type_1 = BatchoperationtypeAdvancedfilter.from_dict(
                 data
             )
@@ -788,6 +824,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_definition_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return process_definition_id_type_1
@@ -805,6 +843,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 job_key_type_1 = JobkeyAdvancedfilter.from_dict(data)
 
                 return job_key_type_1
@@ -822,6 +862,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 user_task_key_type_1 = UsertaskkeyAdvancedfilter.from_dict(data)
 
                 return user_task_key_type_1
@@ -829,7 +871,13 @@ class SearchAuditLogsDataFilter:
                 pass
             return cast(str | Unset | UsertaskkeyAdvancedfilter, data)
 
-        user_task_key = _parse_user_task_key(d.pop("userTaskKey", UNSET))
+        _raw_user_task_key = _parse_user_task_key(d.pop("userTaskKey", UNSET))
+
+        user_task_key = (
+            lift_user_task_key(_raw_user_task_key)
+            if isinstance(_raw_user_task_key, str)
+            else _raw_user_task_key
+        )
 
         def _parse_decision_requirements_id(
             data: object,
@@ -839,6 +887,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 decision_requirements_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return decision_requirements_id_type_1
@@ -858,6 +908,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 decision_requirements_key_type_1 = (
                     DecisionrequirementskeyAdvancedfilter.from_dict(data)
                 )
@@ -879,6 +931,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 decision_definition_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return decision_definition_id_type_1
@@ -898,6 +952,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 decision_definition_key_type_1 = (
                     DecisiondefinitionkeyAdvancedfilter.from_dict(data)
                 )
@@ -919,6 +975,8 @@ class SearchAuditLogsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 decision_evaluation_key_type_1 = (
                     DecisionevaluationkeyAdvancedfilter.from_dict(data)
                 )

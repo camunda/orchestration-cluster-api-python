@@ -12,7 +12,7 @@ from ..models.search_decision_definitions_data_sort_item_field import (
 from ..models.search_decision_definitions_data_sort_item_order import (
     SearchDecisionDefinitionsDataSortItemOrder,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="SearchDecisionDefinitionsDataSortItem")
 
@@ -30,7 +30,9 @@ class SearchDecisionDefinitionsDataSortItem:
     order: SearchDecisionDefinitionsDataSortItemOrder | Unset = (
         SearchDecisionDefinitionsDataSortItemOrder.ASC
     )
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         field = self.field.value

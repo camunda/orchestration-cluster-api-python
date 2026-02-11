@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import Username, lift_username
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -7,7 +7,7 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="SearchUsersForRoleResponse200ItemsItem")
 
@@ -20,7 +20,9 @@ class SearchUsersForRoleResponse200ItemsItem:
     """
 
     username: Username | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         username = self.username
@@ -36,7 +38,11 @@ class SearchUsersForRoleResponse200ItemsItem:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        username = lift_username(_val) if (_val := d.pop("username", UNSET)) is not UNSET else UNSET
+        username = (
+            lift_username(_val)
+            if (_val := d.pop("username", UNSET)) is not UNSET
+            else UNSET
+        )
 
         search_users_for_role_response_200_items_item = cls(
             username=username,

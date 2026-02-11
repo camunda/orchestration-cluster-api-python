@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.modify_process_instance_data_activate_instructions_item_variable_instructions_item_variables import (
@@ -35,7 +35,9 @@ class ModifyProcessInstanceDataActivateInstructionsItemVariableInstructionsItem:
 
     variables: ModifyProcessInstanceDataActivateInstructionsItemVariableInstructionsItemVariables
     scope_id: str | Unset = ""
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         variables = self.variables.to_dict()

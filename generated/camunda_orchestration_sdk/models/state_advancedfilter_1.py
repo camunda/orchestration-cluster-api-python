@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 from ..models.state_advancedfilter_1_eq import StateAdvancedfilter1Eq
 from ..models.state_advancedfilter_1_in_item import StateAdvancedfilter1InItem
 from ..models.state_advancedfilter_1_neq import StateAdvancedfilter1Neq
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="StateAdvancedfilter1")
 
@@ -38,7 +38,9 @@ class StateAdvancedfilter1:
     exists: bool | Unset = UNSET
     in_: list[StateAdvancedfilter1InItem] | Unset = UNSET
     like: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         eq: str | Unset = UNSET

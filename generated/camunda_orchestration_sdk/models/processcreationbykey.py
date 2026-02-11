@@ -1,5 +1,10 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessDefinitionKey,
+    TenantId,
+    lift_process_definition_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -75,10 +80,6 @@ class Processcreationbykey:
     tags: list[str] | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.processcreationbykey_runtime_instructions_item_type_0 import (
-            ProcesscreationbykeyRuntimeInstructionsItemType0,
-        )
-
         process_definition_key = self.process_definition_key
 
         variables: dict[str, Any] | Unset = UNSET
@@ -96,12 +97,7 @@ class Processcreationbykey:
         if not isinstance(self.runtime_instructions, Unset):
             runtime_instructions = []
             for runtime_instructions_item_data in self.runtime_instructions:
-                runtime_instructions_item: dict[str, Any]
-                if isinstance(
-                    runtime_instructions_item_data,
-                    ProcesscreationbykeyRuntimeInstructionsItemType0,
-                ):
-                    runtime_instructions_item = runtime_instructions_item_data.to_dict()
+                runtime_instructions_item = runtime_instructions_item_data.to_dict()
 
                 runtime_instructions.append(runtime_instructions_item)
 
@@ -160,7 +156,9 @@ class Processcreationbykey:
         )
 
         d = dict(src_dict)
-        process_definition_key = lift_process_definition_key(d.pop("processDefinitionKey"))
+        process_definition_key = lift_process_definition_key(
+            d.pop("processDefinitionKey")
+        )
 
         _variables = d.pop("variables", UNSET)
         variables: ProcesscreationbyidVariables | Unset
@@ -197,6 +195,8 @@ class Processcreationbykey:
                 ) -> ProcesscreationbykeyRuntimeInstructionsItemType0:
                     if not isinstance(data, dict):
                         raise TypeError()
+
+                    data = cast(dict[str, Any], data)
                     runtime_instructions_item_type_0 = (
                         ProcesscreationbykeyRuntimeInstructionsItemType0.from_dict(data)
                     )
@@ -209,7 +209,11 @@ class Processcreationbykey:
 
                 runtime_instructions.append(runtime_instructions_item)
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         operation_reference = d.pop("operationReference", UNSET)
 

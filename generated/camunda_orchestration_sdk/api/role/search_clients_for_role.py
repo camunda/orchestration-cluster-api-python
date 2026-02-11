@@ -5,24 +5,55 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.search_clients_for_role_data import SearchClientsForRoleData
-from ...models.search_clients_for_role_response_200 import SearchClientsForRoleResponse200
-from ...models.search_clients_for_role_response_400 import SearchClientsForRoleResponse400
-from ...models.search_clients_for_role_response_401 import SearchClientsForRoleResponse401
-from ...models.search_clients_for_role_response_403 import SearchClientsForRoleResponse403
-from ...models.search_clients_for_role_response_404 import SearchClientsForRoleResponse404
-from ...models.search_clients_for_role_response_500 import SearchClientsForRoleResponse500
+from ...models.search_clients_for_role_response_200 import (
+    SearchClientsForRoleResponse200,
+)
+from ...models.search_clients_for_role_response_400 import (
+    SearchClientsForRoleResponse400,
+)
+from ...models.search_clients_for_role_response_401 import (
+    SearchClientsForRoleResponse401,
+)
+from ...models.search_clients_for_role_response_403 import (
+    SearchClientsForRoleResponse403,
+)
+from ...models.search_clients_for_role_response_404 import (
+    SearchClientsForRoleResponse404,
+)
+from ...models.search_clients_for_role_response_500 import (
+    SearchClientsForRoleResponse500,
+)
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(role_id: str, *, body: SearchClientsForRoleData | Unset=UNSET) -> dict[str, Any]:
+
+def _get_kwargs(
+    role_id: str, *, body: SearchClientsForRoleData | Unset = UNSET
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/roles/{role_id}/clients/search'.format(role_id=quote(str(role_id), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "post",
+        "url": "/roles/{role_id}/clients/search".format(
+            role_id=quote(str(role_id), safe="")
+        ),
+    }
     if not isinstance(body, Unset):
-        _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+        _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> SearchClientsForRoleResponse200 | SearchClientsForRoleResponse400 | SearchClientsForRoleResponse401 | SearchClientsForRoleResponse403 | SearchClientsForRoleResponse404 | SearchClientsForRoleResponse500 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    SearchClientsForRoleResponse200
+    | SearchClientsForRoleResponse400
+    | SearchClientsForRoleResponse401
+    | SearchClientsForRoleResponse403
+    | SearchClientsForRoleResponse404
+    | SearchClientsForRoleResponse500
+    | None
+):
     if response.status_code == 200:
         response_200 = SearchClientsForRoleResponse200.from_dict(response.json())
         return response_200
@@ -46,10 +77,38 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchClientsForRoleResponse200 | SearchClientsForRoleResponse400 | SearchClientsForRoleResponse401 | SearchClientsForRoleResponse403 | SearchClientsForRoleResponse404 | SearchClientsForRoleResponse500]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(role_id: str, *, client: AuthenticatedClient | Client, body: SearchClientsForRoleData | Unset=UNSET) -> Response[SearchClientsForRoleResponse200 | SearchClientsForRoleResponse400 | SearchClientsForRoleResponse401 | SearchClientsForRoleResponse403 | SearchClientsForRoleResponse404 | SearchClientsForRoleResponse500]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    SearchClientsForRoleResponse200
+    | SearchClientsForRoleResponse400
+    | SearchClientsForRoleResponse401
+    | SearchClientsForRoleResponse403
+    | SearchClientsForRoleResponse404
+    | SearchClientsForRoleResponse500
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    role_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchClientsForRoleData | Unset = UNSET,
+) -> Response[
+    SearchClientsForRoleResponse200
+    | SearchClientsForRoleResponse400
+    | SearchClientsForRoleResponse401
+    | SearchClientsForRoleResponse403
+    | SearchClientsForRoleResponse404
+    | SearchClientsForRoleResponse500
+]:
     """Search role clients
 
      Search clients with assigned role.
@@ -69,41 +128,82 @@ def sync_detailed(role_id: str, *, client: AuthenticatedClient | Client, body: S
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(role_id: str, *, client: AuthenticatedClient | Client, body: SearchClientsForRoleData | Unset=UNSET, **kwargs) -> SearchClientsForRoleResponse200:
+
+def sync(
+    role_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchClientsForRoleData | Unset = UNSET,
+    **kwargs: Any,
+) -> SearchClientsForRoleResponse200:
     """Search role clients
 
- Search clients with assigned role.
+     Search clients with assigned role.
 
-Args:
-    role_id (str):
-    body (SearchClientsForRoleData | Unset):
+    Args:
+        role_id (str):
+        body (SearchClientsForRoleData | Unset):
 
-Raises:
-    errors.SearchClientsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.SearchClientsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.SearchClientsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.SearchClientsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
-    errors.SearchClientsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    SearchClientsForRoleResponse200"""
+    Raises:
+        errors.SearchClientsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.SearchClientsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.SearchClientsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.SearchClientsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+        errors.SearchClientsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        SearchClientsForRoleResponse200"""
     response = sync_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchClientsForRoleBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForRoleResponse400, response.parsed))
+            raise errors.SearchClientsForRoleBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForRoleResponse400, response.parsed),
+            )
         if response.status_code == 401:
-            raise errors.SearchClientsForRoleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForRoleResponse401, response.parsed))
+            raise errors.SearchClientsForRoleUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForRoleResponse401, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.SearchClientsForRoleForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForRoleResponse403, response.parsed))
+            raise errors.SearchClientsForRoleForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForRoleResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.SearchClientsForRoleNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForRoleResponse404, response.parsed))
+            raise errors.SearchClientsForRoleNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForRoleResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.SearchClientsForRoleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForRoleResponse500, response.parsed))
+            raise errors.SearchClientsForRoleInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForRoleResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+    assert response.parsed is not None
+    return cast(SearchClientsForRoleResponse200, response.parsed)
 
-async def asyncio_detailed(role_id: str, *, client: AuthenticatedClient | Client, body: SearchClientsForRoleData | Unset=UNSET) -> Response[SearchClientsForRoleResponse200 | SearchClientsForRoleResponse400 | SearchClientsForRoleResponse401 | SearchClientsForRoleResponse403 | SearchClientsForRoleResponse404 | SearchClientsForRoleResponse500]:
+
+async def asyncio_detailed(
+    role_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchClientsForRoleData | Unset = UNSET,
+) -> Response[
+    SearchClientsForRoleResponse200
+    | SearchClientsForRoleResponse400
+    | SearchClientsForRoleResponse401
+    | SearchClientsForRoleResponse403
+    | SearchClientsForRoleResponse404
+    | SearchClientsForRoleResponse500
+]:
     """Search role clients
 
      Search clients with assigned role.
@@ -123,36 +223,64 @@ async def asyncio_detailed(role_id: str, *, client: AuthenticatedClient | Client
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(role_id: str, *, client: AuthenticatedClient | Client, body: SearchClientsForRoleData | Unset=UNSET, **kwargs) -> SearchClientsForRoleResponse200:
+
+async def asyncio(
+    role_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchClientsForRoleData | Unset = UNSET,
+    **kwargs: Any,
+) -> SearchClientsForRoleResponse200:
     """Search role clients
 
- Search clients with assigned role.
+     Search clients with assigned role.
 
-Args:
-    role_id (str):
-    body (SearchClientsForRoleData | Unset):
+    Args:
+        role_id (str):
+        body (SearchClientsForRoleData | Unset):
 
-Raises:
-    errors.SearchClientsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.SearchClientsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.SearchClientsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.SearchClientsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
-    errors.SearchClientsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    SearchClientsForRoleResponse200"""
+    Raises:
+        errors.SearchClientsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.SearchClientsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.SearchClientsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.SearchClientsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
+        errors.SearchClientsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        SearchClientsForRoleResponse200"""
     response = await asyncio_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchClientsForRoleBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForRoleResponse400, response.parsed))
+            raise errors.SearchClientsForRoleBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForRoleResponse400, response.parsed),
+            )
         if response.status_code == 401:
-            raise errors.SearchClientsForRoleUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForRoleResponse401, response.parsed))
+            raise errors.SearchClientsForRoleUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForRoleResponse401, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.SearchClientsForRoleForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForRoleResponse403, response.parsed))
+            raise errors.SearchClientsForRoleForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForRoleResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.SearchClientsForRoleNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForRoleResponse404, response.parsed))
+            raise errors.SearchClientsForRoleNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForRoleResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.SearchClientsForRoleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForRoleResponse500, response.parsed))
+            raise errors.SearchClientsForRoleInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForRoleResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+    assert response.parsed is not None
+    return cast(SearchClientsForRoleResponse200, response.parsed)

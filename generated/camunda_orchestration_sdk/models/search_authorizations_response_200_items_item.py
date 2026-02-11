@@ -1,5 +1,8 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    AuthorizationKey,
+    lift_authorization_key,
+)
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -16,7 +19,7 @@ from ..models.search_authorizations_response_200_items_item_permission_types_ite
 from ..models.search_authorizations_response_200_items_item_resource_type import (
     SearchAuthorizationsResponse200ItemsItemResourceType,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="SearchAuthorizationsResponse200ItemsItem")
 
@@ -47,7 +50,9 @@ class SearchAuthorizationsResponse200ItemsItem:
         list[SearchAuthorizationsResponse200ItemsItemPermissionTypesItem] | Unset
     ) = UNSET
     authorization_key: AuthorizationKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         owner_id = self.owner_id
@@ -133,7 +138,11 @@ class SearchAuthorizationsResponse200ItemsItem:
 
                 permission_types.append(permission_types_item)
 
-        authorization_key = lift_authorization_key(_val) if (_val := d.pop("authorizationKey", UNSET)) is not UNSET else UNSET
+        authorization_key = (
+            lift_authorization_key(_val)
+            if (_val := d.pop("authorizationKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         search_authorizations_response_200_items_item = cls(
             owner_id=owner_id,

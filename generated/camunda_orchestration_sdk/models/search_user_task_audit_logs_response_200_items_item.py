@@ -1,5 +1,38 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    AuditLogEntityKey,
+    AuditLogKey,
+    BatchOperationKey,
+    DecisionDefinitionId,
+    DecisionDefinitionKey,
+    DecisionEvaluationKey,
+    DecisionRequirementsKey,
+    DeploymentKey,
+    ElementInstanceKey,
+    FormKey,
+    JobKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+    UserTaskKey,
+    lift_audit_log_entity_key,
+    lift_audit_log_key,
+    lift_batch_operation_key,
+    lift_decision_definition_id,
+    lift_decision_definition_key,
+    lift_decision_evaluation_key,
+    lift_decision_requirements_key,
+    lift_deployment_key,
+    lift_element_instance_key,
+    lift_form_key,
+    lift_job_key,
+    lift_process_definition_id,
+    lift_process_definition_key,
+    lift_process_instance_key,
+    lift_tenant_id,
+    lift_user_task_key,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -27,7 +60,7 @@ from ..models.search_user_task_audit_logs_response_200_items_item_operation_type
 from ..models.search_user_task_audit_logs_response_200_items_item_result import (
     SearchUserTaskAuditLogsResponse200ItemsItemResult,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="SearchUserTaskAuditLogsResponse200ItemsItem")
 
@@ -102,7 +135,9 @@ class SearchUserTaskAuditLogsResponse200ItemsItem:
     deployment_key: DeploymentKey | Unset = UNSET
     form_key: FormKey | Unset = UNSET
     resource_key: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         audit_log_key = self.audit_log_key
@@ -240,9 +275,17 @@ class SearchUserTaskAuditLogsResponse200ItemsItem:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        audit_log_key = lift_audit_log_key(_val) if (_val := d.pop("auditLogKey", UNSET)) is not UNSET else UNSET
+        audit_log_key = (
+            lift_audit_log_key(_val)
+            if (_val := d.pop("auditLogKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        entity_key = lift_audit_log_entity_key(_val) if (_val := d.pop("entityKey", UNSET)) is not UNSET else UNSET
+        entity_key = (
+            lift_audit_log_entity_key(_val)
+            if (_val := d.pop("entityKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         _entity_type = d.pop("entityType", UNSET)
         entity_type: SearchUserTaskAuditLogsResponse200ItemsItemEntityType | Unset
@@ -262,7 +305,11 @@ class SearchUserTaskAuditLogsResponse200ItemsItem:
                 _operation_type
             )
 
-        batch_operation_key = lift_batch_operation_key(_val) if (_val := d.pop("batchOperationKey", UNSET)) is not UNSET else UNSET
+        batch_operation_key = (
+            lift_batch_operation_key(_val)
+            if (_val := d.pop("batchOperationKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         _batch_operation_type = d.pop("batchOperationType", UNSET)
         batch_operation_type: (
@@ -295,7 +342,11 @@ class SearchUserTaskAuditLogsResponse200ItemsItem:
                 _actor_type
             )
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         _result = d.pop("result", UNSET)
         result: SearchUserTaskAuditLogsResponse200ItemsItemResult | Unset
@@ -313,31 +364,79 @@ class SearchUserTaskAuditLogsResponse200ItemsItem:
         else:
             category = SearchUserTaskAuditLogsResponse200ItemsItemCategory(_category)
 
-        process_definition_id = lift_process_definition_id(_val) if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET else UNSET
+        process_definition_id = (
+            lift_process_definition_id(_val)
+            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_definition_key = lift_process_definition_key(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
+        process_definition_key = (
+            lift_process_definition_key(_val)
+            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_instance_key = lift_process_instance_key(_val) if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET else UNSET
+        process_instance_key = (
+            lift_process_instance_key(_val)
+            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        element_instance_key = lift_element_instance_key(_val) if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET else UNSET
+        element_instance_key = (
+            lift_element_instance_key(_val)
+            if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        job_key = lift_job_key(_val) if (_val := d.pop("jobKey", UNSET)) is not UNSET else UNSET
+        job_key = (
+            lift_job_key(_val)
+            if (_val := d.pop("jobKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        user_task_key = lift_user_task_key(_val) if (_val := d.pop("userTaskKey", UNSET)) is not UNSET else UNSET
+        user_task_key = (
+            lift_user_task_key(_val)
+            if (_val := d.pop("userTaskKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         decision_requirements_id = d.pop("decisionRequirementsId", UNSET)
 
-        decision_requirements_key = lift_decision_requirements_key(_val) if (_val := d.pop("decisionRequirementsKey", UNSET)) is not UNSET else UNSET
+        decision_requirements_key = (
+            lift_decision_requirements_key(_val)
+            if (_val := d.pop("decisionRequirementsKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        decision_definition_id = lift_decision_definition_id(_val) if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET else UNSET
+        decision_definition_id = (
+            lift_decision_definition_id(_val)
+            if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        decision_definition_key = lift_decision_definition_key(_val) if (_val := d.pop("decisionDefinitionKey", UNSET)) is not UNSET else UNSET
+        decision_definition_key = (
+            lift_decision_definition_key(_val)
+            if (_val := d.pop("decisionDefinitionKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        decision_evaluation_key = lift_decision_evaluation_key(_val) if (_val := d.pop("decisionEvaluationKey", UNSET)) is not UNSET else UNSET
+        decision_evaluation_key = (
+            lift_decision_evaluation_key(_val)
+            if (_val := d.pop("decisionEvaluationKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        deployment_key = lift_deployment_key(_val) if (_val := d.pop("deploymentKey", UNSET)) is not UNSET else UNSET
+        deployment_key = (
+            lift_deployment_key(_val)
+            if (_val := d.pop("deploymentKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        form_key = lift_form_key(_val) if (_val := d.pop("formKey", UNSET)) is not UNSET else UNSET
+        form_key = (
+            lift_form_key(_val)
+            if (_val := d.pop("formKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         def _parse_resource_key(data: object) -> str | Unset:
             if isinstance(data, Unset):

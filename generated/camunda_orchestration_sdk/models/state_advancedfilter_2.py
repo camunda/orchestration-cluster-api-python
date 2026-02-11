@@ -10,7 +10,7 @@ from ..models.state_advancedfilter_2_eq import StateAdvancedfilter2Eq
 from ..models.state_advancedfilter_2_in_item import StateAdvancedfilter2InItem
 from ..models.state_advancedfilter_2_neq import StateAdvancedfilter2Neq
 from ..models.state_advancedfilter_2_not_in_item import StateAdvancedfilter2NotInItem
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="StateAdvancedfilter2")
 
@@ -42,7 +42,9 @@ class StateAdvancedfilter2:
     in_: list[StateAdvancedfilter2InItem] | Unset = UNSET
     not_in: list[StateAdvancedfilter2NotInItem] | Unset = UNSET
     like: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         eq: str | Unset = UNSET

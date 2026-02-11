@@ -8,7 +8,7 @@ from attrs import field as _attrs_field
 
 from ..models.search_jobs_data_sort_item_field import SearchJobsDataSortItemField
 from ..models.search_jobs_data_sort_item_order import SearchJobsDataSortItemOrder
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="SearchJobsDataSortItem")
 
@@ -24,7 +24,9 @@ class SearchJobsDataSortItem:
 
     field: SearchJobsDataSortItemField
     order: SearchJobsDataSortItemOrder | Unset = SearchJobsDataSortItemOrder.ASC
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         field = self.field.value

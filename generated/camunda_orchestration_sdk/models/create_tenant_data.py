@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import TenantId, lift_tenant_id
 
 from collections.abc import Mapping
 from typing import Any, TypeVar

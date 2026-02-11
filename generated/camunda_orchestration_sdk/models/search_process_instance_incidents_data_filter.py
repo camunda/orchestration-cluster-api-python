@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import IncidentKey, lift_incident_key
 
 import datetime
 from collections.abc import Mapping
@@ -11,7 +11,7 @@ from dateutil.parser import isoparse
 
 from ..models.errortype_exactmatch import ErrortypeExactmatch
 from ..models.state_exactmatch_4 import StateExactmatch4
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -65,7 +65,9 @@ class SearchProcessInstanceIncidentsDataFilter:
     process_instance_key: ProcessinstancekeyAdvancedfilter | str | Unset = UNSET
     element_instance_key: ElementinstancekeyAdvancedfilter | str | Unset = UNSET
     job_key: JobkeyAdvancedfilter | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -237,6 +239,8 @@ class SearchProcessInstanceIncidentsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_definition_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return process_definition_id_type_1
@@ -263,6 +267,8 @@ class SearchProcessInstanceIncidentsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             error_type_type_1 = ErrortypeAdvancedfilter.from_dict(data)
 
             return error_type_type_1
@@ -275,6 +281,8 @@ class SearchProcessInstanceIncidentsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 error_message_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return error_message_type_1
@@ -290,6 +298,8 @@ class SearchProcessInstanceIncidentsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 element_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return element_id_type_1
@@ -314,6 +324,8 @@ class SearchProcessInstanceIncidentsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             creation_time_type_1 = TimestampAdvancedfilter.from_dict(data)
 
             return creation_time_type_1
@@ -335,6 +347,8 @@ class SearchProcessInstanceIncidentsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             state_type_1 = StateAdvancedfilter4.from_dict(data)
 
             return state_type_1
@@ -347,6 +361,8 @@ class SearchProcessInstanceIncidentsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 tenant_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return tenant_id_type_1
@@ -364,6 +380,8 @@ class SearchProcessInstanceIncidentsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 incident_key_type_1 = UsertaskkeyAdvancedfilter.from_dict(data)
 
                 return incident_key_type_1
@@ -371,7 +389,13 @@ class SearchProcessInstanceIncidentsDataFilter:
                 pass
             return cast(str | Unset | UsertaskkeyAdvancedfilter, data)
 
-        incident_key = _parse_incident_key(d.pop("incidentKey", UNSET))
+        _raw_incident_key = _parse_incident_key(d.pop("incidentKey", UNSET))
+
+        incident_key = (
+            lift_incident_key(_raw_incident_key)
+            if isinstance(_raw_incident_key, str)
+            else _raw_incident_key
+        )
 
         def _parse_process_definition_key(
             data: object,
@@ -381,6 +405,8 @@ class SearchProcessInstanceIncidentsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_definition_key_type_1 = (
                     ProcessdefinitionkeyAdvancedfilter.from_dict(data)
                 )
@@ -402,6 +428,8 @@ class SearchProcessInstanceIncidentsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_instance_key_type_1 = (
                     ProcessinstancekeyAdvancedfilter.from_dict(data)
                 )
@@ -423,6 +451,8 @@ class SearchProcessInstanceIncidentsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 element_instance_key_type_1 = (
                     ElementinstancekeyAdvancedfilter.from_dict(data)
                 )
@@ -442,6 +472,8 @@ class SearchProcessInstanceIncidentsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 job_key_type_1 = JobkeyAdvancedfilter.from_dict(data)
 
                 return job_key_type_1

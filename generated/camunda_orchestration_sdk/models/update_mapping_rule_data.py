@@ -4,6 +4,8 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="UpdateMappingRuleData")
@@ -21,7 +23,9 @@ class UpdateMappingRuleData:
     claim_name: str
     claim_value: str
     name: str
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         claim_name = self.claim_name

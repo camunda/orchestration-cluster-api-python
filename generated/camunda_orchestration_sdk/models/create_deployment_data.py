@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import TenantId, lift_tenant_id
 
 from collections.abc import Mapping
 from io import BytesIO
@@ -26,7 +26,7 @@ class CreateDeploymentData:
     tenant_id: TenantId | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        resources = []
+        resources: list[Any] = []
         for resources_item_data in self.resources:
             resources_item = resources_item_data.to_tuple()
 
@@ -62,14 +62,18 @@ class CreateDeploymentData:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        resources = []
+        resources: list[File] = []
         _resources = d.pop("resources")
         for resources_item_data in _resources:
             resources_item = File(payload=BytesIO(resources_item_data))
 
             resources.append(resources_item)
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         create_deployment_data = cls(
             resources=resources,

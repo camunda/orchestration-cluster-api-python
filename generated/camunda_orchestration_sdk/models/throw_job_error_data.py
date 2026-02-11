@@ -93,6 +93,8 @@ class ThrowJobErrorData:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 variables_type_0 = ThrowJobErrorDataVariablesType0.from_dict(data)
 
                 return variables_type_0

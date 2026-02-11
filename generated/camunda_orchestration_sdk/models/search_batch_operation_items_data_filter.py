@@ -1,5 +1,8 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    BatchOperationKey,
+    lift_batch_operation_key,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -9,7 +12,7 @@ from attrs import field as _attrs_field
 
 from ..models.batchoperationtype_exactmatch import BatchoperationtypeExactmatch
 from ..models.state_exactmatch import StateExactmatch
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.batchoperationtype_advancedfilter import (
@@ -44,7 +47,9 @@ class SearchBatchOperationItemsDataFilter:
     operation_type: (
         BatchoperationtypeAdvancedfilter | BatchoperationtypeExactmatch | Unset
     ) = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.processinstancekey_advancedfilter import (
@@ -129,6 +134,8 @@ class SearchBatchOperationItemsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 batch_operation_key_type_1 = UsertaskkeyAdvancedfilter.from_dict(data)
 
                 return batch_operation_key_type_1
@@ -136,8 +143,14 @@ class SearchBatchOperationItemsDataFilter:
                 pass
             return cast(str | Unset | UsertaskkeyAdvancedfilter, data)
 
-        batch_operation_key = _parse_batch_operation_key(
+        _raw_batch_operation_key = _parse_batch_operation_key(
             d.pop("batchOperationKey", UNSET)
+        )
+
+        batch_operation_key = (
+            lift_batch_operation_key(_raw_batch_operation_key)
+            if isinstance(_raw_batch_operation_key, str)
+            else _raw_batch_operation_key
         )
 
         def _parse_item_key(data: object) -> str | Unset | UsertaskkeyAdvancedfilter:
@@ -146,6 +159,8 @@ class SearchBatchOperationItemsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 item_key_type_1 = UsertaskkeyAdvancedfilter.from_dict(data)
 
                 return item_key_type_1
@@ -163,6 +178,8 @@ class SearchBatchOperationItemsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_instance_key_type_1 = (
                     ProcessinstancekeyAdvancedfilter.from_dict(data)
                 )
@@ -189,6 +206,8 @@ class SearchBatchOperationItemsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             state_type_1 = StateAdvancedfilter.from_dict(data)
 
             return state_type_1
@@ -210,6 +229,8 @@ class SearchBatchOperationItemsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             operation_type_type_1 = BatchoperationtypeAdvancedfilter.from_dict(data)
 
             return operation_type_type_1

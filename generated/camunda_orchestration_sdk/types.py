@@ -2,7 +2,7 @@
 
 from collections.abc import Mapping, MutableMapping
 from http import HTTPStatus
-from typing import IO, BinaryIO, Generic, Literal, TypeVar
+from typing import Any, IO, BinaryIO, Generic, Literal, TypeVar
 
 from attrs import define
 
@@ -51,4 +51,23 @@ class Response(Generic[T]):
     parsed: T | None
 
 
-__all__ = ["UNSET", "File", "FileTypes", "RequestFiles", "Response", "Unset"]
+__all__ = [
+    "UNSET",
+    "File",
+    "FileTypes",
+    "RequestFiles",
+    "Response",
+    "Unset",
+    "str_any_dict_factory",
+    "str_str_dict_factory",
+]
+
+
+def str_any_dict_factory() -> "dict[str, Any]":
+    """Typed factory for ``dict[str, Any]`` attrs fields."""
+    return {}
+
+
+def str_str_dict_factory() -> dict[str, str]:
+    """Typed factory for ``dict[str, str]`` attrs fields."""
+    return {}
