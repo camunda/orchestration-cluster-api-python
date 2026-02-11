@@ -31,6 +31,8 @@ exclude = [
     "hooks_v2",
     ".venv",
     "**/__pycache__",
+    "**/node_modules", 
+    "**/.*"
 ]
 
 [tool.ruff]
