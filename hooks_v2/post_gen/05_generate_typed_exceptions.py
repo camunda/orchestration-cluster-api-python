@@ -2,7 +2,6 @@ import ast
 import os
 import re
 from pathlib import Path
-from collections.abc import Mapping
 from typing import Any, cast
 
 import yaml
@@ -386,7 +385,7 @@ def _generate_errors_py(exceptions: list[tuple[str, int, str, str | None]]) -> s
     return "\n".join(lines)
 
 
-def run(context: Mapping[str, str]) -> None:
+def run(context: dict[str, str]) -> None:
     out_dir = Path(context["out_dir"])
     package_dir = out_dir / "camunda_orchestration_sdk"
     api_dir = package_dir / "api"

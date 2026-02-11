@@ -1,7 +1,7 @@
 from pathlib import Path
-from collections.abc import Mapping
 
-def run(context: Mapping[str, str]) -> None:
+
+def run(context: dict[str, str]) -> None:
     """
     Creates a py.typed file in the package root to indicate that the package supports type checking.
     """

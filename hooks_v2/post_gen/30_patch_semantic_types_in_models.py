@@ -124,7 +124,7 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
         print(f"Patched {file_path.name}")
 
 
-def run(context: Dict[str, Any]) -> None:
+def run(context: dict[str, str]) -> None:
     # spec_path = Path(context["spec_path"]).resolve()
     out_dir = Path(context["out_dir"]).resolve()
     

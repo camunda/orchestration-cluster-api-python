@@ -40,7 +40,7 @@ def ensure_import_in_wrapper(models_dir: Path) -> None:
     wrapper.write_text(content, encoding="utf-8")
 
 
-def run(context: dict) -> None:
+def run(context: dict[str, str]) -> None:
     models_dir = Path(context["out_dir"]).resolve() / "camunda_orchestration_sdk" / "models"
     models_dir.mkdir(parents=True, exist_ok=True)
     ensure_element_instance_key_model(models_dir)

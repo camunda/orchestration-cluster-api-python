@@ -1,7 +1,6 @@
 def test_can_import_generated_package():
     # Import a couple of common entry points to ensure the generated SDK is loadable
-    import camunda_orchestration_sdk  # noqa: F401  # type: ignore[reportUnusedImport]
-    from camunda_orchestration_sdk import Client  # noqa: F401  # type: ignore[reportUnusedImport]
+    from camunda_orchestration_sdk import Client  # noqa: F401  # pyright: ignore[reportUnusedImport]
 
 def test_api_client_constructible():
     # The generated client should be importable and constructible without side effects

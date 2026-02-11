@@ -77,7 +77,7 @@ def _emit_array_alias_model(models_dir: Path, alias: str, item_schema: Dict[str,
     filename.write_text("".join(lines), encoding="utf-8")
 
 
-def run(context: Dict[str, Any]) -> None:
+def run(context: dict[str, str]) -> None:
     spec_path = Path(context["spec_path"]).resolve()
     out_dir = Path(context["out_dir"]).resolve()
     models_dir = out_dir / "camunda_orchestration_sdk" / "models"

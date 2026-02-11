@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-def run(context: dict) -> None:
+def run(context: dict[str, str]) -> None:
     out_dir = Path(context["out_dir"]).resolve()
     models_dir = out_dir / "camunda_orchestration_sdk" / "models"
     models_dir.mkdir(parents=True, exist_ok=True)

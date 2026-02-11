@@ -6,7 +6,7 @@ import yaml
 from pathlib import Path
 
 
-def run(context: dict[str, Any]) -> None:
+def run(context: dict[str, str]) -> None:
     """
     Pre-generation hook to patch the bundled spec.
     Renames inline request bodies to end with 'Data' instead of 'Body'.

@@ -1,6 +1,5 @@
 import ast
 import os
-from collections.abc import Mapping
 from pathlib import Path
 import re
 
@@ -677,7 +676,7 @@ class CamundaAsyncClient:
             f.write(init_content)
         print(f"Successfully exported CamundaClient, CamundaAsyncClient, and WorkerConfig in {init_file}")
 
-def run(context: Mapping[str, str]) -> None:
+def run(context: dict[str, str]) -> None:
     out_dir = Path(context["out_dir"])
     package_dir = out_dir / "camunda_orchestration_sdk"
     if not package_dir.exists():

@@ -129,7 +129,7 @@ def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -
             init_file.write_text(init_txt, encoding="utf-8")
 
 
-def run(context: Dict[str, Any]) -> None:
+def run(context: dict[str, str]) -> None:
     spec_path = Path(context["spec_path"]).resolve()
     out_dir = Path(context["out_dir"]).resolve()
     spec_dir = spec_path.parent

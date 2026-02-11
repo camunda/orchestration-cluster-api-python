@@ -1,7 +1,7 @@
 from pathlib import Path
-from typing import Any, Dict
 
-def run(context: Dict[str, Any]) -> None:
+
+def run(context: dict[str, str]) -> None:
     """
     Patch TagSet to be a valid Pydantic RootModel.
     The generator creates an empty class because of the non-standard format 'string<Tag>[]'.

@@ -7,7 +7,7 @@ import os
 import shutil
 import subprocess
 import sys
-from collections.abc import Callable, Mapping
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -145,8 +145,8 @@ def run_python_client_generator(spec: Path, out_dir: Path, config_path: Path) ->
     log(f"Running openapi-python-client with config {config_path}...")
     subprocess.run(cmd, check=True)
 
-def load_hooks(hooks_dir: Path) -> list[Callable[[Mapping[str, str]], None]]:
-    hooks: list[Callable[[Mapping[str, str]], None]] = []
+def load_hooks(hooks_dir: Path) -> list[Callable[[dict[str, str]], None]]:
+    hooks: list[Callable[[dict[str, str]], None]] = []
     if not hooks_dir.exists():
         return hooks
     for hook_file in sorted(hooks_dir.glob("*.py")):
@@ -158,7 +158,7 @@ def load_hooks(hooks_dir: Path) -> list[Callable[[Mapping[str, str]], None]]:
                 hooks.append(module.run)
     return hooks
 
-def run_hooks(hooks: list[Callable[[Mapping[str, str]], None]], context: dict[str, str]) -> None:
+def run_hooks(hooks: list[Callable[[dict[str, str]], None]], context: dict[str, str]) -> None:
     for hook in hooks:
         log(f"Running hook: {hook.__module__}")
         hook(context)

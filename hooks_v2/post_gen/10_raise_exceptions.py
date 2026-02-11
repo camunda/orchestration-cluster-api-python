@@ -515,7 +515,7 @@ def temp():
             f.write(ast.unparse(tree))
         print(f"Modified {file_path}")
 
-def run(context):
+def run(context: dict[str, str]) -> None:
     out_dir = Path(context["out_dir"])
     package_dir = out_dir / "camunda_orchestration_sdk"
     api_dir = package_dir / "api"
