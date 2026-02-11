@@ -41,25 +41,66 @@ A git tag `v8.9.0-dev.1` has been created with this commit using the `server-maj
 
 ### Step 3: Merge to Main and Push Tag
 
-**After this PR is merged to main**, the following command needs to be run to push the tag:
+**CRITICAL**: After this PR is merged to main, a tag must be manually created and pushed.
+
+#### Quick Method: Use the Provided Script
+
+A helper script `apply-version-fix.sh` is included in this PR. After merging, run:
 
 ```bash
 git checkout main
 git pull origin main
-git tag -a v8.9.0-dev.1 -m "v8.9.0-dev.1"
+./apply-version-fix.sh
+```
+
+The script will:
+- Verify you're on the main branch
+- Check that pyproject.toml has version 8.9.0-dev.1  
+- Create the tag v8.9.0-dev.1 on current HEAD
+- Push the tag to origin
+- Verify the tag was pushed successfully
+
+#### Manual Method: If PR is Merged (Not Squashed)
+
+If the PR is merged with a merge commit (preserving all commits):
+
+```bash
+git checkout main
+git pull origin main
+# The commit ac8c5ec will exist on main with its tag
 git push origin v8.9.0-dev.1
 ```
 
-Alternatively, if the PR is squash-merged (which changes the commit SHA), you'll need to:
+#### Manual Method: If PR is Squash-Merged (Most Common)
 
-1. Find the merge commit SHA on main after merging
-2. Create the tag on that commit:
+**This is the most common scenario on GitHub.** Squash merging creates a new commit with a different SHA, so you need to:
+
+1. Merge the PR using "Squash and merge" on GitHub
+2. Find the new squash commit on main:
    ```bash
    git checkout main
    git pull origin main
-   git tag -a v8.9.0-dev.1 -m "v8.9.0-dev.1" <merge-commit-sha>
+   git log --oneline -5
+   ```
+3. Create the tag on the squash commit (it will be the most recent commit after pulling):
+   ```bash
+   # Tag the current HEAD (which is the squash commit)
+   git tag -a v8.9.0-dev.1 -m "v8.9.0-dev.1"
    git push origin v8.9.0-dev.1
    ```
+
+#### Verification
+
+After pushing the tag, verify it exists on GitHub:
+
+```bash
+git ls-remote --tags origin | grep "8.9.0"
+```
+
+You should see:
+```
+<commit-sha>    refs/tags/v8.9.0-dev.1
+```
 
 ### Step 4: Verify the Fix
 
