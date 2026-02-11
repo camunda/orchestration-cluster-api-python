@@ -520,7 +520,7 @@ def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
             return_stmt = "    return None"
         elif not error_codes:
             # Simple return type — assert narrows it, cast not needed
-            return_stmt = f"    assert response.parsed is not None\n    return response.parsed"
+            return_stmt = "    assert response.parsed is not None\n    return response.parsed"
         else:
             _ensure_typing_import(tree, "cast")
             return_stmt = f"    assert response.parsed is not None\n    return cast({return_type_str}, response.parsed)"
