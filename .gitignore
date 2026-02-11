@@ -17,3 +17,4 @@ demo/.DS_Store
 
 # Generated documentation
 public/
+.DS_Store

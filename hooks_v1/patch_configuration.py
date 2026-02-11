@@ -1,9 +1,9 @@
 from pathlib import Path
-from typing import Any, Dict
+
 
 # Patch for this merged upstream, but this deals with earlier openapi-generator-cli releases.
 
-def run(context: Dict[str, Any]) -> None:
+def run(context: dict[str, str]) -> None:
     """Patch configuration.py 
      Remediation for https://github.com/OpenAPITools/openapi-generator/issues/22415 
      PR in, can remove when https://github.com/OpenAPITools/openapi-generator/pull/22418 is merged

@@ -1,7 +1,7 @@
 from pathlib import Path
-from typing import Any, Dict
 
-def run(context: Dict[str, Any]) -> None:
+
+def run(context: dict[str, str]) -> None:
     """
     Patch OffsetPagination to add an explicit __init__ method.
     This helps IDEs like Pylance understand the constructor arguments,

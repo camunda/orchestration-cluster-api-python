@@ -2,7 +2,6 @@ import ast
 import os
 import re
 from pathlib import Path
-from collections.abc import Mapping
 from typing import Any, cast
 
 import yaml
@@ -314,12 +313,28 @@ def _generate_errors_py(exceptions: list[tuple[str, int, str, str | None]]) -> s
     # Sort for deterministic output
     exceptions_sorted = sorted(exceptions, key=lambda x: (x[0], x[1], x[2], x[3] or ""))
 
+    # Collect model types that need TYPE_CHECKING imports
+    builtin_types = {"Any", "None", "str", "int", "float", "bool", "bytes", "dict", "list"}
+    model_types: set[str] = set()
+    for _exc_name, _code, parsed_type, _desc in exceptions_sorted:
+        if parsed_type not in builtin_types:
+            model_types.add(parsed_type)
+
     lines: list[str] = []
     lines.append('"""Contains shared errors types that can be raised from API functions"""')
     lines.append("from __future__ import annotations")
     lines.append("")
-    lines.append("from typing import Any")
+    lines.append("from typing import TYPE_CHECKING, Any")
     lines.append("")
+
+    if model_types:
+        lines.append("if TYPE_CHECKING:")
+        lines.append("    from .models import (")
+        for name in sorted(model_types):
+            lines.append(f"        {name},")
+        lines.append("    )")
+        lines.append("")
+
     lines.append("")
     lines.append("class ApiError(Exception):")
     lines.append('    """Base class for API errors raised by convenience wrappers."""')
@@ -370,7 +385,7 @@ def _generate_errors_py(exceptions: list[tuple[str, int, str, str | None]]) -> s
     return "\n".join(lines)
 
 
-def run(context: Mapping[str, str]) -> None:
+def run(context: dict[str, str]) -> None:
     out_dir = Path(context["out_dir"])
     package_dir = out_dir / "camunda_orchestration_sdk"
     api_dir = package_dir / "api"

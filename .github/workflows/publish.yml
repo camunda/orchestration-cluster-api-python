@@ -1,15 +1,20 @@
-name: Publish to PyPI
+name: Publish
 
 on:
   push:
     branches:
       - main
+      - 'stable/**'
   workflow_dispatch:
     inputs:
       spec_ref:
         description: "Git ref/branch/tag/SHA in camunda/camunda.git to fetch the OpenAPI spec from (temporary override)."
         required: false
         default: ""
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
   test:
@@ -18,58 +23,14 @@ jobs:
       SPEC_REF: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
       SPEC_REF_OVERRIDE_ACK: ${{ vars.SPEC_REF_OVERRIDE_ACK || '' }}
       SPEC_REF_OVERRIDE_EXPIRES: ${{ vars.SPEC_REF_OVERRIDE_EXPIRES || '' }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Guard spec ref override
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "SPEC_REF=${SPEC_REF}"
-
-          if [[ "${SPEC_REF}" != "main" ]]; then
-            if [[ "${SPEC_REF_OVERRIDE_ACK}" != "true" ]]; then
-              echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_ACK is not 'true'. Set the repo variable to acknowledge this is temporary."
-              exit 1
-            fi
-            if [[ -z "${SPEC_REF_OVERRIDE_EXPIRES}" ]]; then
-              echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_EXPIRES is not set (expected YYYY-MM-DD)."
-              exit 1
-            fi
-            today="$(date -u +%F)"
-            if [[ "${today}" > "${SPEC_REF_OVERRIDE_EXPIRES}" ]]; then
-              echo "::error::SPEC_REF override expired on ${SPEC_REF_OVERRIDE_EXPIRES}. Remove SPEC_REF_OVERRIDE (or extend expiry) now that upstream main should be fixed."
-              exit 1
-            fi
-          fi
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version-file: "pyproject.toml"
-      - name: Install dependencies
-        run: uv sync --all-extras --dev
-      - name: Start Docker Compose
-        run: docker compose -f docker/docker-compose.yaml up -d --wait
-      - name: Run integration tests
-        run: make itest
-
-  release:
-    needs: test
-    runs-on: ubuntu-latest
-    concurrency: release
-    permissions:
-      id-token: write
-      contents: write
-    environment: pypi
-    env:
-      SPEC_REF: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
-      SPEC_REF_OVERRIDE_ACK: ${{ vars.SPEC_REF_OVERRIDE_ACK || '' }}
-      SPEC_REF_OVERRIDE_EXPIRES: ${{ vars.SPEC_REF_OVERRIDE_EXPIRES || '' }}
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Guard spec ref override
         shell: bash
         run: |
@@ -91,34 +52,194 @@ jobs:
               exit 1
             fi
           fi
+
       - name: Install uv
         uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Start Docker Compose
+        run: docker compose -f docker/docker-compose.yaml up -d --wait
+
+      - name: Run integration tests
+        run: make itest SPEC_REF=${SPEC_REF}
+
+  generate:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      SPEC_REF: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
+      SPEC_REF_OVERRIDE_ACK: ${{ vars.SPEC_REF_OVERRIDE_ACK || '' }}
+      SPEC_REF_OVERRIDE_EXPIRES: ${{ vars.SPEC_REF_OVERRIDE_EXPIRES || '' }}
+    outputs:
+      has_changes: ${{ steps.check_changes.outputs.has_changes }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Guard spec ref override
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "SPEC_REF=${SPEC_REF}"
+
+          if [[ "${SPEC_REF}" != "main" ]]; then
+            if [[ "${SPEC_REF_OVERRIDE_ACK}" != "true" ]]; then
+              echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_ACK is not 'true'. Set the repo variable to acknowledge this is temporary."
+              exit 1
+            fi
+            if [[ -z "${SPEC_REF_OVERRIDE_EXPIRES}" ]]; then
+              echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_EXPIRES is not set (expected YYYY-MM-DD)."
+              exit 1
+            fi
+            today="$(date -u +%F)"
+            if [[ "${today}" > "${SPEC_REF_OVERRIDE_EXPIRES}" ]]; then
+              echo "::error::SPEC_REF override expired on ${SPEC_REF_OVERRIDE_EXPIRES}. Remove SPEC_REF_OVERRIDE (or extend expiry) now that upstream main should be fixed."
+              exit 1
+            fi
+          fi
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version-file: "pyproject.toml"
+
       - name: Install dependencies
         run: uv sync --all-extras --dev
-      - name: Python Semantic Release
+
+      - name: Generate SDK
+        run: uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests --spec-ref "${SPEC_REF}"
+
+      - name: Run acceptance tests
+        run: uv run pytest -q tests/acceptance
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if [[ -n $(git status -s) ]]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit generated changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore(generation): update generated SDK [skip ci]"
+          git push
+
+  release:
+    needs: generate
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    environment: pypi
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check if release needed (dry run)
+        id: check_release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            
-            # Generate the SDK
-            uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests --spec-ref "${SPEC_REF}"
-            
-            # Check for changes and commit if found
-            if [[ -n $(git status -s) ]]; then
-              echo "Changes detected in generated code. Committing..."
-              git add .
-              git commit -m "chore(generation): update generated SDK [skip ci]"
-            fi
-            
-            uv run semantic-release version
-            uv run semantic-release publish
+          OUTPUT=$(uv run semantic-release version --print 2>&1) || true
+          if echo "$OUTPUT" | grep -q "No release will be made"; then
+            echo "release_needed=false" >> $GITHUB_OUTPUT
+          else
+            echo "release_needed=true" >> $GITHUB_OUTPUT
+            NEW_VERSION=$(uv run semantic-release version --print 2>/dev/null | tail -1)
+            echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validate version matches stable branch
+        if: steps.check_release.outputs.release_needed == 'true' && startsWith(github.ref_name, 'stable/')
+        run: |
+          # Extract expected version prefix from branch name (e.g., stable/8.8 -> 8.8)
+          BRANCH_VERSION=$(echo "${{ github.ref_name }}" | sed 's|stable/||')
+          NEW_VERSION="${{ steps.check_release.outputs.new_version }}"
+
+          if [[ ! "$NEW_VERSION" =~ ^${BRANCH_VERSION}\. ]]; then
+            echo "::error::Version $NEW_VERSION doesn't match branch constraint ${BRANCH_VERSION}.x"
+            echo "This can happen if a 'server:' or 'server-major:' commit was pushed to a stable branch."
+            echo "Stable branches should only receive patch releases (fix:, feat:, perf:, revert:)."
+            exit 1
+          fi
+
+          echo "Version $NEW_VERSION matches branch constraint ${BRANCH_VERSION}.x"
+
+      - name: Create release
+        if: steps.check_release.outputs.release_needed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          uv run semantic-release version
+          uv run semantic-release publish
+
+      - name: Build package
+        if: steps.check_release.outputs.release_needed == 'true'
+        run: uv build
+
       - name: Publish to PyPI
+        if: steps.check_release.outputs.release_needed == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           skip-existing: true
+
+      - name: Summary
+        run: |
+          if [[ "${{ steps.check_release.outputs.release_needed }}" == "true" ]]; then
+            echo "### Release Published :rocket:" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Version:** ${{ steps.check_release.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+            if [[ "${{ github.ref_name }}" == "main" ]]; then
+              echo "**Type:** Dev pre-release" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "Install with: \`pip install camunda-orchestration-sdk --pre\`" >> $GITHUB_STEP_SUMMARY
+            else
+              STABLE_VERSION=$(echo "${{ github.ref_name }}" | sed 's|stable/||')
+              echo "**Type:** Stable release" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "Install with: \`pip install \"camunda-orchestration-sdk~=${STABLE_VERSION}.0\"\`" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "### No Release Needed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "No commits requiring a release were found." >> $GITHUB_STEP_SUMMARY
+          fi

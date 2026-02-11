@@ -1,7 +1,12 @@
+from __future__ import annotations
+
+from typing import Any, cast
+
 import yaml
 from pathlib import Path
 
-def run(context):
+
+def run(context: dict[str, str]) -> None:
     """
     Pre-generation hook to patch the bundled spec.
     Renames inline request bodies to end with 'Data' instead of 'Body'.
@@ -14,14 +19,13 @@ def run(context):
     print(f"Patching spec at {spec_path} to rename Body to Data...")
     
     with open(spec_path, "r") as f:
-        spec = yaml.safe_load(f)
+        spec: dict[str, Any] = yaml.safe_load(f)
 
-    schemas = spec.get("components", {}).get("schemas", {})
-    paths = spec.get("paths", {})
+    schemas: dict[str, Any] = spec.get("components", {}).get("schemas", {})
+    paths: dict[str, Any] = spec.get("paths", {})
     
     # Track renamed schemas to update refs later
-    renamed_schemas = {}
-    new_schemas = {}
+    renamed_schemas: dict[str, str] = {}
 
     # 1. Rename existing schemas ending in 'Body'
     for name, schema in list(schemas.items()):
@@ -33,24 +37,25 @@ def run(context):
             renamed_schemas[f"#/components/schemas/{name}"] = f"#/components/schemas/{new_name}"
 
     # 2. Extract and name inline request bodies
-    for path, methods in paths.items():
-        for method, operation in methods.items():
-            if not isinstance(operation, dict):
+    for _path, methods in paths.items():
+        for _method, raw_operation in methods.items():
+            if not isinstance(raw_operation, dict):
                 continue
-                
-            request_body = operation.get("requestBody", {})
-            content = request_body.get("content", {})
+
+            operation = cast(dict[str, Any], raw_operation)
+            request_body: dict[str, Any] = operation.get("requestBody", {})
+            content: dict[str, Any] = request_body.get("content", {})
             # Check for both application/json and multipart/form-data
-            target_content = content.get("application/json") or content.get("multipart/form-data")
+            target_content: dict[str, Any] | None = content.get("application/json") or content.get("multipart/form-data")
             
             if not target_content:
                 continue
 
-            schema = target_content.get("schema", {})
+            schema: dict[str, Any] = target_content.get("schema", {})
             
             # If it's an inline schema (no $ref)
             if schema and "$ref" not in schema:
-                op_id = operation.get("operationId")
+                op_id: str | None = operation.get("operationId")
                 if not op_id:
                     continue
                     
@@ -71,7 +76,7 @@ def run(context):
     # It's safer than traversing the dict for deep refs.
     
     # First dump to string
-    spec_str = yaml.safe_dump(spec, sort_keys=False)
+    spec_str: str = yaml.safe_dump(spec, sort_keys=False)
     
     # Replace old refs with new refs
     for old_ref, new_ref in renamed_schemas.items():

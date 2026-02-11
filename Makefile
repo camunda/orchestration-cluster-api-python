@@ -28,7 +28,7 @@ test:
 	uv run pytest -q tests/acceptance
 
 lint:
-	uv run ruff
+	uv run ruff check .
 
 typecheck:
 	uv run pyright

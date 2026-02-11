@@ -61,9 +61,9 @@ The repository has two types of tests:
         ```
 
 ### 4. Linting & Formatting
-**Note**: The default `make lint` command may fail due to missing arguments. Use the following command instead:
 ```bash
-uv run ruff check .
+make lint
+# OR: uv run ruff check .
 ```
 To fix auto-fixable issues:
 ```bash
@@ -108,5 +108,5 @@ make clean
 - `docker/docker-compose.yaml`: Configuration for the local development server.
 
 ### Dependencies
-- **Runtime**: `httpx`, `attrs`, `pydantic`, `python-dateutil`, `loguru`.
-- **Development**: `pytest`, `pytest-asyncio`, `pyyaml`, `openapi-python-client`, `jsonref`, `black`, `pyright`, `fastapi`, `uvicorn`.
+- **Runtime**: `httpx`, `attrs`, `pydantic`, `python-dateutil`, `loguru`, `python-dotenv`, `typing-extensions`.
+- **Development**: `pytest`, `pytest-asyncio`, `pyyaml`, `openapi-python-client`, `jsonref`, `ruff`, `pyright`, `python-semantic-release`, `pdoc`, `psutil`, `pydantic-settings`, `fastapi`, `uvicorn`.

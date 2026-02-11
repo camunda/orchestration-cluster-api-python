@@ -1,7 +1,7 @@
 from pathlib import Path
 import shutil
 
-def run(context):
+def run(context: dict[str, str]) -> None:
     out_dir = Path(context["out_dir"])
     root_dir = Path(__file__).parents[1]
     runtime_dir = root_dir / "runtime"

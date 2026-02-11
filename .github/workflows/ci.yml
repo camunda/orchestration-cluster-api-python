@@ -1,9 +1,14 @@
-name: Test Branches
+name: CI
 
 on:
   push:
     branches-ignore:
       - main
+      - 'stable/**'
+  pull_request:
+    branches:
+      - main
+      - 'stable/**'
   workflow_dispatch:
     inputs:
       spec_ref:
@@ -21,6 +26,9 @@ jobs:
       SPEC_REF: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
       SPEC_REF_OVERRIDE_ACK: ${{ vars.SPEC_REF_OVERRIDE_ACK || '' }}
       SPEC_REF_OVERRIDE_EXPIRES: ${{ vars.SPEC_REF_OVERRIDE_EXPIRES || '' }}
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
     steps:
       - uses: actions/checkout@v4
       - name: Guard spec ref override
@@ -46,13 +54,39 @@ jobs:
           fi
       - name: Install uv
         uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Start Docker Compose
+        run: docker compose -f docker/docker-compose.yaml up -d --wait
+
+      - name: Run tests (Unit and Integration)
+        run: make itest
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version-file: "pyproject.toml"
+
       - name: Install dependencies
         run: uv sync --all-extras --dev
-      - name: Start Docker Compose
-        run: docker compose -f docker/docker-compose.yaml up -d --wait
-      - name: Run tests (Unit and Integration)
-        run: make itest
+
+      - name: Run linter
+        run: make lint
+
+      - name: Run type checker
+        run: make typecheck

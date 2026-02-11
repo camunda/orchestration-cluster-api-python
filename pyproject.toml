@@ -1,6 +1,6 @@
 [project]
 name = "camunda-orchestration-sdk"
-version = "1.1.3"
+version = "8.9.0"
 description = "Add your description here"
 readme = "README.md"
 authors = [
@@ -18,8 +18,28 @@ dependencies = [
 ]
 
 [tool.pyright]
-typeCheckingMode="strict"
-reportMissingTypeStubs=true
+typeCheckingMode = "strict"
+reportMissingTypeStubs = true
+venvPath = "."
+venv = ".venv"
+exclude = [
+    "generated",
+    "demo",
+    "hooks",
+    "hooks_shared",
+    "hooks_v1",
+    "hooks_v2",
+    ".venv",
+    "**/__pycache__",
+    "**/node_modules", 
+    "**/.*"
+]
+
+[tool.ruff]
+extend-exclude = [
+    "generated",
+    "demo",
+]
 
 [build-system]
 requires = ["setuptools>=61.0"]
@@ -54,3 +74,38 @@ build_command = "uv build"
 commit_message = "chore(release): {version} [skip ci]"
 upload_to_pypi = false
 upload_to_release = true
+tag_format = "v{version}"
+
+# Branch configuration for multi-stream releases
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = true
+prerelease_token = "dev"
+
+[tool.semantic_release.branches."stable/*"]
+match = "^stable/.*$"
+prerelease = false
+
+# Commit parsing rules - modified semver aligned with Camunda versions
+# Patch: fix, feat, perf, revert (features are patches in this scheme)
+# Minor: server (Camunda server minor bump)
+# Major: server-major (Camunda server major bump)
+[tool.semantic_release.commit_parser_options]
+allowed_tags = [
+    "build",
+    "chore",
+    "ci",
+    "docs",
+    "feat",
+    "fix",
+    "perf",
+    "style",
+    "refactor",
+    "test",
+    "revert",
+    "server",
+    "server-major",
+]
+minor_tags = ["server"]
+major_tags = ["server-major"]
+patch_tags = ["fix", "feat", "perf", "revert"]
