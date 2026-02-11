@@ -2,6 +2,22 @@
 
 <!-- version list -->
 
+## v1.1.3 (2026-02-11)
+
+### Bug Fixes
+
+- Declare 3.10 support
+  ([`8bd3d52`](https://github.com/camunda/orchestration-cluster-api-python/commit/8bd3d52bb14a435ca0f0b463193615cae71c04ad))
+
+- Docs deployment. fixes #47
+  ([`92684ef`](https://github.com/camunda/orchestration-cluster-api-python/commit/92684ef1c794f013133958849261e643dcba7e04))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`021e4e6`](https://github.com/camunda/orchestration-cluster-api-python/commit/021e4e68e8c176225a1303dcee4c20f0662cec38))
+
+
 ## v1.1.2 (2026-02-10)
 
 ### Bug Fixes
