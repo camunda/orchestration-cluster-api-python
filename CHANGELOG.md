@@ -2,6 +2,47 @@
 
 <!-- version list -->
 
+## v1.2.0-dev.1 (2026-02-11)
+
+### Chores
+
+- Add default excludes
+  ([`6948418`](https://github.com/camunda/orchestration-cluster-api-python/commit/6948418cd488a362a646ad177d42b4720b08fc8f))
+
+- Branch automatically constrains version
+  ([`aa202e1`](https://github.com/camunda/orchestration-cluster-api-python/commit/aa202e172be816637b28f14263ec26c7947860f3))
+
+- Change prerelease token to dev
+  ([`363b209`](https://github.com/camunda/orchestration-cluster-api-python/commit/363b209bcea53666daff85a174c7b362bbf649b1))
+
+- Fix linting
+  ([`2251c0f`](https://github.com/camunda/orchestration-cluster-api-python/commit/2251c0f183d1cd3338efe88bab92421ec4ef1560))
+
+- Set up packaging workflow
+  ([`c4730b5`](https://github.com/camunda/orchestration-cluster-api-python/commit/c4730b5d7df91c511a4ef6f2e3db7fc64284724b))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`84acdca`](https://github.com/camunda/orchestration-cluster-api-python/commit/84acdcac9ad6ac144382e87b2f09c369a0d339e7))
+
+### Continuous Integration
+
+- Align publishing
+  ([`6948b1f`](https://github.com/camunda/orchestration-cluster-api-python/commit/6948b1f395c2b56e8d9e6fd4e002cff483fd1224))
+
+- Test on 3.10 and 3.14
+  ([`dab6863`](https://github.com/camunda/orchestration-cluster-api-python/commit/dab6863320cdd1ae610771c03df245a6893bfe16))
+
+### Refactoring
+
+- Address review comments
+  ([`73c0636`](https://github.com/camunda/orchestration-cluster-api-python/commit/73c06368af0df8286864345056de55f648b52ad7))
+
+### Server
+
+- Start 8.9 prerelease line
+  ([`b507169`](https://github.com/camunda/orchestration-cluster-api-python/commit/b507169159af106ffe0888fef5ac7c14339dc116))
+
+
 ## v1.1.3 (2026-02-11)
 
 ### Bug Fixes
