@@ -12,28 +12,11 @@ from ...models.get_user_task_response_404 import GetUserTaskResponse404
 from ...models.get_user_task_response_500 import GetUserTaskResponse500
 from ...types import Response
 
-
 def _get_kwargs(user_task_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {
-        "method": "get",
-        "url": "/user-tasks/{user_task_key}".format(
-            user_task_key=quote(str(user_task_key), safe="")
-        ),
-    }
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/user-tasks/{user_task_key}'.format(user_task_key=quote(str(user_task_key), safe=''))}
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetUserTaskResponse200
-    | GetUserTaskResponse400
-    | GetUserTaskResponse401
-    | GetUserTaskResponse403
-    | GetUserTaskResponse404
-    | GetUserTaskResponse500
-    | None
-):
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetUserTaskResponse200 | GetUserTaskResponse400 | GetUserTaskResponse401 | GetUserTaskResponse403 | GetUserTaskResponse404 | GetUserTaskResponse500 | None:
     if response.status_code == 200:
         response_200 = GetUserTaskResponse200.from_dict(response.json())
         return response_200
@@ -57,35 +40,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[GetUserTaskResponse200 | GetUserTaskResponse400 | GetUserTaskResponse401 | GetUserTaskResponse403 | GetUserTaskResponse404 | GetUserTaskResponse500]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetUserTaskResponse200
-    | GetUserTaskResponse400
-    | GetUserTaskResponse401
-    | GetUserTaskResponse403
-    | GetUserTaskResponse404
-    | GetUserTaskResponse500
-]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    user_task_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetUserTaskResponse200
-    | GetUserTaskResponse400
-    | GetUserTaskResponse401
-    | GetUserTaskResponse403
-    | GetUserTaskResponse404
-    | GetUserTaskResponse500
-]:
+def sync_detailed(user_task_key: str, *, client: AuthenticatedClient | Client) -> Response[GetUserTaskResponse200 | GetUserTaskResponse400 | GetUserTaskResponse401 | GetUserTaskResponse403 | GetUserTaskResponse404 | GetUserTaskResponse500]:
     """Get user task
 
      Get the user task by the user task key.
@@ -104,74 +62,41 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    user_task_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetUserTaskResponse200:
+def sync(user_task_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> GetUserTaskResponse200:
     """Get user task
 
-     Get the user task by the user task key.
+ Get the user task by the user task key.
 
-    Args:
-        user_task_key (str): System-generated key for a user task.
+Args:
+    user_task_key (str): System-generated key for a user task.
 
-    Raises:
-        errors.GetUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.GetUserTaskUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.GetUserTaskForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.GetUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
-        errors.GetUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        GetUserTaskResponse200"""
+Raises:
+    errors.GetUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUserTaskUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserTaskForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.GetUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetUserTaskResponse200"""
     response = sync_detailed(user_task_key=user_task_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.GetUserTaskBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetUserTaskResponse400, response.parsed),
-            )
+            raise errors.GetUserTaskBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse400, response.parsed))
         if response.status_code == 401:
-            raise errors.GetUserTaskUnauthorized(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetUserTaskResponse401, response.parsed),
-            )
+            raise errors.GetUserTaskUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse401, response.parsed))
         if response.status_code == 403:
-            raise errors.GetUserTaskForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetUserTaskResponse403, response.parsed),
-            )
+            raise errors.GetUserTaskForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse403, response.parsed))
         if response.status_code == 404:
-            raise errors.GetUserTaskNotFound(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetUserTaskResponse404, response.parsed),
-            )
+            raise errors.GetUserTaskNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse404, response.parsed))
         if response.status_code == 500:
-            raise errors.GetUserTaskInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetUserTaskResponse500, response.parsed),
-            )
+            raise errors.GetUserTaskInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(GetUserTaskResponse200, response.parsed)
 
-
-async def asyncio_detailed(
-    user_task_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetUserTaskResponse200
-    | GetUserTaskResponse400
-    | GetUserTaskResponse401
-    | GetUserTaskResponse403
-    | GetUserTaskResponse404
-    | GetUserTaskResponse500
-]:
+async def asyncio_detailed(user_task_key: str, *, client: AuthenticatedClient | Client) -> Response[GetUserTaskResponse200 | GetUserTaskResponse400 | GetUserTaskResponse401 | GetUserTaskResponse403 | GetUserTaskResponse404 | GetUserTaskResponse500]:
     """Get user task
 
      Get the user task by the user task key.
@@ -190,59 +115,36 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    user_task_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetUserTaskResponse200:
+async def asyncio(user_task_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> GetUserTaskResponse200:
     """Get user task
 
-     Get the user task by the user task key.
+ Get the user task by the user task key.
 
-    Args:
-        user_task_key (str): System-generated key for a user task.
+Args:
+    user_task_key (str): System-generated key for a user task.
 
-    Raises:
-        errors.GetUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.GetUserTaskUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.GetUserTaskForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.GetUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
-        errors.GetUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        GetUserTaskResponse200"""
+Raises:
+    errors.GetUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetUserTaskUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetUserTaskForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
+    errors.GetUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetUserTaskResponse200"""
     response = await asyncio_detailed(user_task_key=user_task_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.GetUserTaskBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetUserTaskResponse400, response.parsed),
-            )
+            raise errors.GetUserTaskBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse400, response.parsed))
         if response.status_code == 401:
-            raise errors.GetUserTaskUnauthorized(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetUserTaskResponse401, response.parsed),
-            )
+            raise errors.GetUserTaskUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse401, response.parsed))
         if response.status_code == 403:
-            raise errors.GetUserTaskForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetUserTaskResponse403, response.parsed),
-            )
+            raise errors.GetUserTaskForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse403, response.parsed))
         if response.status_code == 404:
-            raise errors.GetUserTaskNotFound(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetUserTaskResponse404, response.parsed),
-            )
+            raise errors.GetUserTaskNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse404, response.parsed))
         if response.status_code == 500:
-            raise errors.GetUserTaskInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetUserTaskResponse500, response.parsed),
-            )
+            raise errors.GetUserTaskInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetUserTaskResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(GetUserTaskResponse200, response.parsed)

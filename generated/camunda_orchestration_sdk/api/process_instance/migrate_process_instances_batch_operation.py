@@ -3,105 +3,47 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.migrate_process_instances_batch_operation_data import (
-    MigrateProcessInstancesBatchOperationData,
-)
-from ...models.migrate_process_instances_batch_operation_response_200 import (
-    MigrateProcessInstancesBatchOperationResponse200,
-)
-from ...models.migrate_process_instances_batch_operation_response_400 import (
-    MigrateProcessInstancesBatchOperationResponse400,
-)
-from ...models.migrate_process_instances_batch_operation_response_401 import (
-    MigrateProcessInstancesBatchOperationResponse401,
-)
-from ...models.migrate_process_instances_batch_operation_response_403 import (
-    MigrateProcessInstancesBatchOperationResponse403,
-)
-from ...models.migrate_process_instances_batch_operation_response_500 import (
-    MigrateProcessInstancesBatchOperationResponse500,
-)
+from ...models.migrate_process_instances_batch_operation_data import MigrateProcessInstancesBatchOperationData
+from ...models.migrate_process_instances_batch_operation_response_200 import MigrateProcessInstancesBatchOperationResponse200
+from ...models.migrate_process_instances_batch_operation_response_400 import MigrateProcessInstancesBatchOperationResponse400
+from ...models.migrate_process_instances_batch_operation_response_401 import MigrateProcessInstancesBatchOperationResponse401
+from ...models.migrate_process_instances_batch_operation_response_403 import MigrateProcessInstancesBatchOperationResponse403
+from ...models.migrate_process_instances_batch_operation_response_500 import MigrateProcessInstancesBatchOperationResponse500
 from ...types import Response
-
 
 def _get_kwargs(*, body: MigrateProcessInstancesBatchOperationData) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {"method": "post", "url": "/process-instances/migration"}
-    _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-instances/migration'}
+    _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    MigrateProcessInstancesBatchOperationResponse200
-    | MigrateProcessInstancesBatchOperationResponse400
-    | MigrateProcessInstancesBatchOperationResponse401
-    | MigrateProcessInstancesBatchOperationResponse403
-    | MigrateProcessInstancesBatchOperationResponse500
-    | None
-):
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> MigrateProcessInstancesBatchOperationResponse200 | MigrateProcessInstancesBatchOperationResponse400 | MigrateProcessInstancesBatchOperationResponse401 | MigrateProcessInstancesBatchOperationResponse403 | MigrateProcessInstancesBatchOperationResponse500 | None:
     if response.status_code == 200:
-        response_200 = MigrateProcessInstancesBatchOperationResponse200.from_dict(
-            response.json()
-        )
+        response_200 = MigrateProcessInstancesBatchOperationResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = MigrateProcessInstancesBatchOperationResponse400.from_dict(
-            response.json()
-        )
+        response_400 = MigrateProcessInstancesBatchOperationResponse400.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = MigrateProcessInstancesBatchOperationResponse401.from_dict(
-            response.json()
-        )
+        response_401 = MigrateProcessInstancesBatchOperationResponse401.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = MigrateProcessInstancesBatchOperationResponse403.from_dict(
-            response.json()
-        )
+        response_403 = MigrateProcessInstancesBatchOperationResponse403.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = MigrateProcessInstancesBatchOperationResponse500.from_dict(
-            response.json()
-        )
+        response_500 = MigrateProcessInstancesBatchOperationResponse500.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[MigrateProcessInstancesBatchOperationResponse200 | MigrateProcessInstancesBatchOperationResponse400 | MigrateProcessInstancesBatchOperationResponse401 | MigrateProcessInstancesBatchOperationResponse403 | MigrateProcessInstancesBatchOperationResponse500]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    MigrateProcessInstancesBatchOperationResponse200
-    | MigrateProcessInstancesBatchOperationResponse400
-    | MigrateProcessInstancesBatchOperationResponse401
-    | MigrateProcessInstancesBatchOperationResponse403
-    | MigrateProcessInstancesBatchOperationResponse500
-]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    *,
-    client: AuthenticatedClient | Client,
-    body: MigrateProcessInstancesBatchOperationData,
-) -> Response[
-    MigrateProcessInstancesBatchOperationResponse200
-    | MigrateProcessInstancesBatchOperationResponse400
-    | MigrateProcessInstancesBatchOperationResponse401
-    | MigrateProcessInstancesBatchOperationResponse403
-    | MigrateProcessInstancesBatchOperationResponse500
-]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: MigrateProcessInstancesBatchOperationData) -> Response[MigrateProcessInstancesBatchOperationResponse200 | MigrateProcessInstancesBatchOperationResponse400 | MigrateProcessInstancesBatchOperationResponse401 | MigrateProcessInstancesBatchOperationResponse403 | MigrateProcessInstancesBatchOperationResponse500]:
     """Migrate process instances (batch)
 
      Migrate multiple process instances.
@@ -124,83 +66,42 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    *,
-    client: AuthenticatedClient | Client,
-    body: MigrateProcessInstancesBatchOperationData,
-    **kwargs: Any,
-) -> MigrateProcessInstancesBatchOperationResponse200:
+def sync(*, client: AuthenticatedClient | Client, body: MigrateProcessInstancesBatchOperationData, **kwargs: Any) -> MigrateProcessInstancesBatchOperationResponse200:
     """Migrate process instances (batch)
 
-     Migrate multiple process instances.
-    Since only process instances with ACTIVE state can be migrated, any given
-    filters for state are ignored and overridden during this batch operation.
-    This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-    response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+ Migrate multiple process instances.
+Since only process instances with ACTIVE state can be migrated, any given
+filters for state are ignored and overridden during this batch operation.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
-    Args:
-        body (MigrateProcessInstancesBatchOperationData):
+Args:
+    body (MigrateProcessInstancesBatchOperationData):
 
-    Raises:
-        errors.MigrateProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
-        errors.MigrateProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.MigrateProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.MigrateProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        MigrateProcessInstancesBatchOperationResponse200"""
+Raises:
+    errors.MigrateProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.MigrateProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.MigrateProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.MigrateProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    MigrateProcessInstancesBatchOperationResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.MigrateProcessInstancesBatchOperationBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(
-                    MigrateProcessInstancesBatchOperationResponse400, response.parsed
-                ),
-            )
+            raise errors.MigrateProcessInstancesBatchOperationBadRequest(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstancesBatchOperationResponse400, response.parsed))
         if response.status_code == 401:
-            raise errors.MigrateProcessInstancesBatchOperationUnauthorized(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(
-                    MigrateProcessInstancesBatchOperationResponse401, response.parsed
-                ),
-            )
+            raise errors.MigrateProcessInstancesBatchOperationUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstancesBatchOperationResponse401, response.parsed))
         if response.status_code == 403:
-            raise errors.MigrateProcessInstancesBatchOperationForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(
-                    MigrateProcessInstancesBatchOperationResponse403, response.parsed
-                ),
-            )
+            raise errors.MigrateProcessInstancesBatchOperationForbidden(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstancesBatchOperationResponse403, response.parsed))
         if response.status_code == 500:
-            raise errors.MigrateProcessInstancesBatchOperationInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(
-                    MigrateProcessInstancesBatchOperationResponse500, response.parsed
-                ),
-            )
+            raise errors.MigrateProcessInstancesBatchOperationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstancesBatchOperationResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(MigrateProcessInstancesBatchOperationResponse200, response.parsed)
 
-
-async def asyncio_detailed(
-    *,
-    client: AuthenticatedClient | Client,
-    body: MigrateProcessInstancesBatchOperationData,
-) -> Response[
-    MigrateProcessInstancesBatchOperationResponse200
-    | MigrateProcessInstancesBatchOperationResponse400
-    | MigrateProcessInstancesBatchOperationResponse401
-    | MigrateProcessInstancesBatchOperationResponse403
-    | MigrateProcessInstancesBatchOperationResponse500
-]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: MigrateProcessInstancesBatchOperationData) -> Response[MigrateProcessInstancesBatchOperationResponse200 | MigrateProcessInstancesBatchOperationResponse400 | MigrateProcessInstancesBatchOperationResponse401 | MigrateProcessInstancesBatchOperationResponse403 | MigrateProcessInstancesBatchOperationResponse500]:
     """Migrate process instances (batch)
 
      Migrate multiple process instances.
@@ -223,67 +124,37 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    *,
-    client: AuthenticatedClient | Client,
-    body: MigrateProcessInstancesBatchOperationData,
-    **kwargs: Any,
-) -> MigrateProcessInstancesBatchOperationResponse200:
+async def asyncio(*, client: AuthenticatedClient | Client, body: MigrateProcessInstancesBatchOperationData, **kwargs: Any) -> MigrateProcessInstancesBatchOperationResponse200:
     """Migrate process instances (batch)
 
-     Migrate multiple process instances.
-    Since only process instances with ACTIVE state can be migrated, any given
-    filters for state are ignored and overridden during this batch operation.
-    This is done asynchronously, the progress can be tracked using the batchOperationKey from the
-    response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+ Migrate multiple process instances.
+Since only process instances with ACTIVE state can be migrated, any given
+filters for state are ignored and overridden during this batch operation.
+This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
-    Args:
-        body (MigrateProcessInstancesBatchOperationData):
+Args:
+    body (MigrateProcessInstancesBatchOperationData):
 
-    Raises:
-        errors.MigrateProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
-        errors.MigrateProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.MigrateProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.MigrateProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        MigrateProcessInstancesBatchOperationResponse200"""
+Raises:
+    errors.MigrateProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+    errors.MigrateProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.MigrateProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.MigrateProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    MigrateProcessInstancesBatchOperationResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.MigrateProcessInstancesBatchOperationBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(
-                    MigrateProcessInstancesBatchOperationResponse400, response.parsed
-                ),
-            )
+            raise errors.MigrateProcessInstancesBatchOperationBadRequest(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstancesBatchOperationResponse400, response.parsed))
         if response.status_code == 401:
-            raise errors.MigrateProcessInstancesBatchOperationUnauthorized(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(
-                    MigrateProcessInstancesBatchOperationResponse401, response.parsed
-                ),
-            )
+            raise errors.MigrateProcessInstancesBatchOperationUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstancesBatchOperationResponse401, response.parsed))
         if response.status_code == 403:
-            raise errors.MigrateProcessInstancesBatchOperationForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(
-                    MigrateProcessInstancesBatchOperationResponse403, response.parsed
-                ),
-            )
+            raise errors.MigrateProcessInstancesBatchOperationForbidden(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstancesBatchOperationResponse403, response.parsed))
         if response.status_code == 500:
-            raise errors.MigrateProcessInstancesBatchOperationInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(
-                    MigrateProcessInstancesBatchOperationResponse500, response.parsed
-                ),
-            )
+            raise errors.MigrateProcessInstancesBatchOperationInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(MigrateProcessInstancesBatchOperationResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(MigrateProcessInstancesBatchOperationResponse200, response.parsed)

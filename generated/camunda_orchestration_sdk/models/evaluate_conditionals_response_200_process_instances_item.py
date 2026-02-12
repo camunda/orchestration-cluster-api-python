@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    lift_process_definition_key,
-    lift_process_instance_key,
-)
+from camunda_orchestration_sdk.semantic_types import ProcessDefinitionKey, ProcessInstanceKey, lift_process_definition_key, lift_process_instance_key
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -27,9 +22,7 @@ class EvaluateConditionalsResponse200ProcessInstancesItem:
 
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_key = self.process_definition_key
@@ -49,17 +42,9 @@ class EvaluateConditionalsResponse200ProcessInstancesItem:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_definition_key = (
-            lift_process_definition_key(_val)
-            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_definition_key = lift_process_definition_key(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
 
-        process_instance_key = (
-            lift_process_instance_key(_val)
-            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_instance_key = lift_process_instance_key(_val) if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET else UNSET
 
         evaluate_conditionals_response_200_process_instances_item = cls(
             process_definition_key=process_definition_key,

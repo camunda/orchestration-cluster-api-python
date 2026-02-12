@@ -5,52 +5,24 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.cancel_process_instance_data_type_0 import CancelProcessInstanceDataType0
-from ...models.cancel_process_instance_response_400 import (
-    CancelProcessInstanceResponse400,
-)
-from ...models.cancel_process_instance_response_404 import (
-    CancelProcessInstanceResponse404,
-)
-from ...models.cancel_process_instance_response_500 import (
-    CancelProcessInstanceResponse500,
-)
-from ...models.cancel_process_instance_response_503 import (
-    CancelProcessInstanceResponse503,
-)
+from ...models.cancel_process_instance_response_400 import CancelProcessInstanceResponse400
+from ...models.cancel_process_instance_response_404 import CancelProcessInstanceResponse404
+from ...models.cancel_process_instance_response_500 import CancelProcessInstanceResponse500
+from ...models.cancel_process_instance_response_503 import CancelProcessInstanceResponse503
 from ...types import UNSET, Response, Unset
 
-
-def _get_kwargs(
-    process_instance_key: str,
-    *,
-    body: CancelProcessInstanceDataType0 | None | Unset = UNSET,
-) -> dict[str, Any]:
+def _get_kwargs(process_instance_key: str, *, body: CancelProcessInstanceDataType0 | None | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {
-        "method": "post",
-        "url": "/process-instances/{process_instance_key}/cancellation".format(
-            process_instance_key=quote(str(process_instance_key), safe="")
-        ),
-    }
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-instances/{process_instance_key}/cancellation'.format(process_instance_key=quote(str(process_instance_key), safe=''))}
     if isinstance(body, CancelProcessInstanceDataType0):
-        _kwargs["json"] = body.to_dict()
+        _kwargs['json'] = body.to_dict()
     else:
-        _kwargs["json"] = body
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+        _kwargs['json'] = body
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | CancelProcessInstanceResponse400
-    | CancelProcessInstanceResponse404
-    | CancelProcessInstanceResponse500
-    | CancelProcessInstanceResponse503
-    | None
-):
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503 | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
@@ -71,36 +43,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | CancelProcessInstanceResponse400
-    | CancelProcessInstanceResponse404
-    | CancelProcessInstanceResponse500
-    | CancelProcessInstanceResponse503
-]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    process_instance_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: CancelProcessInstanceDataType0 | None | Unset = UNSET,
-) -> Response[
-    Any
-    | CancelProcessInstanceResponse400
-    | CancelProcessInstanceResponse404
-    | CancelProcessInstanceResponse500
-    | CancelProcessInstanceResponse503
-]:
+def sync_detailed(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceDataType0 | None | Unset=UNSET) -> Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]:
     """Cancel process instance
 
      Cancels a running process instance. As a cancellation includes more than just the removal of the
@@ -122,77 +68,40 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    process_instance_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: CancelProcessInstanceDataType0 | None | Unset = UNSET,
-    **kwargs: Any,
-) -> None:
+def sync(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceDataType0 | None | Unset=UNSET, **kwargs: Any) -> None:
     """Cancel process instance
 
-     Cancels a running process instance. As a cancellation includes more than just the removal of the
-    process instance resource, the cancellation resource must be posted.
+ Cancels a running process instance. As a cancellation includes more than just the removal of the
+process instance resource, the cancellation resource must be posted.
 
-    Args:
-        process_instance_key (str): System-generated key for a process instance. Example:
-            2251799813690746.
-        body (CancelProcessInstanceDataType0 | None | Unset):
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (CancelProcessInstanceDataType0 | None | Unset):
 
-    Raises:
-        errors.CancelProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.CancelProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
-        errors.CancelProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.CancelProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        None"""
-    response = sync_detailed(
-        process_instance_key=process_instance_key, client=client, body=body
-    )
+Raises:
+    errors.CancelProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CancelProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.CancelProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CancelProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    None"""
+    response = sync_detailed(process_instance_key=process_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CancelProcessInstanceBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CancelProcessInstanceResponse400, response.parsed),
-            )
+            raise errors.CancelProcessInstanceBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CancelProcessInstanceResponse400, response.parsed))
         if response.status_code == 404:
-            raise errors.CancelProcessInstanceNotFound(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CancelProcessInstanceResponse404, response.parsed),
-            )
+            raise errors.CancelProcessInstanceNotFound(status_code=response.status_code, content=response.content, parsed=cast(CancelProcessInstanceResponse404, response.parsed))
         if response.status_code == 500:
-            raise errors.CancelProcessInstanceInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CancelProcessInstanceResponse500, response.parsed),
-            )
+            raise errors.CancelProcessInstanceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CancelProcessInstanceResponse500, response.parsed))
         if response.status_code == 503:
-            raise errors.CancelProcessInstanceServiceUnavailable(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CancelProcessInstanceResponse503, response.parsed),
-            )
+            raise errors.CancelProcessInstanceServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(CancelProcessInstanceResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
 
-
-async def asyncio_detailed(
-    process_instance_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: CancelProcessInstanceDataType0 | None | Unset = UNSET,
-) -> Response[
-    Any
-    | CancelProcessInstanceResponse400
-    | CancelProcessInstanceResponse404
-    | CancelProcessInstanceResponse500
-    | CancelProcessInstanceResponse503
-]:
+async def asyncio_detailed(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceDataType0 | None | Unset=UNSET) -> Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]:
     """Cancel process instance
 
      Cancels a running process instance. As a cancellation includes more than just the removal of the
@@ -214,60 +123,35 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    process_instance_key: str,
-    *,
-    client: AuthenticatedClient | Client,
-    body: CancelProcessInstanceDataType0 | None | Unset = UNSET,
-    **kwargs: Any,
-) -> None:
+async def asyncio(process_instance_key: str, *, client: AuthenticatedClient | Client, body: CancelProcessInstanceDataType0 | None | Unset=UNSET, **kwargs: Any) -> None:
     """Cancel process instance
 
-     Cancels a running process instance. As a cancellation includes more than just the removal of the
-    process instance resource, the cancellation resource must be posted.
+ Cancels a running process instance. As a cancellation includes more than just the removal of the
+process instance resource, the cancellation resource must be posted.
 
-    Args:
-        process_instance_key (str): System-generated key for a process instance. Example:
-            2251799813690746.
-        body (CancelProcessInstanceDataType0 | None | Unset):
+Args:
+    process_instance_key (str): System-generated key for a process instance. Example:
+        2251799813690746.
+    body (CancelProcessInstanceDataType0 | None | Unset):
 
-    Raises:
-        errors.CancelProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.CancelProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
-        errors.CancelProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.CancelProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        None"""
-    response = await asyncio_detailed(
-        process_instance_key=process_instance_key, client=client, body=body
-    )
+Raises:
+    errors.CancelProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CancelProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
+    errors.CancelProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.CancelProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    None"""
+    response = await asyncio_detailed(process_instance_key=process_instance_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CancelProcessInstanceBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CancelProcessInstanceResponse400, response.parsed),
-            )
+            raise errors.CancelProcessInstanceBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CancelProcessInstanceResponse400, response.parsed))
         if response.status_code == 404:
-            raise errors.CancelProcessInstanceNotFound(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CancelProcessInstanceResponse404, response.parsed),
-            )
+            raise errors.CancelProcessInstanceNotFound(status_code=response.status_code, content=response.content, parsed=cast(CancelProcessInstanceResponse404, response.parsed))
         if response.status_code == 500:
-            raise errors.CancelProcessInstanceInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CancelProcessInstanceResponse500, response.parsed),
-            )
+            raise errors.CancelProcessInstanceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CancelProcessInstanceResponse500, response.parsed))
         if response.status_code == 503:
-            raise errors.CancelProcessInstanceServiceUnavailable(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CancelProcessInstanceResponse503, response.parsed),
-            )
+            raise errors.CancelProcessInstanceServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(CancelProcessInstanceResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

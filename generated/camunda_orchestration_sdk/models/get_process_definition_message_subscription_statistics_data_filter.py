@@ -1,8 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    MessageSubscriptionKey,
-    lift_message_subscription_key,
-)
+from camunda_orchestration_sdk.semantic_types import MessageSubscriptionKey, lift_message_subscription_key
 
 import datetime
 from collections.abc import Mapping
@@ -57,9 +54,7 @@ class GetProcessDefinitionMessageSubscriptionStatisticsDataFilter:
         tenant_id (ActoridAdvancedfilter | str | Unset):
     """
 
-    message_subscription_key: (
-        MessageSubscriptionKey | SubscriptionkeyAdvancedfilter | Unset
-    ) = UNSET
+    message_subscription_key: MessageSubscriptionKey | SubscriptionkeyAdvancedfilter | Unset = UNSET
     process_definition_key: ProcessdefinitionkeyAdvancedfilter | str | Unset = UNSET
     process_definition_id: ActoridAdvancedfilter | str | Unset = UNSET
     process_instance_key: ProcessinstancekeyAdvancedfilter | str | Unset = UNSET
@@ -74,9 +69,7 @@ class GetProcessDefinitionMessageSubscriptionStatisticsDataFilter:
     message_name: ActoridAdvancedfilter | str | Unset = UNSET
     correlation_key: ActoridAdvancedfilter | str | Unset = UNSET
     tenant_id: ActoridAdvancedfilter | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -258,11 +251,8 @@ class GetProcessDefinitionMessageSubscriptionStatisticsDataFilter:
             d.pop("messageSubscriptionKey", UNSET)
         )
 
-        message_subscription_key = (
-            lift_message_subscription_key(_raw_message_subscription_key)
-            if isinstance(_raw_message_subscription_key, str)
-            else _raw_message_subscription_key
-        )
+
+        message_subscription_key = lift_message_subscription_key(_raw_message_subscription_key) if isinstance(_raw_message_subscription_key, str) else _raw_message_subscription_key
 
         def _parse_process_definition_key(
             data: object,

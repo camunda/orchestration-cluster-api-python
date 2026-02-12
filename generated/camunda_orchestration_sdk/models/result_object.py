@@ -46,9 +46,7 @@ class ResultObject:
     denied_reason: None | str | Unset = UNSET
     corrections: None | ResultObjectCorrections | Unset = UNSET
     type_: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.result_object_corrections import ResultObjectCorrections

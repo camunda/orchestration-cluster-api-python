@@ -15,9 +15,7 @@ T = TypeVar("T", bound="ActivateJobsResponse200JobsItemVariables")
 class ActivateJobsResponse200JobsItemVariables:
     """All variables visible to the task scope, computed at activation time."""
 
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         field_dict: dict[str, Any] = {}

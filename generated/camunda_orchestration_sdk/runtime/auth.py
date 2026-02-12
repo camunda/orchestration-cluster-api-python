@@ -75,11 +75,7 @@ def _ensure_dir(path: Path) -> bool:
         test_file.unlink(missing_ok=True)
         return True
     except Exception as e:
-        _log_warning(
-            "OAuth cache dir is not writable; disabling file cache: dir={dir} err={err}",
-            dir=str(path),
-            err=str(e),
-        )
+        _log_warning("OAuth cache dir is not writable; disabling file cache: dir={dir} err={err}", dir=str(path), err=str(e))
         return False
 
 
@@ -114,7 +110,8 @@ class AuthProvider(Protocol):
     Implementations are expected to be lightweight and safe to call for every request.
     """
 
-    def get_headers(self) -> Mapping[str, str]: ...
+    def get_headers(self) -> Mapping[str, str]:
+        ...
 
 
 @runtime_checkable
@@ -124,7 +121,8 @@ class AsyncAuthProvider(Protocol):
     If an auth provider implements this protocol, async clients will prefer it.
     """
 
-    async def aget_headers(self) -> Mapping[str, str]: ...
+    async def aget_headers(self) -> Mapping[str, str]:
+        ...
 
 
 class NullAuthProvider:
@@ -140,9 +138,7 @@ def _resolve_auth_headers(provider: object) -> Mapping[str, str]:
 
     get_headers = getattr(provider, "get_headers", None)
     if not callable(get_headers):
-        raise TypeError(
-            "auth_provider must implement get_headers() -> Mapping[str, str]"
-        )
+        raise TypeError("auth_provider must implement get_headers() -> Mapping[str, str]")
 
     typed_get_headers = cast(Callable[[], object], get_headers)
     headers = typed_get_headers()
@@ -174,9 +170,7 @@ class BasicAuthProvider:
         password = password.strip()
         if not username or not password:
             raise ValueError("Basic auth username and password must be non-empty")
-        token = base64.b64encode(f"{username}:{password}".encode("utf-8")).decode(
-            "ascii"
-        )
+        token = base64.b64encode(f"{username}:{password}".encode("utf-8")).decode("ascii")
         self._header_value = f"Basic {token}"
 
     def get_headers(self) -> Mapping[str, str]:
@@ -285,9 +279,7 @@ class OAuthClientCredentialsAuthProvider:
             expires_at = payload.get("expires_at_epoch_s")
             if not access_token or expires_at is None:
                 return None
-            token = _OAuthToken(
-                access_token=str(access_token), expires_at_epoch_s=float(expires_at)
-            )
+            token = _OAuthToken(access_token=str(access_token), expires_at_epoch_s=float(expires_at))
             if not self._is_valid(token):
                 try:
                     token_file.unlink(missing_ok=True)
@@ -400,9 +392,7 @@ class OAuthClientCredentialsAuthProvider:
         # Match TS behavior: subtract a skew buffer (>=30s or 5% of lifetime)
         skew = max(30.0, lifetime_s * 0.05)
         expires_at = self._now() + max(0.0, lifetime_s - skew)
-        return _OAuthToken(
-            access_token=str(access_token), expires_at_epoch_s=expires_at
-        )
+        return _OAuthToken(access_token=str(access_token), expires_at_epoch_s=expires_at)
 
     def get_headers(self) -> Mapping[str, str]:
         with self._lock:
@@ -524,9 +514,7 @@ class AsyncOAuthClientCredentialsAuthProvider:
             expires_at = payload.get("expires_at_epoch_s")
             if not access_token or expires_at is None:
                 return None
-            token = _OAuthToken(
-                access_token=str(access_token), expires_at_epoch_s=float(expires_at)
-            )
+            token = _OAuthToken(access_token=str(access_token), expires_at_epoch_s=float(expires_at))
             if not self._is_valid(token):
                 try:
                     token_file.unlink(missing_ok=True)
@@ -636,9 +624,7 @@ class AsyncOAuthClientCredentialsAuthProvider:
         lifetime_s = float(expires_in)
         skew = max(30.0, lifetime_s * 0.05)
         expires_at = self._now() + max(0.0, lifetime_s - skew)
-        return _OAuthToken(
-            access_token=str(access_token), expires_at_epoch_s=expires_at
-        )
+        return _OAuthToken(access_token=str(access_token), expires_at_epoch_s=expires_at)
 
     async def aget_headers(self) -> Mapping[str, str]:
         async with self._lock:
@@ -718,9 +704,7 @@ def inject_auth_event_hooks(
             # Keep output safe and compact; only show body at trace.
             if status >= 400:
                 if log_http_body:
-                    body_preview = (
-                        (response.text or "").strip().replace("\n", " ")[:500]
-                    )
+                    body_preview = (response.text or "").strip().replace("\n", " ")[:500]
                     _log_warning(
                         "HTTP response: status={status} method={method} url={url} body={body}",
                         status=status,
@@ -771,9 +755,7 @@ def inject_auth_event_hooks(
             # Keep output safe and compact; only show body at trace.
             if status >= 400:
                 if log_http_body:
-                    body_preview = (
-                        (response.text or "").strip().replace("\n", " ")[:500]
-                    )
+                    body_preview = (response.text or "").strip().replace("\n", " ")[:500]
                     _log_warning(
                         "HTTP response: status={status} method={method} url={url} body={body}",
                         status=status,

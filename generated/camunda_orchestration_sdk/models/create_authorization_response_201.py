@@ -1,8 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    AuthorizationKey,
-    lift_authorization_key,
-)
+from camunda_orchestration_sdk.semantic_types import AuthorizationKey, lift_authorization_key
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -23,9 +20,7 @@ class CreateAuthorizationResponse201:
     """
 
     authorization_key: AuthorizationKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         authorization_key = self.authorization_key
@@ -41,11 +36,7 @@ class CreateAuthorizationResponse201:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        authorization_key = (
-            lift_authorization_key(_val)
-            if (_val := d.pop("authorizationKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        authorization_key = lift_authorization_key(_val) if (_val := d.pop("authorizationKey", UNSET)) is not UNSET else UNSET
 
         create_authorization_response_201 = cls(
             authorization_key=authorization_key,

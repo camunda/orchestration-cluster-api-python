@@ -67,11 +67,7 @@ class BroadcastSignalData:
         else:
             variables = BroadcastSignalDataVariables.from_dict(_variables)
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
 
         broadcast_signal_data = cls(
             signal_name=signal_name,

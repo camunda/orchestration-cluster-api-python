@@ -11,27 +11,16 @@ from ...models.search_users_response_403 import SearchUsersResponse403
 from ...models.search_users_response_500 import SearchUsersResponse500
 from ...types import UNSET, Response, Unset
 
-
-def _get_kwargs(*, body: SearchUsersData | Unset = UNSET) -> dict[str, Any]:
+def _get_kwargs(*, body: SearchUsersData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {"method": "post", "url": "/users/search"}
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/users/search'}
     if not isinstance(body, Unset):
-        _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+        _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    SearchUsersResponse200
-    | SearchUsersResponse400
-    | SearchUsersResponse401
-    | SearchUsersResponse403
-    | SearchUsersResponse500
-    | None
-):
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500 | None:
     if response.status_code == 200:
         response_200 = SearchUsersResponse200.from_dict(response.json())
         return response_200
@@ -52,33 +41,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    SearchUsersResponse200
-    | SearchUsersResponse400
-    | SearchUsersResponse401
-    | SearchUsersResponse403
-    | SearchUsersResponse500
-]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: SearchUsersData | Unset = UNSET
-) -> Response[
-    SearchUsersResponse200
-    | SearchUsersResponse400
-    | SearchUsersResponse401
-    | SearchUsersResponse403
-    | SearchUsersResponse500
-]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchUsersData | Unset=UNSET) -> Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]:
     """Search users
 
      Search for users based on given criteria.
@@ -97,69 +63,38 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    *,
-    client: AuthenticatedClient | Client,
-    body: SearchUsersData | Unset = UNSET,
-    **kwargs: Any,
-) -> SearchUsersResponse200:
+def sync(*, client: AuthenticatedClient | Client, body: SearchUsersData | Unset=UNSET, **kwargs: Any) -> SearchUsersResponse200:
     """Search users
 
-     Search for users based on given criteria.
+ Search for users based on given criteria.
 
-    Args:
-        body (SearchUsersData | Unset):
+Args:
+    body (SearchUsersData | Unset):
 
-    Raises:
-        errors.SearchUsersBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchUsersUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.SearchUsersForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchUsersInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        SearchUsersResponse200"""
+Raises:
+    errors.SearchUsersBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchUsersResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchUsersBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchUsersResponse400, response.parsed),
-            )
+            raise errors.SearchUsersBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse400, response.parsed))
         if response.status_code == 401:
-            raise errors.SearchUsersUnauthorized(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchUsersResponse401, response.parsed),
-            )
+            raise errors.SearchUsersUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse401, response.parsed))
         if response.status_code == 403:
-            raise errors.SearchUsersForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchUsersResponse403, response.parsed),
-            )
+            raise errors.SearchUsersForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse403, response.parsed))
         if response.status_code == 500:
-            raise errors.SearchUsersInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchUsersResponse500, response.parsed),
-            )
+            raise errors.SearchUsersInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(SearchUsersResponse200, response.parsed)
 
-
-async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: SearchUsersData | Unset = UNSET
-) -> Response[
-    SearchUsersResponse200
-    | SearchUsersResponse400
-    | SearchUsersResponse401
-    | SearchUsersResponse403
-    | SearchUsersResponse500
-]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchUsersData | Unset=UNSET) -> Response[SearchUsersResponse200 | SearchUsersResponse400 | SearchUsersResponse401 | SearchUsersResponse403 | SearchUsersResponse500]:
     """Search users
 
      Search for users based on given criteria.
@@ -178,55 +113,33 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    *,
-    client: AuthenticatedClient | Client,
-    body: SearchUsersData | Unset = UNSET,
-    **kwargs: Any,
-) -> SearchUsersResponse200:
+async def asyncio(*, client: AuthenticatedClient | Client, body: SearchUsersData | Unset=UNSET, **kwargs: Any) -> SearchUsersResponse200:
     """Search users
 
-     Search for users based on given criteria.
+ Search for users based on given criteria.
 
-    Args:
-        body (SearchUsersData | Unset):
+Args:
+    body (SearchUsersData | Unset):
 
-    Raises:
-        errors.SearchUsersBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchUsersUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.SearchUsersForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchUsersInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        SearchUsersResponse200"""
+Raises:
+    errors.SearchUsersBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchUsersUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchUsersForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchUsersInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchUsersResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchUsersBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchUsersResponse400, response.parsed),
-            )
+            raise errors.SearchUsersBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse400, response.parsed))
         if response.status_code == 401:
-            raise errors.SearchUsersUnauthorized(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchUsersResponse401, response.parsed),
-            )
+            raise errors.SearchUsersUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse401, response.parsed))
         if response.status_code == 403:
-            raise errors.SearchUsersForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchUsersResponse403, response.parsed),
-            )
+            raise errors.SearchUsersForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse403, response.parsed))
         if response.status_code == 500:
-            raise errors.SearchUsersInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchUsersResponse500, response.parsed),
-            )
+            raise errors.SearchUsersInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchUsersResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(SearchUsersResponse200, response.parsed)

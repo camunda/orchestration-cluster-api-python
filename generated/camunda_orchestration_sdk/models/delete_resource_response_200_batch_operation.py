@@ -1,8 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    BatchOperationKey,
-    lift_batch_operation_key,
-)
+from camunda_orchestration_sdk.semantic_types import BatchOperationKey, lift_batch_operation_key
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -36,9 +33,7 @@ class DeleteResourceResponse200BatchOperation:
     batch_operation_type: (
         DeleteResourceResponse200BatchOperationBatchOperationType | Unset
     ) = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         batch_operation_key = self.batch_operation_key
@@ -60,11 +55,7 @@ class DeleteResourceResponse200BatchOperation:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        batch_operation_key = (
-            lift_batch_operation_key(_val)
-            if (_val := d.pop("batchOperationKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        batch_operation_key = lift_batch_operation_key(_val) if (_val := d.pop("batchOperationKey", UNSET)) is not UNSET else UNSET
 
         _batch_operation_type = d.pop("batchOperationType", UNSET)
         batch_operation_type: (

@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    MessageKey,
-    TenantId,
-    lift_message_key,
-    lift_tenant_id,
-)
+from camunda_orchestration_sdk.semantic_types import MessageKey, TenantId, lift_message_key, lift_tenant_id
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -28,9 +23,7 @@ class PublishMessageResponse200:
 
     tenant_id: TenantId | Unset = UNSET
     message_key: MessageKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         tenant_id = self.tenant_id
@@ -50,17 +43,9 @@ class PublishMessageResponse200:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
 
-        message_key = (
-            lift_message_key(_val)
-            if (_val := d.pop("messageKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        message_key = lift_message_key(_val) if (_val := d.pop("messageKey", UNSET)) is not UNSET else UNSET
 
         publish_message_response_200 = cls(
             tenant_id=tenant_id,

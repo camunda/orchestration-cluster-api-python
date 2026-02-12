@@ -36,9 +36,7 @@ class GetTopologyResponse200BrokersItem:
     port: int
     partitions: list[GetTopologyResponse200BrokersItemPartitionsItem]
     version: str
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         node_id = self.node_id

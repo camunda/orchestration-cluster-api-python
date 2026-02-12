@@ -75,11 +75,7 @@ class CorrelateMessageData:
         else:
             variables = CorrelateMessageDataVariables.from_dict(_variables)
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
 
         correlate_message_data = cls(
             name=name,

@@ -25,9 +25,7 @@ class SearchMappingRuleResponse200ItemsItem:
     claim_value: str | Unset = UNSET
     name: str | Unset = UNSET
     mapping_rule_id: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         claim_name = self.claim_name

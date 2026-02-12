@@ -4,48 +4,19 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_process_definition_response_200 import (
-    GetProcessDefinitionResponse200,
-)
-from ...models.get_process_definition_response_400 import (
-    GetProcessDefinitionResponse400,
-)
-from ...models.get_process_definition_response_401 import (
-    GetProcessDefinitionResponse401,
-)
-from ...models.get_process_definition_response_403 import (
-    GetProcessDefinitionResponse403,
-)
-from ...models.get_process_definition_response_404 import (
-    GetProcessDefinitionResponse404,
-)
-from ...models.get_process_definition_response_500 import (
-    GetProcessDefinitionResponse500,
-)
+from ...models.get_process_definition_response_200 import GetProcessDefinitionResponse200
+from ...models.get_process_definition_response_400 import GetProcessDefinitionResponse400
+from ...models.get_process_definition_response_401 import GetProcessDefinitionResponse401
+from ...models.get_process_definition_response_403 import GetProcessDefinitionResponse403
+from ...models.get_process_definition_response_404 import GetProcessDefinitionResponse404
+from ...models.get_process_definition_response_500 import GetProcessDefinitionResponse500
 from ...types import Response
 
-
 def _get_kwargs(process_definition_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {
-        "method": "get",
-        "url": "/process-definitions/{process_definition_key}".format(
-            process_definition_key=quote(str(process_definition_key), safe="")
-        ),
-    }
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/process-definitions/{process_definition_key}'.format(process_definition_key=quote(str(process_definition_key), safe=''))}
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetProcessDefinitionResponse200
-    | GetProcessDefinitionResponse400
-    | GetProcessDefinitionResponse401
-    | GetProcessDefinitionResponse403
-    | GetProcessDefinitionResponse404
-    | GetProcessDefinitionResponse500
-    | None
-):
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetProcessDefinitionResponse200 | GetProcessDefinitionResponse400 | GetProcessDefinitionResponse401 | GetProcessDefinitionResponse403 | GetProcessDefinitionResponse404 | GetProcessDefinitionResponse500 | None:
     if response.status_code == 200:
         response_200 = GetProcessDefinitionResponse200.from_dict(response.json())
         return response_200
@@ -69,35 +40,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[GetProcessDefinitionResponse200 | GetProcessDefinitionResponse400 | GetProcessDefinitionResponse401 | GetProcessDefinitionResponse403 | GetProcessDefinitionResponse404 | GetProcessDefinitionResponse500]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetProcessDefinitionResponse200
-    | GetProcessDefinitionResponse400
-    | GetProcessDefinitionResponse401
-    | GetProcessDefinitionResponse403
-    | GetProcessDefinitionResponse404
-    | GetProcessDefinitionResponse500
-]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    process_definition_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetProcessDefinitionResponse200
-    | GetProcessDefinitionResponse400
-    | GetProcessDefinitionResponse401
-    | GetProcessDefinitionResponse403
-    | GetProcessDefinitionResponse404
-    | GetProcessDefinitionResponse500
-]:
+def sync_detailed(process_definition_key: str, *, client: AuthenticatedClient | Client) -> Response[GetProcessDefinitionResponse200 | GetProcessDefinitionResponse400 | GetProcessDefinitionResponse401 | GetProcessDefinitionResponse403 | GetProcessDefinitionResponse404 | GetProcessDefinitionResponse500]:
     """Get process definition
 
      Returns process definition as JSON.
@@ -117,77 +63,42 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    process_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetProcessDefinitionResponse200:
+def sync(process_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> GetProcessDefinitionResponse200:
     """Get process definition
 
-     Returns process definition as JSON.
+ Returns process definition as JSON.
 
-    Args:
-        process_definition_key (str): System-generated key for a deployed process definition.
-            Example: 2251799813686749.
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
 
-    Raises:
-        errors.GetProcessDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.GetProcessDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.GetProcessDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.GetProcessDefinitionNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
-        errors.GetProcessDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        GetProcessDefinitionResponse200"""
-    response = sync_detailed(
-        process_definition_key=process_definition_key, client=client
-    )
+Raises:
+    errors.GetProcessDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+    errors.GetProcessDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessDefinitionResponse200"""
+    response = sync_detailed(process_definition_key=process_definition_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.GetProcessDefinitionBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetProcessDefinitionResponse400, response.parsed),
-            )
+            raise errors.GetProcessDefinitionBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse400, response.parsed))
         if response.status_code == 401:
-            raise errors.GetProcessDefinitionUnauthorized(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetProcessDefinitionResponse401, response.parsed),
-            )
+            raise errors.GetProcessDefinitionUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse401, response.parsed))
         if response.status_code == 403:
-            raise errors.GetProcessDefinitionForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetProcessDefinitionResponse403, response.parsed),
-            )
+            raise errors.GetProcessDefinitionForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse403, response.parsed))
         if response.status_code == 404:
-            raise errors.GetProcessDefinitionNotFound(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetProcessDefinitionResponse404, response.parsed),
-            )
+            raise errors.GetProcessDefinitionNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse404, response.parsed))
         if response.status_code == 500:
-            raise errors.GetProcessDefinitionInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetProcessDefinitionResponse500, response.parsed),
-            )
+            raise errors.GetProcessDefinitionInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(GetProcessDefinitionResponse200, response.parsed)
 
-
-async def asyncio_detailed(
-    process_definition_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetProcessDefinitionResponse200
-    | GetProcessDefinitionResponse400
-    | GetProcessDefinitionResponse401
-    | GetProcessDefinitionResponse403
-    | GetProcessDefinitionResponse404
-    | GetProcessDefinitionResponse500
-]:
+async def asyncio_detailed(process_definition_key: str, *, client: AuthenticatedClient | Client) -> Response[GetProcessDefinitionResponse200 | GetProcessDefinitionResponse400 | GetProcessDefinitionResponse401 | GetProcessDefinitionResponse403 | GetProcessDefinitionResponse404 | GetProcessDefinitionResponse500]:
     """Get process definition
 
      Returns process definition as JSON.
@@ -207,62 +118,37 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    process_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetProcessDefinitionResponse200:
+async def asyncio(process_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> GetProcessDefinitionResponse200:
     """Get process definition
 
-     Returns process definition as JSON.
+ Returns process definition as JSON.
 
-    Args:
-        process_definition_key (str): System-generated key for a deployed process definition.
-            Example: 2251799813686749.
+Args:
+    process_definition_key (str): System-generated key for a deployed process definition.
+        Example: 2251799813686749.
 
-    Raises:
-        errors.GetProcessDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.GetProcessDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.GetProcessDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.GetProcessDefinitionNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
-        errors.GetProcessDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        GetProcessDefinitionResponse200"""
-    response = await asyncio_detailed(
-        process_definition_key=process_definition_key, client=client
-    )
+Raises:
+    errors.GetProcessDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetProcessDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetProcessDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetProcessDefinitionNotFound: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+    errors.GetProcessDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetProcessDefinitionResponse200"""
+    response = await asyncio_detailed(process_definition_key=process_definition_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.GetProcessDefinitionBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetProcessDefinitionResponse400, response.parsed),
-            )
+            raise errors.GetProcessDefinitionBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse400, response.parsed))
         if response.status_code == 401:
-            raise errors.GetProcessDefinitionUnauthorized(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetProcessDefinitionResponse401, response.parsed),
-            )
+            raise errors.GetProcessDefinitionUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse401, response.parsed))
         if response.status_code == 403:
-            raise errors.GetProcessDefinitionForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetProcessDefinitionResponse403, response.parsed),
-            )
+            raise errors.GetProcessDefinitionForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse403, response.parsed))
         if response.status_code == 404:
-            raise errors.GetProcessDefinitionNotFound(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetProcessDefinitionResponse404, response.parsed),
-            )
+            raise errors.GetProcessDefinitionNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse404, response.parsed))
         if response.status_code == 500:
-            raise errors.GetProcessDefinitionInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetProcessDefinitionResponse500, response.parsed),
-            )
+            raise errors.GetProcessDefinitionInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetProcessDefinitionResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(GetProcessDefinitionResponse200, response.parsed)

@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ProcessDefinitionKey,
-    TenantId,
-    lift_process_definition_key,
-    lift_tenant_id,
-)
+from camunda_orchestration_sdk.semantic_types import ProcessDefinitionKey, TenantId, lift_process_definition_key, lift_tenant_id
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -80,6 +75,7 @@ class Processcreationbykey:
     tags: list[str] | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
+
         process_definition_key = self.process_definition_key
 
         variables: dict[str, Any] | Unset = UNSET
@@ -156,9 +152,7 @@ class Processcreationbykey:
         )
 
         d = dict(src_dict)
-        process_definition_key = lift_process_definition_key(
-            d.pop("processDefinitionKey")
-        )
+        process_definition_key = lift_process_definition_key(d.pop("processDefinitionKey"))
 
         _variables = d.pop("variables", UNSET)
         variables: ProcesscreationbyidVariables | Unset
@@ -209,11 +203,7 @@ class Processcreationbykey:
 
                 runtime_instructions.append(runtime_instructions_item)
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
 
         operation_reference = d.pop("operationReference", UNSET)
 

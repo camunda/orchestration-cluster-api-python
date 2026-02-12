@@ -1,22 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ElementId,
-    ElementInstanceKey,
-    FormKey,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    TenantId,
-    UserTaskKey,
-    lift_element_id,
-    lift_element_instance_key,
-    lift_form_key,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_tenant_id,
-    lift_user_task_key,
-)
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, FormKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId, UserTaskKey, lift_element_id, lift_element_instance_key, lift_form_key, lift_process_definition_id, lift_process_definition_key, lift_process_instance_key, lift_tenant_id, lift_user_task_key
 
 import datetime
 from collections.abc import Mapping
@@ -91,9 +74,7 @@ class GetUserTaskResponse200:
     process_instance_key: ProcessInstanceKey | Unset = UNSET
     form_key: FormKey | Unset = UNSET
     tags: list[str] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         name = self.name
@@ -230,21 +211,13 @@ class GetUserTaskResponse200:
 
         assignee = d.pop("assignee", UNSET)
 
-        element_id = (
-            lift_element_id(_val)
-            if (_val := d.pop("elementId", UNSET)) is not UNSET
-            else UNSET
-        )
+        element_id = lift_element_id(_val) if (_val := d.pop("elementId", UNSET)) is not UNSET else UNSET
 
         candidate_groups = cast(list[str], d.pop("candidateGroups", UNSET))
 
         candidate_users = cast(list[str], d.pop("candidateUsers", UNSET))
 
-        process_definition_id = (
-            lift_process_definition_id(_val)
-            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_definition_id = lift_process_definition_id(_val) if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET else UNSET
 
         _creation_date = d.pop("creationDate", UNSET)
         creation_date: datetime.datetime | Unset
@@ -274,11 +247,7 @@ class GetUserTaskResponse200:
         else:
             due_date = isoparse(_due_date)
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
 
         external_form_reference = d.pop("externalFormReference", UNSET)
 
@@ -295,37 +264,17 @@ class GetUserTaskResponse200:
 
         priority = d.pop("priority", UNSET)
 
-        user_task_key = (
-            lift_user_task_key(_val)
-            if (_val := d.pop("userTaskKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        user_task_key = lift_user_task_key(_val) if (_val := d.pop("userTaskKey", UNSET)) is not UNSET else UNSET
 
-        element_instance_key = (
-            lift_element_instance_key(_val)
-            if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        element_instance_key = lift_element_instance_key(_val) if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET else UNSET
 
         process_name = d.pop("processName", UNSET)
 
-        process_definition_key = (
-            lift_process_definition_key(_val)
-            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_definition_key = lift_process_definition_key(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
 
-        process_instance_key = (
-            lift_process_instance_key(_val)
-            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_instance_key = lift_process_instance_key(_val) if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET else UNSET
 
-        form_key = (
-            lift_form_key(_val)
-            if (_val := d.pop("formKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        form_key = lift_form_key(_val) if (_val := d.pop("formKey", UNSET)) is not UNSET else UNSET
 
         tags = cast(list[str], d.pop("tags", UNSET))
 

@@ -3,46 +3,23 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.create_global_cluster_variable_data import (
-    CreateGlobalClusterVariableData,
-)
-from ...models.create_global_cluster_variable_response_200 import (
-    CreateGlobalClusterVariableResponse200,
-)
-from ...models.create_global_cluster_variable_response_400 import (
-    CreateGlobalClusterVariableResponse400,
-)
-from ...models.create_global_cluster_variable_response_401 import (
-    CreateGlobalClusterVariableResponse401,
-)
-from ...models.create_global_cluster_variable_response_403 import (
-    CreateGlobalClusterVariableResponse403,
-)
-from ...models.create_global_cluster_variable_response_500 import (
-    CreateGlobalClusterVariableResponse500,
-)
+from ...models.create_global_cluster_variable_data import CreateGlobalClusterVariableData
+from ...models.create_global_cluster_variable_response_200 import CreateGlobalClusterVariableResponse200
+from ...models.create_global_cluster_variable_response_400 import CreateGlobalClusterVariableResponse400
+from ...models.create_global_cluster_variable_response_401 import CreateGlobalClusterVariableResponse401
+from ...models.create_global_cluster_variable_response_403 import CreateGlobalClusterVariableResponse403
+from ...models.create_global_cluster_variable_response_500 import CreateGlobalClusterVariableResponse500
 from ...types import Response
-
 
 def _get_kwargs(*, body: CreateGlobalClusterVariableData) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {"method": "post", "url": "/cluster-variables/global"}
-    _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/cluster-variables/global'}
+    _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    CreateGlobalClusterVariableResponse200
-    | CreateGlobalClusterVariableResponse400
-    | CreateGlobalClusterVariableResponse401
-    | CreateGlobalClusterVariableResponse403
-    | CreateGlobalClusterVariableResponse500
-    | None
-):
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> CreateGlobalClusterVariableResponse200 | CreateGlobalClusterVariableResponse400 | CreateGlobalClusterVariableResponse401 | CreateGlobalClusterVariableResponse403 | CreateGlobalClusterVariableResponse500 | None:
     if response.status_code == 200:
         response_200 = CreateGlobalClusterVariableResponse200.from_dict(response.json())
         return response_200
@@ -63,33 +40,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[CreateGlobalClusterVariableResponse200 | CreateGlobalClusterVariableResponse400 | CreateGlobalClusterVariableResponse401 | CreateGlobalClusterVariableResponse403 | CreateGlobalClusterVariableResponse500]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    CreateGlobalClusterVariableResponse200
-    | CreateGlobalClusterVariableResponse400
-    | CreateGlobalClusterVariableResponse401
-    | CreateGlobalClusterVariableResponse403
-    | CreateGlobalClusterVariableResponse500
-]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: CreateGlobalClusterVariableData
-) -> Response[
-    CreateGlobalClusterVariableResponse200
-    | CreateGlobalClusterVariableResponse400
-    | CreateGlobalClusterVariableResponse401
-    | CreateGlobalClusterVariableResponse403
-    | CreateGlobalClusterVariableResponse500
-]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: CreateGlobalClusterVariableData) -> Response[CreateGlobalClusterVariableResponse200 | CreateGlobalClusterVariableResponse400 | CreateGlobalClusterVariableResponse401 | CreateGlobalClusterVariableResponse403 | CreateGlobalClusterVariableResponse500]:
     """Create a global-scoped cluster variable
 
     Args:
@@ -106,67 +60,36 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    *,
-    client: AuthenticatedClient | Client,
-    body: CreateGlobalClusterVariableData,
-    **kwargs: Any,
-) -> CreateGlobalClusterVariableResponse200:
+def sync(*, client: AuthenticatedClient | Client, body: CreateGlobalClusterVariableData, **kwargs: Any) -> CreateGlobalClusterVariableResponse200:
     """Create a global-scoped cluster variable
 
-    Args:
-        body (CreateGlobalClusterVariableData):
+Args:
+    body (CreateGlobalClusterVariableData):
 
-    Raises:
-        errors.CreateGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.CreateGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.CreateGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.CreateGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        CreateGlobalClusterVariableResponse200"""
+Raises:
+    errors.CreateGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateGlobalClusterVariableResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CreateGlobalClusterVariableBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CreateGlobalClusterVariableResponse400, response.parsed),
-            )
+            raise errors.CreateGlobalClusterVariableBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse400, response.parsed))
         if response.status_code == 401:
-            raise errors.CreateGlobalClusterVariableUnauthorized(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CreateGlobalClusterVariableResponse401, response.parsed),
-            )
+            raise errors.CreateGlobalClusterVariableUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse401, response.parsed))
         if response.status_code == 403:
-            raise errors.CreateGlobalClusterVariableForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CreateGlobalClusterVariableResponse403, response.parsed),
-            )
+            raise errors.CreateGlobalClusterVariableForbidden(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse403, response.parsed))
         if response.status_code == 500:
-            raise errors.CreateGlobalClusterVariableInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CreateGlobalClusterVariableResponse500, response.parsed),
-            )
+            raise errors.CreateGlobalClusterVariableInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(CreateGlobalClusterVariableResponse200, response.parsed)
 
-
-async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: CreateGlobalClusterVariableData
-) -> Response[
-    CreateGlobalClusterVariableResponse200
-    | CreateGlobalClusterVariableResponse400
-    | CreateGlobalClusterVariableResponse401
-    | CreateGlobalClusterVariableResponse403
-    | CreateGlobalClusterVariableResponse500
-]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: CreateGlobalClusterVariableData) -> Response[CreateGlobalClusterVariableResponse200 | CreateGlobalClusterVariableResponse400 | CreateGlobalClusterVariableResponse401 | CreateGlobalClusterVariableResponse403 | CreateGlobalClusterVariableResponse500]:
     """Create a global-scoped cluster variable
 
     Args:
@@ -183,53 +106,31 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    *,
-    client: AuthenticatedClient | Client,
-    body: CreateGlobalClusterVariableData,
-    **kwargs: Any,
-) -> CreateGlobalClusterVariableResponse200:
+async def asyncio(*, client: AuthenticatedClient | Client, body: CreateGlobalClusterVariableData, **kwargs: Any) -> CreateGlobalClusterVariableResponse200:
     """Create a global-scoped cluster variable
 
-    Args:
-        body (CreateGlobalClusterVariableData):
+Args:
+    body (CreateGlobalClusterVariableData):
 
-    Raises:
-        errors.CreateGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.CreateGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.CreateGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.CreateGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        CreateGlobalClusterVariableResponse200"""
+Raises:
+    errors.CreateGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.CreateGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.CreateGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.CreateGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    CreateGlobalClusterVariableResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CreateGlobalClusterVariableBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CreateGlobalClusterVariableResponse400, response.parsed),
-            )
+            raise errors.CreateGlobalClusterVariableBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse400, response.parsed))
         if response.status_code == 401:
-            raise errors.CreateGlobalClusterVariableUnauthorized(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CreateGlobalClusterVariableResponse401, response.parsed),
-            )
+            raise errors.CreateGlobalClusterVariableUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse401, response.parsed))
         if response.status_code == 403:
-            raise errors.CreateGlobalClusterVariableForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CreateGlobalClusterVariableResponse403, response.parsed),
-            )
+            raise errors.CreateGlobalClusterVariableForbidden(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse403, response.parsed))
         if response.status_code == 500:
-            raise errors.CreateGlobalClusterVariableInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(CreateGlobalClusterVariableResponse500, response.parsed),
-            )
+            raise errors.CreateGlobalClusterVariableInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateGlobalClusterVariableResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(CreateGlobalClusterVariableResponse200, response.parsed)

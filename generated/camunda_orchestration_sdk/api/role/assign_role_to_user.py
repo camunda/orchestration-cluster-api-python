@@ -12,29 +12,11 @@ from ...models.assign_role_to_user_response_500 import AssignRoleToUserResponse5
 from ...models.assign_role_to_user_response_503 import AssignRoleToUserResponse503
 from ...types import Response
 
-
 def _get_kwargs(role_id: str, username: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {
-        "method": "put",
-        "url": "/roles/{role_id}/users/{username}".format(
-            role_id=quote(str(role_id), safe=""), username=quote(str(username), safe="")
-        ),
-    }
+    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/roles/{role_id}/users/{username}'.format(role_id=quote(str(role_id), safe=''), username=quote(str(username), safe=''))}
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | AssignRoleToUserResponse400
-    | AssignRoleToUserResponse403
-    | AssignRoleToUserResponse404
-    | AssignRoleToUserResponse409
-    | AssignRoleToUserResponse500
-    | AssignRoleToUserResponse503
-    | None
-):
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | AssignRoleToUserResponse400 | AssignRoleToUserResponse403 | AssignRoleToUserResponse404 | AssignRoleToUserResponse409 | AssignRoleToUserResponse500 | AssignRoleToUserResponse503 | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
@@ -61,37 +43,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | AssignRoleToUserResponse400 | AssignRoleToUserResponse403 | AssignRoleToUserResponse404 | AssignRoleToUserResponse409 | AssignRoleToUserResponse500 | AssignRoleToUserResponse503]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | AssignRoleToUserResponse400
-    | AssignRoleToUserResponse403
-    | AssignRoleToUserResponse404
-    | AssignRoleToUserResponse409
-    | AssignRoleToUserResponse500
-    | AssignRoleToUserResponse503
-]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    role_id: str, username: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | AssignRoleToUserResponse400
-    | AssignRoleToUserResponse403
-    | AssignRoleToUserResponse404
-    | AssignRoleToUserResponse409
-    | AssignRoleToUserResponse500
-    | AssignRoleToUserResponse503
-]:
+def sync_detailed(role_id: str, username: str, *, client: AuthenticatedClient | Client) -> Response[Any | AssignRoleToUserResponse400 | AssignRoleToUserResponse403 | AssignRoleToUserResponse404 | AssignRoleToUserResponse409 | AssignRoleToUserResponse500 | AssignRoleToUserResponse503]:
     """Assign a role to a user
 
      Assigns the specified role to the user. The user will inherit the authorizations associated with
@@ -112,83 +67,45 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    role_id: str, username: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> None:
+def sync(role_id: str, username: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
     """Assign a role to a user
 
-     Assigns the specified role to the user. The user will inherit the authorizations associated with
-    this role.
+ Assigns the specified role to the user. The user will inherit the authorizations associated with
+this role.
 
-    Args:
-        role_id (str):
-        username (str): The unique name of a user. Example: swillis.
+Args:
+    role_id (str):
+    username (str): The unique name of a user. Example: swillis.
 
-    Raises:
-        errors.AssignRoleToUserBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.AssignRoleToUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.AssignRoleToUserNotFound: If the response status code is 404. The role or user with the given ID or username was not found.
-        errors.AssignRoleToUserConflict: If the response status code is 409. The role is already assigned to the user with the given ID.
-        errors.AssignRoleToUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.AssignRoleToUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        None"""
+Raises:
+    errors.AssignRoleToUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToUserNotFound: If the response status code is 404. The role or user with the given ID or username was not found.
+    errors.AssignRoleToUserConflict: If the response status code is 409. The role is already assigned to the user with the given ID.
+    errors.AssignRoleToUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    None"""
     response = sync_detailed(role_id=role_id, username=username, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.AssignRoleToUserBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(AssignRoleToUserResponse400, response.parsed),
-            )
+            raise errors.AssignRoleToUserBadRequest(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse400, response.parsed))
         if response.status_code == 403:
-            raise errors.AssignRoleToUserForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(AssignRoleToUserResponse403, response.parsed),
-            )
+            raise errors.AssignRoleToUserForbidden(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse403, response.parsed))
         if response.status_code == 404:
-            raise errors.AssignRoleToUserNotFound(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(AssignRoleToUserResponse404, response.parsed),
-            )
+            raise errors.AssignRoleToUserNotFound(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse404, response.parsed))
         if response.status_code == 409:
-            raise errors.AssignRoleToUserConflict(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(AssignRoleToUserResponse409, response.parsed),
-            )
+            raise errors.AssignRoleToUserConflict(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse409, response.parsed))
         if response.status_code == 500:
-            raise errors.AssignRoleToUserInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(AssignRoleToUserResponse500, response.parsed),
-            )
+            raise errors.AssignRoleToUserInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse500, response.parsed))
         if response.status_code == 503:
-            raise errors.AssignRoleToUserServiceUnavailable(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(AssignRoleToUserResponse503, response.parsed),
-            )
+            raise errors.AssignRoleToUserServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
 
-
-async def asyncio_detailed(
-    role_id: str, username: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | AssignRoleToUserResponse400
-    | AssignRoleToUserResponse403
-    | AssignRoleToUserResponse404
-    | AssignRoleToUserResponse409
-    | AssignRoleToUserResponse500
-    | AssignRoleToUserResponse503
-]:
+async def asyncio_detailed(role_id: str, username: str, *, client: AuthenticatedClient | Client) -> Response[Any | AssignRoleToUserResponse400 | AssignRoleToUserResponse403 | AssignRoleToUserResponse404 | AssignRoleToUserResponse409 | AssignRoleToUserResponse500 | AssignRoleToUserResponse503]:
     """Assign a role to a user
 
      Assigns the specified role to the user. The user will inherit the authorizations associated with
@@ -209,67 +126,40 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    role_id: str, username: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> None:
+async def asyncio(role_id: str, username: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
     """Assign a role to a user
 
-     Assigns the specified role to the user. The user will inherit the authorizations associated with
-    this role.
+ Assigns the specified role to the user. The user will inherit the authorizations associated with
+this role.
 
-    Args:
-        role_id (str):
-        username (str): The unique name of a user. Example: swillis.
+Args:
+    role_id (str):
+    username (str): The unique name of a user. Example: swillis.
 
-    Raises:
-        errors.AssignRoleToUserBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.AssignRoleToUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.AssignRoleToUserNotFound: If the response status code is 404. The role or user with the given ID or username was not found.
-        errors.AssignRoleToUserConflict: If the response status code is 409. The role is already assigned to the user with the given ID.
-        errors.AssignRoleToUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.AssignRoleToUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        None"""
+Raises:
+    errors.AssignRoleToUserBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.AssignRoleToUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.AssignRoleToUserNotFound: If the response status code is 404. The role or user with the given ID or username was not found.
+    errors.AssignRoleToUserConflict: If the response status code is 409. The role is already assigned to the user with the given ID.
+    errors.AssignRoleToUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.AssignRoleToUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    None"""
     response = await asyncio_detailed(role_id=role_id, username=username, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.AssignRoleToUserBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(AssignRoleToUserResponse400, response.parsed),
-            )
+            raise errors.AssignRoleToUserBadRequest(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse400, response.parsed))
         if response.status_code == 403:
-            raise errors.AssignRoleToUserForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(AssignRoleToUserResponse403, response.parsed),
-            )
+            raise errors.AssignRoleToUserForbidden(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse403, response.parsed))
         if response.status_code == 404:
-            raise errors.AssignRoleToUserNotFound(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(AssignRoleToUserResponse404, response.parsed),
-            )
+            raise errors.AssignRoleToUserNotFound(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse404, response.parsed))
         if response.status_code == 409:
-            raise errors.AssignRoleToUserConflict(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(AssignRoleToUserResponse409, response.parsed),
-            )
+            raise errors.AssignRoleToUserConflict(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse409, response.parsed))
         if response.status_code == 500:
-            raise errors.AssignRoleToUserInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(AssignRoleToUserResponse500, response.parsed),
-            )
+            raise errors.AssignRoleToUserInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse500, response.parsed))
         if response.status_code == 503:
-            raise errors.AssignRoleToUserServiceUnavailable(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(AssignRoleToUserResponse503, response.parsed),
-            )
+            raise errors.AssignRoleToUserServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(AssignRoleToUserResponse503, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

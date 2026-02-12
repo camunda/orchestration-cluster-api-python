@@ -1,22 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    DecisionDefinitionId,
-    DecisionDefinitionKey,
-    DecisionEvaluationInstanceKey,
-    DecisionEvaluationKey,
-    ElementInstanceKey,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    TenantId,
-    lift_decision_definition_id,
-    lift_decision_definition_key,
-    lift_decision_evaluation_instance_key,
-    lift_decision_evaluation_key,
-    lift_element_instance_key,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_tenant_id,
-)
+from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, DecisionDefinitionKey, DecisionEvaluationInstanceKey, DecisionEvaluationKey, ElementInstanceKey, ProcessDefinitionKey, ProcessInstanceKey, TenantId, lift_decision_definition_id, lift_decision_definition_key, lift_decision_evaluation_instance_key, lift_decision_evaluation_key, lift_element_instance_key, lift_process_definition_key, lift_process_instance_key, lift_tenant_id
 
 import datetime
 from collections.abc import Mapping
@@ -81,9 +64,7 @@ class SearchDecisionInstancesResponse200ItemsItem:
     decision_definition_key: DecisionDefinitionKey | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     root_decision_definition_key: DecisionDefinitionKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         decision_evaluation_instance_key = self.decision_evaluation_instance_key
@@ -167,11 +148,7 @@ class SearchDecisionInstancesResponse200ItemsItem:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        decision_evaluation_instance_key = (
-            lift_decision_evaluation_instance_key(_val)
-            if (_val := d.pop("decisionEvaluationInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        decision_evaluation_instance_key = lift_decision_evaluation_instance_key(_val) if (_val := d.pop("decisionEvaluationInstanceKey", UNSET)) is not UNSET else UNSET
 
         _state = d.pop("state", UNSET)
         state: SearchDecisionInstancesResponse200ItemsItemState | Unset
@@ -189,11 +166,7 @@ class SearchDecisionInstancesResponse200ItemsItem:
 
         evaluation_failure = d.pop("evaluationFailure", UNSET)
 
-        decision_definition_id = (
-            lift_decision_definition_id(_val)
-            if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET
-            else UNSET
-        )
+        decision_definition_id = lift_decision_definition_id(_val) if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET else UNSET
 
         decision_definition_name = d.pop("decisionDefinitionName", UNSET)
 
@@ -214,41 +187,17 @@ class SearchDecisionInstancesResponse200ItemsItem:
 
         result = d.pop("result", UNSET)
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
 
-        decision_evaluation_key = (
-            lift_decision_evaluation_key(_val)
-            if (_val := d.pop("decisionEvaluationKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        decision_evaluation_key = lift_decision_evaluation_key(_val) if (_val := d.pop("decisionEvaluationKey", UNSET)) is not UNSET else UNSET
 
-        process_definition_key = (
-            lift_process_definition_key(_val)
-            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_definition_key = lift_process_definition_key(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
 
-        process_instance_key = (
-            lift_process_instance_key(_val)
-            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_instance_key = lift_process_instance_key(_val) if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET else UNSET
 
-        decision_definition_key = (
-            lift_decision_definition_key(_val)
-            if (_val := d.pop("decisionDefinitionKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        decision_definition_key = lift_decision_definition_key(_val) if (_val := d.pop("decisionDefinitionKey", UNSET)) is not UNSET else UNSET
 
-        element_instance_key = (
-            lift_element_instance_key(_val)
-            if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        element_instance_key = lift_element_instance_key(_val) if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET else UNSET
 
         root_decision_definition_key = d.pop("rootDecisionDefinitionKey", UNSET)
 

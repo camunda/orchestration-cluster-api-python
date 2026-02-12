@@ -1,18 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ElementId,
-    ElementInstanceKey,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    UserTaskKey,
-    lift_element_id,
-    lift_element_instance_key,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_user_task_key,
-)
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, UserTaskKey, lift_element_id, lift_element_instance_key, lift_process_definition_id, lift_process_definition_key, lift_process_instance_key, lift_user_task_key
 
 import datetime
 from collections.abc import Mapping
@@ -91,9 +78,7 @@ class SearchUserTasksDataFilter:
     process_instance_key: ProcessInstanceKey | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     tags: list[str] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -337,11 +322,7 @@ class SearchUserTasksDataFilter:
 
         priority = _parse_priority(d.pop("priority", UNSET))
 
-        element_id = (
-            lift_element_id(_val)
-            if (_val := d.pop("elementId", UNSET)) is not UNSET
-            else UNSET
-        )
+        element_id = lift_element_id(_val) if (_val := d.pop("elementId", UNSET)) is not UNSET else UNSET
 
         def _parse_name(data: object) -> ActoridAdvancedfilter | str | Unset:
             if isinstance(data, Unset):
@@ -411,11 +392,7 @@ class SearchUserTasksDataFilter:
 
         tenant_id = _parse_tenant_id(d.pop("tenantId", UNSET))
 
-        process_definition_id = (
-            lift_process_definition_id(_val)
-            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_definition_id = lift_process_definition_id(_val) if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET else UNSET
 
         def _parse_creation_date(
             data: object,
@@ -539,29 +516,13 @@ class SearchUserTasksDataFilter:
 
                 local_variables.append(local_variables_item)
 
-        user_task_key = (
-            lift_user_task_key(_val)
-            if (_val := d.pop("userTaskKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        user_task_key = lift_user_task_key(_val) if (_val := d.pop("userTaskKey", UNSET)) is not UNSET else UNSET
 
-        process_definition_key = (
-            lift_process_definition_key(_val)
-            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_definition_key = lift_process_definition_key(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
 
-        process_instance_key = (
-            lift_process_instance_key(_val)
-            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_instance_key = lift_process_instance_key(_val) if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET else UNSET
 
-        element_instance_key = (
-            lift_element_instance_key(_val)
-            if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        element_instance_key = lift_element_instance_key(_val) if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET else UNSET
 
         tags = cast(list[str], d.pop("tags", UNSET))
 

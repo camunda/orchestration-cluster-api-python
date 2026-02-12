@@ -30,9 +30,7 @@ class ResultObject1ActivateelementsItem:
 
     element_id: ElementId | Unset = UNSET
     variables: ResultObject1ActivateelementsItemVariables | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         element_id = self.element_id
@@ -58,11 +56,7 @@ class ResultObject1ActivateelementsItem:
         )
 
         d = dict(src_dict)
-        element_id = (
-            lift_element_id(_val)
-            if (_val := d.pop("elementId", UNSET)) is not UNSET
-            else UNSET
-        )
+        element_id = lift_element_id(_val) if (_val := d.pop("elementId", UNSET)) is not UNSET else UNSET
 
         _variables = d.pop("variables", UNSET)
         variables: ResultObject1ActivateelementsItemVariables | Unset

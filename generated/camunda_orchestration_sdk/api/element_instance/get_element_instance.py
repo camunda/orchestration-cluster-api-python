@@ -12,28 +12,11 @@ from ...models.get_element_instance_response_404 import GetElementInstanceRespon
 from ...models.get_element_instance_response_500 import GetElementInstanceResponse500
 from ...types import Response
 
-
 def _get_kwargs(element_instance_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {
-        "method": "get",
-        "url": "/element-instances/{element_instance_key}".format(
-            element_instance_key=quote(str(element_instance_key), safe="")
-        ),
-    }
+    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/element-instances/{element_instance_key}'.format(element_instance_key=quote(str(element_instance_key), safe=''))}
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetElementInstanceResponse200
-    | GetElementInstanceResponse400
-    | GetElementInstanceResponse401
-    | GetElementInstanceResponse403
-    | GetElementInstanceResponse404
-    | GetElementInstanceResponse500
-    | None
-):
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500 | None:
     if response.status_code == 200:
         response_200 = GetElementInstanceResponse200.from_dict(response.json())
         return response_200
@@ -57,35 +40,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetElementInstanceResponse200
-    | GetElementInstanceResponse400
-    | GetElementInstanceResponse401
-    | GetElementInstanceResponse403
-    | GetElementInstanceResponse404
-    | GetElementInstanceResponse500
-]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    element_instance_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetElementInstanceResponse200
-    | GetElementInstanceResponse400
-    | GetElementInstanceResponse401
-    | GetElementInstanceResponse403
-    | GetElementInstanceResponse404
-    | GetElementInstanceResponse500
-]:
+def sync_detailed(element_instance_key: str, *, client: AuthenticatedClient | Client) -> Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]:
     """Get element instance
 
      Returns element instance as JSON.
@@ -105,75 +63,42 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    element_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetElementInstanceResponse200:
+def sync(element_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> GetElementInstanceResponse200:
     """Get element instance
 
-     Returns element instance as JSON.
+ Returns element instance as JSON.
 
-    Args:
-        element_instance_key (str): System-generated key for a element instance. Example:
-            2251799813686789.
+Args:
+    element_instance_key (str): System-generated key for a element instance. Example:
+        2251799813686789.
 
-    Raises:
-        errors.GetElementInstanceBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.GetElementInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.GetElementInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.GetElementInstanceNotFound: If the response status code is 404. The element instance with the given key was not found. More details are provided in the response body.
-        errors.GetElementInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        GetElementInstanceResponse200"""
+Raises:
+    errors.GetElementInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetElementInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetElementInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetElementInstanceNotFound: If the response status code is 404. The element instance with the given key was not found. More details are provided in the response body.
+    errors.GetElementInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetElementInstanceResponse200"""
     response = sync_detailed(element_instance_key=element_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.GetElementInstanceBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetElementInstanceResponse400, response.parsed),
-            )
+            raise errors.GetElementInstanceBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse400, response.parsed))
         if response.status_code == 401:
-            raise errors.GetElementInstanceUnauthorized(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetElementInstanceResponse401, response.parsed),
-            )
+            raise errors.GetElementInstanceUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse401, response.parsed))
         if response.status_code == 403:
-            raise errors.GetElementInstanceForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetElementInstanceResponse403, response.parsed),
-            )
+            raise errors.GetElementInstanceForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse403, response.parsed))
         if response.status_code == 404:
-            raise errors.GetElementInstanceNotFound(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetElementInstanceResponse404, response.parsed),
-            )
+            raise errors.GetElementInstanceNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse404, response.parsed))
         if response.status_code == 500:
-            raise errors.GetElementInstanceInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetElementInstanceResponse500, response.parsed),
-            )
+            raise errors.GetElementInstanceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(GetElementInstanceResponse200, response.parsed)
 
-
-async def asyncio_detailed(
-    element_instance_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetElementInstanceResponse200
-    | GetElementInstanceResponse400
-    | GetElementInstanceResponse401
-    | GetElementInstanceResponse403
-    | GetElementInstanceResponse404
-    | GetElementInstanceResponse500
-]:
+async def asyncio_detailed(element_instance_key: str, *, client: AuthenticatedClient | Client) -> Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]:
     """Get element instance
 
      Returns element instance as JSON.
@@ -193,62 +118,37 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    element_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetElementInstanceResponse200:
+async def asyncio(element_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> GetElementInstanceResponse200:
     """Get element instance
 
-     Returns element instance as JSON.
+ Returns element instance as JSON.
 
-    Args:
-        element_instance_key (str): System-generated key for a element instance. Example:
-            2251799813686789.
+Args:
+    element_instance_key (str): System-generated key for a element instance. Example:
+        2251799813686789.
 
-    Raises:
-        errors.GetElementInstanceBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.GetElementInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.GetElementInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.GetElementInstanceNotFound: If the response status code is 404. The element instance with the given key was not found. More details are provided in the response body.
-        errors.GetElementInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        GetElementInstanceResponse200"""
-    response = await asyncio_detailed(
-        element_instance_key=element_instance_key, client=client
-    )
+Raises:
+    errors.GetElementInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.GetElementInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.GetElementInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.GetElementInstanceNotFound: If the response status code is 404. The element instance with the given key was not found. More details are provided in the response body.
+    errors.GetElementInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    GetElementInstanceResponse200"""
+    response = await asyncio_detailed(element_instance_key=element_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.GetElementInstanceBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetElementInstanceResponse400, response.parsed),
-            )
+            raise errors.GetElementInstanceBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse400, response.parsed))
         if response.status_code == 401:
-            raise errors.GetElementInstanceUnauthorized(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetElementInstanceResponse401, response.parsed),
-            )
+            raise errors.GetElementInstanceUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse401, response.parsed))
         if response.status_code == 403:
-            raise errors.GetElementInstanceForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetElementInstanceResponse403, response.parsed),
-            )
+            raise errors.GetElementInstanceForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse403, response.parsed))
         if response.status_code == 404:
-            raise errors.GetElementInstanceNotFound(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetElementInstanceResponse404, response.parsed),
-            )
+            raise errors.GetElementInstanceNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse404, response.parsed))
         if response.status_code == 500:
-            raise errors.GetElementInstanceInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(GetElementInstanceResponse500, response.parsed),
-            )
+            raise errors.GetElementInstanceInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetElementInstanceResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(GetElementInstanceResponse200, response.parsed)

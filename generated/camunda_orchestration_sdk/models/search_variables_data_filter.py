@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    TenantId,
-    VariableKey,
-    lift_tenant_id,
-    lift_variable_key,
-)
+from camunda_orchestration_sdk.semantic_types import TenantId, VariableKey, lift_tenant_id, lift_variable_key
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -47,9 +42,7 @@ class SearchVariablesDataFilter:
     variable_key: VariableKey | Unset | VariablekeyAdvancedfilter = UNSET
     scope_key: ScopekeyAdvancedfilter | str | Unset = UNSET
     process_instance_key: ProcessinstancekeyAdvancedfilter | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -168,11 +161,7 @@ class SearchVariablesDataFilter:
 
         value = _parse_value(d.pop("value", UNSET))
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
 
         is_truncated = d.pop("isTruncated", UNSET)
 
@@ -195,11 +184,8 @@ class SearchVariablesDataFilter:
 
         _raw_variable_key = _parse_variable_key(d.pop("variableKey", UNSET))
 
-        variable_key = (
-            lift_variable_key(_raw_variable_key)
-            if isinstance(_raw_variable_key, str)
-            else _raw_variable_key
-        )
+
+        variable_key = lift_variable_key(_raw_variable_key) if isinstance(_raw_variable_key, str) else _raw_variable_key
 
         def _parse_scope_key(data: object) -> ScopekeyAdvancedfilter | str | Unset:
             if isinstance(data, Unset):

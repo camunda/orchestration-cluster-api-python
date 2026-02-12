@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    MessageKey,
-    MessageSubscriptionKey,
-    lift_message_key,
-    lift_message_subscription_key,
-)
+from camunda_orchestration_sdk.semantic_types import MessageKey, MessageSubscriptionKey, lift_message_key, lift_message_subscription_key
 
 import datetime
 from collections.abc import Mapping
@@ -65,13 +60,9 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
     process_definition_id: ActoridAdvancedfilter | str | Unset = UNSET
     process_definition_key: ProcessdefinitionkeyAdvancedfilter | str | Unset = UNSET
     process_instance_key: ProcessinstancekeyAdvancedfilter | str | Unset = UNSET
-    subscription_key: MessageSubscriptionKey | SubscriptionkeyAdvancedfilter | Unset = (
-        UNSET
-    )
+    subscription_key: MessageSubscriptionKey | SubscriptionkeyAdvancedfilter | Unset = UNSET
     tenant_id: ActoridAdvancedfilter | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -336,11 +327,8 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
 
         _raw_message_key = _parse_message_key(d.pop("messageKey", UNSET))
 
-        message_key = (
-            lift_message_key(_raw_message_key)
-            if isinstance(_raw_message_key, str)
-            else _raw_message_key
-        )
+
+        message_key = lift_message_key(_raw_message_key) if isinstance(_raw_message_key, str) else _raw_message_key
 
         def _parse_message_name(data: object) -> ActoridAdvancedfilter | str | Unset:
             if isinstance(data, Unset):
@@ -464,11 +452,8 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
 
         _raw_subscription_key = _parse_subscription_key(d.pop("subscriptionKey", UNSET))
 
-        subscription_key = (
-            lift_message_subscription_key(_raw_subscription_key)
-            if isinstance(_raw_subscription_key, str)
-            else _raw_subscription_key
-        )
+
+        subscription_key = lift_message_subscription_key(_raw_subscription_key) if isinstance(_raw_subscription_key, str) else _raw_subscription_key
 
         def _parse_tenant_id(data: object) -> ActoridAdvancedfilter | str | Unset:
             if isinstance(data, Unset):

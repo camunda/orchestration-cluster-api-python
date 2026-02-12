@@ -1,12 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    FormId,
-    FormKey,
-    TenantId,
-    lift_form_id,
-    lift_form_key,
-    lift_tenant_id,
-)
+from camunda_orchestration_sdk.semantic_types import FormId, FormKey, TenantId, lift_form_id, lift_form_key, lift_tenant_id
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -39,9 +32,7 @@ class CreateDeploymentResponse200DeploymentsItemForm:
     resource_name: str | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     form_key: FormKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         form_id = self.form_id
@@ -73,27 +64,15 @@ class CreateDeploymentResponse200DeploymentsItemForm:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        form_id = (
-            lift_form_id(_val)
-            if (_val := d.pop("formId", UNSET)) is not UNSET
-            else UNSET
-        )
+        form_id = lift_form_id(_val) if (_val := d.pop("formId", UNSET)) is not UNSET else UNSET
 
         version = d.pop("version", UNSET)
 
         resource_name = d.pop("resourceName", UNSET)
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
 
-        form_key = (
-            lift_form_key(_val)
-            if (_val := d.pop("formKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        form_key = lift_form_key(_val) if (_val := d.pop("formKey", UNSET)) is not UNSET else UNSET
 
         create_deployment_response_200_deployments_item_form = cls(
             form_id=form_id,

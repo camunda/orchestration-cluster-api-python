@@ -4,46 +4,23 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.search_decision_requirements_data import SearchDecisionRequirementsData
-from ...models.search_decision_requirements_response_200 import (
-    SearchDecisionRequirementsResponse200,
-)
-from ...models.search_decision_requirements_response_400 import (
-    SearchDecisionRequirementsResponse400,
-)
-from ...models.search_decision_requirements_response_401 import (
-    SearchDecisionRequirementsResponse401,
-)
-from ...models.search_decision_requirements_response_403 import (
-    SearchDecisionRequirementsResponse403,
-)
-from ...models.search_decision_requirements_response_500 import (
-    SearchDecisionRequirementsResponse500,
-)
+from ...models.search_decision_requirements_response_200 import SearchDecisionRequirementsResponse200
+from ...models.search_decision_requirements_response_400 import SearchDecisionRequirementsResponse400
+from ...models.search_decision_requirements_response_401 import SearchDecisionRequirementsResponse401
+from ...models.search_decision_requirements_response_403 import SearchDecisionRequirementsResponse403
+from ...models.search_decision_requirements_response_500 import SearchDecisionRequirementsResponse500
 from ...types import UNSET, Response, Unset
 
-
-def _get_kwargs(
-    *, body: SearchDecisionRequirementsData | Unset = UNSET
-) -> dict[str, Any]:
+def _get_kwargs(*, body: SearchDecisionRequirementsData | Unset=UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {"method": "post", "url": "/decision-requirements/search"}
+    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/decision-requirements/search'}
     if not isinstance(body, Unset):
-        _kwargs["json"] = body.to_dict()
-    headers["Content-Type"] = "application/json"
-    _kwargs["headers"] = headers
+        _kwargs['json'] = body.to_dict()
+    headers['Content-Type'] = 'application/json'
+    _kwargs['headers'] = headers
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    SearchDecisionRequirementsResponse200
-    | SearchDecisionRequirementsResponse400
-    | SearchDecisionRequirementsResponse401
-    | SearchDecisionRequirementsResponse403
-    | SearchDecisionRequirementsResponse500
-    | None
-):
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> SearchDecisionRequirementsResponse200 | SearchDecisionRequirementsResponse400 | SearchDecisionRequirementsResponse401 | SearchDecisionRequirementsResponse403 | SearchDecisionRequirementsResponse500 | None:
     if response.status_code == 200:
         response_200 = SearchDecisionRequirementsResponse200.from_dict(response.json())
         return response_200
@@ -64,35 +41,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchDecisionRequirementsResponse200 | SearchDecisionRequirementsResponse400 | SearchDecisionRequirementsResponse401 | SearchDecisionRequirementsResponse403 | SearchDecisionRequirementsResponse500]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    SearchDecisionRequirementsResponse200
-    | SearchDecisionRequirementsResponse400
-    | SearchDecisionRequirementsResponse401
-    | SearchDecisionRequirementsResponse403
-    | SearchDecisionRequirementsResponse500
-]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    *,
-    client: AuthenticatedClient | Client,
-    body: SearchDecisionRequirementsData | Unset = UNSET,
-) -> Response[
-    SearchDecisionRequirementsResponse200
-    | SearchDecisionRequirementsResponse400
-    | SearchDecisionRequirementsResponse401
-    | SearchDecisionRequirementsResponse403
-    | SearchDecisionRequirementsResponse500
-]:
+def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchDecisionRequirementsData | Unset=UNSET) -> Response[SearchDecisionRequirementsResponse200 | SearchDecisionRequirementsResponse400 | SearchDecisionRequirementsResponse401 | SearchDecisionRequirementsResponse403 | SearchDecisionRequirementsResponse500]:
     """Search decision requirements
 
      Search for decision requirements based on given criteria.
@@ -111,71 +63,38 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    *,
-    client: AuthenticatedClient | Client,
-    body: SearchDecisionRequirementsData | Unset = UNSET,
-    **kwargs: Any,
-) -> SearchDecisionRequirementsResponse200:
+def sync(*, client: AuthenticatedClient | Client, body: SearchDecisionRequirementsData | Unset=UNSET, **kwargs: Any) -> SearchDecisionRequirementsResponse200:
     """Search decision requirements
 
-     Search for decision requirements based on given criteria.
+ Search for decision requirements based on given criteria.
 
-    Args:
-        body (SearchDecisionRequirementsData | Unset):
+Args:
+    body (SearchDecisionRequirementsData | Unset):
 
-    Raises:
-        errors.SearchDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.SearchDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        SearchDecisionRequirementsResponse200"""
+Raises:
+    errors.SearchDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchDecisionRequirementsResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchDecisionRequirementsBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchDecisionRequirementsResponse400, response.parsed),
-            )
+            raise errors.SearchDecisionRequirementsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchDecisionRequirementsResponse400, response.parsed))
         if response.status_code == 401:
-            raise errors.SearchDecisionRequirementsUnauthorized(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchDecisionRequirementsResponse401, response.parsed),
-            )
+            raise errors.SearchDecisionRequirementsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchDecisionRequirementsResponse401, response.parsed))
         if response.status_code == 403:
-            raise errors.SearchDecisionRequirementsForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchDecisionRequirementsResponse403, response.parsed),
-            )
+            raise errors.SearchDecisionRequirementsForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchDecisionRequirementsResponse403, response.parsed))
         if response.status_code == 500:
-            raise errors.SearchDecisionRequirementsInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchDecisionRequirementsResponse500, response.parsed),
-            )
+            raise errors.SearchDecisionRequirementsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchDecisionRequirementsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(SearchDecisionRequirementsResponse200, response.parsed)
 
-
-async def asyncio_detailed(
-    *,
-    client: AuthenticatedClient | Client,
-    body: SearchDecisionRequirementsData | Unset = UNSET,
-) -> Response[
-    SearchDecisionRequirementsResponse200
-    | SearchDecisionRequirementsResponse400
-    | SearchDecisionRequirementsResponse401
-    | SearchDecisionRequirementsResponse403
-    | SearchDecisionRequirementsResponse500
-]:
+async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchDecisionRequirementsData | Unset=UNSET) -> Response[SearchDecisionRequirementsResponse200 | SearchDecisionRequirementsResponse400 | SearchDecisionRequirementsResponse401 | SearchDecisionRequirementsResponse403 | SearchDecisionRequirementsResponse500]:
     """Search decision requirements
 
      Search for decision requirements based on given criteria.
@@ -194,55 +113,33 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    *,
-    client: AuthenticatedClient | Client,
-    body: SearchDecisionRequirementsData | Unset = UNSET,
-    **kwargs: Any,
-) -> SearchDecisionRequirementsResponse200:
+async def asyncio(*, client: AuthenticatedClient | Client, body: SearchDecisionRequirementsData | Unset=UNSET, **kwargs: Any) -> SearchDecisionRequirementsResponse200:
     """Search decision requirements
 
-     Search for decision requirements based on given criteria.
+ Search for decision requirements based on given criteria.
 
-    Args:
-        body (SearchDecisionRequirementsData | Unset):
+Args:
+    body (SearchDecisionRequirementsData | Unset):
 
-    Raises:
-        errors.SearchDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.SearchDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        SearchDecisionRequirementsResponse200"""
+Raises:
+    errors.SearchDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
+    errors.SearchDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+    errors.SearchDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+    errors.SearchDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    SearchDecisionRequirementsResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchDecisionRequirementsBadRequest(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchDecisionRequirementsResponse400, response.parsed),
-            )
+            raise errors.SearchDecisionRequirementsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchDecisionRequirementsResponse400, response.parsed))
         if response.status_code == 401:
-            raise errors.SearchDecisionRequirementsUnauthorized(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchDecisionRequirementsResponse401, response.parsed),
-            )
+            raise errors.SearchDecisionRequirementsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchDecisionRequirementsResponse401, response.parsed))
         if response.status_code == 403:
-            raise errors.SearchDecisionRequirementsForbidden(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchDecisionRequirementsResponse403, response.parsed),
-            )
+            raise errors.SearchDecisionRequirementsForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchDecisionRequirementsResponse403, response.parsed))
         if response.status_code == 500:
-            raise errors.SearchDecisionRequirementsInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(SearchDecisionRequirementsResponse500, response.parsed),
-            )
+            raise errors.SearchDecisionRequirementsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchDecisionRequirementsResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(SearchDecisionRequirementsResponse200, response.parsed)

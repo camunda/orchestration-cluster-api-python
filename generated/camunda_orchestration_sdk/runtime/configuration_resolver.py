@@ -61,6 +61,7 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "CAMUNDA_CLIENT_AUTH_CLIENTID",
     "CAMUNDA_CLIENT_AUTH_CLIENTSECRET",
     "CAMUNDA_SDK_LOG_LEVEL",
+
     # Optional OAuth disk cache / tarpit persistence
     "CAMUNDA_TOKEN_CACHE_DIR",
     "CAMUNDA_TOKEN_DISK_CACHE_DISABLE",
@@ -107,13 +108,11 @@ def _dotenv_values_for(load_envfile: Any) -> dict[str, str]:
         return {}
 
 
-def read_environment(
-    environ: Mapping[str, str] | None = None,
-) -> CamundaSdkConfigPartial:
+def read_environment(environ: Mapping[str, str] | None = None) -> CamundaSdkConfigPartial:
     # Always operate on a copy to avoid mutating global process state while still
     # allowing us to merge .env-derived values.
     env: dict[str, str] = dict(os.environ) if environ is None else dict(environ)
-
+    
     # Check if we should load a .env file
     load_envfile = env.get("CAMUNDA_LOAD_ENVFILE", "").strip()
     if load_envfile:
@@ -122,7 +121,7 @@ def read_environment(
         for key, value in dotenv_dict.items():
             if key not in env:
                 env[key] = value
-
+    
     out: dict[str, str] = {}
     for key in CAMUNDA_SDK_CONFIG_KEYS:
         if key in env:
@@ -227,9 +226,7 @@ class ConfigurationResolver:
     def __init__(
         self,
         environment: CamundaSdkConfigPartial | Mapping[str, Any],
-        explicit_configuration: CamundaSdkConfigPartial
-        | Mapping[str, Any]
-        | None = None,
+        explicit_configuration: CamundaSdkConfigPartial | Mapping[str, Any] | None = None,
     ):
         self._environment: dict[str, Any] = dict(environment)
         self._explicit: dict[str, Any] | None = (
@@ -248,11 +245,7 @@ class ConfigurationResolver:
         )
 
         # Precedence: .env < environment < explicit
-        merged: dict[str, Any] = {
-            **envfile_values,
-            **self._environment,
-            **(self._explicit or {}),
-        }
+        merged: dict[str, Any] = {**envfile_values, **self._environment, **(self._explicit or {})}
         merged.pop("CAMUNDA_LOAD_ENVFILE", None)
 
         # Alias resolution needs to consider .env-provided values as "environment"
@@ -263,7 +256,6 @@ class ConfigurationResolver:
         # Infer an auth strategy only if the user did NOT explicitly set one.
         # (Defaults do not count as explicit.)
         if "CAMUNDA_AUTH_STRATEGY" not in merged:
-
             def _non_empty(value: Any) -> bool:
                 if value is None:
                     return False
@@ -271,23 +263,23 @@ class ConfigurationResolver:
                     return bool(value.strip())
                 return True
 
-            has_oauth_creds = _non_empty(
-                merged.get("CAMUNDA_CLIENT_ID")
-            ) and _non_empty(merged.get("CAMUNDA_CLIENT_SECRET"))
-            has_basic_creds = _non_empty(
-                merged.get("CAMUNDA_BASIC_AUTH_USERNAME")
-            ) and _non_empty(merged.get("CAMUNDA_BASIC_AUTH_PASSWORD"))
+            has_oauth_creds = _non_empty(merged.get("CAMUNDA_CLIENT_ID")) and _non_empty(
+                merged.get("CAMUNDA_CLIENT_SECRET")
+            )
+            has_basic_creds = _non_empty(merged.get("CAMUNDA_BASIC_AUTH_USERNAME")) and _non_empty(
+                merged.get("CAMUNDA_BASIC_AUTH_PASSWORD")
+            )
 
-            # If both OAuth and Basic credentials are present, require an explicit strategy
-            # instead of silently picking one to avoid surprising behavior.
-            if has_oauth_creds and has_basic_creds:
-                raise ValueError(
-                    "Both OAuth (CAMUNDA_CLIENT_ID/SECRET) and Basic auth "
-                    "(CAMUNDA_BASIC_AUTH_USERNAME/PASSWORD) credentials are set, "
-                    "but CAMUNDA_AUTH_STRATEGY is not explicitly configured. "
-                    "Please set CAMUNDA_AUTH_STRATEGY to either 'OAUTH' or 'BASIC'."
-                )
-            elif has_oauth_creds:
+              # If both OAuth and Basic credentials are present, require an explicit strategy  
+            # instead of silently picking one to avoid surprising behavior.  
+            if has_oauth_creds and has_basic_creds:  
+                raise ValueError(  
+                    "Both OAuth (CAMUNDA_CLIENT_ID/SECRET) and Basic auth "  
+                    "(CAMUNDA_BASIC_AUTH_USERNAME/PASSWORD) credentials are set, "  
+                    "but CAMUNDA_AUTH_STRATEGY is not explicitly configured. "  
+                    "Please set CAMUNDA_AUTH_STRATEGY to either 'OAUTH' or 'BASIC'."  
+                )  
+            elif has_oauth_creds:  
                 merged["CAMUNDA_AUTH_STRATEGY"] = "OAUTH"
             elif has_basic_creds:
                 merged["CAMUNDA_AUTH_STRATEGY"] = "BASIC"
@@ -300,8 +292,8 @@ class ConfigurationResolver:
 
         return ResolvedCamundaSdkConfiguration(
             effective=effective,
-            environment=self._environment,  # type: ignore
-            explicit=self._explicit,  # type: ignore
+            environment=self._environment, # type: ignore
+            explicit=self._explicit, # type: ignore
         )
 
     @classmethod
@@ -348,11 +340,7 @@ class ConfigurationResolver:
         explicit_left_set = _is_set(explicit, left)
         explicit_right_set = _is_set(explicit, right)
 
-        if (
-            explicit_left_set
-            and explicit_right_set
-            and explicit[left] != explicit[right]
-        ):
+        if explicit_left_set and explicit_right_set and explicit[left] != explicit[right]:
             raise ValueError(
                 f"Conflicting explicit configuration: {left}={explicit[left]!r} != {right}={explicit[right]!r}"
             )

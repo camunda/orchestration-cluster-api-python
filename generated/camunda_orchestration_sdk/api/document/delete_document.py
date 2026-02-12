@@ -8,24 +8,14 @@ from ...models.delete_document_response_404 import DeleteDocumentResponse404
 from ...models.delete_document_response_500 import DeleteDocumentResponse500
 from ...types import UNSET, Response, Unset
 
-
-def _get_kwargs(document_id: str, *, store_id: str | Unset = UNSET) -> dict[str, Any]:
+def _get_kwargs(document_id: str, *, store_id: str | Unset=UNSET) -> dict[str, Any]:
     params: dict[str, Any] = {}
-    params["storeId"] = store_id
+    params['storeId'] = store_id
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
-    _kwargs: dict[str, Any] = {
-        "method": "delete",
-        "url": "/documents/{document_id}".format(
-            document_id=quote(str(document_id), safe="")
-        ),
-        "params": params,
-    }
+    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/documents/{document_id}'.format(document_id=quote(str(document_id), safe='')), 'params': params}
     return _kwargs
 
-
-def _parse_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | DeleteDocumentResponse404 | DeleteDocumentResponse500 | None:
+def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | DeleteDocumentResponse404 | DeleteDocumentResponse500 | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
@@ -40,24 +30,10 @@ def _parse_response(
     else:
         return None
 
+def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]:
+    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def _build_response(
-    *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]:
-    return Response(
-        status_code=HTTPStatus(response.status_code),
-        content=response.content,
-        headers=response.headers,
-        parsed=_parse_response(client=client, response=response),
-    )
-
-
-def sync_detailed(
-    document_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    store_id: str | Unset = UNSET,
-) -> Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]:
+def sync_detailed(document_id: str, *, client: AuthenticatedClient | Client, store_id: str | Unset=UNSET) -> Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]:
     """Delete document
 
      Delete a document from the Camunda 8 cluster.
@@ -80,56 +56,35 @@ def sync_detailed(
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-def sync(
-    document_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    store_id: str | Unset = UNSET,
-    **kwargs: Any,
-) -> None:
+def sync(document_id: str, *, client: AuthenticatedClient | Client, store_id: str | Unset=UNSET, **kwargs: Any) -> None:
     """Delete document
 
-     Delete a document from the Camunda 8 cluster.
+ Delete a document from the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
-    production), local (non-production)
+Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+production), local (non-production)
 
-    Args:
-        document_id (str): Document Id that uniquely identifies a document.
-        store_id (str | Unset):
+Args:
+    document_id (str): Document Id that uniquely identifies a document.
+    store_id (str | Unset):
 
-    Raises:
-        errors.DeleteDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
-        errors.DeleteDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        None"""
+Raises:
+    errors.DeleteDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
+    errors.DeleteDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    None"""
     response = sync_detailed(document_id=document_id, client=client, store_id=store_id)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
-            raise errors.DeleteDocumentNotFound(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(DeleteDocumentResponse404, response.parsed),
-            )
+            raise errors.DeleteDocumentNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteDocumentResponse404, response.parsed))
         if response.status_code == 500:
-            raise errors.DeleteDocumentInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(DeleteDocumentResponse500, response.parsed),
-            )
+            raise errors.DeleteDocumentInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteDocumentResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
 
-
-async def asyncio_detailed(
-    document_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    store_id: str | Unset = UNSET,
-) -> Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]:
+async def asyncio_detailed(document_id: str, *, client: AuthenticatedClient | Client, store_id: str | Unset=UNSET) -> Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]:
     """Delete document
 
      Delete a document from the Camunda 8 cluster.
@@ -152,47 +107,30 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-
-async def asyncio(
-    document_id: str,
-    *,
-    client: AuthenticatedClient | Client,
-    store_id: str | Unset = UNSET,
-    **kwargs: Any,
-) -> None:
+async def asyncio(document_id: str, *, client: AuthenticatedClient | Client, store_id: str | Unset=UNSET, **kwargs: Any) -> None:
     """Delete document
 
-     Delete a document from the Camunda 8 cluster.
+ Delete a document from the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
-    production), local (non-production)
+Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+production), local (non-production)
 
-    Args:
-        document_id (str): Document Id that uniquely identifies a document.
-        store_id (str | Unset):
+Args:
+    document_id (str): Document Id that uniquely identifies a document.
+    store_id (str | Unset):
 
-    Raises:
-        errors.DeleteDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
-        errors.DeleteDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UnexpectedStatus: If the response status code is not documented.
-        httpx.TimeoutException: If the request takes longer than Client.timeout.
-    Returns:
-        None"""
-    response = await asyncio_detailed(
-        document_id=document_id, client=client, store_id=store_id
-    )
+Raises:
+    errors.DeleteDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
+    errors.DeleteDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+    errors.UnexpectedStatus: If the response status code is not documented.
+    httpx.TimeoutException: If the request takes longer than Client.timeout.
+Returns:
+    None"""
+    response = await asyncio_detailed(document_id=document_id, client=client, store_id=store_id)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
-            raise errors.DeleteDocumentNotFound(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(DeleteDocumentResponse404, response.parsed),
-            )
+            raise errors.DeleteDocumentNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteDocumentResponse404, response.parsed))
         if response.status_code == 500:
-            raise errors.DeleteDocumentInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=cast(DeleteDocumentResponse500, response.parsed),
-            )
+            raise errors.DeleteDocumentInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteDocumentResponse500, response.parsed))
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

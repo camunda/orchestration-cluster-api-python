@@ -39,9 +39,7 @@ class ActivateJobsResponse200JobsItemUserTask:
     form_key: FormKey | Unset = UNSET
     priority: int | None | Unset = UNSET
     user_task_key: None | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
 
     def to_dict(self) -> dict[str, Any]:
         action = self.action
@@ -154,11 +152,7 @@ class ActivateJobsResponse200JobsItemUserTask:
 
         follow_up_date = _parse_follow_up_date(d.pop("followUpDate", UNSET))
 
-        form_key = (
-            lift_form_key(_val)
-            if (_val := d.pop("formKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        form_key = lift_form_key(_val) if (_val := d.pop("formKey", UNSET)) is not UNSET else UNSET
 
         def _parse_priority(data: object) -> int | None | Unset:
             if data is None:
