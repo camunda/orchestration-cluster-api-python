@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.4 (2026-02-12)
+
+### Bug Fixes
+
+- Add configuration reference to README
+  ([`3647014`](https://github.com/camunda/orchestration-cluster-api-python/commit/3647014d242a0776a1ef10d2e7a223d60588a0ed))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`1ca35cf`](https://github.com/camunda/orchestration-cluster-api-python/commit/1ca35cf5486ad4d1878447e393045133fc28ae63))
+
+### Continuous Integration
+
+- Add hint to workflow
+  ([`6bd3b08`](https://github.com/camunda/orchestration-cluster-api-python/commit/6bd3b082e236a432d33dbb66b86ef0b417ffac79))
+
+
 ## v8.9.0-dev.3 (2026-02-12)
 
 ### Bug Fixes
