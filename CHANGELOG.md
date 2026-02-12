@@ -2,6 +2,39 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.2 (2026-02-12)
+
+### Bug Fixes
+
+- Strictly type check SDK
+  ([`c1693cf`](https://github.com/camunda/orchestration-cluster-api-python/commit/c1693cfccc7f7cf99322d51f26fb716911825b0a))
+
+### Chores
+
+- Generated code
+  ([`65b15b7`](https://github.com/camunda/orchestration-cluster-api-python/commit/65b15b7c93a1a5718114c2b84d0cf434ee5fb27b))
+
+- Regenerate
+  ([`e055b7e`](https://github.com/camunda/orchestration-cluster-api-python/commit/e055b7e7cb5814e2a82bf8620aa44fe5269d1fe4))
+
+- Strict type checking
+  ([`40bf35c`](https://github.com/camunda/orchestration-cluster-api-python/commit/40bf35c5f29c5472b42985de45ae1a4bd368ef60))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`cf1495f`](https://github.com/camunda/orchestration-cluster-api-python/commit/cf1495fd3c0d15bf0973aad6bcf3f4cb569305b6))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`7e3fd9b`](https://github.com/camunda/orchestration-cluster-api-python/commit/7e3fd9b91ee17e0b1a55fbeb3f60e4ab6b6ad1c1))
+
+### Refactoring
+
+- Address review feedback
+  ([`95e28c9`](https://github.com/camunda/orchestration-cluster-api-python/commit/95e28c9e6bea1c9c44f91fdfec7f7afe5534ab08))
+
+- Fix linting error
+  ([`9dbd7da`](https://github.com/camunda/orchestration-cluster-api-python/commit/9dbd7daeea0fff98d40a3b342f5cf98105085dd7))
+
+
 ## v1.2.0-dev.1 (2026-02-11)
 
 ### Chores
