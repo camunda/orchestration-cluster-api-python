@@ -41,6 +41,12 @@ typecheck:
 docs-api:
 	PYTHONPATH=./generated uv run pdoc camunda_orchestration_sdk -o ./public --docformat google
 
+config-reference:
+	uv run scripts/generate_config_reference.py
+
+config-reference-check:
+	uv run scripts/generate_config_reference.py --check
+
 clean-docs:
 	rm -rf ./public
 

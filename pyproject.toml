@@ -24,6 +24,7 @@ venvPath = "."
 venv = ".venv"
 exclude = [
     "demo",
+    "scripts",
     ".venv",
     "**/__pycache__",
     "**/node_modules", 

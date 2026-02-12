@@ -85,6 +85,10 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev
 
+      # If the following task fails, run make config-reference to update the config reference in README and push the changes
+      - name: Check config reference is up-to-date
+        run: make config-reference-check
+
       - name: Run linter
         run: make lint
 
