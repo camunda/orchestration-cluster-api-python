@@ -384,6 +384,37 @@ def test_oauth_disk_cache_tolerates_corrupt_cache_file_sync(tmp_path: Path) -> N
     provider.close()
 
 
+def test_basic_auth_provider_encodes_credentials_correctly():
+    from camunda_orchestration_sdk.runtime.auth import BasicAuthProvider
+
+    provider = BasicAuthProvider(username="admin", password="secret")
+    headers = provider.get_headers()
+
+    token = base64.b64encode(b"admin:secret").decode("ascii")
+    assert headers["Authorization"] == f"Basic {token}"
+
+
+def test_basic_auth_provider_rejects_empty_username():
+    from camunda_orchestration_sdk.runtime.auth import BasicAuthProvider
+
+    with pytest.raises(ValueError, match="non-empty"):
+        BasicAuthProvider(username="", password="secret")
+
+
+def test_basic_auth_provider_rejects_empty_password():
+    from camunda_orchestration_sdk.runtime.auth import BasicAuthProvider
+
+    with pytest.raises(ValueError, match="non-empty"):
+        BasicAuthProvider(username="admin", password="")
+
+
+def test_basic_auth_provider_rejects_whitespace_only_credentials():
+    from camunda_orchestration_sdk.runtime.auth import BasicAuthProvider
+
+    with pytest.raises(ValueError, match="non-empty"):
+        BasicAuthProvider(username="  ", password="  ")
+
+
 @pytest.mark.asyncio
 async def test_builtin_oauth_strategy_applies_bearer_header_async():
     from camunda_orchestration_sdk import CamundaAsyncClient

@@ -133,3 +133,59 @@ def test_camunda_client_oauth_requires_client_credentials():
 
     with pytest.raises(ValidationError):
         CamundaClient(configuration={"CAMUNDA_AUTH_STRATEGY": "OAUTH"})
+
+
+def test_auth_strategy_conflict_raises_when_both_oauth_and_basic_credentials_present():
+    from camunda_orchestration_sdk.runtime.configuration_resolver import ConfigurationResolver
+
+    with pytest.raises(ValueError, match="Both OAuth.*and Basic auth"):
+        ConfigurationResolver(
+            environment={
+                "CAMUNDA_CLIENT_ID": "id",
+                "CAMUNDA_CLIENT_SECRET": "secret",
+                "CAMUNDA_BASIC_AUTH_USERNAME": "u",
+                "CAMUNDA_BASIC_AUTH_PASSWORD": "p",
+            },
+            explicit_configuration=None,
+        ).resolve()
+
+
+def test_auth_strategy_conflict_resolves_when_explicit_strategy_set():
+    from camunda_orchestration_sdk.runtime.configuration_resolver import ConfigurationResolver
+
+    resolved = ConfigurationResolver(
+        environment={
+            "CAMUNDA_AUTH_STRATEGY": "OAUTH",
+            "CAMUNDA_CLIENT_ID": "id",
+            "CAMUNDA_CLIENT_SECRET": "secret",
+            "CAMUNDA_BASIC_AUTH_USERNAME": "u",
+            "CAMUNDA_BASIC_AUTH_PASSWORD": "p",
+        },
+        explicit_configuration=None,
+    ).resolve()
+
+    assert resolved.effective.CAMUNDA_AUTH_STRATEGY == "OAUTH"
+
+
+def test_basic_strategy_requires_username():
+    from camunda_orchestration_sdk import CamundaClient
+
+    with pytest.raises(ValidationError, match="CAMUNDA_BASIC_AUTH_USERNAME"):
+        CamundaClient(
+            configuration={
+                "CAMUNDA_AUTH_STRATEGY": "BASIC",
+                "CAMUNDA_BASIC_AUTH_PASSWORD": "p",
+            }
+        )
+
+
+def test_basic_strategy_requires_password():
+    from camunda_orchestration_sdk import CamundaClient
+
+    with pytest.raises(ValidationError, match="CAMUNDA_BASIC_AUTH_PASSWORD"):
+        CamundaClient(
+            configuration={
+                "CAMUNDA_AUTH_STRATEGY": "BASIC",
+                "CAMUNDA_BASIC_AUTH_USERNAME": "u",
+            }
+        )
