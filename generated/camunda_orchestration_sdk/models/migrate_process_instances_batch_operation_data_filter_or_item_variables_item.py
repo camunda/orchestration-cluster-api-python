@@ -4,6 +4,8 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
@@ -25,7 +27,9 @@ class MigrateProcessInstancesBatchOperationDataFilterOrItemVariablesItem:
 
     name: str
     value: ActoridAdvancedfilter | str
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -60,6 +64,8 @@ class MigrateProcessInstancesBatchOperationDataFilterOrItemVariablesItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 value_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return value_type_1

@@ -4,6 +4,8 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
@@ -30,10 +32,12 @@ class SearchProcessInstancesResponse200:
 
     items: list[SearchProcessInstancesResponse200ItemsItem]
     page: SearchProcessInstancesResponse200Page
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
-        items = []
+        items: list[dict[str, Any]] = []
         for items_item_data in self.items:
             items_item = items_item_data.to_dict()
             items.append(items_item)
@@ -61,7 +65,7 @@ class SearchProcessInstancesResponse200:
         )
 
         d = dict(src_dict)
-        items = []
+        items: list[SearchProcessInstancesResponse200ItemsItem] = []
         _items = d.pop("items")
         for items_item_data in _items:
             items_item = SearchProcessInstancesResponse200ItemsItem.from_dict(

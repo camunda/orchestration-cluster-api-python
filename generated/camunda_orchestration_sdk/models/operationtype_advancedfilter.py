@@ -11,7 +11,7 @@ from ..models.operationtype_advancedfilter_in_item import (
     OperationtypeAdvancedfilterInItem,
 )
 from ..models.operationtype_advancedfilter_neq import OperationtypeAdvancedfilterNeq
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="OperationtypeAdvancedfilter")
 
@@ -41,7 +41,9 @@ class OperationtypeAdvancedfilter:
     exists: bool | Unset = UNSET
     in_: list[OperationtypeAdvancedfilterInItem] | Unset = UNSET
     like: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         eq: str | Unset = UNSET

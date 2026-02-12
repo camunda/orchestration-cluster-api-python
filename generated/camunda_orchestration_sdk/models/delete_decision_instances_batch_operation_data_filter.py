@@ -1,5 +1,16 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    DecisionDefinitionId,
+    DecisionEvaluationKey,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+    lift_decision_definition_id,
+    lift_decision_evaluation_key,
+    lift_process_definition_key,
+    lift_process_instance_key,
+    lift_tenant_id,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -13,7 +24,7 @@ from ..models.delete_decision_instances_batch_operation_data_filter_decision_def
     DeleteDecisionInstancesBatchOperationDataFilterDecisionDefinitionType,
 )
 from ..models.state_exactmatch_2 import StateExactmatch2
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.decisiondefinitionkey_advancedfilter import (
@@ -79,7 +90,9 @@ class DeleteDecisionInstancesBatchOperationDataFilter:
     root_decision_definition_key: DecisiondefinitionkeyAdvancedfilter | str | Unset = (
         UNSET
     )
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.decisiondefinitionkey_advancedfilter import (
@@ -231,6 +244,8 @@ class DeleteDecisionInstancesBatchOperationDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 decision_evaluation_instance_key_type_1 = (
                     DecisionevaluationinstancekeyAdvancedfilter.from_dict(data)
                 )
@@ -259,6 +274,8 @@ class DeleteDecisionInstancesBatchOperationDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             state_type_1 = StateAdvancedfilter2.from_dict(data)
 
             return state_type_1
@@ -282,13 +299,19 @@ class DeleteDecisionInstancesBatchOperationDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             evaluation_date_type_1 = TimestampAdvancedfilter.from_dict(data)
 
             return evaluation_date_type_1
 
         evaluation_date = _parse_evaluation_date(d.pop("evaluationDate", UNSET))
 
-        decision_definition_id = lift_decision_definition_id(_val) if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET else UNSET
+        decision_definition_id = (
+            lift_decision_definition_id(_val)
+            if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         decision_definition_name = d.pop("decisionDefinitionName", UNSET)
 
@@ -308,13 +331,29 @@ class DeleteDecisionInstancesBatchOperationDataFilter:
                 )
             )
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        decision_evaluation_key = lift_decision_evaluation_key(_val) if (_val := d.pop("decisionEvaluationKey", UNSET)) is not UNSET else UNSET
+        decision_evaluation_key = (
+            lift_decision_evaluation_key(_val)
+            if (_val := d.pop("decisionEvaluationKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_definition_key = lift_process_definition_key(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
+        process_definition_key = (
+            lift_process_definition_key(_val)
+            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_instance_key = lift_process_instance_key(_val) if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET else UNSET
+        process_instance_key = (
+            lift_process_instance_key(_val)
+            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         def _parse_decision_definition_key(
             data: object,
@@ -324,6 +363,8 @@ class DeleteDecisionInstancesBatchOperationDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 decision_definition_key_type_1 = (
                     DecisiondefinitionkeyAdvancedfilter.from_dict(data)
                 )
@@ -345,6 +386,8 @@ class DeleteDecisionInstancesBatchOperationDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 element_instance_key_type_1 = (
                     ElementinstancekeyAdvancedfilter.from_dict(data)
                 )
@@ -366,6 +409,8 @@ class DeleteDecisionInstancesBatchOperationDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 root_decision_definition_key_type_1 = (
                     DecisiondefinitionkeyAdvancedfilter.from_dict(data)
                 )

@@ -1,5 +1,14 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+    lift_process_definition_id,
+    lift_process_definition_key,
+    lift_process_instance_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -7,7 +16,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.create_process_instance_response_200_variables import (
@@ -46,7 +55,9 @@ class CreateProcessInstanceResponse200:
     process_definition_key: ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
     tags: list[str] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id
@@ -99,7 +110,9 @@ class CreateProcessInstanceResponse200:
             d.pop("variables")
         )
 
-        process_definition_key = lift_process_definition_key(d.pop("processDefinitionKey"))
+        process_definition_key = lift_process_definition_key(
+            d.pop("processDefinitionKey")
+        )
 
         process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
 

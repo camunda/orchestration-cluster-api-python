@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
 from ..models.state_exactmatch_3 import StateExactmatch3
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -86,7 +86,9 @@ class SearchProcessInstancesDataFilterOrItem:
     has_element_instance_incident: bool | Unset = UNSET
     incident_error_hash_code: int | PartitionidAdvancedfilter | Unset = UNSET
     tags: list[str] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -342,6 +344,8 @@ class SearchProcessInstancesDataFilterOrItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_definition_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return process_definition_id_type_1
@@ -361,6 +365,8 @@ class SearchProcessInstancesDataFilterOrItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_definition_name_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return process_definition_name_type_1
@@ -380,6 +386,8 @@ class SearchProcessInstancesDataFilterOrItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_definition_version_type_1 = PartitionidAdvancedfilter.from_dict(
                     data
                 )
@@ -401,6 +409,8 @@ class SearchProcessInstancesDataFilterOrItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_definition_version_tag_type_1 = ActoridAdvancedfilter.from_dict(
                     data
                 )
@@ -422,6 +432,8 @@ class SearchProcessInstancesDataFilterOrItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_definition_key_type_1 = (
                     ProcessdefinitionkeyAdvancedfilter.from_dict(data)
                 )
@@ -450,6 +462,8 @@ class SearchProcessInstancesDataFilterOrItem:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             start_date_type_1 = TimestampAdvancedfilter.from_dict(data)
 
             return start_date_type_1
@@ -471,6 +485,8 @@ class SearchProcessInstancesDataFilterOrItem:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             end_date_type_1 = TimestampAdvancedfilter.from_dict(data)
 
             return end_date_type_1
@@ -492,6 +508,8 @@ class SearchProcessInstancesDataFilterOrItem:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             state_type_1 = StateAdvancedfilter6.from_dict(data)
 
             return state_type_1
@@ -506,6 +524,8 @@ class SearchProcessInstancesDataFilterOrItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 tenant_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return tenant_id_type_1
@@ -538,6 +558,8 @@ class SearchProcessInstancesDataFilterOrItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_instance_key_type_1 = (
                     ProcessinstancekeyAdvancedfilter.from_dict(data)
                 )
@@ -559,6 +581,8 @@ class SearchProcessInstancesDataFilterOrItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 parent_process_instance_key_type_1 = (
                     ProcessinstancekeyAdvancedfilter.from_dict(data)
                 )
@@ -580,6 +604,8 @@ class SearchProcessInstancesDataFilterOrItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 parent_element_instance_key_type_1 = (
                     ElementinstancekeyAdvancedfilter.from_dict(data)
                 )
@@ -601,6 +627,8 @@ class SearchProcessInstancesDataFilterOrItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 batch_operation_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return batch_operation_id_type_1
@@ -616,6 +644,8 @@ class SearchProcessInstancesDataFilterOrItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 error_message_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return error_message_type_1
@@ -642,6 +672,8 @@ class SearchProcessInstancesDataFilterOrItem:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             element_instance_state_type_1 = StateAdvancedfilter3.from_dict(data)
 
             return element_instance_state_type_1
@@ -656,6 +688,8 @@ class SearchProcessInstancesDataFilterOrItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 element_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return element_id_type_1
@@ -675,6 +709,8 @@ class SearchProcessInstancesDataFilterOrItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 incident_error_hash_code_type_1 = PartitionidAdvancedfilter.from_dict(
                     data
                 )

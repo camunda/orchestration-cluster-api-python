@@ -6,7 +6,7 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="GetProcessInstanceStatisticsByErrorResponse200ItemsItem")
 
@@ -24,7 +24,9 @@ class GetProcessInstanceStatisticsByErrorResponse200ItemsItem:
     error_hash_code: int | Unset = UNSET
     error_message: str | Unset = UNSET
     active_instances_with_error_count: int | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         error_hash_code = self.error_hash_code

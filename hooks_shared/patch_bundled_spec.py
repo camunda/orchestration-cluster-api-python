@@ -3,31 +3,37 @@ This hook patches the bundled OpenAPI spec to fix issues that cause openapi-pyth
 Specifically, it injects an empty schema into request bodies that define 'application/json' content but provide no schema.
 It also flattens allOf compositions to help the generator produce better models.
 """
-import yaml
-import json
+from __future__ import annotations
+
 import hashlib
+import json
 from pathlib import Path
+from typing import Any, cast
+
+import yaml
+
+SpecNode = dict[str, Any] | list[Any] | str | int | float | bool | None
 
 class InlineSchemaExtractor:
-    def __init__(self, spec):
-        self.spec = spec
+    def __init__(self, spec: dict[str, Any]) -> None:
+        self.spec: dict[str, Any] = spec
         if 'components' not in self.spec:
             self.spec['components'] = {}
         if 'schemas' not in self.spec['components']:
             self.spec['components']['schemas'] = {}
-        self.schemas = self.spec['components']['schemas']
-        self.new_schemas = {} # Store new schemas here to avoid runtime modification errors
-        self.schema_fingerprints = {} # hash -> name
+        self.schemas: dict[str, Any] = self.spec['components']['schemas']
+        self.new_schemas: dict[str, Any] = {}  # Store new schemas here to avoid runtime modification errors
+        self.schema_fingerprints: dict[str, str] = {}  # hash -> name
 
-    def get_fingerprint(self, schema):
+    def get_fingerprint(self, schema: dict[str, Any]) -> str:
         return hashlib.md5(json.dumps(schema, sort_keys=True).encode('utf-8')).hexdigest()
 
-    def extract(self):
+    def extract(self) -> dict[str, Any]:
         self.traverse(self.spec)
         self.schemas.update(self.new_schemas)
         return self.spec
 
-    def traverse(self, node, name_hint=""):
+    def traverse(self, node: SpecNode, name_hint: str = "") -> None:
         if not isinstance(node, dict):
             return
             
@@ -38,54 +44,64 @@ class InlineSchemaExtractor:
             
         for k, v in node.items():
             if k == 'properties':
-                for prop_name, prop_schema in v.items():
-                    # Capitalize for class name style
-                    clean_name = ''.join(x.capitalize() or '_' for x in prop_name.split('_'))
-                    self.traverse(prop_schema, clean_name)
+                if isinstance(v, dict):
+                    properties = cast(dict[str, Any], v)
+                    for prop_name, prop_schema in properties.items():
+                        # Capitalize for class name style
+                        clean_name = ''.join(str(x).capitalize() or '_' for x in str(prop_name).split('_'))
+                        self.traverse(prop_schema, clean_name)
             elif k in ['allOf', 'oneOf', 'anyOf']:
                 # These are lists
-                for item in v:
-                    self.traverse(item, name_hint)
+                if isinstance(v, list):
+                    items_list = cast(list[Any], v)
+                    for item in items_list:
+                        self.traverse(item, name_hint)
             elif k == 'items':
                 self.traverse(v, name_hint + "Item")
             else:
                 self.traverse(v, name_hint)
 
-    def process_composition(self, node, key, name_hint):
-        new_options = []
-        for option in node[key]:
+    def process_composition(self, node: dict[str, Any], key: str, name_hint: str) -> None:
+        new_options: list[dict[str, Any]] = []
+        options_list: list[Any] = node[key]
+        for option_raw in options_list:
+            option: dict[str, Any] | Any = option_raw
             # Extract inline schemas that have metadata properties or are complex
             # We want to extract schemas with: properties, enum, title, description, etc.
             # But skip simple type-only schemas and existing refs
-            should_extract = (
-                isinstance(option, dict) and
-                '$ref' not in option and
-                (
-                    'properties' in option or  # inline object
-                    ('enum' in option and ('title' in option or 'description' in option)) or  # enum with metadata
-                    ('type' in option and len(option) > 2)  # complex type with multiple constraints
+            should_extract: bool = False
+            if isinstance(option_raw, dict):
+                option = cast(dict[str, Any], option_raw)
+                should_extract = (
+                    '$ref' not in option and
+                    (
+                        'properties' in option or  # inline object
+                        ('enum' in option and ('title' in option or 'description' in option)) or  # enum with metadata
+                        ('type' in option and len(option) > 2)  # complex type with multiple constraints
+                    )
                 )
-            )
 
             if should_extract:
+                assert isinstance(option, dict)
+                opt = cast(dict[str, Any], option)
                 # Found inline schema - Extract it
-                title = option.get('title', 'Object').replace(' ', '')
-                base_name = f"{name_hint}{title}"
+                title: str = str(opt.get('title', 'Object')).replace(' ', '')
+                base_name: str = f"{name_hint}{title}"
                 print(f"Extracting inline schema: {base_name}")
                 
                 # Deduplicate
-                fingerprint = self.get_fingerprint(option)
+                fingerprint: str = self.get_fingerprint(opt)
                 if fingerprint in self.schema_fingerprints:
-                    schema_name = self.schema_fingerprints[fingerprint]
+                    schema_name: str = self.schema_fingerprints[fingerprint]
                 else:
                     schema_name = base_name
                     # Ensure unique name
-                    counter = 1
+                    counter: int = 1
                     while schema_name in self.schemas or schema_name in self.new_schemas:
                         schema_name = f"{base_name}{counter}"
                         counter += 1
                     
-                    self.new_schemas[schema_name] = option
+                    self.new_schemas[schema_name] = opt
                     # Update the title of the extracted schema to match the name
                     # This helps generators that use title for naming and avoids collisions
                     self.new_schemas[schema_name]['title'] = schema_name
@@ -98,46 +114,47 @@ class InlineSchemaExtractor:
         node[key] = new_options
 
 class SpecFlattener:
-    def __init__(self, spec):
-        self.spec = spec
-        self._cache = {}
+    def __init__(self, spec: dict[str, Any]) -> None:
+        self.spec: dict[str, Any] = spec
+        self._cache: dict[str, SpecNode] = {}
 
-    def resolve_ref(self, ref):
+    def resolve_ref(self, ref: str) -> SpecNode:
         if not ref.startswith('#/'):
             return None
         parts = ref.split('/')
-        current = self.spec
+        current: Any = self.spec
         try:
             for part in parts[1:]:
                 current = current[part]
-            return current
+            return current  # type: ignore[no-any-return]
         except (KeyError, TypeError):
             return None
 
-    def flatten_schema(self, schema):
+    def flatten_schema(self, schema: SpecNode) -> SpecNode:
         if not isinstance(schema, dict):
             return schema
 
         # We construct a new schema dict
-        new_schema = {}
+        new_schema: dict[str, Any] = {}
         
         # Copy non-allOf properties first, recursively flattening them
         for k, v in schema.items():
             if k == 'allOf':
                 continue
             if isinstance(v, dict):
-                new_schema[k] = self.flatten_schema(v)
+                new_schema[k] = self.flatten_schema(cast(dict[str, Any], v))
             elif isinstance(v, list):
-                new_schema[k] = [self.flatten_schema(i) if isinstance(i, dict) else i for i in v]
+                items_list = cast(list[Any], v)
+                new_schema[k] = [self.flatten_schema(cast(dict[str, Any], i)) if isinstance(i, dict) else i for i in items_list]
             else:
                 new_schema[k] = v
 
         if 'allOf' in schema:
-            all_of_list = schema['allOf']
+            all_of_list: list[Any] = schema['allOf']
             
             # Collect all items to merge
-            items_to_merge = []
-            can_merge = True
+            items_to_merge: list[SpecNode] = []
+            can_merge: bool = True
             
             for item in all_of_list:
                 if '$ref' in item:
@@ -165,35 +182,36 @@ class SpecFlattener:
             
             if not can_merge:
                 # If we couldn't resolve a ref, we keep the original allOf (but with flattened children where possible)
-                flattened_all_of = []
+                flattened_all_of: list[SpecNode] = []
                 for item in all_of_list:
                      flattened_all_of.append(self.flatten_schema(item))
                 new_schema['allOf'] = flattened_all_of
                 return new_schema
 
             # Analyze types to decide if we should merge
-            types = set()
+            types: set[Any] = set()
             if 'type' in new_schema:
                 types.add(new_schema['type'])
             
-            has_properties = 'properties' in new_schema
+            has_properties: bool = 'properties' in new_schema
             
             for item in items_to_merge:
-                if 'type' in item:
+                if isinstance(item, dict) and 'type' in item:
                     types.add(item['type'])
-                if 'properties' in item:
+                if isinstance(item, dict) and 'properties' in item:
                     has_properties = True
 
-            primitive_types = {'string', 'integer', 'number', 'boolean'}
-            is_primitive = bool(types.intersection(primitive_types))
-            is_object = 'object' in types or has_properties
+            primitive_types: set[str] = {'string', 'integer', 'number', 'boolean'}
+            is_primitive: bool = bool(types.intersection(primitive_types))
+            is_object: bool = 'object' in types or has_properties
 
             if is_primitive:
                 # Merge primitives
                 for item in items_to_merge:
-                    for k, v in item.items():
-                        if k not in new_schema:
-                            new_schema[k] = v
+                    if isinstance(item, dict):
+                        for k, v in item.items():
+                            if k not in new_schema:
+                                new_schema[k] = v
                         # We could merge descriptions etc here
             
             elif is_object:
@@ -201,24 +219,25 @@ class SpecFlattener:
                 if 'type' not in new_schema:
                     new_schema['type'] = 'object'
                 
-                merged_props = new_schema.get('properties', {})
-                merged_required = set(new_schema.get('required', []))
+                merged_props: dict[str, Any] = new_schema.get('properties', {})
+                merged_required: set[Any] = set(new_schema.get('required', []))
                 
                 for item in items_to_merge:
-                    if 'properties' in item:
+                    if isinstance(item, dict) and 'properties' in item:
                         for pk, pv in item['properties'].items():
                             if pk not in merged_props:
                                 merged_props[pk] = pv
                             # If property exists, we assume the parent/first one wins or they are compatible
                     
-                    if 'required' in item:
+                    if isinstance(item, dict) and 'required' in item:
                         merged_required.update(item['required'])
                         
                     # Merge other fields
-                    for k, v in item.items():
-                        if k not in ['properties', 'required', 'type', 'description', 'allOf', '$ref']:
-                            if k not in new_schema:
-                                new_schema[k] = v
+                    if isinstance(item, dict):
+                        for k, v in item.items():
+                            if k not in ['properties', 'required', 'type', 'description', 'allOf', '$ref']:
+                                if k not in new_schema:
+                                    new_schema[k] = v
 
                 if merged_props:
                     new_schema['properties'] = merged_props
@@ -240,27 +259,27 @@ class SpecFlattener:
 
         return new_schema
 
-def extract_nested_properties(spec):
+def extract_nested_properties(spec: dict[str, Any]) -> dict[str, Any]:
     """
     Extract nested object properties that have their own 'properties' defined
     into separate schemas. This fixes issues with openapi-python-client
     when nested objects appear in schemas used in unions.
     """
-    schemas = spec.get('components', {}).get('schemas', {})
-    new_schemas = {}
-    schema_fingerprints = {}
+    schemas: dict[str, Any] = spec.get('components', {}).get('schemas', {})
+    new_schemas: dict[str, Any] = {}
+    schema_fingerprints: dict[str, str] = {}
 
-    def get_fingerprint(schema):
+    def get_fingerprint(schema: dict[str, Any]) -> str:
         return hashlib.md5(json.dumps(schema, sort_keys=True).encode('utf-8')).hexdigest()
 
-    def extract_object_schema(obj_schema, base_name):
+    def extract_object_schema(obj_schema: dict[str, Any], base_name: str) -> dict[str, str]:
         """Extract a nested object schema and return a ref to it."""
-        fingerprint = get_fingerprint(obj_schema)
+        fingerprint: str = get_fingerprint(obj_schema)
         if fingerprint in schema_fingerprints:
             return {'$ref': f"#/components/schemas/{schema_fingerprints[fingerprint]}"}
 
-        schema_name = base_name
-        counter = 1
+        schema_name: str = base_name
+        counter: int = 1
         while schema_name in schemas or schema_name in new_schemas:
             schema_name = f"{base_name}{counter}"
             counter += 1
@@ -272,19 +291,17 @@ def extract_nested_properties(spec):
 
         return {'$ref': f"#/components/schemas/{schema_name}"}
 
-    def process_schema(schema, parent_name):
+    def process_schema(schema: dict[str, Any], parent_name: str) -> dict[str, Any]:
         """Recursively process a schema to extract nested objects."""
-        if not isinstance(schema, dict):
-            return schema
 
         # Handle array items
         if 'items' in schema and isinstance(schema['items'], dict):
-            items = schema['items']
+            items = cast(dict[str, Any], schema['items'])
             if (items.get('type') == 'object' and
                 ('properties' in items or
                  ('additionalProperties' in items and items['additionalProperties'] is not False))):
                 # Extract the item schema
-                clean_name = f"{parent_name}Item"
+                clean_name: str = f"{parent_name}Item"
                 schema['items'] = extract_object_schema(items, clean_name)
             else:
                 # Recursively process items
@@ -296,63 +313,76 @@ def extract_nested_properties(spec):
 
         return schema
 
-    def process_properties(props, parent_name):
-        if not isinstance(props, dict):
-            return props
-
-        new_props = {}
+    def process_properties(props: dict[str, Any], parent_name: str) -> dict[str, Any]:
+        new_props: dict[str, Any] = {}
         for prop_name, prop_schema in props.items():
+            prop_name_str: str = str(prop_name)
             # Extract nested objects that are complex enough to warrant their own schema
-            should_extract = (
-                isinstance(prop_schema, dict) and
-                'type' in prop_schema and
-                prop_schema.get('type') == 'object' and
-                ('properties' in prop_schema or
-                 ('additionalProperties' in prop_schema and prop_schema['additionalProperties'] is not False))
-            )
+            is_dict: bool = isinstance(prop_schema, dict)
+            should_extract: bool = False
+            if is_dict:
+                prop_dict = cast(dict[str, Any], prop_schema)
+                should_extract = (
+                    'type' in prop_dict and
+                    prop_dict.get('type') == 'object' and
+                    ('properties' in prop_dict or
+                     ('additionalProperties' in prop_dict and prop_dict['additionalProperties'] is not False))
+                )
 
             if should_extract:
+                assert isinstance(prop_schema, dict)
                 # This is a nested object - extract it
-                clean_prop_name = ''.join(x.capitalize() or '_' for x in prop_name.split('_'))
-                base_name = f"{parent_name}{clean_prop_name}"
-                new_props[prop_name] = extract_object_schema(prop_schema, base_name)
+                clean_prop_name: str = ''.join(str(x).capitalize() or '_' for x in prop_name_str.split('_'))
+                base_name: str = f"{parent_name}{clean_prop_name}"
+                new_props[prop_name] = extract_object_schema(cast(dict[str, Any], prop_schema), base_name)
             elif isinstance(prop_schema, dict):
                 # Recursively process the property
-                clean_prop_name = ''.join(x.capitalize() or '_' for x in prop_name.split('_'))
-                new_props[prop_name] = process_schema(prop_schema, f"{parent_name}{clean_prop_name}")
+                clean_prop_name = ''.join(str(x).capitalize() or '_' for x in prop_name_str.split('_'))
+                new_props[prop_name] = process_schema(cast(dict[str, Any], prop_schema), f"{parent_name}{clean_prop_name}")
             else:
                 new_props[prop_name] = prop_schema
 
         return new_props
 
     # Process all schemas
-    for schema_name, schema in list(schemas.items()):
-        if isinstance(schema, dict):
-            process_schema(schema, schema_name)
+    for schema_name, schema_val in list(schemas.items()):
+        if isinstance(schema_val, dict):
+            typed_schema = cast(dict[str, Any], schema_val)
+            process_schema(typed_schema, str(schema_name))
 
     # Add new schemas
     schemas.update(new_schemas)
     return spec
 
-def patch_bundled_spec(spec_path: Path):
+
+def patch_bundled_spec(spec_path: Path) -> None:
     with open(spec_path, 'r') as f:
-        spec = yaml.safe_load(f)
+        spec: dict[str, Any] = yaml.safe_load(f)
 
     # Fix empty request bodies
-    paths = spec.get('paths', {})
-    for path, methods in paths.items():
-        for method, operation in methods.items():
+    paths: dict[str, Any] = spec.get('paths', {})
+    for path, methods_val in paths.items():
+        if not isinstance(methods_val, dict):
+            continue
+        methods_dict = cast(dict[str, Any], methods_val)
+        for method, operation_val in methods_dict.items():
+            if not isinstance(operation_val, dict):
+                continue
+            operation = cast(dict[str, Any], operation_val)
             if 'requestBody' in operation:
-                content = operation['requestBody'].get('content', {})
+                req_body: dict[str, Any] = cast(dict[str, Any], operation['requestBody']) if isinstance(operation['requestBody'], dict) else {}
+                content = cast(dict[str, Any], req_body.get('content', {}))
                 if 'application/json' in content:
                     if content['application/json'] == {}:
-                        print(f"Patching empty request body for {method.upper()} {path}")
+                        print(f"Patching empty request body for {str(method).upper()} {path}")
                         content['application/json'] = {'schema': {}}
 
     # Flatten allOf schemas
     print("Flattening allOf schemas...")
     flattener = SpecFlattener(spec)
-    spec = flattener.flatten_schema(spec)
+    spec_result: SpecNode = flattener.flatten_schema(spec)
+    assert isinstance(spec_result, dict)
+    spec = spec_result
 
     # Extract inline objects from oneOf/anyOf
     print("Extracting inline objects from compositions...")

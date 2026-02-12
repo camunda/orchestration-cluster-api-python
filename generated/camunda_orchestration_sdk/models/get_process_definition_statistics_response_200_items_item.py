@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import ElementId, lift_element_id
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -7,7 +7,7 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="GetProcessDefinitionStatisticsResponse200ItemsItem")
 
@@ -29,7 +29,9 @@ class GetProcessDefinitionStatisticsResponse200ItemsItem:
     canceled: int | Unset = UNSET
     incidents: int | Unset = UNSET
     completed: int | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         element_id = self.element_id
@@ -61,7 +63,11 @@ class GetProcessDefinitionStatisticsResponse200ItemsItem:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        element_id = lift_element_id(_val) if (_val := d.pop("elementId", UNSET)) is not UNSET else UNSET
+        element_id = (
+            lift_element_id(_val)
+            if (_val := d.pop("elementId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         active = d.pop("active", UNSET)
 

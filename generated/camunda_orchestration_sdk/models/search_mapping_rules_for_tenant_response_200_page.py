@@ -1,5 +1,10 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    EndCursor,
+    StartCursor,
+    lift_end_cursor,
+    lift_start_cursor,
+)
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -7,7 +12,7 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="SearchMappingRulesForTenantResponse200Page")
 
@@ -34,7 +39,9 @@ class SearchMappingRulesForTenantResponse200Page:
     has_more_total_items: bool | Unset = UNSET
     start_cursor: StartCursor | Unset = UNSET
     end_cursor: EndCursor | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         total_items = self.total_items
@@ -68,9 +75,17 @@ class SearchMappingRulesForTenantResponse200Page:
 
         has_more_total_items = d.pop("hasMoreTotalItems", UNSET)
 
-        start_cursor = lift_start_cursor(_val) if (_val := d.pop("startCursor", UNSET)) is not UNSET else UNSET
+        start_cursor = (
+            lift_start_cursor(_val)
+            if (_val := d.pop("startCursor", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        end_cursor = lift_end_cursor(_val) if (_val := d.pop("endCursor", UNSET)) is not UNSET else UNSET
+        end_cursor = (
+            lift_end_cursor(_val)
+            if (_val := d.pop("endCursor", UNSET)) is not UNSET
+            else UNSET
+        )
 
         search_mapping_rules_for_tenant_response_200_page = cls(
             total_items=total_items,

@@ -4,18 +4,45 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.delete_global_cluster_variable_response_400 import DeleteGlobalClusterVariableResponse400
-from ...models.delete_global_cluster_variable_response_401 import DeleteGlobalClusterVariableResponse401
-from ...models.delete_global_cluster_variable_response_403 import DeleteGlobalClusterVariableResponse403
-from ...models.delete_global_cluster_variable_response_404 import DeleteGlobalClusterVariableResponse404
-from ...models.delete_global_cluster_variable_response_500 import DeleteGlobalClusterVariableResponse500
+from ...models.delete_global_cluster_variable_response_400 import (
+    DeleteGlobalClusterVariableResponse400,
+)
+from ...models.delete_global_cluster_variable_response_401 import (
+    DeleteGlobalClusterVariableResponse401,
+)
+from ...models.delete_global_cluster_variable_response_403 import (
+    DeleteGlobalClusterVariableResponse403,
+)
+from ...models.delete_global_cluster_variable_response_404 import (
+    DeleteGlobalClusterVariableResponse404,
+)
+from ...models.delete_global_cluster_variable_response_500 import (
+    DeleteGlobalClusterVariableResponse500,
+)
 from ...types import Response
 
+
 def _get_kwargs(name: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/cluster-variables/global/{name}'.format(name=quote(str(name), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "delete",
+        "url": "/cluster-variables/global/{name}".format(
+            name=quote(str(name), safe="")
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | DeleteGlobalClusterVariableResponse400 | DeleteGlobalClusterVariableResponse401 | DeleteGlobalClusterVariableResponse403 | DeleteGlobalClusterVariableResponse404 | DeleteGlobalClusterVariableResponse500 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    Any
+    | DeleteGlobalClusterVariableResponse400
+    | DeleteGlobalClusterVariableResponse401
+    | DeleteGlobalClusterVariableResponse403
+    | DeleteGlobalClusterVariableResponse404
+    | DeleteGlobalClusterVariableResponse500
+    | None
+):
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
@@ -39,10 +66,35 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | DeleteGlobalClusterVariableResponse400 | DeleteGlobalClusterVariableResponse401 | DeleteGlobalClusterVariableResponse403 | DeleteGlobalClusterVariableResponse404 | DeleteGlobalClusterVariableResponse500]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(name: str, *, client: AuthenticatedClient | Client) -> Response[Any | DeleteGlobalClusterVariableResponse400 | DeleteGlobalClusterVariableResponse401 | DeleteGlobalClusterVariableResponse403 | DeleteGlobalClusterVariableResponse404 | DeleteGlobalClusterVariableResponse500]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    Any
+    | DeleteGlobalClusterVariableResponse400
+    | DeleteGlobalClusterVariableResponse401
+    | DeleteGlobalClusterVariableResponse403
+    | DeleteGlobalClusterVariableResponse404
+    | DeleteGlobalClusterVariableResponse500
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    name: str, *, client: AuthenticatedClient | Client
+) -> Response[
+    Any
+    | DeleteGlobalClusterVariableResponse400
+    | DeleteGlobalClusterVariableResponse401
+    | DeleteGlobalClusterVariableResponse403
+    | DeleteGlobalClusterVariableResponse404
+    | DeleteGlobalClusterVariableResponse500
+]:
     """Delete a global-scoped cluster variable
 
     Args:
@@ -59,38 +111,69 @@ def sync_detailed(name: str, *, client: AuthenticatedClient | Client) -> Respons
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(name: str, *, client: AuthenticatedClient | Client, **kwargs) -> Any:
+
+def sync(name: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
     """Delete a global-scoped cluster variable
 
-Args:
-    name (str):
+    Args:
+        name (str):
 
-Raises:
-    errors.DeleteGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.DeleteGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.DeleteGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.DeleteGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
-    errors.DeleteGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    Any"""
+    Raises:
+        errors.DeleteGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.DeleteGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.DeleteGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.DeleteGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+        errors.DeleteGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
     response = sync_detailed(name=name, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.DeleteGlobalClusterVariableBadRequest(status_code=response.status_code, content=response.content, parsed=cast(DeleteGlobalClusterVariableResponse400, response.parsed))
+            raise errors.DeleteGlobalClusterVariableBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(DeleteGlobalClusterVariableResponse400, response.parsed),
+            )
         if response.status_code == 401:
-            raise errors.DeleteGlobalClusterVariableUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(DeleteGlobalClusterVariableResponse401, response.parsed))
+            raise errors.DeleteGlobalClusterVariableUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(DeleteGlobalClusterVariableResponse401, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.DeleteGlobalClusterVariableForbidden(status_code=response.status_code, content=response.content, parsed=cast(DeleteGlobalClusterVariableResponse403, response.parsed))
+            raise errors.DeleteGlobalClusterVariableForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(DeleteGlobalClusterVariableResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.DeleteGlobalClusterVariableNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteGlobalClusterVariableResponse404, response.parsed))
+            raise errors.DeleteGlobalClusterVariableNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(DeleteGlobalClusterVariableResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.DeleteGlobalClusterVariableInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteGlobalClusterVariableResponse500, response.parsed))
+            raise errors.DeleteGlobalClusterVariableInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(DeleteGlobalClusterVariableResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+    return None
 
-async def asyncio_detailed(name: str, *, client: AuthenticatedClient | Client) -> Response[Any | DeleteGlobalClusterVariableResponse400 | DeleteGlobalClusterVariableResponse401 | DeleteGlobalClusterVariableResponse403 | DeleteGlobalClusterVariableResponse404 | DeleteGlobalClusterVariableResponse500]:
+
+async def asyncio_detailed(
+    name: str, *, client: AuthenticatedClient | Client
+) -> Response[
+    Any
+    | DeleteGlobalClusterVariableResponse400
+    | DeleteGlobalClusterVariableResponse401
+    | DeleteGlobalClusterVariableResponse403
+    | DeleteGlobalClusterVariableResponse404
+    | DeleteGlobalClusterVariableResponse500
+]:
     """Delete a global-scoped cluster variable
 
     Args:
@@ -107,33 +190,56 @@ async def asyncio_detailed(name: str, *, client: AuthenticatedClient | Client) -
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(name: str, *, client: AuthenticatedClient | Client, **kwargs) -> Any:
+
+async def asyncio(
+    name: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> None:
     """Delete a global-scoped cluster variable
 
-Args:
-    name (str):
+    Args:
+        name (str):
 
-Raises:
-    errors.DeleteGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.DeleteGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.DeleteGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.DeleteGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
-    errors.DeleteGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    Any"""
+    Raises:
+        errors.DeleteGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.DeleteGlobalClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.DeleteGlobalClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.DeleteGlobalClusterVariableNotFound: If the response status code is 404. Cluster variable not found
+        errors.DeleteGlobalClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
     response = await asyncio_detailed(name=name, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.DeleteGlobalClusterVariableBadRequest(status_code=response.status_code, content=response.content, parsed=cast(DeleteGlobalClusterVariableResponse400, response.parsed))
+            raise errors.DeleteGlobalClusterVariableBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(DeleteGlobalClusterVariableResponse400, response.parsed),
+            )
         if response.status_code == 401:
-            raise errors.DeleteGlobalClusterVariableUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(DeleteGlobalClusterVariableResponse401, response.parsed))
+            raise errors.DeleteGlobalClusterVariableUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(DeleteGlobalClusterVariableResponse401, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.DeleteGlobalClusterVariableForbidden(status_code=response.status_code, content=response.content, parsed=cast(DeleteGlobalClusterVariableResponse403, response.parsed))
+            raise errors.DeleteGlobalClusterVariableForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(DeleteGlobalClusterVariableResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.DeleteGlobalClusterVariableNotFound(status_code=response.status_code, content=response.content, parsed=cast(DeleteGlobalClusterVariableResponse404, response.parsed))
+            raise errors.DeleteGlobalClusterVariableNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(DeleteGlobalClusterVariableResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.DeleteGlobalClusterVariableInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(DeleteGlobalClusterVariableResponse500, response.parsed))
+            raise errors.DeleteGlobalClusterVariableInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(DeleteGlobalClusterVariableResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+    return None

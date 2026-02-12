@@ -1,5 +1,22 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ElementInstanceKey,
+    MessageKey,
+    MessageSubscriptionKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+    lift_element_id,
+    lift_element_instance_key,
+    lift_message_key,
+    lift_message_subscription_key,
+    lift_process_definition_id,
+    lift_process_definition_key,
+    lift_process_instance_key,
+    lift_tenant_id,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -9,7 +26,7 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="SearchCorrelatedMessageSubscriptionsResponse200ItemsItem")
 
@@ -48,7 +65,9 @@ class SearchCorrelatedMessageSubscriptionsResponse200ItemsItem:
     tenant_id: TenantId
     element_instance_key: ElementInstanceKey | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         correlation_key = self.correlation_key
@@ -121,9 +140,17 @@ class SearchCorrelatedMessageSubscriptionsResponse200ItemsItem:
 
         tenant_id = lift_tenant_id(d.pop("tenantId"))
 
-        element_instance_key = lift_element_instance_key(_val) if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET else UNSET
+        element_instance_key = (
+            lift_element_instance_key(_val)
+            if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_definition_key = lift_process_definition_key(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
+        process_definition_key = (
+            lift_process_definition_key(_val)
+            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         search_correlated_message_subscriptions_response_200_items_item = cls(
             correlation_key=correlation_key,

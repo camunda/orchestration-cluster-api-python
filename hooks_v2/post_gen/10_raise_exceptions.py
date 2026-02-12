@@ -2,6 +2,7 @@ import ast
 import os
 import re
 from pathlib import Path
+from typing import Any, cast
 
 import yaml
 
@@ -55,29 +56,6 @@ def _set_docstring(func_node: ast.AST, docstring: str) -> None:
         func_node.body.insert(0, doc_stmt)
 
 
-def _get_success_type_from_union(type_expr: ast.expr) -> ast.expr:
-    """Heuristic: pick the left-most type from a PEP604 union (A | B | C)."""
-    current = type_expr
-    while isinstance(current, ast.BinOp) and isinstance(current.op, ast.BitOr):
-        current = current.left
-    return current
-
-
-def _get_success_type_from_detailed_return(return_annotation: ast.expr | None) -> ast.expr | None:
-    """Given detailed's return annotation (typically Response[T]), returns the success type expr."""
-    if return_annotation is None:
-        return None
-    if not isinstance(return_annotation, ast.Subscript):
-        return None
-
-    # detailed returns Response[T] where T is (Success | Error1 | Error2 ...)
-    slice_val = return_annotation.slice
-    if isinstance(slice_val, ast.Tuple) and slice_val.elts:
-        # Very defensive; shouldn't happen for our generator output.
-        slice_val = slice_val.elts[0]
-    return _get_success_type_from_union(slice_val)
-
-
 def _infer_return_type_from_if(if_node: ast.If) -> str | None:
     # Find the returned expression.
     return_expr: ast.expr | None = None
@@ -104,9 +82,30 @@ def _infer_return_type_from_if(if_node: ast.If) -> str | None:
                     # Model.from_dict(...)
                     if isinstance(value.func, ast.Attribute) and isinstance(value.func.value, ast.Name):
                         return value.func.value.id
-                    # cast(Type, ...)
-                    if isinstance(value.func, ast.Name) and value.func.id == "cast" and value.args:
-                        return ast.unparse(value.args[0])
+                    # cast(Type, ...) or just SomeType(...)
+                    if isinstance(value.func, ast.Name):
+                        if value.func.id == "cast" and value.args:
+                            return ast.unparse(value.args[0])
+                        return value.func.id
+
+                # response_200 = response.text → str
+                if isinstance(value, ast.Attribute) and value.attr == "text":
+                    return "str"
+
+                # response_200 = [] with loop appending .from_dict() items → list[ModelName]
+                if isinstance(value, ast.List) and not value.elts:
+                    # Look for pattern: response_200_item = ModelName.from_dict(...)
+                    for s in if_node.body:
+                        if (isinstance(s, ast.Assign)
+                                and len(s.targets) == 1
+                                and isinstance(s.targets[0], ast.Name)
+                                and s.targets[0].id.endswith("_item")):
+                            val = s.value
+                            if isinstance(val, ast.Call) and isinstance(val.func, ast.Attribute):
+                                if val.func.attr == "from_dict" and isinstance(val.func.value, ast.Name):
+                                    return f"list[{val.func.value.id}]"
+                    return "list[Any]"
+
                 return ast.unparse(value)
         return None
 
@@ -263,15 +262,15 @@ def _normalize_path_template(path: str) -> str:
     return re.sub(r"\{[^}]+\}", "{}", path)
 
 
-def _resolve_ref(spec: dict, ref: str) -> dict | None:
+def _resolve_ref(spec: dict[str, Any], ref: str) -> dict[str, Any] | None:
     if not ref.startswith("#/"):
         return None
-    current: object = spec
+    current: Any = spec
     for part in ref[2:].split("/"):
         if not isinstance(current, dict) or part not in current:
             return None
-        current = current[part]
-    return current if isinstance(current, dict) else None
+        current = cast(dict[str, Any], current)[part]
+    return cast(dict[str, Any], current) if isinstance(current, dict) else None
 
 
 def _normalize_description(desc: str) -> str:
@@ -279,43 +278,47 @@ def _normalize_description(desc: str) -> str:
 
 
 def _get_response_descriptions_for_endpoint(
-    *, spec: dict, method: str, url: str
+    *, spec: dict[str, Any], method: str, url: str
 ) -> dict[int, str]:
-    paths = spec.get("paths") or {}
-    if not isinstance(paths, dict):
-        return {}
+    paths: dict[str, Any] = spec.get("paths") or {}
 
     # Try direct match first.
-    operation = ((paths.get(url) or {}).get(method))
+    path_entry: dict[str, Any] = cast(dict[str, Any], paths.get(url) or {})
+    operation: dict[str, Any] | None = cast(dict[str, Any], path_entry.get(method)) if method in path_entry else None
 
     # Fallback: match normalized templates (handles generated snake_case params).
-    if not isinstance(operation, dict):
+    if operation is None:
         normalized_url = _normalize_path_template(url)
         for candidate_url, candidate_ops in paths.items():
-            if not isinstance(candidate_url, str) or not isinstance(candidate_ops, dict):
+            if not isinstance(candidate_ops, dict):
                 continue
-            if _normalize_path_template(candidate_url) == normalized_url:
-                operation = candidate_ops.get(method)
+            ops: dict[str, Any] = cast(dict[str, Any], candidate_ops)
+            if _normalize_path_template(str(candidate_url)) == normalized_url:
+                operation = cast(dict[str, Any], ops.get(method)) if method in ops else None
                 break
 
-    if not isinstance(operation, dict):
+    if operation is None:
         return {}
 
-    responses = operation.get("responses")
-    if not isinstance(responses, dict):
-        return {}
+    responses: dict[str, Any] = cast(dict[str, Any], operation.get("responses")) if "responses" in operation else {}
 
     out: dict[int, str] = {}
-    for code_str, resp in responses.items():
-        if not isinstance(code_str, str) or not code_str.isdigit():
+    for code_str_raw, resp_raw in responses.items():
+        code_str: str = str(code_str_raw)
+        if not code_str.isdigit():
             continue
         code = int(code_str)
-        if isinstance(resp, dict) and "$ref" in resp and isinstance(resp["$ref"], str):
-            resolved = _resolve_ref(spec, resp["$ref"])
-            resp = resolved if resolved is not None else resp
+        resp: dict[str, Any] | Any = resp_raw
+        if isinstance(resp_raw, dict):
+            resp_dict_raw = cast(dict[str, Any], resp_raw)
+            if "$ref" in resp_dict_raw:
+                ref_val: str = str(resp_dict_raw["$ref"])
+                resolved = _resolve_ref(spec, ref_val)
+                resp = resolved if resolved is not None else cast(dict[str, Any], resp_raw)
         if not isinstance(resp, dict):
             continue
-        desc = resp.get("description")
+        resp_dict = cast(dict[str, Any], resp)
+        desc: Any = resp_dict.get("description")
         if isinstance(desc, str) and desc.strip():
             out[code] = _normalize_description(desc)
     return out
@@ -333,10 +336,15 @@ def _ensure_typing_import(tree: ast.Module, name: str) -> None:
 
     # Insert a new import after any __future__ import / module docstring and other imports.
     insert_at = 0
-    if tree.body and isinstance(tree.body[0], ast.Expr) and isinstance(tree.body[0].value, ast.Constant) and isinstance(tree.body[0].value.value, str):
+    first_stmt = tree.body[0] if tree.body else None
+    if isinstance(first_stmt, ast.Expr) and isinstance(first_stmt.value, ast.Constant) and isinstance(first_stmt.value.value, str):
         insert_at = 1
-    while insert_at < len(tree.body) and isinstance(tree.body[insert_at], ast.ImportFrom) and tree.body[insert_at].module == "__future__":
-        insert_at += 1
+    while insert_at < len(tree.body):
+        s = tree.body[insert_at]
+        if isinstance(s, ast.ImportFrom) and s.module == "__future__":
+            insert_at += 1
+        else:
+            break
     while insert_at < len(tree.body) and isinstance(tree.body[insert_at], (ast.Import, ast.ImportFrom)):
         insert_at += 1
 
@@ -400,7 +408,7 @@ def _rewrite_docstring(docstring: str, return_type_str: str, raise_lines: list[s
 
     return "\n".join(lines)
 
-def modify_api_file(file_path: Path, *, spec: dict) -> None:
+def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
     with open(file_path, "r") as f:
         code = f.read()
     
@@ -428,7 +436,12 @@ def modify_api_file(file_path: Path, *, spec: dict) -> None:
         # Ensure the function accepts **kwargs if it doesn't already.
         # Needed for the flattened client which passes extra kwargs.
         if not node.args.kwarg:
-            node.args.kwarg = ast.arg(arg="kwargs", annotation=None)
+            _ensure_typing_import(tree, "Any")
+            node.args.kwarg = ast.arg(arg="kwargs", annotation=ast.Name(id="Any"))
+            modified = True
+        elif node.args.kwarg and node.args.kwarg.annotation is None:
+            _ensure_typing_import(tree, "Any")
+            node.args.kwarg.annotation = ast.Name(id="Any")
             modified = True
 
         detailed_func_name = f"{node.name}_detailed"
@@ -441,11 +454,21 @@ def modify_api_file(file_path: Path, *, spec: dict) -> None:
             None,
         )
 
-        success_type = _get_success_type_from_detailed_return(detailed_node.returns if detailed_node else None)
-        if success_type is not None:
-            node.returns = success_type
-            modified = True
-        return_type_str = ast.unparse(node.returns) if node.returns is not None else "Any"
+        # Determine the success return type from the status_type_map.
+        # 2xx codes represent success responses.
+        success_codes = sorted(c for c in status_type_map if 200 <= c < 300)
+        if success_codes:
+            # Use the type from the first 2xx status code
+            success_type_name = status_type_map[success_codes[0]]
+            if success_type_name and success_type_name != "Any":
+                node.returns = ast.Name(id=success_type_name)
+            else:
+                node.returns = ast.Constant(value=None)
+        else:
+            # No 2xx responses (e.g., 204 No Content) → return None
+            node.returns = ast.Constant(value=None)
+        modified = True
+        return_type_str = ast.unparse(node.returns)
 
         # Ensure cast is available if we need to cast parsed error models.
         needs_cast = any(status_type_map.get(c) not in {None, "Any"} for c in error_codes)
@@ -488,14 +511,30 @@ def modify_api_file(file_path: Path, *, spec: dict) -> None:
 
         raise_lines.append("errors.UnexpectedStatus: If the response status code is not documented.")
 
+        # For 204 No Content and similar endpoints that return None,
+        # skip the assert and just return None.
+        # When there are no error codes, _parse_response returns SuccessType | None,
+        # so the assert alone is sufficient for type narrowing (no cast needed).
+        is_none_return = (return_type_str == "None")
+        if is_none_return:
+            return_stmt = "    return None"
+        elif not error_codes:
+            # Simple return type — assert narrows it, cast not needed
+            return_stmt = "    assert response.parsed is not None\n    return response.parsed"
+        else:
+            _ensure_typing_import(tree, "cast")
+            return_stmt = f"    assert response.parsed is not None\n    return cast({return_type_str}, response.parsed)"
+
         new_body_code = f"""
 def temp():
     response = {func_call}
     if response.status_code < 200 or response.status_code >= 300:
 {raise_blocks}        raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+{return_stmt}
 """
-        new_body_ast = ast.parse(new_body_code).body[0].body
+        temp_func = ast.parse(new_body_code).body[0]
+        assert isinstance(temp_func, ast.FunctionDef)
+        new_body_ast = temp_func.body
         node.body = new_body_ast
         modified = True
 
@@ -521,7 +560,7 @@ def run(context: dict[str, str]) -> None:
     api_dir = package_dir / "api"
 
     spec_path = out_dir / "bundled_spec.yaml"
-    spec: dict = {}
+    spec: dict[str, Any] = {}
     if spec_path.exists():
         spec = yaml.safe_load(spec_path.read_text()) or {}
     
@@ -529,7 +568,7 @@ def run(context: dict[str, str]) -> None:
         print(f"API directory not found at {api_dir}")
         return
 
-    for root, dirs, files in os.walk(api_dir):
+    for root, _dirs, files in os.walk(api_dir):
         for file in files:
             if file.endswith(".py") and file != "__init__.py":
                 modify_api_file(Path(root) / file, spec=spec)

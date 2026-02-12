@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -24,7 +24,9 @@ class SearchUserTaskVariablesDataFilter:
     """
 
     name: ActoridAdvancedfilter | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -57,6 +59,8 @@ class SearchUserTaskVariablesDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 name_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return name_type_1

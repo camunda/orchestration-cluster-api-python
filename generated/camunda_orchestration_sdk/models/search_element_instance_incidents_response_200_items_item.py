@@ -1,5 +1,22 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ElementInstanceKey,
+    IncidentKey,
+    JobKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+    lift_element_id,
+    lift_element_instance_key,
+    lift_incident_key,
+    lift_job_key,
+    lift_process_definition_id,
+    lift_process_definition_key,
+    lift_process_instance_key,
+    lift_tenant_id,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -9,7 +26,7 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.search_element_instance_incidents_response_200_items_item_error_type import (
@@ -60,7 +77,9 @@ class SearchElementInstanceIncidentsResponse200ItemsItem:
     process_instance_key: ProcessInstanceKey | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     job_key: JobKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id
@@ -133,7 +152,11 @@ class SearchElementInstanceIncidentsResponse200ItemsItem:
         )
 
         d = dict(src_dict)
-        process_definition_id = lift_process_definition_id(_val) if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET else UNSET
+        process_definition_id = (
+            lift_process_definition_id(_val)
+            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         _error_type = d.pop("errorType", UNSET)
         error_type: SearchElementInstanceIncidentsResponse200ItemsItemErrorType | Unset
@@ -148,7 +171,11 @@ class SearchElementInstanceIncidentsResponse200ItemsItem:
 
         error_message = d.pop("errorMessage", UNSET)
 
-        element_id = lift_element_id(_val) if (_val := d.pop("elementId", UNSET)) is not UNSET else UNSET
+        element_id = (
+            lift_element_id(_val)
+            if (_val := d.pop("elementId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         _creation_time = d.pop("creationTime", UNSET)
         creation_time: datetime.datetime | Unset
@@ -166,17 +193,41 @@ class SearchElementInstanceIncidentsResponse200ItemsItem:
                 _state
             )
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        incident_key = lift_incident_key(_val) if (_val := d.pop("incidentKey", UNSET)) is not UNSET else UNSET
+        incident_key = (
+            lift_incident_key(_val)
+            if (_val := d.pop("incidentKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_definition_key = lift_process_definition_key(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
+        process_definition_key = (
+            lift_process_definition_key(_val)
+            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_instance_key = lift_process_instance_key(_val) if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET else UNSET
+        process_instance_key = (
+            lift_process_instance_key(_val)
+            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        element_instance_key = lift_element_instance_key(_val) if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET else UNSET
+        element_instance_key = (
+            lift_element_instance_key(_val)
+            if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        job_key = lift_job_key(_val) if (_val := d.pop("jobKey", UNSET)) is not UNSET else UNSET
+        job_key = (
+            lift_job_key(_val)
+            if (_val := d.pop("jobKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         search_element_instance_incidents_response_200_items_item = cls(
             process_definition_id=process_definition_id,

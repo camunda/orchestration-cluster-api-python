@@ -5,24 +5,50 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.search_user_task_variables_data import SearchUserTaskVariablesData
-from ...models.search_user_task_variables_response_200 import SearchUserTaskVariablesResponse200
-from ...models.search_user_task_variables_response_400 import SearchUserTaskVariablesResponse400
-from ...models.search_user_task_variables_response_500 import SearchUserTaskVariablesResponse500
+from ...models.search_user_task_variables_response_200 import (
+    SearchUserTaskVariablesResponse200,
+)
+from ...models.search_user_task_variables_response_400 import (
+    SearchUserTaskVariablesResponse400,
+)
+from ...models.search_user_task_variables_response_500 import (
+    SearchUserTaskVariablesResponse500,
+)
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(user_task_key: str, *, body: SearchUserTaskVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> dict[str, Any]:
+
+def _get_kwargs(
+    user_task_key: str,
+    *,
+    body: SearchUserTaskVariablesData | Unset = UNSET,
+    truncate_values: bool | Unset = UNSET,
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     params: dict[str, Any] = {}
-    params['truncateValues'] = truncate_values
+    params["truncateValues"] = truncate_values
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/user-tasks/{user_task_key}/variables/search'.format(user_task_key=quote(str(user_task_key), safe='')), 'params': params}
+    _kwargs: dict[str, Any] = {
+        "method": "post",
+        "url": "/user-tasks/{user_task_key}/variables/search".format(
+            user_task_key=quote(str(user_task_key), safe="")
+        ),
+        "params": params,
+    }
     if not isinstance(body, Unset):
-        _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+        _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    SearchUserTaskVariablesResponse200
+    | SearchUserTaskVariablesResponse400
+    | SearchUserTaskVariablesResponse500
+    | None
+):
     if response.status_code == 200:
         response_200 = SearchUserTaskVariablesResponse200.from_dict(response.json())
         return response_200
@@ -37,10 +63,33 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    SearchUserTaskVariablesResponse200
+    | SearchUserTaskVariablesResponse400
+    | SearchUserTaskVariablesResponse500
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    user_task_key: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchUserTaskVariablesData | Unset = UNSET,
+    truncate_values: bool | Unset = UNSET,
+) -> Response[
+    SearchUserTaskVariablesResponse200
+    | SearchUserTaskVariablesResponse400
+    | SearchUserTaskVariablesResponse500
+]:
     """Search user task variables
 
      Search for user task variables based on given criteria. By default, long variable values in the
@@ -58,38 +107,73 @@ def sync_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, b
     Returns:
         Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]
     """
-    kwargs = _get_kwargs(user_task_key=user_task_key, body=body, truncate_values=truncate_values)
+    kwargs = _get_kwargs(
+        user_task_key=user_task_key, body=body, truncate_values=truncate_values
+    )
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET, **kwargs) -> SearchUserTaskVariablesResponse200:
+
+def sync(
+    user_task_key: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchUserTaskVariablesData | Unset = UNSET,
+    truncate_values: bool | Unset = UNSET,
+    **kwargs: Any,
+) -> SearchUserTaskVariablesResponse200:
     """Search user task variables
 
- Search for user task variables based on given criteria. By default, long variable values in the
-response are truncated.
+     Search for user task variables based on given criteria. By default, long variable values in the
+    response are truncated.
 
-Args:
-    user_task_key (str): System-generated key for a user task.
-    truncate_values (bool | Unset):
-    body (SearchUserTaskVariablesData | Unset): User task search query request.
+    Args:
+        user_task_key (str): System-generated key for a user task.
+        truncate_values (bool | Unset):
+        body (SearchUserTaskVariablesData | Unset): User task search query request.
 
-Raises:
-    errors.SearchUserTaskVariablesBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    SearchUserTaskVariablesResponse200"""
-    response = sync_detailed(user_task_key=user_task_key, client=client, body=body, truncate_values=truncate_values)
+    Raises:
+        errors.SearchUserTaskVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        SearchUserTaskVariablesResponse200"""
+    response = sync_detailed(
+        user_task_key=user_task_key,
+        client=client,
+        body=body,
+        truncate_values=truncate_values,
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchUserTaskVariablesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchUserTaskVariablesResponse400, response.parsed))
+            raise errors.SearchUserTaskVariablesBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchUserTaskVariablesResponse400, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.SearchUserTaskVariablesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchUserTaskVariablesResponse500, response.parsed))
+            raise errors.SearchUserTaskVariablesInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchUserTaskVariablesResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+    assert response.parsed is not None
+    return cast(SearchUserTaskVariablesResponse200, response.parsed)
 
-async def asyncio_detailed(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET) -> Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]:
+
+async def asyncio_detailed(
+    user_task_key: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchUserTaskVariablesData | Unset = UNSET,
+    truncate_values: bool | Unset = UNSET,
+) -> Response[
+    SearchUserTaskVariablesResponse200
+    | SearchUserTaskVariablesResponse400
+    | SearchUserTaskVariablesResponse500
+]:
     """Search user task variables
 
      Search for user task variables based on given criteria. By default, long variable values in the
@@ -107,33 +191,57 @@ async def asyncio_detailed(user_task_key: str, *, client: AuthenticatedClient | 
     Returns:
         Response[SearchUserTaskVariablesResponse200 | SearchUserTaskVariablesResponse400 | SearchUserTaskVariablesResponse500]
     """
-    kwargs = _get_kwargs(user_task_key=user_task_key, body=body, truncate_values=truncate_values)
+    kwargs = _get_kwargs(
+        user_task_key=user_task_key, body=body, truncate_values=truncate_values
+    )
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(user_task_key: str, *, client: AuthenticatedClient | Client, body: SearchUserTaskVariablesData | Unset=UNSET, truncate_values: bool | Unset=UNSET, **kwargs) -> SearchUserTaskVariablesResponse200:
+
+async def asyncio(
+    user_task_key: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchUserTaskVariablesData | Unset = UNSET,
+    truncate_values: bool | Unset = UNSET,
+    **kwargs: Any,
+) -> SearchUserTaskVariablesResponse200:
     """Search user task variables
 
- Search for user task variables based on given criteria. By default, long variable values in the
-response are truncated.
+     Search for user task variables based on given criteria. By default, long variable values in the
+    response are truncated.
 
-Args:
-    user_task_key (str): System-generated key for a user task.
-    truncate_values (bool | Unset):
-    body (SearchUserTaskVariablesData | Unset): User task search query request.
+    Args:
+        user_task_key (str): System-generated key for a user task.
+        truncate_values (bool | Unset):
+        body (SearchUserTaskVariablesData | Unset): User task search query request.
 
-Raises:
-    errors.SearchUserTaskVariablesBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    SearchUserTaskVariablesResponse200"""
-    response = await asyncio_detailed(user_task_key=user_task_key, client=client, body=body, truncate_values=truncate_values)
+    Raises:
+        errors.SearchUserTaskVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        SearchUserTaskVariablesResponse200"""
+    response = await asyncio_detailed(
+        user_task_key=user_task_key,
+        client=client,
+        body=body,
+        truncate_values=truncate_values,
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchUserTaskVariablesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchUserTaskVariablesResponse400, response.parsed))
+            raise errors.SearchUserTaskVariablesBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchUserTaskVariablesResponse400, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.SearchUserTaskVariablesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchUserTaskVariablesResponse500, response.parsed))
+            raise errors.SearchUserTaskVariablesInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchUserTaskVariablesResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+    assert response.parsed is not None
+    return cast(SearchUserTaskVariablesResponse200, response.parsed)

@@ -1,5 +1,14 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessInstanceKey,
+    ScopeKey,
+    TenantId,
+    VariableKey,
+    lift_process_instance_key,
+    lift_scope_key,
+    lift_tenant_id,
+    lift_variable_key,
+)
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -7,7 +16,7 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="GetVariableResponse200")
 
@@ -31,7 +40,9 @@ class GetVariableResponse200:
     variable_key: VariableKey | Unset = UNSET
     scope_key: ScopeKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         value = self.value
@@ -71,13 +82,29 @@ class GetVariableResponse200:
 
         name = d.pop("name", UNSET)
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        variable_key = lift_variable_key(_val) if (_val := d.pop("variableKey", UNSET)) is not UNSET else UNSET
+        variable_key = (
+            lift_variable_key(_val)
+            if (_val := d.pop("variableKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        scope_key = lift_scope_key(_val) if (_val := d.pop("scopeKey", UNSET)) is not UNSET else UNSET
+        scope_key = (
+            lift_scope_key(_val)
+            if (_val := d.pop("scopeKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_instance_key = lift_process_instance_key(_val) if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET else UNSET
+        process_instance_key = (
+            lift_process_instance_key(_val)
+            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         get_variable_response_200 = cls(
             value=value,

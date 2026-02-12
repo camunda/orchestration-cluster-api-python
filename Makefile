@@ -11,8 +11,13 @@ install:
 generate-v1: clean install
 	uv run generate.py --spec-ref $(SPEC_REF)
 
+# Generate the SDK, including verifying the generated code. This task will fail if the generated
+# code is not valid.
 generate: clean install
 	uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests --spec-ref $(SPEC_REF)
+	uv run ruff format generated/
+	uv run ruff check generated/ --fix
+	uv run pyright
 	uv run pytest -q tests/acceptance
 
 clean:

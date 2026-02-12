@@ -47566,10 +47566,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimName
       - mappingRuleId
-      - claimValue
+      - claimName
       - name
+      - claimValue
     SearchMappingRuleData:
       additionalProperties: false
       type: object
@@ -47638,8 +47638,8 @@ components:
           description: The name of the mapping rule.
       required:
       - claimName
-      - claimValue
       - name
+      - claimValue
     SearchMessageSubscriptionsData:
       type: object
       additionalProperties: false

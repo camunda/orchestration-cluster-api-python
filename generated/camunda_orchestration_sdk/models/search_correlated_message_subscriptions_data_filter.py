@@ -1,5 +1,10 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    MessageKey,
+    MessageSubscriptionKey,
+    lift_message_key,
+    lift_message_subscription_key,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -9,7 +14,7 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -60,9 +65,13 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
     process_definition_id: ActoridAdvancedfilter | str | Unset = UNSET
     process_definition_key: ProcessdefinitionkeyAdvancedfilter | str | Unset = UNSET
     process_instance_key: ProcessinstancekeyAdvancedfilter | str | Unset = UNSET
-    subscription_key: MessageSubscriptionKey | SubscriptionkeyAdvancedfilter | Unset = UNSET
+    subscription_key: MessageSubscriptionKey | SubscriptionkeyAdvancedfilter | Unset = (
+        UNSET
+    )
     tenant_id: ActoridAdvancedfilter | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -236,6 +245,8 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 correlation_key_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return correlation_key_type_1
@@ -260,6 +271,8 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             correlation_time_type_1 = TimestampAdvancedfilter.from_dict(data)
 
             return correlation_time_type_1
@@ -272,6 +285,8 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 element_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return element_id_type_1
@@ -289,6 +304,8 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 element_instance_key_type_1 = (
                     ElementinstancekeyAdvancedfilter.from_dict(data)
                 )
@@ -308,6 +325,8 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 message_key_type_1 = UsertaskkeyAdvancedfilter.from_dict(data)
 
                 return message_key_type_1
@@ -315,7 +334,13 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
                 pass
             return cast(str | Unset | UsertaskkeyAdvancedfilter, data)
 
-        message_key = _parse_message_key(d.pop("messageKey", UNSET))
+        _raw_message_key = _parse_message_key(d.pop("messageKey", UNSET))
+
+        message_key = (
+            lift_message_key(_raw_message_key)
+            if isinstance(_raw_message_key, str)
+            else _raw_message_key
+        )
 
         def _parse_message_name(data: object) -> ActoridAdvancedfilter | str | Unset:
             if isinstance(data, Unset):
@@ -323,6 +348,8 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 message_name_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return message_name_type_1
@@ -340,6 +367,8 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 partition_id_type_1 = PartitionidAdvancedfilter.from_dict(data)
 
                 return partition_id_type_1
@@ -357,6 +386,8 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_definition_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return process_definition_id_type_1
@@ -376,6 +407,8 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_definition_key_type_1 = (
                     ProcessdefinitionkeyAdvancedfilter.from_dict(data)
                 )
@@ -397,6 +430,8 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_instance_key_type_1 = (
                     ProcessinstancekeyAdvancedfilter.from_dict(data)
                 )
@@ -418,6 +453,8 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 subscription_key_type_1 = SubscriptionkeyAdvancedfilter.from_dict(data)
 
                 return subscription_key_type_1
@@ -425,7 +462,13 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
                 pass
             return cast(str | SubscriptionkeyAdvancedfilter | Unset, data)
 
-        subscription_key = _parse_subscription_key(d.pop("subscriptionKey", UNSET))
+        _raw_subscription_key = _parse_subscription_key(d.pop("subscriptionKey", UNSET))
+
+        subscription_key = (
+            lift_message_subscription_key(_raw_subscription_key)
+            if isinstance(_raw_subscription_key, str)
+            else _raw_subscription_key
+        )
 
         def _parse_tenant_id(data: object) -> ActoridAdvancedfilter | str | Unset:
             if isinstance(data, Unset):
@@ -433,6 +476,8 @@ class SearchCorrelatedMessageSubscriptionsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 tenant_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return tenant_id_type_1

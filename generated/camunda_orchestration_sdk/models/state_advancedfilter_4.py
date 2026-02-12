@@ -8,7 +8,7 @@ from attrs import field as _attrs_field
 
 from ..models.state_advancedfilter_4_in_item import StateAdvancedfilter4InItem
 from ..models.state_advancedfilter_4_not_in_item import StateAdvancedfilter4NotInItem
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.state_advancedfilter_4_eq import StateAdvancedfilter4Eq
@@ -45,7 +45,9 @@ class StateAdvancedfilter4:
     in_: list[StateAdvancedfilter4InItem] | Unset = UNSET
     not_in: list[StateAdvancedfilter4NotInItem] | Unset = UNSET
     like: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         eq: dict[str, Any] | Unset = UNSET

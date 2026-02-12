@@ -1,5 +1,12 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    TenantId,
+    lift_process_definition_id,
+    lift_process_definition_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -7,7 +14,7 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar(
     "T", bound="GetProcessDefinitionMessageSubscriptionStatisticsResponse200ItemsItem"
@@ -34,7 +41,9 @@ class GetProcessDefinitionMessageSubscriptionStatisticsResponse200ItemsItem:
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instances_with_active_subscriptions: int | Unset = UNSET
     active_subscriptions: int | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id
@@ -70,11 +79,23 @@ class GetProcessDefinitionMessageSubscriptionStatisticsResponse200ItemsItem:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_definition_id = lift_process_definition_id(_val) if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET else UNSET
+        process_definition_id = (
+            lift_process_definition_id(_val)
+            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_definition_key = lift_process_definition_key(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
+        process_definition_key = (
+            lift_process_definition_key(_val)
+            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         process_instances_with_active_subscriptions = d.pop(
             "processInstancesWithActiveSubscriptions", UNSET

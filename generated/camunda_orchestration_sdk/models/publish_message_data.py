@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import TenantId, lift_tenant_id
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -91,7 +91,11 @@ class PublishMessageData:
         else:
             variables = PublishMessageDataVariables.from_dict(_variables)
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         publish_message_data = cls(
             name=name,

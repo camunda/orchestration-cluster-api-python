@@ -1,7 +1,7 @@
 from __future__ import annotations
 import re
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, cast
 
 import yaml
 
@@ -65,6 +65,9 @@ def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -
     lines.append("from typing import NewType, Any, Tuple\n")
     lines.append("import re\n\n")
 
+    # Track all exported names for __all__ and explicit import
+    all_exported_names: List[str] = []
+
     for alias_name, info in sorted(aliases.items()):
         base = info.get("type", "string")
         py_base = {
@@ -76,6 +79,11 @@ def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -
         constraints = info.get("constraints", {})
 
         lines.append(f"{alias_name} = NewType('{alias_name}', {py_base})\n")
+
+        # Track exported names
+        func_name = _snake(f"lift_{alias_name}")
+        try_func_name = _snake(f"try_lift_{alias_name}")
+        all_exported_names.extend([alias_name, func_name, try_func_name])
 
         # lifter with validation
         func: List[str] = []
@@ -117,16 +125,42 @@ def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -
 
         lines.extend(func)
 
+    # Add __all__ for explicit export control
+    lines.append(f"__all__ = {sorted(all_exported_names)!r}\n")
+
     target.write_text("".join(lines), encoding="utf-8")
 
-    # Update package __init__ to export these aliases and lifters
+    # Update package __init__ to export these aliases and lifters with explicit import
     init_file = pkg_dir / "__init__.py"
     if init_file.exists():
         init_txt = init_file.read_text(encoding="utf-8")
-        export_line = "from camunda_orchestration_sdk.semantic_types import *\n"
-        if export_line not in init_txt:
-            init_txt += "\n" + export_line
-            init_file.write_text(init_txt, encoding="utf-8")
+        # Remove any existing wildcard import
+        wildcard_line = "from camunda_orchestration_sdk.semantic_types import *\n"
+        init_txt = init_txt.replace(wildcard_line, "")
+        # Add explicit import
+        export_names = ", ".join(sorted(all_exported_names))
+        explicit_line = f"from camunda_orchestration_sdk.semantic_types import {export_names}\n"
+        if explicit_line not in init_txt:
+            init_txt += "\n" + explicit_line
+
+        # Extend __all__ to include the semantic type names so pyright
+        # considers them intentional re-exports.
+        import re as _re
+        # Support both tuple (__all__ = (...)) and list (__all__: list[str] = [...]) formats
+        all_match = _re.search(r'__all__(?::\s*list\[str\])?\s*=\s*[\(\[]([^\)\]]*)[\)\]]', init_txt, _re.DOTALL)
+        if all_match:
+            existing_all = all_match.group(0)
+            is_list = existing_all.rstrip().endswith("]")
+            close_char = "]" if is_list else ")"
+            # Build new entries
+            quoted_names = [f'    "{n}",' for n in sorted(all_exported_names)]
+            new_entries = "\n".join(quoted_names)
+            # Replace the closing bracket/paren with the new entries + close
+            new_all = existing_all.rstrip(close_char)
+            new_all += "\n" + new_entries + "\n" + close_char
+            init_txt = init_txt.replace(existing_all, new_all, 1)
+
+        init_file.write_text(init_txt, encoding="utf-8")
 
 
 def run(context: dict[str, str]) -> None:
@@ -134,17 +168,17 @@ def run(context: dict[str, str]) -> None:
     out_dir = Path(context["out_dir"]).resolve()
     spec_dir = spec_path.parent
 
-    schemas = {}
+    schemas: Dict[str, Any] = {}
 
     # Iterate over all yaml files in the spec directory to gather all schemas
     for yaml_file in spec_dir.glob("*.yaml"):
         try:
             with open(yaml_file, "r", encoding="utf-8") as f:
-                spec = yaml.safe_load(f)
+                spec: dict[str, Any] | None = yaml.safe_load(f)
                 if not spec:
                     continue
-                components = spec.get("components", {})
-                file_schemas = components.get("schemas", {})
+                components: dict[str, Any] = spec.get("components", {})
+                file_schemas: dict[str, Any] = components.get("schemas", {})
                 if file_schemas:
                     schemas.update(file_schemas)
         except Exception as e:
@@ -152,11 +186,12 @@ def run(context: dict[str, str]) -> None:
 
     aliases: Dict[str, Dict[str, Any]] = {}
 
-    for name, schema in schemas.items():
-        if not isinstance(schema, dict):
+    for name, schema_val in schemas.items():
+        if not isinstance(schema_val, dict):
             continue
+        schema = cast(Dict[str, Any], schema_val)
         if _is_primitive_alias(name, schema):
-            alias_info = {
+            alias_info: Dict[str, Any] = {
                 "type": schema.get("type", "string"),
                 "constraints": _extract_constraints(schema, schemas),
             }

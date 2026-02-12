@@ -2735,7 +2735,7 @@ from .update_user_task_response_503 import UpdateUserTaskResponse503
 from .usertaskkey_advancedfilter import UsertaskkeyAdvancedfilter
 from .variablekey_advancedfilter import VariablekeyAdvancedfilter
 
-__all__ = (
+__all__: list[str] = [
     "ActivateAdHocSubProcessActivitiesData",
     "ActivateAdHocSubProcessActivitiesDataElementsItem",
     "ActivateAdHocSubProcessActivitiesDataElementsItemVariables",
@@ -4298,4 +4298,4 @@ __all__ = (
     "UpdateUserTaskResponse503",
     "UsertaskkeyAdvancedfilter",
     "VariablekeyAdvancedfilter",
-)
+]

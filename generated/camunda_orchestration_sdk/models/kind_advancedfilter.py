@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 from ..models.kind_advancedfilter_eq import KindAdvancedfilterEq
 from ..models.kind_advancedfilter_in_item import KindAdvancedfilterInItem
 from ..models.kind_advancedfilter_neq import KindAdvancedfilterNeq
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="KindAdvancedfilter")
 
@@ -38,7 +38,9 @@ class KindAdvancedfilter:
     exists: bool | Unset = UNSET
     in_: list[KindAdvancedfilterInItem] | Unset = UNSET
     like: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         eq: str | Unset = UNSET

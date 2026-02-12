@@ -1,13 +1,13 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import ElementId, lift_element_id
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.ancestorscopeinstruction_object import AncestorscopeinstructionObject
@@ -63,7 +63,9 @@ class ModifyProcessInstanceDataMoveInstructionsItem:
         list[ModifyProcessInstanceDataMoveInstructionsItemVariableInstructionsItem]
         | Unset
     ) = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.ancestorscopeinstruction_object import (
@@ -149,6 +151,8 @@ class ModifyProcessInstanceDataMoveInstructionsItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 source_element_instruction_type_0 = (
                     SourceelementinstructionObject.from_dict(data)
                 )
@@ -158,6 +162,8 @@ class ModifyProcessInstanceDataMoveInstructionsItem:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             source_element_instruction_type_1 = (
                 SourceelementinstructionObject1.from_dict(data)
             )
@@ -183,6 +189,8 @@ class ModifyProcessInstanceDataMoveInstructionsItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 ancestor_scope_instruction_type_0 = (
                     AncestorscopeinstructionObject.from_dict(data)
                 )
@@ -193,6 +201,8 @@ class ModifyProcessInstanceDataMoveInstructionsItem:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 ancestor_scope_instruction_type_1 = (
                     AncestorscopeinstructionObject1.from_dict(data)
                 )
@@ -202,6 +212,8 @@ class ModifyProcessInstanceDataMoveInstructionsItem:
                 pass
             if not isinstance(data, dict):
                 raise TypeError()
+
+            data = cast(dict[str, Any], data)
             ancestor_scope_instruction_type_2 = (
                 AncestorscopeinstructionObject2.from_dict(data)
             )

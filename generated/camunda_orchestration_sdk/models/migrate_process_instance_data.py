@@ -1,5 +1,8 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessDefinitionKey,
+    lift_process_definition_key,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -38,7 +41,7 @@ class MigrateProcessInstanceData:
     def to_dict(self) -> dict[str, Any]:
         target_process_definition_key = self.target_process_definition_key
 
-        mapping_instructions = []
+        mapping_instructions: list[dict[str, Any]] = []
         for mapping_instructions_item_data in self.mapping_instructions:
             mapping_instructions_item = mapping_instructions_item_data.to_dict()
             mapping_instructions.append(mapping_instructions_item)
@@ -65,9 +68,13 @@ class MigrateProcessInstanceData:
         )
 
         d = dict(src_dict)
-        target_process_definition_key = lift_process_definition_key(d.pop("targetProcessDefinitionKey"))
+        target_process_definition_key = lift_process_definition_key(
+            d.pop("targetProcessDefinitionKey")
+        )
 
-        mapping_instructions = []
+        mapping_instructions: list[
+            MigrateProcessInstanceDataMappingInstructionsItem
+        ] = []
         _mapping_instructions = d.pop("mappingInstructions")
         for mapping_instructions_item_data in _mapping_instructions:
             mapping_instructions_item = (

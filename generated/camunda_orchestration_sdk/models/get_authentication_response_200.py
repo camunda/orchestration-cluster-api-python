@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.get_authentication_response_200_tenants_item import (
@@ -46,10 +46,12 @@ class GetAuthenticationResponse200:
     display_name: None | str | Unset = UNSET
     email: None | str | Unset = UNSET
     authorized_components: list[str] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
-        tenants = []
+        tenants: list[dict[str, Any]] = []
         for tenants_item_data in self.tenants:
             tenants_item = tenants_item_data.to_dict()
             tenants.append(tenants_item)
@@ -119,7 +121,7 @@ class GetAuthenticationResponse200:
         )
 
         d = dict(src_dict)
-        tenants = []
+        tenants: list[GetAuthenticationResponse200TenantsItem] = []
         _tenants = d.pop("tenants")
         for tenants_item_data in _tenants:
             tenants_item = GetAuthenticationResponse200TenantsItem.from_dict(

@@ -12,7 +12,7 @@ from ..models.search_correlated_message_subscriptions_data_sort_item_field impor
 from ..models.search_correlated_message_subscriptions_data_sort_item_order import (
     SearchCorrelatedMessageSubscriptionsDataSortItemOrder,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="SearchCorrelatedMessageSubscriptionsDataSortItem")
 
@@ -30,7 +30,9 @@ class SearchCorrelatedMessageSubscriptionsDataSortItem:
     order: SearchCorrelatedMessageSubscriptionsDataSortItemOrder | Unset = (
         SearchCorrelatedMessageSubscriptionsDataSortItemOrder.ASC
     )
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         field = self.field.value

@@ -1,5 +1,16 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ElementInstanceKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+    lift_element_instance_key,
+    lift_process_definition_id,
+    lift_process_definition_key,
+    lift_process_instance_key,
+    lift_tenant_id,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -12,7 +23,7 @@ from dateutil.parser import isoparse
 from ..models.get_process_instance_response_200_state import (
     GetProcessInstanceResponse200State,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="GetProcessInstanceResponse200")
 
@@ -54,7 +65,9 @@ class GetProcessInstanceResponse200:
     parent_process_instance_key: ProcessInstanceKey | Unset = UNSET
     parent_element_instance_key: ElementInstanceKey | Unset = UNSET
     tags: list[str] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id
@@ -136,7 +149,9 @@ class GetProcessInstanceResponse200:
 
         process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
 
-        process_definition_key = lift_process_definition_key(d.pop("processDefinitionKey"))
+        process_definition_key = lift_process_definition_key(
+            d.pop("processDefinitionKey")
+        )
 
         process_definition_version_tag = d.pop("processDefinitionVersionTag", UNSET)
 
@@ -149,7 +164,11 @@ class GetProcessInstanceResponse200:
 
         parent_process_instance_key = d.pop("parentProcessInstanceKey", UNSET)
 
-        parent_element_instance_key = lift_element_instance_key(_val) if (_val := d.pop("parentElementInstanceKey", UNSET)) is not UNSET else UNSET
+        parent_element_instance_key = (
+            lift_element_instance_key(_val)
+            if (_val := d.pop("parentElementInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         tags = cast(list[str], d.pop("tags", UNSET))
 

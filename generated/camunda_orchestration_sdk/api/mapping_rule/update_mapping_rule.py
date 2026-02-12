@@ -13,16 +13,35 @@ from ...models.update_mapping_rule_response_500 import UpdateMappingRuleResponse
 from ...models.update_mapping_rule_response_503 import UpdateMappingRuleResponse503
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(mapping_rule_id: str, *, body: UpdateMappingRuleData | Unset=UNSET) -> dict[str, Any]:
+
+def _get_kwargs(
+    mapping_rule_id: str, *, body: UpdateMappingRuleData | Unset = UNSET
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/mapping-rules/{mapping_rule_id}'.format(mapping_rule_id=quote(str(mapping_rule_id), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "put",
+        "url": "/mapping-rules/{mapping_rule_id}".format(
+            mapping_rule_id=quote(str(mapping_rule_id), safe="")
+        ),
+    }
     if not isinstance(body, Unset):
-        _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+        _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    UpdateMappingRuleResponse200
+    | UpdateMappingRuleResponse400
+    | UpdateMappingRuleResponse403
+    | UpdateMappingRuleResponse404
+    | UpdateMappingRuleResponse500
+    | UpdateMappingRuleResponse503
+    | None
+):
     if response.status_code == 200:
         response_200 = UpdateMappingRuleResponse200.from_dict(response.json())
         return response_200
@@ -46,10 +65,38 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(mapping_rule_id: str, *, client: AuthenticatedClient | Client, body: UpdateMappingRuleData | Unset=UNSET) -> Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    UpdateMappingRuleResponse200
+    | UpdateMappingRuleResponse400
+    | UpdateMappingRuleResponse403
+    | UpdateMappingRuleResponse404
+    | UpdateMappingRuleResponse500
+    | UpdateMappingRuleResponse503
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    mapping_rule_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: UpdateMappingRuleData | Unset = UNSET,
+) -> Response[
+    UpdateMappingRuleResponse200
+    | UpdateMappingRuleResponse400
+    | UpdateMappingRuleResponse403
+    | UpdateMappingRuleResponse404
+    | UpdateMappingRuleResponse500
+    | UpdateMappingRuleResponse503
+]:
     """Update mapping rule
 
      Update a mapping rule.
@@ -69,41 +116,82 @@ def sync_detailed(mapping_rule_id: str, *, client: AuthenticatedClient | Client,
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(mapping_rule_id: str, *, client: AuthenticatedClient | Client, body: UpdateMappingRuleData | Unset=UNSET, **kwargs) -> UpdateMappingRuleResponse200:
+
+def sync(
+    mapping_rule_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: UpdateMappingRuleData | Unset = UNSET,
+    **kwargs: Any,
+) -> UpdateMappingRuleResponse200:
     """Update mapping rule
 
- Update a mapping rule.
+     Update a mapping rule.
 
-Args:
-    mapping_rule_id (str):
-    body (UpdateMappingRuleData | Unset):
+    Args:
+        mapping_rule_id (str):
+        body (UpdateMappingRuleData | Unset):
 
-Raises:
-    errors.UpdateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.UpdateMappingRuleForbidden: If the response status code is 403. The request to update a mapping rule was denied. More details are provided in the response body.
-    errors.UpdateMappingRuleNotFound: If the response status code is 404. The request to update a mapping rule was denied.
-    errors.UpdateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UpdateMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    UpdateMappingRuleResponse200"""
+    Raises:
+        errors.UpdateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.UpdateMappingRuleForbidden: If the response status code is 403. The request to update a mapping rule was denied. More details are provided in the response body.
+        errors.UpdateMappingRuleNotFound: If the response status code is 404. The request to update a mapping rule was denied.
+        errors.UpdateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UpdateMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        UpdateMappingRuleResponse200"""
     response = sync_detailed(mapping_rule_id=mapping_rule_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.UpdateMappingRuleBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UpdateMappingRuleResponse400, response.parsed))
+            raise errors.UpdateMappingRuleBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateMappingRuleResponse400, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.UpdateMappingRuleForbidden(status_code=response.status_code, content=response.content, parsed=cast(UpdateMappingRuleResponse403, response.parsed))
+            raise errors.UpdateMappingRuleForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateMappingRuleResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.UpdateMappingRuleNotFound(status_code=response.status_code, content=response.content, parsed=cast(UpdateMappingRuleResponse404, response.parsed))
+            raise errors.UpdateMappingRuleNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateMappingRuleResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.UpdateMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UpdateMappingRuleResponse500, response.parsed))
+            raise errors.UpdateMappingRuleInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateMappingRuleResponse500, response.parsed),
+            )
         if response.status_code == 503:
-            raise errors.UpdateMappingRuleServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UpdateMappingRuleResponse503, response.parsed))
+            raise errors.UpdateMappingRuleServiceUnavailable(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateMappingRuleResponse503, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+    assert response.parsed is not None
+    return cast(UpdateMappingRuleResponse200, response.parsed)
 
-async def asyncio_detailed(mapping_rule_id: str, *, client: AuthenticatedClient | Client, body: UpdateMappingRuleData | Unset=UNSET) -> Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]:
+
+async def asyncio_detailed(
+    mapping_rule_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: UpdateMappingRuleData | Unset = UNSET,
+) -> Response[
+    UpdateMappingRuleResponse200
+    | UpdateMappingRuleResponse400
+    | UpdateMappingRuleResponse403
+    | UpdateMappingRuleResponse404
+    | UpdateMappingRuleResponse500
+    | UpdateMappingRuleResponse503
+]:
     """Update mapping rule
 
      Update a mapping rule.
@@ -123,36 +211,66 @@ async def asyncio_detailed(mapping_rule_id: str, *, client: AuthenticatedClient 
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(mapping_rule_id: str, *, client: AuthenticatedClient | Client, body: UpdateMappingRuleData | Unset=UNSET, **kwargs) -> UpdateMappingRuleResponse200:
+
+async def asyncio(
+    mapping_rule_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: UpdateMappingRuleData | Unset = UNSET,
+    **kwargs: Any,
+) -> UpdateMappingRuleResponse200:
     """Update mapping rule
 
- Update a mapping rule.
+     Update a mapping rule.
 
-Args:
-    mapping_rule_id (str):
-    body (UpdateMappingRuleData | Unset):
+    Args:
+        mapping_rule_id (str):
+        body (UpdateMappingRuleData | Unset):
 
-Raises:
-    errors.UpdateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.UpdateMappingRuleForbidden: If the response status code is 403. The request to update a mapping rule was denied. More details are provided in the response body.
-    errors.UpdateMappingRuleNotFound: If the response status code is 404. The request to update a mapping rule was denied.
-    errors.UpdateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UpdateMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    UpdateMappingRuleResponse200"""
-    response = await asyncio_detailed(mapping_rule_id=mapping_rule_id, client=client, body=body)
+    Raises:
+        errors.UpdateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.UpdateMappingRuleForbidden: If the response status code is 403. The request to update a mapping rule was denied. More details are provided in the response body.
+        errors.UpdateMappingRuleNotFound: If the response status code is 404. The request to update a mapping rule was denied.
+        errors.UpdateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UpdateMappingRuleServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        UpdateMappingRuleResponse200"""
+    response = await asyncio_detailed(
+        mapping_rule_id=mapping_rule_id, client=client, body=body
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.UpdateMappingRuleBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UpdateMappingRuleResponse400, response.parsed))
+            raise errors.UpdateMappingRuleBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateMappingRuleResponse400, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.UpdateMappingRuleForbidden(status_code=response.status_code, content=response.content, parsed=cast(UpdateMappingRuleResponse403, response.parsed))
+            raise errors.UpdateMappingRuleForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateMappingRuleResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.UpdateMappingRuleNotFound(status_code=response.status_code, content=response.content, parsed=cast(UpdateMappingRuleResponse404, response.parsed))
+            raise errors.UpdateMappingRuleNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateMappingRuleResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.UpdateMappingRuleInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UpdateMappingRuleResponse500, response.parsed))
+            raise errors.UpdateMappingRuleInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateMappingRuleResponse500, response.parsed),
+            )
         if response.status_code == 503:
-            raise errors.UpdateMappingRuleServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UpdateMappingRuleResponse503, response.parsed))
+            raise errors.UpdateMappingRuleServiceUnavailable(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateMappingRuleResponse503, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+    assert response.parsed is not None
+    return cast(UpdateMappingRuleResponse200, response.parsed)

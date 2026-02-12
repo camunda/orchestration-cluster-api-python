@@ -1,5 +1,20 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ElementInstanceKey,
+    IncidentKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+    lift_element_id,
+    lift_element_instance_key,
+    lift_incident_key,
+    lift_process_definition_id,
+    lift_process_definition_key,
+    lift_process_instance_key,
+    lift_tenant_id,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -15,7 +30,7 @@ from ..models.search_element_instances_response_200_items_item_state import (
 from ..models.search_element_instances_response_200_items_item_type import (
     SearchElementInstancesResponse200ItemsItemType,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="SearchElementInstancesResponse200ItemsItem")
 
@@ -57,7 +72,9 @@ class SearchElementInstancesResponse200ItemsItem:
     process_definition_key: ProcessDefinitionKey
     end_date: datetime.datetime | Unset = UNSET
     incident_key: IncidentKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id
@@ -135,7 +152,9 @@ class SearchElementInstancesResponse200ItemsItem:
 
         process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
 
-        process_definition_key = lift_process_definition_key(d.pop("processDefinitionKey"))
+        process_definition_key = lift_process_definition_key(
+            d.pop("processDefinitionKey")
+        )
 
         _end_date = d.pop("endDate", UNSET)
         end_date: datetime.datetime | Unset
@@ -144,7 +163,11 @@ class SearchElementInstancesResponse200ItemsItem:
         else:
             end_date = isoparse(_end_date)
 
-        incident_key = lift_incident_key(_val) if (_val := d.pop("incidentKey", UNSET)) is not UNSET else UNSET
+        incident_key = (
+            lift_incident_key(_val)
+            if (_val := d.pop("incidentKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         search_element_instances_response_200_items_item = cls(
             process_definition_id=process_definition_id,

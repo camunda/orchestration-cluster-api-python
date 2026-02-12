@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import TenantId, lift_tenant_id
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -10,7 +10,7 @@ from attrs import field as _attrs_field
 from ..models.search_cluster_variables_response_200_items_item_scope import (
     SearchClusterVariablesResponse200ItemsItemScope,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="SearchClusterVariablesResponse200ItemsItem")
 
@@ -32,7 +32,9 @@ class SearchClusterVariablesResponse200ItemsItem:
     scope: SearchClusterVariablesResponse200ItemsItemScope
     is_truncated: bool | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         value = self.value
@@ -72,7 +74,11 @@ class SearchClusterVariablesResponse200ItemsItem:
 
         is_truncated = d.pop("isTruncated", UNSET)
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         search_cluster_variables_response_200_items_item = cls(
             value=value,

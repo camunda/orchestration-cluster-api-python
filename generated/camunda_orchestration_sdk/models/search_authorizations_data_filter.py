@@ -12,7 +12,7 @@ from ..models.search_authorizations_data_filter_owner_type import (
 from ..models.search_authorizations_data_filter_resource_type import (
     SearchAuthorizationsDataFilterResourceType,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="SearchAuthorizationsDataFilter")
 
@@ -35,7 +35,9 @@ class SearchAuthorizationsDataFilter:
     resource_ids: list[str] | Unset = UNSET
     resource_property_names: list[str] | Unset = UNSET
     resource_type: SearchAuthorizationsDataFilterResourceType | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         owner_id = self.owner_id

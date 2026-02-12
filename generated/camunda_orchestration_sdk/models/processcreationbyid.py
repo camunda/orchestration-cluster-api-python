@@ -1,5 +1,10 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessDefinitionId,
+    TenantId,
+    lift_process_definition_id,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -77,10 +82,6 @@ class Processcreationbyid:
     tags: list[str] | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.processcreationbyid_runtime_instructions_item_type_0 import (
-            ProcesscreationbyidRuntimeInstructionsItemType0,
-        )
-
         process_definition_id = self.process_definition_id
 
         process_definition_version = self.process_definition_version
@@ -104,12 +105,7 @@ class Processcreationbyid:
         if not isinstance(self.runtime_instructions, Unset):
             runtime_instructions = []
             for runtime_instructions_item_data in self.runtime_instructions:
-                runtime_instructions_item: dict[str, Any]
-                if isinstance(
-                    runtime_instructions_item_data,
-                    ProcesscreationbyidRuntimeInstructionsItemType0,
-                ):
-                    runtime_instructions_item = runtime_instructions_item_data.to_dict()
+                runtime_instructions_item = runtime_instructions_item_data.to_dict()
 
                 runtime_instructions.append(runtime_instructions_item)
 
@@ -177,7 +173,11 @@ class Processcreationbyid:
         else:
             variables = ProcesscreationbyidVariables.from_dict(_variables)
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         operation_reference = d.pop("operationReference", UNSET)
 
@@ -209,6 +209,8 @@ class Processcreationbyid:
                 ) -> ProcesscreationbyidRuntimeInstructionsItemType0:
                     if not isinstance(data, dict):
                         raise TypeError()
+
+                    data = cast(dict[str, Any], data)
                     runtime_instructions_item_type_0 = (
                         ProcesscreationbyidRuntimeInstructionsItemType0.from_dict(data)
                     )

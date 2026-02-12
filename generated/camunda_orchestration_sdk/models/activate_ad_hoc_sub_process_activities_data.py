@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.activate_ad_hoc_sub_process_activities_data_elements_item import (
@@ -28,10 +28,12 @@ class ActivateAdHocSubProcessActivitiesData:
 
     elements: list[ActivateAdHocSubProcessActivitiesDataElementsItem]
     cancel_remaining_instances: bool | Unset = False
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
-        elements = []
+        elements: list[dict[str, Any]] = []
         for elements_item_data in self.elements:
             elements_item = elements_item_data.to_dict()
             elements.append(elements_item)
@@ -57,7 +59,7 @@ class ActivateAdHocSubProcessActivitiesData:
         )
 
         d = dict(src_dict)
-        elements = []
+        elements: list[ActivateAdHocSubProcessActivitiesDataElementsItem] = []
         _elements = d.pop("elements")
         for elements_item_data in _elements:
             elements_item = ActivateAdHocSubProcessActivitiesDataElementsItem.from_dict(

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.create_deployment_response_200_deployments_item_decision_definition import (
@@ -52,7 +52,9 @@ class CreateDeploymentResponse200DeploymentsItem:
     ) = UNSET
     form: CreateDeploymentResponse200DeploymentsItemForm | Unset = UNSET
     resource: CreateDeploymentResponse200DeploymentsItemResource | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         process_definition: dict[str, Any] | Unset = UNSET

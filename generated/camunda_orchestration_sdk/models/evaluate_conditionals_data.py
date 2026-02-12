@@ -1,5 +1,10 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessDefinitionKey,
+    TenantId,
+    lift_process_definition_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -7,7 +12,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.evaluate_conditionals_data_variables import (
@@ -36,7 +41,9 @@ class EvaluateConditionalsData:
     variables: EvaluateConditionalsDataVariables
     tenant_id: TenantId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         variables = self.variables.to_dict()
@@ -68,9 +75,17 @@ class EvaluateConditionalsData:
         d = dict(src_dict)
         variables = EvaluateConditionalsDataVariables.from_dict(d.pop("variables"))
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_definition_key = lift_process_definition_key(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
+        process_definition_key = (
+            lift_process_definition_key(_val)
+            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         evaluate_conditionals_data = cls(
             variables=variables,

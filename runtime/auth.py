@@ -649,6 +649,17 @@ class AsyncOAuthClientCredentialsAuthProvider:
                     self._try_save_file_cached_token(self._token)
             return {"Authorization": f"Bearer {self._token.access_token}"}
 
+    def get_headers(self) -> Mapping[str, str]:
+        """Sync fallback satisfying the ``AuthProvider`` protocol.
+
+        Returns cached token headers if a valid token is already held,
+        otherwise returns empty headers (the next async request hook will
+        call ``aget_headers`` to fetch a fresh token).
+        """
+        if self._token is not None and self._is_valid(self._token):
+            return {"Authorization": f"Bearer {self._token.access_token}"}
+        return {}
+
 
 def inject_auth_event_hooks(
     httpx_args: dict[str, Any] | None,

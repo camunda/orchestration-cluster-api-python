@@ -12,7 +12,7 @@ from ..models.search_user_tasks_data_sort_item_field import (
 from ..models.search_user_tasks_data_sort_item_order import (
     SearchUserTasksDataSortItemOrder,
 )
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="SearchUserTasksDataSortItem")
 
@@ -30,7 +30,9 @@ class SearchUserTasksDataSortItem:
     order: SearchUserTasksDataSortItemOrder | Unset = (
         SearchUserTasksDataSortItemOrder.ASC
     )
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         field = self.field.value

@@ -4,6 +4,8 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
@@ -24,10 +26,12 @@ class ActivateJobsResponse200:
     """
 
     jobs: list[ActivateJobsResponse200JobsItem]
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
-        jobs = []
+        jobs: list[dict[str, Any]] = []
         for jobs_item_data in self.jobs:
             jobs_item = jobs_item_data.to_dict()
             jobs.append(jobs_item)
@@ -49,7 +53,7 @@ class ActivateJobsResponse200:
         )
 
         d = dict(src_dict)
-        jobs = []
+        jobs: list[ActivateJobsResponse200JobsItem] = []
         _jobs = d.pop("jobs")
         for jobs_item_data in _jobs:
             jobs_item = ActivateJobsResponse200JobsItem.from_dict(jobs_item_data)

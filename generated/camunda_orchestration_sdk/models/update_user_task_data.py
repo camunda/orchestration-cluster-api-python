@@ -90,6 +90,8 @@ class UpdateUserTaskData:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 changeset_type_0 = UpdateUserTaskDataChangesetType0.from_dict(data)
 
                 return changeset_type_0

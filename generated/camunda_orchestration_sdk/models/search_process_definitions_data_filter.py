@@ -1,5 +1,10 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import *
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessDefinitionKey,
+    TenantId,
+    lift_process_definition_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -7,7 +12,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
+from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -44,7 +49,9 @@ class SearchProcessDefinitionsDataFilter:
     tenant_id: TenantId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     has_start_form: bool | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -115,6 +122,8 @@ class SearchProcessDefinitionsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 name_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return name_type_1
@@ -140,6 +149,8 @@ class SearchProcessDefinitionsDataFilter:
             try:
                 if not isinstance(data, dict):
                     raise TypeError()
+
+                data = cast(dict[str, Any], data)
                 process_definition_id_type_1 = ActoridAdvancedfilter.from_dict(data)
 
                 return process_definition_id_type_1
@@ -151,9 +162,17 @@ class SearchProcessDefinitionsDataFilter:
             d.pop("processDefinitionId", UNSET)
         )
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_definition_key = lift_process_definition_key(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
+        process_definition_key = (
+            lift_process_definition_key(_val)
+            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         has_start_form = d.pop("hasStartForm", UNSET)
 

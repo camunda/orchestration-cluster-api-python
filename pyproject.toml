@@ -23,12 +23,7 @@ reportMissingTypeStubs = true
 venvPath = "."
 venv = ".venv"
 exclude = [
-    "generated",
     "demo",
-    "hooks",
-    "hooks_shared",
-    "hooks_v1",
-    "hooks_v2",
     ".venv",
     "**/__pycache__",
     "**/node_modules", 

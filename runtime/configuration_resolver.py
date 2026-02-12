@@ -177,8 +177,12 @@ class CamundaSdkConfiguration(BaseModel):
         # or
         #   https://host/<clusterId>/v2
         # and the SDK will consistently call /v2/...
-        self.ZEEBE_REST_ADDRESS = self._normalize_rest_address(self.ZEEBE_REST_ADDRESS) # pyright: ignore[reportConstantRedefinition]
-        self.CAMUNDA_REST_ADDRESS = self._normalize_rest_address(self.CAMUNDA_REST_ADDRESS) # pyright: ignore[reportConstantRedefinition]
+        self.ZEEBE_REST_ADDRESS = self._normalize_rest_address(  # pyright: ignore[reportConstantRedefinition]
+            self.ZEEBE_REST_ADDRESS
+        )
+        self.CAMUNDA_REST_ADDRESS = self._normalize_rest_address(  # pyright: ignore[reportConstantRedefinition]
+            self.CAMUNDA_REST_ADDRESS
+        )
 
         if self.CAMUNDA_AUTH_STRATEGY == "BASIC":
             if not self.CAMUNDA_BASIC_AUTH_USERNAME:

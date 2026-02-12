@@ -12,15 +12,28 @@ from ...models.create_tenant_response_500 import CreateTenantResponse500
 from ...models.create_tenant_response_503 import CreateTenantResponse503
 from ...types import Response
 
+
 def _get_kwargs(*, body: CreateTenantData) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/tenants'}
-    _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+    _kwargs: dict[str, Any] = {"method": "post", "url": "/tenants"}
+    _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | CreateTenantResponse201 | CreateTenantResponse400 | CreateTenantResponse403 | CreateTenantResponse404 | CreateTenantResponse500 | CreateTenantResponse503 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    Any
+    | CreateTenantResponse201
+    | CreateTenantResponse400
+    | CreateTenantResponse403
+    | CreateTenantResponse404
+    | CreateTenantResponse500
+    | CreateTenantResponse503
+    | None
+):
     if response.status_code == 201:
         response_201 = CreateTenantResponse201.from_dict(response.json())
         return response_201
@@ -47,10 +60,37 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | CreateTenantResponse201 | CreateTenantResponse400 | CreateTenantResponse403 | CreateTenantResponse404 | CreateTenantResponse500 | CreateTenantResponse503]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: CreateTenantData) -> Response[Any | CreateTenantResponse201 | CreateTenantResponse400 | CreateTenantResponse403 | CreateTenantResponse404 | CreateTenantResponse500 | CreateTenantResponse503]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    Any
+    | CreateTenantResponse201
+    | CreateTenantResponse400
+    | CreateTenantResponse403
+    | CreateTenantResponse404
+    | CreateTenantResponse500
+    | CreateTenantResponse503
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    *, client: AuthenticatedClient | Client, body: CreateTenantData
+) -> Response[
+    Any
+    | CreateTenantResponse201
+    | CreateTenantResponse400
+    | CreateTenantResponse403
+    | CreateTenantResponse404
+    | CreateTenantResponse500
+    | CreateTenantResponse503
+]:
     """Create tenant
 
      Creates a new tenant.
@@ -69,43 +109,82 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: CreateTenantDat
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: CreateTenantData, **kwargs) -> Any:
+
+def sync(
+    *, client: AuthenticatedClient | Client, body: CreateTenantData, **kwargs: Any
+) -> CreateTenantResponse201:
     """Create tenant
 
- Creates a new tenant.
+     Creates a new tenant.
 
-Args:
-    body (CreateTenantData):
+    Args:
+        body (CreateTenantData):
 
-Raises:
-    errors.CreateTenantBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.CreateTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.CreateTenantNotFound: If the response status code is 404. Not found. The resource was not found.
-    errors.CreateTenantConflict: If the response status code is 409. Tenant with this id already exists.
-    errors.CreateTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.CreateTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    Any"""
+    Raises:
+        errors.CreateTenantBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.CreateTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.CreateTenantNotFound: If the response status code is 404. Not found. The resource was not found.
+        errors.CreateTenantConflict: If the response status code is 409. Tenant with this id already exists.
+        errors.CreateTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.CreateTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        CreateTenantResponse201"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CreateTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateTenantResponse400, response.parsed))
+            raise errors.CreateTenantBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(CreateTenantResponse400, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.CreateTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(CreateTenantResponse403, response.parsed))
+            raise errors.CreateTenantForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(CreateTenantResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.CreateTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(CreateTenantResponse404, response.parsed))
+            raise errors.CreateTenantNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(CreateTenantResponse404, response.parsed),
+            )
         if response.status_code == 409:
-            raise errors.CreateTenantConflict(status_code=response.status_code, content=response.content, parsed=response.parsed)
+            raise errors.CreateTenantConflict(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=response.parsed,
+            )
         if response.status_code == 500:
-            raise errors.CreateTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateTenantResponse500, response.parsed))
+            raise errors.CreateTenantInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(CreateTenantResponse500, response.parsed),
+            )
         if response.status_code == 503:
-            raise errors.CreateTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(CreateTenantResponse503, response.parsed))
+            raise errors.CreateTenantServiceUnavailable(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(CreateTenantResponse503, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+    assert response.parsed is not None
+    return cast(CreateTenantResponse201, response.parsed)
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: CreateTenantData) -> Response[Any | CreateTenantResponse201 | CreateTenantResponse400 | CreateTenantResponse403 | CreateTenantResponse404 | CreateTenantResponse500 | CreateTenantResponse503]:
+
+async def asyncio_detailed(
+    *, client: AuthenticatedClient | Client, body: CreateTenantData
+) -> Response[
+    Any
+    | CreateTenantResponse201
+    | CreateTenantResponse400
+    | CreateTenantResponse403
+    | CreateTenantResponse404
+    | CreateTenantResponse500
+    | CreateTenantResponse503
+]:
     """Create tenant
 
      Creates a new tenant.
@@ -124,38 +203,66 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Create
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: CreateTenantData, **kwargs) -> Any:
+
+async def asyncio(
+    *, client: AuthenticatedClient | Client, body: CreateTenantData, **kwargs: Any
+) -> CreateTenantResponse201:
     """Create tenant
 
- Creates a new tenant.
+     Creates a new tenant.
 
-Args:
-    body (CreateTenantData):
+    Args:
+        body (CreateTenantData):
 
-Raises:
-    errors.CreateTenantBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.CreateTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.CreateTenantNotFound: If the response status code is 404. Not found. The resource was not found.
-    errors.CreateTenantConflict: If the response status code is 409. Tenant with this id already exists.
-    errors.CreateTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.CreateTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    Any"""
+    Raises:
+        errors.CreateTenantBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.CreateTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.CreateTenantNotFound: If the response status code is 404. Not found. The resource was not found.
+        errors.CreateTenantConflict: If the response status code is 409. Tenant with this id already exists.
+        errors.CreateTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.CreateTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        CreateTenantResponse201"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CreateTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(CreateTenantResponse400, response.parsed))
+            raise errors.CreateTenantBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(CreateTenantResponse400, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.CreateTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(CreateTenantResponse403, response.parsed))
+            raise errors.CreateTenantForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(CreateTenantResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.CreateTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(CreateTenantResponse404, response.parsed))
+            raise errors.CreateTenantNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(CreateTenantResponse404, response.parsed),
+            )
         if response.status_code == 409:
-            raise errors.CreateTenantConflict(status_code=response.status_code, content=response.content, parsed=response.parsed)
+            raise errors.CreateTenantConflict(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=response.parsed,
+            )
         if response.status_code == 500:
-            raise errors.CreateTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(CreateTenantResponse500, response.parsed))
+            raise errors.CreateTenantInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(CreateTenantResponse500, response.parsed),
+            )
         if response.status_code == 503:
-            raise errors.CreateTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(CreateTenantResponse503, response.parsed))
+            raise errors.CreateTenantServiceUnavailable(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(CreateTenantResponse503, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return response.parsed
+    assert response.parsed is not None
+    return cast(CreateTenantResponse201, response.parsed)
