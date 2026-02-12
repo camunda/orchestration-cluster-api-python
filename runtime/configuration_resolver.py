@@ -133,32 +133,73 @@ class CamundaSdkConfiguration(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     # REST
-    ZEEBE_REST_ADDRESS: str = Field(default="http://localhost:8080/v2")
-    CAMUNDA_REST_ADDRESS: str = Field(default="http://localhost:8080/v2")
+    ZEEBE_REST_ADDRESS: str = Field(
+        default="http://localhost:8080/v2",
+        description="REST API base URL (alias for CAMUNDA_REST_ADDRESS).",
+    )
+    CAMUNDA_REST_ADDRESS: str = Field(
+        default="http://localhost:8080/v2",
+        description="REST API base URL. `/v2` is appended automatically if missing.",
+    )
 
     # OAuth
-    CAMUNDA_TOKEN_AUDIENCE: str = Field(default="zeebe.camunda.io")
-    CAMUNDA_OAUTH_URL: str = Field(default="https://login.cloud.camunda.io/oauth/token")
+    CAMUNDA_TOKEN_AUDIENCE: str = Field(
+        default="zeebe.camunda.io",
+        description="OAuth token audience.",
+    )
+    CAMUNDA_OAUTH_URL: str = Field(
+        default="https://login.cloud.camunda.io/oauth/token",
+        description="OAuth token endpoint URL.",
+    )
 
-    CAMUNDA_CLIENT_ID: str | None = None
-    CAMUNDA_CLIENT_SECRET: str | None = None
+    CAMUNDA_CLIENT_ID: str | None = Field(
+        default=None,
+        description="OAuth client ID.",
+    )
+    CAMUNDA_CLIENT_SECRET: str | None = Field(
+        default=None,
+        description="OAuth client secret.",
+    )
 
-    CAMUNDA_CLIENT_AUTH_CLIENTID: str | None = None
-    CAMUNDA_CLIENT_AUTH_CLIENTSECRET: str | None = None
+    CAMUNDA_CLIENT_AUTH_CLIENTID: str | None = Field(
+        default=None,
+        description="Alias for CAMUNDA_CLIENT_ID.",
+    )
+    CAMUNDA_CLIENT_AUTH_CLIENTSECRET: str | None = Field(
+        default=None,
+        description="Alias for CAMUNDA_CLIENT_SECRET.",
+    )
 
     # Auth strategy
-    CAMUNDA_AUTH_STRATEGY: CamundaAuthStrategy = Field(default="NONE")
+    CAMUNDA_AUTH_STRATEGY: CamundaAuthStrategy = Field(
+        default="NONE",
+        description="Authentication strategy: NONE, OAUTH, or BASIC. Auto-inferred from credentials if omitted.",
+    )
 
-    CAMUNDA_BASIC_AUTH_USERNAME: str | None = None
-    CAMUNDA_BASIC_AUTH_PASSWORD: str | None = None
+    CAMUNDA_BASIC_AUTH_USERNAME: str | None = Field(
+        default=None,
+        description="Basic auth username. Required when CAMUNDA_AUTH_STRATEGY=BASIC.",
+    )
+    CAMUNDA_BASIC_AUTH_PASSWORD: str | None = Field(
+        default=None,
+        description="Basic auth password. Required when CAMUNDA_AUTH_STRATEGY=BASIC.",
+    )
 
     # Logging
-    CAMUNDA_SDK_LOG_LEVEL: CamundaSdkLogLevel = Field(default="error")
+    CAMUNDA_SDK_LOG_LEVEL: CamundaSdkLogLevel = Field(
+        default="error",
+        description="SDK log level: silent, error, warn, info, debug, trace, or silly.",
+    )
 
     # OAuth disk cache / tarpit persistence
-    # If CAMUNDA_TOKEN_CACHE_DIR is unset/None, the SDK will not write tokens to disk.
-    CAMUNDA_TOKEN_CACHE_DIR: str | None = None
-    CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool = Field(default=False)
+    CAMUNDA_TOKEN_CACHE_DIR: str | None = Field(
+        default=None,
+        description="Directory for OAuth token disk cache. Disabled if unset.",
+    )
+    CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool = Field(
+        default=False,
+        description="Disable OAuth token disk caching.",
+    )
 
     @staticmethod
     def _normalize_rest_address(value: str) -> str:

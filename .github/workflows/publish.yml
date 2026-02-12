@@ -126,6 +126,9 @@ jobs:
       - name: Run acceptance tests
         run: uv run pytest -q tests/acceptance
 
+      - name: Check config reference is up-to-date
+        run: make config-reference-check
+
       - name: Check for changes
         id: check_changes
         run: |
