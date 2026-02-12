@@ -1,4 +1,4 @@
-.PHONY: install generate clean test itest docs-api regenerate
+.PHONY: install generate clean test itest docs-api
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
@@ -11,6 +11,8 @@ install:
 generate-v1: clean install
 	uv run generate.py --spec-ref $(SPEC_REF)
 
+# Generate the SDK, including verifying the generated code. This task will fail if the generated
+# code is not valid.
 generate: clean install
 	uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests --spec-ref $(SPEC_REF)
 	uv run ruff format generated/
@@ -26,15 +28,6 @@ clean_spec:
 
 itest: generate
 	CAMUNDA_INTEGRATION=1 uv run pytest -q tests/integration
-
-regenerate: generate
-	@if git diff --quiet generated/; then \
-		echo "No changes to generated code."; \
-	else \
-		git add generated/; \
-		git commit -m "chore: regenerate SDK"; \
-		echo "Committed regenerated SDK output."; \
-	fi
 
 test:
 	uv run pytest -q tests/acceptance
