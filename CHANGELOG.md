@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.3 (2026-02-12)
+
+### Bug Fixes
+
+- Update test coverage and docs
+  ([`0e4f495`](https://github.com/camunda/orchestration-cluster-api-python/commit/0e4f495465c3319e23470cc9364e2367b3dba596))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`466c825`](https://github.com/camunda/orchestration-cluster-api-python/commit/466c825d37e2025ccf8cfcf088032703c17fdb97))
+
+
 ## v8.9.0-dev.2 (2026-02-12)
 
 ### Bug Fixes
