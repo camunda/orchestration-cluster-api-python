@@ -126,6 +126,7 @@ jobs:
       - name: Run acceptance tests
         run: uv run pytest -q tests/acceptance
 
+      # If the following task fails, run make config-reference to update the config reference in README and push the changes
       - name: Check config reference is up-to-date
         run: make config-reference-check
 
