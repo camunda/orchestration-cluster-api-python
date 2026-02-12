@@ -4,9 +4,33 @@
 
 ## Installing the SDK to your project
 
+### Stable release (recommended for production)
+
+The stable version tracks the latest supported Camunda server release. The first stable release will be **8.9.0**.
+
 ```bash
 pip install camunda-orchestration-sdk
 ```
+
+### Pre-release / dev channel
+
+Pre-release versions (e.g. `8.9.0.dev2`) are published from the `main` branch and contain the latest changes targeting the next server minor version. Use these to preview upcoming features or validate your integration ahead of a stable release.
+
+```bash
+# pip
+pip install --pre camunda-orchestration-sdk
+
+# pin to a specific pre-release
+pip install camunda-orchestration-sdk==8.9.0.dev2
+```
+
+In a `requirements.txt`:
+
+```text
+camunda-orchestration-sdk>=8.9.0.dev1
+```
+
+> **Note:** Pre-release versions may contain breaking changes between builds. Pin to a specific version if you need reproducible builds.
 
 ### Using the generated SDK
 
@@ -91,6 +115,61 @@ You can also enable it via the explicit configuration dict:
 from camunda_orchestration_sdk import CamundaClient
 
 client = CamundaClient(configuration={"CAMUNDA_LOAD_ENVFILE": "true"})
+```
+
+### Authentication
+
+The SDK supports three authentication strategies, controlled by `CAMUNDA_AUTH_STRATEGY`:
+
+| Strategy | When to use |
+|----------|------------|
+| `NONE`   | Local development with unauthenticated Camunda (default) |
+| `OAUTH`  | Camunda SaaS or any OAuth 2.0 Client Credentials endpoint |
+| `BASIC`  | Self-Managed Camunda with Basic auth (username/password) |
+
+#### Auto-detection
+
+If you omit `CAMUNDA_AUTH_STRATEGY`, the SDK infers it from the credentials you provide:
+
+- Only `CAMUNDA_CLIENT_ID` + `CAMUNDA_CLIENT_SECRET` → **OAUTH**
+- Only `CAMUNDA_BASIC_AUTH_USERNAME` + `CAMUNDA_BASIC_AUTH_PASSWORD` → **BASIC**
+- No credentials → **NONE**
+- Both OAuth and Basic credentials present → **error** (set `CAMUNDA_AUTH_STRATEGY` explicitly)
+
+#### OAuth 2.0
+
+```bash
+CAMUNDA_REST_ADDRESS=https://cluster.example/v2
+CAMUNDA_AUTH_STRATEGY=OAUTH
+CAMUNDA_CLIENT_ID=your-client-id
+CAMUNDA_CLIENT_SECRET=your-client-secret
+# Optional:
+# CAMUNDA_OAUTH_URL=https://login.cloud.camunda.io/oauth/token
+# CAMUNDA_TOKEN_AUDIENCE=zeebe.camunda.io
+```
+
+#### Basic authentication
+
+```bash
+CAMUNDA_REST_ADDRESS=http://localhost:8080/v2
+CAMUNDA_AUTH_STRATEGY=BASIC
+CAMUNDA_BASIC_AUTH_USERNAME=your-username
+CAMUNDA_BASIC_AUTH_PASSWORD=your-password
+```
+
+Or programmatically:
+
+```python
+from camunda_orchestration_sdk import CamundaClient
+
+client = CamundaClient(
+    configuration={
+        "CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2",
+        "CAMUNDA_AUTH_STRATEGY": "BASIC",
+        "CAMUNDA_BASIC_AUTH_USERNAME": "your-username",
+        "CAMUNDA_BASIC_AUTH_PASSWORD": "your-password",
+    }
+)
 ```
 
 #### Synchronous Usage
