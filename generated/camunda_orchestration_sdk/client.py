@@ -24,6 +24,7 @@ from .runtime.auth import (
     AsyncOAuthClientCredentialsAuthProvider,
     inject_auth_event_hooks,
 )
+from .runtime.logging import CamundaLogger, SdkLogger, create_logger
 from pathlib import Path
 from .models.create_deployment_response_200 import CreateDeploymentResponse200
 from .models.deployment_process_result import DeploymentProcessResult
@@ -628,6 +629,7 @@ class CamundaClient:
         self,
         configuration: CamundaSdkConfigPartial | None = None,
         auth_provider: AuthProvider | None = None,
+        logger: CamundaLogger | None = None,
         **kwargs: Any,
     ):
         resolved = ConfigurationResolver(
@@ -635,6 +637,7 @@ class CamundaClient:
             explicit_configuration=configuration,
         ).resolve()
         self.configuration = resolved.effective
+        self._sdk_logger: SdkLogger = create_logger(logger)
 
         if "base_url" in kwargs:
             raise TypeError(
@@ -664,6 +667,7 @@ class CamundaClient:
                     cache_dir=self.configuration.CAMUNDA_TOKEN_CACHE_DIR,
                     disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
                     transport=transport,
+                    logger=self._sdk_logger,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -676,6 +680,7 @@ class CamundaClient:
             auth_provider,
             async_client=False,
             log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
+            logger=self._sdk_logger,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -6223,6 +6228,7 @@ class CamundaAsyncClient:
         self,
         configuration: CamundaSdkConfigPartial | None = None,
         auth_provider: AuthProvider | None = None,
+        logger: CamundaLogger | None = None,
         **kwargs: Any,
     ):
         resolved = ConfigurationResolver(
@@ -6230,6 +6236,7 @@ class CamundaAsyncClient:
             explicit_configuration=configuration,
         ).resolve()
         self.configuration = resolved.effective
+        self._sdk_logger: SdkLogger = create_logger(logger)
 
         if "base_url" in kwargs:
             raise TypeError(
@@ -6259,6 +6266,7 @@ class CamundaAsyncClient:
                     cache_dir=self.configuration.CAMUNDA_TOKEN_CACHE_DIR,
                     disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
                     transport=transport,
+                    logger=self._sdk_logger,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -6271,6 +6279,7 @@ class CamundaAsyncClient:
             auth_provider,
             async_client=True,
             log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
+            logger=self._sdk_logger,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -6327,7 +6336,7 @@ class CamundaAsyncClient:
     def create_job_worker(
         self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True
     ) -> JobWorker:
-        worker = JobWorker(self, callback, config)
+        worker = JobWorker(self, callback, config, logger=self._sdk_logger)
         self._workers.append(worker)
         if auto_start:
             worker.start()

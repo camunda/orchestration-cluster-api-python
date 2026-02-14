@@ -276,6 +276,7 @@ def generate_flat_client(package_path: Path) -> None:
     imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, JobHandler"
     imports_content += "\nfrom .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
     imports_content += "\nfrom .runtime.auth import AuthProvider, BasicAuthProvider, NullAuthProvider, OAuthClientCredentialsAuthProvider, AsyncOAuthClientCredentialsAuthProvider, inject_auth_event_hooks"
+    imports_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger, SdkLogger, create_logger"
     imports_content += "\nfrom pathlib import Path"
     imports_content += "\nfrom .models.create_deployment_response_200 import CreateDeploymentResponse200"
     imports_content += "\nfrom .models.deployment_process_result import DeploymentProcessResult"
@@ -353,12 +354,13 @@ class CamundaClient:
     configuration: CamundaSdkConfiguration
     auth_provider: AuthProvider
 
-    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, **kwargs: Any):
+    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, logger: CamundaLogger | None = None, **kwargs: Any):
         resolved = ConfigurationResolver(
             environment=read_environment(),
             explicit_configuration=configuration,
         ).resolve()
         self.configuration = resolved.effective
+        self._sdk_logger: SdkLogger = create_logger(logger)
 
         if "base_url" in kwargs:
             raise TypeError(
@@ -388,6 +390,7 @@ class CamundaClient:
                     cache_dir=self.configuration.CAMUNDA_TOKEN_CACHE_DIR,
                     disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
                     transport=transport,
+                    logger=self._sdk_logger,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -400,6 +403,7 @@ class CamundaClient:
             auth_provider,
             async_client=False,
             log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
+            logger=self._sdk_logger,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -486,12 +490,13 @@ class CamundaAsyncClient:
     auth_provider: AuthProvider
     _workers: list[JobWorker]
 
-    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, **kwargs: Any):
+    def __init__(self, configuration: CamundaSdkConfigPartial | None = None, auth_provider: AuthProvider | None = None, logger: CamundaLogger | None = None, **kwargs: Any):
         resolved = ConfigurationResolver(
             environment=read_environment(),
             explicit_configuration=configuration,
         ).resolve()
         self.configuration = resolved.effective
+        self._sdk_logger: SdkLogger = create_logger(logger)
 
         if "base_url" in kwargs:
             raise TypeError(
@@ -521,6 +526,7 @@ class CamundaAsyncClient:
                     cache_dir=self.configuration.CAMUNDA_TOKEN_CACHE_DIR,
                     disk_cache_disable=self.configuration.CAMUNDA_TOKEN_DISK_CACHE_DISABLE,
                     transport=transport,
+                    logger=self._sdk_logger,
                 )
             else:
                 auth_provider = NullAuthProvider()
@@ -533,6 +539,7 @@ class CamundaAsyncClient:
             auth_provider,
             async_client=True,
             log_level=self.configuration.CAMUNDA_SDK_LOG_LEVEL,
+            logger=self._sdk_logger,
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
@@ -587,7 +594,7 @@ class CamundaAsyncClient:
             return
 
     def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True) -> JobWorker:
-        worker = JobWorker(self, callback, config)
+        worker = JobWorker(self, callback, config, logger=self._sdk_logger)
         self._workers.append(worker)
         if auto_start:
             worker.start()
@@ -720,11 +727,14 @@ class CamundaAsyncClient:
 
         init_content = _ensure_all_tuple_exports(
             init_content,
-            ["CamundaClient", "CamundaAsyncClient", "WorkerConfig"],
+            ["CamundaClient", "CamundaAsyncClient", "WorkerConfig", "CamundaLogger", "NullLogger"],
         )
 
         if "from .runtime.job_worker import WorkerConfig" not in init_content:
             init_content += "\nfrom .runtime.job_worker import WorkerConfig"
+
+        if "from .runtime.logging import CamundaLogger, NullLogger" not in init_content:
+            init_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger"
 
         with open(init_file, "w") as f:
             f.write(init_content)

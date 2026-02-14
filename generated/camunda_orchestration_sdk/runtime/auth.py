@@ -14,10 +14,7 @@ from typing import Any, Mapping, Protocol, runtime_checkable
 
 import httpx
 
-try:
-    from loguru import logger as _logger
-except Exception:  # pragma: no cover
-    _logger = None  # type: ignore[assignment]
+from .logging import SdkLogger
 
 
 _LOG_LEVEL_ORDER: dict[str, int] = {
@@ -66,7 +63,7 @@ def _hash_secret_for_filename(secret: str) -> str:
     return derived.hex()[:16]
 
 
-def _ensure_dir(path: Path) -> bool:
+def _ensure_dir(path: Path, logger: SdkLogger | None = None) -> bool:
     try:
         path.mkdir(parents=True, exist_ok=True)
         # Best-effort writeability check.
@@ -75,11 +72,10 @@ def _ensure_dir(path: Path) -> bool:
         test_file.unlink(missing_ok=True)
         return True
     except Exception as e:
-        _log_warning(
-            "OAuth cache dir is not writable; disabling file cache: dir={dir} err={err}",
-            dir=str(path),
-            err=str(e),
-        )
+        if logger:
+            logger.warning(
+                f"OAuth cache dir is not writable; disabling file cache: dir={path} err={e}"
+            )
         return False
 
 
@@ -93,18 +89,6 @@ def _should_log_http_body(log_level: str | None) -> bool:
     if not log_level:
         return False
     return _LOG_LEVEL_ORDER.get(str(log_level).lower(), 0) >= _LOG_LEVEL_ORDER["trace"]
-
-
-def _log_debug(message: str, **kwargs: Any) -> None:
-    if _logger is None:
-        return
-    _logger.debug(message, **kwargs)
-
-
-def _log_warning(message: str, **kwargs: Any) -> None:
-    if _logger is None:
-        return
-    _logger.warning(message, **kwargs)
 
 
 @runtime_checkable
@@ -207,6 +191,7 @@ class OAuthClientCredentialsAuthProvider:
         saas_401_cooldown_s: float = _SAAS_401_COOLDOWN_S_DEFAULT,
         transport: httpx.BaseTransport | None = None,
         timeout: float | None = None,
+        logger: SdkLogger | None = None,
     ):
         self._oauth_url = oauth_url
         self._client_id = client_id
@@ -218,11 +203,12 @@ class OAuthClientCredentialsAuthProvider:
         self._is_saas = _is_saas_oauth_url(oauth_url)
         self._saas_401_cooldown_s = float(saas_401_cooldown_s)
         self._memoized_401: tuple[float, Exception] | None = None
+        self._logger = logger
 
         self._cache_dir = Path(cache_dir).expanduser() if cache_dir else None
         self._use_file_cache = bool(self._cache_dir) and (not disk_cache_disable)
         if self._use_file_cache and self._cache_dir is not None:
-            self._use_file_cache = _ensure_dir(self._cache_dir)
+            self._use_file_cache = _ensure_dir(self._cache_dir, logger)
 
     def close(self) -> None:
         """Close the underlying HTTP client used for token requests.
@@ -368,12 +354,10 @@ class OAuthClientCredentialsAuthProvider:
             "audience": self._audience,
         }
 
-        _log_debug(
-            "OAuth token request: url={url} audience={audience} client_id={client_id}",
-            url=self._oauth_url,
-            audience=self._audience,
-            client_id=self._client_id,
-        )
+        if self._logger:
+            self._logger.debug(
+                f"OAuth token request: url={self._oauth_url} audience={self._audience} client_id={self._client_id}"
+            )
 
         resp = self._client.post(
             self._oauth_url,
@@ -449,6 +433,7 @@ class AsyncOAuthClientCredentialsAuthProvider:
         saas_401_cooldown_s: float = _SAAS_401_COOLDOWN_S_DEFAULT,
         transport: httpx.AsyncBaseTransport | None = None,
         timeout: float | None = None,
+        logger: SdkLogger | None = None,
     ):
         self._oauth_url = oauth_url
         self._client_id = client_id
@@ -460,11 +445,12 @@ class AsyncOAuthClientCredentialsAuthProvider:
         self._is_saas = _is_saas_oauth_url(oauth_url)
         self._saas_401_cooldown_s = float(saas_401_cooldown_s)
         self._memoized_401: tuple[float, Exception] | None = None
+        self._logger = logger
 
         self._cache_dir = Path(cache_dir).expanduser() if cache_dir else None
         self._use_file_cache = bool(self._cache_dir) and (not disk_cache_disable)
         if self._use_file_cache and self._cache_dir is not None:
-            self._use_file_cache = _ensure_dir(self._cache_dir)
+            self._use_file_cache = _ensure_dir(self._cache_dir, logger)
 
     async def aclose(self) -> None:
         """Close the underlying async HTTP client used for token requests."""
@@ -559,11 +545,10 @@ class AsyncOAuthClientCredentialsAuthProvider:
             try:
                 os.chmod(token_file, 0o600)
             except Exception as exc:
-                _log_debug(
-                    "Failed to set permissions on token cache file {file}: {err}",
-                    file=str(token_file),
-                    err=str(exc),
-                )
+                if self._logger:
+                    self._logger.debug(
+                        f"Failed to set permissions on token cache file {token_file}: {exc}"
+                    )
         except Exception:
             return
 
@@ -607,12 +592,10 @@ class AsyncOAuthClientCredentialsAuthProvider:
             "audience": self._audience,
         }
 
-        _log_debug(
-            "OAuth token request (async): url={url} audience={audience} client_id={client_id}",
-            url=self._oauth_url,
-            audience=self._audience,
-            client_id=self._client_id,
-        )
+        if self._logger:
+            self._logger.debug(
+                f"OAuth token request (async): url={self._oauth_url} audience={self._audience} client_id={self._client_id}"
+            )
 
         resp = await self._client.post(
             self._oauth_url,
@@ -681,6 +664,7 @@ def inject_auth_event_hooks(
     *,
     async_client: bool = False,
     log_level: str | None = None,
+    logger: SdkLogger | None = None,
 ) -> dict[str, Any]:
     """Return a copy of httpx_args with a request hook that applies auth headers.
 
@@ -700,16 +684,13 @@ def inject_auth_event_hooks(
             if headers:
                 request.headers.update(headers)
 
-            if log_http:
-                _log_debug(
-                    "HTTP request: method={method} url={url} has_auth={has_auth}",
-                    method=request.method,
-                    url=str(request.url),
-                    has_auth=("authorization" in request.headers),
+            if log_http and logger:
+                logger.debug(
+                    f"HTTP request: method={request.method} url={request.url} has_auth={'authorization' in request.headers}"
                 )
 
         async def _response_hook_async(response: httpx.Response) -> None:
-            if not log_http:
+            if not log_http or not logger:
                 return
 
             request = response.request
@@ -721,26 +702,16 @@ def inject_auth_event_hooks(
                     body_preview = (
                         (response.text or "").strip().replace("\n", " ")[:500]
                     )
-                    _log_warning(
-                        "HTTP response: status={status} method={method} url={url} body={body}",
-                        status=status,
-                        method=request.method,
-                        url=str(request.url),
-                        body=body_preview,
+                    logger.warning(
+                        f"HTTP response: status={status} method={request.method} url={request.url} body={body_preview}"
                     )
                 else:
-                    _log_warning(
-                        "HTTP response: status={status} method={method} url={url}",
-                        status=status,
-                        method=request.method,
-                        url=str(request.url),
+                    logger.warning(
+                        f"HTTP response: status={status} method={request.method} url={request.url}"
                     )
             else:
-                _log_debug(
-                    "HTTP response: status={status} method={method} url={url}",
-                    status=status,
-                    method=request.method,
-                    url=str(request.url),
+                logger.debug(
+                    f"HTTP response: status={status} method={request.method} url={request.url}"
                 )
 
         request_hook = _request_hook_async
@@ -753,16 +724,13 @@ def inject_auth_event_hooks(
             if headers:
                 request.headers.update(headers)
 
-            if log_http:
-                _log_debug(
-                    "HTTP request: method={method} url={url} has_auth={has_auth}",
-                    method=request.method,
-                    url=str(request.url),
-                    has_auth=("authorization" in request.headers),
+            if log_http and logger:
+                logger.debug(
+                    f"HTTP request: method={request.method} url={request.url} has_auth={'authorization' in request.headers}"
                 )
 
         def _response_hook_sync(response: httpx.Response) -> None:
-            if not log_http:
+            if not log_http or not logger:
                 return
 
             request = response.request
@@ -774,26 +742,16 @@ def inject_auth_event_hooks(
                     body_preview = (
                         (response.text or "").strip().replace("\n", " ")[:500]
                     )
-                    _log_warning(
-                        "HTTP response: status={status} method={method} url={url} body={body}",
-                        status=status,
-                        method=request.method,
-                        url=str(request.url),
-                        body=body_preview,
+                    logger.warning(
+                        f"HTTP response: status={status} method={request.method} url={request.url} body={body_preview}"
                     )
                 else:
-                    _log_warning(
-                        "HTTP response: status={status} method={method} url={url}",
-                        status=status,
-                        method=request.method,
-                        url=str(request.url),
+                    logger.warning(
+                        f"HTTP response: status={status} method={request.method} url={request.url}"
                     )
             else:
-                _log_debug(
-                    "HTTP response: status={status} method={method} url={url}",
-                    status=status,
-                    method=request.method,
-                    url=str(request.url),
+                logger.debug(
+                    f"HTTP response: status={status} method={request.method} url={request.url}"
                 )
 
         request_hook = _request_hook_sync

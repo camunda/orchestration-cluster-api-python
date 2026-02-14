@@ -9,6 +9,7 @@ A fully typed Python client for the [Camunda 8 Orchestration Cluster REST API](h
 - **Zero-config** — reads `CAMUNDA_*` environment variables (12-factor style)
 - **Job workers** — long-poll workers with thread, process, or async execution strategies
 - **OAuth & Basic auth** — pluggable authentication with automatic token management
+- **Pluggable logging** — inject your own logger (stdlib `logging`, loguru, or custom)
 
 ## Installing the SDK to your project
 
@@ -325,17 +326,58 @@ with CamundaClient() as client:
 
 ### Logging
 
-The SDK uses [loguru](https://github.com/Delgan/loguru) for logging. Control the log level with the `LOGURU_LEVEL` environment variable or `CAMUNDA_SDK_LOG_LEVEL` in configuration.
+By default the SDK logs via [loguru](https://github.com/Delgan/loguru). You can inject any logger that exposes `debug`, `info`, `warning`, and `error` methods — including Python's built-in `logging.Logger`.
+
+#### Using the default logger (loguru)
+
+No configuration needed. Control verbosity with `CAMUNDA_SDK_LOG_LEVEL` or loguru's own `LOGURU_LEVEL` environment variable:
 
 ```bash
-# Run with INFO level (default is DEBUG)
-LOGURU_LEVEL=INFO python your_script.py
+CAMUNDA_SDK_LOG_LEVEL=debug python your_script.py
+```
 
-# Run with WARNING level
-LOGURU_LEVEL=WARNING python your_script.py
+#### Injecting a custom logger
 
-# Run with TRACE level (more verbose than DEBUG)
-LOGURU_LEVEL=TRACE python your_script.py
+Pass a `logger=` argument to `CamundaClient` or `CamundaAsyncClient`. The logger is forwarded to all internal components (auth providers, HTTP hooks, job workers).
+
+**stdlib `logging`:**
+
+```python
+import logging
+from camunda_orchestration_sdk import CamundaClient
+
+my_logger = logging.getLogger("my_app.camunda")
+my_logger.setLevel(logging.DEBUG)
+
+client = CamundaClient(logger=my_logger)
+```
+
+**Custom logger object:**
+
+```python
+from camunda_orchestration_sdk import CamundaClient
+
+class MyLogger:
+    def debug(self, msg, *args, **kwargs):
+        print(f"[DEBUG] {msg}")
+    def info(self, msg, *args, **kwargs):
+        print(f"[INFO] {msg}")
+    def warning(self, msg, *args, **kwargs):
+        print(f"[WARN] {msg}")
+    def error(self, msg, *args, **kwargs):
+        print(f"[ERROR] {msg}")
+
+client = CamundaClient(logger=MyLogger())
+```
+
+#### Disabling logging
+
+Pass an instance of `NullLogger` to silence all SDK output:
+
+```python
+from camunda_orchestration_sdk import CamundaClient, NullLogger
+
+client = CamundaClient(logger=NullLogger())
 ```
 
 ### Contributing

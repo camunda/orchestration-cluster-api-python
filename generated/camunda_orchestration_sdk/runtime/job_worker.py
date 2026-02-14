@@ -19,7 +19,7 @@ from typing import (
     Tuple,
 )
 from dataclasses import dataclass
-from loguru import logger
+from .logging import SdkLogger, create_logger
 from camunda_orchestration_sdk.models.job_activation_request import JobActivationRequest
 from camunda_orchestration_sdk.models.activate_jobs_jobs_item import (
     ActivateJobsJobsItem,
@@ -186,14 +186,19 @@ class JobWorker:
     _strategy: _EFFECTIVE_EXECUTION_STRATEGY = "async"
 
     def __init__(
-        self, client: "CamundaAsyncClient", callback: JobHandler, config: WorkerConfig
+        self,
+        client: "CamundaAsyncClient",
+        callback: JobHandler,
+        config: WorkerConfig,
+        logger: SdkLogger | None = None,
     ):
         self.callback = callback
         self.config = config
         self.client = client
 
         # Bind logger with context
-        self.logger = logger.bind(
+        base_logger = logger if logger is not None else create_logger()
+        self.logger = base_logger.bind(
             sdk="camunda_orchestration_sdk",
             worker=config.worker_name,
             job_type=config.job_type,

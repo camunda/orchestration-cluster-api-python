@@ -107,6 +107,8 @@ __all__ = (
     "CamundaClient",
     "CamundaAsyncClient",
     "WorkerConfig",
+    "CamundaLogger",
+    "NullLogger",
 )
 
 from camunda_orchestration_sdk.semantic_types import (
@@ -212,3 +214,4 @@ from camunda_orchestration_sdk.semantic_types import (
 )
 
 from .runtime.job_worker import WorkerConfig
+from .runtime.logging import CamundaLogger, NullLogger
