@@ -6271,8 +6271,8 @@ paths:
                 description: Process instance search response.
                 type: object
                 required:
-                - page
                 - items
+                - page
                 properties:
                   items:
                     description: The matching process instances.
@@ -12501,8 +12501,8 @@ components:
           description: Only provided if the cluster variable scope is TENANT.
       required:
       - name
-      - scope
       - value
+      - scope
     ClusterVariableSearchResult:
       description: Cluster variable search response item.
       type: object
@@ -12524,8 +12524,8 @@ components:
           description: Only provided if the cluster variable scope is TENANT.
       required:
       - name
-      - scope
       - value
+      - scope
     ClusterVariableResultBase:
       description: Cluster variable response item.
       type: object
@@ -17424,10 +17424,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimValue
-      - mappingRuleId
       - name
       - claimName
+      - mappingRuleId
+      - claimValue
     MappingRuleUpdateRequest:
       type: object
       properties:
@@ -17441,9 +17441,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimValue
-      - claimName
       - name
+      - claimName
+      - claimValue
     MappingRuleCreateUpdateResult:
       type: object
       properties:
@@ -19344,8 +19344,8 @@ components:
       description: Process instance search response.
       type: object
       required:
-      - page
       - items
+      - page
       properties:
         items:
           description: The matching process instances.
@@ -21347,8 +21347,8 @@ components:
     UserSearchResult:
       type: object
       required:
-      - page
       - items
+      - page
       properties:
         items:
           description: The matching users.
