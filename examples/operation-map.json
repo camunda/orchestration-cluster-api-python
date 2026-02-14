@@ -1,0 +1,78 @@
+{
+  "get_topology": [
+    { "file": "client.py", "region": "GetTopology", "label": "Get cluster topology" }
+  ],
+  "create_deployment": [
+    { "file": "deployment.py", "region": "DeployResources", "label": "Deploy resources from files" },
+    { "file": "deployment.py", "region": "DeployResourcesWithTenant", "label": "Deploy resources with tenant ID" }
+  ],
+  "delete_resource": [
+    { "file": "deployment.py", "region": "DeleteResource", "label": "Delete a resource" }
+  ],
+  "create_process_instance": [
+    { "file": "process_instance.py", "region": "CreateProcessInstanceByKey", "label": "Create by process definition key" },
+    { "file": "process_instance.py", "region": "CreateProcessInstanceByKeyFromStorage", "label": "Create from a stored key" },
+    { "file": "process_instance.py", "region": "CreateProcessInstanceById", "label": "Create by process definition ID" }
+  ],
+  "cancel_process_instance": [
+    { "file": "process_instance.py", "region": "CancelProcessInstance", "label": "Cancel a process instance" }
+  ],
+  "search_process_instances": [
+    { "file": "process_instance.py", "region": "SearchProcessInstances", "label": "Search process instances" }
+  ],
+  "activate_jobs": [
+    { "file": "job.py", "region": "ActivateJobs", "label": "Activate and process jobs" }
+  ],
+  "complete_job": [
+    { "file": "job.py", "region": "CompleteJob", "label": "Complete a job" }
+  ],
+  "fail_job": [
+    { "file": "job.py", "region": "FailJob", "label": "Fail a job with retry" }
+  ],
+  "evaluate_decision": [
+    { "file": "decision.py", "region": "EvaluateDecisionByKey", "label": "Evaluate by decision definition key" },
+    { "file": "decision.py", "region": "EvaluateDecisionById", "label": "Evaluate by decision definition ID" }
+  ],
+  "get_decision_definition": [
+    { "file": "decision.py", "region": "GetDecisionDefinition", "label": "Get a decision definition" }
+  ],
+  "search_decision_definitions": [
+    { "file": "decision.py", "region": "SearchDecisionDefinitions", "label": "Search decision definitions" }
+  ],
+  "assign_user_task": [
+    { "file": "user_task.py", "region": "AssignUserTask", "label": "Assign a user task" }
+  ],
+  "unassign_user_task": [
+    { "file": "user_task.py", "region": "UnassignUserTask", "label": "Unassign a user task" }
+  ],
+  "complete_user_task": [
+    { "file": "user_task.py", "region": "CompleteUserTask", "label": "Complete a user task" }
+  ],
+  "update_user_task": [
+    { "file": "user_task.py", "region": "UpdateUserTask", "label": "Update a user task" }
+  ],
+  "get_user_task": [
+    { "file": "user_task.py", "region": "GetUserTask", "label": "Get a user task" }
+  ],
+  "search_user_tasks": [
+    { "file": "user_task.py", "region": "SearchUserTasks", "label": "Search user tasks" }
+  ],
+  "correlate_message": [
+    { "file": "message_signal.py", "region": "CorrelateMessage", "label": "Correlate a message" }
+  ],
+  "publish_message": [
+    { "file": "message_signal.py", "region": "PublishMessage", "label": "Publish a message" }
+  ],
+  "broadcast_signal": [
+    { "file": "message_signal.py", "region": "BroadcastSignal", "label": "Broadcast a signal" }
+  ],
+  "get_incident": [
+    { "file": "incident.py", "region": "GetIncident", "label": "Get an incident" }
+  ],
+  "resolve_incident": [
+    { "file": "incident.py", "region": "ResolveIncident", "label": "Resolve an incident" }
+  ],
+  "search_incidents": [
+    { "file": "incident.py", "region": "SearchIncidents", "label": "Search incidents" }
+  ]
+}
