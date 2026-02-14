@@ -63,13 +63,19 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev
 
-      - name: Download camunda-schema-bundler
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release download --repo camunda/camunda-schema-bundler --pattern 'camunda-schema-bundler-linux-x64' --dir /tmp/bundler
-          chmod +x /tmp/bundler/camunda-schema-bundler-linux-x64
-          echo "BUNDLER_BIN=/tmp/bundler/camunda-schema-bundler-linux-x64" >> "$GITHUB_ENV"
+      # TODO: Restore binary download when camunda-schema-bundler repo is public.
+      # - name: Download camunda-schema-bundler
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     gh release download --repo camunda/camunda-schema-bundler --pattern 'camunda-schema-bundler-linux-x64' --dir /tmp/bundler
+      #     chmod +x /tmp/bundler/camunda-schema-bundler-linux-x64
+      #     echo "BUNDLER_BIN=/tmp/bundler/camunda-schema-bundler-linux-x64" >> "$GITHUB_ENV"
+
+      - name: Set up Node.js (for npx camunda-schema-bundler)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Start Docker Compose
         run: docker compose -f docker/docker-compose.yaml up -d --wait
