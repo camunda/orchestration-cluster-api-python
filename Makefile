@@ -1,4 +1,4 @@
-.PHONY: install generate clean test itest docs-api bundle-spec
+.PHONY: install generate clean test itest docs-api bundle-spec typecheck-examples
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
@@ -48,6 +48,9 @@ lint:
 
 typecheck:
 	uv run pyright
+
+typecheck-examples:
+	uv run pyright examples/
 
 docs-api:
 	PYTHONPATH=./generated uv run pdoc camunda_orchestration_sdk -o ./public --docformat google
