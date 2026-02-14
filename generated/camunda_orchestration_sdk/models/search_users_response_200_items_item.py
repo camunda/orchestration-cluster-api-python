@@ -24,7 +24,9 @@ class SearchUsersResponse200ItemsItem:
     username: Username | Unset = UNSET
     name: str | Unset = UNSET
     email: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         username = self.username
@@ -48,7 +50,11 @@ class SearchUsersResponse200ItemsItem:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        username = lift_username(_val) if (_val := d.pop("username", UNSET)) is not UNSET else UNSET
+        username = (
+            lift_username(_val)
+            if (_val := d.pop("username", UNSET)) is not UNSET
+            else UNSET
+        )
 
         name = d.pop("name", UNSET)
 

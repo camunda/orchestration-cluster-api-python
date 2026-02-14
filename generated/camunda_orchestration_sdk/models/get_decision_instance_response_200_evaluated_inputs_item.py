@@ -24,7 +24,9 @@ class GetDecisionInstanceResponse200EvaluatedInputsItem:
     input_id: str | Unset = UNSET
     input_name: str | Unset = UNSET
     input_value: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         input_id = self.input_id

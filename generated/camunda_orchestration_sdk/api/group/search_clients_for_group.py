@@ -5,24 +5,55 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.search_clients_for_group_data import SearchClientsForGroupData
-from ...models.search_clients_for_group_response_200 import SearchClientsForGroupResponse200
-from ...models.search_clients_for_group_response_400 import SearchClientsForGroupResponse400
-from ...models.search_clients_for_group_response_401 import SearchClientsForGroupResponse401
-from ...models.search_clients_for_group_response_403 import SearchClientsForGroupResponse403
-from ...models.search_clients_for_group_response_404 import SearchClientsForGroupResponse404
-from ...models.search_clients_for_group_response_500 import SearchClientsForGroupResponse500
+from ...models.search_clients_for_group_response_200 import (
+    SearchClientsForGroupResponse200,
+)
+from ...models.search_clients_for_group_response_400 import (
+    SearchClientsForGroupResponse400,
+)
+from ...models.search_clients_for_group_response_401 import (
+    SearchClientsForGroupResponse401,
+)
+from ...models.search_clients_for_group_response_403 import (
+    SearchClientsForGroupResponse403,
+)
+from ...models.search_clients_for_group_response_404 import (
+    SearchClientsForGroupResponse404,
+)
+from ...models.search_clients_for_group_response_500 import (
+    SearchClientsForGroupResponse500,
+)
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(group_id: str, *, body: SearchClientsForGroupData | Unset=UNSET) -> dict[str, Any]:
+
+def _get_kwargs(
+    group_id: str, *, body: SearchClientsForGroupData | Unset = UNSET
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/groups/{group_id}/clients/search'.format(group_id=quote(str(group_id), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "post",
+        "url": "/groups/{group_id}/clients/search".format(
+            group_id=quote(str(group_id), safe="")
+        ),
+    }
     if not isinstance(body, Unset):
-        _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+        _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> SearchClientsForGroupResponse200 | SearchClientsForGroupResponse400 | SearchClientsForGroupResponse401 | SearchClientsForGroupResponse403 | SearchClientsForGroupResponse404 | SearchClientsForGroupResponse500 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    SearchClientsForGroupResponse200
+    | SearchClientsForGroupResponse400
+    | SearchClientsForGroupResponse401
+    | SearchClientsForGroupResponse403
+    | SearchClientsForGroupResponse404
+    | SearchClientsForGroupResponse500
+    | None
+):
     if response.status_code == 200:
         response_200 = SearchClientsForGroupResponse200.from_dict(response.json())
         return response_200
@@ -46,10 +77,38 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchClientsForGroupResponse200 | SearchClientsForGroupResponse400 | SearchClientsForGroupResponse401 | SearchClientsForGroupResponse403 | SearchClientsForGroupResponse404 | SearchClientsForGroupResponse500]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(group_id: str, *, client: AuthenticatedClient | Client, body: SearchClientsForGroupData | Unset=UNSET) -> Response[SearchClientsForGroupResponse200 | SearchClientsForGroupResponse400 | SearchClientsForGroupResponse401 | SearchClientsForGroupResponse403 | SearchClientsForGroupResponse404 | SearchClientsForGroupResponse500]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    SearchClientsForGroupResponse200
+    | SearchClientsForGroupResponse400
+    | SearchClientsForGroupResponse401
+    | SearchClientsForGroupResponse403
+    | SearchClientsForGroupResponse404
+    | SearchClientsForGroupResponse500
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    group_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchClientsForGroupData | Unset = UNSET,
+) -> Response[
+    SearchClientsForGroupResponse200
+    | SearchClientsForGroupResponse400
+    | SearchClientsForGroupResponse401
+    | SearchClientsForGroupResponse403
+    | SearchClientsForGroupResponse404
+    | SearchClientsForGroupResponse500
+]:
     """Search group clients
 
      Search clients assigned to a group.
@@ -69,42 +128,82 @@ def sync_detailed(group_id: str, *, client: AuthenticatedClient | Client, body: 
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(group_id: str, *, client: AuthenticatedClient | Client, body: SearchClientsForGroupData | Unset=UNSET, **kwargs: Any) -> SearchClientsForGroupResponse200:
+
+def sync(
+    group_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchClientsForGroupData | Unset = UNSET,
+    **kwargs: Any,
+) -> SearchClientsForGroupResponse200:
     """Search group clients
 
- Search clients assigned to a group.
+     Search clients assigned to a group.
 
-Args:
-    group_id (str):
-    body (SearchClientsForGroupData | Unset):
+    Args:
+        group_id (str):
+        body (SearchClientsForGroupData | Unset):
 
-Raises:
-    errors.SearchClientsForGroupBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.SearchClientsForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.SearchClientsForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.SearchClientsForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-    errors.SearchClientsForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    SearchClientsForGroupResponse200"""
+    Raises:
+        errors.SearchClientsForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.SearchClientsForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.SearchClientsForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.SearchClientsForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+        errors.SearchClientsForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        SearchClientsForGroupResponse200"""
     response = sync_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchClientsForGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse400, response.parsed))
+            raise errors.SearchClientsForGroupBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForGroupResponse400, response.parsed),
+            )
         if response.status_code == 401:
-            raise errors.SearchClientsForGroupUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse401, response.parsed))
+            raise errors.SearchClientsForGroupUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForGroupResponse401, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.SearchClientsForGroupForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse403, response.parsed))
+            raise errors.SearchClientsForGroupForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForGroupResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.SearchClientsForGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse404, response.parsed))
+            raise errors.SearchClientsForGroupNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForGroupResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.SearchClientsForGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse500, response.parsed))
+            raise errors.SearchClientsForGroupInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForGroupResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(SearchClientsForGroupResponse200, response.parsed)
 
-async def asyncio_detailed(group_id: str, *, client: AuthenticatedClient | Client, body: SearchClientsForGroupData | Unset=UNSET) -> Response[SearchClientsForGroupResponse200 | SearchClientsForGroupResponse400 | SearchClientsForGroupResponse401 | SearchClientsForGroupResponse403 | SearchClientsForGroupResponse404 | SearchClientsForGroupResponse500]:
+
+async def asyncio_detailed(
+    group_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchClientsForGroupData | Unset = UNSET,
+) -> Response[
+    SearchClientsForGroupResponse200
+    | SearchClientsForGroupResponse400
+    | SearchClientsForGroupResponse401
+    | SearchClientsForGroupResponse403
+    | SearchClientsForGroupResponse404
+    | SearchClientsForGroupResponse500
+]:
     """Search group clients
 
      Search clients assigned to a group.
@@ -124,37 +223,64 @@ async def asyncio_detailed(group_id: str, *, client: AuthenticatedClient | Clien
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(group_id: str, *, client: AuthenticatedClient | Client, body: SearchClientsForGroupData | Unset=UNSET, **kwargs: Any) -> SearchClientsForGroupResponse200:
+
+async def asyncio(
+    group_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchClientsForGroupData | Unset = UNSET,
+    **kwargs: Any,
+) -> SearchClientsForGroupResponse200:
     """Search group clients
 
- Search clients assigned to a group.
+     Search clients assigned to a group.
 
-Args:
-    group_id (str):
-    body (SearchClientsForGroupData | Unset):
+    Args:
+        group_id (str):
+        body (SearchClientsForGroupData | Unset):
 
-Raises:
-    errors.SearchClientsForGroupBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.SearchClientsForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.SearchClientsForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.SearchClientsForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-    errors.SearchClientsForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    SearchClientsForGroupResponse200"""
+    Raises:
+        errors.SearchClientsForGroupBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.SearchClientsForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.SearchClientsForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.SearchClientsForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+        errors.SearchClientsForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        SearchClientsForGroupResponse200"""
     response = await asyncio_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchClientsForGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse400, response.parsed))
+            raise errors.SearchClientsForGroupBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForGroupResponse400, response.parsed),
+            )
         if response.status_code == 401:
-            raise errors.SearchClientsForGroupUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse401, response.parsed))
+            raise errors.SearchClientsForGroupUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForGroupResponse401, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.SearchClientsForGroupForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse403, response.parsed))
+            raise errors.SearchClientsForGroupForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForGroupResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.SearchClientsForGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse404, response.parsed))
+            raise errors.SearchClientsForGroupNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForGroupResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.SearchClientsForGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchClientsForGroupResponse500, response.parsed))
+            raise errors.SearchClientsForGroupInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchClientsForGroupResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(SearchClientsForGroupResponse200, response.parsed)

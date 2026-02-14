@@ -25,7 +25,9 @@ class GetAuthenticationResponse200TenantsItem:
     name: str | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     description: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         name = self.name
@@ -51,7 +53,11 @@ class GetAuthenticationResponse200TenantsItem:
         d = dict(src_dict)
         name = d.pop("name", UNSET)
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         description = d.pop("description", UNSET)
 

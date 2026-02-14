@@ -65,7 +65,9 @@ class SearchElementInstanceIncidentsDataFilter:
     process_instance_key: ProcessinstancekeyAdvancedfilter | str | Unset = UNSET
     element_instance_key: ElementinstancekeyAdvancedfilter | str | Unset = UNSET
     job_key: JobkeyAdvancedfilter | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -389,8 +391,11 @@ class SearchElementInstanceIncidentsDataFilter:
 
         _raw_incident_key = _parse_incident_key(d.pop("incidentKey", UNSET))
 
-
-        incident_key = lift_incident_key(_raw_incident_key) if isinstance(_raw_incident_key, str) else _raw_incident_key
+        incident_key = (
+            lift_incident_key(_raw_incident_key)
+            if isinstance(_raw_incident_key, str)
+            else _raw_incident_key
+        )
 
         def _parse_process_definition_key(
             data: object,

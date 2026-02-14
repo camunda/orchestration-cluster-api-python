@@ -40,7 +40,9 @@ class GetProcessDefinitionInstanceVersionStatisticsData:
         UNSET
     )
     filter_: GetProcessDefinitionInstanceVersionStatisticsDataFilter | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         page: dict[str, Any] | Unset = UNSET

@@ -8,11 +8,15 @@ from ...models.get_topology_response_401 import GetTopologyResponse401
 from ...models.get_topology_response_500 import GetTopologyResponse500
 from ...types import Response
 
+
 def _get_kwargs() -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/topology'}
+    _kwargs: dict[str, Any] = {"method": "get", "url": "/topology"}
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500 | None:
     if response.status_code == 200:
         response_200 = GetTopologyResponse200.from_dict(response.json())
         return response_200
@@ -27,10 +31,21 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client) -> Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    *, client: AuthenticatedClient | Client
+) -> Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]:
     """Get cluster topology
 
      Obtains the current topology of the cluster the gateway is part of.
@@ -46,29 +61,43 @@ def sync_detailed(*, client: AuthenticatedClient | Client) -> Response[GetTopolo
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, **kwargs: Any) -> GetTopologyResponse200:
+
+def sync(
+    *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> GetTopologyResponse200:
     """Get cluster topology
 
- Obtains the current topology of the cluster the gateway is part of.
+     Obtains the current topology of the cluster the gateway is part of.
 
-Raises:
-    errors.GetTopologyUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.GetTopologyInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    GetTopologyResponse200"""
+    Raises:
+        errors.GetTopologyUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.GetTopologyInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        GetTopologyResponse200"""
     response = sync_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
-            raise errors.GetTopologyUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetTopologyResponse401, response.parsed))
+            raise errors.GetTopologyUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetTopologyResponse401, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.GetTopologyInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetTopologyResponse500, response.parsed))
+            raise errors.GetTopologyInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetTopologyResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(GetTopologyResponse200, response.parsed)
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client) -> Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]:
+
+async def asyncio_detailed(
+    *, client: AuthenticatedClient | Client
+) -> Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]:
     """Get cluster topology
 
      Obtains the current topology of the cluster the gateway is part of.
@@ -84,24 +113,35 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client) -> Response[
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, **kwargs: Any) -> GetTopologyResponse200:
+
+async def asyncio(
+    *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> GetTopologyResponse200:
     """Get cluster topology
 
- Obtains the current topology of the cluster the gateway is part of.
+     Obtains the current topology of the cluster the gateway is part of.
 
-Raises:
-    errors.GetTopologyUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.GetTopologyInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    GetTopologyResponse200"""
+    Raises:
+        errors.GetTopologyUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.GetTopologyInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        GetTopologyResponse200"""
     response = await asyncio_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
-            raise errors.GetTopologyUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetTopologyResponse401, response.parsed))
+            raise errors.GetTopologyUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetTopologyResponse401, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.GetTopologyInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetTopologyResponse500, response.parsed))
+            raise errors.GetTopologyInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetTopologyResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(GetTopologyResponse200, response.parsed)

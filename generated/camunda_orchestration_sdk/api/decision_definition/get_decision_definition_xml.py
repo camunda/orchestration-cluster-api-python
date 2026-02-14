@@ -4,18 +4,45 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_decision_definition_xml_response_400 import GetDecisionDefinitionXMLResponse400
-from ...models.get_decision_definition_xml_response_401 import GetDecisionDefinitionXMLResponse401
-from ...models.get_decision_definition_xml_response_403 import GetDecisionDefinitionXMLResponse403
-from ...models.get_decision_definition_xml_response_404 import GetDecisionDefinitionXMLResponse404
-from ...models.get_decision_definition_xml_response_500 import GetDecisionDefinitionXMLResponse500
+from ...models.get_decision_definition_xml_response_400 import (
+    GetDecisionDefinitionXMLResponse400,
+)
+from ...models.get_decision_definition_xml_response_401 import (
+    GetDecisionDefinitionXMLResponse401,
+)
+from ...models.get_decision_definition_xml_response_403 import (
+    GetDecisionDefinitionXMLResponse403,
+)
+from ...models.get_decision_definition_xml_response_404 import (
+    GetDecisionDefinitionXMLResponse404,
+)
+from ...models.get_decision_definition_xml_response_500 import (
+    GetDecisionDefinitionXMLResponse500,
+)
 from ...types import Response
 
+
 def _get_kwargs(decision_definition_key: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'get', 'url': '/decision-definitions/{decision_definition_key}/xml'.format(decision_definition_key=quote(str(decision_definition_key), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "get",
+        "url": "/decision-definitions/{decision_definition_key}/xml".format(
+            decision_definition_key=quote(str(decision_definition_key), safe="")
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> GetDecisionDefinitionXMLResponse400 | GetDecisionDefinitionXMLResponse401 | GetDecisionDefinitionXMLResponse403 | GetDecisionDefinitionXMLResponse404 | GetDecisionDefinitionXMLResponse500 | str | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    GetDecisionDefinitionXMLResponse400
+    | GetDecisionDefinitionXMLResponse401
+    | GetDecisionDefinitionXMLResponse403
+    | GetDecisionDefinitionXMLResponse404
+    | GetDecisionDefinitionXMLResponse500
+    | str
+    | None
+):
     if response.status_code == 200:
         response_200 = response.text
         return response_200
@@ -39,10 +66,35 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[GetDecisionDefinitionXMLResponse400 | GetDecisionDefinitionXMLResponse401 | GetDecisionDefinitionXMLResponse403 | GetDecisionDefinitionXMLResponse404 | GetDecisionDefinitionXMLResponse500 | str]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(decision_definition_key: str, *, client: AuthenticatedClient | Client) -> Response[GetDecisionDefinitionXMLResponse400 | GetDecisionDefinitionXMLResponse401 | GetDecisionDefinitionXMLResponse403 | GetDecisionDefinitionXMLResponse404 | GetDecisionDefinitionXMLResponse500 | str]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    GetDecisionDefinitionXMLResponse400
+    | GetDecisionDefinitionXMLResponse401
+    | GetDecisionDefinitionXMLResponse403
+    | GetDecisionDefinitionXMLResponse404
+    | GetDecisionDefinitionXMLResponse500
+    | str
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    decision_definition_key: str, *, client: AuthenticatedClient | Client
+) -> Response[
+    GetDecisionDefinitionXMLResponse400
+    | GetDecisionDefinitionXMLResponse401
+    | GetDecisionDefinitionXMLResponse403
+    | GetDecisionDefinitionXMLResponse404
+    | GetDecisionDefinitionXMLResponse500
+    | str
+]:
     """Get decision definition XML
 
      Returns decision definition as XML.
@@ -62,42 +114,77 @@ def sync_detailed(decision_definition_key: str, *, client: AuthenticatedClient |
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(decision_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> str:
+
+def sync(
+    decision_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> str:
     """Get decision definition XML
 
- Returns decision definition as XML.
+     Returns decision definition as XML.
 
-Args:
-    decision_definition_key (str): System-generated key for a decision definition. Example:
-        2251799813326547.
+    Args:
+        decision_definition_key (str): System-generated key for a decision definition. Example:
+            2251799813326547.
 
-Raises:
-    errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
-    errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    str"""
-    response = sync_detailed(decision_definition_key=decision_definition_key, client=client)
+    Raises:
+        errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+        errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        str"""
+    response = sync_detailed(
+        decision_definition_key=decision_definition_key, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.GetDecisionDefinitionXmlBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse400, response.parsed))
+            raise errors.GetDecisionDefinitionXmlBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetDecisionDefinitionXMLResponse400, response.parsed),
+            )
         if response.status_code == 401:
-            raise errors.GetDecisionDefinitionXmlUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse401, response.parsed))
+            raise errors.GetDecisionDefinitionXmlUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetDecisionDefinitionXMLResponse401, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.GetDecisionDefinitionXmlForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse403, response.parsed))
+            raise errors.GetDecisionDefinitionXmlForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetDecisionDefinitionXMLResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.GetDecisionDefinitionXmlNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse404, response.parsed))
+            raise errors.GetDecisionDefinitionXmlNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetDecisionDefinitionXMLResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.GetDecisionDefinitionXmlInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse500, response.parsed))
+            raise errors.GetDecisionDefinitionXmlInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetDecisionDefinitionXMLResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(str, response.parsed)
 
-async def asyncio_detailed(decision_definition_key: str, *, client: AuthenticatedClient | Client) -> Response[GetDecisionDefinitionXMLResponse400 | GetDecisionDefinitionXMLResponse401 | GetDecisionDefinitionXMLResponse403 | GetDecisionDefinitionXMLResponse404 | GetDecisionDefinitionXMLResponse500 | str]:
+
+async def asyncio_detailed(
+    decision_definition_key: str, *, client: AuthenticatedClient | Client
+) -> Response[
+    GetDecisionDefinitionXMLResponse400
+    | GetDecisionDefinitionXMLResponse401
+    | GetDecisionDefinitionXMLResponse403
+    | GetDecisionDefinitionXMLResponse404
+    | GetDecisionDefinitionXMLResponse500
+    | str
+]:
     """Get decision definition XML
 
      Returns decision definition as XML.
@@ -117,37 +204,62 @@ async def asyncio_detailed(decision_definition_key: str, *, client: Authenticate
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(decision_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> str:
+
+async def asyncio(
+    decision_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> str:
     """Get decision definition XML
 
- Returns decision definition as XML.
+     Returns decision definition as XML.
 
-Args:
-    decision_definition_key (str): System-generated key for a decision definition. Example:
-        2251799813326547.
+    Args:
+        decision_definition_key (str): System-generated key for a decision definition. Example:
+            2251799813326547.
 
-Raises:
-    errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
-    errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    str"""
-    response = await asyncio_detailed(decision_definition_key=decision_definition_key, client=client)
+    Raises:
+        errors.GetDecisionDefinitionXmlBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.GetDecisionDefinitionXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.GetDecisionDefinitionXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.GetDecisionDefinitionXmlNotFound: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+        errors.GetDecisionDefinitionXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        str"""
+    response = await asyncio_detailed(
+        decision_definition_key=decision_definition_key, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.GetDecisionDefinitionXmlBadRequest(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse400, response.parsed))
+            raise errors.GetDecisionDefinitionXmlBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetDecisionDefinitionXMLResponse400, response.parsed),
+            )
         if response.status_code == 401:
-            raise errors.GetDecisionDefinitionXmlUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse401, response.parsed))
+            raise errors.GetDecisionDefinitionXmlUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetDecisionDefinitionXMLResponse401, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.GetDecisionDefinitionXmlForbidden(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse403, response.parsed))
+            raise errors.GetDecisionDefinitionXmlForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetDecisionDefinitionXMLResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.GetDecisionDefinitionXmlNotFound(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse404, response.parsed))
+            raise errors.GetDecisionDefinitionXmlNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetDecisionDefinitionXMLResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.GetDecisionDefinitionXmlInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(GetDecisionDefinitionXMLResponse500, response.parsed))
+            raise errors.GetDecisionDefinitionXmlInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(GetDecisionDefinitionXMLResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(str, response.parsed)

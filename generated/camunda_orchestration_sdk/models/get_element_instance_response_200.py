@@ -1,5 +1,20 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, IncidentKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId, lift_element_id, lift_element_instance_key, lift_incident_key, lift_process_definition_id, lift_process_definition_key, lift_process_instance_key, lift_tenant_id
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ElementInstanceKey,
+    IncidentKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+    lift_element_id,
+    lift_element_instance_key,
+    lift_incident_key,
+    lift_process_definition_id,
+    lift_process_definition_key,
+    lift_process_instance_key,
+    lift_tenant_id,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -57,7 +72,9 @@ class GetElementInstanceResponse200:
     process_definition_key: ProcessDefinitionKey
     end_date: datetime.datetime | Unset = UNSET
     incident_key: IncidentKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id
@@ -135,7 +152,9 @@ class GetElementInstanceResponse200:
 
         process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
 
-        process_definition_key = lift_process_definition_key(d.pop("processDefinitionKey"))
+        process_definition_key = lift_process_definition_key(
+            d.pop("processDefinitionKey")
+        )
 
         _end_date = d.pop("endDate", UNSET)
         end_date: datetime.datetime | Unset
@@ -144,7 +163,11 @@ class GetElementInstanceResponse200:
         else:
             end_date = isoparse(_end_date)
 
-        incident_key = lift_incident_key(_val) if (_val := d.pop("incidentKey", UNSET)) is not UNSET else UNSET
+        incident_key = (
+            lift_incident_key(_val)
+            if (_val := d.pop("incidentKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         get_element_instance_response_200 = cls(
             process_definition_id=process_definition_id,

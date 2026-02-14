@@ -15,7 +15,9 @@ T = TypeVar("T", bound="SearchJobsResponse200ItemsItemCustomHeaders")
 class SearchJobsResponse200ItemsItemCustomHeaders:
     """A set of custom headers defined during modelling."""
 
-    additional_properties: dict[str, str] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, str] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         field_dict: dict[str, Any] = {}

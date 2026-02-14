@@ -1,5 +1,10 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import SignalKey, TenantId, lift_signal_key, lift_tenant_id
+from camunda_orchestration_sdk.semantic_types import (
+    SignalKey,
+    TenantId,
+    lift_signal_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -22,7 +27,9 @@ class BroadcastSignalResponse200:
 
     tenant_id: TenantId
     signal_key: SignalKey
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         tenant_id = self.tenant_id

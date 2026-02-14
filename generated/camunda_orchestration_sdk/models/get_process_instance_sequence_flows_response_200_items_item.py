@@ -1,5 +1,16 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementId, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId, lift_element_id, lift_process_definition_id, lift_process_definition_key, lift_process_instance_key, lift_tenant_id
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+    lift_element_id,
+    lift_process_definition_id,
+    lift_process_definition_key,
+    lift_process_instance_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -32,7 +43,9 @@ class GetProcessInstanceSequenceFlowsResponse200ItemsItem:
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     element_id: ElementId | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         sequence_flow_id = self.sequence_flow_id
@@ -70,15 +83,35 @@ class GetProcessInstanceSequenceFlowsResponse200ItemsItem:
         d = dict(src_dict)
         sequence_flow_id = d.pop("sequenceFlowId", UNSET)
 
-        process_instance_key = lift_process_instance_key(_val) if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET else UNSET
+        process_instance_key = (
+            lift_process_instance_key(_val)
+            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_definition_key = lift_process_definition_key(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
+        process_definition_key = (
+            lift_process_definition_key(_val)
+            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_definition_id = lift_process_definition_id(_val) if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET else UNSET
+        process_definition_id = (
+            lift_process_definition_id(_val)
+            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        element_id = lift_element_id(_val) if (_val := d.pop("elementId", UNSET)) is not UNSET else UNSET
+        element_id = (
+            lift_element_id(_val)
+            if (_val := d.pop("elementId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         get_process_instance_sequence_flows_response_200_items_item = cls(
             sequence_flow_id=sequence_flow_id,

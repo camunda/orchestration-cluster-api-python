@@ -23,7 +23,9 @@ class EvaluateExpressionData:
 
     expression: str
     tenant_id: TenantId | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         expression = self.expression
@@ -47,7 +49,11 @@ class EvaluateExpressionData:
         d = dict(src_dict)
         expression = d.pop("expression")
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         evaluate_expression_data = cls(
             expression=expression,

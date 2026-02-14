@@ -77,8 +77,8 @@ class ModifyProcessInstancesBatchOperationData:
         )
 
         move_instructions: list[
-        ModifyProcessInstancesBatchOperationDataMoveInstructionsItem
-    ] = []
+            ModifyProcessInstancesBatchOperationDataMoveInstructionsItem
+        ] = []
         _move_instructions = d.pop("moveInstructions")
         for move_instructions_item_data in _move_instructions:
             move_instructions_item = (

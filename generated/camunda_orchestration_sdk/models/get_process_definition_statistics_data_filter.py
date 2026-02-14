@@ -114,7 +114,9 @@ class GetProcessDefinitionStatisticsDataFilter:
     incident_error_hash_code: int | PartitionidAdvancedfilter | Unset = UNSET
     tags: list[str] | Unset = UNSET
     or_: list[GetProcessDefinitionStatisticsDataFilterOrItem] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter

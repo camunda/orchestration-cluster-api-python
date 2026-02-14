@@ -32,7 +32,9 @@ class SearchClusterVariablesResponse200ItemsItem:
     scope: SearchClusterVariablesResponse200ItemsItemScope
     is_truncated: bool | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         value = self.value
@@ -72,7 +74,11 @@ class SearchClusterVariablesResponse200ItemsItem:
 
         is_truncated = d.pop("isTruncated", UNSET)
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         search_cluster_variables_response_200_items_item = cls(
             value=value,

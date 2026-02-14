@@ -4,18 +4,46 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.unassign_role_from_tenant_response_400 import UnassignRoleFromTenantResponse400
-from ...models.unassign_role_from_tenant_response_403 import UnassignRoleFromTenantResponse403
-from ...models.unassign_role_from_tenant_response_404 import UnassignRoleFromTenantResponse404
-from ...models.unassign_role_from_tenant_response_500 import UnassignRoleFromTenantResponse500
-from ...models.unassign_role_from_tenant_response_503 import UnassignRoleFromTenantResponse503
+from ...models.unassign_role_from_tenant_response_400 import (
+    UnassignRoleFromTenantResponse400,
+)
+from ...models.unassign_role_from_tenant_response_403 import (
+    UnassignRoleFromTenantResponse403,
+)
+from ...models.unassign_role_from_tenant_response_404 import (
+    UnassignRoleFromTenantResponse404,
+)
+from ...models.unassign_role_from_tenant_response_500 import (
+    UnassignRoleFromTenantResponse500,
+)
+from ...models.unassign_role_from_tenant_response_503 import (
+    UnassignRoleFromTenantResponse503,
+)
 from ...types import Response
 
+
 def _get_kwargs(tenant_id: str, role_id: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/tenants/{tenant_id}/roles/{role_id}'.format(tenant_id=quote(str(tenant_id), safe=''), role_id=quote(str(role_id), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "delete",
+        "url": "/tenants/{tenant_id}/roles/{role_id}".format(
+            tenant_id=quote(str(tenant_id), safe=""),
+            role_id=quote(str(role_id), safe=""),
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | UnassignRoleFromTenantResponse400 | UnassignRoleFromTenantResponse403 | UnassignRoleFromTenantResponse404 | UnassignRoleFromTenantResponse500 | UnassignRoleFromTenantResponse503 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    Any
+    | UnassignRoleFromTenantResponse400
+    | UnassignRoleFromTenantResponse403
+    | UnassignRoleFromTenantResponse404
+    | UnassignRoleFromTenantResponse500
+    | UnassignRoleFromTenantResponse503
+    | None
+):
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
@@ -39,10 +67,35 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | UnassignRoleFromTenantResponse400 | UnassignRoleFromTenantResponse403 | UnassignRoleFromTenantResponse404 | UnassignRoleFromTenantResponse500 | UnassignRoleFromTenantResponse503]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(tenant_id: str, role_id: str, *, client: AuthenticatedClient | Client) -> Response[Any | UnassignRoleFromTenantResponse400 | UnassignRoleFromTenantResponse403 | UnassignRoleFromTenantResponse404 | UnassignRoleFromTenantResponse500 | UnassignRoleFromTenantResponse503]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    Any
+    | UnassignRoleFromTenantResponse400
+    | UnassignRoleFromTenantResponse403
+    | UnassignRoleFromTenantResponse404
+    | UnassignRoleFromTenantResponse500
+    | UnassignRoleFromTenantResponse503
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    tenant_id: str, role_id: str, *, client: AuthenticatedClient | Client
+) -> Response[
+    Any
+    | UnassignRoleFromTenantResponse400
+    | UnassignRoleFromTenantResponse403
+    | UnassignRoleFromTenantResponse404
+    | UnassignRoleFromTenantResponse500
+    | UnassignRoleFromTenantResponse503
+]:
     """Unassign a role from a tenant
 
      Unassigns a role from a specified tenant.
@@ -64,43 +117,76 @@ def sync_detailed(tenant_id: str, role_id: str, *, client: AuthenticatedClient |
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(tenant_id: str, role_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
+
+def sync(
+    tenant_id: str, role_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> None:
     """Unassign a role from a tenant
 
- Unassigns a role from a specified tenant.
-Users, Clients or Groups, that have the role assigned, will no longer have access to the
-tenant's data - unless they are assigned directly to the tenant.
+     Unassigns a role from a specified tenant.
+    Users, Clients or Groups, that have the role assigned, will no longer have access to the
+    tenant's data - unless they are assigned directly to the tenant.
 
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    role_id (str):
+    Args:
+        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+        role_id (str):
 
-Raises:
-    errors.UnassignRoleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.UnassignRoleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.UnassignRoleFromTenantNotFound: If the response status code is 404. Not found. The tenant or role was not found.
-    errors.UnassignRoleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnassignRoleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    None"""
+    Raises:
+        errors.UnassignRoleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.UnassignRoleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.UnassignRoleFromTenantNotFound: If the response status code is 404. Not found. The tenant or role was not found.
+        errors.UnassignRoleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnassignRoleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
     response = sync_detailed(tenant_id=tenant_id, role_id=role_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.UnassignRoleFromTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse400, response.parsed))
+            raise errors.UnassignRoleFromTenantBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignRoleFromTenantResponse400, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.UnassignRoleFromTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse403, response.parsed))
+            raise errors.UnassignRoleFromTenantForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignRoleFromTenantResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.UnassignRoleFromTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse404, response.parsed))
+            raise errors.UnassignRoleFromTenantNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignRoleFromTenantResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.UnassignRoleFromTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse500, response.parsed))
+            raise errors.UnassignRoleFromTenantInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignRoleFromTenantResponse500, response.parsed),
+            )
         if response.status_code == 503:
-            raise errors.UnassignRoleFromTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse503, response.parsed))
+            raise errors.UnassignRoleFromTenantServiceUnavailable(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignRoleFromTenantResponse503, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
 
-async def asyncio_detailed(tenant_id: str, role_id: str, *, client: AuthenticatedClient | Client) -> Response[Any | UnassignRoleFromTenantResponse400 | UnassignRoleFromTenantResponse403 | UnassignRoleFromTenantResponse404 | UnassignRoleFromTenantResponse500 | UnassignRoleFromTenantResponse503]:
+
+async def asyncio_detailed(
+    tenant_id: str, role_id: str, *, client: AuthenticatedClient | Client
+) -> Response[
+    Any
+    | UnassignRoleFromTenantResponse400
+    | UnassignRoleFromTenantResponse403
+    | UnassignRoleFromTenantResponse404
+    | UnassignRoleFromTenantResponse500
+    | UnassignRoleFromTenantResponse503
+]:
     """Unassign a role from a tenant
 
      Unassigns a role from a specified tenant.
@@ -122,38 +208,63 @@ async def asyncio_detailed(tenant_id: str, role_id: str, *, client: Authenticate
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(tenant_id: str, role_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
+
+async def asyncio(
+    tenant_id: str, role_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any
+) -> None:
     """Unassign a role from a tenant
 
- Unassigns a role from a specified tenant.
-Users, Clients or Groups, that have the role assigned, will no longer have access to the
-tenant's data - unless they are assigned directly to the tenant.
+     Unassigns a role from a specified tenant.
+    Users, Clients or Groups, that have the role assigned, will no longer have access to the
+    tenant's data - unless they are assigned directly to the tenant.
 
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    role_id (str):
+    Args:
+        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+        role_id (str):
 
-Raises:
-    errors.UnassignRoleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.UnassignRoleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.UnassignRoleFromTenantNotFound: If the response status code is 404. Not found. The tenant or role was not found.
-    errors.UnassignRoleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnassignRoleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    None"""
-    response = await asyncio_detailed(tenant_id=tenant_id, role_id=role_id, client=client)
+    Raises:
+        errors.UnassignRoleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.UnassignRoleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.UnassignRoleFromTenantNotFound: If the response status code is 404. Not found. The tenant or role was not found.
+        errors.UnassignRoleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnassignRoleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
+    response = await asyncio_detailed(
+        tenant_id=tenant_id, role_id=role_id, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.UnassignRoleFromTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse400, response.parsed))
+            raise errors.UnassignRoleFromTenantBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignRoleFromTenantResponse400, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.UnassignRoleFromTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse403, response.parsed))
+            raise errors.UnassignRoleFromTenantForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignRoleFromTenantResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.UnassignRoleFromTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse404, response.parsed))
+            raise errors.UnassignRoleFromTenantNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignRoleFromTenantResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.UnassignRoleFromTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse500, response.parsed))
+            raise errors.UnassignRoleFromTenantInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignRoleFromTenantResponse500, response.parsed),
+            )
         if response.status_code == 503:
-            raise errors.UnassignRoleFromTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UnassignRoleFromTenantResponse503, response.parsed))
+            raise errors.UnassignRoleFromTenantServiceUnavailable(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignRoleFromTenantResponse503, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

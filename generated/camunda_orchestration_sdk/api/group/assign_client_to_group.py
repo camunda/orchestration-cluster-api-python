@@ -12,11 +12,30 @@ from ...models.assign_client_to_group_response_500 import AssignClientToGroupRes
 from ...models.assign_client_to_group_response_503 import AssignClientToGroupResponse503
 from ...types import Response
 
+
 def _get_kwargs(group_id: str, client_id: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'put', 'url': '/groups/{group_id}/clients/{client_id}'.format(group_id=quote(str(group_id), safe=''), client_id=quote(str(client_id), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "put",
+        "url": "/groups/{group_id}/clients/{client_id}".format(
+            group_id=quote(str(group_id), safe=""),
+            client_id=quote(str(client_id), safe=""),
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | AssignClientToGroupResponse400 | AssignClientToGroupResponse403 | AssignClientToGroupResponse404 | AssignClientToGroupResponse409 | AssignClientToGroupResponse500 | AssignClientToGroupResponse503 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    Any
+    | AssignClientToGroupResponse400
+    | AssignClientToGroupResponse403
+    | AssignClientToGroupResponse404
+    | AssignClientToGroupResponse409
+    | AssignClientToGroupResponse500
+    | AssignClientToGroupResponse503
+    | None
+):
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
@@ -43,10 +62,37 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | AssignClientToGroupResponse400 | AssignClientToGroupResponse403 | AssignClientToGroupResponse404 | AssignClientToGroupResponse409 | AssignClientToGroupResponse500 | AssignClientToGroupResponse503]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(group_id: str, client_id: str, *, client: AuthenticatedClient | Client) -> Response[Any | AssignClientToGroupResponse400 | AssignClientToGroupResponse403 | AssignClientToGroupResponse404 | AssignClientToGroupResponse409 | AssignClientToGroupResponse500 | AssignClientToGroupResponse503]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    Any
+    | AssignClientToGroupResponse400
+    | AssignClientToGroupResponse403
+    | AssignClientToGroupResponse404
+    | AssignClientToGroupResponse409
+    | AssignClientToGroupResponse500
+    | AssignClientToGroupResponse503
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    group_id: str, client_id: str, *, client: AuthenticatedClient | Client
+) -> Response[
+    Any
+    | AssignClientToGroupResponse400
+    | AssignClientToGroupResponse403
+    | AssignClientToGroupResponse404
+    | AssignClientToGroupResponse409
+    | AssignClientToGroupResponse500
+    | AssignClientToGroupResponse503
+]:
     """Assign a client to a group
 
      Assigns a client to a group, making it a member of the group.
@@ -67,45 +113,87 @@ def sync_detailed(group_id: str, client_id: str, *, client: AuthenticatedClient 
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(group_id: str, client_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
+
+def sync(
+    group_id: str,
+    client_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    **kwargs: Any,
+) -> None:
     """Assign a client to a group
 
- Assigns a client to a group, making it a member of the group.
-Members of the group inherit the group authorizations, roles, and tenant assignments.
+     Assigns a client to a group, making it a member of the group.
+    Members of the group inherit the group authorizations, roles, and tenant assignments.
 
-Args:
-    group_id (str):
-    client_id (str):
+    Args:
+        group_id (str):
+        client_id (str):
 
-Raises:
-    errors.AssignClientToGroupBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.AssignClientToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.AssignClientToGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-    errors.AssignClientToGroupConflict: If the response status code is 409. The client with the given ID is already assigned to the group.
-    errors.AssignClientToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.AssignClientToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    None"""
+    Raises:
+        errors.AssignClientToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.AssignClientToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.AssignClientToGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+        errors.AssignClientToGroupConflict: If the response status code is 409. The client with the given ID is already assigned to the group.
+        errors.AssignClientToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.AssignClientToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
     response = sync_detailed(group_id=group_id, client_id=client_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.AssignClientToGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(AssignClientToGroupResponse400, response.parsed))
+            raise errors.AssignClientToGroupBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(AssignClientToGroupResponse400, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.AssignClientToGroupForbidden(status_code=response.status_code, content=response.content, parsed=cast(AssignClientToGroupResponse403, response.parsed))
+            raise errors.AssignClientToGroupForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(AssignClientToGroupResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.AssignClientToGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(AssignClientToGroupResponse404, response.parsed))
+            raise errors.AssignClientToGroupNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(AssignClientToGroupResponse404, response.parsed),
+            )
         if response.status_code == 409:
-            raise errors.AssignClientToGroupConflict(status_code=response.status_code, content=response.content, parsed=cast(AssignClientToGroupResponse409, response.parsed))
+            raise errors.AssignClientToGroupConflict(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(AssignClientToGroupResponse409, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.AssignClientToGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(AssignClientToGroupResponse500, response.parsed))
+            raise errors.AssignClientToGroupInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(AssignClientToGroupResponse500, response.parsed),
+            )
         if response.status_code == 503:
-            raise errors.AssignClientToGroupServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(AssignClientToGroupResponse503, response.parsed))
+            raise errors.AssignClientToGroupServiceUnavailable(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(AssignClientToGroupResponse503, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
 
-async def asyncio_detailed(group_id: str, client_id: str, *, client: AuthenticatedClient | Client) -> Response[Any | AssignClientToGroupResponse400 | AssignClientToGroupResponse403 | AssignClientToGroupResponse404 | AssignClientToGroupResponse409 | AssignClientToGroupResponse500 | AssignClientToGroupResponse503]:
+
+async def asyncio_detailed(
+    group_id: str, client_id: str, *, client: AuthenticatedClient | Client
+) -> Response[
+    Any
+    | AssignClientToGroupResponse400
+    | AssignClientToGroupResponse403
+    | AssignClientToGroupResponse404
+    | AssignClientToGroupResponse409
+    | AssignClientToGroupResponse500
+    | AssignClientToGroupResponse503
+]:
     """Assign a client to a group
 
      Assigns a client to a group, making it a member of the group.
@@ -126,40 +214,73 @@ async def asyncio_detailed(group_id: str, client_id: str, *, client: Authenticat
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(group_id: str, client_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
+
+async def asyncio(
+    group_id: str,
+    client_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    **kwargs: Any,
+) -> None:
     """Assign a client to a group
 
- Assigns a client to a group, making it a member of the group.
-Members of the group inherit the group authorizations, roles, and tenant assignments.
+     Assigns a client to a group, making it a member of the group.
+    Members of the group inherit the group authorizations, roles, and tenant assignments.
 
-Args:
-    group_id (str):
-    client_id (str):
+    Args:
+        group_id (str):
+        client_id (str):
 
-Raises:
-    errors.AssignClientToGroupBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.AssignClientToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.AssignClientToGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-    errors.AssignClientToGroupConflict: If the response status code is 409. The client with the given ID is already assigned to the group.
-    errors.AssignClientToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.AssignClientToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    None"""
-    response = await asyncio_detailed(group_id=group_id, client_id=client_id, client=client)
+    Raises:
+        errors.AssignClientToGroupBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.AssignClientToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.AssignClientToGroupNotFound: If the response status code is 404. The group with the given ID was not found.
+        errors.AssignClientToGroupConflict: If the response status code is 409. The client with the given ID is already assigned to the group.
+        errors.AssignClientToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.AssignClientToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
+    response = await asyncio_detailed(
+        group_id=group_id, client_id=client_id, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.AssignClientToGroupBadRequest(status_code=response.status_code, content=response.content, parsed=cast(AssignClientToGroupResponse400, response.parsed))
+            raise errors.AssignClientToGroupBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(AssignClientToGroupResponse400, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.AssignClientToGroupForbidden(status_code=response.status_code, content=response.content, parsed=cast(AssignClientToGroupResponse403, response.parsed))
+            raise errors.AssignClientToGroupForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(AssignClientToGroupResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.AssignClientToGroupNotFound(status_code=response.status_code, content=response.content, parsed=cast(AssignClientToGroupResponse404, response.parsed))
+            raise errors.AssignClientToGroupNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(AssignClientToGroupResponse404, response.parsed),
+            )
         if response.status_code == 409:
-            raise errors.AssignClientToGroupConflict(status_code=response.status_code, content=response.content, parsed=cast(AssignClientToGroupResponse409, response.parsed))
+            raise errors.AssignClientToGroupConflict(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(AssignClientToGroupResponse409, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.AssignClientToGroupInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(AssignClientToGroupResponse500, response.parsed))
+            raise errors.AssignClientToGroupInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(AssignClientToGroupResponse500, response.parsed),
+            )
         if response.status_code == 503:
-            raise errors.AssignClientToGroupServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(AssignClientToGroupResponse503, response.parsed))
+            raise errors.AssignClientToGroupServiceUnavailable(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(AssignClientToGroupResponse503, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

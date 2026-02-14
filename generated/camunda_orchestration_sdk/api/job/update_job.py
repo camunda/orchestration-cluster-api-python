@@ -12,15 +12,30 @@ from ...models.update_job_response_500 import UpdateJobResponse500
 from ...models.update_job_response_503 import UpdateJobResponse503
 from ...types import Response
 
+
 def _get_kwargs(job_key: str, *, body: UpdateJobData) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'patch', 'url': '/jobs/{job_key}'.format(job_key=quote(str(job_key), safe=''))}
-    _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+    _kwargs: dict[str, Any] = {
+        "method": "patch",
+        "url": "/jobs/{job_key}".format(job_key=quote(str(job_key), safe="")),
+    }
+    _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | UpdateJobResponse400 | UpdateJobResponse404 | UpdateJobResponse409 | UpdateJobResponse500 | UpdateJobResponse503 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    Any
+    | UpdateJobResponse400
+    | UpdateJobResponse404
+    | UpdateJobResponse409
+    | UpdateJobResponse500
+    | UpdateJobResponse503
+    | None
+):
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
@@ -44,10 +59,35 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | UpdateJobResponse400 | UpdateJobResponse404 | UpdateJobResponse409 | UpdateJobResponse500 | UpdateJobResponse503]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(job_key: str, *, client: AuthenticatedClient | Client, body: UpdateJobData) -> Response[Any | UpdateJobResponse400 | UpdateJobResponse404 | UpdateJobResponse409 | UpdateJobResponse500 | UpdateJobResponse503]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    Any
+    | UpdateJobResponse400
+    | UpdateJobResponse404
+    | UpdateJobResponse409
+    | UpdateJobResponse500
+    | UpdateJobResponse503
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    job_key: str, *, client: AuthenticatedClient | Client, body: UpdateJobData
+) -> Response[
+    Any
+    | UpdateJobResponse400
+    | UpdateJobResponse404
+    | UpdateJobResponse409
+    | UpdateJobResponse500
+    | UpdateJobResponse503
+]:
     """Update job
 
      Update a job with the given key.
@@ -67,41 +107,78 @@ def sync_detailed(job_key: str, *, client: AuthenticatedClient | Client, body: U
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(job_key: str, *, client: AuthenticatedClient | Client, body: UpdateJobData, **kwargs: Any) -> None:
+
+def sync(
+    job_key: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: UpdateJobData,
+    **kwargs: Any,
+) -> None:
     """Update job
 
- Update a job with the given key.
+     Update a job with the given key.
 
-Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (UpdateJobData):
+    Args:
+        job_key (str): System-generated key for a job. Example: 2251799813653498.
+        body (UpdateJobData):
 
-Raises:
-    errors.UpdateJobBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.UpdateJobNotFound: If the response status code is 404. The job with the jobKey is not found.
-    errors.UpdateJobConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
-    errors.UpdateJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UpdateJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    None"""
+    Raises:
+        errors.UpdateJobBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.UpdateJobNotFound: If the response status code is 404. The job with the jobKey is not found.
+        errors.UpdateJobConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+        errors.UpdateJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UpdateJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
     response = sync_detailed(job_key=job_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.UpdateJobBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UpdateJobResponse400, response.parsed))
+            raise errors.UpdateJobBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateJobResponse400, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.UpdateJobNotFound(status_code=response.status_code, content=response.content, parsed=cast(UpdateJobResponse404, response.parsed))
+            raise errors.UpdateJobNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateJobResponse404, response.parsed),
+            )
         if response.status_code == 409:
-            raise errors.UpdateJobConflict(status_code=response.status_code, content=response.content, parsed=cast(UpdateJobResponse409, response.parsed))
+            raise errors.UpdateJobConflict(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateJobResponse409, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.UpdateJobInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UpdateJobResponse500, response.parsed))
+            raise errors.UpdateJobInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateJobResponse500, response.parsed),
+            )
         if response.status_code == 503:
-            raise errors.UpdateJobServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UpdateJobResponse503, response.parsed))
+            raise errors.UpdateJobServiceUnavailable(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateJobResponse503, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
 
-async def asyncio_detailed(job_key: str, *, client: AuthenticatedClient | Client, body: UpdateJobData) -> Response[Any | UpdateJobResponse400 | UpdateJobResponse404 | UpdateJobResponse409 | UpdateJobResponse500 | UpdateJobResponse503]:
+
+async def asyncio_detailed(
+    job_key: str, *, client: AuthenticatedClient | Client, body: UpdateJobData
+) -> Response[
+    Any
+    | UpdateJobResponse400
+    | UpdateJobResponse404
+    | UpdateJobResponse409
+    | UpdateJobResponse500
+    | UpdateJobResponse503
+]:
     """Update job
 
      Update a job with the given key.
@@ -121,36 +198,63 @@ async def asyncio_detailed(job_key: str, *, client: AuthenticatedClient | Client
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(job_key: str, *, client: AuthenticatedClient | Client, body: UpdateJobData, **kwargs: Any) -> None:
+
+async def asyncio(
+    job_key: str,
+    *,
+    client: AuthenticatedClient | Client,
+    body: UpdateJobData,
+    **kwargs: Any,
+) -> None:
     """Update job
 
- Update a job with the given key.
+     Update a job with the given key.
 
-Args:
-    job_key (str): System-generated key for a job. Example: 2251799813653498.
-    body (UpdateJobData):
+    Args:
+        job_key (str): System-generated key for a job. Example: 2251799813653498.
+        body (UpdateJobData):
 
-Raises:
-    errors.UpdateJobBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.UpdateJobNotFound: If the response status code is 404. The job with the jobKey is not found.
-    errors.UpdateJobConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
-    errors.UpdateJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UpdateJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    None"""
+    Raises:
+        errors.UpdateJobBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.UpdateJobNotFound: If the response status code is 404. The job with the jobKey is not found.
+        errors.UpdateJobConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+        errors.UpdateJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UpdateJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
     response = await asyncio_detailed(job_key=job_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.UpdateJobBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UpdateJobResponse400, response.parsed))
+            raise errors.UpdateJobBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateJobResponse400, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.UpdateJobNotFound(status_code=response.status_code, content=response.content, parsed=cast(UpdateJobResponse404, response.parsed))
+            raise errors.UpdateJobNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateJobResponse404, response.parsed),
+            )
         if response.status_code == 409:
-            raise errors.UpdateJobConflict(status_code=response.status_code, content=response.content, parsed=cast(UpdateJobResponse409, response.parsed))
+            raise errors.UpdateJobConflict(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateJobResponse409, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.UpdateJobInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UpdateJobResponse500, response.parsed))
+            raise errors.UpdateJobInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateJobResponse500, response.parsed),
+            )
         if response.status_code == 503:
-            raise errors.UpdateJobServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UpdateJobResponse503, response.parsed))
+            raise errors.UpdateJobServiceUnavailable(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UpdateJobResponse503, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

@@ -1,5 +1,16 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, DecisionEvaluationKey, ProcessDefinitionKey, ProcessInstanceKey, TenantId, lift_decision_definition_id, lift_decision_evaluation_key, lift_process_definition_key, lift_process_instance_key, lift_tenant_id
+from camunda_orchestration_sdk.semantic_types import (
+    DecisionDefinitionId,
+    DecisionEvaluationKey,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+    lift_decision_definition_id,
+    lift_decision_evaluation_key,
+    lift_process_definition_key,
+    lift_process_instance_key,
+    lift_tenant_id,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -79,7 +90,9 @@ class SearchDecisionInstancesDataFilter:
     root_decision_definition_key: DecisiondefinitionkeyAdvancedfilter | str | Unset = (
         UNSET
     )
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.decisiondefinitionkey_advancedfilter import (
@@ -294,7 +307,11 @@ class SearchDecisionInstancesDataFilter:
 
         evaluation_date = _parse_evaluation_date(d.pop("evaluationDate", UNSET))
 
-        decision_definition_id = lift_decision_definition_id(_val) if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET else UNSET
+        decision_definition_id = (
+            lift_decision_definition_id(_val)
+            if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         decision_definition_name = d.pop("decisionDefinitionName", UNSET)
 
@@ -313,13 +330,29 @@ class SearchDecisionInstancesDataFilter:
                 )
             )
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        decision_evaluation_key = lift_decision_evaluation_key(_val) if (_val := d.pop("decisionEvaluationKey", UNSET)) is not UNSET else UNSET
+        decision_evaluation_key = (
+            lift_decision_evaluation_key(_val)
+            if (_val := d.pop("decisionEvaluationKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_definition_key = lift_process_definition_key(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
+        process_definition_key = (
+            lift_process_definition_key(_val)
+            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_instance_key = lift_process_instance_key(_val) if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET else UNSET
+        process_instance_key = (
+            lift_process_instance_key(_val)
+            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         def _parse_decision_definition_key(
             data: object,

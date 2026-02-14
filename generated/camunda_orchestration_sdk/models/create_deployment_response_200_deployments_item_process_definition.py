@@ -1,5 +1,12 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ProcessDefinitionId, ProcessDefinitionKey, TenantId, lift_process_definition_id, lift_process_definition_key, lift_tenant_id
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    TenantId,
+    lift_process_definition_id,
+    lift_process_definition_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -32,7 +39,9 @@ class CreateDeploymentResponse200DeploymentsItemProcessDefinition:
     resource_name: str
     tenant_id: TenantId
     process_definition_key: ProcessDefinitionKey
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id
@@ -70,7 +79,9 @@ class CreateDeploymentResponse200DeploymentsItemProcessDefinition:
 
         tenant_id = lift_tenant_id(d.pop("tenantId"))
 
-        process_definition_key = lift_process_definition_key(d.pop("processDefinitionKey"))
+        process_definition_key = lift_process_definition_key(
+            d.pop("processDefinitionKey")
+        )
 
         create_deployment_response_200_deployments_item_process_definition = cls(
             process_definition_id=process_definition_id,

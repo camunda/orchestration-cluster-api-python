@@ -4,45 +4,108 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.unassign_mapping_rule_from_tenant_response_400 import UnassignMappingRuleFromTenantResponse400
-from ...models.unassign_mapping_rule_from_tenant_response_403 import UnassignMappingRuleFromTenantResponse403
-from ...models.unassign_mapping_rule_from_tenant_response_404 import UnassignMappingRuleFromTenantResponse404
-from ...models.unassign_mapping_rule_from_tenant_response_500 import UnassignMappingRuleFromTenantResponse500
-from ...models.unassign_mapping_rule_from_tenant_response_503 import UnassignMappingRuleFromTenantResponse503
+from ...models.unassign_mapping_rule_from_tenant_response_400 import (
+    UnassignMappingRuleFromTenantResponse400,
+)
+from ...models.unassign_mapping_rule_from_tenant_response_403 import (
+    UnassignMappingRuleFromTenantResponse403,
+)
+from ...models.unassign_mapping_rule_from_tenant_response_404 import (
+    UnassignMappingRuleFromTenantResponse404,
+)
+from ...models.unassign_mapping_rule_from_tenant_response_500 import (
+    UnassignMappingRuleFromTenantResponse500,
+)
+from ...models.unassign_mapping_rule_from_tenant_response_503 import (
+    UnassignMappingRuleFromTenantResponse503,
+)
 from ...types import Response
 
+
 def _get_kwargs(tenant_id: str, mapping_rule_id: str) -> dict[str, Any]:
-    _kwargs: dict[str, Any] = {'method': 'delete', 'url': '/tenants/{tenant_id}/mapping-rules/{mapping_rule_id}'.format(tenant_id=quote(str(tenant_id), safe=''), mapping_rule_id=quote(str(mapping_rule_id), safe=''))}
+    _kwargs: dict[str, Any] = {
+        "method": "delete",
+        "url": "/tenants/{tenant_id}/mapping-rules/{mapping_rule_id}".format(
+            tenant_id=quote(str(tenant_id), safe=""),
+            mapping_rule_id=quote(str(mapping_rule_id), safe=""),
+        ),
+    }
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Any | UnassignMappingRuleFromTenantResponse400 | UnassignMappingRuleFromTenantResponse403 | UnassignMappingRuleFromTenantResponse404 | UnassignMappingRuleFromTenantResponse500 | UnassignMappingRuleFromTenantResponse503 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    Any
+    | UnassignMappingRuleFromTenantResponse400
+    | UnassignMappingRuleFromTenantResponse403
+    | UnassignMappingRuleFromTenantResponse404
+    | UnassignMappingRuleFromTenantResponse500
+    | UnassignMappingRuleFromTenantResponse503
+    | None
+):
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = UnassignMappingRuleFromTenantResponse400.from_dict(response.json())
+        response_400 = UnassignMappingRuleFromTenantResponse400.from_dict(
+            response.json()
+        )
         return response_400
     if response.status_code == 403:
-        response_403 = UnassignMappingRuleFromTenantResponse403.from_dict(response.json())
+        response_403 = UnassignMappingRuleFromTenantResponse403.from_dict(
+            response.json()
+        )
         return response_403
     if response.status_code == 404:
-        response_404 = UnassignMappingRuleFromTenantResponse404.from_dict(response.json())
+        response_404 = UnassignMappingRuleFromTenantResponse404.from_dict(
+            response.json()
+        )
         return response_404
     if response.status_code == 500:
-        response_500 = UnassignMappingRuleFromTenantResponse500.from_dict(response.json())
+        response_500 = UnassignMappingRuleFromTenantResponse500.from_dict(
+            response.json()
+        )
         return response_500
     if response.status_code == 503:
-        response_503 = UnassignMappingRuleFromTenantResponse503.from_dict(response.json())
+        response_503 = UnassignMappingRuleFromTenantResponse503.from_dict(
+            response.json()
+        )
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | UnassignMappingRuleFromTenantResponse400 | UnassignMappingRuleFromTenantResponse403 | UnassignMappingRuleFromTenantResponse404 | UnassignMappingRuleFromTenantResponse500 | UnassignMappingRuleFromTenantResponse503]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(tenant_id: str, mapping_rule_id: str, *, client: AuthenticatedClient | Client) -> Response[Any | UnassignMappingRuleFromTenantResponse400 | UnassignMappingRuleFromTenantResponse403 | UnassignMappingRuleFromTenantResponse404 | UnassignMappingRuleFromTenantResponse500 | UnassignMappingRuleFromTenantResponse503]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    Any
+    | UnassignMappingRuleFromTenantResponse400
+    | UnassignMappingRuleFromTenantResponse403
+    | UnassignMappingRuleFromTenantResponse404
+    | UnassignMappingRuleFromTenantResponse500
+    | UnassignMappingRuleFromTenantResponse503
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    tenant_id: str, mapping_rule_id: str, *, client: AuthenticatedClient | Client
+) -> Response[
+    Any
+    | UnassignMappingRuleFromTenantResponse400
+    | UnassignMappingRuleFromTenantResponse403
+    | UnassignMappingRuleFromTenantResponse404
+    | UnassignMappingRuleFromTenantResponse500
+    | UnassignMappingRuleFromTenantResponse503
+]:
     """Unassign a mapping rule from a tenant
 
      Unassigns a single mapping rule from a specified tenant without deleting the rule.
@@ -62,41 +125,80 @@ def sync_detailed(tenant_id: str, mapping_rule_id: str, *, client: Authenticated
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(tenant_id: str, mapping_rule_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
+
+def sync(
+    tenant_id: str,
+    mapping_rule_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    **kwargs: Any,
+) -> None:
     """Unassign a mapping rule from a tenant
 
- Unassigns a single mapping rule from a specified tenant without deleting the rule.
+     Unassigns a single mapping rule from a specified tenant without deleting the rule.
 
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    mapping_rule_id (str):
+    Args:
+        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+        mapping_rule_id (str):
 
-Raises:
-    errors.UnassignMappingRuleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.UnassignMappingRuleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.UnassignMappingRuleFromTenantNotFound: If the response status code is 404. Not found. The tenant or mapping rule was not found.
-    errors.UnassignMappingRuleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnassignMappingRuleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    None"""
-    response = sync_detailed(tenant_id=tenant_id, mapping_rule_id=mapping_rule_id, client=client)
+    Raises:
+        errors.UnassignMappingRuleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.UnassignMappingRuleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.UnassignMappingRuleFromTenantNotFound: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+        errors.UnassignMappingRuleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnassignMappingRuleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
+    response = sync_detailed(
+        tenant_id=tenant_id, mapping_rule_id=mapping_rule_id, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.UnassignMappingRuleFromTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UnassignMappingRuleFromTenantResponse400, response.parsed))
+            raise errors.UnassignMappingRuleFromTenantBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignMappingRuleFromTenantResponse400, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.UnassignMappingRuleFromTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(UnassignMappingRuleFromTenantResponse403, response.parsed))
+            raise errors.UnassignMappingRuleFromTenantForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignMappingRuleFromTenantResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.UnassignMappingRuleFromTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(UnassignMappingRuleFromTenantResponse404, response.parsed))
+            raise errors.UnassignMappingRuleFromTenantNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignMappingRuleFromTenantResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.UnassignMappingRuleFromTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UnassignMappingRuleFromTenantResponse500, response.parsed))
+            raise errors.UnassignMappingRuleFromTenantInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignMappingRuleFromTenantResponse500, response.parsed),
+            )
         if response.status_code == 503:
-            raise errors.UnassignMappingRuleFromTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UnassignMappingRuleFromTenantResponse503, response.parsed))
+            raise errors.UnassignMappingRuleFromTenantServiceUnavailable(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignMappingRuleFromTenantResponse503, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
 
-async def asyncio_detailed(tenant_id: str, mapping_rule_id: str, *, client: AuthenticatedClient | Client) -> Response[Any | UnassignMappingRuleFromTenantResponse400 | UnassignMappingRuleFromTenantResponse403 | UnassignMappingRuleFromTenantResponse404 | UnassignMappingRuleFromTenantResponse500 | UnassignMappingRuleFromTenantResponse503]:
+
+async def asyncio_detailed(
+    tenant_id: str, mapping_rule_id: str, *, client: AuthenticatedClient | Client
+) -> Response[
+    Any
+    | UnassignMappingRuleFromTenantResponse400
+    | UnassignMappingRuleFromTenantResponse403
+    | UnassignMappingRuleFromTenantResponse404
+    | UnassignMappingRuleFromTenantResponse500
+    | UnassignMappingRuleFromTenantResponse503
+]:
     """Unassign a mapping rule from a tenant
 
      Unassigns a single mapping rule from a specified tenant without deleting the rule.
@@ -116,36 +218,65 @@ async def asyncio_detailed(tenant_id: str, mapping_rule_id: str, *, client: Auth
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(tenant_id: str, mapping_rule_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
+
+async def asyncio(
+    tenant_id: str,
+    mapping_rule_id: str,
+    *,
+    client: AuthenticatedClient | Client,
+    **kwargs: Any,
+) -> None:
     """Unassign a mapping rule from a tenant
 
- Unassigns a single mapping rule from a specified tenant without deleting the rule.
+     Unassigns a single mapping rule from a specified tenant without deleting the rule.
 
-Args:
-    tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-    mapping_rule_id (str):
+    Args:
+        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+        mapping_rule_id (str):
 
-Raises:
-    errors.UnassignMappingRuleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.UnassignMappingRuleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.UnassignMappingRuleFromTenantNotFound: If the response status code is 404. Not found. The tenant or mapping rule was not found.
-    errors.UnassignMappingRuleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnassignMappingRuleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    None"""
-    response = await asyncio_detailed(tenant_id=tenant_id, mapping_rule_id=mapping_rule_id, client=client)
+    Raises:
+        errors.UnassignMappingRuleFromTenantBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.UnassignMappingRuleFromTenantForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.UnassignMappingRuleFromTenantNotFound: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+        errors.UnassignMappingRuleFromTenantInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnassignMappingRuleFromTenantServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
+    response = await asyncio_detailed(
+        tenant_id=tenant_id, mapping_rule_id=mapping_rule_id, client=client
+    )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.UnassignMappingRuleFromTenantBadRequest(status_code=response.status_code, content=response.content, parsed=cast(UnassignMappingRuleFromTenantResponse400, response.parsed))
+            raise errors.UnassignMappingRuleFromTenantBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignMappingRuleFromTenantResponse400, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.UnassignMappingRuleFromTenantForbidden(status_code=response.status_code, content=response.content, parsed=cast(UnassignMappingRuleFromTenantResponse403, response.parsed))
+            raise errors.UnassignMappingRuleFromTenantForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignMappingRuleFromTenantResponse403, response.parsed),
+            )
         if response.status_code == 404:
-            raise errors.UnassignMappingRuleFromTenantNotFound(status_code=response.status_code, content=response.content, parsed=cast(UnassignMappingRuleFromTenantResponse404, response.parsed))
+            raise errors.UnassignMappingRuleFromTenantNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignMappingRuleFromTenantResponse404, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.UnassignMappingRuleFromTenantInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(UnassignMappingRuleFromTenantResponse500, response.parsed))
+            raise errors.UnassignMappingRuleFromTenantInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignMappingRuleFromTenantResponse500, response.parsed),
+            )
         if response.status_code == 503:
-            raise errors.UnassignMappingRuleFromTenantServiceUnavailable(status_code=response.status_code, content=response.content, parsed=cast(UnassignMappingRuleFromTenantResponse503, response.parsed))
+            raise errors.UnassignMappingRuleFromTenantServiceUnavailable(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(UnassignMappingRuleFromTenantResponse503, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

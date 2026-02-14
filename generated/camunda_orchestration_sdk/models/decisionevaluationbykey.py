@@ -1,5 +1,10 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import DecisionDefinitionKey, TenantId, lift_decision_definition_key, lift_tenant_id
+from camunda_orchestration_sdk.semantic_types import (
+    DecisionDefinitionKey,
+    TenantId,
+    lift_decision_definition_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -60,7 +65,9 @@ class Decisionevaluationbykey:
         )
 
         d = dict(src_dict)
-        decision_definition_key = lift_decision_definition_key(d.pop("decisionDefinitionKey"))
+        decision_definition_key = lift_decision_definition_key(
+            d.pop("decisionDefinitionKey")
+        )
 
         _variables = d.pop("variables", UNSET)
         variables: DecisionevaluationbyIDVariables | Unset
@@ -69,7 +76,11 @@ class Decisionevaluationbykey:
         else:
             variables = DecisionevaluationbyIDVariables.from_dict(_variables)
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         decisionevaluationbykey = cls(
             decision_definition_key=decision_definition_key,

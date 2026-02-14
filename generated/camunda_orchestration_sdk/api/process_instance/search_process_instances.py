@@ -4,23 +4,44 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.search_process_instances_data import SearchProcessInstancesData
-from ...models.search_process_instances_response_200 import SearchProcessInstancesResponse200
-from ...models.search_process_instances_response_400 import SearchProcessInstancesResponse400
-from ...models.search_process_instances_response_401 import SearchProcessInstancesResponse401
-from ...models.search_process_instances_response_403 import SearchProcessInstancesResponse403
-from ...models.search_process_instances_response_500 import SearchProcessInstancesResponse500
+from ...models.search_process_instances_response_200 import (
+    SearchProcessInstancesResponse200,
+)
+from ...models.search_process_instances_response_400 import (
+    SearchProcessInstancesResponse400,
+)
+from ...models.search_process_instances_response_401 import (
+    SearchProcessInstancesResponse401,
+)
+from ...models.search_process_instances_response_403 import (
+    SearchProcessInstancesResponse403,
+)
+from ...models.search_process_instances_response_500 import (
+    SearchProcessInstancesResponse500,
+)
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: SearchProcessInstancesData | Unset=UNSET) -> dict[str, Any]:
+
+def _get_kwargs(*, body: SearchProcessInstancesData | Unset = UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/process-instances/search'}
+    _kwargs: dict[str, Any] = {"method": "post", "url": "/process-instances/search"}
     if not isinstance(body, Unset):
-        _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+        _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> SearchProcessInstancesResponse200 | SearchProcessInstancesResponse400 | SearchProcessInstancesResponse401 | SearchProcessInstancesResponse403 | SearchProcessInstancesResponse500 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    SearchProcessInstancesResponse200
+    | SearchProcessInstancesResponse400
+    | SearchProcessInstancesResponse401
+    | SearchProcessInstancesResponse403
+    | SearchProcessInstancesResponse500
+    | None
+):
     if response.status_code == 200:
         response_200 = SearchProcessInstancesResponse200.from_dict(response.json())
         return response_200
@@ -41,10 +62,35 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchProcessInstancesResponse200 | SearchProcessInstancesResponse400 | SearchProcessInstancesResponse401 | SearchProcessInstancesResponse403 | SearchProcessInstancesResponse500]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchProcessInstancesData | Unset=UNSET) -> Response[SearchProcessInstancesResponse200 | SearchProcessInstancesResponse400 | SearchProcessInstancesResponse401 | SearchProcessInstancesResponse403 | SearchProcessInstancesResponse500]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    SearchProcessInstancesResponse200
+    | SearchProcessInstancesResponse400
+    | SearchProcessInstancesResponse401
+    | SearchProcessInstancesResponse403
+    | SearchProcessInstancesResponse500
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchProcessInstancesData | Unset = UNSET,
+) -> Response[
+    SearchProcessInstancesResponse200
+    | SearchProcessInstancesResponse400
+    | SearchProcessInstancesResponse401
+    | SearchProcessInstancesResponse403
+    | SearchProcessInstancesResponse500
+]:
     """Search process instances
 
      Search for process instances based on given criteria.
@@ -63,38 +109,71 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchProcessIn
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: SearchProcessInstancesData | Unset=UNSET, **kwargs: Any) -> SearchProcessInstancesResponse200:
+
+def sync(
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchProcessInstancesData | Unset = UNSET,
+    **kwargs: Any,
+) -> SearchProcessInstancesResponse200:
     """Search process instances
 
- Search for process instances based on given criteria.
+     Search for process instances based on given criteria.
 
-Args:
-    body (SearchProcessInstancesData | Unset): Process instance search request.
+    Args:
+        body (SearchProcessInstancesData | Unset): Process instance search request.
 
-Raises:
-    errors.SearchProcessInstancesBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.SearchProcessInstancesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.SearchProcessInstancesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.SearchProcessInstancesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    SearchProcessInstancesResponse200"""
+    Raises:
+        errors.SearchProcessInstancesBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.SearchProcessInstancesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.SearchProcessInstancesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.SearchProcessInstancesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        SearchProcessInstancesResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchProcessInstancesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstancesResponse400, response.parsed))
+            raise errors.SearchProcessInstancesBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchProcessInstancesResponse400, response.parsed),
+            )
         if response.status_code == 401:
-            raise errors.SearchProcessInstancesUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstancesResponse401, response.parsed))
+            raise errors.SearchProcessInstancesUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchProcessInstancesResponse401, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.SearchProcessInstancesForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstancesResponse403, response.parsed))
+            raise errors.SearchProcessInstancesForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchProcessInstancesResponse403, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.SearchProcessInstancesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstancesResponse500, response.parsed))
+            raise errors.SearchProcessInstancesInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchProcessInstancesResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(SearchProcessInstancesResponse200, response.parsed)
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchProcessInstancesData | Unset=UNSET) -> Response[SearchProcessInstancesResponse200 | SearchProcessInstancesResponse400 | SearchProcessInstancesResponse401 | SearchProcessInstancesResponse403 | SearchProcessInstancesResponse500]:
+
+async def asyncio_detailed(
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchProcessInstancesData | Unset = UNSET,
+) -> Response[
+    SearchProcessInstancesResponse200
+    | SearchProcessInstancesResponse400
+    | SearchProcessInstancesResponse401
+    | SearchProcessInstancesResponse403
+    | SearchProcessInstancesResponse500
+]:
     """Search process instances
 
      Search for process instances based on given criteria.
@@ -113,33 +192,55 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Search
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: SearchProcessInstancesData | Unset=UNSET, **kwargs: Any) -> SearchProcessInstancesResponse200:
+
+async def asyncio(
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchProcessInstancesData | Unset = UNSET,
+    **kwargs: Any,
+) -> SearchProcessInstancesResponse200:
     """Search process instances
 
- Search for process instances based on given criteria.
+     Search for process instances based on given criteria.
 
-Args:
-    body (SearchProcessInstancesData | Unset): Process instance search request.
+    Args:
+        body (SearchProcessInstancesData | Unset): Process instance search request.
 
-Raises:
-    errors.SearchProcessInstancesBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.SearchProcessInstancesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.SearchProcessInstancesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.SearchProcessInstancesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    SearchProcessInstancesResponse200"""
+    Raises:
+        errors.SearchProcessInstancesBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.SearchProcessInstancesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.SearchProcessInstancesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.SearchProcessInstancesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        SearchProcessInstancesResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchProcessInstancesBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstancesResponse400, response.parsed))
+            raise errors.SearchProcessInstancesBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchProcessInstancesResponse400, response.parsed),
+            )
         if response.status_code == 401:
-            raise errors.SearchProcessInstancesUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstancesResponse401, response.parsed))
+            raise errors.SearchProcessInstancesUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchProcessInstancesResponse401, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.SearchProcessInstancesForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstancesResponse403, response.parsed))
+            raise errors.SearchProcessInstancesForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchProcessInstancesResponse403, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.SearchProcessInstancesInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchProcessInstancesResponse500, response.parsed))
+            raise errors.SearchProcessInstancesInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchProcessInstancesResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(SearchProcessInstancesResponse200, response.parsed)

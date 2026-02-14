@@ -40,7 +40,9 @@ class CreateDocumentsResponse201CreatedDocumentsItem:
     document_id: DocumentId | Unset = UNSET
     content_hash: str | Unset = UNSET
     metadata: CreateDocumentsResponse201CreatedDocumentsItemMetadata | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         camunda_document_type: str | Unset = UNSET
@@ -95,7 +97,11 @@ class CreateDocumentsResponse201CreatedDocumentsItem:
 
         store_id = d.pop("storeId", UNSET)
 
-        document_id = lift_document_id(_val) if (_val := d.pop("documentId", UNSET)) is not UNSET else UNSET
+        document_id = (
+            lift_document_id(_val)
+            if (_val := d.pop("documentId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         content_hash = d.pop("contentHash", UNSET)
 

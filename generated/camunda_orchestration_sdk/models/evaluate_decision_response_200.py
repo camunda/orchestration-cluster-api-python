@@ -1,5 +1,18 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, DecisionDefinitionKey, DecisionEvaluationKey, DecisionInstanceKey, DecisionRequirementsKey, TenantId, lift_decision_definition_id, lift_decision_definition_key, lift_decision_evaluation_key, lift_decision_instance_key, lift_decision_requirements_key, lift_tenant_id
+from camunda_orchestration_sdk.semantic_types import (
+    DecisionDefinitionId,
+    DecisionDefinitionKey,
+    DecisionEvaluationKey,
+    DecisionInstanceKey,
+    DecisionRequirementsKey,
+    TenantId,
+    lift_decision_definition_id,
+    lift_decision_definition_key,
+    lift_decision_evaluation_key,
+    lift_decision_instance_key,
+    lift_decision_requirements_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -56,7 +69,9 @@ class EvaluateDecisionResponse200:
     decision_evaluation_key: DecisionEvaluationKey
     evaluated_decisions: list[EvaluateDecisionResponse200EvaluatedDecisionsItem]
     decision_instance_key: DecisionInstanceKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         decision_definition_id = self.decision_definition_id
@@ -118,7 +133,9 @@ class EvaluateDecisionResponse200:
         )
 
         d = dict(src_dict)
-        decision_definition_id = lift_decision_definition_id(d.pop("decisionDefinitionId"))
+        decision_definition_id = lift_decision_definition_id(
+            d.pop("decisionDefinitionId")
+        )
 
         decision_definition_name = d.pop("decisionDefinitionName")
 
@@ -134,13 +151,21 @@ class EvaluateDecisionResponse200:
 
         tenant_id = lift_tenant_id(d.pop("tenantId"))
 
-        decision_definition_key = lift_decision_definition_key(d.pop("decisionDefinitionKey"))
+        decision_definition_key = lift_decision_definition_key(
+            d.pop("decisionDefinitionKey")
+        )
 
-        decision_requirements_key = lift_decision_requirements_key(d.pop("decisionRequirementsKey"))
+        decision_requirements_key = lift_decision_requirements_key(
+            d.pop("decisionRequirementsKey")
+        )
 
-        decision_evaluation_key = lift_decision_evaluation_key(d.pop("decisionEvaluationKey"))
+        decision_evaluation_key = lift_decision_evaluation_key(
+            d.pop("decisionEvaluationKey")
+        )
 
-        evaluated_decisions: list[EvaluateDecisionResponse200EvaluatedDecisionsItem] = []
+        evaluated_decisions: list[
+            EvaluateDecisionResponse200EvaluatedDecisionsItem
+        ] = []
         _evaluated_decisions = d.pop("evaluatedDecisions")
         for evaluated_decisions_item_data in _evaluated_decisions:
             evaluated_decisions_item = (
@@ -151,7 +176,11 @@ class EvaluateDecisionResponse200:
 
             evaluated_decisions.append(evaluated_decisions_item)
 
-        decision_instance_key = lift_decision_instance_key(_val) if (_val := d.pop("decisionInstanceKey", UNSET)) is not UNSET else UNSET
+        decision_instance_key = (
+            lift_decision_instance_key(_val)
+            if (_val := d.pop("decisionInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         evaluate_decision_response_200 = cls(
             decision_definition_id=decision_definition_id,

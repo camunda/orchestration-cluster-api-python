@@ -11,16 +11,27 @@ from ...models.search_authorizations_response_403 import SearchAuthorizationsRes
 from ...models.search_authorizations_response_500 import SearchAuthorizationsResponse500
 from ...types import UNSET, Response, Unset
 
-def _get_kwargs(*, body: SearchAuthorizationsData | Unset=UNSET) -> dict[str, Any]:
+
+def _get_kwargs(*, body: SearchAuthorizationsData | Unset = UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {'method': 'post', 'url': '/authorizations/search'}
+    _kwargs: dict[str, Any] = {"method": "post", "url": "/authorizations/search"}
     if not isinstance(body, Unset):
-        _kwargs['json'] = body.to_dict()
-    headers['Content-Type'] = 'application/json'
-    _kwargs['headers'] = headers
+        _kwargs["json"] = body.to_dict()
+    headers["Content-Type"] = "application/json"
+    _kwargs["headers"] = headers
     return _kwargs
 
-def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> SearchAuthorizationsResponse200 | SearchAuthorizationsResponse400 | SearchAuthorizationsResponse401 | SearchAuthorizationsResponse403 | SearchAuthorizationsResponse500 | None:
+
+def _parse_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> (
+    SearchAuthorizationsResponse200
+    | SearchAuthorizationsResponse400
+    | SearchAuthorizationsResponse401
+    | SearchAuthorizationsResponse403
+    | SearchAuthorizationsResponse500
+    | None
+):
     if response.status_code == 200:
         response_200 = SearchAuthorizationsResponse200.from_dict(response.json())
         return response_200
@@ -41,10 +52,35 @@ def _parse_response(*, client: AuthenticatedClient | Client, response: httpx.Res
     else:
         return None
 
-def _build_response(*, client: AuthenticatedClient | Client, response: httpx.Response) -> Response[SearchAuthorizationsResponse200 | SearchAuthorizationsResponse400 | SearchAuthorizationsResponse401 | SearchAuthorizationsResponse403 | SearchAuthorizationsResponse500]:
-    return Response(status_code=HTTPStatus(response.status_code), content=response.content, headers=response.headers, parsed=_parse_response(client=client, response=response))
 
-def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchAuthorizationsData | Unset=UNSET) -> Response[SearchAuthorizationsResponse200 | SearchAuthorizationsResponse400 | SearchAuthorizationsResponse401 | SearchAuthorizationsResponse403 | SearchAuthorizationsResponse500]:
+def _build_response(
+    *, client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    SearchAuthorizationsResponse200
+    | SearchAuthorizationsResponse400
+    | SearchAuthorizationsResponse401
+    | SearchAuthorizationsResponse403
+    | SearchAuthorizationsResponse500
+]:
+    return Response(
+        status_code=HTTPStatus(response.status_code),
+        content=response.content,
+        headers=response.headers,
+        parsed=_parse_response(client=client, response=response),
+    )
+
+
+def sync_detailed(
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchAuthorizationsData | Unset = UNSET,
+) -> Response[
+    SearchAuthorizationsResponse200
+    | SearchAuthorizationsResponse400
+    | SearchAuthorizationsResponse401
+    | SearchAuthorizationsResponse403
+    | SearchAuthorizationsResponse500
+]:
     """Search authorizations
 
      Search for authorizations based on given criteria.
@@ -63,38 +99,71 @@ def sync_detailed(*, client: AuthenticatedClient | Client, body: SearchAuthoriza
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-def sync(*, client: AuthenticatedClient | Client, body: SearchAuthorizationsData | Unset=UNSET, **kwargs: Any) -> SearchAuthorizationsResponse200:
+
+def sync(
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchAuthorizationsData | Unset = UNSET,
+    **kwargs: Any,
+) -> SearchAuthorizationsResponse200:
     """Search authorizations
 
- Search for authorizations based on given criteria.
+     Search for authorizations based on given criteria.
 
-Args:
-    body (SearchAuthorizationsData | Unset):
+    Args:
+        body (SearchAuthorizationsData | Unset):
 
-Raises:
-    errors.SearchAuthorizationsBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.SearchAuthorizationsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.SearchAuthorizationsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.SearchAuthorizationsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    SearchAuthorizationsResponse200"""
+    Raises:
+        errors.SearchAuthorizationsBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.SearchAuthorizationsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.SearchAuthorizationsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.SearchAuthorizationsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        SearchAuthorizationsResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchAuthorizationsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchAuthorizationsResponse400, response.parsed))
+            raise errors.SearchAuthorizationsBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchAuthorizationsResponse400, response.parsed),
+            )
         if response.status_code == 401:
-            raise errors.SearchAuthorizationsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchAuthorizationsResponse401, response.parsed))
+            raise errors.SearchAuthorizationsUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchAuthorizationsResponse401, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.SearchAuthorizationsForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchAuthorizationsResponse403, response.parsed))
+            raise errors.SearchAuthorizationsForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchAuthorizationsResponse403, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.SearchAuthorizationsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchAuthorizationsResponse500, response.parsed))
+            raise errors.SearchAuthorizationsInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchAuthorizationsResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(SearchAuthorizationsResponse200, response.parsed)
 
-async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: SearchAuthorizationsData | Unset=UNSET) -> Response[SearchAuthorizationsResponse200 | SearchAuthorizationsResponse400 | SearchAuthorizationsResponse401 | SearchAuthorizationsResponse403 | SearchAuthorizationsResponse500]:
+
+async def asyncio_detailed(
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchAuthorizationsData | Unset = UNSET,
+) -> Response[
+    SearchAuthorizationsResponse200
+    | SearchAuthorizationsResponse400
+    | SearchAuthorizationsResponse401
+    | SearchAuthorizationsResponse403
+    | SearchAuthorizationsResponse500
+]:
     """Search authorizations
 
      Search for authorizations based on given criteria.
@@ -113,33 +182,55 @@ async def asyncio_detailed(*, client: AuthenticatedClient | Client, body: Search
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
-async def asyncio(*, client: AuthenticatedClient | Client, body: SearchAuthorizationsData | Unset=UNSET, **kwargs: Any) -> SearchAuthorizationsResponse200:
+
+async def asyncio(
+    *,
+    client: AuthenticatedClient | Client,
+    body: SearchAuthorizationsData | Unset = UNSET,
+    **kwargs: Any,
+) -> SearchAuthorizationsResponse200:
     """Search authorizations
 
- Search for authorizations based on given criteria.
+     Search for authorizations based on given criteria.
 
-Args:
-    body (SearchAuthorizationsData | Unset):
+    Args:
+        body (SearchAuthorizationsData | Unset):
 
-Raises:
-    errors.SearchAuthorizationsBadRequest: If the response status code is 400. The provided data is not valid.
-    errors.SearchAuthorizationsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-    errors.SearchAuthorizationsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-    errors.SearchAuthorizationsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-    errors.UnexpectedStatus: If the response status code is not documented.
-    httpx.TimeoutException: If the request takes longer than Client.timeout.
-Returns:
-    SearchAuthorizationsResponse200"""
+    Raises:
+        errors.SearchAuthorizationsBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.SearchAuthorizationsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.SearchAuthorizationsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.SearchAuthorizationsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        SearchAuthorizationsResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchAuthorizationsBadRequest(status_code=response.status_code, content=response.content, parsed=cast(SearchAuthorizationsResponse400, response.parsed))
+            raise errors.SearchAuthorizationsBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchAuthorizationsResponse400, response.parsed),
+            )
         if response.status_code == 401:
-            raise errors.SearchAuthorizationsUnauthorized(status_code=response.status_code, content=response.content, parsed=cast(SearchAuthorizationsResponse401, response.parsed))
+            raise errors.SearchAuthorizationsUnauthorized(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchAuthorizationsResponse401, response.parsed),
+            )
         if response.status_code == 403:
-            raise errors.SearchAuthorizationsForbidden(status_code=response.status_code, content=response.content, parsed=cast(SearchAuthorizationsResponse403, response.parsed))
+            raise errors.SearchAuthorizationsForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchAuthorizationsResponse403, response.parsed),
+            )
         if response.status_code == 500:
-            raise errors.SearchAuthorizationsInternalServerError(status_code=response.status_code, content=response.content, parsed=cast(SearchAuthorizationsResponse500, response.parsed))
+            raise errors.SearchAuthorizationsInternalServerError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(SearchAuthorizationsResponse500, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(SearchAuthorizationsResponse200, response.parsed)

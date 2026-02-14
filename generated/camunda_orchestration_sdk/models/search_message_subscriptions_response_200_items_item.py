@@ -1,5 +1,20 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, MessageSubscriptionKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId, lift_element_id, lift_element_instance_key, lift_message_subscription_key, lift_process_definition_id, lift_process_definition_key, lift_process_instance_key, lift_tenant_id
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ElementInstanceKey,
+    MessageSubscriptionKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+    lift_element_id,
+    lift_element_instance_key,
+    lift_message_subscription_key,
+    lift_process_definition_id,
+    lift_process_definition_key,
+    lift_process_instance_key,
+    lift_tenant_id,
+)
 
 import datetime
 from collections.abc import Mapping
@@ -53,7 +68,9 @@ class SearchMessageSubscriptionsResponse200ItemsItem:
     message_name: str | Unset = UNSET
     correlation_key: str | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         message_subscription_key = self.message_subscription_key
@@ -113,17 +130,41 @@ class SearchMessageSubscriptionsResponse200ItemsItem:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        message_subscription_key = lift_message_subscription_key(_val) if (_val := d.pop("messageSubscriptionKey", UNSET)) is not UNSET else UNSET
+        message_subscription_key = (
+            lift_message_subscription_key(_val)
+            if (_val := d.pop("messageSubscriptionKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_definition_id = lift_process_definition_id(_val) if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET else UNSET
+        process_definition_id = (
+            lift_process_definition_id(_val)
+            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_definition_key = lift_process_definition_key(_val) if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET else UNSET
+        process_definition_key = (
+            lift_process_definition_key(_val)
+            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        process_instance_key = lift_process_instance_key(_val) if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET else UNSET
+        process_instance_key = (
+            lift_process_instance_key(_val)
+            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        element_id = lift_element_id(_val) if (_val := d.pop("elementId", UNSET)) is not UNSET else UNSET
+        element_id = (
+            lift_element_id(_val)
+            if (_val := d.pop("elementId", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        element_instance_key = lift_element_instance_key(_val) if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET else UNSET
+        element_instance_key = (
+            lift_element_instance_key(_val)
+            if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         _message_subscription_state = d.pop("messageSubscriptionState", UNSET)
         message_subscription_state: (
@@ -150,7 +191,11 @@ class SearchMessageSubscriptionsResponse200ItemsItem:
 
         correlation_key = d.pop("correlationKey", UNSET)
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         search_message_subscriptions_response_200_items_item = cls(
             message_subscription_key=message_subscription_key,

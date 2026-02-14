@@ -1,5 +1,8 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import BatchOperationKey, lift_batch_operation_key
+from camunda_orchestration_sdk.semantic_types import (
+    BatchOperationKey,
+    lift_batch_operation_key,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -46,7 +49,9 @@ class SearchBatchOperationsDataFilter:
     state: StateAdvancedfilter1 | StateExactmatch1 | Unset = UNSET
     actor_type: SearchBatchOperationsDataFilterActorType | Unset = UNSET
     actor_id: ActoridAdvancedfilter | str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.actorid_advancedfilter import ActoridAdvancedfilter
@@ -136,8 +141,11 @@ class SearchBatchOperationsDataFilter:
             d.pop("batchOperationKey", UNSET)
         )
 
-
-        batch_operation_key = lift_batch_operation_key(_raw_batch_operation_key) if isinstance(_raw_batch_operation_key, str) else _raw_batch_operation_key
+        batch_operation_key = (
+            lift_batch_operation_key(_raw_batch_operation_key)
+            if isinstance(_raw_batch_operation_key, str)
+            else _raw_batch_operation_key
+        )
 
         def _parse_operation_type(
             data: object,

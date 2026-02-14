@@ -69,7 +69,11 @@ class CreateDeploymentData:
 
             resources.append(resources_item)
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         create_deployment_data = cls(
             resources=resources,

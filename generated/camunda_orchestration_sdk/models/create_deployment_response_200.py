@@ -1,5 +1,10 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import DeploymentKey, TenantId, lift_deployment_key, lift_tenant_id
+from camunda_orchestration_sdk.semantic_types import (
+    DeploymentKey,
+    TenantId,
+    lift_deployment_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -30,7 +35,9 @@ class CreateDeploymentResponse200:
     deployment_key: DeploymentKey
     tenant_id: TenantId
     deployments: list[CreateDeploymentResponse200DeploymentsItem]
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         deployment_key = self.deployment_key

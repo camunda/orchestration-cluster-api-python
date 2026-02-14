@@ -1,5 +1,10 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ConditionalEvaluationKey, TenantId, lift_conditional_evaluation_key, lift_tenant_id
+from camunda_orchestration_sdk.semantic_types import (
+    ConditionalEvaluationKey,
+    TenantId,
+    lift_conditional_evaluation_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -32,7 +37,9 @@ class EvaluateConditionalsResponse200:
     conditional_evaluation_key: ConditionalEvaluationKey
     tenant_id: TenantId
     process_instances: list[EvaluateConditionalsResponse200ProcessInstancesItem]
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         conditional_evaluation_key = self.conditional_evaluation_key
@@ -63,11 +70,15 @@ class EvaluateConditionalsResponse200:
         )
 
         d = dict(src_dict)
-        conditional_evaluation_key = lift_conditional_evaluation_key(d.pop("conditionalEvaluationKey"))
+        conditional_evaluation_key = lift_conditional_evaluation_key(
+            d.pop("conditionalEvaluationKey")
+        )
 
         tenant_id = lift_tenant_id(d.pop("tenantId"))
 
-        process_instances: list[EvaluateConditionalsResponse200ProcessInstancesItem] = []
+        process_instances: list[
+            EvaluateConditionalsResponse200ProcessInstancesItem
+        ] = []
         _process_instances = d.pop("processInstances")
         for process_instances_item_data in _process_instances:
             process_instances_item = (

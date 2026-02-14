@@ -30,7 +30,9 @@ class GetResourceResponse200:
     resource_id: str | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     resource_key: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         resource_name = self.resource_name
@@ -78,7 +80,11 @@ class GetResourceResponse200:
 
         resource_id = d.pop("resourceId", UNSET)
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         def _parse_resource_key(data: object) -> str | Unset:
             if isinstance(data, Unset):

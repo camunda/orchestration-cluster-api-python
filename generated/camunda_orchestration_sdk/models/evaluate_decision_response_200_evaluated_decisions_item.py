@@ -1,5 +1,14 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, DecisionDefinitionKey, DecisionEvaluationInstanceKey, TenantId, lift_decision_definition_id, lift_decision_definition_key, lift_decision_evaluation_instance_key, lift_tenant_id
+from camunda_orchestration_sdk.semantic_types import (
+    DecisionDefinitionId,
+    DecisionDefinitionKey,
+    DecisionEvaluationInstanceKey,
+    TenantId,
+    lift_decision_definition_id,
+    lift_decision_definition_key,
+    lift_decision_evaluation_instance_key,
+    lift_tenant_id,
+)
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -58,7 +67,9 @@ class EvaluateDecisionResponse200EvaluatedDecisionsItem:
     ) = UNSET
     decision_definition_key: DecisionDefinitionKey | Unset = UNSET
     decision_evaluation_instance_key: DecisionEvaluationInstanceKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
 
     def to_dict(self) -> dict[str, Any]:
         decision_definition_id = self.decision_definition_id
@@ -129,7 +140,11 @@ class EvaluateDecisionResponse200EvaluatedDecisionsItem:
         )
 
         d = dict(src_dict)
-        decision_definition_id = lift_decision_definition_id(_val) if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET else UNSET
+        decision_definition_id = (
+            lift_decision_definition_id(_val)
+            if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         decision_definition_name = d.pop("decisionDefinitionName", UNSET)
 
@@ -139,7 +154,11 @@ class EvaluateDecisionResponse200EvaluatedDecisionsItem:
 
         output = d.pop("output", UNSET)
 
-        tenant_id = lift_tenant_id(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
 
         _matched_rules = d.pop("matchedRules", UNSET)
         matched_rules: (
@@ -169,9 +188,17 @@ class EvaluateDecisionResponse200EvaluatedDecisionsItem:
 
                 evaluated_inputs.append(evaluated_inputs_item)
 
-        decision_definition_key = lift_decision_definition_key(_val) if (_val := d.pop("decisionDefinitionKey", UNSET)) is not UNSET else UNSET
+        decision_definition_key = (
+            lift_decision_definition_key(_val)
+            if (_val := d.pop("decisionDefinitionKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
-        decision_evaluation_instance_key = lift_decision_evaluation_instance_key(_val) if (_val := d.pop("decisionEvaluationInstanceKey", UNSET)) is not UNSET else UNSET
+        decision_evaluation_instance_key = (
+            lift_decision_evaluation_instance_key(_val)
+            if (_val := d.pop("decisionEvaluationInstanceKey", UNSET)) is not UNSET
+            else UNSET
+        )
 
         evaluate_decision_response_200_evaluated_decisions_item = cls(
             decision_definition_id=decision_definition_id,
