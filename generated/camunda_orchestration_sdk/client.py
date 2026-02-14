@@ -297,6 +297,26 @@ if TYPE_CHECKING:
     from .models.user_update_request import UserUpdateRequest
     from .models.variable_result import VariableResult
     from .models.variable_search_query_result import VariableSearchQueryResult
+    from .semantic_types import (
+        AuditLogKey,
+        AuthorizationKey,
+        BatchOperationKey,
+        DecisionDefinitionKey,
+        DecisionEvaluationInstanceKey,
+        DecisionInstanceKey,
+        DecisionRequirementsKey,
+        DocumentId,
+        ElementInstanceKey,
+        IncidentKey,
+        JobKey,
+        ProcessDefinitionId,
+        ProcessDefinitionKey,
+        ProcessInstanceKey,
+        TenantId,
+        UserTaskKey,
+        Username,
+        VariableKey,
+    )
     from .types import File
     import datetime
 
@@ -765,7 +785,7 @@ class CamundaClient:
         )
         return ExtendedDeploymentResult(self.create_deployment(data=data))
 
-    def delete_tenant(self, tenant_id: str, **kwargs: Any) -> None:
+    def delete_tenant(self, tenant_id: TenantId, **kwargs: Any) -> None:
         """Delete tenant
 
          Deletes an existing tenant.
@@ -793,7 +813,7 @@ class CamundaClient:
         return delete_tenant_sync(**_kwargs)
 
     def assign_group_to_tenant(
-        self, tenant_id: str, group_id: str, **kwargs: Any
+        self, tenant_id: TenantId, group_id: str, **kwargs: Any
     ) -> None:
         """Assign a group to a tenant
 
@@ -826,7 +846,7 @@ class CamundaClient:
         return assign_group_to_tenant_sync(**_kwargs)
 
     def unassign_role_from_tenant(
-        self, tenant_id: str, role_id: str, **kwargs: Any
+        self, tenant_id: TenantId, role_id: str, **kwargs: Any
     ) -> None:
         """Unassign a role from a tenant
 
@@ -861,7 +881,7 @@ class CamundaClient:
 
     def search_group_ids_for_tenant(
         self,
-        tenant_id: str,
+        tenant_id: TenantId,
         *,
         data: SearchGroupIdsForTenantData | Unset = UNSET,
         **kwargs: Any,
@@ -892,7 +912,7 @@ class CamundaClient:
 
     def search_users_for_tenant(
         self,
-        tenant_id: str,
+        tenant_id: TenantId,
         *,
         data: SearchUsersForTenantData | Unset = UNSET,
         **kwargs: Any,
@@ -922,7 +942,7 @@ class CamundaClient:
         return search_users_for_tenant_sync(**_kwargs)
 
     def unassign_client_from_tenant(
-        self, tenant_id: str, client_id: str, **kwargs: Any
+        self, tenant_id: TenantId, client_id: str, **kwargs: Any
     ) -> None:
         """Unassign a client from a tenant
 
@@ -955,7 +975,7 @@ class CamundaClient:
         return unassign_client_from_tenant_sync(**_kwargs)
 
     def unassign_user_from_tenant(
-        self, tenant_id: str, username: str, **kwargs: Any
+        self, tenant_id: TenantId, username: Username, **kwargs: Any
     ) -> None:
         """Unassign a user from a tenant
 
@@ -989,7 +1009,7 @@ class CamundaClient:
 
     def search_roles_for_tenant(
         self,
-        tenant_id: str,
+        tenant_id: TenantId,
         *,
         data: RoleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
@@ -1019,7 +1039,7 @@ class CamundaClient:
         return search_roles_for_tenant_sync(**_kwargs)
 
     def unassign_group_from_tenant(
-        self, tenant_id: str, group_id: str, **kwargs: Any
+        self, tenant_id: TenantId, group_id: str, **kwargs: Any
     ) -> None:
         """Unassign a group from a tenant
 
@@ -1054,7 +1074,7 @@ class CamundaClient:
 
     def search_clients_for_tenant(
         self,
-        tenant_id: str,
+        tenant_id: TenantId,
         *,
         data: SearchClientsForTenantData | Unset = UNSET,
         **kwargs: Any,
@@ -1113,7 +1133,7 @@ class CamundaClient:
         return search_tenants_sync(**_kwargs)
 
     def assign_user_to_tenant(
-        self, tenant_id: str, username: str, **kwargs: Any
+        self, tenant_id: TenantId, username: Username, **kwargs: Any
     ) -> None:
         """Assign a user to a tenant
 
@@ -1144,7 +1164,7 @@ class CamundaClient:
         return assign_user_to_tenant_sync(**_kwargs)
 
     def assign_role_to_tenant(
-        self, tenant_id: str, role_id: str, **kwargs: Any
+        self, tenant_id: TenantId, role_id: str, **kwargs: Any
     ) -> None:
         """Assign a role to a tenant
 
@@ -1177,7 +1197,7 @@ class CamundaClient:
 
     def search_mapping_rules_for_tenant(
         self,
-        tenant_id: str,
+        tenant_id: TenantId,
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
@@ -1207,7 +1227,7 @@ class CamundaClient:
         return search_mapping_rules_for_tenant_sync(**_kwargs)
 
     def assign_mapping_rule_to_tenant(
-        self, tenant_id: str, mapping_rule_id: str, **kwargs: Any
+        self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any
     ) -> None:
         """Assign a mapping rule to a tenant
 
@@ -1239,7 +1259,7 @@ class CamundaClient:
         return assign_mapping_rule_to_tenant_sync(**_kwargs)
 
     def update_tenant(
-        self, tenant_id: str, *, data: TenantUpdateRequest, **kwargs: Any
+        self, tenant_id: TenantId, *, data: TenantUpdateRequest, **kwargs: Any
     ) -> TenantUpdateResult:
         """Update tenant
 
@@ -1269,7 +1289,7 @@ class CamundaClient:
         return update_tenant_sync(**_kwargs)
 
     def assign_client_to_tenant(
-        self, tenant_id: str, client_id: str, **kwargs: Any
+        self, tenant_id: TenantId, client_id: str, **kwargs: Any
     ) -> None:
         """Assign a client to a tenant
 
@@ -1301,7 +1321,7 @@ class CamundaClient:
             _kwargs["body"] = _kwargs.pop("data")
         return assign_client_to_tenant_sync(**_kwargs)
 
-    def get_tenant(self, tenant_id: str, **kwargs: Any) -> TenantResult:
+    def get_tenant(self, tenant_id: TenantId, **kwargs: Any) -> TenantResult:
         """Get tenant
 
          Retrieves a single tenant by tenant ID.
@@ -1359,7 +1379,7 @@ class CamundaClient:
         return create_tenant_sync(**_kwargs)
 
     def unassign_mapping_rule_from_tenant(
-        self, tenant_id: str, mapping_rule_id: str, **kwargs: Any
+        self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any
     ) -> None:
         """Unassign a mapping rule from a tenant
 
@@ -1391,7 +1411,11 @@ class CamundaClient:
         return unassign_mapping_rule_from_tenant_sync(**_kwargs)
 
     def cancel_batch_operation(
-        self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
     ) -> None:
         """Cancel Batch operation
 
@@ -1425,7 +1449,11 @@ class CamundaClient:
         return cancel_batch_operation_sync(**_kwargs)
 
     def resume_batch_operation(
-        self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
     ) -> None:
         """Resume Batch operation
 
@@ -1460,7 +1488,11 @@ class CamundaClient:
         return resume_batch_operation_sync(**_kwargs)
 
     def suspend_batch_operation(
-        self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
     ) -> None:
         """Suspend Batch operation
 
@@ -1523,7 +1555,7 @@ class CamundaClient:
         return search_batch_operations_sync(**_kwargs)
 
     def get_batch_operation(
-        self, batch_operation_key: str, **kwargs: Any
+        self, batch_operation_key: BatchOperationKey, **kwargs: Any
     ) -> BatchOperationResponse:
         """Get batch operation
 
@@ -1762,7 +1794,7 @@ class CamundaClient:
         return unassign_role_from_client_sync(**_kwargs)
 
     def unassign_role_from_user(
-        self, role_id: str, username: str, **kwargs: Any
+        self, role_id: str, username: Username, **kwargs: Any
     ) -> None:
         """Unassign a role from a user
 
@@ -1859,7 +1891,9 @@ class CamundaClient:
             _kwargs["body"] = _kwargs.pop("data")
         return search_clients_for_role_sync(**_kwargs)
 
-    def assign_role_to_user(self, role_id: str, username: str, **kwargs: Any) -> None:
+    def assign_role_to_user(
+        self, role_id: str, username: Username, **kwargs: Any
+    ) -> None:
         """Assign a role to a user
 
          Assigns the specified role to the user. The user will inherit the authorizations associated with
@@ -2222,7 +2256,9 @@ class CamundaClient:
         return search_decision_instances_sync(**_kwargs)
 
     def get_decision_instance(
-        self, decision_evaluation_instance_key: str, **kwargs: Any
+        self,
+        decision_evaluation_instance_key: DecisionEvaluationInstanceKey,
+        **kwargs: Any,
     ) -> DecisionInstanceGetQueryResult:
         """Get decision instance
 
@@ -2255,7 +2291,7 @@ class CamundaClient:
 
     def delete_decision_instance(
         self,
-        decision_instance_key: str,
+        decision_instance_key: DecisionInstanceKey,
         *,
         data: DeleteProcessInstanceRequestType0 | None | Unset = UNSET,
         **kwargs: Any,
@@ -2323,7 +2359,7 @@ class CamundaClient:
             _kwargs["body"] = _kwargs.pop("data")
         return delete_decision_instances_batch_operation_sync(**_kwargs)
 
-    def get_variable(self, variable_key: str, **kwargs: Any) -> VariableResult:
+    def get_variable(self, variable_key: VariableKey, **kwargs: Any) -> VariableResult:
         """Get variable
 
          Get the variable by the variable key.
@@ -2385,7 +2421,7 @@ class CamundaClient:
         return search_variables_sync(**_kwargs)
 
     def get_tenant_cluster_variable(
-        self, tenant_id: str, name: str, **kwargs: Any
+        self, tenant_id: TenantId, name: str, **kwargs: Any
     ) -> ClusterVariableResult:
         """Get a tenant-scoped cluster variable
 
@@ -2478,7 +2514,7 @@ class CamundaClient:
 
     def update_tenant_cluster_variable(
         self,
-        tenant_id: str,
+        tenant_id: TenantId,
         name: str,
         *,
         data: UpdateClusterVariableRequest,
@@ -2543,7 +2579,7 @@ class CamundaClient:
         return delete_global_cluster_variable_sync(**_kwargs)
 
     def delete_tenant_cluster_variable(
-        self, tenant_id: str, name: str, **kwargs: Any
+        self, tenant_id: TenantId, name: str, **kwargs: Any
     ) -> None:
         """Delete a tenant-scoped cluster variable
 
@@ -2606,7 +2642,7 @@ class CamundaClient:
         return update_global_cluster_variable_sync(**_kwargs)
 
     def create_tenant_cluster_variable(
-        self, tenant_id: str, *, data: CreateClusterVariableRequest, **kwargs: Any
+        self, tenant_id: TenantId, *, data: CreateClusterVariableRequest, **kwargs: Any
     ) -> ClusterVariableResult:
         """Create a tenant-scoped cluster variable
 
@@ -2766,7 +2802,7 @@ class CamundaClient:
         return assign_client_to_group_sync(**_kwargs)
 
     def unassign_user_from_group(
-        self, group_id: str, username: str, **kwargs: Any
+        self, group_id: str, username: Username, **kwargs: Any
     ) -> None:
         """Unassign a user from a group
 
@@ -3077,7 +3113,9 @@ class CamundaClient:
             _kwargs["body"] = _kwargs.pop("data")
         return delete_group_sync(**_kwargs)
 
-    def assign_user_to_group(self, group_id: str, username: str, **kwargs: Any) -> None:
+    def assign_user_to_group(
+        self, group_id: str, username: Username, **kwargs: Any
+    ) -> None:
         """Assign a user to a group
 
          Assigns a user to a group, making the user a member of the group.
@@ -3353,7 +3391,7 @@ class CamundaClient:
             _kwargs["body"] = _kwargs.pop("data")
         return search_users_sync(**_kwargs)
 
-    def delete_user(self, username: str, **kwargs: Any) -> None:
+    def delete_user(self, username: Username, **kwargs: Any) -> None:
         """Delete user
 
          Deletes a user.
@@ -3379,7 +3417,7 @@ class CamundaClient:
             _kwargs["body"] = _kwargs.pop("data")
         return delete_user_sync(**_kwargs)
 
-    def get_user(self, username: str, **kwargs: Any) -> UserResult:
+    def get_user(self, username: Username, **kwargs: Any) -> UserResult:
         """Get user
 
          Get a user by its username.
@@ -3406,7 +3444,7 @@ class CamundaClient:
         return get_user_sync(**_kwargs)
 
     def update_user(
-        self, username: str, *, data: UserUpdateRequest, **kwargs: Any
+        self, username: Username, *, data: UserUpdateRequest, **kwargs: Any
     ) -> UserResult:
         """Update user
 
@@ -3437,7 +3475,7 @@ class CamundaClient:
 
     def get_document(
         self,
-        document_id: str,
+        document_id: DocumentId,
         *,
         store_id: str | Unset = UNSET,
         content_hash: str | Unset = UNSET,
@@ -3521,7 +3559,7 @@ class CamundaClient:
 
     def create_document_link(
         self,
-        document_id: str,
+        document_id: DocumentId,
         *,
         data: DocumentLinkRequest | Unset = UNSET,
         store_id: str | Unset = UNSET,
@@ -3556,7 +3594,7 @@ class CamundaClient:
         return create_document_link_sync(**_kwargs)
 
     def delete_document(
-        self, document_id: str, *, store_id: str | Unset = UNSET, **kwargs: Any
+        self, document_id: DocumentId, *, store_id: str | Unset = UNSET, **kwargs: Any
     ) -> None:
         """Delete document
 
@@ -3622,7 +3660,7 @@ class CamundaClient:
         return create_document_sync(**_kwargs)
 
     def get_audit_log(
-        self, audit_log_key: str, **kwargs: Any
+        self, audit_log_key: AuditLogKey, **kwargs: Any
     ) -> GetAuditLogResponse200:
         """Get audit log
 
@@ -3716,7 +3754,11 @@ class CamundaClient:
         return get_usage_metrics_sync(**_kwargs)
 
     def search_element_instance_incidents(
-        self, element_instance_key: str, *, data: IncidentSearchQuery, **kwargs: Any
+        self,
+        element_instance_key: ElementInstanceKey,
+        *,
+        data: IncidentSearchQuery,
+        **kwargs: Any,
     ) -> IncidentSearchQueryResult:
         """Search for incidents of a specific element instance
 
@@ -3759,7 +3801,7 @@ class CamundaClient:
         return search_element_instance_incidents_sync(**_kwargs)
 
     def get_element_instance(
-        self, element_instance_key: str, **kwargs: Any
+        self, element_instance_key: ElementInstanceKey, **kwargs: Any
     ) -> ElementInstanceResult:
         """Get element instance
 
@@ -3791,7 +3833,11 @@ class CamundaClient:
         return get_element_instance_sync(**_kwargs)
 
     def create_element_instance_variables(
-        self, element_instance_key: str, *, data: SetVariableRequest, **kwargs: Any
+        self,
+        element_instance_key: ElementInstanceKey,
+        *,
+        data: SetVariableRequest,
+        **kwargs: Any,
     ) -> None:
         """Update element instance variables
 
@@ -3894,7 +3940,7 @@ class CamundaClient:
         return activate_ad_hoc_sub_process_activities_sync(**_kwargs)
 
     def fail_job(
-        self, job_key: str, *, data: JobFailRequest | Unset = UNSET, **kwargs: Any
+        self, job_key: JobKey, *, data: JobFailRequest | Unset = UNSET, **kwargs: Any
     ) -> None:
         """Fail job
 
@@ -4018,7 +4064,7 @@ class CamundaClient:
         return get_global_job_statistics_sync(**_kwargs)
 
     def throw_job_error(
-        self, job_key: str, *, data: JobErrorRequest, **kwargs: Any
+        self, job_key: JobKey, *, data: JobErrorRequest, **kwargs: Any
     ) -> None:
         """Throw error for job
 
@@ -4048,7 +4094,7 @@ class CamundaClient:
         return throw_job_error_sync(**_kwargs)
 
     def complete_job(
-        self, job_key: str, *, data: CompleteJobData | Unset = UNSET, **kwargs: Any
+        self, job_key: JobKey, *, data: CompleteJobData | Unset = UNSET, **kwargs: Any
     ) -> None:
         """Complete job
 
@@ -4078,7 +4124,7 @@ class CamundaClient:
         return complete_job_sync(**_kwargs)
 
     def update_job(
-        self, job_key: str, *, data: JobUpdateRequest, **kwargs: Any
+        self, job_key: JobKey, *, data: JobUpdateRequest, **kwargs: Any
     ) -> None:
         """Update job
 
@@ -4141,7 +4187,7 @@ class CamundaClient:
 
     def resolve_incident(
         self,
-        incident_key: str,
+        incident_key: IncidentKey,
         *,
         data: IncidentResolutionRequest | Unset = UNSET,
         **kwargs: Any,
@@ -4235,7 +4281,7 @@ class CamundaClient:
             _kwargs["body"] = _kwargs.pop("data")
         return get_process_instance_statistics_by_error_sync(**_kwargs)
 
-    def get_incident(self, incident_key: str, **kwargs: Any) -> IncidentResult:
+    def get_incident(self, incident_key: IncidentKey, **kwargs: Any) -> IncidentResult:
         """Get incident
 
          Returns incident as JSON.
@@ -4263,7 +4309,7 @@ class CamundaClient:
         return get_incident_sync(**_kwargs)
 
     def get_decision_definition(
-        self, decision_definition_key: str, **kwargs: Any
+        self, decision_definition_key: DecisionDefinitionKey, **kwargs: Any
     ) -> DecisionDefinitionResult:
         """Get decision definition
 
@@ -4358,7 +4404,7 @@ class CamundaClient:
         return search_decision_definitions_sync(**_kwargs)
 
     def get_decision_definition_xml(
-        self, decision_definition_key: str, **kwargs: Any
+        self, decision_definition_key: DecisionDefinitionKey, **kwargs: Any
     ) -> str:
         """Get decision definition XML
 
@@ -4418,7 +4464,7 @@ class CamundaClient:
             _kwargs["body"] = _kwargs.pop("data")
         return evaluate_expression_sync(**_kwargs)
 
-    def unassign_user_task(self, user_task_key: str, **kwargs: Any) -> None:
+    def unassign_user_task(self, user_task_key: UserTaskKey, **kwargs: Any) -> None:
         """Unassign user task
 
          Removes the assignee of a task with the given key.
@@ -4447,7 +4493,7 @@ class CamundaClient:
 
     def search_user_task_variables(
         self,
-        user_task_key: str,
+        user_task_key: UserTaskKey,
         *,
         data: SearchUserTaskVariablesData | Unset = UNSET,
         truncate_values: bool | Unset = UNSET,
@@ -4482,7 +4528,11 @@ class CamundaClient:
         return search_user_task_variables_sync(**_kwargs)
 
     def assign_user_task(
-        self, user_task_key: str, *, data: UserTaskAssignmentRequest, **kwargs: Any
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskAssignmentRequest,
+        **kwargs: Any,
     ) -> None:
         """Assign user task
 
@@ -4513,7 +4563,7 @@ class CamundaClient:
 
     def update_user_task(
         self,
-        user_task_key: str,
+        user_task_key: UserTaskKey,
         *,
         data: UserTaskUpdateRequest | Unset = UNSET,
         **kwargs: Any,
@@ -4546,7 +4596,7 @@ class CamundaClient:
         return update_user_task_sync(**_kwargs)
 
     def get_user_task_form(
-        self, user_task_key: str, **kwargs: Any
+        self, user_task_key: UserTaskKey, **kwargs: Any
     ) -> GetUserTaskFormResponse200:
         """Get user task form
 
@@ -4577,7 +4627,7 @@ class CamundaClient:
         return get_user_task_form_sync(**_kwargs)
 
     def get_user_task(
-        self, user_task_key: str, **kwargs: Any
+        self, user_task_key: UserTaskKey, **kwargs: Any
     ) -> GetUserTaskResponse200:
         """Get user task
 
@@ -4607,7 +4657,7 @@ class CamundaClient:
 
     def search_user_task_audit_logs(
         self,
-        user_task_key: str,
+        user_task_key: UserTaskKey,
         *,
         data: SearchUserTaskAuditLogsData | Unset = UNSET,
         **kwargs: Any,
@@ -4668,7 +4718,7 @@ class CamundaClient:
 
     def complete_user_task(
         self,
-        user_task_key: str,
+        user_task_key: UserTaskKey,
         *,
         data: UserTaskCompletionRequest | Unset = UNSET,
         **kwargs: Any,
@@ -4828,7 +4878,7 @@ class CamundaClient:
 
     def update_authorization(
         self,
-        authorization_key: str,
+        authorization_key: AuthorizationKey,
         *,
         data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
         **kwargs: Any,
@@ -4928,7 +4978,7 @@ class CamundaClient:
         return search_authorizations_sync(**_kwargs)
 
     def get_authorization(
-        self, authorization_key: str, **kwargs: Any
+        self, authorization_key: AuthorizationKey, **kwargs: Any
     ) -> AuthorizationResult:
         """Get authorization
 
@@ -4956,7 +5006,9 @@ class CamundaClient:
             _kwargs["body"] = _kwargs.pop("data")
         return get_authorization_sync(**_kwargs)
 
-    def delete_authorization(self, authorization_key: str, **kwargs: Any) -> None:
+    def delete_authorization(
+        self, authorization_key: AuthorizationKey, **kwargs: Any
+    ) -> None:
         """Delete authorization
 
          Deletes the authorization with the given key.
@@ -4986,7 +5038,7 @@ class CamundaClient:
         return delete_authorization_sync(**_kwargs)
 
     def get_decision_requirements_xml(
-        self, decision_requirements_key: str, **kwargs: Any
+        self, decision_requirements_key: DecisionRequirementsKey, **kwargs: Any
     ) -> str:
         """Get decision requirements XML
 
@@ -5048,7 +5100,7 @@ class CamundaClient:
         return search_decision_requirements_sync(**_kwargs)
 
     def get_decision_requirements(
-        self, decision_requirements_key: str, **kwargs: Any
+        self, decision_requirements_key: DecisionRequirementsKey, **kwargs: Any
     ) -> DecisionRequirementsResult:
         """Get decision requirements
 
@@ -5283,7 +5335,7 @@ class CamundaClient:
         return get_mapping_rule_sync(**_kwargs)
 
     def get_process_instance_sequence_flows(
-        self, process_instance_key: str, **kwargs: Any
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
     ) -> GetProcessInstanceSequenceFlowsResponse200:
         """Get sequence flows
 
@@ -5314,7 +5366,7 @@ class CamundaClient:
         return get_process_instance_sequence_flows_sync(**_kwargs)
 
     def get_process_instance_call_hierarchy(
-        self, process_instance_key: str, **kwargs: Any
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
     ) -> list[Any]:
         """Get call hierarchy
 
@@ -5348,7 +5400,7 @@ class CamundaClient:
 
     def modify_process_instance(
         self,
-        process_instance_key: str,
+        process_instance_key: ProcessInstanceKey,
         *,
         data: ModifyProcessInstanceData,
         **kwargs: Any,
@@ -5388,7 +5440,7 @@ class CamundaClient:
         return modify_process_instance_sync(**_kwargs)
 
     def get_process_instance_statistics(
-        self, process_instance_key: str, **kwargs: Any
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
     ) -> GetProcessInstanceStatisticsResponse200:
         """Get element instance statistics
 
@@ -5453,7 +5505,7 @@ class CamundaClient:
         return migrate_process_instances_batch_operation_sync(**_kwargs)
 
     def get_process_instance(
-        self, process_instance_key: str, **kwargs: Any
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
     ) -> GetProcessInstanceResponse200:
         """Get process instance
 
@@ -5560,7 +5612,7 @@ class CamundaClient:
 
     def delete_process_instance(
         self,
-        process_instance_key: str,
+        process_instance_key: ProcessInstanceKey,
         *,
         data: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
         **kwargs: Any,
@@ -5704,7 +5756,7 @@ class CamundaClient:
 
     def cancel_process_instance(
         self,
-        process_instance_key: str,
+        process_instance_key: ProcessInstanceKey,
         *,
         data: CancelProcessInstanceDataType0 | None | Unset = UNSET,
         **kwargs: Any,
@@ -5741,7 +5793,7 @@ class CamundaClient:
 
     def search_process_instance_incidents(
         self,
-        process_instance_key: str,
+        process_instance_key: ProcessInstanceKey,
         *,
         data: IncidentSearchQuery | Unset = UNSET,
         **kwargs: Any,
@@ -5787,7 +5839,7 @@ class CamundaClient:
 
     def migrate_process_instance(
         self,
-        process_instance_key: str,
+        process_instance_key: ProcessInstanceKey,
         *,
         data: MigrateProcessInstanceData,
         **kwargs: Any,
@@ -5860,7 +5912,7 @@ class CamundaClient:
         return search_process_instances_sync(**_kwargs)
 
     def resolve_process_instance_incidents(
-        self, process_instance_key: str, **kwargs: Any
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
     ) -> BatchOperationCreatedResult:
         """Resolve related incidents
 
@@ -5950,7 +6002,7 @@ class CamundaClient:
 
     def get_process_definition_instance_version_statistics(
         self,
-        process_definition_id: str,
+        process_definition_id: ProcessDefinitionId,
         *,
         data: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
         **kwargs: Any,
@@ -6082,7 +6134,7 @@ class CamundaClient:
         return get_process_definition_message_subscription_statistics_sync(**_kwargs)
 
     def get_start_process_form(
-        self, process_definition_key: str, **kwargs: Any
+        self, process_definition_key: ProcessDefinitionKey, **kwargs: Any
     ) -> GetStartProcessFormResponse200:
         """Get process start form
 
@@ -6116,7 +6168,7 @@ class CamundaClient:
         return get_start_process_form_sync(**_kwargs)
 
     def get_process_definition_xml(
-        self, process_definition_key: str, **kwargs: Any
+        self, process_definition_key: ProcessDefinitionKey, **kwargs: Any
     ) -> str:
         """Get process definition XML
 
@@ -6148,7 +6200,7 @@ class CamundaClient:
         return get_process_definition_xml_sync(**_kwargs)
 
     def get_process_definition(
-        self, process_definition_key: str, **kwargs: Any
+        self, process_definition_key: ProcessDefinitionKey, **kwargs: Any
     ) -> ProcessDefinitionResult:
         """Get process definition
 
@@ -6181,7 +6233,7 @@ class CamundaClient:
 
     def get_process_definition_statistics(
         self,
-        process_definition_key: str,
+        process_definition_key: ProcessDefinitionKey,
         *,
         data: GetProcessDefinitionStatisticsData | Unset = UNSET,
         **kwargs: Any,
@@ -6402,7 +6454,7 @@ class CamundaAsyncClient:
         )
         return ExtendedDeploymentResult(await self.create_deployment(data=data))
 
-    async def delete_tenant(self, tenant_id: str, **kwargs: Any) -> None:
+    async def delete_tenant(self, tenant_id: TenantId, **kwargs: Any) -> None:
         """Delete tenant
 
          Deletes an existing tenant.
@@ -6430,7 +6482,7 @@ class CamundaAsyncClient:
         return await delete_tenant_asyncio(**_kwargs)
 
     async def assign_group_to_tenant(
-        self, tenant_id: str, group_id: str, **kwargs: Any
+        self, tenant_id: TenantId, group_id: str, **kwargs: Any
     ) -> None:
         """Assign a group to a tenant
 
@@ -6463,7 +6515,7 @@ class CamundaAsyncClient:
         return await assign_group_to_tenant_asyncio(**_kwargs)
 
     async def unassign_role_from_tenant(
-        self, tenant_id: str, role_id: str, **kwargs: Any
+        self, tenant_id: TenantId, role_id: str, **kwargs: Any
     ) -> None:
         """Unassign a role from a tenant
 
@@ -6498,7 +6550,7 @@ class CamundaAsyncClient:
 
     async def search_group_ids_for_tenant(
         self,
-        tenant_id: str,
+        tenant_id: TenantId,
         *,
         data: SearchGroupIdsForTenantData | Unset = UNSET,
         **kwargs: Any,
@@ -6529,7 +6581,7 @@ class CamundaAsyncClient:
 
     async def search_users_for_tenant(
         self,
-        tenant_id: str,
+        tenant_id: TenantId,
         *,
         data: SearchUsersForTenantData | Unset = UNSET,
         **kwargs: Any,
@@ -6559,7 +6611,7 @@ class CamundaAsyncClient:
         return await search_users_for_tenant_asyncio(**_kwargs)
 
     async def unassign_client_from_tenant(
-        self, tenant_id: str, client_id: str, **kwargs: Any
+        self, tenant_id: TenantId, client_id: str, **kwargs: Any
     ) -> None:
         """Unassign a client from a tenant
 
@@ -6592,7 +6644,7 @@ class CamundaAsyncClient:
         return await unassign_client_from_tenant_asyncio(**_kwargs)
 
     async def unassign_user_from_tenant(
-        self, tenant_id: str, username: str, **kwargs: Any
+        self, tenant_id: TenantId, username: Username, **kwargs: Any
     ) -> None:
         """Unassign a user from a tenant
 
@@ -6626,7 +6678,7 @@ class CamundaAsyncClient:
 
     async def search_roles_for_tenant(
         self,
-        tenant_id: str,
+        tenant_id: TenantId,
         *,
         data: RoleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
@@ -6656,7 +6708,7 @@ class CamundaAsyncClient:
         return await search_roles_for_tenant_asyncio(**_kwargs)
 
     async def unassign_group_from_tenant(
-        self, tenant_id: str, group_id: str, **kwargs: Any
+        self, tenant_id: TenantId, group_id: str, **kwargs: Any
     ) -> None:
         """Unassign a group from a tenant
 
@@ -6691,7 +6743,7 @@ class CamundaAsyncClient:
 
     async def search_clients_for_tenant(
         self,
-        tenant_id: str,
+        tenant_id: TenantId,
         *,
         data: SearchClientsForTenantData | Unset = UNSET,
         **kwargs: Any,
@@ -6750,7 +6802,7 @@ class CamundaAsyncClient:
         return await search_tenants_asyncio(**_kwargs)
 
     async def assign_user_to_tenant(
-        self, tenant_id: str, username: str, **kwargs: Any
+        self, tenant_id: TenantId, username: Username, **kwargs: Any
     ) -> None:
         """Assign a user to a tenant
 
@@ -6783,7 +6835,7 @@ class CamundaAsyncClient:
         return await assign_user_to_tenant_asyncio(**_kwargs)
 
     async def assign_role_to_tenant(
-        self, tenant_id: str, role_id: str, **kwargs: Any
+        self, tenant_id: TenantId, role_id: str, **kwargs: Any
     ) -> None:
         """Assign a role to a tenant
 
@@ -6818,7 +6870,7 @@ class CamundaAsyncClient:
 
     async def search_mapping_rules_for_tenant(
         self,
-        tenant_id: str,
+        tenant_id: TenantId,
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
@@ -6848,7 +6900,7 @@ class CamundaAsyncClient:
         return await search_mapping_rules_for_tenant_asyncio(**_kwargs)
 
     async def assign_mapping_rule_to_tenant(
-        self, tenant_id: str, mapping_rule_id: str, **kwargs: Any
+        self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any
     ) -> None:
         """Assign a mapping rule to a tenant
 
@@ -6880,7 +6932,7 @@ class CamundaAsyncClient:
         return await assign_mapping_rule_to_tenant_asyncio(**_kwargs)
 
     async def update_tenant(
-        self, tenant_id: str, *, data: TenantUpdateRequest, **kwargs: Any
+        self, tenant_id: TenantId, *, data: TenantUpdateRequest, **kwargs: Any
     ) -> TenantUpdateResult:
         """Update tenant
 
@@ -6910,7 +6962,7 @@ class CamundaAsyncClient:
         return await update_tenant_asyncio(**_kwargs)
 
     async def assign_client_to_tenant(
-        self, tenant_id: str, client_id: str, **kwargs: Any
+        self, tenant_id: TenantId, client_id: str, **kwargs: Any
     ) -> None:
         """Assign a client to a tenant
 
@@ -6942,7 +6994,7 @@ class CamundaAsyncClient:
             _kwargs["body"] = _kwargs.pop("data")
         return await assign_client_to_tenant_asyncio(**_kwargs)
 
-    async def get_tenant(self, tenant_id: str, **kwargs: Any) -> TenantResult:
+    async def get_tenant(self, tenant_id: TenantId, **kwargs: Any) -> TenantResult:
         """Get tenant
 
          Retrieves a single tenant by tenant ID.
@@ -7000,7 +7052,7 @@ class CamundaAsyncClient:
         return await create_tenant_asyncio(**_kwargs)
 
     async def unassign_mapping_rule_from_tenant(
-        self, tenant_id: str, mapping_rule_id: str, **kwargs: Any
+        self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any
     ) -> None:
         """Unassign a mapping rule from a tenant
 
@@ -7032,7 +7084,11 @@ class CamundaAsyncClient:
         return await unassign_mapping_rule_from_tenant_asyncio(**_kwargs)
 
     async def cancel_batch_operation(
-        self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
     ) -> None:
         """Cancel Batch operation
 
@@ -7066,7 +7122,11 @@ class CamundaAsyncClient:
         return await cancel_batch_operation_asyncio(**_kwargs)
 
     async def resume_batch_operation(
-        self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
     ) -> None:
         """Resume Batch operation
 
@@ -7101,7 +7161,11 @@ class CamundaAsyncClient:
         return await resume_batch_operation_asyncio(**_kwargs)
 
     async def suspend_batch_operation(
-        self, batch_operation_key: str, *, data: Any | Unset = UNSET, **kwargs: Any
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
     ) -> None:
         """Suspend Batch operation
 
@@ -7164,7 +7228,7 @@ class CamundaAsyncClient:
         return await search_batch_operations_asyncio(**_kwargs)
 
     async def get_batch_operation(
-        self, batch_operation_key: str, **kwargs: Any
+        self, batch_operation_key: BatchOperationKey, **kwargs: Any
     ) -> BatchOperationResponse:
         """Get batch operation
 
@@ -7405,7 +7469,7 @@ class CamundaAsyncClient:
         return await unassign_role_from_client_asyncio(**_kwargs)
 
     async def unassign_role_from_user(
-        self, role_id: str, username: str, **kwargs: Any
+        self, role_id: str, username: Username, **kwargs: Any
     ) -> None:
         """Unassign a role from a user
 
@@ -7503,7 +7567,7 @@ class CamundaAsyncClient:
         return await search_clients_for_role_asyncio(**_kwargs)
 
     async def assign_role_to_user(
-        self, role_id: str, username: str, **kwargs: Any
+        self, role_id: str, username: Username, **kwargs: Any
     ) -> None:
         """Assign a role to a user
 
@@ -7875,7 +7939,9 @@ class CamundaAsyncClient:
         return await search_decision_instances_asyncio(**_kwargs)
 
     async def get_decision_instance(
-        self, decision_evaluation_instance_key: str, **kwargs: Any
+        self,
+        decision_evaluation_instance_key: DecisionEvaluationInstanceKey,
+        **kwargs: Any,
     ) -> DecisionInstanceGetQueryResult:
         """Get decision instance
 
@@ -7908,7 +7974,7 @@ class CamundaAsyncClient:
 
     async def delete_decision_instance(
         self,
-        decision_instance_key: str,
+        decision_instance_key: DecisionInstanceKey,
         *,
         data: DeleteProcessInstanceRequestType0 | None | Unset = UNSET,
         **kwargs: Any,
@@ -7976,7 +8042,9 @@ class CamundaAsyncClient:
             _kwargs["body"] = _kwargs.pop("data")
         return await delete_decision_instances_batch_operation_asyncio(**_kwargs)
 
-    async def get_variable(self, variable_key: str, **kwargs: Any) -> VariableResult:
+    async def get_variable(
+        self, variable_key: VariableKey, **kwargs: Any
+    ) -> VariableResult:
         """Get variable
 
          Get the variable by the variable key.
@@ -8038,7 +8106,7 @@ class CamundaAsyncClient:
         return await search_variables_asyncio(**_kwargs)
 
     async def get_tenant_cluster_variable(
-        self, tenant_id: str, name: str, **kwargs: Any
+        self, tenant_id: TenantId, name: str, **kwargs: Any
     ) -> ClusterVariableResult:
         """Get a tenant-scoped cluster variable
 
@@ -8131,7 +8199,7 @@ class CamundaAsyncClient:
 
     async def update_tenant_cluster_variable(
         self,
-        tenant_id: str,
+        tenant_id: TenantId,
         name: str,
         *,
         data: UpdateClusterVariableRequest,
@@ -8196,7 +8264,7 @@ class CamundaAsyncClient:
         return await delete_global_cluster_variable_asyncio(**_kwargs)
 
     async def delete_tenant_cluster_variable(
-        self, tenant_id: str, name: str, **kwargs: Any
+        self, tenant_id: TenantId, name: str, **kwargs: Any
     ) -> None:
         """Delete a tenant-scoped cluster variable
 
@@ -8259,7 +8327,7 @@ class CamundaAsyncClient:
         return await update_global_cluster_variable_asyncio(**_kwargs)
 
     async def create_tenant_cluster_variable(
-        self, tenant_id: str, *, data: CreateClusterVariableRequest, **kwargs: Any
+        self, tenant_id: TenantId, *, data: CreateClusterVariableRequest, **kwargs: Any
     ) -> ClusterVariableResult:
         """Create a tenant-scoped cluster variable
 
@@ -8419,7 +8487,7 @@ class CamundaAsyncClient:
         return await assign_client_to_group_asyncio(**_kwargs)
 
     async def unassign_user_from_group(
-        self, group_id: str, username: str, **kwargs: Any
+        self, group_id: str, username: Username, **kwargs: Any
     ) -> None:
         """Unassign a user from a group
 
@@ -8731,7 +8799,7 @@ class CamundaAsyncClient:
         return await delete_group_asyncio(**_kwargs)
 
     async def assign_user_to_group(
-        self, group_id: str, username: str, **kwargs: Any
+        self, group_id: str, username: Username, **kwargs: Any
     ) -> None:
         """Assign a user to a group
 
@@ -9012,7 +9080,7 @@ class CamundaAsyncClient:
             _kwargs["body"] = _kwargs.pop("data")
         return await search_users_asyncio(**_kwargs)
 
-    async def delete_user(self, username: str, **kwargs: Any) -> None:
+    async def delete_user(self, username: Username, **kwargs: Any) -> None:
         """Delete user
 
          Deletes a user.
@@ -9038,7 +9106,7 @@ class CamundaAsyncClient:
             _kwargs["body"] = _kwargs.pop("data")
         return await delete_user_asyncio(**_kwargs)
 
-    async def get_user(self, username: str, **kwargs: Any) -> UserResult:
+    async def get_user(self, username: Username, **kwargs: Any) -> UserResult:
         """Get user
 
          Get a user by its username.
@@ -9065,7 +9133,7 @@ class CamundaAsyncClient:
         return await get_user_asyncio(**_kwargs)
 
     async def update_user(
-        self, username: str, *, data: UserUpdateRequest, **kwargs: Any
+        self, username: Username, *, data: UserUpdateRequest, **kwargs: Any
     ) -> UserResult:
         """Update user
 
@@ -9096,7 +9164,7 @@ class CamundaAsyncClient:
 
     async def get_document(
         self,
-        document_id: str,
+        document_id: DocumentId,
         *,
         store_id: str | Unset = UNSET,
         content_hash: str | Unset = UNSET,
@@ -9180,7 +9248,7 @@ class CamundaAsyncClient:
 
     async def create_document_link(
         self,
-        document_id: str,
+        document_id: DocumentId,
         *,
         data: DocumentLinkRequest | Unset = UNSET,
         store_id: str | Unset = UNSET,
@@ -9217,7 +9285,7 @@ class CamundaAsyncClient:
         return await create_document_link_asyncio(**_kwargs)
 
     async def delete_document(
-        self, document_id: str, *, store_id: str | Unset = UNSET, **kwargs: Any
+        self, document_id: DocumentId, *, store_id: str | Unset = UNSET, **kwargs: Any
     ) -> None:
         """Delete document
 
@@ -9283,7 +9351,7 @@ class CamundaAsyncClient:
         return await create_document_asyncio(**_kwargs)
 
     async def get_audit_log(
-        self, audit_log_key: str, **kwargs: Any
+        self, audit_log_key: AuditLogKey, **kwargs: Any
     ) -> GetAuditLogResponse200:
         """Get audit log
 
@@ -9379,7 +9447,11 @@ class CamundaAsyncClient:
         return await get_usage_metrics_asyncio(**_kwargs)
 
     async def search_element_instance_incidents(
-        self, element_instance_key: str, *, data: IncidentSearchQuery, **kwargs: Any
+        self,
+        element_instance_key: ElementInstanceKey,
+        *,
+        data: IncidentSearchQuery,
+        **kwargs: Any,
     ) -> IncidentSearchQueryResult:
         """Search for incidents of a specific element instance
 
@@ -9422,7 +9494,7 @@ class CamundaAsyncClient:
         return await search_element_instance_incidents_asyncio(**_kwargs)
 
     async def get_element_instance(
-        self, element_instance_key: str, **kwargs: Any
+        self, element_instance_key: ElementInstanceKey, **kwargs: Any
     ) -> ElementInstanceResult:
         """Get element instance
 
@@ -9454,7 +9526,11 @@ class CamundaAsyncClient:
         return await get_element_instance_asyncio(**_kwargs)
 
     async def create_element_instance_variables(
-        self, element_instance_key: str, *, data: SetVariableRequest, **kwargs: Any
+        self,
+        element_instance_key: ElementInstanceKey,
+        *,
+        data: SetVariableRequest,
+        **kwargs: Any,
     ) -> None:
         """Update element instance variables
 
@@ -9557,7 +9633,7 @@ class CamundaAsyncClient:
         return await activate_ad_hoc_sub_process_activities_asyncio(**_kwargs)
 
     async def fail_job(
-        self, job_key: str, *, data: JobFailRequest | Unset = UNSET, **kwargs: Any
+        self, job_key: JobKey, *, data: JobFailRequest | Unset = UNSET, **kwargs: Any
     ) -> None:
         """Fail job
 
@@ -9681,7 +9757,7 @@ class CamundaAsyncClient:
         return await get_global_job_statistics_asyncio(**_kwargs)
 
     async def throw_job_error(
-        self, job_key: str, *, data: JobErrorRequest, **kwargs: Any
+        self, job_key: JobKey, *, data: JobErrorRequest, **kwargs: Any
     ) -> None:
         """Throw error for job
 
@@ -9711,7 +9787,7 @@ class CamundaAsyncClient:
         return await throw_job_error_asyncio(**_kwargs)
 
     async def complete_job(
-        self, job_key: str, *, data: CompleteJobData | Unset = UNSET, **kwargs: Any
+        self, job_key: JobKey, *, data: CompleteJobData | Unset = UNSET, **kwargs: Any
     ) -> None:
         """Complete job
 
@@ -9741,7 +9817,7 @@ class CamundaAsyncClient:
         return await complete_job_asyncio(**_kwargs)
 
     async def update_job(
-        self, job_key: str, *, data: JobUpdateRequest, **kwargs: Any
+        self, job_key: JobKey, *, data: JobUpdateRequest, **kwargs: Any
     ) -> None:
         """Update job
 
@@ -9804,7 +9880,7 @@ class CamundaAsyncClient:
 
     async def resolve_incident(
         self,
-        incident_key: str,
+        incident_key: IncidentKey,
         *,
         data: IncidentResolutionRequest | Unset = UNSET,
         **kwargs: Any,
@@ -9898,7 +9974,9 @@ class CamundaAsyncClient:
             _kwargs["body"] = _kwargs.pop("data")
         return await get_process_instance_statistics_by_error_asyncio(**_kwargs)
 
-    async def get_incident(self, incident_key: str, **kwargs: Any) -> IncidentResult:
+    async def get_incident(
+        self, incident_key: IncidentKey, **kwargs: Any
+    ) -> IncidentResult:
         """Get incident
 
          Returns incident as JSON.
@@ -9926,7 +10004,7 @@ class CamundaAsyncClient:
         return await get_incident_asyncio(**_kwargs)
 
     async def get_decision_definition(
-        self, decision_definition_key: str, **kwargs: Any
+        self, decision_definition_key: DecisionDefinitionKey, **kwargs: Any
     ) -> DecisionDefinitionResult:
         """Get decision definition
 
@@ -10021,7 +10099,7 @@ class CamundaAsyncClient:
         return await search_decision_definitions_asyncio(**_kwargs)
 
     async def get_decision_definition_xml(
-        self, decision_definition_key: str, **kwargs: Any
+        self, decision_definition_key: DecisionDefinitionKey, **kwargs: Any
     ) -> str:
         """Get decision definition XML
 
@@ -10083,7 +10161,9 @@ class CamundaAsyncClient:
             _kwargs["body"] = _kwargs.pop("data")
         return await evaluate_expression_asyncio(**_kwargs)
 
-    async def unassign_user_task(self, user_task_key: str, **kwargs: Any) -> None:
+    async def unassign_user_task(
+        self, user_task_key: UserTaskKey, **kwargs: Any
+    ) -> None:
         """Unassign user task
 
          Removes the assignee of a task with the given key.
@@ -10114,7 +10194,7 @@ class CamundaAsyncClient:
 
     async def search_user_task_variables(
         self,
-        user_task_key: str,
+        user_task_key: UserTaskKey,
         *,
         data: SearchUserTaskVariablesData | Unset = UNSET,
         truncate_values: bool | Unset = UNSET,
@@ -10149,7 +10229,11 @@ class CamundaAsyncClient:
         return await search_user_task_variables_asyncio(**_kwargs)
 
     async def assign_user_task(
-        self, user_task_key: str, *, data: UserTaskAssignmentRequest, **kwargs: Any
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskAssignmentRequest,
+        **kwargs: Any,
     ) -> None:
         """Assign user task
 
@@ -10180,7 +10264,7 @@ class CamundaAsyncClient:
 
     async def update_user_task(
         self,
-        user_task_key: str,
+        user_task_key: UserTaskKey,
         *,
         data: UserTaskUpdateRequest | Unset = UNSET,
         **kwargs: Any,
@@ -10213,7 +10297,7 @@ class CamundaAsyncClient:
         return await update_user_task_asyncio(**_kwargs)
 
     async def get_user_task_form(
-        self, user_task_key: str, **kwargs: Any
+        self, user_task_key: UserTaskKey, **kwargs: Any
     ) -> GetUserTaskFormResponse200:
         """Get user task form
 
@@ -10246,7 +10330,7 @@ class CamundaAsyncClient:
         return await get_user_task_form_asyncio(**_kwargs)
 
     async def get_user_task(
-        self, user_task_key: str, **kwargs: Any
+        self, user_task_key: UserTaskKey, **kwargs: Any
     ) -> GetUserTaskResponse200:
         """Get user task
 
@@ -10276,7 +10360,7 @@ class CamundaAsyncClient:
 
     async def search_user_task_audit_logs(
         self,
-        user_task_key: str,
+        user_task_key: UserTaskKey,
         *,
         data: SearchUserTaskAuditLogsData | Unset = UNSET,
         **kwargs: Any,
@@ -10339,7 +10423,7 @@ class CamundaAsyncClient:
 
     async def complete_user_task(
         self,
-        user_task_key: str,
+        user_task_key: UserTaskKey,
         *,
         data: UserTaskCompletionRequest | Unset = UNSET,
         **kwargs: Any,
@@ -10503,7 +10587,7 @@ class CamundaAsyncClient:
 
     async def update_authorization(
         self,
-        authorization_key: str,
+        authorization_key: AuthorizationKey,
         *,
         data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
         **kwargs: Any,
@@ -10603,7 +10687,7 @@ class CamundaAsyncClient:
         return await search_authorizations_asyncio(**_kwargs)
 
     async def get_authorization(
-        self, authorization_key: str, **kwargs: Any
+        self, authorization_key: AuthorizationKey, **kwargs: Any
     ) -> AuthorizationResult:
         """Get authorization
 
@@ -10633,7 +10717,9 @@ class CamundaAsyncClient:
             _kwargs["body"] = _kwargs.pop("data")
         return await get_authorization_asyncio(**_kwargs)
 
-    async def delete_authorization(self, authorization_key: str, **kwargs: Any) -> None:
+    async def delete_authorization(
+        self, authorization_key: AuthorizationKey, **kwargs: Any
+    ) -> None:
         """Delete authorization
 
          Deletes the authorization with the given key.
@@ -10663,7 +10749,7 @@ class CamundaAsyncClient:
         return await delete_authorization_asyncio(**_kwargs)
 
     async def get_decision_requirements_xml(
-        self, decision_requirements_key: str, **kwargs: Any
+        self, decision_requirements_key: DecisionRequirementsKey, **kwargs: Any
     ) -> str:
         """Get decision requirements XML
 
@@ -10725,7 +10811,7 @@ class CamundaAsyncClient:
         return await search_decision_requirements_asyncio(**_kwargs)
 
     async def get_decision_requirements(
-        self, decision_requirements_key: str, **kwargs: Any
+        self, decision_requirements_key: DecisionRequirementsKey, **kwargs: Any
     ) -> DecisionRequirementsResult:
         """Get decision requirements
 
@@ -10962,7 +11048,7 @@ class CamundaAsyncClient:
         return await get_mapping_rule_asyncio(**_kwargs)
 
     async def get_process_instance_sequence_flows(
-        self, process_instance_key: str, **kwargs: Any
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
     ) -> GetProcessInstanceSequenceFlowsResponse200:
         """Get sequence flows
 
@@ -10993,7 +11079,7 @@ class CamundaAsyncClient:
         return await get_process_instance_sequence_flows_asyncio(**_kwargs)
 
     async def get_process_instance_call_hierarchy(
-        self, process_instance_key: str, **kwargs: Any
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
     ) -> list[Any]:
         """Get call hierarchy
 
@@ -11027,7 +11113,7 @@ class CamundaAsyncClient:
 
     async def modify_process_instance(
         self,
-        process_instance_key: str,
+        process_instance_key: ProcessInstanceKey,
         *,
         data: ModifyProcessInstanceData,
         **kwargs: Any,
@@ -11067,7 +11153,7 @@ class CamundaAsyncClient:
         return await modify_process_instance_asyncio(**_kwargs)
 
     async def get_process_instance_statistics(
-        self, process_instance_key: str, **kwargs: Any
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
     ) -> GetProcessInstanceStatisticsResponse200:
         """Get element instance statistics
 
@@ -11132,7 +11218,7 @@ class CamundaAsyncClient:
         return await migrate_process_instances_batch_operation_asyncio(**_kwargs)
 
     async def get_process_instance(
-        self, process_instance_key: str, **kwargs: Any
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
     ) -> GetProcessInstanceResponse200:
         """Get process instance
 
@@ -11239,7 +11325,7 @@ class CamundaAsyncClient:
 
     async def delete_process_instance(
         self,
-        process_instance_key: str,
+        process_instance_key: ProcessInstanceKey,
         *,
         data: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
         **kwargs: Any,
@@ -11383,7 +11469,7 @@ class CamundaAsyncClient:
 
     async def cancel_process_instance(
         self,
-        process_instance_key: str,
+        process_instance_key: ProcessInstanceKey,
         *,
         data: CancelProcessInstanceDataType0 | None | Unset = UNSET,
         **kwargs: Any,
@@ -11420,7 +11506,7 @@ class CamundaAsyncClient:
 
     async def search_process_instance_incidents(
         self,
-        process_instance_key: str,
+        process_instance_key: ProcessInstanceKey,
         *,
         data: IncidentSearchQuery | Unset = UNSET,
         **kwargs: Any,
@@ -11466,7 +11552,7 @@ class CamundaAsyncClient:
 
     async def migrate_process_instance(
         self,
-        process_instance_key: str,
+        process_instance_key: ProcessInstanceKey,
         *,
         data: MigrateProcessInstanceData,
         **kwargs: Any,
@@ -11539,7 +11625,7 @@ class CamundaAsyncClient:
         return await search_process_instances_asyncio(**_kwargs)
 
     async def resolve_process_instance_incidents(
-        self, process_instance_key: str, **kwargs: Any
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
     ) -> BatchOperationCreatedResult:
         """Resolve related incidents
 
@@ -11629,7 +11715,7 @@ class CamundaAsyncClient:
 
     async def get_process_definition_instance_version_statistics(
         self,
-        process_definition_id: str,
+        process_definition_id: ProcessDefinitionId,
         *,
         data: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
         **kwargs: Any,
@@ -11765,7 +11851,7 @@ class CamundaAsyncClient:
         )
 
     async def get_start_process_form(
-        self, process_definition_key: str, **kwargs: Any
+        self, process_definition_key: ProcessDefinitionKey, **kwargs: Any
     ) -> GetStartProcessFormResponse200:
         """Get process start form
 
@@ -11799,7 +11885,7 @@ class CamundaAsyncClient:
         return await get_start_process_form_asyncio(**_kwargs)
 
     async def get_process_definition_xml(
-        self, process_definition_key: str, **kwargs: Any
+        self, process_definition_key: ProcessDefinitionKey, **kwargs: Any
     ) -> str:
         """Get process definition XML
 
@@ -11831,7 +11917,7 @@ class CamundaAsyncClient:
         return await get_process_definition_xml_asyncio(**_kwargs)
 
     async def get_process_definition(
-        self, process_definition_key: str, **kwargs: Any
+        self, process_definition_key: ProcessDefinitionKey, **kwargs: Any
     ) -> ProcessDefinitionResult:
         """Get process definition
 
@@ -11864,7 +11950,7 @@ class CamundaAsyncClient:
 
     async def get_process_definition_statistics(
         self,
-        process_definition_key: str,
+        process_definition_key: ProcessDefinitionKey,
         *,
         data: GetProcessDefinitionStatisticsData | Unset = UNSET,
         **kwargs: Any,

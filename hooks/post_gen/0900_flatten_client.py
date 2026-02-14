@@ -10,6 +10,43 @@ def to_camel_case(snake_str: str) -> str:
 ImportNode = ast.Import | ast.ImportFrom
 
 
+def _build_semantic_type_map(package_path: Path) -> dict[str, str]:
+    """Map snake_case param names to PascalCase semantic type names from semantic_types.py."""
+    semantic_types_file = package_path / "semantic_types.py"
+    if not semantic_types_file.exists():
+        return {}
+    with open(semantic_types_file, "r") as f:
+        tree = ast.parse(f.read())
+    mapping: dict[str, str] = {}
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1:
+            target = node.targets[0]
+            if isinstance(target, ast.Name) and isinstance(node.value, ast.Call):
+                call = node.value
+                if isinstance(call.func, ast.Name) and call.func.id == "NewType":
+                    type_name = target.id
+                    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', type_name)
+                    snake = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+                    mapping[snake] = type_name
+    return mapping
+
+
+def _lift_semantic_annotations(
+    func: ast.FunctionDef | ast.AsyncFunctionDef,
+    semantic_type_map: dict[str, str],
+    semantic_types_used: set[str],
+) -> None:
+    """Replace str annotations on path parameters with semantic types in-place."""
+    for arg in func.args.posonlyargs + func.args.args:
+        if (arg.annotation
+                and isinstance(arg.annotation, ast.Name)
+                and arg.annotation.id == "str"
+                and arg.arg in semantic_type_map):
+            semantic_type = semantic_type_map[arg.arg]
+            arg.annotation = ast.Name(id=semantic_type, ctx=ast.Load())
+            semantic_types_used.add(semantic_type)
+
+
 def get_imports_and_signature(
     file_path: Path,
     package_root: Path,
@@ -79,6 +116,8 @@ def generate_flat_client(package_path: Path) -> None:
     async_methods: list[str] = []
     all_imports: set[str] = set()
     needed_type_names: set[str] = set()
+    semantic_type_map = _build_semantic_type_map(package_path)
+    semantic_types_used: set[str] = set()
 
     def _extract_annotation_names(node: ast.expr | None) -> set[str]:
         """Extract all Name identifiers from a type annotation AST node."""
@@ -110,7 +149,11 @@ def generate_flat_client(package_path: Path) -> None:
             module_name = file[:-3]
             import_path = f".{'.'.join(rel_path.parts)}.{module_name}"
             method_name = module_name
-            
+
+            # Lift path parameter annotations from str to semantic types
+            for func in [f for f in [sync_func, async_func] if f is not None]:
+                _lift_semantic_annotations(func, semantic_type_map, semantic_types_used)
+
             if sync_func:
                 args = sync_func.args
                 # Track type names used in annotations for TYPE_CHECKING imports
@@ -232,6 +275,10 @@ def generate_flat_client(package_path: Path) -> None:
             _kwargs["body"] = _kwargs.pop("data")
         return await {method_name}_asyncio(**_kwargs)
 """)
+
+    # Add semantic type import for TYPE_CHECKING block
+    if semantic_types_used:
+        all_imports.add(f"from .semantic_types import {', '.join(sorted(semantic_types_used))}")
 
     client_file = package_path / "client.py"
     if not client_file.exists():

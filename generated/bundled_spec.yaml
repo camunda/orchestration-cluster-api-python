@@ -12501,8 +12501,8 @@ components:
           description: Only provided if the cluster variable scope is TENANT.
       required:
       - value
-      - scope
       - name
+      - scope
     ClusterVariableSearchResult:
       description: Cluster variable search response item.
       type: object
@@ -12524,8 +12524,8 @@ components:
           description: Only provided if the cluster variable scope is TENANT.
       required:
       - value
-      - scope
       - name
+      - scope
     ClusterVariableResultBase:
       description: Cluster variable response item.
       type: object
@@ -17424,10 +17424,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - mappingRuleId
       - claimValue
       - name
       - claimName
+      - mappingRuleId
     MappingRuleUpdateRequest:
       type: object
       properties:
@@ -17441,9 +17441,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimValue
       - name
       - claimName
+      - claimValue
     MappingRuleCreateUpdateResult:
       type: object
       properties:
@@ -22992,8 +22992,8 @@ components:
             $ref: '#/components/schemas/MigrateProcessInstanceMappingInstruction'
           description: The mapping instructions.
       required:
-      - targetProcessDefinitionKey
       - mappingInstructions
+      - targetProcessDefinitionKey
       title: ProcessInstanceMigrationBatchOperationRequestMigrationPlan
     ClusterVariableSearchQueryRequestFilter:
       description: The cluster variable search filters.
@@ -24661,8 +24661,8 @@ components:
             $ref: '#/components/schemas/MigrateProcessInstanceMappingInstruction'
           description: The mapping instructions.
       required:
-      - targetProcessDefinitionKey
       - mappingInstructions
+      - targetProcessDefinitionKey
       title: MigrateProcessInstancesBatchOperationMigrationPlan
     SearchProcessInstancesItemsItem:
       description: Process instance search response item.
