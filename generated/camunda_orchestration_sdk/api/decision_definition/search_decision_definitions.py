@@ -3,27 +3,16 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.search_decision_definitions_data import SearchDecisionDefinitionsData
-from ...models.search_decision_definitions_response_200 import (
-    SearchDecisionDefinitionsResponse200,
+from ...models.decision_definition_search_query import DecisionDefinitionSearchQuery
+from ...models.decision_definition_search_query_result import (
+    DecisionDefinitionSearchQueryResult,
 )
-from ...models.search_decision_definitions_response_400 import (
-    SearchDecisionDefinitionsResponse400,
-)
-from ...models.search_decision_definitions_response_401 import (
-    SearchDecisionDefinitionsResponse401,
-)
-from ...models.search_decision_definitions_response_403 import (
-    SearchDecisionDefinitionsResponse403,
-)
-from ...models.search_decision_definitions_response_500 import (
-    SearchDecisionDefinitionsResponse500,
-)
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    *, body: SearchDecisionDefinitionsData | Unset = UNSET
+    *, body: DecisionDefinitionSearchQuery | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/decision-definitions/search"}
@@ -36,28 +25,21 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    SearchDecisionDefinitionsResponse200
-    | SearchDecisionDefinitionsResponse400
-    | SearchDecisionDefinitionsResponse401
-    | SearchDecisionDefinitionsResponse403
-    | SearchDecisionDefinitionsResponse500
-    | None
-):
+) -> DecisionDefinitionSearchQueryResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = SearchDecisionDefinitionsResponse200.from_dict(response.json())
+        response_200 = DecisionDefinitionSearchQueryResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = SearchDecisionDefinitionsResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = SearchDecisionDefinitionsResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = SearchDecisionDefinitionsResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = SearchDecisionDefinitionsResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -67,13 +49,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    SearchDecisionDefinitionsResponse200
-    | SearchDecisionDefinitionsResponse400
-    | SearchDecisionDefinitionsResponse401
-    | SearchDecisionDefinitionsResponse403
-    | SearchDecisionDefinitionsResponse500
-]:
+) -> Response[DecisionDefinitionSearchQueryResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -85,27 +61,21 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchDecisionDefinitionsData | Unset = UNSET,
-) -> Response[
-    SearchDecisionDefinitionsResponse200
-    | SearchDecisionDefinitionsResponse400
-    | SearchDecisionDefinitionsResponse401
-    | SearchDecisionDefinitionsResponse403
-    | SearchDecisionDefinitionsResponse500
-]:
+    body: DecisionDefinitionSearchQuery | Unset = UNSET,
+) -> Response[DecisionDefinitionSearchQueryResult | ProblemDetail]:
     """Search decision definitions
 
      Search for decision definitions based on given criteria.
 
     Args:
-        body (SearchDecisionDefinitionsData | Unset):
+        body (DecisionDefinitionSearchQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchDecisionDefinitionsResponse200 | SearchDecisionDefinitionsResponse400 | SearchDecisionDefinitionsResponse401 | SearchDecisionDefinitionsResponse403 | SearchDecisionDefinitionsResponse500]
+        Response[DecisionDefinitionSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -115,15 +85,15 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchDecisionDefinitionsData | Unset = UNSET,
+    body: DecisionDefinitionSearchQuery | Unset = UNSET,
     **kwargs: Any,
-) -> SearchDecisionDefinitionsResponse200:
+) -> DecisionDefinitionSearchQueryResult:
     """Search decision definitions
 
      Search for decision definitions based on given criteria.
 
     Args:
-        body (SearchDecisionDefinitionsData | Unset):
+        body (DecisionDefinitionSearchQuery | Unset):
 
     Raises:
         errors.SearchDecisionDefinitionsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -133,62 +103,56 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchDecisionDefinitionsResponse200"""
+        DecisionDefinitionSearchQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.SearchDecisionDefinitionsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchDecisionDefinitionsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchDecisionDefinitionsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchDecisionDefinitionsResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchDecisionDefinitionsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchDecisionDefinitionsResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchDecisionDefinitionsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchDecisionDefinitionsResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchDecisionDefinitionsResponse200, response.parsed)
+    return cast(DecisionDefinitionSearchQueryResult, response.parsed)
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchDecisionDefinitionsData | Unset = UNSET,
-) -> Response[
-    SearchDecisionDefinitionsResponse200
-    | SearchDecisionDefinitionsResponse400
-    | SearchDecisionDefinitionsResponse401
-    | SearchDecisionDefinitionsResponse403
-    | SearchDecisionDefinitionsResponse500
-]:
+    body: DecisionDefinitionSearchQuery | Unset = UNSET,
+) -> Response[DecisionDefinitionSearchQueryResult | ProblemDetail]:
     """Search decision definitions
 
      Search for decision definitions based on given criteria.
 
     Args:
-        body (SearchDecisionDefinitionsData | Unset):
+        body (DecisionDefinitionSearchQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchDecisionDefinitionsResponse200 | SearchDecisionDefinitionsResponse400 | SearchDecisionDefinitionsResponse401 | SearchDecisionDefinitionsResponse403 | SearchDecisionDefinitionsResponse500]
+        Response[DecisionDefinitionSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -198,15 +162,15 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchDecisionDefinitionsData | Unset = UNSET,
+    body: DecisionDefinitionSearchQuery | Unset = UNSET,
     **kwargs: Any,
-) -> SearchDecisionDefinitionsResponse200:
+) -> DecisionDefinitionSearchQueryResult:
     """Search decision definitions
 
      Search for decision definitions based on given criteria.
 
     Args:
-        body (SearchDecisionDefinitionsData | Unset):
+        body (DecisionDefinitionSearchQuery | Unset):
 
     Raises:
         errors.SearchDecisionDefinitionsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -216,33 +180,33 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchDecisionDefinitionsResponse200"""
+        DecisionDefinitionSearchQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.SearchDecisionDefinitionsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchDecisionDefinitionsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchDecisionDefinitionsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchDecisionDefinitionsResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchDecisionDefinitionsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchDecisionDefinitionsResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchDecisionDefinitionsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchDecisionDefinitionsResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchDecisionDefinitionsResponse200, response.parsed)
+    return cast(DecisionDefinitionSearchQueryResult, response.parsed)

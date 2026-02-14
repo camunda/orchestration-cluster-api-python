@@ -3,23 +3,10 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.batch_operation_created_result import BatchOperationCreatedResult
+from ...models.problem_detail import ProblemDetail
 from ...models.resolve_incidents_batch_operation_data import (
     ResolveIncidentsBatchOperationData,
-)
-from ...models.resolve_incidents_batch_operation_response_200 import (
-    ResolveIncidentsBatchOperationResponse200,
-)
-from ...models.resolve_incidents_batch_operation_response_400 import (
-    ResolveIncidentsBatchOperationResponse400,
-)
-from ...models.resolve_incidents_batch_operation_response_401 import (
-    ResolveIncidentsBatchOperationResponse401,
-)
-from ...models.resolve_incidents_batch_operation_response_403 import (
-    ResolveIncidentsBatchOperationResponse403,
-)
-from ...models.resolve_incidents_batch_operation_response_500 import (
-    ResolveIncidentsBatchOperationResponse500,
 )
 from ...types import UNSET, Response, Unset
 
@@ -41,38 +28,21 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    ResolveIncidentsBatchOperationResponse200
-    | ResolveIncidentsBatchOperationResponse400
-    | ResolveIncidentsBatchOperationResponse401
-    | ResolveIncidentsBatchOperationResponse403
-    | ResolveIncidentsBatchOperationResponse500
-    | None
-):
+) -> BatchOperationCreatedResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = ResolveIncidentsBatchOperationResponse200.from_dict(
-            response.json()
-        )
+        response_200 = BatchOperationCreatedResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = ResolveIncidentsBatchOperationResponse400.from_dict(
-            response.json()
-        )
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = ResolveIncidentsBatchOperationResponse401.from_dict(
-            response.json()
-        )
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = ResolveIncidentsBatchOperationResponse403.from_dict(
-            response.json()
-        )
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = ResolveIncidentsBatchOperationResponse500.from_dict(
-            response.json()
-        )
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -82,13 +52,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    ResolveIncidentsBatchOperationResponse200
-    | ResolveIncidentsBatchOperationResponse400
-    | ResolveIncidentsBatchOperationResponse401
-    | ResolveIncidentsBatchOperationResponse403
-    | ResolveIncidentsBatchOperationResponse500
-]:
+) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -101,13 +65,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: ResolveIncidentsBatchOperationData | Unset = UNSET,
-) -> Response[
-    ResolveIncidentsBatchOperationResponse200
-    | ResolveIncidentsBatchOperationResponse400
-    | ResolveIncidentsBatchOperationResponse401
-    | ResolveIncidentsBatchOperationResponse403
-    | ResolveIncidentsBatchOperationResponse500
-]:
+) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Resolve related incidents (batch)
 
      Resolves multiple instances of process instances.
@@ -125,7 +83,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ResolveIncidentsBatchOperationResponse200 | ResolveIncidentsBatchOperationResponse400 | ResolveIncidentsBatchOperationResponse401 | ResolveIncidentsBatchOperationResponse403 | ResolveIncidentsBatchOperationResponse500]
+        Response[BatchOperationCreatedResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -137,7 +95,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: ResolveIncidentsBatchOperationData | Unset = UNSET,
     **kwargs: Any,
-) -> ResolveIncidentsBatchOperationResponse200:
+) -> BatchOperationCreatedResult:
     """Resolve related incidents (batch)
 
      Resolves multiple instances of process instances.
@@ -158,49 +116,43 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        ResolveIncidentsBatchOperationResponse200"""
+        BatchOperationCreatedResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.ResolveIncidentsBatchOperationBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentsBatchOperationResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.ResolveIncidentsBatchOperationUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentsBatchOperationResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.ResolveIncidentsBatchOperationForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentsBatchOperationResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.ResolveIncidentsBatchOperationInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentsBatchOperationResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(ResolveIncidentsBatchOperationResponse200, response.parsed)
+    return cast(BatchOperationCreatedResult, response.parsed)
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: ResolveIncidentsBatchOperationData | Unset = UNSET,
-) -> Response[
-    ResolveIncidentsBatchOperationResponse200
-    | ResolveIncidentsBatchOperationResponse400
-    | ResolveIncidentsBatchOperationResponse401
-    | ResolveIncidentsBatchOperationResponse403
-    | ResolveIncidentsBatchOperationResponse500
-]:
+) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Resolve related incidents (batch)
 
      Resolves multiple instances of process instances.
@@ -218,7 +170,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ResolveIncidentsBatchOperationResponse200 | ResolveIncidentsBatchOperationResponse400 | ResolveIncidentsBatchOperationResponse401 | ResolveIncidentsBatchOperationResponse403 | ResolveIncidentsBatchOperationResponse500]
+        Response[BatchOperationCreatedResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -230,7 +182,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: ResolveIncidentsBatchOperationData | Unset = UNSET,
     **kwargs: Any,
-) -> ResolveIncidentsBatchOperationResponse200:
+) -> BatchOperationCreatedResult:
     """Resolve related incidents (batch)
 
      Resolves multiple instances of process instances.
@@ -251,33 +203,33 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        ResolveIncidentsBatchOperationResponse200"""
+        BatchOperationCreatedResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.ResolveIncidentsBatchOperationBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentsBatchOperationResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.ResolveIncidentsBatchOperationUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentsBatchOperationResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.ResolveIncidentsBatchOperationForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentsBatchOperationResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.ResolveIncidentsBatchOperationInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentsBatchOperationResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(ResolveIncidentsBatchOperationResponse200, response.parsed)
+    return cast(BatchOperationCreatedResult, response.parsed)

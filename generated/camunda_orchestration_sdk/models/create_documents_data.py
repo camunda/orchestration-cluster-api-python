@@ -11,9 +11,7 @@ from .. import types
 from ..types import UNSET, File, Unset
 
 if TYPE_CHECKING:
-    from ..models.create_documents_data_metadata_list_item import (
-        CreateDocumentsDataMetadataListItem,
-    )
+    from ..models.document_metadata import DocumentMetadata
 
 
 T = TypeVar("T", bound="CreateDocumentsData")
@@ -24,12 +22,12 @@ class CreateDocumentsData:
     """
     Attributes:
         files (list[File]): The documents to upload.
-        metadata_list (list[CreateDocumentsDataMetadataListItem] | Unset): Optional JSON array of metadata object whose
-            index aligns with each file entry. The metadata array must have the same length as the files array.
+        metadata_list (list[DocumentMetadata] | Unset): Optional JSON array of metadata object whose index aligns with
+            each file entry. The metadata array must have the same length as the files array.
     """
 
     files: list[File]
-    metadata_list: list[CreateDocumentsDataMetadataListItem] | Unset = UNSET
+    metadata_list: list[DocumentMetadata] | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         files: list[Any] = []
@@ -80,9 +78,7 @@ class CreateDocumentsData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.create_documents_data_metadata_list_item import (
-            CreateDocumentsDataMetadataListItem,
-        )
+        from ..models.document_metadata import DocumentMetadata
 
         d = dict(src_dict)
         files: list[File] = []
@@ -93,13 +89,11 @@ class CreateDocumentsData:
             files.append(files_item)
 
         _metadata_list = d.pop("metadataList", UNSET)
-        metadata_list: list[CreateDocumentsDataMetadataListItem] | Unset = UNSET
+        metadata_list: list[DocumentMetadata] | Unset = UNSET
         if _metadata_list is not UNSET:
             metadata_list = []
             for metadata_list_item_data in _metadata_list:
-                metadata_list_item = CreateDocumentsDataMetadataListItem.from_dict(
-                    metadata_list_item_data
-                )
+                metadata_list_item = DocumentMetadata.from_dict(metadata_list_item_data)
 
                 metadata_list.append(metadata_list_item)
 

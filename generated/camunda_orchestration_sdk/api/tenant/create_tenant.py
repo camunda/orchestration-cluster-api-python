@@ -3,17 +3,13 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.create_tenant_data import CreateTenantData
-from ...models.create_tenant_response_201 import CreateTenantResponse201
-from ...models.create_tenant_response_400 import CreateTenantResponse400
-from ...models.create_tenant_response_403 import CreateTenantResponse403
-from ...models.create_tenant_response_404 import CreateTenantResponse404
-from ...models.create_tenant_response_500 import CreateTenantResponse500
-from ...models.create_tenant_response_503 import CreateTenantResponse503
+from ...models.problem_detail import ProblemDetail
+from ...models.tenant_create_request import TenantCreateRequest
+from ...models.tenant_create_result import TenantCreateResult
 from ...types import Response
 
 
-def _get_kwargs(*, body: CreateTenantData) -> dict[str, Any]:
+def _get_kwargs(*, body: TenantCreateRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/tenants"}
     _kwargs["json"] = body.to_dict()
@@ -24,36 +20,27 @@ def _get_kwargs(*, body: CreateTenantData) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | CreateTenantResponse201
-    | CreateTenantResponse400
-    | CreateTenantResponse403
-    | CreateTenantResponse404
-    | CreateTenantResponse500
-    | CreateTenantResponse503
-    | None
-):
+) -> Any | ProblemDetail | TenantCreateResult | None:
     if response.status_code == 201:
-        response_201 = CreateTenantResponse201.from_dict(response.json())
+        response_201 = TenantCreateResult.from_dict(response.json())
         return response_201
     if response.status_code == 400:
-        response_400 = CreateTenantResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 403:
-        response_403 = CreateTenantResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = CreateTenantResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 409:
         response_409 = cast(Any, None)
         return response_409
     if response.status_code == 500:
-        response_500 = CreateTenantResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = CreateTenantResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -63,15 +50,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | CreateTenantResponse201
-    | CreateTenantResponse400
-    | CreateTenantResponse403
-    | CreateTenantResponse404
-    | CreateTenantResponse500
-    | CreateTenantResponse503
-]:
+) -> Response[Any | ProblemDetail | TenantCreateResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -81,29 +60,21 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: CreateTenantData
-) -> Response[
-    Any
-    | CreateTenantResponse201
-    | CreateTenantResponse400
-    | CreateTenantResponse403
-    | CreateTenantResponse404
-    | CreateTenantResponse500
-    | CreateTenantResponse503
-]:
+    *, client: AuthenticatedClient | Client, body: TenantCreateRequest
+) -> Response[Any | ProblemDetail | TenantCreateResult]:
     """Create tenant
 
      Creates a new tenant.
 
     Args:
-        body (CreateTenantData):
+        body (TenantCreateRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | CreateTenantResponse201 | CreateTenantResponse400 | CreateTenantResponse403 | CreateTenantResponse404 | CreateTenantResponse500 | CreateTenantResponse503]
+        Response[Any | ProblemDetail | TenantCreateResult]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -111,14 +82,14 @@ def sync_detailed(
 
 
 def sync(
-    *, client: AuthenticatedClient | Client, body: CreateTenantData, **kwargs: Any
-) -> CreateTenantResponse201:
+    *, client: AuthenticatedClient | Client, body: TenantCreateRequest, **kwargs: Any
+) -> TenantCreateResult:
     """Create tenant
 
      Creates a new tenant.
 
     Args:
-        body (CreateTenantData):
+        body (TenantCreateRequest):
 
     Raises:
         errors.CreateTenantBadRequest: If the response status code is 400. The provided data is not valid.
@@ -130,26 +101,26 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CreateTenantResponse201"""
+        TenantCreateResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.CreateTenantBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateTenantResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.CreateTenantForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateTenantResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.CreateTenantNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateTenantResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 409:
             raise errors.CreateTenantConflict(
@@ -161,43 +132,35 @@ def sync(
             raise errors.CreateTenantInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateTenantResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CreateTenantServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateTenantResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CreateTenantResponse201, response.parsed)
+    return cast(TenantCreateResult, response.parsed)
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: CreateTenantData
-) -> Response[
-    Any
-    | CreateTenantResponse201
-    | CreateTenantResponse400
-    | CreateTenantResponse403
-    | CreateTenantResponse404
-    | CreateTenantResponse500
-    | CreateTenantResponse503
-]:
+    *, client: AuthenticatedClient | Client, body: TenantCreateRequest
+) -> Response[Any | ProblemDetail | TenantCreateResult]:
     """Create tenant
 
      Creates a new tenant.
 
     Args:
-        body (CreateTenantData):
+        body (TenantCreateRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | CreateTenantResponse201 | CreateTenantResponse400 | CreateTenantResponse403 | CreateTenantResponse404 | CreateTenantResponse500 | CreateTenantResponse503]
+        Response[Any | ProblemDetail | TenantCreateResult]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -205,14 +168,14 @@ async def asyncio_detailed(
 
 
 async def asyncio(
-    *, client: AuthenticatedClient | Client, body: CreateTenantData, **kwargs: Any
-) -> CreateTenantResponse201:
+    *, client: AuthenticatedClient | Client, body: TenantCreateRequest, **kwargs: Any
+) -> TenantCreateResult:
     """Create tenant
 
      Creates a new tenant.
 
     Args:
-        body (CreateTenantData):
+        body (TenantCreateRequest):
 
     Raises:
         errors.CreateTenantBadRequest: If the response status code is 400. The provided data is not valid.
@@ -224,26 +187,26 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CreateTenantResponse201"""
+        TenantCreateResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.CreateTenantBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateTenantResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.CreateTenantForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateTenantResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.CreateTenantNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateTenantResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 409:
             raise errors.CreateTenantConflict(
@@ -255,14 +218,14 @@ async def asyncio(
             raise errors.CreateTenantInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateTenantResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CreateTenantServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateTenantResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CreateTenantResponse201, response.parsed)
+    return cast(TenantCreateResult, response.parsed)

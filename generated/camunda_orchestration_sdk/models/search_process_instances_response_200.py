@@ -9,12 +9,10 @@ from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
-    from ..models.search_process_instances_response_200_items_item import (
-        SearchProcessInstancesResponse200ItemsItem,
+    from ..models.search_process_instances_items_item import (
+        SearchProcessInstancesItemsItem,
     )
-    from ..models.search_process_instances_response_200_page import (
-        SearchProcessInstancesResponse200Page,
-    )
+    from ..models.search_query_page_response import SearchQueryPageResponse
 
 
 T = TypeVar("T", bound="SearchProcessInstancesResponse200")
@@ -25,13 +23,13 @@ class SearchProcessInstancesResponse200:
     """Process instance search response.
 
     Attributes:
-        items (list[SearchProcessInstancesResponse200ItemsItem]): The matching process instances.
-        page (SearchProcessInstancesResponse200Page): Pagination information about the search results. Example:
-            {'totalItems': 1, 'hasMoreTotalItems': False}.
+        items (list[SearchProcessInstancesItemsItem]): The matching process instances.
+        page (SearchQueryPageResponse): Pagination information about the search results. Example: {'totalItems': 1,
+            'hasMoreTotalItems': False}.
     """
 
-    items: list[SearchProcessInstancesResponse200ItemsItem]
-    page: SearchProcessInstancesResponse200Page
+    items: list[SearchProcessInstancesItemsItem]
+    page: SearchQueryPageResponse
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -57,24 +55,20 @@ class SearchProcessInstancesResponse200:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.search_process_instances_response_200_items_item import (
-            SearchProcessInstancesResponse200ItemsItem,
+        from ..models.search_process_instances_items_item import (
+            SearchProcessInstancesItemsItem,
         )
-        from ..models.search_process_instances_response_200_page import (
-            SearchProcessInstancesResponse200Page,
-        )
+        from ..models.search_query_page_response import SearchQueryPageResponse
 
         d = dict(src_dict)
-        items: list[SearchProcessInstancesResponse200ItemsItem] = []
+        items: list[SearchProcessInstancesItemsItem] = []
         _items = d.pop("items")
         for items_item_data in _items:
-            items_item = SearchProcessInstancesResponse200ItemsItem.from_dict(
-                items_item_data
-            )
+            items_item = SearchProcessInstancesItemsItem.from_dict(items_item_data)
 
             items.append(items_item)
 
-        page = SearchProcessInstancesResponse200Page.from_dict(d.pop("page"))
+        page = SearchQueryPageResponse.from_dict(d.pop("page"))
 
         search_process_instances_response_200 = cls(
             items=items,

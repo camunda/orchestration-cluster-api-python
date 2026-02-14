@@ -3,14 +3,12 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.pin_clock_data import PinClockData
-from ...models.pin_clock_response_400 import PinClockResponse400
-from ...models.pin_clock_response_500 import PinClockResponse500
-from ...models.pin_clock_response_503 import PinClockResponse503
+from ...models.clock_pin_request import ClockPinRequest
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
-def _get_kwargs(*, body: PinClockData) -> dict[str, Any]:
+def _get_kwargs(*, body: ClockPinRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "put", "url": "/clock"}
     _kwargs["json"] = body.to_dict()
@@ -21,18 +19,18 @@ def _get_kwargs(*, body: PinClockData) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | PinClockResponse400 | PinClockResponse500 | PinClockResponse503 | None:
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = PinClockResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 500:
-        response_500 = PinClockResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = PinClockResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -42,7 +40,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | PinClockResponse400 | PinClockResponse500 | PinClockResponse503]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -52,8 +50,8 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: PinClockData
-) -> Response[Any | PinClockResponse400 | PinClockResponse500 | PinClockResponse503]:
+    *, client: AuthenticatedClient | Client, body: ClockPinRequest
+) -> Response[Any | ProblemDetail]:
     """Pin internal clock (alpha)
 
      Set a precise, static time for the Zeebe engine's internal clock.
@@ -64,14 +62,14 @@ def sync_detailed(
     in future releases.
 
     Args:
-        body (PinClockData):
+        body (ClockPinRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | PinClockResponse400 | PinClockResponse500 | PinClockResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -79,7 +77,7 @@ def sync_detailed(
 
 
 def sync(
-    *, client: AuthenticatedClient | Client, body: PinClockData, **kwargs: Any
+    *, client: AuthenticatedClient | Client, body: ClockPinRequest, **kwargs: Any
 ) -> None:
     """Pin internal clock (alpha)
 
@@ -91,7 +89,7 @@ def sync(
     in future releases.
 
     Args:
-        body (PinClockData):
+        body (ClockPinRequest):
 
     Raises:
         errors.PinClockBadRequest: If the response status code is 400. The provided data is not valid.
@@ -107,27 +105,27 @@ def sync(
             raise errors.PinClockBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(PinClockResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.PinClockInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(PinClockResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.PinClockServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(PinClockResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: PinClockData
-) -> Response[Any | PinClockResponse400 | PinClockResponse500 | PinClockResponse503]:
+    *, client: AuthenticatedClient | Client, body: ClockPinRequest
+) -> Response[Any | ProblemDetail]:
     """Pin internal clock (alpha)
 
      Set a precise, static time for the Zeebe engine's internal clock.
@@ -138,14 +136,14 @@ async def asyncio_detailed(
     in future releases.
 
     Args:
-        body (PinClockData):
+        body (ClockPinRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | PinClockResponse400 | PinClockResponse500 | PinClockResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -153,7 +151,7 @@ async def asyncio_detailed(
 
 
 async def asyncio(
-    *, client: AuthenticatedClient | Client, body: PinClockData, **kwargs: Any
+    *, client: AuthenticatedClient | Client, body: ClockPinRequest, **kwargs: Any
 ) -> None:
     """Pin internal clock (alpha)
 
@@ -165,7 +163,7 @@ async def asyncio(
     in future releases.
 
     Args:
-        body (PinClockData):
+        body (ClockPinRequest):
 
     Raises:
         errors.PinClockBadRequest: If the response status code is 400. The provided data is not valid.
@@ -181,19 +179,19 @@ async def asyncio(
             raise errors.PinClockBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(PinClockResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.PinClockInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(PinClockResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.PinClockServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(PinClockResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

@@ -5,10 +5,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.get_audit_log_response_200 import GetAuditLogResponse200
-from ...models.get_audit_log_response_401 import GetAuditLogResponse401
-from ...models.get_audit_log_response_403 import GetAuditLogResponse403
-from ...models.get_audit_log_response_404 import GetAuditLogResponse404
-from ...models.get_audit_log_response_500 import GetAuditLogResponse500
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -24,28 +21,21 @@ def _get_kwargs(audit_log_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetAuditLogResponse200
-    | GetAuditLogResponse401
-    | GetAuditLogResponse403
-    | GetAuditLogResponse404
-    | GetAuditLogResponse500
-    | None
-):
+) -> GetAuditLogResponse200 | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = GetAuditLogResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 401:
-        response_401 = GetAuditLogResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetAuditLogResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = GetAuditLogResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetAuditLogResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -55,13 +45,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetAuditLogResponse200
-    | GetAuditLogResponse401
-    | GetAuditLogResponse403
-    | GetAuditLogResponse404
-    | GetAuditLogResponse500
-]:
+) -> Response[GetAuditLogResponse200 | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -72,13 +56,7 @@ def _build_response(
 
 def sync_detailed(
     audit_log_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetAuditLogResponse200
-    | GetAuditLogResponse401
-    | GetAuditLogResponse403
-    | GetAuditLogResponse404
-    | GetAuditLogResponse500
-]:
+) -> Response[GetAuditLogResponse200 | ProblemDetail]:
     """Get audit log
 
      Get an audit log entry by auditLogKey.
@@ -92,7 +70,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetAuditLogResponse200 | GetAuditLogResponse401 | GetAuditLogResponse403 | GetAuditLogResponse404 | GetAuditLogResponse500]
+        Response[GetAuditLogResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(audit_log_key=audit_log_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -125,25 +103,25 @@ def sync(
             raise errors.GetAuditLogUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuditLogResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetAuditLogForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuditLogResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetAuditLogNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuditLogResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetAuditLogInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuditLogResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
@@ -152,13 +130,7 @@ def sync(
 
 async def asyncio_detailed(
     audit_log_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetAuditLogResponse200
-    | GetAuditLogResponse401
-    | GetAuditLogResponse403
-    | GetAuditLogResponse404
-    | GetAuditLogResponse500
-]:
+) -> Response[GetAuditLogResponse200 | ProblemDetail]:
     """Get audit log
 
      Get an audit log entry by auditLogKey.
@@ -172,7 +144,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetAuditLogResponse200 | GetAuditLogResponse401 | GetAuditLogResponse403 | GetAuditLogResponse404 | GetAuditLogResponse500]
+        Response[GetAuditLogResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(audit_log_key=audit_log_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -205,25 +177,25 @@ async def asyncio(
             raise errors.GetAuditLogUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuditLogResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetAuditLogForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuditLogResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetAuditLogNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuditLogResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetAuditLogInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuditLogResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

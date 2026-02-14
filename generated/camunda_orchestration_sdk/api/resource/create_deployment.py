@@ -5,8 +5,7 @@ from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.create_deployment_data import CreateDeploymentData
 from ...models.create_deployment_response_200 import CreateDeploymentResponse200
-from ...models.create_deployment_response_400 import CreateDeploymentResponse400
-from ...models.create_deployment_response_503 import CreateDeploymentResponse503
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -20,20 +19,15 @@ def _get_kwargs(*, body: CreateDeploymentData) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    CreateDeploymentResponse200
-    | CreateDeploymentResponse400
-    | CreateDeploymentResponse503
-    | None
-):
+) -> CreateDeploymentResponse200 | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = CreateDeploymentResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = CreateDeploymentResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 503:
-        response_503 = CreateDeploymentResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -43,11 +37,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    CreateDeploymentResponse200
-    | CreateDeploymentResponse400
-    | CreateDeploymentResponse503
-]:
+) -> Response[CreateDeploymentResponse200 | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -58,11 +48,7 @@ def _build_response(
 
 def sync_detailed(
     *, client: AuthenticatedClient | Client, body: CreateDeploymentData
-) -> Response[
-    CreateDeploymentResponse200
-    | CreateDeploymentResponse400
-    | CreateDeploymentResponse503
-]:
+) -> Response[CreateDeploymentResponse200 | ProblemDetail]:
     """Deploy resources
 
      Deploys one or more resources (e.g. processes, decision models, or forms).
@@ -76,7 +62,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateDeploymentResponse200 | CreateDeploymentResponse400 | CreateDeploymentResponse503]
+        Response[CreateDeploymentResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -107,13 +93,13 @@ def sync(
             raise errors.CreateDeploymentBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateDeploymentResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CreateDeploymentServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateDeploymentResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
@@ -122,11 +108,7 @@ def sync(
 
 async def asyncio_detailed(
     *, client: AuthenticatedClient | Client, body: CreateDeploymentData
-) -> Response[
-    CreateDeploymentResponse200
-    | CreateDeploymentResponse400
-    | CreateDeploymentResponse503
-]:
+) -> Response[CreateDeploymentResponse200 | ProblemDetail]:
     """Deploy resources
 
      Deploys one or more resources (e.g. processes, decision models, or forms).
@@ -140,7 +122,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateDeploymentResponse200 | CreateDeploymentResponse400 | CreateDeploymentResponse503]
+        Response[CreateDeploymentResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -171,13 +153,13 @@ async def asyncio(
             raise errors.CreateDeploymentBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateDeploymentResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CreateDeploymentServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateDeploymentResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

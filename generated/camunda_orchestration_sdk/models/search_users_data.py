@@ -1,16 +1,21 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.search_users_data_filter import SearchUsersDataFilter
-    from ..models.search_users_data_page import SearchUsersDataPage
-    from ..models.search_users_data_sort_item import SearchUsersDataSortItem
+    from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
+    from ..models.limit_based_pagination import LimitBasedPagination
+    from ..models.offset_based_pagination import OffsetBasedPagination
+    from ..models.page_cursor_based_backward_pagination import (
+        PageCursorBasedBackwardPagination,
+    )
+    from ..models.user_search_query_request_filter import UserSearchQueryRequestFilter
+    from ..models.user_search_query_sort_request import UserSearchQuerySortRequest
 
 
 T = TypeVar("T", bound="SearchUsersData")
@@ -20,16 +25,29 @@ T = TypeVar("T", bound="SearchUsersData")
 class SearchUsersData:
     """
     Attributes:
-        sort (list[SearchUsersDataSortItem] | Unset): Sort field criteria.
-        filter_ (SearchUsersDataFilter | Unset): The user search filters.
-        page (SearchUsersDataPage | Unset): Pagination criteria.
+        sort (list[UserSearchQuerySortRequest] | Unset): Sort field criteria.
+        filter_ (UserSearchQueryRequestFilter | Unset): The user search filters.
+        page (CursorBasedForwardPagination | LimitBasedPagination | OffsetBasedPagination |
+            PageCursorBasedBackwardPagination | Unset): Pagination criteria.
     """
 
-    sort: list[SearchUsersDataSortItem] | Unset = UNSET
-    filter_: SearchUsersDataFilter | Unset = UNSET
-    page: SearchUsersDataPage | Unset = UNSET
+    sort: list[UserSearchQuerySortRequest] | Unset = UNSET
+    filter_: UserSearchQueryRequestFilter | Unset = UNSET
+    page: (
+        CursorBasedForwardPagination
+        | LimitBasedPagination
+        | OffsetBasedPagination
+        | PageCursorBasedBackwardPagination
+        | Unset
+    ) = UNSET
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.cursor_based_forward_pagination import (
+            CursorBasedForwardPagination,
+        )
+        from ..models.limit_based_pagination import LimitBasedPagination
+        from ..models.offset_based_pagination import OffsetBasedPagination
+
         sort: list[dict[str, Any]] | Unset = UNSET
         if not isinstance(self.sort, Unset):
             sort = []
@@ -41,8 +59,16 @@ class SearchUsersData:
         if not isinstance(self.filter_, Unset):
             filter_ = self.filter_.to_dict()
 
-        page: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.page, Unset):
+        page: dict[str, Any] | Unset
+        if isinstance(self.page, Unset):
+            page = UNSET
+        elif isinstance(self.page, LimitBasedPagination):
+            page = self.page.to_dict()
+        elif isinstance(self.page, OffsetBasedPagination):
+            page = self.page.to_dict()
+        elif isinstance(self.page, CursorBasedForwardPagination):
+            page = self.page.to_dict()
+        else:
             page = self.page.to_dict()
 
         field_dict: dict[str, Any] = {}
@@ -59,33 +85,86 @@ class SearchUsersData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.search_users_data_filter import SearchUsersDataFilter
-        from ..models.search_users_data_page import SearchUsersDataPage
-        from ..models.search_users_data_sort_item import SearchUsersDataSortItem
+        from ..models.cursor_based_forward_pagination import (
+            CursorBasedForwardPagination,
+        )
+        from ..models.limit_based_pagination import LimitBasedPagination
+        from ..models.offset_based_pagination import OffsetBasedPagination
+        from ..models.page_cursor_based_backward_pagination import (
+            PageCursorBasedBackwardPagination,
+        )
+        from ..models.user_search_query_request_filter import (
+            UserSearchQueryRequestFilter,
+        )
+        from ..models.user_search_query_sort_request import UserSearchQuerySortRequest
 
         d = dict(src_dict)
         _sort = d.pop("sort", UNSET)
-        sort: list[SearchUsersDataSortItem] | Unset = UNSET
+        sort: list[UserSearchQuerySortRequest] | Unset = UNSET
         if _sort is not UNSET:
             sort = []
             for sort_item_data in _sort:
-                sort_item = SearchUsersDataSortItem.from_dict(sort_item_data)
+                sort_item = UserSearchQuerySortRequest.from_dict(sort_item_data)
 
                 sort.append(sort_item)
 
         _filter_ = d.pop("filter", UNSET)
-        filter_: SearchUsersDataFilter | Unset
+        filter_: UserSearchQueryRequestFilter | Unset
         if isinstance(_filter_, Unset):
             filter_ = UNSET
         else:
-            filter_ = SearchUsersDataFilter.from_dict(_filter_)
+            filter_ = UserSearchQueryRequestFilter.from_dict(_filter_)
 
-        _page = d.pop("page", UNSET)
-        page: SearchUsersDataPage | Unset
-        if isinstance(_page, Unset):
-            page = UNSET
-        else:
-            page = SearchUsersDataPage.from_dict(_page)
+        def _parse_page(
+            data: object,
+        ) -> (
+            CursorBasedForwardPagination
+            | LimitBasedPagination
+            | OffsetBasedPagination
+            | PageCursorBasedBackwardPagination
+            | Unset
+        ):
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                page_type_0 = LimitBasedPagination.from_dict(data)
+
+                return page_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                page_type_1 = OffsetBasedPagination.from_dict(data)
+
+                return page_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                page_type_2 = CursorBasedForwardPagination.from_dict(data)
+
+                return page_type_2
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+
+            data = cast(dict[str, Any], data)
+            page_type_3 = PageCursorBasedBackwardPagination.from_dict(data)
+
+            return page_type_3
+
+        page = _parse_page(d.pop("page", UNSET))
 
         search_users_data = cls(
             sort=sort,

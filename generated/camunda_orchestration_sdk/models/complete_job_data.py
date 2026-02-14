@@ -8,11 +8,9 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.complete_job_data_variables_type_0 import (
-        CompleteJobDataVariablesType0,
-    )
-    from ..models.result_object import ResultObject
-    from ..models.result_object_1 import ResultObject1
+    from ..models.job_completion_request_variables import JobCompletionRequestVariables
+    from ..models.job_result_user_task_type_0 import JobResultUserTaskType0
+    from ..models.result_object_type_0 import ResultObjectType0
 
 
 T = TypeVar("T", bound="CompleteJobData")
@@ -22,25 +20,25 @@ T = TypeVar("T", bound="CompleteJobData")
 class CompleteJobData:
     """
     Attributes:
-        variables (CompleteJobDataVariablesType0 | None | Unset): The variables to complete the job with.
-        result (None | ResultObject | ResultObject1 | Unset): The result of the completed job as determined by the
-            worker.
+        variables (JobCompletionRequestVariables | None | Unset): The variables to complete the job with.
+        result (JobResultUserTaskType0 | None | ResultObjectType0 | Unset): The result of the completed job as
+            determined by the worker.
     """
 
-    variables: CompleteJobDataVariablesType0 | None | Unset = UNSET
-    result: None | ResultObject | ResultObject1 | Unset = UNSET
+    variables: JobCompletionRequestVariables | None | Unset = UNSET
+    result: JobResultUserTaskType0 | None | ResultObjectType0 | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.complete_job_data_variables_type_0 import (
-            CompleteJobDataVariablesType0,
+        from ..models.job_completion_request_variables import (
+            JobCompletionRequestVariables,
         )
-        from ..models.result_object import ResultObject
-        from ..models.result_object_1 import ResultObject1
+        from ..models.job_result_user_task_type_0 import JobResultUserTaskType0
+        from ..models.result_object_type_0 import ResultObjectType0
 
         variables: dict[str, Any] | None | Unset
         if isinstance(self.variables, Unset):
             variables = UNSET
-        elif isinstance(self.variables, CompleteJobDataVariablesType0):
+        elif isinstance(self.variables, JobCompletionRequestVariables):
             variables = self.variables.to_dict()
         else:
             variables = self.variables
@@ -48,9 +46,9 @@ class CompleteJobData:
         result: dict[str, Any] | None | Unset
         if isinstance(self.result, Unset):
             result = UNSET
-        elif isinstance(self.result, ResultObject):
+        elif isinstance(self.result, JobResultUserTaskType0):
             result = self.result.to_dict()
-        elif isinstance(self.result, ResultObject1):
+        elif isinstance(self.result, ResultObjectType0):
             result = self.result.to_dict()
         else:
             result = self.result
@@ -67,17 +65,17 @@ class CompleteJobData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.complete_job_data_variables_type_0 import (
-            CompleteJobDataVariablesType0,
+        from ..models.job_completion_request_variables import (
+            JobCompletionRequestVariables,
         )
-        from ..models.result_object import ResultObject
-        from ..models.result_object_1 import ResultObject1
+        from ..models.job_result_user_task_type_0 import JobResultUserTaskType0
+        from ..models.result_object_type_0 import ResultObjectType0
 
         d = dict(src_dict)
 
         def _parse_variables(
             data: object,
-        ) -> CompleteJobDataVariablesType0 | None | Unset:
+        ) -> JobCompletionRequestVariables | None | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
@@ -87,16 +85,20 @@ class CompleteJobData:
                     raise TypeError()
 
                 data = cast(dict[str, Any], data)
-                variables_type_0 = CompleteJobDataVariablesType0.from_dict(data)
+                componentsschemas_job_completion_request_variables_type_0 = (
+                    JobCompletionRequestVariables.from_dict(data)
+                )
 
-                return variables_type_0
+                return componentsschemas_job_completion_request_variables_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(CompleteJobDataVariablesType0 | None | Unset, data)
+            return cast(JobCompletionRequestVariables | None | Unset, data)
 
         variables = _parse_variables(d.pop("variables", UNSET))
 
-        def _parse_result(data: object) -> None | ResultObject | ResultObject1 | Unset:
+        def _parse_result(
+            data: object,
+        ) -> JobResultUserTaskType0 | None | ResultObjectType0 | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
@@ -106,22 +108,26 @@ class CompleteJobData:
                     raise TypeError()
 
                 data = cast(dict[str, Any], data)
-                componentsschemas_result_object_type_0 = ResultObject.from_dict(data)
+                componentsschemas_job_result_user_task_type_0 = (
+                    JobResultUserTaskType0.from_dict(data)
+                )
+
+                return componentsschemas_job_result_user_task_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                componentsschemas_result_object_type_0 = ResultObjectType0.from_dict(
+                    data
+                )
 
                 return componentsschemas_result_object_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            try:
-                if not isinstance(data, dict):
-                    raise TypeError()
-
-                data = cast(dict[str, Any], data)
-                componentsschemas_result_object_1_type_0 = ResultObject1.from_dict(data)
-
-                return componentsschemas_result_object_1_type_0
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(None | ResultObject | ResultObject1 | Unset, data)
+            return cast(JobResultUserTaskType0 | None | ResultObjectType0 | Unset, data)
 
         result = _parse_result(d.pop("result", UNSET))
 

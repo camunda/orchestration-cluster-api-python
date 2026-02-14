@@ -4,21 +4,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.unassign_role_from_client_response_400 import (
-    UnassignRoleFromClientResponse400,
-)
-from ...models.unassign_role_from_client_response_403 import (
-    UnassignRoleFromClientResponse403,
-)
-from ...models.unassign_role_from_client_response_404 import (
-    UnassignRoleFromClientResponse404,
-)
-from ...models.unassign_role_from_client_response_500 import (
-    UnassignRoleFromClientResponse500,
-)
-from ...models.unassign_role_from_client_response_503 import (
-    UnassignRoleFromClientResponse503,
-)
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -35,32 +21,24 @@ def _get_kwargs(role_id: str, client_id: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | UnassignRoleFromClientResponse400
-    | UnassignRoleFromClientResponse403
-    | UnassignRoleFromClientResponse404
-    | UnassignRoleFromClientResponse500
-    | UnassignRoleFromClientResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = UnassignRoleFromClientResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 403:
-        response_403 = UnassignRoleFromClientResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = UnassignRoleFromClientResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = UnassignRoleFromClientResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = UnassignRoleFromClientResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -70,14 +48,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | UnassignRoleFromClientResponse400
-    | UnassignRoleFromClientResponse403
-    | UnassignRoleFromClientResponse404
-    | UnassignRoleFromClientResponse500
-    | UnassignRoleFromClientResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -88,14 +59,7 @@ def _build_response(
 
 def sync_detailed(
     role_id: str, client_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | UnassignRoleFromClientResponse400
-    | UnassignRoleFromClientResponse403
-    | UnassignRoleFromClientResponse404
-    | UnassignRoleFromClientResponse500
-    | UnassignRoleFromClientResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Unassign a role from a client
 
      Unassigns the specified role from the client. The client will no longer inherit the authorizations
@@ -110,7 +74,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | UnassignRoleFromClientResponse400 | UnassignRoleFromClientResponse403 | UnassignRoleFromClientResponse404 | UnassignRoleFromClientResponse500 | UnassignRoleFromClientResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(role_id=role_id, client_id=client_id)
     response = client.get_httpx_client().request(**kwargs)
@@ -145,31 +109,31 @@ def sync(
             raise errors.UnassignRoleFromClientBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignRoleFromClientResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.UnassignRoleFromClientForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignRoleFromClientResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UnassignRoleFromClientNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignRoleFromClientResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UnassignRoleFromClientInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignRoleFromClientResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.UnassignRoleFromClientServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignRoleFromClientResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -177,14 +141,7 @@ def sync(
 
 async def asyncio_detailed(
     role_id: str, client_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | UnassignRoleFromClientResponse400
-    | UnassignRoleFromClientResponse403
-    | UnassignRoleFromClientResponse404
-    | UnassignRoleFromClientResponse500
-    | UnassignRoleFromClientResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Unassign a role from a client
 
      Unassigns the specified role from the client. The client will no longer inherit the authorizations
@@ -199,7 +156,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | UnassignRoleFromClientResponse400 | UnassignRoleFromClientResponse403 | UnassignRoleFromClientResponse404 | UnassignRoleFromClientResponse500 | UnassignRoleFromClientResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(role_id=role_id, client_id=client_id)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -236,31 +193,31 @@ async def asyncio(
             raise errors.UnassignRoleFromClientBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignRoleFromClientResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.UnassignRoleFromClientForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignRoleFromClientResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UnassignRoleFromClientNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignRoleFromClientResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UnassignRoleFromClientInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignRoleFromClientResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.UnassignRoleFromClientServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignRoleFromClientResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

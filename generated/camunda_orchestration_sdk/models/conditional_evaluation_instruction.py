@@ -1,0 +1,115 @@
+from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessDefinitionKey,
+    TenantId,
+    lift_process_definition_key,
+    lift_tenant_id,
+)
+
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any, TypeVar
+
+from attrs import define as _attrs_define
+from attrs import field as _attrs_field
+
+from ..types import UNSET, Unset, str_any_dict_factory
+
+if TYPE_CHECKING:
+    from ..models.conditional_evaluation_instruction_variables import (
+        ConditionalEvaluationInstructionVariables,
+    )
+
+
+T = TypeVar("T", bound="ConditionalEvaluationInstruction")
+
+
+@_attrs_define
+class ConditionalEvaluationInstruction:
+    """
+    Attributes:
+        variables (ConditionalEvaluationInstructionVariables): JSON object representing the variables to use for
+            evaluation of the conditions and to pass to the process instances that have been triggered.
+             Example: {'x': 2}.
+        tenant_id (str | Unset): Used to evaluate root-level conditional start events for a tenant with the given ID.
+            This will only evaluate root-level conditional start events of process definitions which belong to the tenant.
+             Example: customer-service.
+        process_definition_key (str | Unset): Used to evaluate root-level conditional start events of the process
+            definition with the given key.
+             Example: 2251799813686749.
+    """
+
+    variables: ConditionalEvaluationInstructionVariables
+    tenant_id: TenantId | Unset = UNSET
+    process_definition_key: ProcessDefinitionKey | Unset = UNSET
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
+
+    def to_dict(self) -> dict[str, Any]:
+        variables = self.variables.to_dict()
+
+        tenant_id = self.tenant_id
+
+        process_definition_key = self.process_definition_key
+
+        field_dict: dict[str, Any] = {}
+        field_dict.update(self.additional_properties)
+        field_dict.update(
+            {
+                "variables": variables,
+            }
+        )
+        if tenant_id is not UNSET:
+            field_dict["tenantId"] = tenant_id
+        if process_definition_key is not UNSET:
+            field_dict["processDefinitionKey"] = process_definition_key
+
+        return field_dict
+
+    @classmethod
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.conditional_evaluation_instruction_variables import (
+            ConditionalEvaluationInstructionVariables,
+        )
+
+        d = dict(src_dict)
+        variables = ConditionalEvaluationInstructionVariables.from_dict(
+            d.pop("variables")
+        )
+
+        tenant_id = (
+            lift_tenant_id(_val)
+            if (_val := d.pop("tenantId", UNSET)) is not UNSET
+            else UNSET
+        )
+
+        process_definition_key = (
+            lift_process_definition_key(_val)
+            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
+            else UNSET
+        )
+
+        conditional_evaluation_instruction = cls(
+            variables=variables,
+            tenant_id=tenant_id,
+            process_definition_key=process_definition_key,
+        )
+
+        conditional_evaluation_instruction.additional_properties = d
+        return conditional_evaluation_instruction
+
+    @property
+    def additional_keys(self) -> list[str]:
+        return list(self.additional_properties.keys())
+
+    def __getitem__(self, key: str) -> Any:
+        return self.additional_properties[key]
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        self.additional_properties[key] = value
+
+    def __delitem__(self, key: str) -> None:
+        del self.additional_properties[key]
+
+    def __contains__(self, key: str) -> bool:
+        return key in self.additional_properties

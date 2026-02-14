@@ -4,30 +4,14 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.search_mapping_rules_for_role_data import SearchMappingRulesForRoleData
-from ...models.search_mapping_rules_for_role_response_200 import (
-    SearchMappingRulesForRoleResponse200,
-)
-from ...models.search_mapping_rules_for_role_response_400 import (
-    SearchMappingRulesForRoleResponse400,
-)
-from ...models.search_mapping_rules_for_role_response_401 import (
-    SearchMappingRulesForRoleResponse401,
-)
-from ...models.search_mapping_rules_for_role_response_403 import (
-    SearchMappingRulesForRoleResponse403,
-)
-from ...models.search_mapping_rules_for_role_response_404 import (
-    SearchMappingRulesForRoleResponse404,
-)
-from ...models.search_mapping_rules_for_role_response_500 import (
-    SearchMappingRulesForRoleResponse500,
-)
+from ...models.mapping_rule_search_query_request import MappingRuleSearchQueryRequest
+from ...models.problem_detail import ProblemDetail
+from ...models.search_query_response import SearchQueryResponse
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    role_id: str, *, body: SearchMappingRulesForRoleData | Unset = UNSET
+    role_id: str, *, body: MappingRuleSearchQueryRequest | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -45,32 +29,24 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    SearchMappingRulesForRoleResponse200
-    | SearchMappingRulesForRoleResponse400
-    | SearchMappingRulesForRoleResponse401
-    | SearchMappingRulesForRoleResponse403
-    | SearchMappingRulesForRoleResponse404
-    | SearchMappingRulesForRoleResponse500
-    | None
-):
+) -> ProblemDetail | SearchQueryResponse | None:
     if response.status_code == 200:
-        response_200 = SearchMappingRulesForRoleResponse200.from_dict(response.json())
+        response_200 = SearchQueryResponse.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = SearchMappingRulesForRoleResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = SearchMappingRulesForRoleResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = SearchMappingRulesForRoleResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = SearchMappingRulesForRoleResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = SearchMappingRulesForRoleResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -80,14 +56,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    SearchMappingRulesForRoleResponse200
-    | SearchMappingRulesForRoleResponse400
-    | SearchMappingRulesForRoleResponse401
-    | SearchMappingRulesForRoleResponse403
-    | SearchMappingRulesForRoleResponse404
-    | SearchMappingRulesForRoleResponse500
-]:
+) -> Response[ProblemDetail | SearchQueryResponse]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -100,29 +69,22 @@ def sync_detailed(
     role_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchMappingRulesForRoleData | Unset = UNSET,
-) -> Response[
-    SearchMappingRulesForRoleResponse200
-    | SearchMappingRulesForRoleResponse400
-    | SearchMappingRulesForRoleResponse401
-    | SearchMappingRulesForRoleResponse403
-    | SearchMappingRulesForRoleResponse404
-    | SearchMappingRulesForRoleResponse500
-]:
+    body: MappingRuleSearchQueryRequest | Unset = UNSET,
+) -> Response[ProblemDetail | SearchQueryResponse]:
     """Search role mapping rules
 
      Search mapping rules with assigned role.
 
     Args:
         role_id (str):
-        body (SearchMappingRulesForRoleData | Unset):
+        body (MappingRuleSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchMappingRulesForRoleResponse200 | SearchMappingRulesForRoleResponse400 | SearchMappingRulesForRoleResponse401 | SearchMappingRulesForRoleResponse403 | SearchMappingRulesForRoleResponse404 | SearchMappingRulesForRoleResponse500]
+        Response[ProblemDetail | SearchQueryResponse]
     """
     kwargs = _get_kwargs(role_id=role_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -133,16 +95,16 @@ def sync(
     role_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchMappingRulesForRoleData | Unset = UNSET,
+    body: MappingRuleSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchMappingRulesForRoleResponse200:
+) -> SearchQueryResponse:
     """Search role mapping rules
 
      Search mapping rules with assigned role.
 
     Args:
         role_id (str):
-        body (SearchMappingRulesForRoleData | Unset):
+        body (MappingRuleSearchQueryRequest | Unset):
 
     Raises:
         errors.SearchMappingRulesForRoleBadRequest: If the response status code is 400. The provided data is not valid.
@@ -153,71 +115,64 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchMappingRulesForRoleResponse200"""
+        SearchQueryResponse"""
     response = sync_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.SearchMappingRulesForRoleBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRulesForRoleResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchMappingRulesForRoleUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRulesForRoleResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchMappingRulesForRoleForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRulesForRoleResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.SearchMappingRulesForRoleNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRulesForRoleResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchMappingRulesForRoleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRulesForRoleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchMappingRulesForRoleResponse200, response.parsed)
+    return cast(SearchQueryResponse, response.parsed)
 
 
 async def asyncio_detailed(
     role_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchMappingRulesForRoleData | Unset = UNSET,
-) -> Response[
-    SearchMappingRulesForRoleResponse200
-    | SearchMappingRulesForRoleResponse400
-    | SearchMappingRulesForRoleResponse401
-    | SearchMappingRulesForRoleResponse403
-    | SearchMappingRulesForRoleResponse404
-    | SearchMappingRulesForRoleResponse500
-]:
+    body: MappingRuleSearchQueryRequest | Unset = UNSET,
+) -> Response[ProblemDetail | SearchQueryResponse]:
     """Search role mapping rules
 
      Search mapping rules with assigned role.
 
     Args:
         role_id (str):
-        body (SearchMappingRulesForRoleData | Unset):
+        body (MappingRuleSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchMappingRulesForRoleResponse200 | SearchMappingRulesForRoleResponse400 | SearchMappingRulesForRoleResponse401 | SearchMappingRulesForRoleResponse403 | SearchMappingRulesForRoleResponse404 | SearchMappingRulesForRoleResponse500]
+        Response[ProblemDetail | SearchQueryResponse]
     """
     kwargs = _get_kwargs(role_id=role_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -228,16 +183,16 @@ async def asyncio(
     role_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchMappingRulesForRoleData | Unset = UNSET,
+    body: MappingRuleSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchMappingRulesForRoleResponse200:
+) -> SearchQueryResponse:
     """Search role mapping rules
 
      Search mapping rules with assigned role.
 
     Args:
         role_id (str):
-        body (SearchMappingRulesForRoleData | Unset):
+        body (MappingRuleSearchQueryRequest | Unset):
 
     Raises:
         errors.SearchMappingRulesForRoleBadRequest: If the response status code is 400. The provided data is not valid.
@@ -248,39 +203,39 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchMappingRulesForRoleResponse200"""
+        SearchQueryResponse"""
     response = await asyncio_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.SearchMappingRulesForRoleBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRulesForRoleResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchMappingRulesForRoleUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRulesForRoleResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchMappingRulesForRoleForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRulesForRoleResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.SearchMappingRulesForRoleNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRulesForRoleResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchMappingRulesForRoleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRulesForRoleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchMappingRulesForRoleResponse200, response.parsed)
+    return cast(SearchQueryResponse, response.parsed)

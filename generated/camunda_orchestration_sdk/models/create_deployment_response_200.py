@@ -15,8 +15,8 @@ from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
-    from ..models.create_deployment_response_200_deployments_item import (
-        CreateDeploymentResponse200DeploymentsItem,
+    from ..models.create_deployment_deployments_item import (
+        CreateDeploymentDeploymentsItem,
     )
 
 
@@ -29,12 +29,12 @@ class CreateDeploymentResponse200:
     Attributes:
         deployment_key (str): The unique key identifying the deployment.
         tenant_id (str): The tenant ID associated with the deployment. Example: customer-service.
-        deployments (list[CreateDeploymentResponse200DeploymentsItem]): Items deployed by the request.
+        deployments (list[CreateDeploymentDeploymentsItem]): Items deployed by the request.
     """
 
     deployment_key: DeploymentKey
     tenant_id: TenantId
-    deployments: list[CreateDeploymentResponse200DeploymentsItem]
+    deployments: list[CreateDeploymentDeploymentsItem]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -63,8 +63,8 @@ class CreateDeploymentResponse200:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.create_deployment_response_200_deployments_item import (
-            CreateDeploymentResponse200DeploymentsItem,
+        from ..models.create_deployment_deployments_item import (
+            CreateDeploymentDeploymentsItem,
         )
 
         d = dict(src_dict)
@@ -72,10 +72,10 @@ class CreateDeploymentResponse200:
 
         tenant_id = lift_tenant_id(d.pop("tenantId"))
 
-        deployments: list[CreateDeploymentResponse200DeploymentsItem] = []
+        deployments: list[CreateDeploymentDeploymentsItem] = []
         _deployments = d.pop("deployments")
         for deployments_item_data in _deployments:
-            deployments_item = CreateDeploymentResponse200DeploymentsItem.from_dict(
+            deployments_item = CreateDeploymentDeploymentsItem.from_dict(
                 deployments_item_data
             )
 

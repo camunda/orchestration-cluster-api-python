@@ -4,10 +4,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.delete_group_response_401 import DeleteGroupResponse401
-from ...models.delete_group_response_404 import DeleteGroupResponse404
-from ...models.delete_group_response_500 import DeleteGroupResponse500
-from ...models.delete_group_response_503 import DeleteGroupResponse503
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -21,28 +18,21 @@ def _get_kwargs(group_id: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | DeleteGroupResponse401
-    | DeleteGroupResponse404
-    | DeleteGroupResponse500
-    | DeleteGroupResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 401:
-        response_401 = DeleteGroupResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 404:
-        response_404 = DeleteGroupResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = DeleteGroupResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = DeleteGroupResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -52,13 +42,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | DeleteGroupResponse401
-    | DeleteGroupResponse404
-    | DeleteGroupResponse500
-    | DeleteGroupResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -69,13 +53,7 @@ def _build_response(
 
 def sync_detailed(
     group_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | DeleteGroupResponse401
-    | DeleteGroupResponse404
-    | DeleteGroupResponse500
-    | DeleteGroupResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Delete group
 
      Deletes the group with the given ID.
@@ -88,7 +66,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | DeleteGroupResponse401 | DeleteGroupResponse404 | DeleteGroupResponse500 | DeleteGroupResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(group_id=group_id)
     response = client.get_httpx_client().request(**kwargs)
@@ -118,25 +96,25 @@ def sync(group_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any) 
             raise errors.DeleteGroupUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteGroupResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.DeleteGroupNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteGroupResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.DeleteGroupInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteGroupResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.DeleteGroupServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteGroupResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -144,13 +122,7 @@ def sync(group_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any) 
 
 async def asyncio_detailed(
     group_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | DeleteGroupResponse401
-    | DeleteGroupResponse404
-    | DeleteGroupResponse500
-    | DeleteGroupResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Delete group
 
      Deletes the group with the given ID.
@@ -163,7 +135,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | DeleteGroupResponse401 | DeleteGroupResponse404 | DeleteGroupResponse500 | DeleteGroupResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(group_id=group_id)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -195,25 +167,25 @@ async def asyncio(
             raise errors.DeleteGroupUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteGroupResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.DeleteGroupNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteGroupResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.DeleteGroupInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteGroupResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.DeleteGroupServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteGroupResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

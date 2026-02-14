@@ -4,12 +4,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.assign_client_to_group_response_400 import AssignClientToGroupResponse400
-from ...models.assign_client_to_group_response_403 import AssignClientToGroupResponse403
-from ...models.assign_client_to_group_response_404 import AssignClientToGroupResponse404
-from ...models.assign_client_to_group_response_409 import AssignClientToGroupResponse409
-from ...models.assign_client_to_group_response_500 import AssignClientToGroupResponse500
-from ...models.assign_client_to_group_response_503 import AssignClientToGroupResponse503
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -26,36 +21,27 @@ def _get_kwargs(group_id: str, client_id: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | AssignClientToGroupResponse400
-    | AssignClientToGroupResponse403
-    | AssignClientToGroupResponse404
-    | AssignClientToGroupResponse409
-    | AssignClientToGroupResponse500
-    | AssignClientToGroupResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = AssignClientToGroupResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 403:
-        response_403 = AssignClientToGroupResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = AssignClientToGroupResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 409:
-        response_409 = AssignClientToGroupResponse409.from_dict(response.json())
+        response_409 = ProblemDetail.from_dict(response.json())
         return response_409
     if response.status_code == 500:
-        response_500 = AssignClientToGroupResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = AssignClientToGroupResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -65,15 +51,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | AssignClientToGroupResponse400
-    | AssignClientToGroupResponse403
-    | AssignClientToGroupResponse404
-    | AssignClientToGroupResponse409
-    | AssignClientToGroupResponse500
-    | AssignClientToGroupResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -84,15 +62,7 @@ def _build_response(
 
 def sync_detailed(
     group_id: str, client_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | AssignClientToGroupResponse400
-    | AssignClientToGroupResponse403
-    | AssignClientToGroupResponse404
-    | AssignClientToGroupResponse409
-    | AssignClientToGroupResponse500
-    | AssignClientToGroupResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Assign a client to a group
 
      Assigns a client to a group, making it a member of the group.
@@ -107,7 +77,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | AssignClientToGroupResponse400 | AssignClientToGroupResponse403 | AssignClientToGroupResponse404 | AssignClientToGroupResponse409 | AssignClientToGroupResponse500 | AssignClientToGroupResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(group_id=group_id, client_id=client_id)
     response = client.get_httpx_client().request(**kwargs)
@@ -147,37 +117,37 @@ def sync(
             raise errors.AssignClientToGroupBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(AssignClientToGroupResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.AssignClientToGroupForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(AssignClientToGroupResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.AssignClientToGroupNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(AssignClientToGroupResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 409:
             raise errors.AssignClientToGroupConflict(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(AssignClientToGroupResponse409, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.AssignClientToGroupInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(AssignClientToGroupResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.AssignClientToGroupServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(AssignClientToGroupResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -185,15 +155,7 @@ def sync(
 
 async def asyncio_detailed(
     group_id: str, client_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | AssignClientToGroupResponse400
-    | AssignClientToGroupResponse403
-    | AssignClientToGroupResponse404
-    | AssignClientToGroupResponse409
-    | AssignClientToGroupResponse500
-    | AssignClientToGroupResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Assign a client to a group
 
      Assigns a client to a group, making it a member of the group.
@@ -208,7 +170,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | AssignClientToGroupResponse400 | AssignClientToGroupResponse403 | AssignClientToGroupResponse404 | AssignClientToGroupResponse409 | AssignClientToGroupResponse500 | AssignClientToGroupResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(group_id=group_id, client_id=client_id)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -250,37 +212,37 @@ async def asyncio(
             raise errors.AssignClientToGroupBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(AssignClientToGroupResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.AssignClientToGroupForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(AssignClientToGroupResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.AssignClientToGroupNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(AssignClientToGroupResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 409:
             raise errors.AssignClientToGroupConflict(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(AssignClientToGroupResponse409, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.AssignClientToGroupInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(AssignClientToGroupResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.AssignClientToGroupServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(AssignClientToGroupResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

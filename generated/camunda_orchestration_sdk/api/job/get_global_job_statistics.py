@@ -4,21 +4,8 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_global_job_statistics_response_200 import (
-    GetGlobalJobStatisticsResponse200,
-)
-from ...models.get_global_job_statistics_response_400 import (
-    GetGlobalJobStatisticsResponse400,
-)
-from ...models.get_global_job_statistics_response_401 import (
-    GetGlobalJobStatisticsResponse401,
-)
-from ...models.get_global_job_statistics_response_403 import (
-    GetGlobalJobStatisticsResponse403,
-)
-from ...models.get_global_job_statistics_response_500 import (
-    GetGlobalJobStatisticsResponse500,
-)
+from ...models.global_job_statistics_query_result import GlobalJobStatisticsQueryResult
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
@@ -42,28 +29,21 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetGlobalJobStatisticsResponse200
-    | GetGlobalJobStatisticsResponse400
-    | GetGlobalJobStatisticsResponse401
-    | GetGlobalJobStatisticsResponse403
-    | GetGlobalJobStatisticsResponse500
-    | None
-):
+) -> GlobalJobStatisticsQueryResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = GetGlobalJobStatisticsResponse200.from_dict(response.json())
+        response_200 = GlobalJobStatisticsQueryResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = GetGlobalJobStatisticsResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = GetGlobalJobStatisticsResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetGlobalJobStatisticsResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = GetGlobalJobStatisticsResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -73,13 +53,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetGlobalJobStatisticsResponse200
-    | GetGlobalJobStatisticsResponse400
-    | GetGlobalJobStatisticsResponse401
-    | GetGlobalJobStatisticsResponse403
-    | GetGlobalJobStatisticsResponse500
-]:
+) -> Response[GlobalJobStatisticsQueryResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -94,13 +68,7 @@ def sync_detailed(
     from_: datetime.datetime,
     to: datetime.datetime,
     job_type: str | Unset = UNSET,
-) -> Response[
-    GetGlobalJobStatisticsResponse200
-    | GetGlobalJobStatisticsResponse400
-    | GetGlobalJobStatisticsResponse401
-    | GetGlobalJobStatisticsResponse403
-    | GetGlobalJobStatisticsResponse500
-]:
+) -> Response[GlobalJobStatisticsQueryResult | ProblemDetail]:
     """Global job statistics
 
      Returns global aggregated counts for jobs. Optionally filter by the creation time window and/or
@@ -116,7 +84,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetGlobalJobStatisticsResponse200 | GetGlobalJobStatisticsResponse400 | GetGlobalJobStatisticsResponse401 | GetGlobalJobStatisticsResponse403 | GetGlobalJobStatisticsResponse500]
+        Response[GlobalJobStatisticsQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(from_=from_, to=to, job_type=job_type)
     response = client.get_httpx_client().request(**kwargs)
@@ -130,7 +98,7 @@ def sync(
     to: datetime.datetime,
     job_type: str | Unset = UNSET,
     **kwargs: Any,
-) -> GetGlobalJobStatisticsResponse200:
+) -> GlobalJobStatisticsQueryResult:
     """Global job statistics
 
      Returns global aggregated counts for jobs. Optionally filter by the creation time window and/or
@@ -149,36 +117,36 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetGlobalJobStatisticsResponse200"""
+        GlobalJobStatisticsQueryResult"""
     response = sync_detailed(client=client, from_=from_, to=to, job_type=job_type)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.GetGlobalJobStatisticsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGlobalJobStatisticsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetGlobalJobStatisticsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGlobalJobStatisticsResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetGlobalJobStatisticsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGlobalJobStatisticsResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetGlobalJobStatisticsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGlobalJobStatisticsResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetGlobalJobStatisticsResponse200, response.parsed)
+    return cast(GlobalJobStatisticsQueryResult, response.parsed)
 
 
 async def asyncio_detailed(
@@ -187,13 +155,7 @@ async def asyncio_detailed(
     from_: datetime.datetime,
     to: datetime.datetime,
     job_type: str | Unset = UNSET,
-) -> Response[
-    GetGlobalJobStatisticsResponse200
-    | GetGlobalJobStatisticsResponse400
-    | GetGlobalJobStatisticsResponse401
-    | GetGlobalJobStatisticsResponse403
-    | GetGlobalJobStatisticsResponse500
-]:
+) -> Response[GlobalJobStatisticsQueryResult | ProblemDetail]:
     """Global job statistics
 
      Returns global aggregated counts for jobs. Optionally filter by the creation time window and/or
@@ -209,7 +171,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetGlobalJobStatisticsResponse200 | GetGlobalJobStatisticsResponse400 | GetGlobalJobStatisticsResponse401 | GetGlobalJobStatisticsResponse403 | GetGlobalJobStatisticsResponse500]
+        Response[GlobalJobStatisticsQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(from_=from_, to=to, job_type=job_type)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -223,7 +185,7 @@ async def asyncio(
     to: datetime.datetime,
     job_type: str | Unset = UNSET,
     **kwargs: Any,
-) -> GetGlobalJobStatisticsResponse200:
+) -> GlobalJobStatisticsQueryResult:
     """Global job statistics
 
      Returns global aggregated counts for jobs. Optionally filter by the creation time window and/or
@@ -242,7 +204,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetGlobalJobStatisticsResponse200"""
+        GlobalJobStatisticsQueryResult"""
     response = await asyncio_detailed(
         client=client, from_=from_, to=to, job_type=job_type
     )
@@ -251,26 +213,26 @@ async def asyncio(
             raise errors.GetGlobalJobStatisticsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGlobalJobStatisticsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetGlobalJobStatisticsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGlobalJobStatisticsResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetGlobalJobStatisticsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGlobalJobStatisticsResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetGlobalJobStatisticsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGlobalJobStatisticsResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetGlobalJobStatisticsResponse200, response.parsed)
+    return cast(GlobalJobStatisticsQueryResult, response.parsed)

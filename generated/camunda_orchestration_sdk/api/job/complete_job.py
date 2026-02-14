@@ -5,11 +5,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.complete_job_data import CompleteJobData
-from ...models.complete_job_response_400 import CompleteJobResponse400
-from ...models.complete_job_response_404 import CompleteJobResponse404
-from ...models.complete_job_response_409 import CompleteJobResponse409
-from ...models.complete_job_response_500 import CompleteJobResponse500
-from ...models.complete_job_response_503 import CompleteJobResponse503
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
@@ -32,32 +28,24 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | CompleteJobResponse400
-    | CompleteJobResponse404
-    | CompleteJobResponse409
-    | CompleteJobResponse500
-    | CompleteJobResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = CompleteJobResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 404:
-        response_404 = CompleteJobResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 409:
-        response_409 = CompleteJobResponse409.from_dict(response.json())
+        response_409 = ProblemDetail.from_dict(response.json())
         return response_409
     if response.status_code == 500:
-        response_500 = CompleteJobResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = CompleteJobResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -67,14 +55,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | CompleteJobResponse400
-    | CompleteJobResponse404
-    | CompleteJobResponse409
-    | CompleteJobResponse500
-    | CompleteJobResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -88,14 +69,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: CompleteJobData | Unset = UNSET,
-) -> Response[
-    Any
-    | CompleteJobResponse400
-    | CompleteJobResponse404
-    | CompleteJobResponse409
-    | CompleteJobResponse500
-    | CompleteJobResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Complete job
 
      Complete a job with the given payload, which allows completing the associated service task.
@@ -109,7 +83,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | CompleteJobResponse400 | CompleteJobResponse404 | CompleteJobResponse409 | CompleteJobResponse500 | CompleteJobResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(job_key=job_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -147,31 +121,31 @@ def sync(
             raise errors.CompleteJobBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CompleteJobResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.CompleteJobNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CompleteJobResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 409:
             raise errors.CompleteJobConflict(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CompleteJobResponse409, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CompleteJobInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CompleteJobResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CompleteJobServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CompleteJobResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -182,14 +156,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: CompleteJobData | Unset = UNSET,
-) -> Response[
-    Any
-    | CompleteJobResponse400
-    | CompleteJobResponse404
-    | CompleteJobResponse409
-    | CompleteJobResponse500
-    | CompleteJobResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Complete job
 
      Complete a job with the given payload, which allows completing the associated service task.
@@ -203,7 +170,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | CompleteJobResponse400 | CompleteJobResponse404 | CompleteJobResponse409 | CompleteJobResponse500 | CompleteJobResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(job_key=job_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -241,31 +208,31 @@ async def asyncio(
             raise errors.CompleteJobBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CompleteJobResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.CompleteJobNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CompleteJobResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 409:
             raise errors.CompleteJobConflict(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CompleteJobResponse409, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CompleteJobInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CompleteJobResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CompleteJobServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CompleteJobResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

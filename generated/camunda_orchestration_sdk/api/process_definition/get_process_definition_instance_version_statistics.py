@@ -4,23 +4,12 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_process_definition_instance_version_statistics_data import (
-    GetProcessDefinitionInstanceVersionStatisticsData,
+from ...models.problem_detail import ProblemDetail
+from ...models.process_definition_instance_version_statistics_query import (
+    ProcessDefinitionInstanceVersionStatisticsQuery,
 )
-from ...models.get_process_definition_instance_version_statistics_response_200 import (
-    GetProcessDefinitionInstanceVersionStatisticsResponse200,
-)
-from ...models.get_process_definition_instance_version_statistics_response_400 import (
-    GetProcessDefinitionInstanceVersionStatisticsResponse400,
-)
-from ...models.get_process_definition_instance_version_statistics_response_401 import (
-    GetProcessDefinitionInstanceVersionStatisticsResponse401,
-)
-from ...models.get_process_definition_instance_version_statistics_response_403 import (
-    GetProcessDefinitionInstanceVersionStatisticsResponse403,
-)
-from ...models.get_process_definition_instance_version_statistics_response_500 import (
-    GetProcessDefinitionInstanceVersionStatisticsResponse500,
+from ...models.process_definition_instance_version_statistics_query_result import (
+    ProcessDefinitionInstanceVersionStatisticsQueryResult,
 )
 from ...types import UNSET, Response, Unset
 
@@ -28,7 +17,7 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     process_definition_id: str,
     *,
-    body: GetProcessDefinitionInstanceVersionStatisticsData | Unset = UNSET,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -46,48 +35,23 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetProcessDefinitionInstanceVersionStatisticsResponse200
-    | GetProcessDefinitionInstanceVersionStatisticsResponse400
-    | GetProcessDefinitionInstanceVersionStatisticsResponse401
-    | GetProcessDefinitionInstanceVersionStatisticsResponse403
-    | GetProcessDefinitionInstanceVersionStatisticsResponse500
-    | None
-):
+) -> ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult | None:
     if response.status_code == 200:
-        response_200 = (
-            GetProcessDefinitionInstanceVersionStatisticsResponse200.from_dict(
-                response.json()
-            )
+        response_200 = ProcessDefinitionInstanceVersionStatisticsQueryResult.from_dict(
+            response.json()
         )
         return response_200
     if response.status_code == 400:
-        response_400 = (
-            GetProcessDefinitionInstanceVersionStatisticsResponse400.from_dict(
-                response.json()
-            )
-        )
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = (
-            GetProcessDefinitionInstanceVersionStatisticsResponse401.from_dict(
-                response.json()
-            )
-        )
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = (
-            GetProcessDefinitionInstanceVersionStatisticsResponse403.from_dict(
-                response.json()
-            )
-        )
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = (
-            GetProcessDefinitionInstanceVersionStatisticsResponse500.from_dict(
-                response.json()
-            )
-        )
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -97,13 +61,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetProcessDefinitionInstanceVersionStatisticsResponse200
-    | GetProcessDefinitionInstanceVersionStatisticsResponse400
-    | GetProcessDefinitionInstanceVersionStatisticsResponse401
-    | GetProcessDefinitionInstanceVersionStatisticsResponse403
-    | GetProcessDefinitionInstanceVersionStatisticsResponse500
-]:
+) -> Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -116,14 +74,8 @@ def sync_detailed(
     process_definition_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: GetProcessDefinitionInstanceVersionStatisticsData | Unset = UNSET,
-) -> Response[
-    GetProcessDefinitionInstanceVersionStatisticsResponse200
-    | GetProcessDefinitionInstanceVersionStatisticsResponse400
-    | GetProcessDefinitionInstanceVersionStatisticsResponse401
-    | GetProcessDefinitionInstanceVersionStatisticsResponse403
-    | GetProcessDefinitionInstanceVersionStatisticsResponse500
-]:
+    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
+) -> Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]:
     """Get process instance statistics by version
 
      Get statistics about process instances, grouped by version for a given process definition.
@@ -132,14 +84,14 @@ def sync_detailed(
         process_definition_id (str): Id of a process definition, from the model. Only ids of
             process definitions that are deployed are useful. Example: new-account-onboarding-
             workflow.
-        body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
+        body (ProcessDefinitionInstanceVersionStatisticsQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetProcessDefinitionInstanceVersionStatisticsResponse200 | GetProcessDefinitionInstanceVersionStatisticsResponse400 | GetProcessDefinitionInstanceVersionStatisticsResponse401 | GetProcessDefinitionInstanceVersionStatisticsResponse403 | GetProcessDefinitionInstanceVersionStatisticsResponse500]
+        Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]
     """
     kwargs = _get_kwargs(process_definition_id=process_definition_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -150,9 +102,9 @@ def sync(
     process_definition_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: GetProcessDefinitionInstanceVersionStatisticsData | Unset = UNSET,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
     **kwargs: Any,
-) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
+) -> ProcessDefinitionInstanceVersionStatisticsQueryResult:
     """Get process instance statistics by version
 
      Get statistics about process instances, grouped by version for a given process definition.
@@ -161,7 +113,7 @@ def sync(
         process_definition_id (str): Id of a process definition, from the model. Only ids of
             process definitions that are deployed are useful. Example: new-account-onboarding-
             workflow.
-        body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
+        body (ProcessDefinitionInstanceVersionStatisticsQuery | Unset):
 
     Raises:
         errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -171,7 +123,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetProcessDefinitionInstanceVersionStatisticsResponse200"""
+        ProcessDefinitionInstanceVersionStatisticsQueryResult"""
     response = sync_detailed(
         process_definition_id=process_definition_id, client=client, body=body
     )
@@ -180,57 +132,37 @@ def sync(
             raise errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionInstanceVersionStatisticsResponse400,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetProcessDefinitionInstanceVersionStatisticsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionInstanceVersionStatisticsResponse401,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetProcessDefinitionInstanceVersionStatisticsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionInstanceVersionStatisticsResponse403,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetProcessDefinitionInstanceVersionStatisticsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionInstanceVersionStatisticsResponse500,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(
-        GetProcessDefinitionInstanceVersionStatisticsResponse200, response.parsed
-    )
+    return cast(ProcessDefinitionInstanceVersionStatisticsQueryResult, response.parsed)
 
 
 async def asyncio_detailed(
     process_definition_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: GetProcessDefinitionInstanceVersionStatisticsData | Unset = UNSET,
-) -> Response[
-    GetProcessDefinitionInstanceVersionStatisticsResponse200
-    | GetProcessDefinitionInstanceVersionStatisticsResponse400
-    | GetProcessDefinitionInstanceVersionStatisticsResponse401
-    | GetProcessDefinitionInstanceVersionStatisticsResponse403
-    | GetProcessDefinitionInstanceVersionStatisticsResponse500
-]:
+    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
+) -> Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]:
     """Get process instance statistics by version
 
      Get statistics about process instances, grouped by version for a given process definition.
@@ -239,14 +171,14 @@ async def asyncio_detailed(
         process_definition_id (str): Id of a process definition, from the model. Only ids of
             process definitions that are deployed are useful. Example: new-account-onboarding-
             workflow.
-        body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
+        body (ProcessDefinitionInstanceVersionStatisticsQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetProcessDefinitionInstanceVersionStatisticsResponse200 | GetProcessDefinitionInstanceVersionStatisticsResponse400 | GetProcessDefinitionInstanceVersionStatisticsResponse401 | GetProcessDefinitionInstanceVersionStatisticsResponse403 | GetProcessDefinitionInstanceVersionStatisticsResponse500]
+        Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]
     """
     kwargs = _get_kwargs(process_definition_id=process_definition_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -257,9 +189,9 @@ async def asyncio(
     process_definition_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: GetProcessDefinitionInstanceVersionStatisticsData | Unset = UNSET,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
     **kwargs: Any,
-) -> GetProcessDefinitionInstanceVersionStatisticsResponse200:
+) -> ProcessDefinitionInstanceVersionStatisticsQueryResult:
     """Get process instance statistics by version
 
      Get statistics about process instances, grouped by version for a given process definition.
@@ -268,7 +200,7 @@ async def asyncio(
         process_definition_id (str): Id of a process definition, from the model. Only ids of
             process definitions that are deployed are useful. Example: new-account-onboarding-
             workflow.
-        body (GetProcessDefinitionInstanceVersionStatisticsData | Unset):
+        body (ProcessDefinitionInstanceVersionStatisticsQuery | Unset):
 
     Raises:
         errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -278,7 +210,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetProcessDefinitionInstanceVersionStatisticsResponse200"""
+        ProcessDefinitionInstanceVersionStatisticsQueryResult"""
     response = await asyncio_detailed(
         process_definition_id=process_definition_id, client=client, body=body
     )
@@ -287,40 +219,26 @@ async def asyncio(
             raise errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionInstanceVersionStatisticsResponse400,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetProcessDefinitionInstanceVersionStatisticsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionInstanceVersionStatisticsResponse401,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetProcessDefinitionInstanceVersionStatisticsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionInstanceVersionStatisticsResponse403,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetProcessDefinitionInstanceVersionStatisticsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionInstanceVersionStatisticsResponse500,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(
-        GetProcessDefinitionInstanceVersionStatisticsResponse200, response.parsed
-    )
+    return cast(ProcessDefinitionInstanceVersionStatisticsQueryResult, response.parsed)

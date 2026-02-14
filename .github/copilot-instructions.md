@@ -97,9 +97,9 @@ make clean
 
 ### Architecture & Generation Flow
 1.  **Spec Retrieval**: `generate.py` fetches the OpenAPI spec.
-2.  **Pre-Gen Hooks**: Scripts in `hooks_v2/pre_gen` modify the raw OpenAPI spec (e.g., renaming fields).
+2.  **Pre-Gen Hooks**: Scripts in `hooks/pre_gen` modify the raw OpenAPI spec (e.g., renaming fields).
 3.  **Core Generation**: `openapi-python-client` runs using `generator-config-python-client.yaml`.
-4.  **Post-Gen Hooks**: Scripts in `hooks_v2/post_gen` and `hooks_shared` modify the generated Python files (e.g., flattening client structure, patching imports).
+4.  **Post-Gen Hooks**: Scripts in `hooks/post_gen` modify the generated Python files (e.g., flattening client structure, patching imports).
 5.  **Runtime Injection**: The content of `runtime/` is copied into `generated/camunda_orchestration_sdk/runtime/`.
 
 ### Important Files

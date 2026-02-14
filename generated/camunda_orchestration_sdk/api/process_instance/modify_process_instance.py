@@ -5,18 +5,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.modify_process_instance_data import ModifyProcessInstanceData
-from ...models.modify_process_instance_response_400 import (
-    ModifyProcessInstanceResponse400,
-)
-from ...models.modify_process_instance_response_404 import (
-    ModifyProcessInstanceResponse404,
-)
-from ...models.modify_process_instance_response_500 import (
-    ModifyProcessInstanceResponse500,
-)
-from ...models.modify_process_instance_response_503 import (
-    ModifyProcessInstanceResponse503,
-)
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -38,28 +27,21 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | ModifyProcessInstanceResponse400
-    | ModifyProcessInstanceResponse404
-    | ModifyProcessInstanceResponse500
-    | ModifyProcessInstanceResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = ModifyProcessInstanceResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 404:
-        response_404 = ModifyProcessInstanceResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = ModifyProcessInstanceResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = ModifyProcessInstanceResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -69,13 +51,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | ModifyProcessInstanceResponse400
-    | ModifyProcessInstanceResponse404
-    | ModifyProcessInstanceResponse500
-    | ModifyProcessInstanceResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -89,13 +65,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: ModifyProcessInstanceData,
-) -> Response[
-    Any
-    | ModifyProcessInstanceResponse400
-    | ModifyProcessInstanceResponse404
-    | ModifyProcessInstanceResponse500
-    | ModifyProcessInstanceResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Modify process instance
 
      Modifies a running process instance.
@@ -115,7 +85,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ModifyProcessInstanceResponse400 | ModifyProcessInstanceResponse404 | ModifyProcessInstanceResponse500 | ModifyProcessInstanceResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(process_instance_key=process_instance_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -160,25 +130,25 @@ def sync(
             raise errors.ModifyProcessInstanceBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ModifyProcessInstanceResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.ModifyProcessInstanceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ModifyProcessInstanceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.ModifyProcessInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ModifyProcessInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.ModifyProcessInstanceServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ModifyProcessInstanceResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -189,13 +159,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: ModifyProcessInstanceData,
-) -> Response[
-    Any
-    | ModifyProcessInstanceResponse400
-    | ModifyProcessInstanceResponse404
-    | ModifyProcessInstanceResponse500
-    | ModifyProcessInstanceResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Modify process instance
 
      Modifies a running process instance.
@@ -215,7 +179,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ModifyProcessInstanceResponse400 | ModifyProcessInstanceResponse404 | ModifyProcessInstanceResponse500 | ModifyProcessInstanceResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(process_instance_key=process_instance_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -260,25 +224,25 @@ async def asyncio(
             raise errors.ModifyProcessInstanceBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ModifyProcessInstanceResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.ModifyProcessInstanceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ModifyProcessInstanceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.ModifyProcessInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ModifyProcessInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.ModifyProcessInstanceServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ModifyProcessInstanceResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

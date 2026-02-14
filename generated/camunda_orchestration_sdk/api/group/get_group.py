@@ -4,11 +4,8 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_group_response_200 import GetGroupResponse200
-from ...models.get_group_response_401 import GetGroupResponse401
-from ...models.get_group_response_403 import GetGroupResponse403
-from ...models.get_group_response_404 import GetGroupResponse404
-from ...models.get_group_response_500 import GetGroupResponse500
+from ...models.group_result import GroupResult
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -22,28 +19,21 @@ def _get_kwargs(group_id: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetGroupResponse200
-    | GetGroupResponse401
-    | GetGroupResponse403
-    | GetGroupResponse404
-    | GetGroupResponse500
-    | None
-):
+) -> GroupResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = GetGroupResponse200.from_dict(response.json())
+        response_200 = GroupResult.from_dict(response.json())
         return response_200
     if response.status_code == 401:
-        response_401 = GetGroupResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetGroupResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = GetGroupResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetGroupResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -53,13 +43,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetGroupResponse200
-    | GetGroupResponse401
-    | GetGroupResponse403
-    | GetGroupResponse404
-    | GetGroupResponse500
-]:
+) -> Response[GroupResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -70,13 +54,7 @@ def _build_response(
 
 def sync_detailed(
     group_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetGroupResponse200
-    | GetGroupResponse401
-    | GetGroupResponse403
-    | GetGroupResponse404
-    | GetGroupResponse500
-]:
+) -> Response[GroupResult | ProblemDetail]:
     """Get group
 
      Get a group by its ID.
@@ -89,7 +67,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetGroupResponse200 | GetGroupResponse401 | GetGroupResponse403 | GetGroupResponse404 | GetGroupResponse500]
+        Response[GroupResult | ProblemDetail]
     """
     kwargs = _get_kwargs(group_id=group_id)
     response = client.get_httpx_client().request(**kwargs)
@@ -98,7 +76,7 @@ def sync_detailed(
 
 def sync(
     group_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetGroupResponse200:
+) -> GroupResult:
     """Get group
 
      Get a group by its ID.
@@ -114,47 +92,41 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetGroupResponse200"""
+        GroupResult"""
     response = sync_detailed(group_id=group_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
             raise errors.GetGroupUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGroupResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetGroupForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGroupResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetGroupNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGroupResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetGroupInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGroupResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetGroupResponse200, response.parsed)
+    return cast(GroupResult, response.parsed)
 
 
 async def asyncio_detailed(
     group_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetGroupResponse200
-    | GetGroupResponse401
-    | GetGroupResponse403
-    | GetGroupResponse404
-    | GetGroupResponse500
-]:
+) -> Response[GroupResult | ProblemDetail]:
     """Get group
 
      Get a group by its ID.
@@ -167,7 +139,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetGroupResponse200 | GetGroupResponse401 | GetGroupResponse403 | GetGroupResponse404 | GetGroupResponse500]
+        Response[GroupResult | ProblemDetail]
     """
     kwargs = _get_kwargs(group_id=group_id)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -176,7 +148,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     group_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetGroupResponse200:
+) -> GroupResult:
     """Get group
 
      Get a group by its ID.
@@ -192,33 +164,33 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetGroupResponse200"""
+        GroupResult"""
     response = await asyncio_detailed(group_id=group_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
             raise errors.GetGroupUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGroupResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetGroupForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGroupResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetGroupNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGroupResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetGroupInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetGroupResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetGroupResponse200, response.parsed)
+    return cast(GroupResult, response.parsed)

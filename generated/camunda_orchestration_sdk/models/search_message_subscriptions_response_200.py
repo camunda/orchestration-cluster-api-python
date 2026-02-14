@@ -9,12 +9,8 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.search_message_subscriptions_response_200_items_item import (
-        SearchMessageSubscriptionsResponse200ItemsItem,
-    )
-    from ..models.search_message_subscriptions_response_200_page import (
-        SearchMessageSubscriptionsResponse200Page,
-    )
+    from ..models.message_subscription_result import MessageSubscriptionResult
+    from ..models.search_query_page_response import SearchQueryPageResponse
 
 
 T = TypeVar("T", bound="SearchMessageSubscriptionsResponse200")
@@ -24,13 +20,13 @@ T = TypeVar("T", bound="SearchMessageSubscriptionsResponse200")
 class SearchMessageSubscriptionsResponse200:
     """
     Attributes:
-        page (SearchMessageSubscriptionsResponse200Page): Pagination information about the search results. Example:
-            {'totalItems': 1, 'hasMoreTotalItems': False}.
-        items (list[SearchMessageSubscriptionsResponse200ItemsItem] | Unset): The matching message subscriptions.
+        page (SearchQueryPageResponse): Pagination information about the search results. Example: {'totalItems': 1,
+            'hasMoreTotalItems': False}.
+        items (list[MessageSubscriptionResult] | Unset): The matching message subscriptions.
     """
 
-    page: SearchMessageSubscriptionsResponse200Page
-    items: list[SearchMessageSubscriptionsResponse200ItemsItem] | Unset = UNSET
+    page: SearchQueryPageResponse
+    items: list[MessageSubscriptionResult] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -59,24 +55,18 @@ class SearchMessageSubscriptionsResponse200:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.search_message_subscriptions_response_200_items_item import (
-            SearchMessageSubscriptionsResponse200ItemsItem,
-        )
-        from ..models.search_message_subscriptions_response_200_page import (
-            SearchMessageSubscriptionsResponse200Page,
-        )
+        from ..models.message_subscription_result import MessageSubscriptionResult
+        from ..models.search_query_page_response import SearchQueryPageResponse
 
         d = dict(src_dict)
-        page = SearchMessageSubscriptionsResponse200Page.from_dict(d.pop("page"))
+        page = SearchQueryPageResponse.from_dict(d.pop("page"))
 
         _items = d.pop("items", UNSET)
-        items: list[SearchMessageSubscriptionsResponse200ItemsItem] | Unset = UNSET
+        items: list[MessageSubscriptionResult] | Unset = UNSET
         if _items is not UNSET:
             items = []
             for items_item_data in _items:
-                items_item = SearchMessageSubscriptionsResponse200ItemsItem.from_dict(
-                    items_item_data
-                )
+                items_item = MessageSubscriptionResult.from_dict(items_item_data)
 
                 items.append(items_item)
 

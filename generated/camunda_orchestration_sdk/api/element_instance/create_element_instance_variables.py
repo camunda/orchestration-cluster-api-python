@@ -4,23 +4,13 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.create_element_instance_variables_data import (
-    CreateElementInstanceVariablesData,
-)
-from ...models.create_element_instance_variables_response_400 import (
-    CreateElementInstanceVariablesResponse400,
-)
-from ...models.create_element_instance_variables_response_500 import (
-    CreateElementInstanceVariablesResponse500,
-)
-from ...models.create_element_instance_variables_response_503 import (
-    CreateElementInstanceVariablesResponse503,
-)
+from ...models.problem_detail import ProblemDetail
+from ...models.set_variable_request import SetVariableRequest
 from ...types import Response
 
 
 def _get_kwargs(
-    element_instance_key: str, *, body: CreateElementInstanceVariablesData
+    element_instance_key: str, *, body: SetVariableRequest
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -37,30 +27,18 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | CreateElementInstanceVariablesResponse400
-    | CreateElementInstanceVariablesResponse500
-    | CreateElementInstanceVariablesResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = CreateElementInstanceVariablesResponse400.from_dict(
-            response.json()
-        )
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 500:
-        response_500 = CreateElementInstanceVariablesResponse500.from_dict(
-            response.json()
-        )
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = CreateElementInstanceVariablesResponse503.from_dict(
-            response.json()
-        )
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -70,12 +48,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | CreateElementInstanceVariablesResponse400
-    | CreateElementInstanceVariablesResponse500
-    | CreateElementInstanceVariablesResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -88,13 +61,8 @@ def sync_detailed(
     element_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CreateElementInstanceVariablesData,
-) -> Response[
-    Any
-    | CreateElementInstanceVariablesResponse400
-    | CreateElementInstanceVariablesResponse500
-    | CreateElementInstanceVariablesResponse503
-]:
+    body: SetVariableRequest,
+) -> Response[Any | ProblemDetail]:
     """Update element instance variables
 
      Updates all the variables of a particular scope (for example, process instance, element instance)
@@ -104,14 +72,14 @@ def sync_detailed(
     Args:
         element_instance_key (str): System-generated key for a element instance. Example:
             2251799813686789.
-        body (CreateElementInstanceVariablesData):
+        body (SetVariableRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | CreateElementInstanceVariablesResponse400 | CreateElementInstanceVariablesResponse500 | CreateElementInstanceVariablesResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(element_instance_key=element_instance_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -122,7 +90,7 @@ def sync(
     element_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CreateElementInstanceVariablesData,
+    body: SetVariableRequest,
     **kwargs: Any,
 ) -> None:
     """Update element instance variables
@@ -134,7 +102,7 @@ def sync(
     Args:
         element_instance_key (str): System-generated key for a element instance. Example:
             2251799813686789.
-        body (CreateElementInstanceVariablesData):
+        body (SetVariableRequest):
 
     Raises:
         errors.CreateElementInstanceVariablesBadRequest: If the response status code is 400. The provided data is not valid.
@@ -152,19 +120,19 @@ def sync(
             raise errors.CreateElementInstanceVariablesBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateElementInstanceVariablesResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CreateElementInstanceVariablesInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateElementInstanceVariablesResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CreateElementInstanceVariablesServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateElementInstanceVariablesResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -174,13 +142,8 @@ async def asyncio_detailed(
     element_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CreateElementInstanceVariablesData,
-) -> Response[
-    Any
-    | CreateElementInstanceVariablesResponse400
-    | CreateElementInstanceVariablesResponse500
-    | CreateElementInstanceVariablesResponse503
-]:
+    body: SetVariableRequest,
+) -> Response[Any | ProblemDetail]:
     """Update element instance variables
 
      Updates all the variables of a particular scope (for example, process instance, element instance)
@@ -190,14 +153,14 @@ async def asyncio_detailed(
     Args:
         element_instance_key (str): System-generated key for a element instance. Example:
             2251799813686789.
-        body (CreateElementInstanceVariablesData):
+        body (SetVariableRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | CreateElementInstanceVariablesResponse400 | CreateElementInstanceVariablesResponse500 | CreateElementInstanceVariablesResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(element_instance_key=element_instance_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -208,7 +171,7 @@ async def asyncio(
     element_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CreateElementInstanceVariablesData,
+    body: SetVariableRequest,
     **kwargs: Any,
 ) -> None:
     """Update element instance variables
@@ -220,7 +183,7 @@ async def asyncio(
     Args:
         element_instance_key (str): System-generated key for a element instance. Example:
             2251799813686789.
-        body (CreateElementInstanceVariablesData):
+        body (SetVariableRequest):
 
     Raises:
         errors.CreateElementInstanceVariablesBadRequest: If the response status code is 400. The provided data is not valid.
@@ -238,19 +201,19 @@ async def asyncio(
             raise errors.CreateElementInstanceVariablesBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateElementInstanceVariablesResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CreateElementInstanceVariablesInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateElementInstanceVariablesResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CreateElementInstanceVariablesServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateElementInstanceVariablesResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

@@ -9,8 +9,8 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.get_process_instance_sequence_flows_response_200_items_item import (
-        GetProcessInstanceSequenceFlowsResponse200ItemsItem,
+    from ..models.process_instance_sequence_flow_result import (
+        ProcessInstanceSequenceFlowResult,
     )
 
 
@@ -22,10 +22,10 @@ class GetProcessInstanceSequenceFlowsResponse200:
     """Process instance sequence flows query response.
 
     Attributes:
-        items (list[GetProcessInstanceSequenceFlowsResponse200ItemsItem] | Unset): The sequence flows.
+        items (list[ProcessInstanceSequenceFlowResult] | Unset): The sequence flows.
     """
 
-    items: list[GetProcessInstanceSequenceFlowsResponse200ItemsItem] | Unset = UNSET
+    items: list[ProcessInstanceSequenceFlowResult] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -48,20 +48,18 @@ class GetProcessInstanceSequenceFlowsResponse200:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.get_process_instance_sequence_flows_response_200_items_item import (
-            GetProcessInstanceSequenceFlowsResponse200ItemsItem,
+        from ..models.process_instance_sequence_flow_result import (
+            ProcessInstanceSequenceFlowResult,
         )
 
         d = dict(src_dict)
         _items = d.pop("items", UNSET)
-        items: list[GetProcessInstanceSequenceFlowsResponse200ItemsItem] | Unset = UNSET
+        items: list[ProcessInstanceSequenceFlowResult] | Unset = UNSET
         if _items is not UNSET:
             items = []
             for items_item_data in _items:
-                items_item = (
-                    GetProcessInstanceSequenceFlowsResponse200ItemsItem.from_dict(
-                        items_item_data
-                    )
+                items_item = ProcessInstanceSequenceFlowResult.from_dict(
+                    items_item_data
                 )
 
                 items.append(items_item)

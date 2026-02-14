@@ -9,9 +9,7 @@ from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
-    from ..models.activate_jobs_response_200_jobs_item import (
-        ActivateJobsResponse200JobsItem,
-    )
+    from ..models.activate_jobs_jobs_item import ActivateJobsJobsItem
 
 
 T = TypeVar("T", bound="ActivateJobsResponse200")
@@ -22,10 +20,10 @@ class ActivateJobsResponse200:
     """The list of activated jobs
 
     Attributes:
-        jobs (list[ActivateJobsResponse200JobsItem]): The activated jobs.
+        jobs (list[ActivateJobsJobsItem]): The activated jobs.
     """
 
-    jobs: list[ActivateJobsResponse200JobsItem]
+    jobs: list[ActivateJobsJobsItem]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -48,15 +46,13 @@ class ActivateJobsResponse200:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.activate_jobs_response_200_jobs_item import (
-            ActivateJobsResponse200JobsItem,
-        )
+        from ..models.activate_jobs_jobs_item import ActivateJobsJobsItem
 
         d = dict(src_dict)
-        jobs: list[ActivateJobsResponse200JobsItem] = []
+        jobs: list[ActivateJobsJobsItem] = []
         _jobs = d.pop("jobs")
         for jobs_item_data in _jobs:
-            jobs_item = ActivateJobsResponse200JobsItem.from_dict(jobs_item_data)
+            jobs_item = ActivateJobsJobsItem.from_dict(jobs_item_data)
 
             jobs.append(jobs_item)
 

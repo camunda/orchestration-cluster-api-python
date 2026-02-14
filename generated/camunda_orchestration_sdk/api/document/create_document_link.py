@@ -4,16 +4,16 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.create_document_link_data import CreateDocumentLinkData
-from ...models.create_document_link_response_201 import CreateDocumentLinkResponse201
-from ...models.create_document_link_response_400 import CreateDocumentLinkResponse400
+from ...models.document_link import DocumentLink
+from ...models.document_link_request import DocumentLinkRequest
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     document_id: str,
     *,
-    body: CreateDocumentLinkData | Unset = UNSET,
+    body: DocumentLinkRequest | Unset = UNSET,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
 ) -> dict[str, Any]:
@@ -38,12 +38,12 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> CreateDocumentLinkResponse201 | CreateDocumentLinkResponse400 | None:
+) -> DocumentLink | ProblemDetail | None:
     if response.status_code == 201:
-        response_201 = CreateDocumentLinkResponse201.from_dict(response.json())
+        response_201 = DocumentLink.from_dict(response.json())
         return response_201
     if response.status_code == 400:
-        response_400 = CreateDocumentLinkResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -53,7 +53,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[CreateDocumentLinkResponse201 | CreateDocumentLinkResponse400]:
+) -> Response[DocumentLink | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -66,10 +66,10 @@ def sync_detailed(
     document_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CreateDocumentLinkData | Unset = UNSET,
+    body: DocumentLinkRequest | Unset = UNSET,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
-) -> Response[CreateDocumentLinkResponse201 | CreateDocumentLinkResponse400]:
+) -> Response[DocumentLink | ProblemDetail]:
     """Create document link
 
      Create a link to a document in the Camunda 8 cluster.
@@ -80,14 +80,14 @@ def sync_detailed(
         document_id (str): Document Id that uniquely identifies a document.
         store_id (str | Unset):
         content_hash (str | Unset):
-        body (CreateDocumentLinkData | Unset):
+        body (DocumentLinkRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateDocumentLinkResponse201 | CreateDocumentLinkResponse400]
+        Response[DocumentLink | ProblemDetail]
     """
     kwargs = _get_kwargs(
         document_id=document_id, body=body, store_id=store_id, content_hash=content_hash
@@ -100,11 +100,11 @@ def sync(
     document_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CreateDocumentLinkData | Unset = UNSET,
+    body: DocumentLinkRequest | Unset = UNSET,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
     **kwargs: Any,
-) -> CreateDocumentLinkResponse201:
+) -> DocumentLink:
     """Create document link
 
      Create a link to a document in the Camunda 8 cluster.
@@ -115,14 +115,14 @@ def sync(
         document_id (str): Document Id that uniquely identifies a document.
         store_id (str | Unset):
         content_hash (str | Unset):
-        body (CreateDocumentLinkData | Unset):
+        body (DocumentLinkRequest | Unset):
 
     Raises:
         errors.CreateDocumentLinkBadRequest: If the response status code is 400. The provided data is not valid.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CreateDocumentLinkResponse201"""
+        DocumentLink"""
     response = sync_detailed(
         document_id=document_id,
         client=client,
@@ -135,21 +135,21 @@ def sync(
             raise errors.CreateDocumentLinkBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateDocumentLinkResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CreateDocumentLinkResponse201, response.parsed)
+    return cast(DocumentLink, response.parsed)
 
 
 async def asyncio_detailed(
     document_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CreateDocumentLinkData | Unset = UNSET,
+    body: DocumentLinkRequest | Unset = UNSET,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
-) -> Response[CreateDocumentLinkResponse201 | CreateDocumentLinkResponse400]:
+) -> Response[DocumentLink | ProblemDetail]:
     """Create document link
 
      Create a link to a document in the Camunda 8 cluster.
@@ -160,14 +160,14 @@ async def asyncio_detailed(
         document_id (str): Document Id that uniquely identifies a document.
         store_id (str | Unset):
         content_hash (str | Unset):
-        body (CreateDocumentLinkData | Unset):
+        body (DocumentLinkRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateDocumentLinkResponse201 | CreateDocumentLinkResponse400]
+        Response[DocumentLink | ProblemDetail]
     """
     kwargs = _get_kwargs(
         document_id=document_id, body=body, store_id=store_id, content_hash=content_hash
@@ -180,11 +180,11 @@ async def asyncio(
     document_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CreateDocumentLinkData | Unset = UNSET,
+    body: DocumentLinkRequest | Unset = UNSET,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
     **kwargs: Any,
-) -> CreateDocumentLinkResponse201:
+) -> DocumentLink:
     """Create document link
 
      Create a link to a document in the Camunda 8 cluster.
@@ -195,14 +195,14 @@ async def asyncio(
         document_id (str): Document Id that uniquely identifies a document.
         store_id (str | Unset):
         content_hash (str | Unset):
-        body (CreateDocumentLinkData | Unset):
+        body (DocumentLinkRequest | Unset):
 
     Raises:
         errors.CreateDocumentLinkBadRequest: If the response status code is 400. The provided data is not valid.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CreateDocumentLinkResponse201"""
+        DocumentLink"""
     response = await asyncio_detailed(
         document_id=document_id,
         client=client,
@@ -215,8 +215,8 @@ async def asyncio(
             raise errors.CreateDocumentLinkBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateDocumentLinkResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CreateDocumentLinkResponse201, response.parsed)
+    return cast(DocumentLink, response.parsed)

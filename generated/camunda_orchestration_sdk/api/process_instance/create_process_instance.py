@@ -3,30 +3,17 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.create_process_instance_response_200 import (
-    CreateProcessInstanceResponse200,
-)
-from ...models.create_process_instance_response_400 import (
-    CreateProcessInstanceResponse400,
-)
-from ...models.create_process_instance_response_500 import (
-    CreateProcessInstanceResponse500,
-)
-from ...models.create_process_instance_response_503 import (
-    CreateProcessInstanceResponse503,
-)
-from ...models.create_process_instance_response_504 import (
-    CreateProcessInstanceResponse504,
-)
-from ...models.processcreationbyid import Processcreationbyid
-from ...models.processcreationbykey import Processcreationbykey
+from ...models.create_process_instance_result import CreateProcessInstanceResult
+from ...models.problem_detail import ProblemDetail
+from ...models.process_creation_by_id import ProcessCreationById
+from ...models.process_creation_by_key import ProcessCreationByKey
 from ...types import Response
 
 
-def _get_kwargs(*, body: Processcreationbyid | Processcreationbykey) -> dict[str, Any]:
+def _get_kwargs(*, body: ProcessCreationById | ProcessCreationByKey) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/process-instances"}
-    if isinstance(body, Processcreationbyid):
+    if isinstance(body, ProcessCreationById):
         _kwargs["json"] = body.to_dict()
     else:
         _kwargs["json"] = body.to_dict()
@@ -37,28 +24,21 @@ def _get_kwargs(*, body: Processcreationbyid | Processcreationbykey) -> dict[str
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    CreateProcessInstanceResponse200
-    | CreateProcessInstanceResponse400
-    | CreateProcessInstanceResponse500
-    | CreateProcessInstanceResponse503
-    | CreateProcessInstanceResponse504
-    | None
-):
+) -> CreateProcessInstanceResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = CreateProcessInstanceResponse200.from_dict(response.json())
+        response_200 = CreateProcessInstanceResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = CreateProcessInstanceResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 500:
-        response_500 = CreateProcessInstanceResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = CreateProcessInstanceResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if response.status_code == 504:
-        response_504 = CreateProcessInstanceResponse504.from_dict(response.json())
+        response_504 = ProblemDetail.from_dict(response.json())
         return response_504
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -68,13 +48,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    CreateProcessInstanceResponse200
-    | CreateProcessInstanceResponse400
-    | CreateProcessInstanceResponse500
-    | CreateProcessInstanceResponse503
-    | CreateProcessInstanceResponse504
-]:
+) -> Response[CreateProcessInstanceResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -86,14 +60,8 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: Processcreationbyid | Processcreationbykey,
-) -> Response[
-    CreateProcessInstanceResponse200
-    | CreateProcessInstanceResponse400
-    | CreateProcessInstanceResponse500
-    | CreateProcessInstanceResponse503
-    | CreateProcessInstanceResponse504
-]:
+    body: ProcessCreationById | ProcessCreationByKey,
+) -> Response[CreateProcessInstanceResult | ProblemDetail]:
     """Create process instance
 
      Creates and starts an instance of the specified process.
@@ -104,7 +72,7 @@ def sync_detailed(
     when awaitCompletion is enabled.
 
     Args:
-        body (Processcreationbyid | Processcreationbykey): Instructions for creating a process
+        body (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
             instance. The process definition can be specified
             either by id or by key.
 
@@ -113,7 +81,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateProcessInstanceResponse200 | CreateProcessInstanceResponse400 | CreateProcessInstanceResponse500 | CreateProcessInstanceResponse503 | CreateProcessInstanceResponse504]
+        Response[CreateProcessInstanceResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -123,9 +91,9 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: Processcreationbyid | Processcreationbykey,
+    body: ProcessCreationById | ProcessCreationByKey,
     **kwargs: Any,
-) -> CreateProcessInstanceResponse200:
+) -> CreateProcessInstanceResult:
     """Create process instance
 
      Creates and starts an instance of the specified process.
@@ -136,7 +104,7 @@ def sync(
     when awaitCompletion is enabled.
 
     Args:
-        body (Processcreationbyid | Processcreationbykey): Instructions for creating a process
+        body (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
             instance. The process definition can be specified
             either by id or by key.
 
@@ -148,49 +116,43 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CreateProcessInstanceResponse200"""
+        CreateProcessInstanceResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.CreateProcessInstanceBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateProcessInstanceResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CreateProcessInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateProcessInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CreateProcessInstanceServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateProcessInstanceResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 504:
             raise errors.CreateProcessInstanceGatewayTimeout(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateProcessInstanceResponse504, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CreateProcessInstanceResponse200, response.parsed)
+    return cast(CreateProcessInstanceResult, response.parsed)
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: Processcreationbyid | Processcreationbykey,
-) -> Response[
-    CreateProcessInstanceResponse200
-    | CreateProcessInstanceResponse400
-    | CreateProcessInstanceResponse500
-    | CreateProcessInstanceResponse503
-    | CreateProcessInstanceResponse504
-]:
+    body: ProcessCreationById | ProcessCreationByKey,
+) -> Response[CreateProcessInstanceResult | ProblemDetail]:
     """Create process instance
 
      Creates and starts an instance of the specified process.
@@ -201,7 +163,7 @@ async def asyncio_detailed(
     when awaitCompletion is enabled.
 
     Args:
-        body (Processcreationbyid | Processcreationbykey): Instructions for creating a process
+        body (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
             instance. The process definition can be specified
             either by id or by key.
 
@@ -210,7 +172,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateProcessInstanceResponse200 | CreateProcessInstanceResponse400 | CreateProcessInstanceResponse500 | CreateProcessInstanceResponse503 | CreateProcessInstanceResponse504]
+        Response[CreateProcessInstanceResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -220,9 +182,9 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: Processcreationbyid | Processcreationbykey,
+    body: ProcessCreationById | ProcessCreationByKey,
     **kwargs: Any,
-) -> CreateProcessInstanceResponse200:
+) -> CreateProcessInstanceResult:
     """Create process instance
 
      Creates and starts an instance of the specified process.
@@ -233,7 +195,7 @@ async def asyncio(
     when awaitCompletion is enabled.
 
     Args:
-        body (Processcreationbyid | Processcreationbykey): Instructions for creating a process
+        body (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
             instance. The process definition can be specified
             either by id or by key.
 
@@ -245,33 +207,33 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CreateProcessInstanceResponse200"""
+        CreateProcessInstanceResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.CreateProcessInstanceBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateProcessInstanceResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CreateProcessInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateProcessInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CreateProcessInstanceServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateProcessInstanceResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 504:
             raise errors.CreateProcessInstanceGatewayTimeout(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateProcessInstanceResponse504, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CreateProcessInstanceResponse200, response.parsed)
+    return cast(CreateProcessInstanceResult, response.parsed)

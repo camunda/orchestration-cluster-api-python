@@ -4,10 +4,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.delete_role_response_401 import DeleteRoleResponse401
-from ...models.delete_role_response_404 import DeleteRoleResponse404
-from ...models.delete_role_response_500 import DeleteRoleResponse500
-from ...models.delete_role_response_503 import DeleteRoleResponse503
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -21,28 +18,21 @@ def _get_kwargs(role_id: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | DeleteRoleResponse401
-    | DeleteRoleResponse404
-    | DeleteRoleResponse500
-    | DeleteRoleResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 401:
-        response_401 = DeleteRoleResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 404:
-        response_404 = DeleteRoleResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = DeleteRoleResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = DeleteRoleResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -52,13 +42,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | DeleteRoleResponse401
-    | DeleteRoleResponse404
-    | DeleteRoleResponse500
-    | DeleteRoleResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -69,13 +53,7 @@ def _build_response(
 
 def sync_detailed(
     role_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | DeleteRoleResponse401
-    | DeleteRoleResponse404
-    | DeleteRoleResponse500
-    | DeleteRoleResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Delete role
 
      Deletes the role with the given ID.
@@ -88,7 +66,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | DeleteRoleResponse401 | DeleteRoleResponse404 | DeleteRoleResponse500 | DeleteRoleResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(role_id=role_id)
     response = client.get_httpx_client().request(**kwargs)
@@ -118,25 +96,25 @@ def sync(role_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -
             raise errors.DeleteRoleUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteRoleResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.DeleteRoleNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteRoleResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.DeleteRoleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteRoleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.DeleteRoleServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteRoleResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -144,13 +122,7 @@ def sync(role_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -
 
 async def asyncio_detailed(
     role_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | DeleteRoleResponse401
-    | DeleteRoleResponse404
-    | DeleteRoleResponse500
-    | DeleteRoleResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Delete role
 
      Deletes the role with the given ID.
@@ -163,7 +135,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | DeleteRoleResponse401 | DeleteRoleResponse404 | DeleteRoleResponse500 | DeleteRoleResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(role_id=role_id)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -195,25 +167,25 @@ async def asyncio(
             raise errors.DeleteRoleUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteRoleResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.DeleteRoleNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteRoleResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.DeleteRoleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteRoleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.DeleteRoleServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteRoleResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

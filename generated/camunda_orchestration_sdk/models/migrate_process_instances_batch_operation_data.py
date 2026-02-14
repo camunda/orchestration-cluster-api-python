@@ -8,11 +8,11 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.migrate_process_instances_batch_operation_data_filter import (
-        MigrateProcessInstancesBatchOperationDataFilter,
+    from ..models.migrate_process_instances_batch_operation_migration_plan import (
+        MigrateProcessInstancesBatchOperationMigrationPlan,
     )
-    from ..models.migrate_process_instances_batch_operation_data_migration_plan import (
-        MigrateProcessInstancesBatchOperationDataMigrationPlan,
+    from ..models.process_instance_cancellation_batch_operation_request_filter import (
+        ProcessInstanceCancellationBatchOperationRequestFilter,
     )
 
 
@@ -23,15 +23,15 @@ T = TypeVar("T", bound="MigrateProcessInstancesBatchOperationData")
 class MigrateProcessInstancesBatchOperationData:
     """
     Attributes:
-        filter_ (MigrateProcessInstancesBatchOperationDataFilter): The process instance filter.
-        migration_plan (MigrateProcessInstancesBatchOperationDataMigrationPlan): The migration plan.
+        filter_ (ProcessInstanceCancellationBatchOperationRequestFilter): The process instance filter.
+        migration_plan (MigrateProcessInstancesBatchOperationMigrationPlan): The migration plan.
         operation_reference (int | Unset): A reference key chosen by the user that will be part of all records resulting
             from this operation.
             Must be > 0 if provided.
     """
 
-    filter_: MigrateProcessInstancesBatchOperationDataFilter
-    migration_plan: MigrateProcessInstancesBatchOperationDataMigrationPlan
+    filter_: ProcessInstanceCancellationBatchOperationRequestFilter
+    migration_plan: MigrateProcessInstancesBatchOperationMigrationPlan
     operation_reference: int | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -56,22 +56,20 @@ class MigrateProcessInstancesBatchOperationData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.migrate_process_instances_batch_operation_data_filter import (
-            MigrateProcessInstancesBatchOperationDataFilter,
+        from ..models.migrate_process_instances_batch_operation_migration_plan import (
+            MigrateProcessInstancesBatchOperationMigrationPlan,
         )
-        from ..models.migrate_process_instances_batch_operation_data_migration_plan import (
-            MigrateProcessInstancesBatchOperationDataMigrationPlan,
+        from ..models.process_instance_cancellation_batch_operation_request_filter import (
+            ProcessInstanceCancellationBatchOperationRequestFilter,
         )
 
         d = dict(src_dict)
-        filter_ = MigrateProcessInstancesBatchOperationDataFilter.from_dict(
+        filter_ = ProcessInstanceCancellationBatchOperationRequestFilter.from_dict(
             d.pop("filter")
         )
 
-        migration_plan = (
-            MigrateProcessInstancesBatchOperationDataMigrationPlan.from_dict(
-                d.pop("migrationPlan")
-            )
+        migration_plan = MigrateProcessInstancesBatchOperationMigrationPlan.from_dict(
+            d.pop("migrationPlan")
         )
 
         operation_reference = d.pop("operationReference", UNSET)

@@ -3,10 +3,8 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_authentication_response_200 import GetAuthenticationResponse200
-from ...models.get_authentication_response_401 import GetAuthenticationResponse401
-from ...models.get_authentication_response_403 import GetAuthenticationResponse403
-from ...models.get_authentication_response_500 import GetAuthenticationResponse500
+from ...models.camunda_user_result import CamundaUserResult
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -17,24 +15,18 @@ def _get_kwargs() -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetAuthenticationResponse200
-    | GetAuthenticationResponse401
-    | GetAuthenticationResponse403
-    | GetAuthenticationResponse500
-    | None
-):
+) -> CamundaUserResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = GetAuthenticationResponse200.from_dict(response.json())
+        response_200 = CamundaUserResult.from_dict(response.json())
         return response_200
     if response.status_code == 401:
-        response_401 = GetAuthenticationResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetAuthenticationResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = GetAuthenticationResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -44,12 +36,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetAuthenticationResponse200
-    | GetAuthenticationResponse401
-    | GetAuthenticationResponse403
-    | GetAuthenticationResponse500
-]:
+) -> Response[CamundaUserResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -60,12 +47,7 @@ def _build_response(
 
 def sync_detailed(
     *, client: AuthenticatedClient
-) -> Response[
-    GetAuthenticationResponse200
-    | GetAuthenticationResponse401
-    | GetAuthenticationResponse403
-    | GetAuthenticationResponse500
-]:
+) -> Response[CamundaUserResult | ProblemDetail]:
     """Get current user
 
      Retrieves the current authenticated user.
@@ -75,14 +57,14 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetAuthenticationResponse200 | GetAuthenticationResponse401 | GetAuthenticationResponse403 | GetAuthenticationResponse500]
+        Response[CamundaUserResult | ProblemDetail]
     """
     kwargs = _get_kwargs()
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
 
-def sync(*, client: AuthenticatedClient, **kwargs: Any) -> GetAuthenticationResponse200:
+def sync(*, client: AuthenticatedClient, **kwargs: Any) -> CamundaUserResult:
     """Get current user
 
      Retrieves the current authenticated user.
@@ -94,40 +76,35 @@ def sync(*, client: AuthenticatedClient, **kwargs: Any) -> GetAuthenticationResp
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetAuthenticationResponse200"""
+        CamundaUserResult"""
     response = sync_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
             raise errors.GetAuthenticationUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuthenticationResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetAuthenticationForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuthenticationResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetAuthenticationInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuthenticationResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetAuthenticationResponse200, response.parsed)
+    return cast(CamundaUserResult, response.parsed)
 
 
 async def asyncio_detailed(
     *, client: AuthenticatedClient
-) -> Response[
-    GetAuthenticationResponse200
-    | GetAuthenticationResponse401
-    | GetAuthenticationResponse403
-    | GetAuthenticationResponse500
-]:
+) -> Response[CamundaUserResult | ProblemDetail]:
     """Get current user
 
      Retrieves the current authenticated user.
@@ -137,16 +114,14 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetAuthenticationResponse200 | GetAuthenticationResponse401 | GetAuthenticationResponse403 | GetAuthenticationResponse500]
+        Response[CamundaUserResult | ProblemDetail]
     """
     kwargs = _get_kwargs()
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
 
-async def asyncio(
-    *, client: AuthenticatedClient, **kwargs: Any
-) -> GetAuthenticationResponse200:
+async def asyncio(*, client: AuthenticatedClient, **kwargs: Any) -> CamundaUserResult:
     """Get current user
 
      Retrieves the current authenticated user.
@@ -158,27 +133,27 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetAuthenticationResponse200"""
+        CamundaUserResult"""
     response = await asyncio_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
             raise errors.GetAuthenticationUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuthenticationResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetAuthenticationForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuthenticationResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetAuthenticationInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuthenticationResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetAuthenticationResponse200, response.parsed)
+    return cast(CamundaUserResult, response.parsed)

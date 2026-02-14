@@ -4,11 +4,8 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_role_response_200 import GetRoleResponse200
-from ...models.get_role_response_401 import GetRoleResponse401
-from ...models.get_role_response_403 import GetRoleResponse403
-from ...models.get_role_response_404 import GetRoleResponse404
-from ...models.get_role_response_500 import GetRoleResponse500
+from ...models.problem_detail import ProblemDetail
+from ...models.role_result import RoleResult
 from ...types import Response
 
 
@@ -22,28 +19,21 @@ def _get_kwargs(role_id: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetRoleResponse200
-    | GetRoleResponse401
-    | GetRoleResponse403
-    | GetRoleResponse404
-    | GetRoleResponse500
-    | None
-):
+) -> ProblemDetail | RoleResult | None:
     if response.status_code == 200:
-        response_200 = GetRoleResponse200.from_dict(response.json())
+        response_200 = RoleResult.from_dict(response.json())
         return response_200
     if response.status_code == 401:
-        response_401 = GetRoleResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetRoleResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = GetRoleResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetRoleResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -53,13 +43,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetRoleResponse200
-    | GetRoleResponse401
-    | GetRoleResponse403
-    | GetRoleResponse404
-    | GetRoleResponse500
-]:
+) -> Response[ProblemDetail | RoleResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -70,13 +54,7 @@ def _build_response(
 
 def sync_detailed(
     role_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetRoleResponse200
-    | GetRoleResponse401
-    | GetRoleResponse403
-    | GetRoleResponse404
-    | GetRoleResponse500
-]:
+) -> Response[ProblemDetail | RoleResult]:
     """Get role
 
      Get a role by its ID.
@@ -89,7 +67,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetRoleResponse200 | GetRoleResponse401 | GetRoleResponse403 | GetRoleResponse404 | GetRoleResponse500]
+        Response[ProblemDetail | RoleResult]
     """
     kwargs = _get_kwargs(role_id=role_id)
     response = client.get_httpx_client().request(**kwargs)
@@ -98,7 +76,7 @@ def sync_detailed(
 
 def sync(
     role_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetRoleResponse200:
+) -> RoleResult:
     """Get role
 
      Get a role by its ID.
@@ -114,47 +92,41 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetRoleResponse200"""
+        RoleResult"""
     response = sync_detailed(role_id=role_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
             raise errors.GetRoleUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetRoleResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetRoleForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetRoleResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetRoleNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetRoleResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetRoleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetRoleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetRoleResponse200, response.parsed)
+    return cast(RoleResult, response.parsed)
 
 
 async def asyncio_detailed(
     role_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetRoleResponse200
-    | GetRoleResponse401
-    | GetRoleResponse403
-    | GetRoleResponse404
-    | GetRoleResponse500
-]:
+) -> Response[ProblemDetail | RoleResult]:
     """Get role
 
      Get a role by its ID.
@@ -167,7 +139,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetRoleResponse200 | GetRoleResponse401 | GetRoleResponse403 | GetRoleResponse404 | GetRoleResponse500]
+        Response[ProblemDetail | RoleResult]
     """
     kwargs = _get_kwargs(role_id=role_id)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -176,7 +148,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     role_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetRoleResponse200:
+) -> RoleResult:
     """Get role
 
      Get a role by its ID.
@@ -192,33 +164,33 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetRoleResponse200"""
+        RoleResult"""
     response = await asyncio_detailed(role_id=role_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
             raise errors.GetRoleUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetRoleResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetRoleForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetRoleResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetRoleNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetRoleResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetRoleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetRoleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetRoleResponse200, response.parsed)
+    return cast(RoleResult, response.parsed)

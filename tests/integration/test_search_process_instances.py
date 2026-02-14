@@ -2,7 +2,7 @@ import os
 import pytest
 from camunda_orchestration_sdk import CamundaAsyncClient
 from camunda_orchestration_sdk.models.search_process_instances_data import SearchProcessInstancesData
-from camunda_orchestration_sdk.models.search_process_instances_data_page import SearchProcessInstancesDataPage
+from camunda_orchestration_sdk.models.offset_based_pagination import OffsetBasedPagination
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("CAMUNDA_INTEGRATION") != "1",
@@ -20,9 +20,7 @@ async def test_searchProcessInstances_smoke():
         # Note: 'from' is aliased to 'var_from' in Python because 'from' is a reserved keyword
         # But since SearchProcessInstancesDataPage is a dict wrapper, we use dict assignment.
         
-        page = SearchProcessInstancesDataPage()
-        page["from"] = 0
-        page["limit"] = 50
+        page = OffsetBasedPagination(from_=0, limit=50)
         
         query = SearchProcessInstancesData(
             page=page

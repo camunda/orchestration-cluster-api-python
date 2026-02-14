@@ -9,8 +9,8 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.get_process_instance_statistics_response_200_items_item import (
-        GetProcessInstanceStatisticsResponse200ItemsItem,
+    from ..models.process_element_statistics_result import (
+        ProcessElementStatisticsResult,
     )
 
 
@@ -22,10 +22,10 @@ class GetProcessInstanceStatisticsResponse200:
     """Process instance element statistics query response.
 
     Attributes:
-        items (list[GetProcessInstanceStatisticsResponse200ItemsItem] | Unset): The element statistics.
+        items (list[ProcessElementStatisticsResult] | Unset): The element statistics.
     """
 
-    items: list[GetProcessInstanceStatisticsResponse200ItemsItem] | Unset = UNSET
+    items: list[ProcessElementStatisticsResult] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -48,19 +48,17 @@ class GetProcessInstanceStatisticsResponse200:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.get_process_instance_statistics_response_200_items_item import (
-            GetProcessInstanceStatisticsResponse200ItemsItem,
+        from ..models.process_element_statistics_result import (
+            ProcessElementStatisticsResult,
         )
 
         d = dict(src_dict)
         _items = d.pop("items", UNSET)
-        items: list[GetProcessInstanceStatisticsResponse200ItemsItem] | Unset = UNSET
+        items: list[ProcessElementStatisticsResult] | Unset = UNSET
         if _items is not UNSET:
             items = []
             for items_item_data in _items:
-                items_item = GetProcessInstanceStatisticsResponse200ItemsItem.from_dict(
-                    items_item_data
-                )
+                items_item = ProcessElementStatisticsResult.from_dict(items_item_data)
 
                 items.append(items_item)
 

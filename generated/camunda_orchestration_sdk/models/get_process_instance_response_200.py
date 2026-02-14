@@ -20,9 +20,7 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
-from ..models.get_process_instance_response_200_state import (
-    GetProcessInstanceResponse200State,
-)
+from ..models.process_instance_state_enum import ProcessInstanceStateEnum
 from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="GetProcessInstanceResponse200")
@@ -38,7 +36,7 @@ class GetProcessInstanceResponse200:
         process_definition_name (str): The process definition name.
         process_definition_version (int):
         start_date (datetime.datetime):
-        state (GetProcessInstanceResponse200State): Process instance states
+        state (ProcessInstanceStateEnum): Process instance states
         has_incident (bool): Whether this process instance has a related incident or not.
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
         process_instance_key (str): The key of this process instance. Example: 2251799813690746.
@@ -55,7 +53,7 @@ class GetProcessInstanceResponse200:
     process_definition_name: str
     process_definition_version: int
     start_date: datetime.datetime
-    state: GetProcessInstanceResponse200State
+    state: ProcessInstanceStateEnum
     has_incident: bool
     tenant_id: TenantId
     process_instance_key: ProcessInstanceKey
@@ -141,7 +139,7 @@ class GetProcessInstanceResponse200:
 
         start_date = isoparse(d.pop("startDate"))
 
-        state = GetProcessInstanceResponse200State(d.pop("state"))
+        state = ProcessInstanceStateEnum(d.pop("state"))
 
         has_incident = d.pop("hasIncident")
 

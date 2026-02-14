@@ -5,11 +5,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.get_user_task_response_200 import GetUserTaskResponse200
-from ...models.get_user_task_response_400 import GetUserTaskResponse400
-from ...models.get_user_task_response_401 import GetUserTaskResponse401
-from ...models.get_user_task_response_403 import GetUserTaskResponse403
-from ...models.get_user_task_response_404 import GetUserTaskResponse404
-from ...models.get_user_task_response_500 import GetUserTaskResponse500
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -25,32 +21,24 @@ def _get_kwargs(user_task_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetUserTaskResponse200
-    | GetUserTaskResponse400
-    | GetUserTaskResponse401
-    | GetUserTaskResponse403
-    | GetUserTaskResponse404
-    | GetUserTaskResponse500
-    | None
-):
+) -> GetUserTaskResponse200 | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = GetUserTaskResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = GetUserTaskResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = GetUserTaskResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetUserTaskResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = GetUserTaskResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetUserTaskResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -60,14 +48,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetUserTaskResponse200
-    | GetUserTaskResponse400
-    | GetUserTaskResponse401
-    | GetUserTaskResponse403
-    | GetUserTaskResponse404
-    | GetUserTaskResponse500
-]:
+) -> Response[GetUserTaskResponse200 | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -78,14 +59,7 @@ def _build_response(
 
 def sync_detailed(
     user_task_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetUserTaskResponse200
-    | GetUserTaskResponse400
-    | GetUserTaskResponse401
-    | GetUserTaskResponse403
-    | GetUserTaskResponse404
-    | GetUserTaskResponse500
-]:
+) -> Response[GetUserTaskResponse200 | ProblemDetail]:
     """Get user task
 
      Get the user task by the user task key.
@@ -98,7 +72,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetUserTaskResponse200 | GetUserTaskResponse400 | GetUserTaskResponse401 | GetUserTaskResponse403 | GetUserTaskResponse404 | GetUserTaskResponse500]
+        Response[GetUserTaskResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(user_task_key=user_task_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -131,31 +105,31 @@ def sync(
             raise errors.GetUserTaskBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetUserTaskUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetUserTaskForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetUserTaskNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetUserTaskInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
@@ -164,14 +138,7 @@ def sync(
 
 async def asyncio_detailed(
     user_task_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetUserTaskResponse200
-    | GetUserTaskResponse400
-    | GetUserTaskResponse401
-    | GetUserTaskResponse403
-    | GetUserTaskResponse404
-    | GetUserTaskResponse500
-]:
+) -> Response[GetUserTaskResponse200 | ProblemDetail]:
     """Get user task
 
      Get the user task by the user task key.
@@ -184,7 +151,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetUserTaskResponse200 | GetUserTaskResponse400 | GetUserTaskResponse401 | GetUserTaskResponse403 | GetUserTaskResponse404 | GetUserTaskResponse500]
+        Response[GetUserTaskResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(user_task_key=user_task_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -217,31 +184,31 @@ async def asyncio(
             raise errors.GetUserTaskBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetUserTaskUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetUserTaskForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetUserTaskNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetUserTaskInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

@@ -3,16 +3,15 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.search_mapping_rule_data import SearchMappingRuleData
-from ...models.search_mapping_rule_response_200 import SearchMappingRuleResponse200
-from ...models.search_mapping_rule_response_400 import SearchMappingRuleResponse400
-from ...models.search_mapping_rule_response_401 import SearchMappingRuleResponse401
-from ...models.search_mapping_rule_response_403 import SearchMappingRuleResponse403
-from ...models.search_mapping_rule_response_500 import SearchMappingRuleResponse500
+from ...models.mapping_rule_search_query_request import MappingRuleSearchQueryRequest
+from ...models.mapping_rule_search_query_result import MappingRuleSearchQueryResult
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
-def _get_kwargs(*, body: SearchMappingRuleData | Unset = UNSET) -> dict[str, Any]:
+def _get_kwargs(
+    *, body: MappingRuleSearchQueryRequest | Unset = UNSET
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/mapping-rules/search"}
     if not isinstance(body, Unset):
@@ -24,28 +23,21 @@ def _get_kwargs(*, body: SearchMappingRuleData | Unset = UNSET) -> dict[str, Any
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    SearchMappingRuleResponse200
-    | SearchMappingRuleResponse400
-    | SearchMappingRuleResponse401
-    | SearchMappingRuleResponse403
-    | SearchMappingRuleResponse500
-    | None
-):
+) -> MappingRuleSearchQueryResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = SearchMappingRuleResponse200.from_dict(response.json())
+        response_200 = MappingRuleSearchQueryResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = SearchMappingRuleResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = SearchMappingRuleResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = SearchMappingRuleResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = SearchMappingRuleResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -55,13 +47,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    SearchMappingRuleResponse200
-    | SearchMappingRuleResponse400
-    | SearchMappingRuleResponse401
-    | SearchMappingRuleResponse403
-    | SearchMappingRuleResponse500
-]:
+) -> Response[MappingRuleSearchQueryResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -71,27 +57,23 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: SearchMappingRuleData | Unset = UNSET
-) -> Response[
-    SearchMappingRuleResponse200
-    | SearchMappingRuleResponse400
-    | SearchMappingRuleResponse401
-    | SearchMappingRuleResponse403
-    | SearchMappingRuleResponse500
-]:
+    *,
+    client: AuthenticatedClient | Client,
+    body: MappingRuleSearchQueryRequest | Unset = UNSET,
+) -> Response[MappingRuleSearchQueryResult | ProblemDetail]:
     """Search mapping rules
 
      Search for mapping rules based on given criteria.
 
     Args:
-        body (SearchMappingRuleData | Unset):
+        body (MappingRuleSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchMappingRuleResponse200 | SearchMappingRuleResponse400 | SearchMappingRuleResponse401 | SearchMappingRuleResponse403 | SearchMappingRuleResponse500]
+        Response[MappingRuleSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -101,15 +83,15 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchMappingRuleData | Unset = UNSET,
+    body: MappingRuleSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchMappingRuleResponse200:
+) -> MappingRuleSearchQueryResult:
     """Search mapping rules
 
      Search for mapping rules based on given criteria.
 
     Args:
-        body (SearchMappingRuleData | Unset):
+        body (MappingRuleSearchQueryRequest | Unset):
 
     Raises:
         errors.SearchMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
@@ -119,60 +101,56 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchMappingRuleResponse200"""
+        MappingRuleSearchQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.SearchMappingRuleBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRuleResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchMappingRuleUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRuleResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchMappingRuleForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRuleResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchMappingRuleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRuleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchMappingRuleResponse200, response.parsed)
+    return cast(MappingRuleSearchQueryResult, response.parsed)
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: SearchMappingRuleData | Unset = UNSET
-) -> Response[
-    SearchMappingRuleResponse200
-    | SearchMappingRuleResponse400
-    | SearchMappingRuleResponse401
-    | SearchMappingRuleResponse403
-    | SearchMappingRuleResponse500
-]:
+    *,
+    client: AuthenticatedClient | Client,
+    body: MappingRuleSearchQueryRequest | Unset = UNSET,
+) -> Response[MappingRuleSearchQueryResult | ProblemDetail]:
     """Search mapping rules
 
      Search for mapping rules based on given criteria.
 
     Args:
-        body (SearchMappingRuleData | Unset):
+        body (MappingRuleSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchMappingRuleResponse200 | SearchMappingRuleResponse400 | SearchMappingRuleResponse401 | SearchMappingRuleResponse403 | SearchMappingRuleResponse500]
+        Response[MappingRuleSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -182,15 +160,15 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchMappingRuleData | Unset = UNSET,
+    body: MappingRuleSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchMappingRuleResponse200:
+) -> MappingRuleSearchQueryResult:
     """Search mapping rules
 
      Search for mapping rules based on given criteria.
 
     Args:
-        body (SearchMappingRuleData | Unset):
+        body (MappingRuleSearchQueryRequest | Unset):
 
     Raises:
         errors.SearchMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
@@ -200,33 +178,33 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchMappingRuleResponse200"""
+        MappingRuleSearchQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.SearchMappingRuleBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRuleResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchMappingRuleUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRuleResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchMappingRuleForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRuleResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchMappingRuleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMappingRuleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchMappingRuleResponse200, response.parsed)
+    return cast(MappingRuleSearchQueryResult, response.parsed)

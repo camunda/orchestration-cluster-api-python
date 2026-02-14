@@ -4,11 +4,8 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_authorization_response_200 import GetAuthorizationResponse200
-from ...models.get_authorization_response_401 import GetAuthorizationResponse401
-from ...models.get_authorization_response_403 import GetAuthorizationResponse403
-from ...models.get_authorization_response_404 import GetAuthorizationResponse404
-from ...models.get_authorization_response_500 import GetAuthorizationResponse500
+from ...models.authorization_result import AuthorizationResult
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -24,28 +21,21 @@ def _get_kwargs(authorization_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetAuthorizationResponse200
-    | GetAuthorizationResponse401
-    | GetAuthorizationResponse403
-    | GetAuthorizationResponse404
-    | GetAuthorizationResponse500
-    | None
-):
+) -> AuthorizationResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = GetAuthorizationResponse200.from_dict(response.json())
+        response_200 = AuthorizationResult.from_dict(response.json())
         return response_200
     if response.status_code == 401:
-        response_401 = GetAuthorizationResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetAuthorizationResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = GetAuthorizationResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetAuthorizationResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -55,13 +45,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetAuthorizationResponse200
-    | GetAuthorizationResponse401
-    | GetAuthorizationResponse403
-    | GetAuthorizationResponse404
-    | GetAuthorizationResponse500
-]:
+) -> Response[AuthorizationResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -72,13 +56,7 @@ def _build_response(
 
 def sync_detailed(
     authorization_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetAuthorizationResponse200
-    | GetAuthorizationResponse401
-    | GetAuthorizationResponse403
-    | GetAuthorizationResponse404
-    | GetAuthorizationResponse500
-]:
+) -> Response[AuthorizationResult | ProblemDetail]:
     """Get authorization
 
      Get authorization by the given key.
@@ -92,7 +70,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetAuthorizationResponse200 | GetAuthorizationResponse401 | GetAuthorizationResponse403 | GetAuthorizationResponse404 | GetAuthorizationResponse500]
+        Response[AuthorizationResult | ProblemDetail]
     """
     kwargs = _get_kwargs(authorization_key=authorization_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -101,7 +79,7 @@ def sync_detailed(
 
 def sync(
     authorization_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetAuthorizationResponse200:
+) -> AuthorizationResult:
     """Get authorization
 
      Get authorization by the given key.
@@ -118,47 +96,41 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetAuthorizationResponse200"""
+        AuthorizationResult"""
     response = sync_detailed(authorization_key=authorization_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
             raise errors.GetAuthorizationUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuthorizationResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetAuthorizationForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuthorizationResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetAuthorizationNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuthorizationResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetAuthorizationInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuthorizationResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetAuthorizationResponse200, response.parsed)
+    return cast(AuthorizationResult, response.parsed)
 
 
 async def asyncio_detailed(
     authorization_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetAuthorizationResponse200
-    | GetAuthorizationResponse401
-    | GetAuthorizationResponse403
-    | GetAuthorizationResponse404
-    | GetAuthorizationResponse500
-]:
+) -> Response[AuthorizationResult | ProblemDetail]:
     """Get authorization
 
      Get authorization by the given key.
@@ -172,7 +144,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetAuthorizationResponse200 | GetAuthorizationResponse401 | GetAuthorizationResponse403 | GetAuthorizationResponse404 | GetAuthorizationResponse500]
+        Response[AuthorizationResult | ProblemDetail]
     """
     kwargs = _get_kwargs(authorization_key=authorization_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -181,7 +153,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     authorization_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetAuthorizationResponse200:
+) -> AuthorizationResult:
     """Get authorization
 
      Get authorization by the given key.
@@ -198,7 +170,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetAuthorizationResponse200"""
+        AuthorizationResult"""
     response = await asyncio_detailed(
         authorization_key=authorization_key, client=client
     )
@@ -207,26 +179,26 @@ async def asyncio(
             raise errors.GetAuthorizationUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuthorizationResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetAuthorizationForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuthorizationResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetAuthorizationNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuthorizationResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetAuthorizationInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetAuthorizationResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetAuthorizationResponse200, response.parsed)
+    return cast(AuthorizationResult, response.parsed)

@@ -3,9 +3,8 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_topology_response_200 import GetTopologyResponse200
-from ...models.get_topology_response_401 import GetTopologyResponse401
-from ...models.get_topology_response_500 import GetTopologyResponse500
+from ...models.problem_detail import ProblemDetail
+from ...models.topology_response import TopologyResponse
 from ...types import Response
 
 
@@ -16,15 +15,15 @@ def _get_kwargs() -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500 | None:
+) -> ProblemDetail | TopologyResponse | None:
     if response.status_code == 200:
-        response_200 = GetTopologyResponse200.from_dict(response.json())
+        response_200 = TopologyResponse.from_dict(response.json())
         return response_200
     if response.status_code == 401:
-        response_401 = GetTopologyResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 500:
-        response_500 = GetTopologyResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -34,7 +33,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]:
+) -> Response[ProblemDetail | TopologyResponse]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -45,7 +44,7 @@ def _build_response(
 
 def sync_detailed(
     *, client: AuthenticatedClient | Client
-) -> Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]:
+) -> Response[ProblemDetail | TopologyResponse]:
     """Get cluster topology
 
      Obtains the current topology of the cluster the gateway is part of.
@@ -55,16 +54,14 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]
+        Response[ProblemDetail | TopologyResponse]
     """
     kwargs = _get_kwargs()
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
 
-def sync(
-    *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetTopologyResponse200:
+def sync(*, client: AuthenticatedClient | Client, **kwargs: Any) -> TopologyResponse:
     """Get cluster topology
 
      Obtains the current topology of the cluster the gateway is part of.
@@ -75,29 +72,29 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetTopologyResponse200"""
+        TopologyResponse"""
     response = sync_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
             raise errors.GetTopologyUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetTopologyResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetTopologyInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetTopologyResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetTopologyResponse200, response.parsed)
+    return cast(TopologyResponse, response.parsed)
 
 
 async def asyncio_detailed(
     *, client: AuthenticatedClient | Client
-) -> Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]:
+) -> Response[ProblemDetail | TopologyResponse]:
     """Get cluster topology
 
      Obtains the current topology of the cluster the gateway is part of.
@@ -107,7 +104,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetTopologyResponse200 | GetTopologyResponse401 | GetTopologyResponse500]
+        Response[ProblemDetail | TopologyResponse]
     """
     kwargs = _get_kwargs()
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -116,7 +113,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetTopologyResponse200:
+) -> TopologyResponse:
     """Get cluster topology
 
      Obtains the current topology of the cluster the gateway is part of.
@@ -127,21 +124,21 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetTopologyResponse200"""
+        TopologyResponse"""
     response = await asyncio_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
             raise errors.GetTopologyUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetTopologyResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetTopologyInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetTopologyResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetTopologyResponse200, response.parsed)
+    return cast(TopologyResponse, response.parsed)

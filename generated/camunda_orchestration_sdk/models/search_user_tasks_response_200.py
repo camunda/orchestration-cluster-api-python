@@ -9,12 +9,8 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.search_user_tasks_response_200_items_item import (
-        SearchUserTasksResponse200ItemsItem,
-    )
-    from ..models.search_user_tasks_response_200_page import (
-        SearchUserTasksResponse200Page,
-    )
+    from ..models.search_query_page_response import SearchQueryPageResponse
+    from ..models.search_user_tasks_items_item import SearchUserTasksItemsItem
 
 
 T = TypeVar("T", bound="SearchUserTasksResponse200")
@@ -25,13 +21,13 @@ class SearchUserTasksResponse200:
     """User task search query response.
 
     Attributes:
-        page (SearchUserTasksResponse200Page): Pagination information about the search results. Example: {'totalItems':
-            1, 'hasMoreTotalItems': False}.
-        items (list[SearchUserTasksResponse200ItemsItem] | Unset): The matching user tasks.
+        page (SearchQueryPageResponse): Pagination information about the search results. Example: {'totalItems': 1,
+            'hasMoreTotalItems': False}.
+        items (list[SearchUserTasksItemsItem] | Unset): The matching user tasks.
     """
 
-    page: SearchUserTasksResponse200Page
-    items: list[SearchUserTasksResponse200ItemsItem] | Unset = UNSET
+    page: SearchQueryPageResponse
+    items: list[SearchUserTasksItemsItem] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -60,24 +56,18 @@ class SearchUserTasksResponse200:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.search_user_tasks_response_200_items_item import (
-            SearchUserTasksResponse200ItemsItem,
-        )
-        from ..models.search_user_tasks_response_200_page import (
-            SearchUserTasksResponse200Page,
-        )
+        from ..models.search_query_page_response import SearchQueryPageResponse
+        from ..models.search_user_tasks_items_item import SearchUserTasksItemsItem
 
         d = dict(src_dict)
-        page = SearchUserTasksResponse200Page.from_dict(d.pop("page"))
+        page = SearchQueryPageResponse.from_dict(d.pop("page"))
 
         _items = d.pop("items", UNSET)
-        items: list[SearchUserTasksResponse200ItemsItem] | Unset = UNSET
+        items: list[SearchUserTasksItemsItem] | Unset = UNSET
         if _items is not UNSET:
             items = []
             for items_item_data in _items:
-                items_item = SearchUserTasksResponse200ItemsItem.from_dict(
-                    items_item_data
-                )
+                items_item = SearchUserTasksItemsItem.from_dict(items_item_data)
 
                 items.append(items_item)
 

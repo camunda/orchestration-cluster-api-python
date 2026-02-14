@@ -4,8 +4,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.delete_document_response_404 import DeleteDocumentResponse404
-from ...models.delete_document_response_500 import DeleteDocumentResponse500
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
@@ -25,15 +24,15 @@ def _get_kwargs(document_id: str, *, store_id: str | Unset = UNSET) -> dict[str,
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | DeleteDocumentResponse404 | DeleteDocumentResponse500 | None:
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 404:
-        response_404 = DeleteDocumentResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = DeleteDocumentResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -43,7 +42,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -57,7 +56,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     store_id: str | Unset = UNSET,
-) -> Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]:
+) -> Response[Any | ProblemDetail]:
     """Delete document
 
      Delete a document from the Camunda 8 cluster.
@@ -74,7 +73,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(document_id=document_id, store_id=store_id)
     response = client.get_httpx_client().request(**kwargs)
@@ -112,13 +111,13 @@ def sync(
             raise errors.DeleteDocumentNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteDocumentResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.DeleteDocumentInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteDocumentResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -129,7 +128,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     store_id: str | Unset = UNSET,
-) -> Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]:
+) -> Response[Any | ProblemDetail]:
     """Delete document
 
      Delete a document from the Camunda 8 cluster.
@@ -146,7 +145,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | DeleteDocumentResponse404 | DeleteDocumentResponse500]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(document_id=document_id, store_id=store_id)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -186,13 +185,13 @@ async def asyncio(
             raise errors.DeleteDocumentNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteDocumentResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.DeleteDocumentInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteDocumentResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

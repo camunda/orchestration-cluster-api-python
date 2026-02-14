@@ -4,10 +4,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.delete_mapping_rule_response_401 import DeleteMappingRuleResponse401
-from ...models.delete_mapping_rule_response_404 import DeleteMappingRuleResponse404
-from ...models.delete_mapping_rule_response_500 import DeleteMappingRuleResponse500
-from ...models.delete_mapping_rule_response_503 import DeleteMappingRuleResponse503
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -23,28 +20,21 @@ def _get_kwargs(mapping_rule_id: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | DeleteMappingRuleResponse401
-    | DeleteMappingRuleResponse404
-    | DeleteMappingRuleResponse500
-    | DeleteMappingRuleResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 401:
-        response_401 = DeleteMappingRuleResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 404:
-        response_404 = DeleteMappingRuleResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = DeleteMappingRuleResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = DeleteMappingRuleResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -54,13 +44,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | DeleteMappingRuleResponse401
-    | DeleteMappingRuleResponse404
-    | DeleteMappingRuleResponse500
-    | DeleteMappingRuleResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -71,13 +55,7 @@ def _build_response(
 
 def sync_detailed(
     mapping_rule_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | DeleteMappingRuleResponse401
-    | DeleteMappingRuleResponse404
-    | DeleteMappingRuleResponse500
-    | DeleteMappingRuleResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Delete a mapping rule
 
      Deletes the mapping rule with the given ID.
@@ -90,7 +68,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | DeleteMappingRuleResponse401 | DeleteMappingRuleResponse404 | DeleteMappingRuleResponse500 | DeleteMappingRuleResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(mapping_rule_id=mapping_rule_id)
     response = client.get_httpx_client().request(**kwargs)
@@ -122,25 +100,25 @@ def sync(
             raise errors.DeleteMappingRuleUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteMappingRuleResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.DeleteMappingRuleNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteMappingRuleResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.DeleteMappingRuleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteMappingRuleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.DeleteMappingRuleServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteMappingRuleResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -148,13 +126,7 @@ def sync(
 
 async def asyncio_detailed(
     mapping_rule_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | DeleteMappingRuleResponse401
-    | DeleteMappingRuleResponse404
-    | DeleteMappingRuleResponse500
-    | DeleteMappingRuleResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Delete a mapping rule
 
      Deletes the mapping rule with the given ID.
@@ -167,7 +139,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | DeleteMappingRuleResponse401 | DeleteMappingRuleResponse404 | DeleteMappingRuleResponse500 | DeleteMappingRuleResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(mapping_rule_id=mapping_rule_id)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -199,25 +171,25 @@ async def asyncio(
             raise errors.DeleteMappingRuleUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteMappingRuleResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.DeleteMappingRuleNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteMappingRuleResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.DeleteMappingRuleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteMappingRuleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.DeleteMappingRuleServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteMappingRuleResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

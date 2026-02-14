@@ -8,12 +8,12 @@ from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from typing import Callable, Literal, Protocol, Any, runtime_checkable, TYPE_CHECKING, Awaitable, cast, Coroutine, Union, Tuple
 from dataclasses import dataclass
 from loguru import logger
-from camunda_orchestration_sdk.models.activate_jobs_data import ActivateJobsData
-from camunda_orchestration_sdk.models.activate_jobs_response_200_jobs_item import ActivateJobsResponse200JobsItem
+from camunda_orchestration_sdk.models.job_activation_request import JobActivationRequest
+from camunda_orchestration_sdk.models.activate_jobs_jobs_item import ActivateJobsJobsItem
 from camunda_orchestration_sdk.models.complete_job_data import CompleteJobData
-from camunda_orchestration_sdk.models.complete_job_data_variables_type_0 import CompleteJobDataVariablesType0
-from camunda_orchestration_sdk.models.fail_job_data import FailJobData
-from camunda_orchestration_sdk.models.throw_job_error_data import ThrowJobErrorData
+from camunda_orchestration_sdk.models.job_completion_request_variables import JobCompletionRequestVariables
+from camunda_orchestration_sdk.models.job_fail_request import JobFailRequest
+from camunda_orchestration_sdk.models.job_error_request import JobErrorRequest
 from camunda_orchestration_sdk.types import UNSET
 
 if TYPE_CHECKING:
@@ -37,15 +37,15 @@ class HintedCallable(Protocol):
 
 
 @attrs.define
-class JobContext(ActivateJobsResponse200JobsItem):
+class JobContext(ActivateJobsJobsItem):
     """Read-only context for a job execution."""
 
     @classmethod
-    def from_job(cls, job: ActivateJobsResponse200JobsItem) -> "JobContext":
+    def from_job(cls, job: ActivateJobsJobsItem) -> "JobContext":
         # Extract init fields
         init_fields = {
             f.name: getattr(job, f.name)
-            for f in attrs.fields(ActivateJobsResponse200JobsItem)
+            for f in attrs.fields(ActivateJobsJobsItem)
             if f.init
         }
         return cls(**init_fields)
@@ -263,12 +263,12 @@ class JobWorker:
         capacity = self.config.max_concurrent_jobs - current_active
         if capacity <= 0:
             self.logger.trace("Max concurrent jobs reached, skipping poll")
-            empty_jobs: list[ActivateJobsResponse200JobsItem] = []
+            empty_jobs: list[ActivateJobsJobsItem] = []
             return empty_jobs
 
         self.logger.debug(f'Polling for jobs of type {self.config.job_type} (capacity: {capacity} | request_timeout: {self.config.request_timeout_milliseconds})...')
         jobsResult = await self.client.activate_jobs(data=
-            ActivateJobsData(
+            JobActivationRequest(
                 type_=self.config.job_type, 
                 timeout=self.config.job_timeout_milliseconds, 
                 max_jobs_to_activate=capacity,
@@ -284,7 +284,7 @@ class JobWorker:
                 self.active_jobs += len(jobsResult.jobs)
         return jobsResult.jobs  # Return list of jobs
     
-    async def _execute_job(self, job_item: ActivateJobsResponse200JobsItem):
+    async def _execute_job(self, job_item: ActivateJobsJobsItem):
         """Execute a single job with appropriate strategy"""
         
         # Create context (picklable data container)
@@ -341,7 +341,7 @@ class JobWorker:
                         # Ensure data is in correct format
                         complete_data = CompleteJobData()
                         if isinstance(action_data, dict):
-                            complete_data = CompleteJobData(variables=CompleteJobDataVariablesType0.from_dict(action_data))
+                            complete_data = CompleteJobData(variables=JobCompletionRequestVariables.from_dict(action_data))
                         elif isinstance(action_data, CompleteJobData):
                             complete_data = action_data
                             
@@ -356,7 +356,7 @@ class JobWorker:
                             
                         await self.client.fail_job(
                             job_key=job_context.job_key, 
-                            data=FailJobData(
+                            data=JobFailRequest(
                                 error_message=error_message,
                                 retries=retries,
                                 retry_back_off=retry_back_off
@@ -368,7 +368,7 @@ class JobWorker:
                         _, (error_code, error_message) = action
                         await self.client.throw_job_error(
                             job_key=job_context.job_key, 
-                            data=ThrowJobErrorData(
+                            data=JobErrorRequest(
                                 error_code=error_code,
                                 error_message=error_message
                             )
@@ -386,7 +386,7 @@ class JobWorker:
             try:
                 await self.client.fail_job(
                     job_key=job_item.job_key,
-                    data=FailJobData(
+                    data=JobFailRequest(
                         error_message=f"System error: {str(e)}",
                         retries=job_item.retries - 1 if job_item.retries else 0,
                     )

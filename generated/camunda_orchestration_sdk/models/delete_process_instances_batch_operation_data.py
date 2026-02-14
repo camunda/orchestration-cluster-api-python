@@ -8,8 +8,8 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.delete_process_instances_batch_operation_data_filter import (
-        DeleteProcessInstancesBatchOperationDataFilter,
+    from ..models.process_instance_cancellation_batch_operation_request_filter import (
+        ProcessInstanceCancellationBatchOperationRequestFilter,
     )
 
 
@@ -21,13 +21,13 @@ class DeleteProcessInstancesBatchOperationData:
     """The process instance filter that defines which process instances should be deleted.
 
     Attributes:
-        filter_ (DeleteProcessInstancesBatchOperationDataFilter): The process instance filter.
+        filter_ (ProcessInstanceCancellationBatchOperationRequestFilter): The process instance filter.
         operation_reference (int | Unset): A reference key chosen by the user that will be part of all records resulting
             from this operation.
             Must be > 0 if provided.
     """
 
-    filter_: DeleteProcessInstancesBatchOperationDataFilter
+    filter_: ProcessInstanceCancellationBatchOperationRequestFilter
     operation_reference: int | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -49,12 +49,12 @@ class DeleteProcessInstancesBatchOperationData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.delete_process_instances_batch_operation_data_filter import (
-            DeleteProcessInstancesBatchOperationDataFilter,
+        from ..models.process_instance_cancellation_batch_operation_request_filter import (
+            ProcessInstanceCancellationBatchOperationRequestFilter,
         )
 
         d = dict(src_dict)
-        filter_ = DeleteProcessInstancesBatchOperationDataFilter.from_dict(
+        filter_ = ProcessInstanceCancellationBatchOperationRequestFilter.from_dict(
             d.pop("filter")
         )
 

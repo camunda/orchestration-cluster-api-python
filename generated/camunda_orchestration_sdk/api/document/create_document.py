@@ -4,9 +4,8 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.create_document_data import CreateDocumentData
-from ...models.create_document_response_201 import CreateDocumentResponse201
-from ...models.create_document_response_400 import CreateDocumentResponse400
-from ...models.create_document_response_415 import CreateDocumentResponse415
+from ...models.document_reference import DocumentReference
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
@@ -29,20 +28,15 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    CreateDocumentResponse201
-    | CreateDocumentResponse400
-    | CreateDocumentResponse415
-    | None
-):
+) -> DocumentReference | ProblemDetail | None:
     if response.status_code == 201:
-        response_201 = CreateDocumentResponse201.from_dict(response.json())
+        response_201 = DocumentReference.from_dict(response.json())
         return response_201
     if response.status_code == 400:
-        response_400 = CreateDocumentResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 415:
-        response_415 = CreateDocumentResponse415.from_dict(response.json())
+        response_415 = ProblemDetail.from_dict(response.json())
         return response_415
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -52,9 +46,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    CreateDocumentResponse201 | CreateDocumentResponse400 | CreateDocumentResponse415
-]:
+) -> Response[DocumentReference | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -69,9 +61,7 @@ def sync_detailed(
     body: CreateDocumentData,
     store_id: str | Unset = UNSET,
     document_id: str | Unset = UNSET,
-) -> Response[
-    CreateDocumentResponse201 | CreateDocumentResponse400 | CreateDocumentResponse415
-]:
+) -> Response[DocumentReference | ProblemDetail]:
     """Upload document
 
      Upload a document to the Camunda 8 cluster.
@@ -89,7 +79,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateDocumentResponse201 | CreateDocumentResponse400 | CreateDocumentResponse415]
+        Response[DocumentReference | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body, store_id=store_id, document_id=document_id)
     response = client.get_httpx_client().request(**kwargs)
@@ -103,7 +93,7 @@ def sync(
     store_id: str | Unset = UNSET,
     document_id: str | Unset = UNSET,
     **kwargs: Any,
-) -> CreateDocumentResponse201:
+) -> DocumentReference:
     """Upload document
 
      Upload a document to the Camunda 8 cluster.
@@ -122,7 +112,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CreateDocumentResponse201"""
+        DocumentReference"""
     response = sync_detailed(
         client=client, body=body, store_id=store_id, document_id=document_id
     )
@@ -131,17 +121,17 @@ def sync(
             raise errors.CreateDocumentBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateDocumentResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 415:
             raise errors.CreateDocumentUnsupportedMediaType(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateDocumentResponse415, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CreateDocumentResponse201, response.parsed)
+    return cast(DocumentReference, response.parsed)
 
 
 async def asyncio_detailed(
@@ -150,9 +140,7 @@ async def asyncio_detailed(
     body: CreateDocumentData,
     store_id: str | Unset = UNSET,
     document_id: str | Unset = UNSET,
-) -> Response[
-    CreateDocumentResponse201 | CreateDocumentResponse400 | CreateDocumentResponse415
-]:
+) -> Response[DocumentReference | ProblemDetail]:
     """Upload document
 
      Upload a document to the Camunda 8 cluster.
@@ -170,7 +158,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateDocumentResponse201 | CreateDocumentResponse400 | CreateDocumentResponse415]
+        Response[DocumentReference | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body, store_id=store_id, document_id=document_id)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -184,7 +172,7 @@ async def asyncio(
     store_id: str | Unset = UNSET,
     document_id: str | Unset = UNSET,
     **kwargs: Any,
-) -> CreateDocumentResponse201:
+) -> DocumentReference:
     """Upload document
 
      Upload a document to the Camunda 8 cluster.
@@ -203,7 +191,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CreateDocumentResponse201"""
+        DocumentReference"""
     response = await asyncio_detailed(
         client=client, body=body, store_id=store_id, document_id=document_id
     )
@@ -212,14 +200,14 @@ async def asyncio(
             raise errors.CreateDocumentBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateDocumentResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 415:
             raise errors.CreateDocumentUnsupportedMediaType(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateDocumentResponse415, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CreateDocumentResponse201, response.parsed)
+    return cast(DocumentReference, response.parsed)

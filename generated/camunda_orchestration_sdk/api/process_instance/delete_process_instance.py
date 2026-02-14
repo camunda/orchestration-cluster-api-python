@@ -4,28 +4,9 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.batch_operation_created_result import BatchOperationCreatedResult
 from ...models.delete_process_instance_data_type_0 import DeleteProcessInstanceDataType0
-from ...models.delete_process_instance_response_200 import (
-    DeleteProcessInstanceResponse200,
-)
-from ...models.delete_process_instance_response_401 import (
-    DeleteProcessInstanceResponse401,
-)
-from ...models.delete_process_instance_response_403 import (
-    DeleteProcessInstanceResponse403,
-)
-from ...models.delete_process_instance_response_404 import (
-    DeleteProcessInstanceResponse404,
-)
-from ...models.delete_process_instance_response_409 import (
-    DeleteProcessInstanceResponse409,
-)
-from ...models.delete_process_instance_response_500 import (
-    DeleteProcessInstanceResponse500,
-)
-from ...models.delete_process_instance_response_503 import (
-    DeleteProcessInstanceResponse503,
-)
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
@@ -52,36 +33,27 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    DeleteProcessInstanceResponse200
-    | DeleteProcessInstanceResponse401
-    | DeleteProcessInstanceResponse403
-    | DeleteProcessInstanceResponse404
-    | DeleteProcessInstanceResponse409
-    | DeleteProcessInstanceResponse500
-    | DeleteProcessInstanceResponse503
-    | None
-):
+) -> BatchOperationCreatedResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = DeleteProcessInstanceResponse200.from_dict(response.json())
+        response_200 = BatchOperationCreatedResult.from_dict(response.json())
         return response_200
     if response.status_code == 401:
-        response_401 = DeleteProcessInstanceResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = DeleteProcessInstanceResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = DeleteProcessInstanceResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 409:
-        response_409 = DeleteProcessInstanceResponse409.from_dict(response.json())
+        response_409 = ProblemDetail.from_dict(response.json())
         return response_409
     if response.status_code == 500:
-        response_500 = DeleteProcessInstanceResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = DeleteProcessInstanceResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -91,15 +63,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    DeleteProcessInstanceResponse200
-    | DeleteProcessInstanceResponse401
-    | DeleteProcessInstanceResponse403
-    | DeleteProcessInstanceResponse404
-    | DeleteProcessInstanceResponse409
-    | DeleteProcessInstanceResponse500
-    | DeleteProcessInstanceResponse503
-]:
+) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -113,15 +77,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
-) -> Response[
-    DeleteProcessInstanceResponse200
-    | DeleteProcessInstanceResponse401
-    | DeleteProcessInstanceResponse403
-    | DeleteProcessInstanceResponse404
-    | DeleteProcessInstanceResponse409
-    | DeleteProcessInstanceResponse500
-    | DeleteProcessInstanceResponse503
-]:
+) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Delete process instance
 
      Deletes a process instance. Only instances that are completed or terminated can be deleted.
@@ -136,7 +92,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[DeleteProcessInstanceResponse200 | DeleteProcessInstanceResponse401 | DeleteProcessInstanceResponse403 | DeleteProcessInstanceResponse404 | DeleteProcessInstanceResponse409 | DeleteProcessInstanceResponse500 | DeleteProcessInstanceResponse503]
+        Response[BatchOperationCreatedResult | ProblemDetail]
     """
     kwargs = _get_kwargs(process_instance_key=process_instance_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -149,7 +105,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
     **kwargs: Any,
-) -> DeleteProcessInstanceResponse200:
+) -> BatchOperationCreatedResult:
     """Delete process instance
 
      Deletes a process instance. Only instances that are completed or terminated can be deleted.
@@ -169,7 +125,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        DeleteProcessInstanceResponse200"""
+        BatchOperationCreatedResult"""
     response = sync_detailed(
         process_instance_key=process_instance_key, client=client, body=body
     )
@@ -178,41 +134,41 @@ def sync(
             raise errors.DeleteProcessInstanceUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteProcessInstanceResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.DeleteProcessInstanceForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteProcessInstanceResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.DeleteProcessInstanceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteProcessInstanceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 409:
             raise errors.DeleteProcessInstanceConflict(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteProcessInstanceResponse409, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.DeleteProcessInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteProcessInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.DeleteProcessInstanceServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteProcessInstanceResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(DeleteProcessInstanceResponse200, response.parsed)
+    return cast(BatchOperationCreatedResult, response.parsed)
 
 
 async def asyncio_detailed(
@@ -220,15 +176,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
-) -> Response[
-    DeleteProcessInstanceResponse200
-    | DeleteProcessInstanceResponse401
-    | DeleteProcessInstanceResponse403
-    | DeleteProcessInstanceResponse404
-    | DeleteProcessInstanceResponse409
-    | DeleteProcessInstanceResponse500
-    | DeleteProcessInstanceResponse503
-]:
+) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Delete process instance
 
      Deletes a process instance. Only instances that are completed or terminated can be deleted.
@@ -243,7 +191,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[DeleteProcessInstanceResponse200 | DeleteProcessInstanceResponse401 | DeleteProcessInstanceResponse403 | DeleteProcessInstanceResponse404 | DeleteProcessInstanceResponse409 | DeleteProcessInstanceResponse500 | DeleteProcessInstanceResponse503]
+        Response[BatchOperationCreatedResult | ProblemDetail]
     """
     kwargs = _get_kwargs(process_instance_key=process_instance_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -256,7 +204,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
     **kwargs: Any,
-) -> DeleteProcessInstanceResponse200:
+) -> BatchOperationCreatedResult:
     """Delete process instance
 
      Deletes a process instance. Only instances that are completed or terminated can be deleted.
@@ -276,7 +224,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        DeleteProcessInstanceResponse200"""
+        BatchOperationCreatedResult"""
     response = await asyncio_detailed(
         process_instance_key=process_instance_key, client=client, body=body
     )
@@ -285,38 +233,38 @@ async def asyncio(
             raise errors.DeleteProcessInstanceUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteProcessInstanceResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.DeleteProcessInstanceForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteProcessInstanceResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.DeleteProcessInstanceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteProcessInstanceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 409:
             raise errors.DeleteProcessInstanceConflict(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteProcessInstanceResponse409, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.DeleteProcessInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteProcessInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.DeleteProcessInstanceServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteProcessInstanceResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(DeleteProcessInstanceResponse200, response.parsed)
+    return cast(BatchOperationCreatedResult, response.parsed)

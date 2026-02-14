@@ -3,17 +3,13 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.correlate_message_data import CorrelateMessageData
-from ...models.correlate_message_response_200 import CorrelateMessageResponse200
-from ...models.correlate_message_response_400 import CorrelateMessageResponse400
-from ...models.correlate_message_response_403 import CorrelateMessageResponse403
-from ...models.correlate_message_response_404 import CorrelateMessageResponse404
-from ...models.correlate_message_response_500 import CorrelateMessageResponse500
-from ...models.correlate_message_response_503 import CorrelateMessageResponse503
+from ...models.message_correlation_request import MessageCorrelationRequest
+from ...models.message_correlation_result import MessageCorrelationResult
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
-def _get_kwargs(*, body: CorrelateMessageData) -> dict[str, Any]:
+def _get_kwargs(*, body: MessageCorrelationRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/messages/correlation"}
     _kwargs["json"] = body.to_dict()
@@ -24,32 +20,24 @@ def _get_kwargs(*, body: CorrelateMessageData) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    CorrelateMessageResponse200
-    | CorrelateMessageResponse400
-    | CorrelateMessageResponse403
-    | CorrelateMessageResponse404
-    | CorrelateMessageResponse500
-    | CorrelateMessageResponse503
-    | None
-):
+) -> MessageCorrelationResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = CorrelateMessageResponse200.from_dict(response.json())
+        response_200 = MessageCorrelationResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = CorrelateMessageResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 403:
-        response_403 = CorrelateMessageResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = CorrelateMessageResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = CorrelateMessageResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = CorrelateMessageResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -59,14 +47,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    CorrelateMessageResponse200
-    | CorrelateMessageResponse400
-    | CorrelateMessageResponse403
-    | CorrelateMessageResponse404
-    | CorrelateMessageResponse500
-    | CorrelateMessageResponse503
-]:
+) -> Response[MessageCorrelationResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -76,15 +57,8 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: CorrelateMessageData
-) -> Response[
-    CorrelateMessageResponse200
-    | CorrelateMessageResponse400
-    | CorrelateMessageResponse403
-    | CorrelateMessageResponse404
-    | CorrelateMessageResponse500
-    | CorrelateMessageResponse503
-]:
+    *, client: AuthenticatedClient | Client, body: MessageCorrelationRequest
+) -> Response[MessageCorrelationResult | ProblemDetail]:
     """Correlate message
 
      Publishes a message and correlates it to a subscription.
@@ -94,14 +68,14 @@ def sync_detailed(
     Use the publish message endpoint to send messages that can be buffered.
 
     Args:
-        body (CorrelateMessageData):
+        body (MessageCorrelationRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CorrelateMessageResponse200 | CorrelateMessageResponse400 | CorrelateMessageResponse403 | CorrelateMessageResponse404 | CorrelateMessageResponse500 | CorrelateMessageResponse503]
+        Response[MessageCorrelationResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -109,8 +83,11 @@ def sync_detailed(
 
 
 def sync(
-    *, client: AuthenticatedClient | Client, body: CorrelateMessageData, **kwargs: Any
-) -> CorrelateMessageResponse200:
+    *,
+    client: AuthenticatedClient | Client,
+    body: MessageCorrelationRequest,
+    **kwargs: Any,
+) -> MessageCorrelationResult:
     """Correlate message
 
      Publishes a message and correlates it to a subscription.
@@ -120,7 +97,7 @@ def sync(
     Use the publish message endpoint to send messages that can be buffered.
 
     Args:
-        body (CorrelateMessageData):
+        body (MessageCorrelationRequest):
 
     Raises:
         errors.CorrelateMessageBadRequest: If the response status code is 400. The provided data is not valid.
@@ -131,54 +108,47 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CorrelateMessageResponse200"""
+        MessageCorrelationResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.CorrelateMessageBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CorrelateMessageResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.CorrelateMessageForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CorrelateMessageResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.CorrelateMessageNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CorrelateMessageResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CorrelateMessageInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CorrelateMessageResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CorrelateMessageServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CorrelateMessageResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CorrelateMessageResponse200, response.parsed)
+    return cast(MessageCorrelationResult, response.parsed)
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: CorrelateMessageData
-) -> Response[
-    CorrelateMessageResponse200
-    | CorrelateMessageResponse400
-    | CorrelateMessageResponse403
-    | CorrelateMessageResponse404
-    | CorrelateMessageResponse500
-    | CorrelateMessageResponse503
-]:
+    *, client: AuthenticatedClient | Client, body: MessageCorrelationRequest
+) -> Response[MessageCorrelationResult | ProblemDetail]:
     """Correlate message
 
      Publishes a message and correlates it to a subscription.
@@ -188,14 +158,14 @@ async def asyncio_detailed(
     Use the publish message endpoint to send messages that can be buffered.
 
     Args:
-        body (CorrelateMessageData):
+        body (MessageCorrelationRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CorrelateMessageResponse200 | CorrelateMessageResponse400 | CorrelateMessageResponse403 | CorrelateMessageResponse404 | CorrelateMessageResponse500 | CorrelateMessageResponse503]
+        Response[MessageCorrelationResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -203,8 +173,11 @@ async def asyncio_detailed(
 
 
 async def asyncio(
-    *, client: AuthenticatedClient | Client, body: CorrelateMessageData, **kwargs: Any
-) -> CorrelateMessageResponse200:
+    *,
+    client: AuthenticatedClient | Client,
+    body: MessageCorrelationRequest,
+    **kwargs: Any,
+) -> MessageCorrelationResult:
     """Correlate message
 
      Publishes a message and correlates it to a subscription.
@@ -214,7 +187,7 @@ async def asyncio(
     Use the publish message endpoint to send messages that can be buffered.
 
     Args:
-        body (CorrelateMessageData):
+        body (MessageCorrelationRequest):
 
     Raises:
         errors.CorrelateMessageBadRequest: If the response status code is 400. The provided data is not valid.
@@ -225,39 +198,39 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CorrelateMessageResponse200"""
+        MessageCorrelationResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.CorrelateMessageBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CorrelateMessageResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.CorrelateMessageForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CorrelateMessageResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.CorrelateMessageNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CorrelateMessageResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CorrelateMessageInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CorrelateMessageResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CorrelateMessageServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CorrelateMessageResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CorrelateMessageResponse200, response.parsed)
+    return cast(MessageCorrelationResult, response.parsed)

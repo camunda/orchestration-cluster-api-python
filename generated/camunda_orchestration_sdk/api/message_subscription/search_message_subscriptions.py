@@ -3,21 +3,10 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.problem_detail import ProblemDetail
 from ...models.search_message_subscriptions_data import SearchMessageSubscriptionsData
 from ...models.search_message_subscriptions_response_200 import (
     SearchMessageSubscriptionsResponse200,
-)
-from ...models.search_message_subscriptions_response_400 import (
-    SearchMessageSubscriptionsResponse400,
-)
-from ...models.search_message_subscriptions_response_401 import (
-    SearchMessageSubscriptionsResponse401,
-)
-from ...models.search_message_subscriptions_response_403 import (
-    SearchMessageSubscriptionsResponse403,
-)
-from ...models.search_message_subscriptions_response_500 import (
-    SearchMessageSubscriptionsResponse500,
 )
 from ...types import UNSET, Response, Unset
 
@@ -36,28 +25,21 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    SearchMessageSubscriptionsResponse200
-    | SearchMessageSubscriptionsResponse400
-    | SearchMessageSubscriptionsResponse401
-    | SearchMessageSubscriptionsResponse403
-    | SearchMessageSubscriptionsResponse500
-    | None
-):
+) -> ProblemDetail | SearchMessageSubscriptionsResponse200 | None:
     if response.status_code == 200:
         response_200 = SearchMessageSubscriptionsResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = SearchMessageSubscriptionsResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = SearchMessageSubscriptionsResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = SearchMessageSubscriptionsResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = SearchMessageSubscriptionsResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -67,13 +49,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    SearchMessageSubscriptionsResponse200
-    | SearchMessageSubscriptionsResponse400
-    | SearchMessageSubscriptionsResponse401
-    | SearchMessageSubscriptionsResponse403
-    | SearchMessageSubscriptionsResponse500
-]:
+) -> Response[ProblemDetail | SearchMessageSubscriptionsResponse200]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -86,13 +62,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: SearchMessageSubscriptionsData | Unset = UNSET,
-) -> Response[
-    SearchMessageSubscriptionsResponse200
-    | SearchMessageSubscriptionsResponse400
-    | SearchMessageSubscriptionsResponse401
-    | SearchMessageSubscriptionsResponse403
-    | SearchMessageSubscriptionsResponse500
-]:
+) -> Response[ProblemDetail | SearchMessageSubscriptionsResponse200]:
     """Search message subscriptions
 
      Search for message subscriptions based on given criteria.
@@ -105,7 +75,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchMessageSubscriptionsResponse200 | SearchMessageSubscriptionsResponse400 | SearchMessageSubscriptionsResponse401 | SearchMessageSubscriptionsResponse403 | SearchMessageSubscriptionsResponse500]
+        Response[ProblemDetail | SearchMessageSubscriptionsResponse200]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -140,25 +110,25 @@ def sync(
             raise errors.SearchMessageSubscriptionsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMessageSubscriptionsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchMessageSubscriptionsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMessageSubscriptionsResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchMessageSubscriptionsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMessageSubscriptionsResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchMessageSubscriptionsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMessageSubscriptionsResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
@@ -169,13 +139,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: SearchMessageSubscriptionsData | Unset = UNSET,
-) -> Response[
-    SearchMessageSubscriptionsResponse200
-    | SearchMessageSubscriptionsResponse400
-    | SearchMessageSubscriptionsResponse401
-    | SearchMessageSubscriptionsResponse403
-    | SearchMessageSubscriptionsResponse500
-]:
+) -> Response[ProblemDetail | SearchMessageSubscriptionsResponse200]:
     """Search message subscriptions
 
      Search for message subscriptions based on given criteria.
@@ -188,7 +152,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchMessageSubscriptionsResponse200 | SearchMessageSubscriptionsResponse400 | SearchMessageSubscriptionsResponse401 | SearchMessageSubscriptionsResponse403 | SearchMessageSubscriptionsResponse500]
+        Response[ProblemDetail | SearchMessageSubscriptionsResponse200]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -223,25 +187,25 @@ async def asyncio(
             raise errors.SearchMessageSubscriptionsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMessageSubscriptionsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchMessageSubscriptionsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMessageSubscriptionsResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchMessageSubscriptionsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMessageSubscriptionsResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchMessageSubscriptionsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchMessageSubscriptionsResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

@@ -4,21 +4,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.unassign_client_from_group_response_400 import (
-    UnassignClientFromGroupResponse400,
-)
-from ...models.unassign_client_from_group_response_403 import (
-    UnassignClientFromGroupResponse403,
-)
-from ...models.unassign_client_from_group_response_404 import (
-    UnassignClientFromGroupResponse404,
-)
-from ...models.unassign_client_from_group_response_500 import (
-    UnassignClientFromGroupResponse500,
-)
-from ...models.unassign_client_from_group_response_503 import (
-    UnassignClientFromGroupResponse503,
-)
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -35,32 +21,24 @@ def _get_kwargs(group_id: str, client_id: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | UnassignClientFromGroupResponse400
-    | UnassignClientFromGroupResponse403
-    | UnassignClientFromGroupResponse404
-    | UnassignClientFromGroupResponse500
-    | UnassignClientFromGroupResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = UnassignClientFromGroupResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 403:
-        response_403 = UnassignClientFromGroupResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = UnassignClientFromGroupResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = UnassignClientFromGroupResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = UnassignClientFromGroupResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -70,14 +48,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | UnassignClientFromGroupResponse400
-    | UnassignClientFromGroupResponse403
-    | UnassignClientFromGroupResponse404
-    | UnassignClientFromGroupResponse500
-    | UnassignClientFromGroupResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -88,14 +59,7 @@ def _build_response(
 
 def sync_detailed(
     group_id: str, client_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | UnassignClientFromGroupResponse400
-    | UnassignClientFromGroupResponse403
-    | UnassignClientFromGroupResponse404
-    | UnassignClientFromGroupResponse500
-    | UnassignClientFromGroupResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Unassign a client from a group
 
      Unassigns a client from a group.
@@ -111,7 +75,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | UnassignClientFromGroupResponse400 | UnassignClientFromGroupResponse403 | UnassignClientFromGroupResponse404 | UnassignClientFromGroupResponse500 | UnassignClientFromGroupResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(group_id=group_id, client_id=client_id)
     response = client.get_httpx_client().request(**kwargs)
@@ -151,31 +115,31 @@ def sync(
             raise errors.UnassignClientFromGroupBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignClientFromGroupResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.UnassignClientFromGroupForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignClientFromGroupResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UnassignClientFromGroupNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignClientFromGroupResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UnassignClientFromGroupInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignClientFromGroupResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.UnassignClientFromGroupServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignClientFromGroupResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -183,14 +147,7 @@ def sync(
 
 async def asyncio_detailed(
     group_id: str, client_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | UnassignClientFromGroupResponse400
-    | UnassignClientFromGroupResponse403
-    | UnassignClientFromGroupResponse404
-    | UnassignClientFromGroupResponse500
-    | UnassignClientFromGroupResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Unassign a client from a group
 
      Unassigns a client from a group.
@@ -206,7 +163,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | UnassignClientFromGroupResponse400 | UnassignClientFromGroupResponse403 | UnassignClientFromGroupResponse404 | UnassignClientFromGroupResponse500 | UnassignClientFromGroupResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(group_id=group_id, client_id=client_id)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -248,31 +205,31 @@ async def asyncio(
             raise errors.UnassignClientFromGroupBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignClientFromGroupResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.UnassignClientFromGroupForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignClientFromGroupResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UnassignClientFromGroupNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignClientFromGroupResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UnassignClientFromGroupInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignClientFromGroupResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.UnassignClientFromGroupServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UnassignClientFromGroupResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

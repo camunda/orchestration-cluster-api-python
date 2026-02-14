@@ -5,11 +5,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.get_user_task_form_response_200 import GetUserTaskFormResponse200
-from ...models.get_user_task_form_response_400 import GetUserTaskFormResponse400
-from ...models.get_user_task_form_response_401 import GetUserTaskFormResponse401
-from ...models.get_user_task_form_response_403 import GetUserTaskFormResponse403
-from ...models.get_user_task_form_response_404 import GetUserTaskFormResponse404
-from ...models.get_user_task_form_response_500 import GetUserTaskFormResponse500
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -25,16 +21,7 @@ def _get_kwargs(user_task_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | GetUserTaskFormResponse200
-    | GetUserTaskFormResponse400
-    | GetUserTaskFormResponse401
-    | GetUserTaskFormResponse403
-    | GetUserTaskFormResponse404
-    | GetUserTaskFormResponse500
-    | None
-):
+) -> Any | GetUserTaskFormResponse200 | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = GetUserTaskFormResponse200.from_dict(response.json())
         return response_200
@@ -42,19 +29,19 @@ def _parse_response(
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = GetUserTaskFormResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = GetUserTaskFormResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetUserTaskFormResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = GetUserTaskFormResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetUserTaskFormResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -64,15 +51,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | GetUserTaskFormResponse200
-    | GetUserTaskFormResponse400
-    | GetUserTaskFormResponse401
-    | GetUserTaskFormResponse403
-    | GetUserTaskFormResponse404
-    | GetUserTaskFormResponse500
-]:
+) -> Response[Any | GetUserTaskFormResponse200 | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -83,15 +62,7 @@ def _build_response(
 
 def sync_detailed(
     user_task_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | GetUserTaskFormResponse200
-    | GetUserTaskFormResponse400
-    | GetUserTaskFormResponse401
-    | GetUserTaskFormResponse403
-    | GetUserTaskFormResponse404
-    | GetUserTaskFormResponse500
-]:
+) -> Response[Any | GetUserTaskFormResponse200 | ProblemDetail]:
     """Get user task form
 
      Get the form of a user task.
@@ -106,7 +77,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | GetUserTaskFormResponse200 | GetUserTaskFormResponse400 | GetUserTaskFormResponse401 | GetUserTaskFormResponse403 | GetUserTaskFormResponse404 | GetUserTaskFormResponse500]
+        Response[Any | GetUserTaskFormResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(user_task_key=user_task_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -141,31 +112,31 @@ def sync(
             raise errors.GetUserTaskFormBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskFormResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetUserTaskFormUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskFormResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetUserTaskFormForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskFormResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetUserTaskFormNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskFormResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetUserTaskFormInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskFormResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
@@ -174,15 +145,7 @@ def sync(
 
 async def asyncio_detailed(
     user_task_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | GetUserTaskFormResponse200
-    | GetUserTaskFormResponse400
-    | GetUserTaskFormResponse401
-    | GetUserTaskFormResponse403
-    | GetUserTaskFormResponse404
-    | GetUserTaskFormResponse500
-]:
+) -> Response[Any | GetUserTaskFormResponse200 | ProblemDetail]:
     """Get user task form
 
      Get the form of a user task.
@@ -197,7 +160,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | GetUserTaskFormResponse200 | GetUserTaskFormResponse400 | GetUserTaskFormResponse401 | GetUserTaskFormResponse403 | GetUserTaskFormResponse404 | GetUserTaskFormResponse500]
+        Response[Any | GetUserTaskFormResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(user_task_key=user_task_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -232,31 +195,31 @@ async def asyncio(
             raise errors.GetUserTaskFormBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskFormResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetUserTaskFormUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskFormResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetUserTaskFormForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskFormResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetUserTaskFormNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskFormResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetUserTaskFormInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetUserTaskFormResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

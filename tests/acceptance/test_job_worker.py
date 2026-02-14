@@ -9,11 +9,11 @@ from camunda_orchestration_sdk.runtime.job_worker import (
     JobError,
     JobFailure,
 )
-from camunda_orchestration_sdk.models.activate_jobs_response_200_jobs_item import ActivateJobsResponse200JobsItem
+from camunda_orchestration_sdk.models.activate_jobs_jobs_item import ActivateJobsJobsItem
 from camunda_orchestration_sdk.models.complete_job_data import CompleteJobData
 from camunda_orchestration_sdk.models.activate_jobs_response_200 import ActivateJobsResponse200
-from camunda_orchestration_sdk.models.fail_job_data import FailJobData
-from camunda_orchestration_sdk.models.throw_job_error_data import ThrowJobErrorData
+from camunda_orchestration_sdk.models.job_fail_request import JobFailRequest
+from camunda_orchestration_sdk.models.job_error_request import JobErrorRequest
 
 @pytest.fixture
 def mock_client():
@@ -33,7 +33,7 @@ def mock_worker():
 
 @pytest.fixture
 def mock_job_item():
-    job = MagicMock(spec=ActivateJobsResponse200JobsItem)
+    job = MagicMock(spec=ActivateJobsJobsItem)
     job.job_key = 12345
     job.type_ = "test-job"
     job.process_instance_key = 1
@@ -77,7 +77,7 @@ async def test_job_failure(mock_client: MagicMock, mock_job_item: JobContext):
     mock_client.fail_job.assert_called_once()
     call_args = mock_client.fail_job.call_args
     assert call_args.kwargs['job_key'] == 12345
-    assert isinstance(call_args.kwargs['data'], FailJobData)
+    assert isinstance(call_args.kwargs['data'], JobFailRequest)
     assert call_args.kwargs['data'].error_message == "Something failed"
     assert call_args.kwargs['data'].retries == 2
     assert call_args.kwargs['data'].retry_back_off == 100
@@ -95,7 +95,7 @@ async def test_job_error(mock_client: MagicMock, mock_job_item: JobContext):
     mock_client.throw_job_error.assert_called_once()
     call_args = mock_client.throw_job_error.call_args
     assert call_args.kwargs['job_key'] == 12345
-    assert isinstance(call_args.kwargs['data'], ThrowJobErrorData)
+    assert isinstance(call_args.kwargs['data'], JobErrorRequest)
     assert call_args.kwargs['data'].error_code == "ERR_CODE"
     assert call_args.kwargs['data'].error_message == "Business error"
 
@@ -171,11 +171,11 @@ async def test_worker_concurrency_limit(mock_client: MagicMock):
     worker = JobWorker(mock_client, slow_callback, config)
     
     # Mock poll response to return 2 jobs each time
-    job1 = MagicMock(spec=ActivateJobsResponse200JobsItem)
+    job1 = MagicMock(spec=ActivateJobsJobsItem)
     job1.job_key = 1
-    job2 = MagicMock(spec=ActivateJobsResponse200JobsItem)
+    job2 = MagicMock(spec=ActivateJobsJobsItem)
     job2.job_key = 2
-    job3 = MagicMock(spec=ActivateJobsResponse200JobsItem)
+    job3 = MagicMock(spec=ActivateJobsJobsItem)
     job3.job_key = 3
     
     # First poll returns 2 jobs (filling capacity)

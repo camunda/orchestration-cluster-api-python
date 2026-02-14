@@ -4,21 +4,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.delete_tenant_cluster_variable_response_400 import (
-    DeleteTenantClusterVariableResponse400,
-)
-from ...models.delete_tenant_cluster_variable_response_401 import (
-    DeleteTenantClusterVariableResponse401,
-)
-from ...models.delete_tenant_cluster_variable_response_403 import (
-    DeleteTenantClusterVariableResponse403,
-)
-from ...models.delete_tenant_cluster_variable_response_404 import (
-    DeleteTenantClusterVariableResponse404,
-)
-from ...models.delete_tenant_cluster_variable_response_500 import (
-    DeleteTenantClusterVariableResponse500,
-)
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -34,32 +20,24 @@ def _get_kwargs(tenant_id: str, name: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | DeleteTenantClusterVariableResponse400
-    | DeleteTenantClusterVariableResponse401
-    | DeleteTenantClusterVariableResponse403
-    | DeleteTenantClusterVariableResponse404
-    | DeleteTenantClusterVariableResponse500
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = DeleteTenantClusterVariableResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = DeleteTenantClusterVariableResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = DeleteTenantClusterVariableResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = DeleteTenantClusterVariableResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = DeleteTenantClusterVariableResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -69,14 +47,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | DeleteTenantClusterVariableResponse400
-    | DeleteTenantClusterVariableResponse401
-    | DeleteTenantClusterVariableResponse403
-    | DeleteTenantClusterVariableResponse404
-    | DeleteTenantClusterVariableResponse500
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -87,14 +58,7 @@ def _build_response(
 
 def sync_detailed(
     tenant_id: str, name: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | DeleteTenantClusterVariableResponse400
-    | DeleteTenantClusterVariableResponse401
-    | DeleteTenantClusterVariableResponse403
-    | DeleteTenantClusterVariableResponse404
-    | DeleteTenantClusterVariableResponse500
-]:
+) -> Response[Any | ProblemDetail]:
     """Delete a tenant-scoped cluster variable
 
     Args:
@@ -106,7 +70,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | DeleteTenantClusterVariableResponse400 | DeleteTenantClusterVariableResponse401 | DeleteTenantClusterVariableResponse403 | DeleteTenantClusterVariableResponse404 | DeleteTenantClusterVariableResponse500]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(tenant_id=tenant_id, name=name)
     response = client.get_httpx_client().request(**kwargs)
@@ -138,31 +102,31 @@ def sync(
             raise errors.DeleteTenantClusterVariableBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteTenantClusterVariableResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.DeleteTenantClusterVariableUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteTenantClusterVariableResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.DeleteTenantClusterVariableForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteTenantClusterVariableResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.DeleteTenantClusterVariableNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteTenantClusterVariableResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.DeleteTenantClusterVariableInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteTenantClusterVariableResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -170,14 +134,7 @@ def sync(
 
 async def asyncio_detailed(
     tenant_id: str, name: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | DeleteTenantClusterVariableResponse400
-    | DeleteTenantClusterVariableResponse401
-    | DeleteTenantClusterVariableResponse403
-    | DeleteTenantClusterVariableResponse404
-    | DeleteTenantClusterVariableResponse500
-]:
+) -> Response[Any | ProblemDetail]:
     """Delete a tenant-scoped cluster variable
 
     Args:
@@ -189,7 +146,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | DeleteTenantClusterVariableResponse400 | DeleteTenantClusterVariableResponse401 | DeleteTenantClusterVariableResponse403 | DeleteTenantClusterVariableResponse404 | DeleteTenantClusterVariableResponse500]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(tenant_id=tenant_id, name=name)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -221,31 +178,31 @@ async def asyncio(
             raise errors.DeleteTenantClusterVariableBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteTenantClusterVariableResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.DeleteTenantClusterVariableUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteTenantClusterVariableResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.DeleteTenantClusterVariableForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteTenantClusterVariableResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.DeleteTenantClusterVariableNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteTenantClusterVariableResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.DeleteTenantClusterVariableInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteTenantClusterVariableResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

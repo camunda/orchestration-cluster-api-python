@@ -3,29 +3,18 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_process_definition_message_subscription_statistics_data import (
-    GetProcessDefinitionMessageSubscriptionStatisticsData,
+from ...models.problem_detail import ProblemDetail
+from ...models.process_definition_message_subscription_statistics_query import (
+    ProcessDefinitionMessageSubscriptionStatisticsQuery,
 )
-from ...models.get_process_definition_message_subscription_statistics_response_200 import (
-    GetProcessDefinitionMessageSubscriptionStatisticsResponse200,
-)
-from ...models.get_process_definition_message_subscription_statistics_response_400 import (
-    GetProcessDefinitionMessageSubscriptionStatisticsResponse400,
-)
-from ...models.get_process_definition_message_subscription_statistics_response_401 import (
-    GetProcessDefinitionMessageSubscriptionStatisticsResponse401,
-)
-from ...models.get_process_definition_message_subscription_statistics_response_403 import (
-    GetProcessDefinitionMessageSubscriptionStatisticsResponse403,
-)
-from ...models.get_process_definition_message_subscription_statistics_response_500 import (
-    GetProcessDefinitionMessageSubscriptionStatisticsResponse500,
+from ...models.process_definition_message_subscription_statistics_query_result import (
+    ProcessDefinitionMessageSubscriptionStatisticsQueryResult,
 )
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    *, body: GetProcessDefinitionMessageSubscriptionStatisticsData | Unset = UNSET
+    *, body: ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -41,48 +30,25 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetProcessDefinitionMessageSubscriptionStatisticsResponse200
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse400
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse401
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse403
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse500
-    | None
-):
+) -> ProblemDetail | ProcessDefinitionMessageSubscriptionStatisticsQueryResult | None:
     if response.status_code == 200:
         response_200 = (
-            GetProcessDefinitionMessageSubscriptionStatisticsResponse200.from_dict(
+            ProcessDefinitionMessageSubscriptionStatisticsQueryResult.from_dict(
                 response.json()
             )
         )
         return response_200
     if response.status_code == 400:
-        response_400 = (
-            GetProcessDefinitionMessageSubscriptionStatisticsResponse400.from_dict(
-                response.json()
-            )
-        )
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = (
-            GetProcessDefinitionMessageSubscriptionStatisticsResponse401.from_dict(
-                response.json()
-            )
-        )
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = (
-            GetProcessDefinitionMessageSubscriptionStatisticsResponse403.from_dict(
-                response.json()
-            )
-        )
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = (
-            GetProcessDefinitionMessageSubscriptionStatisticsResponse500.from_dict(
-                response.json()
-            )
-        )
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -93,11 +59,7 @@ def _parse_response(
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
 ) -> Response[
-    GetProcessDefinitionMessageSubscriptionStatisticsResponse200
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse400
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse401
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse403
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse500
+    ProblemDetail | ProcessDefinitionMessageSubscriptionStatisticsQueryResult
 ]:
     return Response(
         status_code=HTTPStatus(response.status_code),
@@ -110,27 +72,23 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: GetProcessDefinitionMessageSubscriptionStatisticsData | Unset = UNSET,
+    body: ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset = UNSET,
 ) -> Response[
-    GetProcessDefinitionMessageSubscriptionStatisticsResponse200
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse400
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse401
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse403
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse500
+    ProblemDetail | ProcessDefinitionMessageSubscriptionStatisticsQueryResult
 ]:
     """Get message subscription statistics
 
      Get message subscription statistics, grouped by process definition.
 
     Args:
-        body (GetProcessDefinitionMessageSubscriptionStatisticsData | Unset):
+        body (ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetProcessDefinitionMessageSubscriptionStatisticsResponse200 | GetProcessDefinitionMessageSubscriptionStatisticsResponse400 | GetProcessDefinitionMessageSubscriptionStatisticsResponse401 | GetProcessDefinitionMessageSubscriptionStatisticsResponse403 | GetProcessDefinitionMessageSubscriptionStatisticsResponse500]
+        Response[ProblemDetail | ProcessDefinitionMessageSubscriptionStatisticsQueryResult]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -140,15 +98,15 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: GetProcessDefinitionMessageSubscriptionStatisticsData | Unset = UNSET,
+    body: ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset = UNSET,
     **kwargs: Any,
-) -> GetProcessDefinitionMessageSubscriptionStatisticsResponse200:
+) -> ProcessDefinitionMessageSubscriptionStatisticsQueryResult:
     """Get message subscription statistics
 
      Get message subscription statistics, grouped by process definition.
 
     Args:
-        body (GetProcessDefinitionMessageSubscriptionStatisticsData | Unset):
+        body (ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset):
 
     Raises:
         errors.GetProcessDefinitionMessageSubscriptionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -158,76 +116,60 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetProcessDefinitionMessageSubscriptionStatisticsResponse200"""
+        ProcessDefinitionMessageSubscriptionStatisticsQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.GetProcessDefinitionMessageSubscriptionStatisticsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionMessageSubscriptionStatisticsResponse400,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetProcessDefinitionMessageSubscriptionStatisticsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionMessageSubscriptionStatisticsResponse401,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetProcessDefinitionMessageSubscriptionStatisticsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionMessageSubscriptionStatisticsResponse403,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetProcessDefinitionMessageSubscriptionStatisticsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionMessageSubscriptionStatisticsResponse500,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(
-        GetProcessDefinitionMessageSubscriptionStatisticsResponse200, response.parsed
+        ProcessDefinitionMessageSubscriptionStatisticsQueryResult, response.parsed
     )
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: GetProcessDefinitionMessageSubscriptionStatisticsData | Unset = UNSET,
+    body: ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset = UNSET,
 ) -> Response[
-    GetProcessDefinitionMessageSubscriptionStatisticsResponse200
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse400
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse401
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse403
-    | GetProcessDefinitionMessageSubscriptionStatisticsResponse500
+    ProblemDetail | ProcessDefinitionMessageSubscriptionStatisticsQueryResult
 ]:
     """Get message subscription statistics
 
      Get message subscription statistics, grouped by process definition.
 
     Args:
-        body (GetProcessDefinitionMessageSubscriptionStatisticsData | Unset):
+        body (ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetProcessDefinitionMessageSubscriptionStatisticsResponse200 | GetProcessDefinitionMessageSubscriptionStatisticsResponse400 | GetProcessDefinitionMessageSubscriptionStatisticsResponse401 | GetProcessDefinitionMessageSubscriptionStatisticsResponse403 | GetProcessDefinitionMessageSubscriptionStatisticsResponse500]
+        Response[ProblemDetail | ProcessDefinitionMessageSubscriptionStatisticsQueryResult]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -237,15 +179,15 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: GetProcessDefinitionMessageSubscriptionStatisticsData | Unset = UNSET,
+    body: ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset = UNSET,
     **kwargs: Any,
-) -> GetProcessDefinitionMessageSubscriptionStatisticsResponse200:
+) -> ProcessDefinitionMessageSubscriptionStatisticsQueryResult:
     """Get message subscription statistics
 
      Get message subscription statistics, grouped by process definition.
 
     Args:
-        body (GetProcessDefinitionMessageSubscriptionStatisticsData | Unset):
+        body (ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset):
 
     Raises:
         errors.GetProcessDefinitionMessageSubscriptionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -255,47 +197,35 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetProcessDefinitionMessageSubscriptionStatisticsResponse200"""
+        ProcessDefinitionMessageSubscriptionStatisticsQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.GetProcessDefinitionMessageSubscriptionStatisticsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionMessageSubscriptionStatisticsResponse400,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetProcessDefinitionMessageSubscriptionStatisticsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionMessageSubscriptionStatisticsResponse401,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetProcessDefinitionMessageSubscriptionStatisticsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionMessageSubscriptionStatisticsResponse403,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetProcessDefinitionMessageSubscriptionStatisticsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    GetProcessDefinitionMessageSubscriptionStatisticsResponse500,
-                    response.parsed,
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(
-        GetProcessDefinitionMessageSubscriptionStatisticsResponse200, response.parsed
+        ProcessDefinitionMessageSubscriptionStatisticsQueryResult, response.parsed
     )

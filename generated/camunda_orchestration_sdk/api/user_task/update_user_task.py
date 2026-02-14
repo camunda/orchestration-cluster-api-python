@@ -4,17 +4,13 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.update_user_task_data import UpdateUserTaskData
-from ...models.update_user_task_response_400 import UpdateUserTaskResponse400
-from ...models.update_user_task_response_404 import UpdateUserTaskResponse404
-from ...models.update_user_task_response_409 import UpdateUserTaskResponse409
-from ...models.update_user_task_response_500 import UpdateUserTaskResponse500
-from ...models.update_user_task_response_503 import UpdateUserTaskResponse503
+from ...models.problem_detail import ProblemDetail
+from ...models.user_task_update_request import UserTaskUpdateRequest
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    user_task_key: str, *, body: UpdateUserTaskData | Unset = UNSET
+    user_task_key: str, *, body: UserTaskUpdateRequest | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -32,32 +28,24 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | UpdateUserTaskResponse400
-    | UpdateUserTaskResponse404
-    | UpdateUserTaskResponse409
-    | UpdateUserTaskResponse500
-    | UpdateUserTaskResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = UpdateUserTaskResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 404:
-        response_404 = UpdateUserTaskResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 409:
-        response_409 = UpdateUserTaskResponse409.from_dict(response.json())
+        response_409 = ProblemDetail.from_dict(response.json())
         return response_409
     if response.status_code == 500:
-        response_500 = UpdateUserTaskResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = UpdateUserTaskResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -67,14 +55,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | UpdateUserTaskResponse400
-    | UpdateUserTaskResponse404
-    | UpdateUserTaskResponse409
-    | UpdateUserTaskResponse500
-    | UpdateUserTaskResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -87,29 +68,22 @@ def sync_detailed(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateUserTaskData | Unset = UNSET,
-) -> Response[
-    Any
-    | UpdateUserTaskResponse400
-    | UpdateUserTaskResponse404
-    | UpdateUserTaskResponse409
-    | UpdateUserTaskResponse500
-    | UpdateUserTaskResponse503
-]:
+    body: UserTaskUpdateRequest | Unset = UNSET,
+) -> Response[Any | ProblemDetail]:
     """Update user task
 
      Update a user task with the given key.
 
     Args:
         user_task_key (str): System-generated key for a user task.
-        body (UpdateUserTaskData | Unset):
+        body (UserTaskUpdateRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | UpdateUserTaskResponse400 | UpdateUserTaskResponse404 | UpdateUserTaskResponse409 | UpdateUserTaskResponse500 | UpdateUserTaskResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(user_task_key=user_task_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -120,7 +94,7 @@ def sync(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateUserTaskData | Unset = UNSET,
+    body: UserTaskUpdateRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Update user task
@@ -129,7 +103,7 @@ def sync(
 
     Args:
         user_task_key (str): System-generated key for a user task.
-        body (UpdateUserTaskData | Unset):
+        body (UserTaskUpdateRequest | Unset):
 
     Raises:
         errors.UpdateUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
@@ -147,31 +121,31 @@ def sync(
             raise errors.UpdateUserTaskBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateUserTaskResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UpdateUserTaskNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateUserTaskResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 409:
             raise errors.UpdateUserTaskConflict(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateUserTaskResponse409, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UpdateUserTaskInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateUserTaskResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.UpdateUserTaskServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateUserTaskResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -181,29 +155,22 @@ async def asyncio_detailed(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateUserTaskData | Unset = UNSET,
-) -> Response[
-    Any
-    | UpdateUserTaskResponse400
-    | UpdateUserTaskResponse404
-    | UpdateUserTaskResponse409
-    | UpdateUserTaskResponse500
-    | UpdateUserTaskResponse503
-]:
+    body: UserTaskUpdateRequest | Unset = UNSET,
+) -> Response[Any | ProblemDetail]:
     """Update user task
 
      Update a user task with the given key.
 
     Args:
         user_task_key (str): System-generated key for a user task.
-        body (UpdateUserTaskData | Unset):
+        body (UserTaskUpdateRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | UpdateUserTaskResponse400 | UpdateUserTaskResponse404 | UpdateUserTaskResponse409 | UpdateUserTaskResponse500 | UpdateUserTaskResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(user_task_key=user_task_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -214,7 +181,7 @@ async def asyncio(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateUserTaskData | Unset = UNSET,
+    body: UserTaskUpdateRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Update user task
@@ -223,7 +190,7 @@ async def asyncio(
 
     Args:
         user_task_key (str): System-generated key for a user task.
-        body (UpdateUserTaskData | Unset):
+        body (UserTaskUpdateRequest | Unset):
 
     Raises:
         errors.UpdateUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
@@ -243,31 +210,31 @@ async def asyncio(
             raise errors.UpdateUserTaskBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateUserTaskResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UpdateUserTaskNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateUserTaskResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 409:
             raise errors.UpdateUserTaskConflict(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateUserTaskResponse409, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UpdateUserTaskInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateUserTaskResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.UpdateUserTaskServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateUserTaskResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

@@ -4,21 +4,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.resume_batch_operation_response_400 import (
-    ResumeBatchOperationResponse400,
-)
-from ...models.resume_batch_operation_response_403 import (
-    ResumeBatchOperationResponse403,
-)
-from ...models.resume_batch_operation_response_404 import (
-    ResumeBatchOperationResponse404,
-)
-from ...models.resume_batch_operation_response_500 import (
-    ResumeBatchOperationResponse500,
-)
-from ...models.resume_batch_operation_response_503 import (
-    ResumeBatchOperationResponse503,
-)
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
@@ -41,32 +27,24 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | ResumeBatchOperationResponse400
-    | ResumeBatchOperationResponse403
-    | ResumeBatchOperationResponse404
-    | ResumeBatchOperationResponse500
-    | ResumeBatchOperationResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = ResumeBatchOperationResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 403:
-        response_403 = ResumeBatchOperationResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = ResumeBatchOperationResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = ResumeBatchOperationResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = ResumeBatchOperationResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -76,14 +54,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | ResumeBatchOperationResponse400
-    | ResumeBatchOperationResponse403
-    | ResumeBatchOperationResponse404
-    | ResumeBatchOperationResponse500
-    | ResumeBatchOperationResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -97,14 +68,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: Any | Unset = UNSET,
-) -> Response[
-    Any
-    | ResumeBatchOperationResponse400
-    | ResumeBatchOperationResponse403
-    | ResumeBatchOperationResponse404
-    | ResumeBatchOperationResponse500
-    | ResumeBatchOperationResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Resume Batch operation
 
      Resumes a suspended batch operation.
@@ -121,7 +85,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ResumeBatchOperationResponse400 | ResumeBatchOperationResponse403 | ResumeBatchOperationResponse404 | ResumeBatchOperationResponse500 | ResumeBatchOperationResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(batch_operation_key=batch_operation_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -164,31 +128,31 @@ def sync(
             raise errors.ResumeBatchOperationBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResumeBatchOperationResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.ResumeBatchOperationForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResumeBatchOperationResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.ResumeBatchOperationNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResumeBatchOperationResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.ResumeBatchOperationInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResumeBatchOperationResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.ResumeBatchOperationServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResumeBatchOperationResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -199,14 +163,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: Any | Unset = UNSET,
-) -> Response[
-    Any
-    | ResumeBatchOperationResponse400
-    | ResumeBatchOperationResponse403
-    | ResumeBatchOperationResponse404
-    | ResumeBatchOperationResponse500
-    | ResumeBatchOperationResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Resume Batch operation
 
      Resumes a suspended batch operation.
@@ -223,7 +180,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ResumeBatchOperationResponse400 | ResumeBatchOperationResponse403 | ResumeBatchOperationResponse404 | ResumeBatchOperationResponse500 | ResumeBatchOperationResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(batch_operation_key=batch_operation_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -266,31 +223,31 @@ async def asyncio(
             raise errors.ResumeBatchOperationBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResumeBatchOperationResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.ResumeBatchOperationForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResumeBatchOperationResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.ResumeBatchOperationNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResumeBatchOperationResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.ResumeBatchOperationInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResumeBatchOperationResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.ResumeBatchOperationServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResumeBatchOperationResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

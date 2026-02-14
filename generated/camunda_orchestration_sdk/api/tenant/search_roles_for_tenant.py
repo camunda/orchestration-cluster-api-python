@@ -4,15 +4,13 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.search_roles_for_tenant_data import SearchRolesForTenantData
-from ...models.search_roles_for_tenant_response_200 import (
-    SearchRolesForTenantResponse200,
-)
+from ...models.role_search_query_request import RoleSearchQueryRequest
+from ...models.search_query_response import SearchQueryResponse
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    tenant_id: str, *, body: SearchRolesForTenantData | Unset = UNSET
+    tenant_id: str, *, body: RoleSearchQueryRequest | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -30,9 +28,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> SearchRolesForTenantResponse200 | None:
+) -> SearchQueryResponse | None:
     if response.status_code == 200:
-        response_200 = SearchRolesForTenantResponse200.from_dict(response.json())
+        response_200 = SearchQueryResponse.from_dict(response.json())
         return response_200
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -42,7 +40,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[SearchRolesForTenantResponse200]:
+) -> Response[SearchQueryResponse]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -55,22 +53,22 @@ def sync_detailed(
     tenant_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchRolesForTenantData | Unset = UNSET,
-) -> Response[SearchRolesForTenantResponse200]:
+    body: RoleSearchQueryRequest | Unset = UNSET,
+) -> Response[SearchQueryResponse]:
     """Search roles for tenant
 
      Retrieves a filtered and sorted list of roles for a specified tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (SearchRolesForTenantData | Unset): Role search request.
+        body (RoleSearchQueryRequest | Unset): Role search request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchRolesForTenantResponse200]
+        Response[SearchQueryResponse]
     """
     kwargs = _get_kwargs(tenant_id=tenant_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -81,22 +79,22 @@ def sync(
     tenant_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchRolesForTenantData | Unset = UNSET,
+    body: RoleSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchRolesForTenantResponse200:
+) -> SearchQueryResponse:
     """Search roles for tenant
 
      Retrieves a filtered and sorted list of roles for a specified tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (SearchRolesForTenantData | Unset): Role search request.
+        body (RoleSearchQueryRequest | Unset): Role search request.
 
     Raises:
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchRolesForTenantResponse200"""
+        SearchQueryResponse"""
     response = sync_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -108,22 +106,22 @@ async def asyncio_detailed(
     tenant_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchRolesForTenantData | Unset = UNSET,
-) -> Response[SearchRolesForTenantResponse200]:
+    body: RoleSearchQueryRequest | Unset = UNSET,
+) -> Response[SearchQueryResponse]:
     """Search roles for tenant
 
      Retrieves a filtered and sorted list of roles for a specified tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (SearchRolesForTenantData | Unset): Role search request.
+        body (RoleSearchQueryRequest | Unset): Role search request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchRolesForTenantResponse200]
+        Response[SearchQueryResponse]
     """
     kwargs = _get_kwargs(tenant_id=tenant_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -134,22 +132,22 @@ async def asyncio(
     tenant_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchRolesForTenantData | Unset = UNSET,
+    body: RoleSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchRolesForTenantResponse200:
+) -> SearchQueryResponse:
     """Search roles for tenant
 
      Retrieves a filtered and sorted list of roles for a specified tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (SearchRolesForTenantData | Unset): Role search request.
+        body (RoleSearchQueryRequest | Unset): Role search request.
 
     Raises:
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchRolesForTenantResponse200"""
+        SearchQueryResponse"""
     response = await asyncio_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)

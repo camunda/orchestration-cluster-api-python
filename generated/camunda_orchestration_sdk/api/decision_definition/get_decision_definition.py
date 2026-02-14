@@ -4,24 +4,8 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_decision_definition_response_200 import (
-    GetDecisionDefinitionResponse200,
-)
-from ...models.get_decision_definition_response_400 import (
-    GetDecisionDefinitionResponse400,
-)
-from ...models.get_decision_definition_response_401 import (
-    GetDecisionDefinitionResponse401,
-)
-from ...models.get_decision_definition_response_403 import (
-    GetDecisionDefinitionResponse403,
-)
-from ...models.get_decision_definition_response_404 import (
-    GetDecisionDefinitionResponse404,
-)
-from ...models.get_decision_definition_response_500 import (
-    GetDecisionDefinitionResponse500,
-)
+from ...models.decision_definition_result import DecisionDefinitionResult
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -37,32 +21,24 @@ def _get_kwargs(decision_definition_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetDecisionDefinitionResponse200
-    | GetDecisionDefinitionResponse400
-    | GetDecisionDefinitionResponse401
-    | GetDecisionDefinitionResponse403
-    | GetDecisionDefinitionResponse404
-    | GetDecisionDefinitionResponse500
-    | None
-):
+) -> DecisionDefinitionResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = GetDecisionDefinitionResponse200.from_dict(response.json())
+        response_200 = DecisionDefinitionResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = GetDecisionDefinitionResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = GetDecisionDefinitionResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetDecisionDefinitionResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = GetDecisionDefinitionResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetDecisionDefinitionResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -72,14 +48,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetDecisionDefinitionResponse200
-    | GetDecisionDefinitionResponse400
-    | GetDecisionDefinitionResponse401
-    | GetDecisionDefinitionResponse403
-    | GetDecisionDefinitionResponse404
-    | GetDecisionDefinitionResponse500
-]:
+) -> Response[DecisionDefinitionResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -90,14 +59,7 @@ def _build_response(
 
 def sync_detailed(
     decision_definition_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetDecisionDefinitionResponse200
-    | GetDecisionDefinitionResponse400
-    | GetDecisionDefinitionResponse401
-    | GetDecisionDefinitionResponse403
-    | GetDecisionDefinitionResponse404
-    | GetDecisionDefinitionResponse500
-]:
+) -> Response[DecisionDefinitionResult | ProblemDetail]:
     """Get decision definition
 
      Returns a decision definition by key.
@@ -111,7 +73,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetDecisionDefinitionResponse200 | GetDecisionDefinitionResponse400 | GetDecisionDefinitionResponse401 | GetDecisionDefinitionResponse403 | GetDecisionDefinitionResponse404 | GetDecisionDefinitionResponse500]
+        Response[DecisionDefinitionResult | ProblemDetail]
     """
     kwargs = _get_kwargs(decision_definition_key=decision_definition_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -120,7 +82,7 @@ def sync_detailed(
 
 def sync(
     decision_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetDecisionDefinitionResponse200:
+) -> DecisionDefinitionResult:
     """Get decision definition
 
      Returns a decision definition by key.
@@ -138,7 +100,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetDecisionDefinitionResponse200"""
+        DecisionDefinitionResult"""
     response = sync_detailed(
         decision_definition_key=decision_definition_key, client=client
     )
@@ -147,47 +109,40 @@ def sync(
             raise errors.GetDecisionDefinitionBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionDefinitionResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetDecisionDefinitionUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionDefinitionResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetDecisionDefinitionForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionDefinitionResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetDecisionDefinitionNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionDefinitionResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetDecisionDefinitionInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionDefinitionResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetDecisionDefinitionResponse200, response.parsed)
+    return cast(DecisionDefinitionResult, response.parsed)
 
 
 async def asyncio_detailed(
     decision_definition_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetDecisionDefinitionResponse200
-    | GetDecisionDefinitionResponse400
-    | GetDecisionDefinitionResponse401
-    | GetDecisionDefinitionResponse403
-    | GetDecisionDefinitionResponse404
-    | GetDecisionDefinitionResponse500
-]:
+) -> Response[DecisionDefinitionResult | ProblemDetail]:
     """Get decision definition
 
      Returns a decision definition by key.
@@ -201,7 +156,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetDecisionDefinitionResponse200 | GetDecisionDefinitionResponse400 | GetDecisionDefinitionResponse401 | GetDecisionDefinitionResponse403 | GetDecisionDefinitionResponse404 | GetDecisionDefinitionResponse500]
+        Response[DecisionDefinitionResult | ProblemDetail]
     """
     kwargs = _get_kwargs(decision_definition_key=decision_definition_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -210,7 +165,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     decision_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetDecisionDefinitionResponse200:
+) -> DecisionDefinitionResult:
     """Get decision definition
 
      Returns a decision definition by key.
@@ -228,7 +183,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetDecisionDefinitionResponse200"""
+        DecisionDefinitionResult"""
     response = await asyncio_detailed(
         decision_definition_key=decision_definition_key, client=client
     )
@@ -237,32 +192,32 @@ async def asyncio(
             raise errors.GetDecisionDefinitionBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionDefinitionResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetDecisionDefinitionUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionDefinitionResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetDecisionDefinitionForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionDefinitionResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetDecisionDefinitionNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionDefinitionResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetDecisionDefinitionInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionDefinitionResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetDecisionDefinitionResponse200, response.parsed)
+    return cast(DecisionDefinitionResult, response.parsed)

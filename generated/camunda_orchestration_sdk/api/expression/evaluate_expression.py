@@ -3,16 +3,13 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.evaluate_expression_data import EvaluateExpressionData
-from ...models.evaluate_expression_response_200 import EvaluateExpressionResponse200
-from ...models.evaluate_expression_response_400 import EvaluateExpressionResponse400
-from ...models.evaluate_expression_response_401 import EvaluateExpressionResponse401
-from ...models.evaluate_expression_response_403 import EvaluateExpressionResponse403
-from ...models.evaluate_expression_response_500 import EvaluateExpressionResponse500
+from ...models.expression_evaluation_request import ExpressionEvaluationRequest
+from ...models.expression_evaluation_result import ExpressionEvaluationResult
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
-def _get_kwargs(*, body: EvaluateExpressionData) -> dict[str, Any]:
+def _get_kwargs(*, body: ExpressionEvaluationRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/expression/evaluation"}
     _kwargs["json"] = body.to_dict()
@@ -23,28 +20,21 @@ def _get_kwargs(*, body: EvaluateExpressionData) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    EvaluateExpressionResponse200
-    | EvaluateExpressionResponse400
-    | EvaluateExpressionResponse401
-    | EvaluateExpressionResponse403
-    | EvaluateExpressionResponse500
-    | None
-):
+) -> ExpressionEvaluationResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = EvaluateExpressionResponse200.from_dict(response.json())
+        response_200 = ExpressionEvaluationResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = EvaluateExpressionResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = EvaluateExpressionResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = EvaluateExpressionResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = EvaluateExpressionResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -54,13 +44,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    EvaluateExpressionResponse200
-    | EvaluateExpressionResponse400
-    | EvaluateExpressionResponse401
-    | EvaluateExpressionResponse403
-    | EvaluateExpressionResponse500
-]:
+) -> Response[ExpressionEvaluationResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -70,28 +54,22 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: EvaluateExpressionData
-) -> Response[
-    EvaluateExpressionResponse200
-    | EvaluateExpressionResponse400
-    | EvaluateExpressionResponse401
-    | EvaluateExpressionResponse403
-    | EvaluateExpressionResponse500
-]:
+    *, client: AuthenticatedClient | Client, body: ExpressionEvaluationRequest
+) -> Response[ExpressionEvaluationResult | ProblemDetail]:
     """Evaluate an expression
 
      Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
     variables when a tenant ID is provided.
 
     Args:
-        body (EvaluateExpressionData):
+        body (ExpressionEvaluationRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[EvaluateExpressionResponse200 | EvaluateExpressionResponse400 | EvaluateExpressionResponse401 | EvaluateExpressionResponse403 | EvaluateExpressionResponse500]
+        Response[ExpressionEvaluationResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -99,15 +77,18 @@ def sync_detailed(
 
 
 def sync(
-    *, client: AuthenticatedClient | Client, body: EvaluateExpressionData, **kwargs: Any
-) -> EvaluateExpressionResponse200:
+    *,
+    client: AuthenticatedClient | Client,
+    body: ExpressionEvaluationRequest,
+    **kwargs: Any,
+) -> ExpressionEvaluationResult:
     """Evaluate an expression
 
      Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
     variables when a tenant ID is provided.
 
     Args:
-        body (EvaluateExpressionData):
+        body (ExpressionEvaluationRequest):
 
     Raises:
         errors.EvaluateExpressionBadRequest: If the response status code is 400. The provided data is not valid.
@@ -117,61 +98,55 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        EvaluateExpressionResponse200"""
+        ExpressionEvaluationResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.EvaluateExpressionBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(EvaluateExpressionResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.EvaluateExpressionUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(EvaluateExpressionResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.EvaluateExpressionForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(EvaluateExpressionResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.EvaluateExpressionInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(EvaluateExpressionResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(EvaluateExpressionResponse200, response.parsed)
+    return cast(ExpressionEvaluationResult, response.parsed)
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: EvaluateExpressionData
-) -> Response[
-    EvaluateExpressionResponse200
-    | EvaluateExpressionResponse400
-    | EvaluateExpressionResponse401
-    | EvaluateExpressionResponse403
-    | EvaluateExpressionResponse500
-]:
+    *, client: AuthenticatedClient | Client, body: ExpressionEvaluationRequest
+) -> Response[ExpressionEvaluationResult | ProblemDetail]:
     """Evaluate an expression
 
      Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
     variables when a tenant ID is provided.
 
     Args:
-        body (EvaluateExpressionData):
+        body (ExpressionEvaluationRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[EvaluateExpressionResponse200 | EvaluateExpressionResponse400 | EvaluateExpressionResponse401 | EvaluateExpressionResponse403 | EvaluateExpressionResponse500]
+        Response[ExpressionEvaluationResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -179,15 +154,18 @@ async def asyncio_detailed(
 
 
 async def asyncio(
-    *, client: AuthenticatedClient | Client, body: EvaluateExpressionData, **kwargs: Any
-) -> EvaluateExpressionResponse200:
+    *,
+    client: AuthenticatedClient | Client,
+    body: ExpressionEvaluationRequest,
+    **kwargs: Any,
+) -> ExpressionEvaluationResult:
     """Evaluate an expression
 
      Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
     variables when a tenant ID is provided.
 
     Args:
-        body (EvaluateExpressionData):
+        body (ExpressionEvaluationRequest):
 
     Raises:
         errors.EvaluateExpressionBadRequest: If the response status code is 400. The provided data is not valid.
@@ -197,33 +175,33 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        EvaluateExpressionResponse200"""
+        ExpressionEvaluationResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.EvaluateExpressionBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(EvaluateExpressionResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.EvaluateExpressionUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(EvaluateExpressionResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.EvaluateExpressionForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(EvaluateExpressionResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.EvaluateExpressionInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(EvaluateExpressionResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(EvaluateExpressionResponse200, response.parsed)
+    return cast(ExpressionEvaluationResult, response.parsed)

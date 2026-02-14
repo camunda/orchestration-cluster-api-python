@@ -3,8 +3,7 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.reset_clock_response_500 import ResetClockResponse500
-from ...models.reset_clock_response_503 import ResetClockResponse503
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -15,15 +14,15 @@ def _get_kwargs() -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | ResetClockResponse500 | ResetClockResponse503 | None:
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 500:
-        response_500 = ResetClockResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = ResetClockResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -33,7 +32,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | ResetClockResponse500 | ResetClockResponse503]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -44,7 +43,7 @@ def _build_response(
 
 def sync_detailed(
     *, client: AuthenticatedClient | Client
-) -> Response[Any | ResetClockResponse500 | ResetClockResponse503]:
+) -> Response[Any | ProblemDetail]:
     """Reset internal clock (alpha)
 
      Resets the Zeebe engine's internal clock to the current system time, enabling it to tick in real-
@@ -60,7 +59,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ResetClockResponse500 | ResetClockResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs()
     response = client.get_httpx_client().request(**kwargs)
@@ -91,13 +90,13 @@ def sync(*, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
             raise errors.ResetClockInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResetClockResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.ResetClockServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResetClockResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -105,7 +104,7 @@ def sync(*, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
 
 async def asyncio_detailed(
     *, client: AuthenticatedClient | Client
-) -> Response[Any | ResetClockResponse500 | ResetClockResponse503]:
+) -> Response[Any | ProblemDetail]:
     """Reset internal clock (alpha)
 
      Resets the Zeebe engine's internal clock to the current system time, enabling it to tick in real-
@@ -121,7 +120,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ResetClockResponse500 | ResetClockResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs()
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -152,13 +151,13 @@ async def asyncio(*, client: AuthenticatedClient | Client, **kwargs: Any) -> Non
             raise errors.ResetClockInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResetClockResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.ResetClockServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResetClockResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

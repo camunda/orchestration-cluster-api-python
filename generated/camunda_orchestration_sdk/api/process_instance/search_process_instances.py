@@ -3,21 +3,10 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.problem_detail import ProblemDetail
 from ...models.search_process_instances_data import SearchProcessInstancesData
 from ...models.search_process_instances_response_200 import (
     SearchProcessInstancesResponse200,
-)
-from ...models.search_process_instances_response_400 import (
-    SearchProcessInstancesResponse400,
-)
-from ...models.search_process_instances_response_401 import (
-    SearchProcessInstancesResponse401,
-)
-from ...models.search_process_instances_response_403 import (
-    SearchProcessInstancesResponse403,
-)
-from ...models.search_process_instances_response_500 import (
-    SearchProcessInstancesResponse500,
 )
 from ...types import UNSET, Response, Unset
 
@@ -34,28 +23,21 @@ def _get_kwargs(*, body: SearchProcessInstancesData | Unset = UNSET) -> dict[str
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    SearchProcessInstancesResponse200
-    | SearchProcessInstancesResponse400
-    | SearchProcessInstancesResponse401
-    | SearchProcessInstancesResponse403
-    | SearchProcessInstancesResponse500
-    | None
-):
+) -> ProblemDetail | SearchProcessInstancesResponse200 | None:
     if response.status_code == 200:
         response_200 = SearchProcessInstancesResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = SearchProcessInstancesResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = SearchProcessInstancesResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = SearchProcessInstancesResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = SearchProcessInstancesResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -65,13 +47,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    SearchProcessInstancesResponse200
-    | SearchProcessInstancesResponse400
-    | SearchProcessInstancesResponse401
-    | SearchProcessInstancesResponse403
-    | SearchProcessInstancesResponse500
-]:
+) -> Response[ProblemDetail | SearchProcessInstancesResponse200]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -84,13 +60,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: SearchProcessInstancesData | Unset = UNSET,
-) -> Response[
-    SearchProcessInstancesResponse200
-    | SearchProcessInstancesResponse400
-    | SearchProcessInstancesResponse401
-    | SearchProcessInstancesResponse403
-    | SearchProcessInstancesResponse500
-]:
+) -> Response[ProblemDetail | SearchProcessInstancesResponse200]:
     """Search process instances
 
      Search for process instances based on given criteria.
@@ -103,7 +73,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchProcessInstancesResponse200 | SearchProcessInstancesResponse400 | SearchProcessInstancesResponse401 | SearchProcessInstancesResponse403 | SearchProcessInstancesResponse500]
+        Response[ProblemDetail | SearchProcessInstancesResponse200]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -138,25 +108,25 @@ def sync(
             raise errors.SearchProcessInstancesBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchProcessInstancesResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchProcessInstancesUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchProcessInstancesResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchProcessInstancesForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchProcessInstancesResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchProcessInstancesInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchProcessInstancesResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
@@ -167,13 +137,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: SearchProcessInstancesData | Unset = UNSET,
-) -> Response[
-    SearchProcessInstancesResponse200
-    | SearchProcessInstancesResponse400
-    | SearchProcessInstancesResponse401
-    | SearchProcessInstancesResponse403
-    | SearchProcessInstancesResponse500
-]:
+) -> Response[ProblemDetail | SearchProcessInstancesResponse200]:
     """Search process instances
 
      Search for process instances based on given criteria.
@@ -186,7 +150,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchProcessInstancesResponse200 | SearchProcessInstancesResponse400 | SearchProcessInstancesResponse401 | SearchProcessInstancesResponse403 | SearchProcessInstancesResponse500]
+        Response[ProblemDetail | SearchProcessInstancesResponse200]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -221,25 +185,25 @@ async def asyncio(
             raise errors.SearchProcessInstancesBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchProcessInstancesResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchProcessInstancesUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchProcessInstancesResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchProcessInstancesForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchProcessInstancesResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchProcessInstancesInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchProcessInstancesResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

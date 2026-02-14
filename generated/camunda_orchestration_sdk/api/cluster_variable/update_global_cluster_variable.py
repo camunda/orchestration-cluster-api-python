@@ -4,31 +4,13 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.update_global_cluster_variable_data import (
-    UpdateGlobalClusterVariableData,
-)
-from ...models.update_global_cluster_variable_response_200 import (
-    UpdateGlobalClusterVariableResponse200,
-)
-from ...models.update_global_cluster_variable_response_400 import (
-    UpdateGlobalClusterVariableResponse400,
-)
-from ...models.update_global_cluster_variable_response_401 import (
-    UpdateGlobalClusterVariableResponse401,
-)
-from ...models.update_global_cluster_variable_response_403 import (
-    UpdateGlobalClusterVariableResponse403,
-)
-from ...models.update_global_cluster_variable_response_404 import (
-    UpdateGlobalClusterVariableResponse404,
-)
-from ...models.update_global_cluster_variable_response_500 import (
-    UpdateGlobalClusterVariableResponse500,
-)
+from ...models.cluster_variable_result import ClusterVariableResult
+from ...models.problem_detail import ProblemDetail
+from ...models.update_cluster_variable_request import UpdateClusterVariableRequest
 from ...types import Response
 
 
-def _get_kwargs(name: str, *, body: UpdateGlobalClusterVariableData) -> dict[str, Any]:
+def _get_kwargs(name: str, *, body: UpdateClusterVariableRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
         "method": "put",
@@ -44,32 +26,24 @@ def _get_kwargs(name: str, *, body: UpdateGlobalClusterVariableData) -> dict[str
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    UpdateGlobalClusterVariableResponse200
-    | UpdateGlobalClusterVariableResponse400
-    | UpdateGlobalClusterVariableResponse401
-    | UpdateGlobalClusterVariableResponse403
-    | UpdateGlobalClusterVariableResponse404
-    | UpdateGlobalClusterVariableResponse500
-    | None
-):
+) -> ClusterVariableResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = UpdateGlobalClusterVariableResponse200.from_dict(response.json())
+        response_200 = ClusterVariableResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = UpdateGlobalClusterVariableResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = UpdateGlobalClusterVariableResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = UpdateGlobalClusterVariableResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = UpdateGlobalClusterVariableResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = UpdateGlobalClusterVariableResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -79,14 +53,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    UpdateGlobalClusterVariableResponse200
-    | UpdateGlobalClusterVariableResponse400
-    | UpdateGlobalClusterVariableResponse401
-    | UpdateGlobalClusterVariableResponse403
-    | UpdateGlobalClusterVariableResponse404
-    | UpdateGlobalClusterVariableResponse500
-]:
+) -> Response[ClusterVariableResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -99,15 +66,8 @@ def sync_detailed(
     name: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateGlobalClusterVariableData,
-) -> Response[
-    UpdateGlobalClusterVariableResponse200
-    | UpdateGlobalClusterVariableResponse400
-    | UpdateGlobalClusterVariableResponse401
-    | UpdateGlobalClusterVariableResponse403
-    | UpdateGlobalClusterVariableResponse404
-    | UpdateGlobalClusterVariableResponse500
-]:
+    body: UpdateClusterVariableRequest,
+) -> Response[ClusterVariableResult | ProblemDetail]:
     """Update a global-scoped cluster variable
 
      Updates the value of an existing global cluster variable.
@@ -115,14 +75,14 @@ def sync_detailed(
 
     Args:
         name (str):
-        body (UpdateGlobalClusterVariableData):
+        body (UpdateClusterVariableRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[UpdateGlobalClusterVariableResponse200 | UpdateGlobalClusterVariableResponse400 | UpdateGlobalClusterVariableResponse401 | UpdateGlobalClusterVariableResponse403 | UpdateGlobalClusterVariableResponse404 | UpdateGlobalClusterVariableResponse500]
+        Response[ClusterVariableResult | ProblemDetail]
     """
     kwargs = _get_kwargs(name=name, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -133,9 +93,9 @@ def sync(
     name: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateGlobalClusterVariableData,
+    body: UpdateClusterVariableRequest,
     **kwargs: Any,
-) -> UpdateGlobalClusterVariableResponse200:
+) -> ClusterVariableResult:
     """Update a global-scoped cluster variable
 
      Updates the value of an existing global cluster variable.
@@ -143,7 +103,7 @@ def sync(
 
     Args:
         name (str):
-        body (UpdateGlobalClusterVariableData):
+        body (UpdateClusterVariableRequest):
 
     Raises:
         errors.UpdateGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
@@ -154,57 +114,50 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UpdateGlobalClusterVariableResponse200"""
+        ClusterVariableResult"""
     response = sync_detailed(name=name, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.UpdateGlobalClusterVariableBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateGlobalClusterVariableResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.UpdateGlobalClusterVariableUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateGlobalClusterVariableResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.UpdateGlobalClusterVariableForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateGlobalClusterVariableResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UpdateGlobalClusterVariableNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateGlobalClusterVariableResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UpdateGlobalClusterVariableInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateGlobalClusterVariableResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UpdateGlobalClusterVariableResponse200, response.parsed)
+    return cast(ClusterVariableResult, response.parsed)
 
 
 async def asyncio_detailed(
     name: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateGlobalClusterVariableData,
-) -> Response[
-    UpdateGlobalClusterVariableResponse200
-    | UpdateGlobalClusterVariableResponse400
-    | UpdateGlobalClusterVariableResponse401
-    | UpdateGlobalClusterVariableResponse403
-    | UpdateGlobalClusterVariableResponse404
-    | UpdateGlobalClusterVariableResponse500
-]:
+    body: UpdateClusterVariableRequest,
+) -> Response[ClusterVariableResult | ProblemDetail]:
     """Update a global-scoped cluster variable
 
      Updates the value of an existing global cluster variable.
@@ -212,14 +165,14 @@ async def asyncio_detailed(
 
     Args:
         name (str):
-        body (UpdateGlobalClusterVariableData):
+        body (UpdateClusterVariableRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[UpdateGlobalClusterVariableResponse200 | UpdateGlobalClusterVariableResponse400 | UpdateGlobalClusterVariableResponse401 | UpdateGlobalClusterVariableResponse403 | UpdateGlobalClusterVariableResponse404 | UpdateGlobalClusterVariableResponse500]
+        Response[ClusterVariableResult | ProblemDetail]
     """
     kwargs = _get_kwargs(name=name, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -230,9 +183,9 @@ async def asyncio(
     name: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateGlobalClusterVariableData,
+    body: UpdateClusterVariableRequest,
     **kwargs: Any,
-) -> UpdateGlobalClusterVariableResponse200:
+) -> ClusterVariableResult:
     """Update a global-scoped cluster variable
 
      Updates the value of an existing global cluster variable.
@@ -240,7 +193,7 @@ async def asyncio(
 
     Args:
         name (str):
-        body (UpdateGlobalClusterVariableData):
+        body (UpdateClusterVariableRequest):
 
     Raises:
         errors.UpdateGlobalClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
@@ -251,39 +204,39 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UpdateGlobalClusterVariableResponse200"""
+        ClusterVariableResult"""
     response = await asyncio_detailed(name=name, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.UpdateGlobalClusterVariableBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateGlobalClusterVariableResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.UpdateGlobalClusterVariableUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateGlobalClusterVariableResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.UpdateGlobalClusterVariableForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateGlobalClusterVariableResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UpdateGlobalClusterVariableNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateGlobalClusterVariableResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UpdateGlobalClusterVariableInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateGlobalClusterVariableResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UpdateGlobalClusterVariableResponse200, response.parsed)
+    return cast(ClusterVariableResult, response.parsed)

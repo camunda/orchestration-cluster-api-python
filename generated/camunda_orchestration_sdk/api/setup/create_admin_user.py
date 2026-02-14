@@ -3,15 +3,12 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.create_admin_user_data import CreateAdminUserData
-from ...models.create_admin_user_response_400 import CreateAdminUserResponse400
-from ...models.create_admin_user_response_403 import CreateAdminUserResponse403
-from ...models.create_admin_user_response_500 import CreateAdminUserResponse500
-from ...models.create_admin_user_response_503 import CreateAdminUserResponse503
+from ...models.problem_detail import ProblemDetail
+from ...models.user_request import UserRequest
 from ...types import Response
 
 
-def _get_kwargs(*, body: CreateAdminUserData) -> dict[str, Any]:
+def _get_kwargs(*, body: UserRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/setup/user"}
     _kwargs["json"] = body.to_dict()
@@ -22,28 +19,21 @@ def _get_kwargs(*, body: CreateAdminUserData) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | CreateAdminUserResponse400
-    | CreateAdminUserResponse403
-    | CreateAdminUserResponse500
-    | CreateAdminUserResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 201:
         response_201 = cast(Any, None)
         return response_201
     if response.status_code == 400:
-        response_400 = CreateAdminUserResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 403:
-        response_403 = CreateAdminUserResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = CreateAdminUserResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = CreateAdminUserResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -53,13 +43,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | CreateAdminUserResponse400
-    | CreateAdminUserResponse403
-    | CreateAdminUserResponse500
-    | CreateAdminUserResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -69,28 +53,22 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: CreateAdminUserData
-) -> Response[
-    Any
-    | CreateAdminUserResponse400
-    | CreateAdminUserResponse403
-    | CreateAdminUserResponse500
-    | CreateAdminUserResponse503
-]:
+    *, client: AuthenticatedClient | Client, body: UserRequest
+) -> Response[Any | ProblemDetail]:
     """Create admin user
 
      Creates a new user and assigns the admin role to it. This endpoint is only usable when users are
     managed in the Orchestration Cluster and while no user is assigned to the admin role.
 
     Args:
-        body (CreateAdminUserData):
+        body (UserRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | CreateAdminUserResponse400 | CreateAdminUserResponse403 | CreateAdminUserResponse500 | CreateAdminUserResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -98,7 +76,7 @@ def sync_detailed(
 
 
 def sync(
-    *, client: AuthenticatedClient | Client, body: CreateAdminUserData, **kwargs: Any
+    *, client: AuthenticatedClient | Client, body: UserRequest, **kwargs: Any
 ) -> None:
     """Create admin user
 
@@ -106,7 +84,7 @@ def sync(
     managed in the Orchestration Cluster and while no user is assigned to the admin role.
 
     Args:
-        body (CreateAdminUserData):
+        body (UserRequest):
 
     Raises:
         errors.CreateAdminUserBadRequest: If the response status code is 400. The provided data is not valid.
@@ -123,53 +101,47 @@ def sync(
             raise errors.CreateAdminUserBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAdminUserResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.CreateAdminUserForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAdminUserResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CreateAdminUserInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAdminUserResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CreateAdminUserServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAdminUserResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: CreateAdminUserData
-) -> Response[
-    Any
-    | CreateAdminUserResponse400
-    | CreateAdminUserResponse403
-    | CreateAdminUserResponse500
-    | CreateAdminUserResponse503
-]:
+    *, client: AuthenticatedClient | Client, body: UserRequest
+) -> Response[Any | ProblemDetail]:
     """Create admin user
 
      Creates a new user and assigns the admin role to it. This endpoint is only usable when users are
     managed in the Orchestration Cluster and while no user is assigned to the admin role.
 
     Args:
-        body (CreateAdminUserData):
+        body (UserRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | CreateAdminUserResponse400 | CreateAdminUserResponse403 | CreateAdminUserResponse500 | CreateAdminUserResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -177,7 +149,7 @@ async def asyncio_detailed(
 
 
 async def asyncio(
-    *, client: AuthenticatedClient | Client, body: CreateAdminUserData, **kwargs: Any
+    *, client: AuthenticatedClient | Client, body: UserRequest, **kwargs: Any
 ) -> None:
     """Create admin user
 
@@ -185,7 +157,7 @@ async def asyncio(
     managed in the Orchestration Cluster and while no user is assigned to the admin role.
 
     Args:
-        body (CreateAdminUserData):
+        body (UserRequest):
 
     Raises:
         errors.CreateAdminUserBadRequest: If the response status code is 400. The provided data is not valid.
@@ -202,25 +174,25 @@ async def asyncio(
             raise errors.CreateAdminUserBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAdminUserResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.CreateAdminUserForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAdminUserResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CreateAdminUserInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAdminUserResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CreateAdminUserServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAdminUserResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

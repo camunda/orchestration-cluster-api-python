@@ -4,14 +4,11 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import os
-import shutil
 import subprocess
 import sys
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
-
-from hooks_shared import patch_bundled_spec
 
 REPO_URL = "https://github.com/camunda/camunda.git"
 SPEC_DIR = "zeebe/gateway-protocol/src/main/proto/v2"
@@ -19,9 +16,6 @@ SPEC_FILE = "rest-api.yaml"
 
 def log(msg: str) -> None:
     print(msg)
-
-def which(cmd: str) -> bool:
-    return shutil.which(cmd) is not None
 
 def ensure_cache_dir(cache_dir: Path) -> None:
     cache_dir.mkdir(parents=True, exist_ok=True)
@@ -60,91 +54,6 @@ def fetch_spec(cache_dir: Path, ref: str) -> Path:
 
     raise FileNotFoundError(f"OpenAPI spec not found at {spec_path}")
 
-def run_openapi_generator(spec: Path, out_dir: Path, config_path: Path, generator: str) -> None:
-    out_dir.mkdir(parents=True, exist_ok=True)
-    cmd = None
-    # This is for testing patches to the upstream generator using a local build
-    if os.environ.get("CAMUNDA_OPENAPI_GEN_LOCAL") == "1":
-        cmd = [
-            "java", "-jar", "/Users/jwulf/workspace/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar", "generate",
-            "-g", generator,
-            "-i", str(spec),
-            "-o", str(out_dir),
-            "-c", str(config_path),
-            "--skip-validate-spec"
-        ]
-    elif which("npx"):
-        cmd = [
-            "npx", "--yes", "@openapitools/openapi-generator-cli", "generate",
-            "-g", generator,
-            "-i", str(spec),
-            "-o", str(out_dir),
-            "-c", str(config_path),
-            "--skip-validate-spec"
-        ]
-    elif which("docker"):
-        cmd = [
-            "docker", "run", "--rm",
-            "-v", f"{spec.parent}:/spec",
-            "-v", f"{out_dir}:/out",
-            "-v", f"{config_path.parent}:/cfg",
-            "openapitools/openapi-generator-cli", "generate",
-            "-g", generator,
-            "-i", f"/spec/{spec.name}",
-            "-o", "/out",
-            "-c", f"/cfg/{config_path.name}",
-            "--skip-validate-spec"
-        ]
-    else:
-        raise RuntimeError("Neither npx nor docker is available to run openapi-generator")
-
-    log("Running OpenAPI Generator...")
-    subprocess.run(cmd, check=True)
-
-def run_python_client_generator(spec: Path, out_dir: Path, config_path: Path) -> None:
-    """Run openapi-python-client generator."""
-    import yaml
-    from bundle import bundle_spec
-
-    with open(config_path, "r", encoding="utf-8") as f:
-        config = yaml.safe_load(f)
-
-    package_name = config.get("package_name_override", "client")
-    actual_out_dir = out_dir / package_name
-
-    # Ensure parent directory exists because openapi-python-client might not create parents
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    # Bundle the spec first
-    bundled_spec_path = out_dir / "bundled_spec.yaml"
-    log(f"Bundling spec from {spec} to {bundled_spec_path}...")
-    bundle_spec(spec, bundled_spec_path)
-
-    # Patch the bundled spec
-    try:
-        log("Patching bundled spec...")
-        patch_bundled_spec.patch_bundled_spec(bundled_spec_path)
-    except ImportError as e:
-        log(f"Failed to import patch_bundled_spec hook: {e}")
-    except Exception as e:
-        log(f"Failed to patch bundled spec: {e}")
-
-    # Ensure the output directory exists (or let the tool handle it, but we might need to clear it first if we want a clean slate)
-    # openapi-python-client requires the output directory to NOT exist unless --overwrite is used.
-    # We will use --overwrite.
-    
-    cmd = [
-        "openapi-python-client", "generate",
-        "--path", str(bundled_spec_path),
-        "--config", str(config_path),
-        "--output-path", str(actual_out_dir),
-        "--overwrite",
-        "--meta", "none"
-    ]
-    
-    log(f"Running openapi-python-client with config {config_path}...")
-    subprocess.run(cmd, check=True)
-
 def load_hooks(hooks_dir: Path) -> list[Callable[[dict[str, str]], None]]:
     hooks: list[Callable[[dict[str, str]], None]] = []
     if not hooks_dir.exists():
@@ -178,21 +87,28 @@ def main():
     parser.add_argument("--out-dir", default="generated", help="Output directory for generated SDK")
     parser.add_argument("--cache-dir", default=".openapi-cache", help="Cache directory for spec repo")
     parser.add_argument("--spec-ref", default="main", help="Git ref/branch/tag for the spec repo")
-    parser.add_argument("--generator", default="python", help="OpenAPI generator name (default: python)")
+    parser.add_argument("--generator", default="openapi-python-client", help="OpenAPI generator name")
     parser.add_argument("--config", default="generator-config.yaml", help="Path to generator config")
     parser.add_argument("--skip-generate", action="store_true", help="Skip generation (run hooks only)")
     parser.add_argument("--package-name", default=None, help="Override packageName in config (in-memory)")
     parser.add_argument("--skip-tests", action="store_true", help="Skip acceptance tests")
     parser.add_argument("--local-spec", help="Path to local OpenAPI spec file (skips git fetch)")
+    parser.add_argument("--bundled-spec", help="Path to a pre-bundled spec (from camunda-schema-bundler). Skips fetch and bundling.")
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parent
     out_dir = (root / args.out_dir).resolve()
     cache_dir = (root / args.cache_dir).resolve()
     config_path = (root / args.config).resolve()
-    shared_hooks_dir = root / "hooks_shared"
 
-    if args.local_spec:
+    bundled_spec_input: Path | None = None
+    if args.bundled_spec:
+        bundled_spec_input = Path(args.bundled_spec).resolve()
+        if not bundled_spec_input.exists():
+            raise FileNotFoundError(f"Bundled spec not found: {bundled_spec_input}")
+        log(f"Using pre-bundled spec: {bundled_spec_input}")
+        spec_path = bundled_spec_input
+    elif args.local_spec:
         spec_path = Path(args.local_spec).resolve()
         if not spec_path.exists():
             raise FileNotFoundError(f"Local spec file not found: {spec_path}")
@@ -215,88 +131,62 @@ def main():
         effective_config = tmp_config
 
     if not args.skip_generate:
-        if args.generator == "openapi-python-client":
-            # For v2, we have pre-gen and post-gen hooks
-            hooks_root = root / "hooks_v2"
-            pre_gen_hooks_dir = hooks_root / "pre_gen"
-            post_gen_hooks_dir = hooks_root / "post_gen"
-            
-            # We need to bundle the spec first to run pre-gen hooks on it
-            # But run_python_client_generator does bundling internally.
-            # We should refactor run_python_client_generator to allow us to intervene.
-            
-            # Let's modify run_python_client_generator to take an optional pre-gen hook callback
-            # Or better, let's just split the logic here.
-            
-            import yaml
+        hooks_root = root / "hooks"
+        pre_gen_hooks_dir = hooks_root / "pre_gen"
+        post_gen_hooks_dir = hooks_root / "post_gen"
+
+        import yaml
+
+        out_dir.mkdir(parents=True, exist_ok=True)
+        bundled_spec_path = out_dir / "bundled_spec.yaml"
+
+        if args.bundled_spec:
+            # Use pre-bundled spec from camunda-schema-bundler
+            import shutil as _shutil
+            assert bundled_spec_input is not None
+            _shutil.copy2(bundled_spec_input, bundled_spec_path)
+            log(f"Using pre-bundled spec: {bundled_spec_input}")
+        else:
+            # Bundle from raw spec
             from bundle import bundle_spec
-            
-            # 1. Bundle
-            bundled_spec_path = out_dir / "bundled_spec.yaml"
-            out_dir.mkdir(parents=True, exist_ok=True)
             log(f"Bundling spec from {spec_path} to {bundled_spec_path}...")
             bundle_spec(spec_path, bundled_spec_path)
-            
-            # 2. Patch bundled spec (Shared hook)
-            try:
-                log("Patching bundled spec...")
-                patch_bundled_spec.patch_bundled_spec(bundled_spec_path)
-            except Exception as e:
-                log(f"Failed to patch bundled spec: {e}")
 
-            # 3. Run v2 Pre-Gen Hooks
-            context = {
-                "out_dir": str(out_dir),
-                "spec_path": str(spec_path),
-                "bundled_spec_path": str(bundled_spec_path),
-                "config_path": str(effective_config),
-                "generator": args.generator,
-            }
-            pre_hooks = load_hooks(pre_gen_hooks_dir)
-            run_hooks(pre_hooks, context)
-            
-            # 4. Generate
-            with open(effective_config, "r", encoding="utf-8") as f:
-                config = yaml.safe_load(f)
-            package_name = config.get("package_name_override", "client")
-            actual_out_dir = out_dir / package_name
-            
-            cmd = [
-                "openapi-python-client", "generate",
-                "--path", str(bundled_spec_path),
-                "--config", str(effective_config),
-                "--output-path", str(actual_out_dir),
-                "--overwrite",
-                "--meta", "none"
-            ]
-            log(f"Running openapi-python-client with config {effective_config}...")
-            subprocess.run(cmd, check=True)
-            
-            # 5. Run v2 Post-Gen Hooks
-            post_hooks = load_hooks(post_gen_hooks_dir)
-            run_hooks(post_hooks, context)
-            
-            # Run shared hooks (e.g. semantic types)
-            shared_hooks = load_hooks(shared_hooks_dir)
-            run_hooks(shared_hooks, context)
+        # Build context shared by all hooks
+        metadata_path = root / "external-spec" / "bundled" / "spec-metadata.json"
+        context = {
+            "out_dir": str(out_dir),
+            "spec_path": str(spec_path),
+            "bundled_spec_path": str(bundled_spec_path),
+            "metadata_path": str(metadata_path) if metadata_path.exists() else "",
+            "config_path": str(effective_config),
+            "generator": args.generator,
+        }
 
-        else:
-            # Legacy v1 flow
-            run_openapi_generator(spec_path, out_dir, effective_config, args.generator)
-            hooks_dir = root / "hooks_v1"
-            
-            context = {
-                "out_dir": str(out_dir),
-                "spec_path": str(spec_path),
-                "config_path": str(effective_config),
-                "generator": args.generator,
-            }
-            # Run shared post-processing hooks
-            shared_hooks = load_hooks(shared_hooks_dir)
-            run_hooks(shared_hooks, context)
-            # Run generator specific hooks
-            hooks = load_hooks(hooks_dir)
-            run_hooks(hooks, context)
+        # 1. Pre-gen hooks (spec transforms)
+        pre_hooks = load_hooks(pre_gen_hooks_dir)
+        run_hooks(pre_hooks, context)
+
+        # 2. Generate
+        with open(effective_config, "r", encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+        package_name = config.get("package_name_override", "client")
+        actual_out_dir = out_dir / package_name
+
+        cmd = [
+            "openapi-python-client", "generate",
+            "--path", str(bundled_spec_path),
+            "--config", str(effective_config),
+            "--output-path", str(actual_out_dir),
+            "--overwrite",
+            "--meta", "none"
+        ]
+        log(f"Running openapi-python-client with config {effective_config}...")
+        subprocess.run(cmd, check=True)
+
+        # 3. Post-gen hooks (code transforms)
+        post_hooks = load_hooks(post_gen_hooks_dir)
+        run_hooks(post_hooks, context)
 
     # Run acceptance tests as final stage
     if not args.skip_tests:

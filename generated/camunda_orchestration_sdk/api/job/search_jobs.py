@@ -3,16 +3,13 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.search_jobs_data import SearchJobsData
+from ...models.job_search_query import JobSearchQuery
+from ...models.problem_detail import ProblemDetail
 from ...models.search_jobs_response_200 import SearchJobsResponse200
-from ...models.search_jobs_response_400 import SearchJobsResponse400
-from ...models.search_jobs_response_401 import SearchJobsResponse401
-from ...models.search_jobs_response_403 import SearchJobsResponse403
-from ...models.search_jobs_response_500 import SearchJobsResponse500
 from ...types import UNSET, Response, Unset
 
 
-def _get_kwargs(*, body: SearchJobsData | Unset = UNSET) -> dict[str, Any]:
+def _get_kwargs(*, body: JobSearchQuery | Unset = UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/jobs/search"}
     if not isinstance(body, Unset):
@@ -24,28 +21,21 @@ def _get_kwargs(*, body: SearchJobsData | Unset = UNSET) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    SearchJobsResponse200
-    | SearchJobsResponse400
-    | SearchJobsResponse401
-    | SearchJobsResponse403
-    | SearchJobsResponse500
-    | None
-):
+) -> ProblemDetail | SearchJobsResponse200 | None:
     if response.status_code == 200:
         response_200 = SearchJobsResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = SearchJobsResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = SearchJobsResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = SearchJobsResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = SearchJobsResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -55,13 +45,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    SearchJobsResponse200
-    | SearchJobsResponse400
-    | SearchJobsResponse401
-    | SearchJobsResponse403
-    | SearchJobsResponse500
-]:
+) -> Response[ProblemDetail | SearchJobsResponse200]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -71,27 +55,21 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: SearchJobsData | Unset = UNSET
-) -> Response[
-    SearchJobsResponse200
-    | SearchJobsResponse400
-    | SearchJobsResponse401
-    | SearchJobsResponse403
-    | SearchJobsResponse500
-]:
+    *, client: AuthenticatedClient | Client, body: JobSearchQuery | Unset = UNSET
+) -> Response[ProblemDetail | SearchJobsResponse200]:
     """Search jobs
 
      Search for jobs based on given criteria.
 
     Args:
-        body (SearchJobsData | Unset): Job search request.
+        body (JobSearchQuery | Unset): Job search request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchJobsResponse200 | SearchJobsResponse400 | SearchJobsResponse401 | SearchJobsResponse403 | SearchJobsResponse500]
+        Response[ProblemDetail | SearchJobsResponse200]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -101,7 +79,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchJobsData | Unset = UNSET,
+    body: JobSearchQuery | Unset = UNSET,
     **kwargs: Any,
 ) -> SearchJobsResponse200:
     """Search jobs
@@ -109,7 +87,7 @@ def sync(
      Search for jobs based on given criteria.
 
     Args:
-        body (SearchJobsData | Unset): Job search request.
+        body (JobSearchQuery | Unset): Job search request.
 
     Raises:
         errors.SearchJobsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -126,25 +104,25 @@ def sync(
             raise errors.SearchJobsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchJobsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchJobsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchJobsResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchJobsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchJobsResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchJobsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchJobsResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
@@ -152,27 +130,21 @@ def sync(
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: SearchJobsData | Unset = UNSET
-) -> Response[
-    SearchJobsResponse200
-    | SearchJobsResponse400
-    | SearchJobsResponse401
-    | SearchJobsResponse403
-    | SearchJobsResponse500
-]:
+    *, client: AuthenticatedClient | Client, body: JobSearchQuery | Unset = UNSET
+) -> Response[ProblemDetail | SearchJobsResponse200]:
     """Search jobs
 
      Search for jobs based on given criteria.
 
     Args:
-        body (SearchJobsData | Unset): Job search request.
+        body (JobSearchQuery | Unset): Job search request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchJobsResponse200 | SearchJobsResponse400 | SearchJobsResponse401 | SearchJobsResponse403 | SearchJobsResponse500]
+        Response[ProblemDetail | SearchJobsResponse200]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -182,7 +154,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchJobsData | Unset = UNSET,
+    body: JobSearchQuery | Unset = UNSET,
     **kwargs: Any,
 ) -> SearchJobsResponse200:
     """Search jobs
@@ -190,7 +162,7 @@ async def asyncio(
      Search for jobs based on given criteria.
 
     Args:
-        body (SearchJobsData | Unset): Job search request.
+        body (JobSearchQuery | Unset): Job search request.
 
     Raises:
         errors.SearchJobsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -207,25 +179,25 @@ async def asyncio(
             raise errors.SearchJobsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchJobsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchJobsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchJobsResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchJobsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchJobsResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchJobsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchJobsResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

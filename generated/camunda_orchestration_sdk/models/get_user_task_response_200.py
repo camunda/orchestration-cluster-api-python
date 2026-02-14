@@ -26,13 +26,11 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
-from ..models.get_user_task_response_200_state import GetUserTaskResponse200State
+from ..models.user_task_state_enum import UserTaskStateEnum
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.get_user_task_response_200_custom_headers import (
-        GetUserTaskResponse200CustomHeaders,
-    )
+    from ..models.user_task_result_custom_headers import UserTaskResultCustomHeaders
 
 
 T = TypeVar("T", bound="GetUserTaskResponse200")
@@ -43,7 +41,7 @@ class GetUserTaskResponse200:
     """
     Attributes:
         name (str | Unset): The name for this user task.
-        state (GetUserTaskResponse200State | Unset): The state of the user task.
+        state (UserTaskStateEnum | Unset): The state of the user task.
         assignee (str | Unset): The assignee of the user task.
         element_id (str | Unset): The element ID of the user task. Example: Activity_106kosb.
         candidate_groups (list[str] | Unset): The candidate groups for this user task.
@@ -56,7 +54,7 @@ class GetUserTaskResponse200:
         tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
         external_form_reference (str | Unset): The external form reference.
         process_definition_version (int | Unset): The version of the process definition.
-        custom_headers (GetUserTaskResponse200CustomHeaders | Unset): Custom headers for the user task.
+        custom_headers (UserTaskResultCustomHeaders | Unset): Custom headers for the user task.
         priority (int | Unset): The priority of a user task. The higher the value the higher the priority. Default: 50.
         user_task_key (str | Unset): The key of the user task.
         element_instance_key (str | Unset): The key of the element instance. Example: 2251799813686789.
@@ -69,7 +67,7 @@ class GetUserTaskResponse200:
     """
 
     name: str | Unset = UNSET
-    state: GetUserTaskResponse200State | Unset = UNSET
+    state: UserTaskStateEnum | Unset = UNSET
     assignee: str | Unset = UNSET
     element_id: ElementId | Unset = UNSET
     candidate_groups: list[str] | Unset = UNSET
@@ -82,7 +80,7 @@ class GetUserTaskResponse200:
     tenant_id: TenantId | Unset = UNSET
     external_form_reference: str | Unset = UNSET
     process_definition_version: int | Unset = UNSET
-    custom_headers: GetUserTaskResponse200CustomHeaders | Unset = UNSET
+    custom_headers: UserTaskResultCustomHeaders | Unset = UNSET
     priority: int | Unset = 50
     user_task_key: UserTaskKey | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
@@ -214,19 +212,17 @@ class GetUserTaskResponse200:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.get_user_task_response_200_custom_headers import (
-            GetUserTaskResponse200CustomHeaders,
-        )
+        from ..models.user_task_result_custom_headers import UserTaskResultCustomHeaders
 
         d = dict(src_dict)
         name = d.pop("name", UNSET)
 
         _state = d.pop("state", UNSET)
-        state: GetUserTaskResponse200State | Unset
+        state: UserTaskStateEnum | Unset
         if isinstance(_state, Unset):
             state = UNSET
         else:
-            state = GetUserTaskResponse200State(_state)
+            state = UserTaskStateEnum(_state)
 
         assignee = d.pop("assignee", UNSET)
 
@@ -285,13 +281,11 @@ class GetUserTaskResponse200:
         process_definition_version = d.pop("processDefinitionVersion", UNSET)
 
         _custom_headers = d.pop("customHeaders", UNSET)
-        custom_headers: GetUserTaskResponse200CustomHeaders | Unset
+        custom_headers: UserTaskResultCustomHeaders | Unset
         if isinstance(_custom_headers, Unset):
             custom_headers = UNSET
         else:
-            custom_headers = GetUserTaskResponse200CustomHeaders.from_dict(
-                _custom_headers
-            )
+            custom_headers = UserTaskResultCustomHeaders.from_dict(_custom_headers)
 
         priority = d.pop("priority", UNSET)
 

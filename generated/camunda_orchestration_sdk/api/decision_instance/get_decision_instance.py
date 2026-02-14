@@ -4,12 +4,8 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_decision_instance_response_200 import GetDecisionInstanceResponse200
-from ...models.get_decision_instance_response_400 import GetDecisionInstanceResponse400
-from ...models.get_decision_instance_response_401 import GetDecisionInstanceResponse401
-from ...models.get_decision_instance_response_403 import GetDecisionInstanceResponse403
-from ...models.get_decision_instance_response_404 import GetDecisionInstanceResponse404
-from ...models.get_decision_instance_response_500 import GetDecisionInstanceResponse500
+from ...models.decision_instance_get_query_result import DecisionInstanceGetQueryResult
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -27,32 +23,24 @@ def _get_kwargs(decision_evaluation_instance_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetDecisionInstanceResponse200
-    | GetDecisionInstanceResponse400
-    | GetDecisionInstanceResponse401
-    | GetDecisionInstanceResponse403
-    | GetDecisionInstanceResponse404
-    | GetDecisionInstanceResponse500
-    | None
-):
+) -> DecisionInstanceGetQueryResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = GetDecisionInstanceResponse200.from_dict(response.json())
+        response_200 = DecisionInstanceGetQueryResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = GetDecisionInstanceResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = GetDecisionInstanceResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetDecisionInstanceResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = GetDecisionInstanceResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetDecisionInstanceResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -62,14 +50,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetDecisionInstanceResponse200
-    | GetDecisionInstanceResponse400
-    | GetDecisionInstanceResponse401
-    | GetDecisionInstanceResponse403
-    | GetDecisionInstanceResponse404
-    | GetDecisionInstanceResponse500
-]:
+) -> Response[DecisionInstanceGetQueryResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -80,14 +61,7 @@ def _build_response(
 
 def sync_detailed(
     decision_evaluation_instance_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetDecisionInstanceResponse200
-    | GetDecisionInstanceResponse400
-    | GetDecisionInstanceResponse401
-    | GetDecisionInstanceResponse403
-    | GetDecisionInstanceResponse404
-    | GetDecisionInstanceResponse500
-]:
+) -> Response[DecisionInstanceGetQueryResult | ProblemDetail]:
     """Get decision instance
 
      Returns a decision instance.
@@ -101,7 +75,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetDecisionInstanceResponse200 | GetDecisionInstanceResponse400 | GetDecisionInstanceResponse401 | GetDecisionInstanceResponse403 | GetDecisionInstanceResponse404 | GetDecisionInstanceResponse500]
+        Response[DecisionInstanceGetQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(
         decision_evaluation_instance_key=decision_evaluation_instance_key
@@ -115,7 +89,7 @@ def sync(
     *,
     client: AuthenticatedClient | Client,
     **kwargs: Any,
-) -> GetDecisionInstanceResponse200:
+) -> DecisionInstanceGetQueryResult:
     """Get decision instance
 
      Returns a decision instance.
@@ -133,7 +107,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetDecisionInstanceResponse200"""
+        DecisionInstanceGetQueryResult"""
     response = sync_detailed(
         decision_evaluation_instance_key=decision_evaluation_instance_key, client=client
     )
@@ -142,47 +116,40 @@ def sync(
             raise errors.GetDecisionInstanceBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionInstanceResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetDecisionInstanceUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionInstanceResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetDecisionInstanceForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionInstanceResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetDecisionInstanceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionInstanceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetDecisionInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetDecisionInstanceResponse200, response.parsed)
+    return cast(DecisionInstanceGetQueryResult, response.parsed)
 
 
 async def asyncio_detailed(
     decision_evaluation_instance_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetDecisionInstanceResponse200
-    | GetDecisionInstanceResponse400
-    | GetDecisionInstanceResponse401
-    | GetDecisionInstanceResponse403
-    | GetDecisionInstanceResponse404
-    | GetDecisionInstanceResponse500
-]:
+) -> Response[DecisionInstanceGetQueryResult | ProblemDetail]:
     """Get decision instance
 
      Returns a decision instance.
@@ -196,7 +163,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetDecisionInstanceResponse200 | GetDecisionInstanceResponse400 | GetDecisionInstanceResponse401 | GetDecisionInstanceResponse403 | GetDecisionInstanceResponse404 | GetDecisionInstanceResponse500]
+        Response[DecisionInstanceGetQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(
         decision_evaluation_instance_key=decision_evaluation_instance_key
@@ -210,7 +177,7 @@ async def asyncio(
     *,
     client: AuthenticatedClient | Client,
     **kwargs: Any,
-) -> GetDecisionInstanceResponse200:
+) -> DecisionInstanceGetQueryResult:
     """Get decision instance
 
      Returns a decision instance.
@@ -228,7 +195,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetDecisionInstanceResponse200"""
+        DecisionInstanceGetQueryResult"""
     response = await asyncio_detailed(
         decision_evaluation_instance_key=decision_evaluation_instance_key, client=client
     )
@@ -237,32 +204,32 @@ async def asyncio(
             raise errors.GetDecisionInstanceBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionInstanceResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetDecisionInstanceUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionInstanceResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetDecisionInstanceForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionInstanceResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetDecisionInstanceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionInstanceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetDecisionInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDecisionInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetDecisionInstanceResponse200, response.parsed)
+    return cast(DecisionInstanceGetQueryResult, response.parsed)

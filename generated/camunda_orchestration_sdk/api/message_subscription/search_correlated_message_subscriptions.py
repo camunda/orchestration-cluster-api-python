@@ -3,29 +3,18 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.search_correlated_message_subscriptions_data import (
-    SearchCorrelatedMessageSubscriptionsData,
+from ...models.correlated_message_subscription_search_query import (
+    CorrelatedMessageSubscriptionSearchQuery,
 )
-from ...models.search_correlated_message_subscriptions_response_200 import (
-    SearchCorrelatedMessageSubscriptionsResponse200,
+from ...models.correlated_message_subscription_search_query_result import (
+    CorrelatedMessageSubscriptionSearchQueryResult,
 )
-from ...models.search_correlated_message_subscriptions_response_400 import (
-    SearchCorrelatedMessageSubscriptionsResponse400,
-)
-from ...models.search_correlated_message_subscriptions_response_401 import (
-    SearchCorrelatedMessageSubscriptionsResponse401,
-)
-from ...models.search_correlated_message_subscriptions_response_403 import (
-    SearchCorrelatedMessageSubscriptionsResponse403,
-)
-from ...models.search_correlated_message_subscriptions_response_500 import (
-    SearchCorrelatedMessageSubscriptionsResponse500,
-)
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    *, body: SearchCorrelatedMessageSubscriptionsData | Unset = UNSET
+    *, body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -41,38 +30,23 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    SearchCorrelatedMessageSubscriptionsResponse200
-    | SearchCorrelatedMessageSubscriptionsResponse400
-    | SearchCorrelatedMessageSubscriptionsResponse401
-    | SearchCorrelatedMessageSubscriptionsResponse403
-    | SearchCorrelatedMessageSubscriptionsResponse500
-    | None
-):
+) -> CorrelatedMessageSubscriptionSearchQueryResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = SearchCorrelatedMessageSubscriptionsResponse200.from_dict(
+        response_200 = CorrelatedMessageSubscriptionSearchQueryResult.from_dict(
             response.json()
         )
         return response_200
     if response.status_code == 400:
-        response_400 = SearchCorrelatedMessageSubscriptionsResponse400.from_dict(
-            response.json()
-        )
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = SearchCorrelatedMessageSubscriptionsResponse401.from_dict(
-            response.json()
-        )
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = SearchCorrelatedMessageSubscriptionsResponse403.from_dict(
-            response.json()
-        )
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = SearchCorrelatedMessageSubscriptionsResponse500.from_dict(
-            response.json()
-        )
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -82,13 +56,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    SearchCorrelatedMessageSubscriptionsResponse200
-    | SearchCorrelatedMessageSubscriptionsResponse400
-    | SearchCorrelatedMessageSubscriptionsResponse401
-    | SearchCorrelatedMessageSubscriptionsResponse403
-    | SearchCorrelatedMessageSubscriptionsResponse500
-]:
+) -> Response[CorrelatedMessageSubscriptionSearchQueryResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -100,27 +68,21 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchCorrelatedMessageSubscriptionsData | Unset = UNSET,
-) -> Response[
-    SearchCorrelatedMessageSubscriptionsResponse200
-    | SearchCorrelatedMessageSubscriptionsResponse400
-    | SearchCorrelatedMessageSubscriptionsResponse401
-    | SearchCorrelatedMessageSubscriptionsResponse403
-    | SearchCorrelatedMessageSubscriptionsResponse500
-]:
+    body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET,
+) -> Response[CorrelatedMessageSubscriptionSearchQueryResult | ProblemDetail]:
     """Search correlated message subscriptions
 
      Search correlated message subscriptions based on given criteria.
 
     Args:
-        body (SearchCorrelatedMessageSubscriptionsData | Unset):
+        body (CorrelatedMessageSubscriptionSearchQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchCorrelatedMessageSubscriptionsResponse200 | SearchCorrelatedMessageSubscriptionsResponse400 | SearchCorrelatedMessageSubscriptionsResponse401 | SearchCorrelatedMessageSubscriptionsResponse403 | SearchCorrelatedMessageSubscriptionsResponse500]
+        Response[CorrelatedMessageSubscriptionSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -130,15 +92,15 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchCorrelatedMessageSubscriptionsData | Unset = UNSET,
+    body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET,
     **kwargs: Any,
-) -> SearchCorrelatedMessageSubscriptionsResponse200:
+) -> CorrelatedMessageSubscriptionSearchQueryResult:
     """Search correlated message subscriptions
 
      Search correlated message subscriptions based on given criteria.
 
     Args:
-        body (SearchCorrelatedMessageSubscriptionsData | Unset):
+        body (CorrelatedMessageSubscriptionSearchQuery | Unset):
 
     Raises:
         errors.SearchCorrelatedMessageSubscriptionsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -148,70 +110,56 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchCorrelatedMessageSubscriptionsResponse200"""
+        CorrelatedMessageSubscriptionSearchQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.SearchCorrelatedMessageSubscriptionsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    SearchCorrelatedMessageSubscriptionsResponse400, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchCorrelatedMessageSubscriptionsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    SearchCorrelatedMessageSubscriptionsResponse401, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchCorrelatedMessageSubscriptionsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    SearchCorrelatedMessageSubscriptionsResponse403, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchCorrelatedMessageSubscriptionsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    SearchCorrelatedMessageSubscriptionsResponse500, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchCorrelatedMessageSubscriptionsResponse200, response.parsed)
+    return cast(CorrelatedMessageSubscriptionSearchQueryResult, response.parsed)
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchCorrelatedMessageSubscriptionsData | Unset = UNSET,
-) -> Response[
-    SearchCorrelatedMessageSubscriptionsResponse200
-    | SearchCorrelatedMessageSubscriptionsResponse400
-    | SearchCorrelatedMessageSubscriptionsResponse401
-    | SearchCorrelatedMessageSubscriptionsResponse403
-    | SearchCorrelatedMessageSubscriptionsResponse500
-]:
+    body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET,
+) -> Response[CorrelatedMessageSubscriptionSearchQueryResult | ProblemDetail]:
     """Search correlated message subscriptions
 
      Search correlated message subscriptions based on given criteria.
 
     Args:
-        body (SearchCorrelatedMessageSubscriptionsData | Unset):
+        body (CorrelatedMessageSubscriptionSearchQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchCorrelatedMessageSubscriptionsResponse200 | SearchCorrelatedMessageSubscriptionsResponse400 | SearchCorrelatedMessageSubscriptionsResponse401 | SearchCorrelatedMessageSubscriptionsResponse403 | SearchCorrelatedMessageSubscriptionsResponse500]
+        Response[CorrelatedMessageSubscriptionSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -221,15 +169,15 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchCorrelatedMessageSubscriptionsData | Unset = UNSET,
+    body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET,
     **kwargs: Any,
-) -> SearchCorrelatedMessageSubscriptionsResponse200:
+) -> CorrelatedMessageSubscriptionSearchQueryResult:
     """Search correlated message subscriptions
 
      Search correlated message subscriptions based on given criteria.
 
     Args:
-        body (SearchCorrelatedMessageSubscriptionsData | Unset):
+        body (CorrelatedMessageSubscriptionSearchQuery | Unset):
 
     Raises:
         errors.SearchCorrelatedMessageSubscriptionsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -239,41 +187,33 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchCorrelatedMessageSubscriptionsResponse200"""
+        CorrelatedMessageSubscriptionSearchQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.SearchCorrelatedMessageSubscriptionsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    SearchCorrelatedMessageSubscriptionsResponse400, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchCorrelatedMessageSubscriptionsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    SearchCorrelatedMessageSubscriptionsResponse401, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchCorrelatedMessageSubscriptionsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    SearchCorrelatedMessageSubscriptionsResponse403, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchCorrelatedMessageSubscriptionsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    SearchCorrelatedMessageSubscriptionsResponse500, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchCorrelatedMessageSubscriptionsResponse200, response.parsed)
+    return cast(CorrelatedMessageSubscriptionSearchQueryResult, response.parsed)

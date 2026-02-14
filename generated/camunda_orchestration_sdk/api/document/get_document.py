@@ -5,8 +5,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_document_response_404 import GetDocumentResponse404
-from ...models.get_document_response_500 import GetDocumentResponse500
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, File, Response, Unset
 
 
@@ -32,15 +31,15 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> File | GetDocumentResponse404 | GetDocumentResponse500 | None:
+) -> File | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = File(payload=BytesIO(response.content))
         return response_200
     if response.status_code == 404:
-        response_404 = GetDocumentResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetDocumentResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -50,7 +49,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[File | GetDocumentResponse404 | GetDocumentResponse500]:
+) -> Response[File | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -65,7 +64,7 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
-) -> Response[File | GetDocumentResponse404 | GetDocumentResponse500]:
+) -> Response[File | ProblemDetail]:
     """Download document
 
      Download a document from the Camunda 8 cluster.
@@ -83,7 +82,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[File | GetDocumentResponse404 | GetDocumentResponse500]
+        Response[File | ProblemDetail]
     """
     kwargs = _get_kwargs(
         document_id=document_id, store_id=store_id, content_hash=content_hash
@@ -130,13 +129,13 @@ def sync(
             raise errors.GetDocumentNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDocumentResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetDocumentInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDocumentResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
@@ -149,7 +148,7 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     store_id: str | Unset = UNSET,
     content_hash: str | Unset = UNSET,
-) -> Response[File | GetDocumentResponse404 | GetDocumentResponse500]:
+) -> Response[File | ProblemDetail]:
     """Download document
 
      Download a document from the Camunda 8 cluster.
@@ -167,7 +166,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[File | GetDocumentResponse404 | GetDocumentResponse500]
+        Response[File | ProblemDetail]
     """
     kwargs = _get_kwargs(
         document_id=document_id, store_id=store_id, content_hash=content_hash
@@ -214,13 +213,13 @@ async def asyncio(
             raise errors.GetDocumentNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDocumentResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetDocumentInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetDocumentResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

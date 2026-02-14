@@ -3,16 +3,13 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.search_incidents_data import SearchIncidentsData
-from ...models.search_incidents_response_200 import SearchIncidentsResponse200
-from ...models.search_incidents_response_400 import SearchIncidentsResponse400
-from ...models.search_incidents_response_401 import SearchIncidentsResponse401
-from ...models.search_incidents_response_403 import SearchIncidentsResponse403
-from ...models.search_incidents_response_500 import SearchIncidentsResponse500
+from ...models.incident_search_query import IncidentSearchQuery
+from ...models.incident_search_query_result import IncidentSearchQueryResult
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
-def _get_kwargs(*, body: SearchIncidentsData | Unset = UNSET) -> dict[str, Any]:
+def _get_kwargs(*, body: IncidentSearchQuery | Unset = UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/incidents/search"}
     if not isinstance(body, Unset):
@@ -24,28 +21,21 @@ def _get_kwargs(*, body: SearchIncidentsData | Unset = UNSET) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    SearchIncidentsResponse200
-    | SearchIncidentsResponse400
-    | SearchIncidentsResponse401
-    | SearchIncidentsResponse403
-    | SearchIncidentsResponse500
-    | None
-):
+) -> IncidentSearchQueryResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = SearchIncidentsResponse200.from_dict(response.json())
+        response_200 = IncidentSearchQueryResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = SearchIncidentsResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = SearchIncidentsResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = SearchIncidentsResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = SearchIncidentsResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -55,13 +45,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    SearchIncidentsResponse200
-    | SearchIncidentsResponse400
-    | SearchIncidentsResponse401
-    | SearchIncidentsResponse403
-    | SearchIncidentsResponse500
-]:
+) -> Response[IncidentSearchQueryResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -71,27 +55,21 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: SearchIncidentsData | Unset = UNSET
-) -> Response[
-    SearchIncidentsResponse200
-    | SearchIncidentsResponse400
-    | SearchIncidentsResponse401
-    | SearchIncidentsResponse403
-    | SearchIncidentsResponse500
-]:
+    *, client: AuthenticatedClient | Client, body: IncidentSearchQuery | Unset = UNSET
+) -> Response[IncidentSearchQueryResult | ProblemDetail]:
     """Search incidents
 
      Search for incidents based on given criteria.
 
     Args:
-        body (SearchIncidentsData | Unset):
+        body (IncidentSearchQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchIncidentsResponse200 | SearchIncidentsResponse400 | SearchIncidentsResponse401 | SearchIncidentsResponse403 | SearchIncidentsResponse500]
+        Response[IncidentSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -101,15 +79,15 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchIncidentsData | Unset = UNSET,
+    body: IncidentSearchQuery | Unset = UNSET,
     **kwargs: Any,
-) -> SearchIncidentsResponse200:
+) -> IncidentSearchQueryResult:
     """Search incidents
 
      Search for incidents based on given criteria.
 
     Args:
-        body (SearchIncidentsData | Unset):
+        body (IncidentSearchQuery | Unset):
 
     Raises:
         errors.SearchIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -119,60 +97,54 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchIncidentsResponse200"""
+        IncidentSearchQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.SearchIncidentsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchIncidentsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchIncidentsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchIncidentsResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchIncidentsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchIncidentsResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchIncidentsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchIncidentsResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchIncidentsResponse200, response.parsed)
+    return cast(IncidentSearchQueryResult, response.parsed)
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: SearchIncidentsData | Unset = UNSET
-) -> Response[
-    SearchIncidentsResponse200
-    | SearchIncidentsResponse400
-    | SearchIncidentsResponse401
-    | SearchIncidentsResponse403
-    | SearchIncidentsResponse500
-]:
+    *, client: AuthenticatedClient | Client, body: IncidentSearchQuery | Unset = UNSET
+) -> Response[IncidentSearchQueryResult | ProblemDetail]:
     """Search incidents
 
      Search for incidents based on given criteria.
 
     Args:
-        body (SearchIncidentsData | Unset):
+        body (IncidentSearchQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchIncidentsResponse200 | SearchIncidentsResponse400 | SearchIncidentsResponse401 | SearchIncidentsResponse403 | SearchIncidentsResponse500]
+        Response[IncidentSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -182,15 +154,15 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchIncidentsData | Unset = UNSET,
+    body: IncidentSearchQuery | Unset = UNSET,
     **kwargs: Any,
-) -> SearchIncidentsResponse200:
+) -> IncidentSearchQueryResult:
     """Search incidents
 
      Search for incidents based on given criteria.
 
     Args:
-        body (SearchIncidentsData | Unset):
+        body (IncidentSearchQuery | Unset):
 
     Raises:
         errors.SearchIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -200,33 +172,33 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchIncidentsResponse200"""
+        IncidentSearchQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.SearchIncidentsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchIncidentsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchIncidentsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchIncidentsResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchIncidentsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchIncidentsResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchIncidentsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchIncidentsResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchIncidentsResponse200, response.parsed)
+    return cast(IncidentSearchQueryResult, response.parsed)

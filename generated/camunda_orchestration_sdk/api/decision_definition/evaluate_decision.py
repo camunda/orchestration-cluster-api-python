@@ -3,24 +3,22 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.decisionevaluationby_id import DecisionevaluationbyID
-from ...models.decisionevaluationbykey import Decisionevaluationbykey
-from ...models.evaluate_decision_response_200 import EvaluateDecisionResponse200
-from ...models.evaluate_decision_response_400 import EvaluateDecisionResponse400
-from ...models.evaluate_decision_response_500 import EvaluateDecisionResponse500
-from ...models.evaluate_decision_response_503 import EvaluateDecisionResponse503
+from ...models.decision_evaluation_by_id import DecisionEvaluationByID
+from ...models.decision_evaluation_by_key import DecisionEvaluationByKey
+from ...models.evaluate_decision_result import EvaluateDecisionResult
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
 def _get_kwargs(
-    *, body: DecisionevaluationbyID | Decisionevaluationbykey
+    *, body: DecisionEvaluationByID | DecisionEvaluationByKey
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
         "method": "post",
         "url": "/decision-definitions/evaluation",
     }
-    if isinstance(body, DecisionevaluationbyID):
+    if isinstance(body, DecisionEvaluationByID):
         _kwargs["json"] = body.to_dict()
     else:
         _kwargs["json"] = body.to_dict()
@@ -31,28 +29,21 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | EvaluateDecisionResponse200
-    | EvaluateDecisionResponse400
-    | EvaluateDecisionResponse500
-    | EvaluateDecisionResponse503
-    | None
-):
+) -> Any | EvaluateDecisionResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = EvaluateDecisionResponse200.from_dict(response.json())
+        response_200 = EvaluateDecisionResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = EvaluateDecisionResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 404:
         response_404 = cast(Any, None)
         return response_404
     if response.status_code == 500:
-        response_500 = EvaluateDecisionResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = EvaluateDecisionResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -62,13 +53,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | EvaluateDecisionResponse200
-    | EvaluateDecisionResponse400
-    | EvaluateDecisionResponse500
-    | EvaluateDecisionResponse503
-]:
+) -> Response[Any | EvaluateDecisionResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -80,14 +65,8 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: DecisionevaluationbyID | Decisionevaluationbykey,
-) -> Response[
-    Any
-    | EvaluateDecisionResponse200
-    | EvaluateDecisionResponse400
-    | EvaluateDecisionResponse500
-    | EvaluateDecisionResponse503
-]:
+    body: DecisionEvaluationByID | DecisionEvaluationByKey,
+) -> Response[Any | EvaluateDecisionResult | ProblemDetail]:
     """Evaluate decision
 
      Evaluates a decision.
@@ -96,14 +75,14 @@ def sync_detailed(
     version of the decision is used.
 
     Args:
-        body (DecisionevaluationbyID | Decisionevaluationbykey):
+        body (DecisionEvaluationByID | DecisionEvaluationByKey):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | EvaluateDecisionResponse200 | EvaluateDecisionResponse400 | EvaluateDecisionResponse500 | EvaluateDecisionResponse503]
+        Response[Any | EvaluateDecisionResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -113,9 +92,9 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: DecisionevaluationbyID | Decisionevaluationbykey,
+    body: DecisionEvaluationByID | DecisionEvaluationByKey,
     **kwargs: Any,
-) -> EvaluateDecisionResponse200:
+) -> EvaluateDecisionResult:
     """Evaluate decision
 
      Evaluates a decision.
@@ -124,7 +103,7 @@ def sync(
     version of the decision is used.
 
     Args:
-        body (DecisionevaluationbyID | Decisionevaluationbykey):
+        body (DecisionEvaluationByID | DecisionEvaluationByKey):
 
     Raises:
         errors.EvaluateDecisionBadRequest: If the response status code is 400. The provided data is not valid.
@@ -134,14 +113,14 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        EvaluateDecisionResponse200"""
+        EvaluateDecisionResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.EvaluateDecisionBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(EvaluateDecisionResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.EvaluateDecisionNotFound(
@@ -153,30 +132,24 @@ def sync(
             raise errors.EvaluateDecisionInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(EvaluateDecisionResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.EvaluateDecisionServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(EvaluateDecisionResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(EvaluateDecisionResponse200, response.parsed)
+    return cast(EvaluateDecisionResult, response.parsed)
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: DecisionevaluationbyID | Decisionevaluationbykey,
-) -> Response[
-    Any
-    | EvaluateDecisionResponse200
-    | EvaluateDecisionResponse400
-    | EvaluateDecisionResponse500
-    | EvaluateDecisionResponse503
-]:
+    body: DecisionEvaluationByID | DecisionEvaluationByKey,
+) -> Response[Any | EvaluateDecisionResult | ProblemDetail]:
     """Evaluate decision
 
      Evaluates a decision.
@@ -185,14 +158,14 @@ async def asyncio_detailed(
     version of the decision is used.
 
     Args:
-        body (DecisionevaluationbyID | Decisionevaluationbykey):
+        body (DecisionEvaluationByID | DecisionEvaluationByKey):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | EvaluateDecisionResponse200 | EvaluateDecisionResponse400 | EvaluateDecisionResponse500 | EvaluateDecisionResponse503]
+        Response[Any | EvaluateDecisionResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -202,9 +175,9 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: DecisionevaluationbyID | Decisionevaluationbykey,
+    body: DecisionEvaluationByID | DecisionEvaluationByKey,
     **kwargs: Any,
-) -> EvaluateDecisionResponse200:
+) -> EvaluateDecisionResult:
     """Evaluate decision
 
      Evaluates a decision.
@@ -213,7 +186,7 @@ async def asyncio(
     version of the decision is used.
 
     Args:
-        body (DecisionevaluationbyID | Decisionevaluationbykey):
+        body (DecisionEvaluationByID | DecisionEvaluationByKey):
 
     Raises:
         errors.EvaluateDecisionBadRequest: If the response status code is 400. The provided data is not valid.
@@ -223,14 +196,14 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        EvaluateDecisionResponse200"""
+        EvaluateDecisionResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.EvaluateDecisionBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(EvaluateDecisionResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.EvaluateDecisionNotFound(
@@ -242,14 +215,14 @@ async def asyncio(
             raise errors.EvaluateDecisionInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(EvaluateDecisionResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.EvaluateDecisionServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(EvaluateDecisionResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(EvaluateDecisionResponse200, response.parsed)
+    return cast(EvaluateDecisionResult, response.parsed)

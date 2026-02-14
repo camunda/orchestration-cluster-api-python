@@ -2,54 +2,6 @@ from __future__ import annotations
 from typing import NewType, Any, Tuple
 import re
 
-AuditLogActorTypeEnum = NewType("AuditLogActorTypeEnum", str)
-
-
-def lift_audit_log_actor_type_enum(value: Any) -> AuditLogActorTypeEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"AuditLogActorTypeEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in ["ANONYMOUS", "CLIENT", "UNKNOWN", "USER"]:
-        raise ValueError(
-            f"AuditLogActorTypeEnum must be one of ['ANONYMOUS', 'CLIENT', 'UNKNOWN', 'USER'], got {value!r}"
-        )
-    return AuditLogActorTypeEnum(value)
-
-
-def try_lift_audit_log_actor_type_enum(
-    value: Any,
-) -> Tuple[bool, AuditLogActorTypeEnum | Exception]:
-    try:
-        return True, lift_audit_log_actor_type_enum(value)
-    except Exception as e:
-        return False, e
-
-
-AuditLogCategoryEnum = NewType("AuditLogCategoryEnum", str)
-
-
-def lift_audit_log_category_enum(value: Any) -> AuditLogCategoryEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"AuditLogCategoryEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in ["ADMIN", "DEPLOYED_RESOURCES", "USER_TASKS"]:
-        raise ValueError(
-            f"AuditLogCategoryEnum must be one of ['ADMIN', 'DEPLOYED_RESOURCES', 'USER_TASKS'], got {value!r}"
-        )
-    return AuditLogCategoryEnum(value)
-
-
-def try_lift_audit_log_category_enum(
-    value: Any,
-) -> Tuple[bool, AuditLogCategoryEnum | Exception]:
-    try:
-        return True, lift_audit_log_category_enum(value)
-    except Exception as e:
-        return False, e
-
-
 AuditLogEntityKey = NewType("AuditLogEntityKey", str)
 
 
@@ -66,44 +18,6 @@ def try_lift_audit_log_entity_key(
 ) -> Tuple[bool, AuditLogEntityKey | Exception]:
     try:
         return True, lift_audit_log_entity_key(value)
-    except Exception as e:
-        return False, e
-
-
-AuditLogEntityTypeEnum = NewType("AuditLogEntityTypeEnum", str)
-
-
-def lift_audit_log_entity_type_enum(value: Any) -> AuditLogEntityTypeEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"AuditLogEntityTypeEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in [
-        "AUTHORIZATION",
-        "BATCH",
-        "DECISION",
-        "GROUP",
-        "INCIDENT",
-        "MAPPING_RULE",
-        "PROCESS_INSTANCE",
-        "RESOURCE",
-        "ROLE",
-        "TENANT",
-        "USER",
-        "USER_TASK",
-        "VARIABLE",
-    ]:
-        raise ValueError(
-            f"AuditLogEntityTypeEnum must be one of ['AUTHORIZATION', 'BATCH', 'DECISION', 'GROUP', 'INCIDENT', 'MAPPING_RULE', 'PROCESS_INSTANCE', 'RESOURCE', 'ROLE', 'TENANT', 'USER', 'USER_TASK', 'VARIABLE'], got {value!r}"
-        )
-    return AuditLogEntityTypeEnum(value)
-
-
-def try_lift_audit_log_entity_type_enum(
-    value: Any,
-) -> Tuple[bool, AuditLogEntityTypeEnum | Exception]:
-    try:
-        return True, lift_audit_log_entity_type_enum(value)
     except Exception as e:
         return False, e
 
@@ -134,69 +48,6 @@ def try_lift_audit_log_key(value: Any) -> Tuple[bool, AuditLogKey | Exception]:
         return False, e
 
 
-AuditLogOperationTypeEnum = NewType("AuditLogOperationTypeEnum", str)
-
-
-def lift_audit_log_operation_type_enum(value: Any) -> AuditLogOperationTypeEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"AuditLogOperationTypeEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in [
-        "ASSIGN",
-        "CANCEL",
-        "COMPLETE",
-        "CREATE",
-        "DELETE",
-        "EVALUATE",
-        "MIGRATE",
-        "MODIFY",
-        "RESOLVE",
-        "RESUME",
-        "SUSPEND",
-        "UNASSIGN",
-        "UNKNOWN",
-        "UPDATE",
-    ]:
-        raise ValueError(
-            f"AuditLogOperationTypeEnum must be one of ['ASSIGN', 'CANCEL', 'COMPLETE', 'CREATE', 'DELETE', 'EVALUATE', 'MIGRATE', 'MODIFY', 'RESOLVE', 'RESUME', 'SUSPEND', 'UNASSIGN', 'UNKNOWN', 'UPDATE'], got {value!r}"
-        )
-    return AuditLogOperationTypeEnum(value)
-
-
-def try_lift_audit_log_operation_type_enum(
-    value: Any,
-) -> Tuple[bool, AuditLogOperationTypeEnum | Exception]:
-    try:
-        return True, lift_audit_log_operation_type_enum(value)
-    except Exception as e:
-        return False, e
-
-
-AuditLogResultEnum = NewType("AuditLogResultEnum", str)
-
-
-def lift_audit_log_result_enum(value: Any) -> AuditLogResultEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"AuditLogResultEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in ["FAIL", "SUCCESS"]:
-        raise ValueError(
-            f"AuditLogResultEnum must be one of ['FAIL', 'SUCCESS'], got {value!r}"
-        )
-    return AuditLogResultEnum(value)
-
-
-def try_lift_audit_log_result_enum(
-    value: Any,
-) -> Tuple[bool, AuditLogResultEnum | Exception]:
-    try:
-        return True, lift_audit_log_result_enum(value)
-    except Exception as e:
-        return False, e
-
-
 AuthorizationKey = NewType("AuthorizationKey", str)
 
 
@@ -205,36 +56,20 @@ def lift_authorization_key(value: Any) -> AuthorizationKey:
         raise TypeError(
             f"AuthorizationKey must be str, got {type(value).__name__}: {value!r}"
         )
+    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+        raise ValueError(
+            f"AuthorizationKey does not match pattern '^-?[0-9]+$', got {value!r}"
+        )
+    if len(value) < 1:
+        raise ValueError(f"AuthorizationKey shorter than minLength 1, got {value!r}")
+    if len(value) > 25:
+        raise ValueError(f"AuthorizationKey longer than maxLength 25, got {value!r}")
     return AuthorizationKey(value)
 
 
 def try_lift_authorization_key(value: Any) -> Tuple[bool, AuthorizationKey | Exception]:
     try:
         return True, lift_authorization_key(value)
-    except Exception as e:
-        return False, e
-
-
-BatchOperationItemStateEnum = NewType("BatchOperationItemStateEnum", str)
-
-
-def lift_batch_operation_item_state_enum(value: Any) -> BatchOperationItemStateEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"BatchOperationItemStateEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in ["ACTIVE", "COMPLETED", "CANCELED", "FAILED"]:
-        raise ValueError(
-            f"BatchOperationItemStateEnum must be one of ['ACTIVE', 'COMPLETED', 'CANCELED', 'FAILED'], got {value!r}"
-        )
-    return BatchOperationItemStateEnum(value)
-
-
-def try_lift_batch_operation_item_state_enum(
-    value: Any,
-) -> Tuple[bool, BatchOperationItemStateEnum | Exception]:
-    try:
-        return True, lift_batch_operation_item_state_enum(value)
     except Exception as e:
         return False, e
 
@@ -259,97 +94,6 @@ def try_lift_batch_operation_key(
         return False, e
 
 
-BatchOperationStateEnum = NewType("BatchOperationStateEnum", str)
-
-
-def lift_batch_operation_state_enum(value: Any) -> BatchOperationStateEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"BatchOperationStateEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in [
-        "ACTIVE",
-        "CANCELED",
-        "COMPLETED",
-        "CREATED",
-        "FAILED",
-        "PARTIALLY_COMPLETED",
-        "SUSPENDED",
-    ]:
-        raise ValueError(
-            f"BatchOperationStateEnum must be one of ['ACTIVE', 'CANCELED', 'COMPLETED', 'CREATED', 'FAILED', 'PARTIALLY_COMPLETED', 'SUSPENDED'], got {value!r}"
-        )
-    return BatchOperationStateEnum(value)
-
-
-def try_lift_batch_operation_state_enum(
-    value: Any,
-) -> Tuple[bool, BatchOperationStateEnum | Exception]:
-    try:
-        return True, lift_batch_operation_state_enum(value)
-    except Exception as e:
-        return False, e
-
-
-BatchOperationTypeEnum = NewType("BatchOperationTypeEnum", str)
-
-
-def lift_batch_operation_type_enum(value: Any) -> BatchOperationTypeEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"BatchOperationTypeEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in [
-        "ADD_VARIABLE",
-        "CANCEL_PROCESS_INSTANCE",
-        "DELETE_DECISION_DEFINITION",
-        "DELETE_DECISION_INSTANCE",
-        "DELETE_PROCESS_DEFINITION",
-        "DELETE_PROCESS_INSTANCE",
-        "MIGRATE_PROCESS_INSTANCE",
-        "MODIFY_PROCESS_INSTANCE",
-        "RESOLVE_INCIDENT",
-        "UPDATE_VARIABLE",
-    ]:
-        raise ValueError(
-            f"BatchOperationTypeEnum must be one of ['ADD_VARIABLE', 'CANCEL_PROCESS_INSTANCE', 'DELETE_DECISION_DEFINITION', 'DELETE_DECISION_INSTANCE', 'DELETE_PROCESS_DEFINITION', 'DELETE_PROCESS_INSTANCE', 'MIGRATE_PROCESS_INSTANCE', 'MODIFY_PROCESS_INSTANCE', 'RESOLVE_INCIDENT', 'UPDATE_VARIABLE'], got {value!r}"
-        )
-    return BatchOperationTypeEnum(value)
-
-
-def try_lift_batch_operation_type_enum(
-    value: Any,
-) -> Tuple[bool, BatchOperationTypeEnum | Exception]:
-    try:
-        return True, lift_batch_operation_type_enum(value)
-    except Exception as e:
-        return False, e
-
-
-ClusterVariableScopeEnum = NewType("ClusterVariableScopeEnum", str)
-
-
-def lift_cluster_variable_scope_enum(value: Any) -> ClusterVariableScopeEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"ClusterVariableScopeEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in ["GLOBAL", "TENANT"]:
-        raise ValueError(
-            f"ClusterVariableScopeEnum must be one of ['GLOBAL', 'TENANT'], got {value!r}"
-        )
-    return ClusterVariableScopeEnum(value)
-
-
-def try_lift_cluster_variable_scope_enum(
-    value: Any,
-) -> Tuple[bool, ClusterVariableScopeEnum | Exception]:
-    try:
-        return True, lift_cluster_variable_scope_enum(value)
-    except Exception as e:
-        return False, e
-
-
 ConditionalEvaluationKey = NewType("ConditionalEvaluationKey", str)
 
 
@@ -357,6 +101,18 @@ def lift_conditional_evaluation_key(value: Any) -> ConditionalEvaluationKey:
     if not isinstance(value, str):
         raise TypeError(
             f"ConditionalEvaluationKey must be str, got {type(value).__name__}: {value!r}"
+        )
+    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+        raise ValueError(
+            f"ConditionalEvaluationKey does not match pattern '^-?[0-9]+$', got {value!r}"
+        )
+    if len(value) < 1:
+        raise ValueError(
+            f"ConditionalEvaluationKey shorter than minLength 1, got {value!r}"
+        )
+    if len(value) > 25:
+        raise ValueError(
+            f"ConditionalEvaluationKey longer than maxLength 25, got {value!r}"
         )
     return ConditionalEvaluationKey(value)
 
@@ -430,30 +186,6 @@ def try_lift_decision_definition_key(
 ) -> Tuple[bool, DecisionDefinitionKey | Exception]:
     try:
         return True, lift_decision_definition_key(value)
-    except Exception as e:
-        return False, e
-
-
-DecisionDefinitionTypeEnum = NewType("DecisionDefinitionTypeEnum", str)
-
-
-def lift_decision_definition_type_enum(value: Any) -> DecisionDefinitionTypeEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"DecisionDefinitionTypeEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in ["DECISION_TABLE", "LITERAL_EXPRESSION", "UNKNOWN"]:
-        raise ValueError(
-            f"DecisionDefinitionTypeEnum must be one of ['DECISION_TABLE', 'LITERAL_EXPRESSION', 'UNKNOWN'], got {value!r}"
-        )
-    return DecisionDefinitionTypeEnum(value)
-
-
-def try_lift_decision_definition_type_enum(
-    value: Any,
-) -> Tuple[bool, DecisionDefinitionTypeEnum | Exception]:
-    try:
-        return True, lift_decision_definition_type_enum(value)
     except Exception as e:
         return False, e
 
@@ -550,30 +282,6 @@ def try_lift_decision_instance_key(
         return False, e
 
 
-DecisionInstanceStateEnum = NewType("DecisionInstanceStateEnum", str)
-
-
-def lift_decision_instance_state_enum(value: Any) -> DecisionInstanceStateEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"DecisionInstanceStateEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in ["EVALUATED", "FAILED", "UNSPECIFIED"]:
-        raise ValueError(
-            f"DecisionInstanceStateEnum must be one of ['EVALUATED', 'FAILED', 'UNSPECIFIED'], got {value!r}"
-        )
-    return DecisionInstanceStateEnum(value)
-
-
-def try_lift_decision_instance_state_enum(
-    value: Any,
-) -> Tuple[bool, DecisionInstanceStateEnum | Exception]:
-    try:
-        return True, lift_decision_instance_state_enum(value)
-    except Exception as e:
-        return False, e
-
-
 DecisionRequirementsKey = NewType("DecisionRequirementsKey", str)
 
 
@@ -614,6 +322,14 @@ def lift_deployment_key(value: Any) -> DeploymentKey:
         raise TypeError(
             f"DeploymentKey must be str, got {type(value).__name__}: {value!r}"
         )
+    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+        raise ValueError(
+            f"DeploymentKey does not match pattern '^-?[0-9]+$', got {value!r}"
+        )
+    if len(value) < 1:
+        raise ValueError(f"DeploymentKey shorter than minLength 1, got {value!r}")
+    if len(value) > 25:
+        raise ValueError(f"DeploymentKey longer than maxLength 25, got {value!r}")
     return DeploymentKey(value)
 
 
@@ -682,30 +398,6 @@ def try_lift_element_instance_key(
 ) -> Tuple[bool, ElementInstanceKey | Exception]:
     try:
         return True, lift_element_instance_key(value)
-    except Exception as e:
-        return False, e
-
-
-ElementInstanceStateEnum = NewType("ElementInstanceStateEnum", str)
-
-
-def lift_element_instance_state_enum(value: Any) -> ElementInstanceStateEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"ElementInstanceStateEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in ["ACTIVE", "COMPLETED", "TERMINATED"]:
-        raise ValueError(
-            f"ElementInstanceStateEnum must be one of ['ACTIVE', 'COMPLETED', 'TERMINATED'], got {value!r}"
-        )
-    return ElementInstanceStateEnum(value)
-
-
-def try_lift_element_instance_state_enum(
-    value: Any,
-) -> Tuple[bool, ElementInstanceStateEnum | Exception]:
-    try:
-        return True, lift_element_instance_state_enum(value)
     except Exception as e:
         return False, e
 
@@ -826,137 +518,6 @@ def try_lift_job_key(value: Any) -> Tuple[bool, JobKey | Exception]:
         return False, e
 
 
-JobKindEnum = NewType("JobKindEnum", str)
-
-
-def lift_job_kind_enum(value: Any) -> JobKindEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"JobKindEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in [
-        "BPMN_ELEMENT",
-        "EXECUTION_LISTENER",
-        "TASK_LISTENER",
-        "AD_HOC_SUB_PROCESS",
-    ]:
-        raise ValueError(
-            f"JobKindEnum must be one of ['BPMN_ELEMENT', 'EXECUTION_LISTENER', 'TASK_LISTENER', 'AD_HOC_SUB_PROCESS'], got {value!r}"
-        )
-    return JobKindEnum(value)
-
-
-def try_lift_job_kind_enum(value: Any) -> Tuple[bool, JobKindEnum | Exception]:
-    try:
-        return True, lift_job_kind_enum(value)
-    except Exception as e:
-        return False, e
-
-
-JobListenerEventTypeEnum = NewType("JobListenerEventTypeEnum", str)
-
-
-def lift_job_listener_event_type_enum(value: Any) -> JobListenerEventTypeEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"JobListenerEventTypeEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in [
-        "ASSIGNING",
-        "CANCELING",
-        "COMPLETING",
-        "CREATING",
-        "END",
-        "START",
-        "UNSPECIFIED",
-        "UPDATING",
-    ]:
-        raise ValueError(
-            f"JobListenerEventTypeEnum must be one of ['ASSIGNING', 'CANCELING', 'COMPLETING', 'CREATING', 'END', 'START', 'UNSPECIFIED', 'UPDATING'], got {value!r}"
-        )
-    return JobListenerEventTypeEnum(value)
-
-
-def try_lift_job_listener_event_type_enum(
-    value: Any,
-) -> Tuple[bool, JobListenerEventTypeEnum | Exception]:
-    try:
-        return True, lift_job_listener_event_type_enum(value)
-    except Exception as e:
-        return False, e
-
-
-JobStateEnum = NewType("JobStateEnum", str)
-
-
-def lift_job_state_enum(value: Any) -> JobStateEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"JobStateEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in [
-        "CANCELED",
-        "COMPLETED",
-        "CREATED",
-        "ERROR_THROWN",
-        "FAILED",
-        "MIGRATED",
-        "RETRIES_UPDATED",
-        "TIMED_OUT",
-    ]:
-        raise ValueError(
-            f"JobStateEnum must be one of ['CANCELED', 'COMPLETED', 'CREATED', 'ERROR_THROWN', 'FAILED', 'MIGRATED', 'RETRIES_UPDATED', 'TIMED_OUT'], got {value!r}"
-        )
-    return JobStateEnum(value)
-
-
-def try_lift_job_state_enum(value: Any) -> Tuple[bool, JobStateEnum | Exception]:
-    try:
-        return True, lift_job_state_enum(value)
-    except Exception as e:
-        return False, e
-
-
-LikeFilter = NewType("LikeFilter", str)
-
-
-def lift_like_filter(value: Any) -> LikeFilter:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"LikeFilter must be str, got {type(value).__name__}: {value!r}"
-        )
-    return LikeFilter(value)
-
-
-def try_lift_like_filter(value: Any) -> Tuple[bool, LikeFilter | Exception]:
-    try:
-        return True, lift_like_filter(value)
-    except Exception as e:
-        return False, e
-
-
-LongKey = NewType("LongKey", str)
-
-
-def lift_long_key(value: Any) -> LongKey:
-    if not isinstance(value, str):
-        raise TypeError(f"LongKey must be str, got {type(value).__name__}: {value!r}")
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
-        raise ValueError(f"LongKey does not match pattern '^-?[0-9]+$', got {value!r}")
-    if len(value) < 1:
-        raise ValueError(f"LongKey shorter than minLength 1, got {value!r}")
-    if len(value) > 25:
-        raise ValueError(f"LongKey longer than maxLength 25, got {value!r}")
-    return LongKey(value)
-
-
-def try_lift_long_key(value: Any) -> Tuple[bool, LongKey | Exception]:
-    try:
-        return True, lift_long_key(value)
-    except Exception as e:
-        return False, e
-
-
 MessageKey = NewType("MessageKey", str)
 
 
@@ -965,6 +526,14 @@ def lift_message_key(value: Any) -> MessageKey:
         raise TypeError(
             f"MessageKey must be str, got {type(value).__name__}: {value!r}"
         )
+    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+        raise ValueError(
+            f"MessageKey does not match pattern '^-?[0-9]+$', got {value!r}"
+        )
+    if len(value) < 1:
+        raise ValueError(f"MessageKey shorter than minLength 1, got {value!r}")
+    if len(value) > 25:
+        raise ValueError(f"MessageKey longer than maxLength 25, got {value!r}")
     return MessageKey(value)
 
 
@@ -983,6 +552,18 @@ def lift_message_subscription_key(value: Any) -> MessageSubscriptionKey:
         raise TypeError(
             f"MessageSubscriptionKey must be str, got {type(value).__name__}: {value!r}"
         )
+    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+        raise ValueError(
+            f"MessageSubscriptionKey does not match pattern '^-?[0-9]+$', got {value!r}"
+        )
+    if len(value) < 1:
+        raise ValueError(
+            f"MessageSubscriptionKey shorter than minLength 1, got {value!r}"
+        )
+    if len(value) > 25:
+        raise ValueError(
+            f"MessageSubscriptionKey longer than maxLength 25, got {value!r}"
+        )
     return MessageSubscriptionKey(value)
 
 
@@ -991,138 +572,6 @@ def try_lift_message_subscription_key(
 ) -> Tuple[bool, MessageSubscriptionKey | Exception]:
     try:
         return True, lift_message_subscription_key(value)
-    except Exception as e:
-        return False, e
-
-
-MessageSubscriptionStateEnum = NewType("MessageSubscriptionStateEnum", str)
-
-
-def lift_message_subscription_state_enum(value: Any) -> MessageSubscriptionStateEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"MessageSubscriptionStateEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in ["CORRELATED", "CREATED", "DELETED", "MIGRATED"]:
-        raise ValueError(
-            f"MessageSubscriptionStateEnum must be one of ['CORRELATED', 'CREATED', 'DELETED', 'MIGRATED'], got {value!r}"
-        )
-    return MessageSubscriptionStateEnum(value)
-
-
-def try_lift_message_subscription_state_enum(
-    value: Any,
-) -> Tuple[bool, MessageSubscriptionStateEnum | Exception]:
-    try:
-        return True, lift_message_subscription_state_enum(value)
-    except Exception as e:
-        return False, e
-
-
-OperationReference = NewType("OperationReference", int)
-
-
-def lift_operation_reference(value: Any) -> OperationReference:
-    if not isinstance(value, int):
-        raise TypeError(
-            f"OperationReference must be int, got {type(value).__name__}: {value!r}"
-        )
-    if value < 1:
-        raise ValueError(f"OperationReference smaller than minimum 1, got {value!r}")
-    return OperationReference(value)
-
-
-def try_lift_operation_reference(
-    value: Any,
-) -> Tuple[bool, OperationReference | Exception]:
-    try:
-        return True, lift_operation_reference(value)
-    except Exception as e:
-        return False, e
-
-
-OwnerTypeEnum = NewType("OwnerTypeEnum", str)
-
-
-def lift_owner_type_enum(value: Any) -> OwnerTypeEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"OwnerTypeEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in ["USER", "CLIENT", "ROLE", "GROUP", "MAPPING_RULE", "UNSPECIFIED"]:
-        raise ValueError(
-            f"OwnerTypeEnum must be one of ['USER', 'CLIENT', 'ROLE', 'GROUP', 'MAPPING_RULE', 'UNSPECIFIED'], got {value!r}"
-        )
-    return OwnerTypeEnum(value)
-
-
-def try_lift_owner_type_enum(value: Any) -> Tuple[bool, OwnerTypeEnum | Exception]:
-    try:
-        return True, lift_owner_type_enum(value)
-    except Exception as e:
-        return False, e
-
-
-PermissionTypeEnum = NewType("PermissionTypeEnum", str)
-
-
-def lift_permission_type_enum(value: Any) -> PermissionTypeEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"PermissionTypeEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in [
-        "ACCESS",
-        "CANCEL_PROCESS_INSTANCE",
-        "CLAIM",
-        "COMPLETE",
-        "CREATE",
-        "CREATE_BATCH_OPERATION_CANCEL_PROCESS_INSTANCE",
-        "CREATE_BATCH_OPERATION_DELETE_DECISION_DEFINITION",
-        "CREATE_BATCH_OPERATION_DELETE_DECISION_INSTANCE",
-        "CREATE_BATCH_OPERATION_DELETE_PROCESS_DEFINITION",
-        "CREATE_BATCH_OPERATION_DELETE_PROCESS_INSTANCE",
-        "CREATE_BATCH_OPERATION_MIGRATE_PROCESS_INSTANCE",
-        "CREATE_BATCH_OPERATION_MODIFY_PROCESS_INSTANCE",
-        "CREATE_BATCH_OPERATION_RESOLVE_INCIDENT",
-        "CREATE_DECISION_INSTANCE",
-        "CREATE_PROCESS_INSTANCE",
-        "CREATE_TASK_LISTENER",
-        "DELETE",
-        "DELETE_DECISION_INSTANCE",
-        "DELETE_DRD",
-        "DELETE_FORM",
-        "DELETE_PROCESS",
-        "DELETE_PROCESS_INSTANCE",
-        "DELETE_RESOURCE",
-        "DELETE_TASK_LISTENER",
-        "EVALUATE",
-        "MODIFY_PROCESS_INSTANCE",
-        "READ",
-        "READ_DECISION_DEFINITION",
-        "READ_DECISION_INSTANCE",
-        "READ_JOB_METRIC",
-        "READ_PROCESS_DEFINITION",
-        "READ_PROCESS_INSTANCE",
-        "READ_USAGE_METRIC",
-        "READ_USER_TASK",
-        "READ_TASK_LISTENER",
-        "UPDATE",
-        "UPDATE_PROCESS_INSTANCE",
-        "UPDATE_USER_TASK",
-        "UPDATE_TASK_LISTENER",
-    ]:
-        raise ValueError(
-            f"PermissionTypeEnum must be one of ['ACCESS', 'CANCEL_PROCESS_INSTANCE', 'CLAIM', 'COMPLETE', 'CREATE', 'CREATE_BATCH_OPERATION_CANCEL_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_DELETE_DECISION_DEFINITION', 'CREATE_BATCH_OPERATION_DELETE_DECISION_INSTANCE', 'CREATE_BATCH_OPERATION_DELETE_PROCESS_DEFINITION', 'CREATE_BATCH_OPERATION_DELETE_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_MIGRATE_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_MODIFY_PROCESS_INSTANCE', 'CREATE_BATCH_OPERATION_RESOLVE_INCIDENT', 'CREATE_DECISION_INSTANCE', 'CREATE_PROCESS_INSTANCE', 'CREATE_TASK_LISTENER', 'DELETE', 'DELETE_DECISION_INSTANCE', 'DELETE_DRD', 'DELETE_FORM', 'DELETE_PROCESS', 'DELETE_PROCESS_INSTANCE', 'DELETE_RESOURCE', 'DELETE_TASK_LISTENER', 'EVALUATE', 'MODIFY_PROCESS_INSTANCE', 'READ', 'READ_DECISION_DEFINITION', 'READ_DECISION_INSTANCE', 'READ_JOB_METRIC', 'READ_PROCESS_DEFINITION', 'READ_PROCESS_INSTANCE', 'READ_USAGE_METRIC', 'READ_USER_TASK', 'READ_TASK_LISTENER', 'UPDATE', 'UPDATE_PROCESS_INSTANCE', 'UPDATE_USER_TASK', 'UPDATE_TASK_LISTENER'], got {value!r}"
-        )
-    return PermissionTypeEnum(value)
-
-
-def try_lift_permission_type_enum(
-    value: Any,
-) -> Tuple[bool, PermissionTypeEnum | Exception]:
-    try:
-        return True, lift_permission_type_enum(value)
     except Exception as e:
         return False, e
 
@@ -1213,93 +662,6 @@ def try_lift_process_instance_key(
         return False, e
 
 
-ProcessInstanceStateEnum = NewType("ProcessInstanceStateEnum", str)
-
-
-def lift_process_instance_state_enum(value: Any) -> ProcessInstanceStateEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"ProcessInstanceStateEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in ["ACTIVE", "COMPLETED", "TERMINATED"]:
-        raise ValueError(
-            f"ProcessInstanceStateEnum must be one of ['ACTIVE', 'COMPLETED', 'TERMINATED'], got {value!r}"
-        )
-    return ProcessInstanceStateEnum(value)
-
-
-def try_lift_process_instance_state_enum(
-    value: Any,
-) -> Tuple[bool, ProcessInstanceStateEnum | Exception]:
-    try:
-        return True, lift_process_instance_state_enum(value)
-    except Exception as e:
-        return False, e
-
-
-ResourceKey = NewType("ResourceKey", str)
-
-
-def lift_resource_key(value: Any) -> ResourceKey:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"ResourceKey must be str, got {type(value).__name__}: {value!r}"
-        )
-    return ResourceKey(value)
-
-
-def try_lift_resource_key(value: Any) -> Tuple[bool, ResourceKey | Exception]:
-    try:
-        return True, lift_resource_key(value)
-    except Exception as e:
-        return False, e
-
-
-ResourceTypeEnum = NewType("ResourceTypeEnum", str)
-
-
-def lift_resource_type_enum(value: Any) -> ResourceTypeEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"ResourceTypeEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in [
-        "AUDIT_LOG",
-        "AUTHORIZATION",
-        "BATCH",
-        "CLUSTER_VARIABLE",
-        "COMPONENT",
-        "DECISION_DEFINITION",
-        "DECISION_REQUIREMENTS_DEFINITION",
-        "DOCUMENT",
-        "EXPRESSION",
-        "GLOBAL_LISTENER",
-        "GROUP",
-        "MAPPING_RULE",
-        "MESSAGE",
-        "PROCESS_DEFINITION",
-        "RESOURCE",
-        "ROLE",
-        "SYSTEM",
-        "TENANT",
-        "USER",
-        "USER_TASK",
-    ]:
-        raise ValueError(
-            f"ResourceTypeEnum must be one of ['AUDIT_LOG', 'AUTHORIZATION', 'BATCH', 'CLUSTER_VARIABLE', 'COMPONENT', 'DECISION_DEFINITION', 'DECISION_REQUIREMENTS_DEFINITION', 'DOCUMENT', 'EXPRESSION', 'GLOBAL_LISTENER', 'GROUP', 'MAPPING_RULE', 'MESSAGE', 'PROCESS_DEFINITION', 'RESOURCE', 'ROLE', 'SYSTEM', 'TENANT', 'USER', 'USER_TASK'], got {value!r}"
-        )
-    return ResourceTypeEnum(value)
-
-
-def try_lift_resource_type_enum(
-    value: Any,
-) -> Tuple[bool, ResourceTypeEnum | Exception]:
-    try:
-        return True, lift_resource_type_enum(value)
-    except Exception as e:
-        return False, e
-
-
 ScopeKey = NewType("ScopeKey", str)
 
 
@@ -1328,32 +690,20 @@ SignalKey = NewType("SignalKey", str)
 def lift_signal_key(value: Any) -> SignalKey:
     if not isinstance(value, str):
         raise TypeError(f"SignalKey must be str, got {type(value).__name__}: {value!r}")
+    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+        raise ValueError(
+            f"SignalKey does not match pattern '^-?[0-9]+$', got {value!r}"
+        )
+    if len(value) < 1:
+        raise ValueError(f"SignalKey shorter than minLength 1, got {value!r}")
+    if len(value) > 25:
+        raise ValueError(f"SignalKey longer than maxLength 25, got {value!r}")
     return SignalKey(value)
 
 
 def try_lift_signal_key(value: Any) -> Tuple[bool, SignalKey | Exception]:
     try:
         return True, lift_signal_key(value)
-    except Exception as e:
-        return False, e
-
-
-SortOrderEnum = NewType("SortOrderEnum", str)
-
-
-def lift_sort_order_enum(value: Any) -> SortOrderEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"SortOrderEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in ["ASC", "DESC"]:
-        raise ValueError(f"SortOrderEnum must be one of ['ASC', 'DESC'], got {value!r}")
-    return SortOrderEnum(value)
-
-
-def try_lift_sort_order_enum(value: Any) -> Tuple[bool, SortOrderEnum | Exception]:
-    try:
-        return True, lift_sort_order_enum(value)
     except Exception as e:
         return False, e
 
@@ -1464,40 +814,6 @@ def try_lift_user_task_key(value: Any) -> Tuple[bool, UserTaskKey | Exception]:
         return False, e
 
 
-UserTaskStateEnum = NewType("UserTaskStateEnum", str)
-
-
-def lift_user_task_state_enum(value: Any) -> UserTaskStateEnum:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"UserTaskStateEnum must be str, got {type(value).__name__}: {value!r}"
-        )
-    if value not in [
-        "CREATING",
-        "CREATED",
-        "ASSIGNING",
-        "UPDATING",
-        "COMPLETING",
-        "COMPLETED",
-        "CANCELING",
-        "CANCELED",
-        "FAILED",
-    ]:
-        raise ValueError(
-            f"UserTaskStateEnum must be one of ['CREATING', 'CREATED', 'ASSIGNING', 'UPDATING', 'COMPLETING', 'COMPLETED', 'CANCELING', 'CANCELED', 'FAILED'], got {value!r}"
-        )
-    return UserTaskStateEnum(value)
-
-
-def try_lift_user_task_state_enum(
-    value: Any,
-) -> Tuple[bool, UserTaskStateEnum | Exception]:
-    try:
-        return True, lift_user_task_state_enum(value)
-    except Exception as e:
-        return False, e
-
-
 Username = NewType("Username", str)
 
 
@@ -1549,181 +865,103 @@ def try_lift_variable_key(value: Any) -> Tuple[bool, VariableKey | Exception]:
 
 
 __all__ = [
-    "AuditLogActorTypeEnum",
-    "AuditLogCategoryEnum",
     "AuditLogEntityKey",
-    "AuditLogEntityTypeEnum",
     "AuditLogKey",
-    "AuditLogOperationTypeEnum",
-    "AuditLogResultEnum",
     "AuthorizationKey",
-    "BatchOperationItemStateEnum",
     "BatchOperationKey",
-    "BatchOperationStateEnum",
-    "BatchOperationTypeEnum",
-    "ClusterVariableScopeEnum",
     "ConditionalEvaluationKey",
     "DecisionDefinitionId",
     "DecisionDefinitionKey",
-    "DecisionDefinitionTypeEnum",
     "DecisionEvaluationInstanceKey",
     "DecisionEvaluationKey",
     "DecisionInstanceKey",
-    "DecisionInstanceStateEnum",
     "DecisionRequirementsKey",
     "DeploymentKey",
     "DocumentId",
     "ElementId",
     "ElementInstanceKey",
-    "ElementInstanceStateEnum",
     "EndCursor",
     "FormId",
     "FormKey",
     "IncidentKey",
     "JobKey",
-    "JobKindEnum",
-    "JobListenerEventTypeEnum",
-    "JobStateEnum",
-    "LikeFilter",
-    "LongKey",
     "MessageKey",
     "MessageSubscriptionKey",
-    "MessageSubscriptionStateEnum",
-    "OperationReference",
-    "OwnerTypeEnum",
-    "PermissionTypeEnum",
     "ProcessDefinitionId",
     "ProcessDefinitionKey",
     "ProcessInstanceKey",
-    "ProcessInstanceStateEnum",
-    "ResourceKey",
-    "ResourceTypeEnum",
     "ScopeKey",
     "SignalKey",
-    "SortOrderEnum",
     "StartCursor",
     "Tag",
     "TenantId",
     "UserTaskKey",
-    "UserTaskStateEnum",
     "Username",
     "VariableKey",
-    "lift_audit_log_actor_type_enum",
-    "lift_audit_log_category_enum",
     "lift_audit_log_entity_key",
-    "lift_audit_log_entity_type_enum",
     "lift_audit_log_key",
-    "lift_audit_log_operation_type_enum",
-    "lift_audit_log_result_enum",
     "lift_authorization_key",
-    "lift_batch_operation_item_state_enum",
     "lift_batch_operation_key",
-    "lift_batch_operation_state_enum",
-    "lift_batch_operation_type_enum",
-    "lift_cluster_variable_scope_enum",
     "lift_conditional_evaluation_key",
     "lift_decision_definition_id",
     "lift_decision_definition_key",
-    "lift_decision_definition_type_enum",
     "lift_decision_evaluation_instance_key",
     "lift_decision_evaluation_key",
     "lift_decision_instance_key",
-    "lift_decision_instance_state_enum",
     "lift_decision_requirements_key",
     "lift_deployment_key",
     "lift_document_id",
     "lift_element_id",
     "lift_element_instance_key",
-    "lift_element_instance_state_enum",
     "lift_end_cursor",
     "lift_form_id",
     "lift_form_key",
     "lift_incident_key",
     "lift_job_key",
-    "lift_job_kind_enum",
-    "lift_job_listener_event_type_enum",
-    "lift_job_state_enum",
-    "lift_like_filter",
-    "lift_long_key",
     "lift_message_key",
     "lift_message_subscription_key",
-    "lift_message_subscription_state_enum",
-    "lift_operation_reference",
-    "lift_owner_type_enum",
-    "lift_permission_type_enum",
     "lift_process_definition_id",
     "lift_process_definition_key",
     "lift_process_instance_key",
-    "lift_process_instance_state_enum",
-    "lift_resource_key",
-    "lift_resource_type_enum",
     "lift_scope_key",
     "lift_signal_key",
-    "lift_sort_order_enum",
     "lift_start_cursor",
     "lift_tag",
     "lift_tenant_id",
     "lift_user_task_key",
-    "lift_user_task_state_enum",
     "lift_username",
     "lift_variable_key",
-    "try_lift_audit_log_actor_type_enum",
-    "try_lift_audit_log_category_enum",
     "try_lift_audit_log_entity_key",
-    "try_lift_audit_log_entity_type_enum",
     "try_lift_audit_log_key",
-    "try_lift_audit_log_operation_type_enum",
-    "try_lift_audit_log_result_enum",
     "try_lift_authorization_key",
-    "try_lift_batch_operation_item_state_enum",
     "try_lift_batch_operation_key",
-    "try_lift_batch_operation_state_enum",
-    "try_lift_batch_operation_type_enum",
-    "try_lift_cluster_variable_scope_enum",
     "try_lift_conditional_evaluation_key",
     "try_lift_decision_definition_id",
     "try_lift_decision_definition_key",
-    "try_lift_decision_definition_type_enum",
     "try_lift_decision_evaluation_instance_key",
     "try_lift_decision_evaluation_key",
     "try_lift_decision_instance_key",
-    "try_lift_decision_instance_state_enum",
     "try_lift_decision_requirements_key",
     "try_lift_deployment_key",
     "try_lift_document_id",
     "try_lift_element_id",
     "try_lift_element_instance_key",
-    "try_lift_element_instance_state_enum",
     "try_lift_end_cursor",
     "try_lift_form_id",
     "try_lift_form_key",
     "try_lift_incident_key",
     "try_lift_job_key",
-    "try_lift_job_kind_enum",
-    "try_lift_job_listener_event_type_enum",
-    "try_lift_job_state_enum",
-    "try_lift_like_filter",
-    "try_lift_long_key",
     "try_lift_message_key",
     "try_lift_message_subscription_key",
-    "try_lift_message_subscription_state_enum",
-    "try_lift_operation_reference",
-    "try_lift_owner_type_enum",
-    "try_lift_permission_type_enum",
     "try_lift_process_definition_id",
     "try_lift_process_definition_key",
     "try_lift_process_instance_key",
-    "try_lift_process_instance_state_enum",
-    "try_lift_resource_key",
-    "try_lift_resource_type_enum",
     "try_lift_scope_key",
     "try_lift_signal_key",
-    "try_lift_sort_order_enum",
     "try_lift_start_cursor",
     "try_lift_tag",
     "try_lift_tenant_id",
     "try_lift_user_task_key",
-    "try_lift_user_task_state_enum",
     "try_lift_username",
     "try_lift_variable_key",
 ]

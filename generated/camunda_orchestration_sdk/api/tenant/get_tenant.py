@@ -4,12 +4,8 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_tenant_response_200 import GetTenantResponse200
-from ...models.get_tenant_response_400 import GetTenantResponse400
-from ...models.get_tenant_response_401 import GetTenantResponse401
-from ...models.get_tenant_response_403 import GetTenantResponse403
-from ...models.get_tenant_response_404 import GetTenantResponse404
-from ...models.get_tenant_response_500 import GetTenantResponse500
+from ...models.problem_detail import ProblemDetail
+from ...models.tenant_result import TenantResult
 from ...types import Response
 
 
@@ -23,32 +19,24 @@ def _get_kwargs(tenant_id: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetTenantResponse200
-    | GetTenantResponse400
-    | GetTenantResponse401
-    | GetTenantResponse403
-    | GetTenantResponse404
-    | GetTenantResponse500
-    | None
-):
+) -> ProblemDetail | TenantResult | None:
     if response.status_code == 200:
-        response_200 = GetTenantResponse200.from_dict(response.json())
+        response_200 = TenantResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = GetTenantResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = GetTenantResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetTenantResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = GetTenantResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetTenantResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -58,14 +46,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetTenantResponse200
-    | GetTenantResponse400
-    | GetTenantResponse401
-    | GetTenantResponse403
-    | GetTenantResponse404
-    | GetTenantResponse500
-]:
+) -> Response[ProblemDetail | TenantResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -76,14 +57,7 @@ def _build_response(
 
 def sync_detailed(
     tenant_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetTenantResponse200
-    | GetTenantResponse400
-    | GetTenantResponse401
-    | GetTenantResponse403
-    | GetTenantResponse404
-    | GetTenantResponse500
-]:
+) -> Response[ProblemDetail | TenantResult]:
     """Get tenant
 
      Retrieves a single tenant by tenant ID.
@@ -96,7 +70,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetTenantResponse200 | GetTenantResponse400 | GetTenantResponse401 | GetTenantResponse403 | GetTenantResponse404 | GetTenantResponse500]
+        Response[ProblemDetail | TenantResult]
     """
     kwargs = _get_kwargs(tenant_id=tenant_id)
     response = client.get_httpx_client().request(**kwargs)
@@ -105,7 +79,7 @@ def sync_detailed(
 
 def sync(
     tenant_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetTenantResponse200:
+) -> TenantResult:
     """Get tenant
 
      Retrieves a single tenant by tenant ID.
@@ -122,54 +96,47 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetTenantResponse200"""
+        TenantResult"""
     response = sync_detailed(tenant_id=tenant_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.GetTenantBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetTenantResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetTenantUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetTenantResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetTenantForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetTenantResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetTenantNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetTenantResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetTenantInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetTenantResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetTenantResponse200, response.parsed)
+    return cast(TenantResult, response.parsed)
 
 
 async def asyncio_detailed(
     tenant_id: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetTenantResponse200
-    | GetTenantResponse400
-    | GetTenantResponse401
-    | GetTenantResponse403
-    | GetTenantResponse404
-    | GetTenantResponse500
-]:
+) -> Response[ProblemDetail | TenantResult]:
     """Get tenant
 
      Retrieves a single tenant by tenant ID.
@@ -182,7 +149,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetTenantResponse200 | GetTenantResponse400 | GetTenantResponse401 | GetTenantResponse403 | GetTenantResponse404 | GetTenantResponse500]
+        Response[ProblemDetail | TenantResult]
     """
     kwargs = _get_kwargs(tenant_id=tenant_id)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -191,7 +158,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     tenant_id: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetTenantResponse200:
+) -> TenantResult:
     """Get tenant
 
      Retrieves a single tenant by tenant ID.
@@ -208,39 +175,39 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetTenantResponse200"""
+        TenantResult"""
     response = await asyncio_detailed(tenant_id=tenant_id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.GetTenantBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetTenantResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetTenantUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetTenantResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetTenantForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetTenantResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetTenantNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetTenantResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetTenantInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetTenantResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetTenantResponse200, response.parsed)
+    return cast(TenantResult, response.parsed)

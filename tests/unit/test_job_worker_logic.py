@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import MagicMock, AsyncMock
 from camunda_orchestration_sdk.runtime.job_worker import JobWorker, WorkerConfig, JobContext
-from camunda_orchestration_sdk.models.activate_jobs_response_200_jobs_item import ActivateJobsResponse200JobsItem
+from camunda_orchestration_sdk.models.activate_jobs_jobs_item import ActivateJobsJobsItem
 
 @pytest.mark.asyncio
 async def test_worker_decrements_active_jobs_on_success():
@@ -11,7 +11,7 @@ async def test_worker_decrements_active_jobs_on_success():
     mock_client.complete_job = AsyncMock()
 
     # Mock job
-    mock_job_item = MagicMock(spec=ActivateJobsResponse200JobsItem)
+    mock_job_item = MagicMock(spec=ActivateJobsJobsItem)
     mock_job_item.job_key = 123
     mock_job_item.type_ = "test-job"
     mock_job_item.process_instance_key = 1
@@ -67,7 +67,7 @@ async def test_worker_handles_exception_and_decrements_counter():
     mock_client.fail_job = AsyncMock()
 
     # Mock job
-    mock_job_item = MagicMock(spec=ActivateJobsResponse200JobsItem)
+    mock_job_item = MagicMock(spec=ActivateJobsJobsItem)
     mock_job_item.job_key = 456
     mock_job_item.type_ = "test-job"
     mock_job_item.process_instance_key = 1
@@ -123,7 +123,7 @@ async def test_worker_thread_strategy_exception_handling():
     mock_client.fail_job = AsyncMock()
 
     # Mock job
-    mock_job_item = MagicMock(spec=ActivateJobsResponse200JobsItem)
+    mock_job_item = MagicMock(spec=ActivateJobsJobsItem)
     mock_job_item.job_key = 789
     mock_job_item.type_ = "test-job"
     mock_job_item.process_instance_key = 1

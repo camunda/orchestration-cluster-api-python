@@ -9,12 +9,8 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.search_user_task_audit_logs_response_200_items_item import (
-        SearchUserTaskAuditLogsResponse200ItemsItem,
-    )
-    from ..models.search_user_task_audit_logs_response_200_page import (
-        SearchUserTaskAuditLogsResponse200Page,
-    )
+    from ..models.audit_log_result import AuditLogResult
+    from ..models.search_query_page_response import SearchQueryPageResponse
 
 
 T = TypeVar("T", bound="SearchUserTaskAuditLogsResponse200")
@@ -25,13 +21,13 @@ class SearchUserTaskAuditLogsResponse200:
     """Audit log search response.
 
     Attributes:
-        page (SearchUserTaskAuditLogsResponse200Page): Pagination information about the search results. Example:
-            {'totalItems': 1, 'hasMoreTotalItems': False}.
-        items (list[SearchUserTaskAuditLogsResponse200ItemsItem] | Unset): The matching audit logs.
+        page (SearchQueryPageResponse): Pagination information about the search results. Example: {'totalItems': 1,
+            'hasMoreTotalItems': False}.
+        items (list[AuditLogResult] | Unset): The matching audit logs.
     """
 
-    page: SearchUserTaskAuditLogsResponse200Page
-    items: list[SearchUserTaskAuditLogsResponse200ItemsItem] | Unset = UNSET
+    page: SearchQueryPageResponse
+    items: list[AuditLogResult] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -60,24 +56,18 @@ class SearchUserTaskAuditLogsResponse200:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.search_user_task_audit_logs_response_200_items_item import (
-            SearchUserTaskAuditLogsResponse200ItemsItem,
-        )
-        from ..models.search_user_task_audit_logs_response_200_page import (
-            SearchUserTaskAuditLogsResponse200Page,
-        )
+        from ..models.audit_log_result import AuditLogResult
+        from ..models.search_query_page_response import SearchQueryPageResponse
 
         d = dict(src_dict)
-        page = SearchUserTaskAuditLogsResponse200Page.from_dict(d.pop("page"))
+        page = SearchQueryPageResponse.from_dict(d.pop("page"))
 
         _items = d.pop("items", UNSET)
-        items: list[SearchUserTaskAuditLogsResponse200ItemsItem] | Unset = UNSET
+        items: list[AuditLogResult] | Unset = UNSET
         if _items is not UNSET:
             items = []
             for items_item_data in _items:
-                items_item = SearchUserTaskAuditLogsResponse200ItemsItem.from_dict(
-                    items_item_data
-                )
+                items_item = AuditLogResult.from_dict(items_item_data)
 
                 items.append(items_item)
 

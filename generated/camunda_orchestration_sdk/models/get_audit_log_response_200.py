@@ -1,6 +1,5 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
-    AuditLogEntityKey,
     AuditLogKey,
     BatchOperationKey,
     DecisionDefinitionId,
@@ -16,7 +15,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessInstanceKey,
     TenantId,
     UserTaskKey,
-    lift_audit_log_entity_key,
     lift_audit_log_key,
     lift_batch_operation_key,
     lift_decision_definition_id,
@@ -42,20 +40,14 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
-from ..models.get_audit_log_response_200_actor_type import (
-    GetAuditLogResponse200ActorType,
-)
+from ..models.audit_log_actor_type_enum import AuditLogActorTypeEnum
+from ..models.audit_log_category_enum import AuditLogCategoryEnum
+from ..models.audit_log_entity_type_enum import AuditLogEntityTypeEnum
+from ..models.audit_log_operation_type_enum import AuditLogOperationTypeEnum
+from ..models.audit_log_result_enum import AuditLogResultEnum
 from ..models.get_audit_log_response_200_batch_operation_type import (
     GetAuditLogResponse200BatchOperationType,
 )
-from ..models.get_audit_log_response_200_category import GetAuditLogResponse200Category
-from ..models.get_audit_log_response_200_entity_type import (
-    GetAuditLogResponse200EntityType,
-)
-from ..models.get_audit_log_response_200_operation_type import (
-    GetAuditLogResponse200OperationType,
-)
-from ..models.get_audit_log_response_200_result import GetAuditLogResponse200Result
 from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="GetAuditLogResponse200")
@@ -68,18 +60,18 @@ class GetAuditLogResponse200:
     Attributes:
         audit_log_key (str | Unset): The unique key of the audit log entry. Example: 22517998136843567.
         entity_key (str | Unset): System-generated entity key for an audit log entry. Example: 22517998136843567.
-        entity_type (GetAuditLogResponse200EntityType | Unset): The type of entity affected by the operation.
-        operation_type (GetAuditLogResponse200OperationType | Unset): The type of operation performed.
+        entity_type (AuditLogEntityTypeEnum | Unset): The type of entity affected by the operation.
+        operation_type (AuditLogOperationTypeEnum | Unset): The type of operation performed.
         batch_operation_key (str | Unset): Key of the batch operation. Example: 2251799813684321.
         batch_operation_type (GetAuditLogResponse200BatchOperationType | Unset): The type of batch operation performed,
             if this is part of a batch.
         timestamp (datetime.datetime | Unset): The timestamp when the operation occurred.
         actor_id (str | Unset): The ID of the actor who performed the operation.
-        actor_type (GetAuditLogResponse200ActorType | Unset): The type of actor who performed the operation.
+        actor_type (AuditLogActorTypeEnum | Unset): The type of actor who performed the operation.
         tenant_id (str | Unset): The tenant ID of the audit log. Example: customer-service.
-        result (GetAuditLogResponse200Result | Unset): The result status of the operation.
+        result (AuditLogResultEnum | Unset): The result status of the operation.
         annotation (str | Unset): Additional notes about the operation.
-        category (GetAuditLogResponse200Category | Unset): The category of the audit log operation.
+        category (AuditLogCategoryEnum | Unset): The category of the audit log operation.
         process_definition_id (str | Unset): The process definition ID. Example: new-account-onboarding-workflow.
         process_definition_key (str | Unset): The key of the process definition. Example: 2251799813686749.
         process_instance_key (str | Unset): The key of the process instance. Example: 2251799813690746.
@@ -98,18 +90,18 @@ class GetAuditLogResponse200:
     """
 
     audit_log_key: AuditLogKey | Unset = UNSET
-    entity_key: AuditLogEntityKey | Unset = UNSET
-    entity_type: GetAuditLogResponse200EntityType | Unset = UNSET
-    operation_type: GetAuditLogResponse200OperationType | Unset = UNSET
+    entity_key: str | Unset = UNSET
+    entity_type: AuditLogEntityTypeEnum | Unset = UNSET
+    operation_type: AuditLogOperationTypeEnum | Unset = UNSET
     batch_operation_key: BatchOperationKey | Unset = UNSET
     batch_operation_type: GetAuditLogResponse200BatchOperationType | Unset = UNSET
     timestamp: datetime.datetime | Unset = UNSET
     actor_id: str | Unset = UNSET
-    actor_type: GetAuditLogResponse200ActorType | Unset = UNSET
+    actor_type: AuditLogActorTypeEnum | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
-    result: GetAuditLogResponse200Result | Unset = UNSET
+    result: AuditLogResultEnum | Unset = UNSET
     annotation: str | Unset = UNSET
-    category: GetAuditLogResponse200Category | Unset = UNSET
+    category: AuditLogCategoryEnum | Unset = UNSET
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
@@ -270,25 +262,21 @@ class GetAuditLogResponse200:
             else UNSET
         )
 
-        entity_key = (
-            lift_audit_log_entity_key(_val)
-            if (_val := d.pop("entityKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        entity_key = d.pop("entityKey", UNSET)
 
         _entity_type = d.pop("entityType", UNSET)
-        entity_type: GetAuditLogResponse200EntityType | Unset
+        entity_type: AuditLogEntityTypeEnum | Unset
         if isinstance(_entity_type, Unset):
             entity_type = UNSET
         else:
-            entity_type = GetAuditLogResponse200EntityType(_entity_type)
+            entity_type = AuditLogEntityTypeEnum(_entity_type)
 
         _operation_type = d.pop("operationType", UNSET)
-        operation_type: GetAuditLogResponse200OperationType | Unset
+        operation_type: AuditLogOperationTypeEnum | Unset
         if isinstance(_operation_type, Unset):
             operation_type = UNSET
         else:
-            operation_type = GetAuditLogResponse200OperationType(_operation_type)
+            operation_type = AuditLogOperationTypeEnum(_operation_type)
 
         batch_operation_key = (
             lift_batch_operation_key(_val)
@@ -315,11 +303,11 @@ class GetAuditLogResponse200:
         actor_id = d.pop("actorId", UNSET)
 
         _actor_type = d.pop("actorType", UNSET)
-        actor_type: GetAuditLogResponse200ActorType | Unset
+        actor_type: AuditLogActorTypeEnum | Unset
         if isinstance(_actor_type, Unset):
             actor_type = UNSET
         else:
-            actor_type = GetAuditLogResponse200ActorType(_actor_type)
+            actor_type = AuditLogActorTypeEnum(_actor_type)
 
         tenant_id = (
             lift_tenant_id(_val)
@@ -328,20 +316,20 @@ class GetAuditLogResponse200:
         )
 
         _result = d.pop("result", UNSET)
-        result: GetAuditLogResponse200Result | Unset
+        result: AuditLogResultEnum | Unset
         if isinstance(_result, Unset):
             result = UNSET
         else:
-            result = GetAuditLogResponse200Result(_result)
+            result = AuditLogResultEnum(_result)
 
         annotation = d.pop("annotation", UNSET)
 
         _category = d.pop("category", UNSET)
-        category: GetAuditLogResponse200Category | Unset
+        category: AuditLogCategoryEnum | Unset
         if isinstance(_category, Unset):
             category = UNSET
         else:
-            category = GetAuditLogResponse200Category(_category)
+            category = AuditLogCategoryEnum(_category)
 
         process_definition_id = (
             lift_process_definition_id(_val)

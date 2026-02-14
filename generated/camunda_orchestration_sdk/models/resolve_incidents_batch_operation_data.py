@@ -8,8 +8,8 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.resolve_incidents_batch_operation_data_filter import (
-        ResolveIncidentsBatchOperationDataFilter,
+    from ..models.process_instance_cancellation_batch_operation_request_filter import (
+        ProcessInstanceCancellationBatchOperationRequestFilter,
     )
 
 
@@ -21,13 +21,13 @@ class ResolveIncidentsBatchOperationData:
     """The process instance filter that defines which process instances should have their incidents resolved.
 
     Attributes:
-        filter_ (ResolveIncidentsBatchOperationDataFilter): The process instance filter.
+        filter_ (ProcessInstanceCancellationBatchOperationRequestFilter): The process instance filter.
         operation_reference (int | Unset): A reference key chosen by the user that will be part of all records resulting
             from this operation.
             Must be > 0 if provided.
     """
 
-    filter_: ResolveIncidentsBatchOperationDataFilter
+    filter_: ProcessInstanceCancellationBatchOperationRequestFilter
     operation_reference: int | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -49,12 +49,14 @@ class ResolveIncidentsBatchOperationData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.resolve_incidents_batch_operation_data_filter import (
-            ResolveIncidentsBatchOperationDataFilter,
+        from ..models.process_instance_cancellation_batch_operation_request_filter import (
+            ProcessInstanceCancellationBatchOperationRequestFilter,
         )
 
         d = dict(src_dict)
-        filter_ = ResolveIncidentsBatchOperationDataFilter.from_dict(d.pop("filter"))
+        filter_ = ProcessInstanceCancellationBatchOperationRequestFilter.from_dict(
+            d.pop("filter")
+        )
 
         operation_reference = d.pop("operationReference", UNSET)
 

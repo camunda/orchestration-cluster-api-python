@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -9,9 +9,14 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.search_groups_for_role_data_page import SearchGroupsForRoleDataPage
-    from ..models.search_groups_for_role_data_sort_item import (
-        SearchGroupsForRoleDataSortItem,
+    from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
+    from ..models.limit_based_pagination import LimitBasedPagination
+    from ..models.offset_based_pagination import OffsetBasedPagination
+    from ..models.page_cursor_based_backward_pagination import (
+        PageCursorBasedBackwardPagination,
+    )
+    from ..models.role_group_search_query_sort_request import (
+        RoleGroupSearchQuerySortRequest,
     )
 
 
@@ -22,17 +27,30 @@ T = TypeVar("T", bound="SearchGroupsForRoleData")
 class SearchGroupsForRoleData:
     """
     Attributes:
-        sort (list[SearchGroupsForRoleDataSortItem] | Unset): Sort field criteria.
-        page (SearchGroupsForRoleDataPage | Unset): Pagination criteria.
+        sort (list[RoleGroupSearchQuerySortRequest] | Unset): Sort field criteria.
+        page (CursorBasedForwardPagination | LimitBasedPagination | OffsetBasedPagination |
+            PageCursorBasedBackwardPagination | Unset): Pagination criteria.
     """
 
-    sort: list[SearchGroupsForRoleDataSortItem] | Unset = UNSET
-    page: SearchGroupsForRoleDataPage | Unset = UNSET
+    sort: list[RoleGroupSearchQuerySortRequest] | Unset = UNSET
+    page: (
+        CursorBasedForwardPagination
+        | LimitBasedPagination
+        | OffsetBasedPagination
+        | PageCursorBasedBackwardPagination
+        | Unset
+    ) = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.cursor_based_forward_pagination import (
+            CursorBasedForwardPagination,
+        )
+        from ..models.limit_based_pagination import LimitBasedPagination
+        from ..models.offset_based_pagination import OffsetBasedPagination
+
         sort: list[dict[str, Any]] | Unset = UNSET
         if not isinstance(self.sort, Unset):
             sort = []
@@ -40,8 +58,16 @@ class SearchGroupsForRoleData:
                 sort_item = sort_item_data.to_dict()
                 sort.append(sort_item)
 
-        page: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.page, Unset):
+        page: dict[str, Any] | Unset
+        if isinstance(self.page, Unset):
+            page = UNSET
+        elif isinstance(self.page, LimitBasedPagination):
+            page = self.page.to_dict()
+        elif isinstance(self.page, OffsetBasedPagination):
+            page = self.page.to_dict()
+        elif isinstance(self.page, CursorBasedForwardPagination):
+            page = self.page.to_dict()
+        else:
             page = self.page.to_dict()
 
         field_dict: dict[str, Any] = {}
@@ -56,29 +82,78 @@ class SearchGroupsForRoleData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.search_groups_for_role_data_page import (
-            SearchGroupsForRoleDataPage,
+        from ..models.cursor_based_forward_pagination import (
+            CursorBasedForwardPagination,
         )
-        from ..models.search_groups_for_role_data_sort_item import (
-            SearchGroupsForRoleDataSortItem,
+        from ..models.limit_based_pagination import LimitBasedPagination
+        from ..models.offset_based_pagination import OffsetBasedPagination
+        from ..models.page_cursor_based_backward_pagination import (
+            PageCursorBasedBackwardPagination,
+        )
+        from ..models.role_group_search_query_sort_request import (
+            RoleGroupSearchQuerySortRequest,
         )
 
         d = dict(src_dict)
         _sort = d.pop("sort", UNSET)
-        sort: list[SearchGroupsForRoleDataSortItem] | Unset = UNSET
+        sort: list[RoleGroupSearchQuerySortRequest] | Unset = UNSET
         if _sort is not UNSET:
             sort = []
             for sort_item_data in _sort:
-                sort_item = SearchGroupsForRoleDataSortItem.from_dict(sort_item_data)
+                sort_item = RoleGroupSearchQuerySortRequest.from_dict(sort_item_data)
 
                 sort.append(sort_item)
 
-        _page = d.pop("page", UNSET)
-        page: SearchGroupsForRoleDataPage | Unset
-        if isinstance(_page, Unset):
-            page = UNSET
-        else:
-            page = SearchGroupsForRoleDataPage.from_dict(_page)
+        def _parse_page(
+            data: object,
+        ) -> (
+            CursorBasedForwardPagination
+            | LimitBasedPagination
+            | OffsetBasedPagination
+            | PageCursorBasedBackwardPagination
+            | Unset
+        ):
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                page_type_0 = LimitBasedPagination.from_dict(data)
+
+                return page_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                page_type_1 = OffsetBasedPagination.from_dict(data)
+
+                return page_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                page_type_2 = CursorBasedForwardPagination.from_dict(data)
+
+                return page_type_2
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+
+            data = cast(dict[str, Any], data)
+            page_type_3 = PageCursorBasedBackwardPagination.from_dict(data)
+
+            return page_type_3
+
+        page = _parse_page(d.pop("page", UNSET))
 
         search_groups_for_role_data = cls(
             sort=sort,

@@ -4,9 +4,8 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_resource_response_200 import GetResourceResponse200
-from ...models.get_resource_response_404 import GetResourceResponse404
-from ...models.get_resource_response_500 import GetResourceResponse500
+from ...models.problem_detail import ProblemDetail
+from ...models.resource_result import ResourceResult
 from ...types import Response
 
 
@@ -22,15 +21,15 @@ def _get_kwargs(resource_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> GetResourceResponse200 | GetResourceResponse404 | GetResourceResponse500 | None:
+) -> ProblemDetail | ResourceResult | None:
     if response.status_code == 200:
-        response_200 = GetResourceResponse200.from_dict(response.json())
+        response_200 = ResourceResult.from_dict(response.json())
         return response_200
     if response.status_code == 404:
-        response_404 = GetResourceResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetResourceResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -40,7 +39,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[GetResourceResponse200 | GetResourceResponse404 | GetResourceResponse500]:
+) -> Response[ProblemDetail | ResourceResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -51,7 +50,7 @@ def _build_response(
 
 def sync_detailed(
     resource_key: str, *, client: AuthenticatedClient | Client
-) -> Response[GetResourceResponse200 | GetResourceResponse404 | GetResourceResponse500]:
+) -> Response[ProblemDetail | ResourceResult]:
     """Get resource
 
      Returns a deployed resource.
@@ -67,7 +66,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetResourceResponse200 | GetResourceResponse404 | GetResourceResponse500]
+        Response[ProblemDetail | ResourceResult]
     """
     kwargs = _get_kwargs(resource_key=resource_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -76,7 +75,7 @@ def sync_detailed(
 
 def sync(
     resource_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetResourceResponse200:
+) -> ResourceResult:
     """Get resource
 
      Returns a deployed resource.
@@ -93,29 +92,29 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetResourceResponse200"""
+        ResourceResult"""
     response = sync_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
             raise errors.GetResourceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetResourceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetResourceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetResourceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetResourceResponse200, response.parsed)
+    return cast(ResourceResult, response.parsed)
 
 
 async def asyncio_detailed(
     resource_key: str, *, client: AuthenticatedClient | Client
-) -> Response[GetResourceResponse200 | GetResourceResponse404 | GetResourceResponse500]:
+) -> Response[ProblemDetail | ResourceResult]:
     """Get resource
 
      Returns a deployed resource.
@@ -131,7 +130,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetResourceResponse200 | GetResourceResponse404 | GetResourceResponse500]
+        Response[ProblemDetail | ResourceResult]
     """
     kwargs = _get_kwargs(resource_key=resource_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -140,7 +139,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     resource_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetResourceResponse200:
+) -> ResourceResult:
     """Get resource
 
      Returns a deployed resource.
@@ -157,21 +156,21 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetResourceResponse200"""
+        ResourceResult"""
     response = await asyncio_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
             raise errors.GetResourceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetResourceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetResourceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetResourceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetResourceResponse200, response.parsed)
+    return cast(ResourceResult, response.parsed)

@@ -4,32 +4,17 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.activate_ad_hoc_sub_process_activities_data import (
-    ActivateAdHocSubProcessActivitiesData,
+from ...models.ad_hoc_sub_process_activate_activities_instruction import (
+    AdHocSubProcessActivateActivitiesInstruction,
 )
-from ...models.activate_ad_hoc_sub_process_activities_response_400 import (
-    ActivateAdHocSubProcessActivitiesResponse400,
-)
-from ...models.activate_ad_hoc_sub_process_activities_response_401 import (
-    ActivateAdHocSubProcessActivitiesResponse401,
-)
-from ...models.activate_ad_hoc_sub_process_activities_response_403 import (
-    ActivateAdHocSubProcessActivitiesResponse403,
-)
-from ...models.activate_ad_hoc_sub_process_activities_response_404 import (
-    ActivateAdHocSubProcessActivitiesResponse404,
-)
-from ...models.activate_ad_hoc_sub_process_activities_response_500 import (
-    ActivateAdHocSubProcessActivitiesResponse500,
-)
-from ...models.activate_ad_hoc_sub_process_activities_response_503 import (
-    ActivateAdHocSubProcessActivitiesResponse503,
-)
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
 def _get_kwargs(
-    ad_hoc_sub_process_instance_key: str, *, body: ActivateAdHocSubProcessActivitiesData
+    ad_hoc_sub_process_instance_key: str,
+    *,
+    body: AdHocSubProcessActivateActivitiesInstruction,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -48,48 +33,27 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    ActivateAdHocSubProcessActivitiesResponse400
-    | ActivateAdHocSubProcessActivitiesResponse401
-    | ActivateAdHocSubProcessActivitiesResponse403
-    | ActivateAdHocSubProcessActivitiesResponse404
-    | ActivateAdHocSubProcessActivitiesResponse500
-    | ActivateAdHocSubProcessActivitiesResponse503
-    | Any
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = ActivateAdHocSubProcessActivitiesResponse400.from_dict(
-            response.json()
-        )
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = ActivateAdHocSubProcessActivitiesResponse401.from_dict(
-            response.json()
-        )
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = ActivateAdHocSubProcessActivitiesResponse403.from_dict(
-            response.json()
-        )
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = ActivateAdHocSubProcessActivitiesResponse404.from_dict(
-            response.json()
-        )
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = ActivateAdHocSubProcessActivitiesResponse500.from_dict(
-            response.json()
-        )
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = ActivateAdHocSubProcessActivitiesResponse503.from_dict(
-            response.json()
-        )
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -99,15 +63,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    ActivateAdHocSubProcessActivitiesResponse400
-    | ActivateAdHocSubProcessActivitiesResponse401
-    | ActivateAdHocSubProcessActivitiesResponse403
-    | ActivateAdHocSubProcessActivitiesResponse404
-    | ActivateAdHocSubProcessActivitiesResponse500
-    | ActivateAdHocSubProcessActivitiesResponse503
-    | Any
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -120,16 +76,8 @@ def sync_detailed(
     ad_hoc_sub_process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ActivateAdHocSubProcessActivitiesData,
-) -> Response[
-    ActivateAdHocSubProcessActivitiesResponse400
-    | ActivateAdHocSubProcessActivitiesResponse401
-    | ActivateAdHocSubProcessActivitiesResponse403
-    | ActivateAdHocSubProcessActivitiesResponse404
-    | ActivateAdHocSubProcessActivitiesResponse500
-    | ActivateAdHocSubProcessActivitiesResponse503
-    | Any
-]:
+    body: AdHocSubProcessActivateActivitiesInstruction,
+) -> Response[Any | ProblemDetail]:
     """Activate activities within an ad-hoc sub-process
 
      Activates selected activities within an ad-hoc sub-process identified by element ID.
@@ -139,14 +87,14 @@ def sync_detailed(
     Args:
         ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
             Example: 2251799813686789.
-        body (ActivateAdHocSubProcessActivitiesData):
+        body (AdHocSubProcessActivateActivitiesInstruction):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ActivateAdHocSubProcessActivitiesResponse400 | ActivateAdHocSubProcessActivitiesResponse401 | ActivateAdHocSubProcessActivitiesResponse403 | ActivateAdHocSubProcessActivitiesResponse404 | ActivateAdHocSubProcessActivitiesResponse500 | ActivateAdHocSubProcessActivitiesResponse503 | Any]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(
         ad_hoc_sub_process_instance_key=ad_hoc_sub_process_instance_key, body=body
@@ -159,7 +107,7 @@ def sync(
     ad_hoc_sub_process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ActivateAdHocSubProcessActivitiesData,
+    body: AdHocSubProcessActivateActivitiesInstruction,
     **kwargs: Any,
 ) -> None:
     """Activate activities within an ad-hoc sub-process
@@ -171,7 +119,7 @@ def sync(
     Args:
         ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
             Example: 2251799813686789.
-        body (ActivateAdHocSubProcessActivitiesData):
+        body (AdHocSubProcessActivateActivitiesInstruction):
 
     Raises:
         errors.ActivateAdHocSubProcessActivitiesBadRequest: If the response status code is 400. The provided data is not valid.
@@ -194,49 +142,37 @@ def sync(
             raise errors.ActivateAdHocSubProcessActivitiesBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    ActivateAdHocSubProcessActivitiesResponse400, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.ActivateAdHocSubProcessActivitiesUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    ActivateAdHocSubProcessActivitiesResponse401, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.ActivateAdHocSubProcessActivitiesForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    ActivateAdHocSubProcessActivitiesResponse403, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.ActivateAdHocSubProcessActivitiesNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    ActivateAdHocSubProcessActivitiesResponse404, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.ActivateAdHocSubProcessActivitiesInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    ActivateAdHocSubProcessActivitiesResponse500, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.ActivateAdHocSubProcessActivitiesServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    ActivateAdHocSubProcessActivitiesResponse503, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -246,16 +182,8 @@ async def asyncio_detailed(
     ad_hoc_sub_process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ActivateAdHocSubProcessActivitiesData,
-) -> Response[
-    ActivateAdHocSubProcessActivitiesResponse400
-    | ActivateAdHocSubProcessActivitiesResponse401
-    | ActivateAdHocSubProcessActivitiesResponse403
-    | ActivateAdHocSubProcessActivitiesResponse404
-    | ActivateAdHocSubProcessActivitiesResponse500
-    | ActivateAdHocSubProcessActivitiesResponse503
-    | Any
-]:
+    body: AdHocSubProcessActivateActivitiesInstruction,
+) -> Response[Any | ProblemDetail]:
     """Activate activities within an ad-hoc sub-process
 
      Activates selected activities within an ad-hoc sub-process identified by element ID.
@@ -265,14 +193,14 @@ async def asyncio_detailed(
     Args:
         ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
             Example: 2251799813686789.
-        body (ActivateAdHocSubProcessActivitiesData):
+        body (AdHocSubProcessActivateActivitiesInstruction):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ActivateAdHocSubProcessActivitiesResponse400 | ActivateAdHocSubProcessActivitiesResponse401 | ActivateAdHocSubProcessActivitiesResponse403 | ActivateAdHocSubProcessActivitiesResponse404 | ActivateAdHocSubProcessActivitiesResponse500 | ActivateAdHocSubProcessActivitiesResponse503 | Any]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(
         ad_hoc_sub_process_instance_key=ad_hoc_sub_process_instance_key, body=body
@@ -285,7 +213,7 @@ async def asyncio(
     ad_hoc_sub_process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ActivateAdHocSubProcessActivitiesData,
+    body: AdHocSubProcessActivateActivitiesInstruction,
     **kwargs: Any,
 ) -> None:
     """Activate activities within an ad-hoc sub-process
@@ -297,7 +225,7 @@ async def asyncio(
     Args:
         ad_hoc_sub_process_instance_key (str): System-generated key for a element instance.
             Example: 2251799813686789.
-        body (ActivateAdHocSubProcessActivitiesData):
+        body (AdHocSubProcessActivateActivitiesInstruction):
 
     Raises:
         errors.ActivateAdHocSubProcessActivitiesBadRequest: If the response status code is 400. The provided data is not valid.
@@ -320,49 +248,37 @@ async def asyncio(
             raise errors.ActivateAdHocSubProcessActivitiesBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    ActivateAdHocSubProcessActivitiesResponse400, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.ActivateAdHocSubProcessActivitiesUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    ActivateAdHocSubProcessActivitiesResponse401, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.ActivateAdHocSubProcessActivitiesForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    ActivateAdHocSubProcessActivitiesResponse403, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.ActivateAdHocSubProcessActivitiesNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    ActivateAdHocSubProcessActivitiesResponse404, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.ActivateAdHocSubProcessActivitiesInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    ActivateAdHocSubProcessActivitiesResponse500, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.ActivateAdHocSubProcessActivitiesServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(
-                    ActivateAdHocSubProcessActivitiesResponse503, response.parsed
-                ),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

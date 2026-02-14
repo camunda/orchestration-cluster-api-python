@@ -3,18 +3,13 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.create_user_data import CreateUserData
-from ...models.create_user_response_201 import CreateUserResponse201
-from ...models.create_user_response_400 import CreateUserResponse400
-from ...models.create_user_response_401 import CreateUserResponse401
-from ...models.create_user_response_403 import CreateUserResponse403
-from ...models.create_user_response_409 import CreateUserResponse409
-from ...models.create_user_response_500 import CreateUserResponse500
-from ...models.create_user_response_503 import CreateUserResponse503
+from ...models.problem_detail import ProblemDetail
+from ...models.user_create_result import UserCreateResult
+from ...models.user_request import UserRequest
 from ...types import Response
 
 
-def _get_kwargs(*, body: CreateUserData) -> dict[str, Any]:
+def _get_kwargs(*, body: UserRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/users"}
     _kwargs["json"] = body.to_dict()
@@ -25,36 +20,27 @@ def _get_kwargs(*, body: CreateUserData) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    CreateUserResponse201
-    | CreateUserResponse400
-    | CreateUserResponse401
-    | CreateUserResponse403
-    | CreateUserResponse409
-    | CreateUserResponse500
-    | CreateUserResponse503
-    | None
-):
+) -> ProblemDetail | UserCreateResult | None:
     if response.status_code == 201:
-        response_201 = CreateUserResponse201.from_dict(response.json())
+        response_201 = UserCreateResult.from_dict(response.json())
         return response_201
     if response.status_code == 400:
-        response_400 = CreateUserResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = CreateUserResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = CreateUserResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 409:
-        response_409 = CreateUserResponse409.from_dict(response.json())
+        response_409 = ProblemDetail.from_dict(response.json())
         return response_409
     if response.status_code == 500:
-        response_500 = CreateUserResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = CreateUserResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -64,15 +50,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    CreateUserResponse201
-    | CreateUserResponse400
-    | CreateUserResponse401
-    | CreateUserResponse403
-    | CreateUserResponse409
-    | CreateUserResponse500
-    | CreateUserResponse503
-]:
+) -> Response[ProblemDetail | UserCreateResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -82,29 +60,21 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: CreateUserData
-) -> Response[
-    CreateUserResponse201
-    | CreateUserResponse400
-    | CreateUserResponse401
-    | CreateUserResponse403
-    | CreateUserResponse409
-    | CreateUserResponse500
-    | CreateUserResponse503
-]:
+    *, client: AuthenticatedClient | Client, body: UserRequest
+) -> Response[ProblemDetail | UserCreateResult]:
     """Create user
 
      Create a new user.
 
     Args:
-        body (CreateUserData):
+        body (UserRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateUserResponse201 | CreateUserResponse400 | CreateUserResponse401 | CreateUserResponse403 | CreateUserResponse409 | CreateUserResponse500 | CreateUserResponse503]
+        Response[ProblemDetail | UserCreateResult]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -112,14 +82,14 @@ def sync_detailed(
 
 
 def sync(
-    *, client: AuthenticatedClient | Client, body: CreateUserData, **kwargs: Any
-) -> CreateUserResponse201:
+    *, client: AuthenticatedClient | Client, body: UserRequest, **kwargs: Any
+) -> UserCreateResult:
     """Create user
 
      Create a new user.
 
     Args:
-        body (CreateUserData):
+        body (UserRequest):
 
     Raises:
         errors.CreateUserBadRequest: If the response status code is 400. The provided data is not valid.
@@ -131,74 +101,66 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CreateUserResponse201"""
+        UserCreateResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.CreateUserBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateUserResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.CreateUserUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateUserResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.CreateUserForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateUserResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 409:
             raise errors.CreateUserConflict(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateUserResponse409, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CreateUserInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateUserResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CreateUserServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateUserResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CreateUserResponse201, response.parsed)
+    return cast(UserCreateResult, response.parsed)
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: CreateUserData
-) -> Response[
-    CreateUserResponse201
-    | CreateUserResponse400
-    | CreateUserResponse401
-    | CreateUserResponse403
-    | CreateUserResponse409
-    | CreateUserResponse500
-    | CreateUserResponse503
-]:
+    *, client: AuthenticatedClient | Client, body: UserRequest
+) -> Response[ProblemDetail | UserCreateResult]:
     """Create user
 
      Create a new user.
 
     Args:
-        body (CreateUserData):
+        body (UserRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateUserResponse201 | CreateUserResponse400 | CreateUserResponse401 | CreateUserResponse403 | CreateUserResponse409 | CreateUserResponse500 | CreateUserResponse503]
+        Response[ProblemDetail | UserCreateResult]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -206,14 +168,14 @@ async def asyncio_detailed(
 
 
 async def asyncio(
-    *, client: AuthenticatedClient | Client, body: CreateUserData, **kwargs: Any
-) -> CreateUserResponse201:
+    *, client: AuthenticatedClient | Client, body: UserRequest, **kwargs: Any
+) -> UserCreateResult:
     """Create user
 
      Create a new user.
 
     Args:
-        body (CreateUserData):
+        body (UserRequest):
 
     Raises:
         errors.CreateUserBadRequest: If the response status code is 400. The provided data is not valid.
@@ -225,45 +187,45 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CreateUserResponse201"""
+        UserCreateResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.CreateUserBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateUserResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.CreateUserUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateUserResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.CreateUserForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateUserResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 409:
             raise errors.CreateUserConflict(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateUserResponse409, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CreateUserInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateUserResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CreateUserServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateUserResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CreateUserResponse201, response.parsed)
+    return cast(UserCreateResult, response.parsed)

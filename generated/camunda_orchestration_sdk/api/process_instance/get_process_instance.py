@@ -5,11 +5,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.get_process_instance_response_200 import GetProcessInstanceResponse200
-from ...models.get_process_instance_response_400 import GetProcessInstanceResponse400
-from ...models.get_process_instance_response_401 import GetProcessInstanceResponse401
-from ...models.get_process_instance_response_403 import GetProcessInstanceResponse403
-from ...models.get_process_instance_response_404 import GetProcessInstanceResponse404
-from ...models.get_process_instance_response_500 import GetProcessInstanceResponse500
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -25,32 +21,24 @@ def _get_kwargs(process_instance_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetProcessInstanceResponse200
-    | GetProcessInstanceResponse400
-    | GetProcessInstanceResponse401
-    | GetProcessInstanceResponse403
-    | GetProcessInstanceResponse404
-    | GetProcessInstanceResponse500
-    | None
-):
+) -> GetProcessInstanceResponse200 | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = GetProcessInstanceResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = GetProcessInstanceResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = GetProcessInstanceResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetProcessInstanceResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = GetProcessInstanceResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetProcessInstanceResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -60,14 +48,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetProcessInstanceResponse200
-    | GetProcessInstanceResponse400
-    | GetProcessInstanceResponse401
-    | GetProcessInstanceResponse403
-    | GetProcessInstanceResponse404
-    | GetProcessInstanceResponse500
-]:
+) -> Response[GetProcessInstanceResponse200 | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -78,14 +59,7 @@ def _build_response(
 
 def sync_detailed(
     process_instance_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetProcessInstanceResponse200
-    | GetProcessInstanceResponse400
-    | GetProcessInstanceResponse401
-    | GetProcessInstanceResponse403
-    | GetProcessInstanceResponse404
-    | GetProcessInstanceResponse500
-]:
+) -> Response[GetProcessInstanceResponse200 | ProblemDetail]:
     """Get process instance
 
      Get the process instance by the process instance key.
@@ -99,7 +73,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetProcessInstanceResponse200 | GetProcessInstanceResponse400 | GetProcessInstanceResponse401 | GetProcessInstanceResponse403 | GetProcessInstanceResponse404 | GetProcessInstanceResponse500]
+        Response[GetProcessInstanceResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(process_instance_key=process_instance_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -133,31 +107,31 @@ def sync(
             raise errors.GetProcessInstanceBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessInstanceResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetProcessInstanceUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessInstanceResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetProcessInstanceForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessInstanceResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetProcessInstanceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessInstanceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetProcessInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
@@ -166,14 +140,7 @@ def sync(
 
 async def asyncio_detailed(
     process_instance_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetProcessInstanceResponse200
-    | GetProcessInstanceResponse400
-    | GetProcessInstanceResponse401
-    | GetProcessInstanceResponse403
-    | GetProcessInstanceResponse404
-    | GetProcessInstanceResponse500
-]:
+) -> Response[GetProcessInstanceResponse200 | ProblemDetail]:
     """Get process instance
 
      Get the process instance by the process instance key.
@@ -187,7 +154,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetProcessInstanceResponse200 | GetProcessInstanceResponse400 | GetProcessInstanceResponse401 | GetProcessInstanceResponse403 | GetProcessInstanceResponse404 | GetProcessInstanceResponse500]
+        Response[GetProcessInstanceResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(process_instance_key=process_instance_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -223,31 +190,31 @@ async def asyncio(
             raise errors.GetProcessInstanceBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessInstanceResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetProcessInstanceUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessInstanceResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetProcessInstanceForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessInstanceResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetProcessInstanceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessInstanceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetProcessInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

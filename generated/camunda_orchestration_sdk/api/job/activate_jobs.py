@@ -3,16 +3,13 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.activate_jobs_data import ActivateJobsData
 from ...models.activate_jobs_response_200 import ActivateJobsResponse200
-from ...models.activate_jobs_response_400 import ActivateJobsResponse400
-from ...models.activate_jobs_response_401 import ActivateJobsResponse401
-from ...models.activate_jobs_response_500 import ActivateJobsResponse500
-from ...models.activate_jobs_response_503 import ActivateJobsResponse503
+from ...models.job_activation_request import JobActivationRequest
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
-def _get_kwargs(*, body: ActivateJobsData) -> dict[str, Any]:
+def _get_kwargs(*, body: JobActivationRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/jobs/activation"}
     _kwargs["json"] = body.to_dict()
@@ -23,28 +20,21 @@ def _get_kwargs(*, body: ActivateJobsData) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    ActivateJobsResponse200
-    | ActivateJobsResponse400
-    | ActivateJobsResponse401
-    | ActivateJobsResponse500
-    | ActivateJobsResponse503
-    | None
-):
+) -> ActivateJobsResponse200 | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = ActivateJobsResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = ActivateJobsResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = ActivateJobsResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 500:
-        response_500 = ActivateJobsResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = ActivateJobsResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -54,13 +44,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    ActivateJobsResponse200
-    | ActivateJobsResponse400
-    | ActivateJobsResponse401
-    | ActivateJobsResponse500
-    | ActivateJobsResponse503
-]:
+) -> Response[ActivateJobsResponse200 | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -70,27 +54,21 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: ActivateJobsData
-) -> Response[
-    ActivateJobsResponse200
-    | ActivateJobsResponse400
-    | ActivateJobsResponse401
-    | ActivateJobsResponse500
-    | ActivateJobsResponse503
-]:
+    *, client: AuthenticatedClient | Client, body: JobActivationRequest
+) -> Response[ActivateJobsResponse200 | ProblemDetail]:
     """Activate jobs
 
      Iterate through all known partitions and activate jobs up to the requested maximum.
 
     Args:
-        body (ActivateJobsData):
+        body (JobActivationRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ActivateJobsResponse200 | ActivateJobsResponse400 | ActivateJobsResponse401 | ActivateJobsResponse500 | ActivateJobsResponse503]
+        Response[ActivateJobsResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -98,14 +76,14 @@ def sync_detailed(
 
 
 def sync(
-    *, client: AuthenticatedClient | Client, body: ActivateJobsData, **kwargs: Any
+    *, client: AuthenticatedClient | Client, body: JobActivationRequest, **kwargs: Any
 ) -> ActivateJobsResponse200:
     """Activate jobs
 
      Iterate through all known partitions and activate jobs up to the requested maximum.
 
     Args:
-        body (ActivateJobsData):
+        body (JobActivationRequest):
 
     Raises:
         errors.ActivateJobsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -122,25 +100,25 @@ def sync(
             raise errors.ActivateJobsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ActivateJobsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.ActivateJobsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ActivateJobsResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.ActivateJobsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ActivateJobsResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.ActivateJobsServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ActivateJobsResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
@@ -148,27 +126,21 @@ def sync(
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: ActivateJobsData
-) -> Response[
-    ActivateJobsResponse200
-    | ActivateJobsResponse400
-    | ActivateJobsResponse401
-    | ActivateJobsResponse500
-    | ActivateJobsResponse503
-]:
+    *, client: AuthenticatedClient | Client, body: JobActivationRequest
+) -> Response[ActivateJobsResponse200 | ProblemDetail]:
     """Activate jobs
 
      Iterate through all known partitions and activate jobs up to the requested maximum.
 
     Args:
-        body (ActivateJobsData):
+        body (JobActivationRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ActivateJobsResponse200 | ActivateJobsResponse400 | ActivateJobsResponse401 | ActivateJobsResponse500 | ActivateJobsResponse503]
+        Response[ActivateJobsResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -176,14 +148,14 @@ async def asyncio_detailed(
 
 
 async def asyncio(
-    *, client: AuthenticatedClient | Client, body: ActivateJobsData, **kwargs: Any
+    *, client: AuthenticatedClient | Client, body: JobActivationRequest, **kwargs: Any
 ) -> ActivateJobsResponse200:
     """Activate jobs
 
      Iterate through all known partitions and activate jobs up to the requested maximum.
 
     Args:
-        body (ActivateJobsData):
+        body (JobActivationRequest):
 
     Raises:
         errors.ActivateJobsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -200,25 +172,25 @@ async def asyncio(
             raise errors.ActivateJobsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ActivateJobsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.ActivateJobsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ActivateJobsResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.ActivateJobsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ActivateJobsResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.ActivateJobsServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ActivateJobsResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

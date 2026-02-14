@@ -12,8 +12,8 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.migrate_process_instance_data_mapping_instructions_item import (
-        MigrateProcessInstanceDataMappingInstructionsItem,
+    from ..models.migrate_process_instance_mapping_instruction import (
+        MigrateProcessInstanceMappingInstruction,
     )
 
 
@@ -27,15 +27,15 @@ class MigrateProcessInstanceData:
     Attributes:
         target_process_definition_key (str): The key of process definition to migrate the process instance to. Example:
             2251799813686749.
-        mapping_instructions (list[MigrateProcessInstanceDataMappingInstructionsItem]): Element mappings from the source
-            process instance to the target process instance.
+        mapping_instructions (list[MigrateProcessInstanceMappingInstruction]): Element mappings from the source process
+            instance to the target process instance.
         operation_reference (int | Unset): A reference key chosen by the user that will be part of all records resulting
             from this operation.
             Must be > 0 if provided.
     """
 
     target_process_definition_key: ProcessDefinitionKey
-    mapping_instructions: list[MigrateProcessInstanceDataMappingInstructionsItem]
+    mapping_instructions: list[MigrateProcessInstanceMappingInstruction]
     operation_reference: int | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -63,8 +63,8 @@ class MigrateProcessInstanceData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.migrate_process_instance_data_mapping_instructions_item import (
-            MigrateProcessInstanceDataMappingInstructionsItem,
+        from ..models.migrate_process_instance_mapping_instruction import (
+            MigrateProcessInstanceMappingInstruction,
         )
 
         d = dict(src_dict)
@@ -72,13 +72,11 @@ class MigrateProcessInstanceData:
             d.pop("targetProcessDefinitionKey")
         )
 
-        mapping_instructions: list[
-            MigrateProcessInstanceDataMappingInstructionsItem
-        ] = []
+        mapping_instructions: list[MigrateProcessInstanceMappingInstruction] = []
         _mapping_instructions = d.pop("mappingInstructions")
         for mapping_instructions_item_data in _mapping_instructions:
             mapping_instructions_item = (
-                MigrateProcessInstanceDataMappingInstructionsItem.from_dict(
+                MigrateProcessInstanceMappingInstruction.from_dict(
                     mapping_instructions_item_data
                 )
             )

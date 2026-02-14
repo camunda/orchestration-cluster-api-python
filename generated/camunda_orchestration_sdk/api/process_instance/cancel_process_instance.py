@@ -5,18 +5,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.cancel_process_instance_data_type_0 import CancelProcessInstanceDataType0
-from ...models.cancel_process_instance_response_400 import (
-    CancelProcessInstanceResponse400,
-)
-from ...models.cancel_process_instance_response_404 import (
-    CancelProcessInstanceResponse404,
-)
-from ...models.cancel_process_instance_response_500 import (
-    CancelProcessInstanceResponse500,
-)
-from ...models.cancel_process_instance_response_503 import (
-    CancelProcessInstanceResponse503,
-)
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
@@ -43,28 +32,21 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | CancelProcessInstanceResponse400
-    | CancelProcessInstanceResponse404
-    | CancelProcessInstanceResponse500
-    | CancelProcessInstanceResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = CancelProcessInstanceResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 404:
-        response_404 = CancelProcessInstanceResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = CancelProcessInstanceResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = CancelProcessInstanceResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -74,13 +56,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | CancelProcessInstanceResponse400
-    | CancelProcessInstanceResponse404
-    | CancelProcessInstanceResponse500
-    | CancelProcessInstanceResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -94,13 +70,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: CancelProcessInstanceDataType0 | None | Unset = UNSET,
-) -> Response[
-    Any
-    | CancelProcessInstanceResponse400
-    | CancelProcessInstanceResponse404
-    | CancelProcessInstanceResponse500
-    | CancelProcessInstanceResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Cancel process instance
 
      Cancels a running process instance. As a cancellation includes more than just the removal of the
@@ -116,7 +86,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(process_instance_key=process_instance_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -157,25 +127,25 @@ def sync(
             raise errors.CancelProcessInstanceBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CancelProcessInstanceResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.CancelProcessInstanceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CancelProcessInstanceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CancelProcessInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CancelProcessInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CancelProcessInstanceServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CancelProcessInstanceResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -186,13 +156,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: CancelProcessInstanceDataType0 | None | Unset = UNSET,
-) -> Response[
-    Any
-    | CancelProcessInstanceResponse400
-    | CancelProcessInstanceResponse404
-    | CancelProcessInstanceResponse500
-    | CancelProcessInstanceResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     """Cancel process instance
 
      Cancels a running process instance. As a cancellation includes more than just the removal of the
@@ -208,7 +172,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | CancelProcessInstanceResponse400 | CancelProcessInstanceResponse404 | CancelProcessInstanceResponse500 | CancelProcessInstanceResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(process_instance_key=process_instance_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -249,25 +213,25 @@ async def asyncio(
             raise errors.CancelProcessInstanceBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CancelProcessInstanceResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.CancelProcessInstanceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CancelProcessInstanceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CancelProcessInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CancelProcessInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CancelProcessInstanceServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CancelProcessInstanceResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

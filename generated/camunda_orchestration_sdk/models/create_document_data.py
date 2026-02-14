@@ -11,7 +11,7 @@ from .. import types
 from ..types import UNSET, File, Unset
 
 if TYPE_CHECKING:
-    from ..models.create_document_data_metadata import CreateDocumentDataMetadata
+    from ..models.document_metadata import DocumentMetadata
 
 
 T = TypeVar("T", bound="CreateDocumentData")
@@ -22,11 +22,11 @@ class CreateDocumentData:
     """
     Attributes:
         file (File):
-        metadata (CreateDocumentDataMetadata | Unset): Information about the document.
+        metadata (DocumentMetadata | Unset): Information about the document.
     """
 
     file: File
-    metadata: CreateDocumentDataMetadata | Unset = UNSET
+    metadata: DocumentMetadata | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         file = self.file.to_tuple()
@@ -68,17 +68,17 @@ class CreateDocumentData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.create_document_data_metadata import CreateDocumentDataMetadata
+        from ..models.document_metadata import DocumentMetadata
 
         d = dict(src_dict)
         file = File(payload=BytesIO(d.pop("file")))
 
         _metadata = d.pop("metadata", UNSET)
-        metadata: CreateDocumentDataMetadata | Unset
+        metadata: DocumentMetadata | Unset
         if isinstance(_metadata, Unset):
             metadata = UNSET
         else:
-            metadata = CreateDocumentDataMetadata.from_dict(_metadata)
+            metadata = DocumentMetadata.from_dict(_metadata)
 
         create_document_data = cls(
             file=file,

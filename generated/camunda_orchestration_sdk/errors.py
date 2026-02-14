@@ -6,723 +6,7 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .models import (
-        ActivateAdHocSubProcessActivitiesResponse400,
-        ActivateAdHocSubProcessActivitiesResponse401,
-        ActivateAdHocSubProcessActivitiesResponse403,
-        ActivateAdHocSubProcessActivitiesResponse404,
-        ActivateAdHocSubProcessActivitiesResponse500,
-        ActivateAdHocSubProcessActivitiesResponse503,
-        ActivateJobsResponse400,
-        ActivateJobsResponse401,
-        ActivateJobsResponse500,
-        ActivateJobsResponse503,
-        AssignClientToGroupResponse400,
-        AssignClientToGroupResponse403,
-        AssignClientToGroupResponse404,
-        AssignClientToGroupResponse409,
-        AssignClientToGroupResponse500,
-        AssignClientToGroupResponse503,
-        AssignClientToTenantResponse400,
-        AssignClientToTenantResponse403,
-        AssignClientToTenantResponse404,
-        AssignClientToTenantResponse500,
-        AssignClientToTenantResponse503,
-        AssignGroupToTenantResponse400,
-        AssignGroupToTenantResponse403,
-        AssignGroupToTenantResponse404,
-        AssignGroupToTenantResponse500,
-        AssignGroupToTenantResponse503,
-        AssignMappingRuleToGroupResponse400,
-        AssignMappingRuleToGroupResponse403,
-        AssignMappingRuleToGroupResponse404,
-        AssignMappingRuleToGroupResponse409,
-        AssignMappingRuleToGroupResponse500,
-        AssignMappingRuleToGroupResponse503,
-        AssignMappingRuleToTenantResponse400,
-        AssignMappingRuleToTenantResponse403,
-        AssignMappingRuleToTenantResponse404,
-        AssignMappingRuleToTenantResponse500,
-        AssignMappingRuleToTenantResponse503,
-        AssignRoleToClientResponse400,
-        AssignRoleToClientResponse403,
-        AssignRoleToClientResponse404,
-        AssignRoleToClientResponse409,
-        AssignRoleToClientResponse500,
-        AssignRoleToClientResponse503,
-        AssignRoleToGroupResponse400,
-        AssignRoleToGroupResponse403,
-        AssignRoleToGroupResponse404,
-        AssignRoleToGroupResponse409,
-        AssignRoleToGroupResponse500,
-        AssignRoleToGroupResponse503,
-        AssignRoleToMappingRuleResponse400,
-        AssignRoleToMappingRuleResponse403,
-        AssignRoleToMappingRuleResponse404,
-        AssignRoleToMappingRuleResponse409,
-        AssignRoleToMappingRuleResponse500,
-        AssignRoleToMappingRuleResponse503,
-        AssignRoleToTenantResponse400,
-        AssignRoleToTenantResponse403,
-        AssignRoleToTenantResponse404,
-        AssignRoleToTenantResponse500,
-        AssignRoleToTenantResponse503,
-        AssignRoleToUserResponse400,
-        AssignRoleToUserResponse403,
-        AssignRoleToUserResponse404,
-        AssignRoleToUserResponse409,
-        AssignRoleToUserResponse500,
-        AssignRoleToUserResponse503,
-        AssignUserTaskResponse400,
-        AssignUserTaskResponse404,
-        AssignUserTaskResponse409,
-        AssignUserTaskResponse500,
-        AssignUserTaskResponse503,
-        AssignUserToGroupResponse400,
-        AssignUserToGroupResponse403,
-        AssignUserToGroupResponse404,
-        AssignUserToGroupResponse409,
-        AssignUserToGroupResponse500,
-        AssignUserToGroupResponse503,
-        AssignUserToTenantResponse400,
-        AssignUserToTenantResponse403,
-        AssignUserToTenantResponse404,
-        AssignUserToTenantResponse500,
-        AssignUserToTenantResponse503,
-        BroadcastSignalResponse400,
-        BroadcastSignalResponse404,
-        BroadcastSignalResponse500,
-        BroadcastSignalResponse503,
-        CancelBatchOperationResponse400,
-        CancelBatchOperationResponse403,
-        CancelBatchOperationResponse404,
-        CancelBatchOperationResponse500,
-        CancelProcessInstanceResponse400,
-        CancelProcessInstanceResponse404,
-        CancelProcessInstanceResponse500,
-        CancelProcessInstanceResponse503,
-        CancelProcessInstancesBatchOperationResponse400,
-        CancelProcessInstancesBatchOperationResponse401,
-        CancelProcessInstancesBatchOperationResponse403,
-        CancelProcessInstancesBatchOperationResponse500,
-        CompleteJobResponse400,
-        CompleteJobResponse404,
-        CompleteJobResponse409,
-        CompleteJobResponse500,
-        CompleteJobResponse503,
-        CompleteUserTaskResponse400,
-        CompleteUserTaskResponse404,
-        CompleteUserTaskResponse409,
-        CompleteUserTaskResponse500,
-        CompleteUserTaskResponse503,
-        CorrelateMessageResponse400,
-        CorrelateMessageResponse403,
-        CorrelateMessageResponse404,
-        CorrelateMessageResponse500,
-        CorrelateMessageResponse503,
-        CreateAdminUserResponse400,
-        CreateAdminUserResponse403,
-        CreateAdminUserResponse500,
-        CreateAdminUserResponse503,
-        CreateAuthorizationResponse400,
-        CreateAuthorizationResponse401,
-        CreateAuthorizationResponse403,
-        CreateAuthorizationResponse404,
-        CreateAuthorizationResponse500,
-        CreateAuthorizationResponse503,
-        CreateDeploymentResponse400,
-        CreateDeploymentResponse503,
-        CreateDocumentLinkResponse400,
-        CreateDocumentResponse400,
-        CreateDocumentResponse415,
-        CreateDocumentsResponse400,
-        CreateDocumentsResponse415,
-        CreateElementInstanceVariablesResponse400,
-        CreateElementInstanceVariablesResponse500,
-        CreateElementInstanceVariablesResponse503,
-        CreateGlobalClusterVariableResponse400,
-        CreateGlobalClusterVariableResponse401,
-        CreateGlobalClusterVariableResponse403,
-        CreateGlobalClusterVariableResponse500,
-        CreateGroupResponse400,
-        CreateGroupResponse401,
-        CreateGroupResponse403,
-        CreateGroupResponse500,
-        CreateGroupResponse503,
-        CreateMappingRuleResponse400,
-        CreateMappingRuleResponse403,
-        CreateMappingRuleResponse404,
-        CreateMappingRuleResponse500,
-        CreateProcessInstanceResponse400,
-        CreateProcessInstanceResponse500,
-        CreateProcessInstanceResponse503,
-        CreateProcessInstanceResponse504,
-        CreateRoleResponse400,
-        CreateRoleResponse401,
-        CreateRoleResponse403,
-        CreateRoleResponse500,
-        CreateRoleResponse503,
-        CreateTenantClusterVariableResponse400,
-        CreateTenantClusterVariableResponse401,
-        CreateTenantClusterVariableResponse403,
-        CreateTenantClusterVariableResponse500,
-        CreateTenantResponse400,
-        CreateTenantResponse403,
-        CreateTenantResponse404,
-        CreateTenantResponse500,
-        CreateTenantResponse503,
-        CreateUserResponse400,
-        CreateUserResponse401,
-        CreateUserResponse403,
-        CreateUserResponse409,
-        CreateUserResponse500,
-        CreateUserResponse503,
-        DeleteAuthorizationResponse401,
-        DeleteAuthorizationResponse404,
-        DeleteAuthorizationResponse500,
-        DeleteAuthorizationResponse503,
-        DeleteDecisionInstanceResponse401,
-        DeleteDecisionInstanceResponse403,
-        DeleteDecisionInstanceResponse404,
-        DeleteDecisionInstanceResponse500,
-        DeleteDecisionInstanceResponse503,
-        DeleteDecisionInstancesBatchOperationResponse400,
-        DeleteDecisionInstancesBatchOperationResponse401,
-        DeleteDecisionInstancesBatchOperationResponse403,
-        DeleteDecisionInstancesBatchOperationResponse500,
-        DeleteDocumentResponse404,
-        DeleteDocumentResponse500,
-        DeleteGlobalClusterVariableResponse400,
-        DeleteGlobalClusterVariableResponse401,
-        DeleteGlobalClusterVariableResponse403,
-        DeleteGlobalClusterVariableResponse404,
-        DeleteGlobalClusterVariableResponse500,
-        DeleteGroupResponse401,
-        DeleteGroupResponse404,
-        DeleteGroupResponse500,
-        DeleteGroupResponse503,
-        DeleteMappingRuleResponse401,
-        DeleteMappingRuleResponse404,
-        DeleteMappingRuleResponse500,
-        DeleteMappingRuleResponse503,
-        DeleteProcessInstanceResponse401,
-        DeleteProcessInstanceResponse403,
-        DeleteProcessInstanceResponse404,
-        DeleteProcessInstanceResponse409,
-        DeleteProcessInstanceResponse500,
-        DeleteProcessInstanceResponse503,
-        DeleteProcessInstancesBatchOperationResponse400,
-        DeleteProcessInstancesBatchOperationResponse401,
-        DeleteProcessInstancesBatchOperationResponse403,
-        DeleteProcessInstancesBatchOperationResponse500,
-        DeleteResourceResponse400,
-        DeleteResourceResponse404,
-        DeleteResourceResponse500,
-        DeleteResourceResponse503,
-        DeleteRoleResponse401,
-        DeleteRoleResponse404,
-        DeleteRoleResponse500,
-        DeleteRoleResponse503,
-        DeleteTenantClusterVariableResponse400,
-        DeleteTenantClusterVariableResponse401,
-        DeleteTenantClusterVariableResponse403,
-        DeleteTenantClusterVariableResponse404,
-        DeleteTenantClusterVariableResponse500,
-        DeleteTenantResponse400,
-        DeleteTenantResponse403,
-        DeleteTenantResponse404,
-        DeleteTenantResponse500,
-        DeleteTenantResponse503,
-        DeleteUserResponse400,
-        DeleteUserResponse404,
-        DeleteUserResponse500,
-        DeleteUserResponse503,
-        EvaluateConditionalsResponse400,
-        EvaluateConditionalsResponse403,
-        EvaluateConditionalsResponse404,
-        EvaluateConditionalsResponse500,
-        EvaluateConditionalsResponse503,
-        EvaluateDecisionResponse400,
-        EvaluateDecisionResponse500,
-        EvaluateDecisionResponse503,
-        EvaluateExpressionResponse400,
-        EvaluateExpressionResponse401,
-        EvaluateExpressionResponse403,
-        EvaluateExpressionResponse500,
-        FailJobResponse400,
-        FailJobResponse404,
-        FailJobResponse409,
-        FailJobResponse500,
-        FailJobResponse503,
-        GetAuditLogResponse401,
-        GetAuditLogResponse403,
-        GetAuditLogResponse404,
-        GetAuditLogResponse500,
-        GetAuthenticationResponse401,
-        GetAuthenticationResponse403,
-        GetAuthenticationResponse500,
-        GetAuthorizationResponse401,
-        GetAuthorizationResponse403,
-        GetAuthorizationResponse404,
-        GetAuthorizationResponse500,
-        GetBatchOperationResponse400,
-        GetBatchOperationResponse404,
-        GetBatchOperationResponse500,
-        GetDecisionDefinitionResponse400,
-        GetDecisionDefinitionResponse401,
-        GetDecisionDefinitionResponse403,
-        GetDecisionDefinitionResponse404,
-        GetDecisionDefinitionResponse500,
-        GetDecisionDefinitionXMLResponse400,
-        GetDecisionDefinitionXMLResponse401,
-        GetDecisionDefinitionXMLResponse403,
-        GetDecisionDefinitionXMLResponse404,
-        GetDecisionDefinitionXMLResponse500,
-        GetDecisionInstanceResponse400,
-        GetDecisionInstanceResponse401,
-        GetDecisionInstanceResponse403,
-        GetDecisionInstanceResponse404,
-        GetDecisionInstanceResponse500,
-        GetDecisionRequirementsResponse400,
-        GetDecisionRequirementsResponse401,
-        GetDecisionRequirementsResponse403,
-        GetDecisionRequirementsResponse404,
-        GetDecisionRequirementsResponse500,
-        GetDecisionRequirementsXMLResponse400,
-        GetDecisionRequirementsXMLResponse401,
-        GetDecisionRequirementsXMLResponse403,
-        GetDecisionRequirementsXMLResponse404,
-        GetDecisionRequirementsXMLResponse500,
-        GetDocumentResponse404,
-        GetDocumentResponse500,
-        GetElementInstanceResponse400,
-        GetElementInstanceResponse401,
-        GetElementInstanceResponse403,
-        GetElementInstanceResponse404,
-        GetElementInstanceResponse500,
-        GetGlobalClusterVariableResponse400,
-        GetGlobalClusterVariableResponse401,
-        GetGlobalClusterVariableResponse403,
-        GetGlobalClusterVariableResponse404,
-        GetGlobalClusterVariableResponse500,
-        GetGlobalJobStatisticsResponse400,
-        GetGlobalJobStatisticsResponse401,
-        GetGlobalJobStatisticsResponse403,
-        GetGlobalJobStatisticsResponse500,
-        GetGroupResponse401,
-        GetGroupResponse403,
-        GetGroupResponse404,
-        GetGroupResponse500,
-        GetIncidentResponse400,
-        GetIncidentResponse401,
-        GetIncidentResponse403,
-        GetIncidentResponse404,
-        GetIncidentResponse500,
-        GetLicenseResponse500,
-        GetMappingRuleResponse401,
-        GetMappingRuleResponse404,
-        GetMappingRuleResponse500,
-        GetProcessDefinitionInstanceStatisticsResponse400,
-        GetProcessDefinitionInstanceStatisticsResponse401,
-        GetProcessDefinitionInstanceStatisticsResponse403,
-        GetProcessDefinitionInstanceStatisticsResponse500,
-        GetProcessDefinitionInstanceVersionStatisticsResponse400,
-        GetProcessDefinitionInstanceVersionStatisticsResponse401,
-        GetProcessDefinitionInstanceVersionStatisticsResponse403,
-        GetProcessDefinitionInstanceVersionStatisticsResponse500,
-        GetProcessDefinitionMessageSubscriptionStatisticsResponse400,
-        GetProcessDefinitionMessageSubscriptionStatisticsResponse401,
-        GetProcessDefinitionMessageSubscriptionStatisticsResponse403,
-        GetProcessDefinitionMessageSubscriptionStatisticsResponse500,
-        GetProcessDefinitionResponse400,
-        GetProcessDefinitionResponse401,
-        GetProcessDefinitionResponse403,
-        GetProcessDefinitionResponse404,
-        GetProcessDefinitionResponse500,
-        GetProcessDefinitionStatisticsResponse400,
-        GetProcessDefinitionStatisticsResponse401,
-        GetProcessDefinitionStatisticsResponse403,
-        GetProcessDefinitionStatisticsResponse500,
-        GetProcessDefinitionXMLResponse400,
-        GetProcessDefinitionXMLResponse401,
-        GetProcessDefinitionXMLResponse403,
-        GetProcessDefinitionXMLResponse404,
-        GetProcessDefinitionXMLResponse500,
-        GetProcessInstanceCallHierarchyResponse400,
-        GetProcessInstanceCallHierarchyResponse401,
-        GetProcessInstanceCallHierarchyResponse403,
-        GetProcessInstanceCallHierarchyResponse404,
-        GetProcessInstanceCallHierarchyResponse500,
-        GetProcessInstanceResponse400,
-        GetProcessInstanceResponse401,
-        GetProcessInstanceResponse403,
-        GetProcessInstanceResponse404,
-        GetProcessInstanceResponse500,
-        GetProcessInstanceSequenceFlowsResponse400,
-        GetProcessInstanceSequenceFlowsResponse401,
-        GetProcessInstanceSequenceFlowsResponse403,
-        GetProcessInstanceSequenceFlowsResponse500,
-        GetProcessInstanceStatisticsByDefinitionResponse400,
-        GetProcessInstanceStatisticsByDefinitionResponse401,
-        GetProcessInstanceStatisticsByDefinitionResponse403,
-        GetProcessInstanceStatisticsByDefinitionResponse500,
-        GetProcessInstanceStatisticsByErrorResponse400,
-        GetProcessInstanceStatisticsByErrorResponse401,
-        GetProcessInstanceStatisticsByErrorResponse403,
-        GetProcessInstanceStatisticsByErrorResponse500,
-        GetProcessInstanceStatisticsResponse400,
-        GetProcessInstanceStatisticsResponse401,
-        GetProcessInstanceStatisticsResponse403,
-        GetProcessInstanceStatisticsResponse500,
-        GetResourceContentResponse404,
-        GetResourceContentResponse500,
-        GetResourceResponse404,
-        GetResourceResponse500,
-        GetRoleResponse401,
-        GetRoleResponse403,
-        GetRoleResponse404,
-        GetRoleResponse500,
-        GetStartProcessFormResponse400,
-        GetStartProcessFormResponse401,
-        GetStartProcessFormResponse403,
-        GetStartProcessFormResponse404,
-        GetStartProcessFormResponse500,
-        GetTenantClusterVariableResponse400,
-        GetTenantClusterVariableResponse401,
-        GetTenantClusterVariableResponse403,
-        GetTenantClusterVariableResponse404,
-        GetTenantClusterVariableResponse500,
-        GetTenantResponse400,
-        GetTenantResponse401,
-        GetTenantResponse403,
-        GetTenantResponse404,
-        GetTenantResponse500,
-        GetTopologyResponse401,
-        GetTopologyResponse500,
-        GetUsageMetricsResponse400,
-        GetUsageMetricsResponse401,
-        GetUsageMetricsResponse403,
-        GetUsageMetricsResponse500,
-        GetUserResponse401,
-        GetUserResponse403,
-        GetUserResponse404,
-        GetUserResponse500,
-        GetUserTaskFormResponse400,
-        GetUserTaskFormResponse401,
-        GetUserTaskFormResponse403,
-        GetUserTaskFormResponse404,
-        GetUserTaskFormResponse500,
-        GetUserTaskResponse400,
-        GetUserTaskResponse401,
-        GetUserTaskResponse403,
-        GetUserTaskResponse404,
-        GetUserTaskResponse500,
-        GetVariableResponse400,
-        GetVariableResponse401,
-        GetVariableResponse403,
-        GetVariableResponse404,
-        GetVariableResponse500,
-        MigrateProcessInstanceResponse400,
-        MigrateProcessInstanceResponse404,
-        MigrateProcessInstanceResponse409,
-        MigrateProcessInstanceResponse500,
-        MigrateProcessInstanceResponse503,
-        MigrateProcessInstancesBatchOperationResponse400,
-        MigrateProcessInstancesBatchOperationResponse401,
-        MigrateProcessInstancesBatchOperationResponse403,
-        MigrateProcessInstancesBatchOperationResponse500,
-        ModifyProcessInstanceResponse400,
-        ModifyProcessInstanceResponse404,
-        ModifyProcessInstanceResponse500,
-        ModifyProcessInstanceResponse503,
-        ModifyProcessInstancesBatchOperationResponse400,
-        ModifyProcessInstancesBatchOperationResponse401,
-        ModifyProcessInstancesBatchOperationResponse403,
-        ModifyProcessInstancesBatchOperationResponse500,
-        PinClockResponse400,
-        PinClockResponse500,
-        PinClockResponse503,
-        PublishMessageResponse400,
-        PublishMessageResponse500,
-        PublishMessageResponse503,
-        ResetClockResponse500,
-        ResetClockResponse503,
-        ResolveIncidentResponse400,
-        ResolveIncidentResponse404,
-        ResolveIncidentResponse500,
-        ResolveIncidentResponse503,
-        ResolveIncidentsBatchOperationResponse400,
-        ResolveIncidentsBatchOperationResponse401,
-        ResolveIncidentsBatchOperationResponse403,
-        ResolveIncidentsBatchOperationResponse500,
-        ResolveProcessInstanceIncidentsResponse400,
-        ResolveProcessInstanceIncidentsResponse401,
-        ResolveProcessInstanceIncidentsResponse404,
-        ResolveProcessInstanceIncidentsResponse500,
-        ResolveProcessInstanceIncidentsResponse503,
-        ResumeBatchOperationResponse400,
-        ResumeBatchOperationResponse403,
-        ResumeBatchOperationResponse404,
-        ResumeBatchOperationResponse500,
-        ResumeBatchOperationResponse503,
-        SearchAuditLogsResponse400,
-        SearchAuditLogsResponse401,
-        SearchAuditLogsResponse403,
-        SearchAuthorizationsResponse400,
-        SearchAuthorizationsResponse401,
-        SearchAuthorizationsResponse403,
-        SearchAuthorizationsResponse500,
-        SearchBatchOperationItemsResponse400,
-        SearchBatchOperationItemsResponse500,
-        SearchBatchOperationsResponse400,
-        SearchBatchOperationsResponse500,
-        SearchClientsForGroupResponse400,
-        SearchClientsForGroupResponse401,
-        SearchClientsForGroupResponse403,
-        SearchClientsForGroupResponse404,
-        SearchClientsForGroupResponse500,
-        SearchClientsForRoleResponse400,
-        SearchClientsForRoleResponse401,
-        SearchClientsForRoleResponse403,
-        SearchClientsForRoleResponse404,
-        SearchClientsForRoleResponse500,
-        SearchClusterVariablesResponse400,
-        SearchClusterVariablesResponse401,
-        SearchClusterVariablesResponse403,
-        SearchClusterVariablesResponse500,
-        SearchCorrelatedMessageSubscriptionsResponse400,
-        SearchCorrelatedMessageSubscriptionsResponse401,
-        SearchCorrelatedMessageSubscriptionsResponse403,
-        SearchCorrelatedMessageSubscriptionsResponse500,
-        SearchDecisionDefinitionsResponse400,
-        SearchDecisionDefinitionsResponse401,
-        SearchDecisionDefinitionsResponse403,
-        SearchDecisionDefinitionsResponse500,
-        SearchDecisionInstancesResponse400,
-        SearchDecisionInstancesResponse401,
-        SearchDecisionInstancesResponse403,
-        SearchDecisionInstancesResponse500,
-        SearchDecisionRequirementsResponse400,
-        SearchDecisionRequirementsResponse401,
-        SearchDecisionRequirementsResponse403,
-        SearchDecisionRequirementsResponse500,
-        SearchElementInstanceIncidentsResponse400,
-        SearchElementInstanceIncidentsResponse401,
-        SearchElementInstanceIncidentsResponse403,
-        SearchElementInstanceIncidentsResponse404,
-        SearchElementInstanceIncidentsResponse500,
-        SearchElementInstancesResponse400,
-        SearchElementInstancesResponse401,
-        SearchElementInstancesResponse403,
-        SearchElementInstancesResponse500,
-        SearchGroupsForRoleResponse400,
-        SearchGroupsForRoleResponse401,
-        SearchGroupsForRoleResponse403,
-        SearchGroupsForRoleResponse404,
-        SearchGroupsForRoleResponse500,
-        SearchGroupsResponse400,
-        SearchGroupsResponse401,
-        SearchGroupsResponse403,
-        SearchIncidentsResponse400,
-        SearchIncidentsResponse401,
-        SearchIncidentsResponse403,
-        SearchIncidentsResponse500,
-        SearchJobsResponse400,
-        SearchJobsResponse401,
-        SearchJobsResponse403,
-        SearchJobsResponse500,
-        SearchMappingRuleResponse400,
-        SearchMappingRuleResponse401,
-        SearchMappingRuleResponse403,
-        SearchMappingRuleResponse500,
-        SearchMappingRulesForGroupResponse400,
-        SearchMappingRulesForGroupResponse401,
-        SearchMappingRulesForGroupResponse403,
-        SearchMappingRulesForGroupResponse404,
-        SearchMappingRulesForGroupResponse500,
-        SearchMappingRulesForRoleResponse400,
-        SearchMappingRulesForRoleResponse401,
-        SearchMappingRulesForRoleResponse403,
-        SearchMappingRulesForRoleResponse404,
-        SearchMappingRulesForRoleResponse500,
-        SearchMessageSubscriptionsResponse400,
-        SearchMessageSubscriptionsResponse401,
-        SearchMessageSubscriptionsResponse403,
-        SearchMessageSubscriptionsResponse500,
-        SearchProcessDefinitionsResponse400,
-        SearchProcessDefinitionsResponse401,
-        SearchProcessDefinitionsResponse403,
-        SearchProcessDefinitionsResponse500,
-        SearchProcessInstanceIncidentsResponse400,
-        SearchProcessInstanceIncidentsResponse401,
-        SearchProcessInstanceIncidentsResponse403,
-        SearchProcessInstanceIncidentsResponse404,
-        SearchProcessInstanceIncidentsResponse500,
-        SearchProcessInstancesResponse400,
-        SearchProcessInstancesResponse401,
-        SearchProcessInstancesResponse403,
-        SearchProcessInstancesResponse500,
-        SearchRolesForGroupResponse400,
-        SearchRolesForGroupResponse401,
-        SearchRolesForGroupResponse403,
-        SearchRolesForGroupResponse404,
-        SearchRolesForGroupResponse500,
-        SearchRolesResponse400,
-        SearchRolesResponse401,
-        SearchRolesResponse403,
-        SearchTenantsResponse400,
-        SearchTenantsResponse401,
-        SearchTenantsResponse403,
-        SearchTenantsResponse500,
-        SearchUserTaskAuditLogsResponse400,
-        SearchUserTaskAuditLogsResponse500,
-        SearchUserTaskVariablesResponse400,
-        SearchUserTaskVariablesResponse500,
-        SearchUserTasksResponse400,
-        SearchUserTasksResponse401,
-        SearchUserTasksResponse403,
-        SearchUserTasksResponse500,
-        SearchUsersForGroupResponse400,
-        SearchUsersForGroupResponse401,
-        SearchUsersForGroupResponse403,
-        SearchUsersForGroupResponse404,
-        SearchUsersForGroupResponse500,
-        SearchUsersForRoleResponse400,
-        SearchUsersForRoleResponse401,
-        SearchUsersForRoleResponse403,
-        SearchUsersForRoleResponse404,
-        SearchUsersForRoleResponse500,
-        SearchUsersResponse400,
-        SearchUsersResponse401,
-        SearchUsersResponse403,
-        SearchUsersResponse500,
-        SearchVariablesResponse400,
-        SearchVariablesResponse401,
-        SearchVariablesResponse403,
-        SearchVariablesResponse500,
-        SuspendBatchOperationResponse400,
-        SuspendBatchOperationResponse403,
-        SuspendBatchOperationResponse404,
-        SuspendBatchOperationResponse500,
-        SuspendBatchOperationResponse503,
-        ThrowJobErrorResponse400,
-        ThrowJobErrorResponse404,
-        ThrowJobErrorResponse409,
-        ThrowJobErrorResponse500,
-        ThrowJobErrorResponse503,
-        UnassignClientFromGroupResponse400,
-        UnassignClientFromGroupResponse403,
-        UnassignClientFromGroupResponse404,
-        UnassignClientFromGroupResponse500,
-        UnassignClientFromGroupResponse503,
-        UnassignClientFromTenantResponse400,
-        UnassignClientFromTenantResponse403,
-        UnassignClientFromTenantResponse404,
-        UnassignClientFromTenantResponse500,
-        UnassignClientFromTenantResponse503,
-        UnassignGroupFromTenantResponse400,
-        UnassignGroupFromTenantResponse403,
-        UnassignGroupFromTenantResponse404,
-        UnassignGroupFromTenantResponse500,
-        UnassignGroupFromTenantResponse503,
-        UnassignMappingRuleFromGroupResponse400,
-        UnassignMappingRuleFromGroupResponse403,
-        UnassignMappingRuleFromGroupResponse404,
-        UnassignMappingRuleFromGroupResponse500,
-        UnassignMappingRuleFromGroupResponse503,
-        UnassignMappingRuleFromTenantResponse400,
-        UnassignMappingRuleFromTenantResponse403,
-        UnassignMappingRuleFromTenantResponse404,
-        UnassignMappingRuleFromTenantResponse500,
-        UnassignMappingRuleFromTenantResponse503,
-        UnassignRoleFromClientResponse400,
-        UnassignRoleFromClientResponse403,
-        UnassignRoleFromClientResponse404,
-        UnassignRoleFromClientResponse500,
-        UnassignRoleFromClientResponse503,
-        UnassignRoleFromGroupResponse400,
-        UnassignRoleFromGroupResponse403,
-        UnassignRoleFromGroupResponse404,
-        UnassignRoleFromGroupResponse500,
-        UnassignRoleFromGroupResponse503,
-        UnassignRoleFromMappingRuleResponse400,
-        UnassignRoleFromMappingRuleResponse403,
-        UnassignRoleFromMappingRuleResponse404,
-        UnassignRoleFromMappingRuleResponse500,
-        UnassignRoleFromMappingRuleResponse503,
-        UnassignRoleFromTenantResponse400,
-        UnassignRoleFromTenantResponse403,
-        UnassignRoleFromTenantResponse404,
-        UnassignRoleFromTenantResponse500,
-        UnassignRoleFromTenantResponse503,
-        UnassignRoleFromUserResponse400,
-        UnassignRoleFromUserResponse403,
-        UnassignRoleFromUserResponse404,
-        UnassignRoleFromUserResponse500,
-        UnassignRoleFromUserResponse503,
-        UnassignUserFromGroupResponse400,
-        UnassignUserFromGroupResponse403,
-        UnassignUserFromGroupResponse404,
-        UnassignUserFromGroupResponse500,
-        UnassignUserFromGroupResponse503,
-        UnassignUserFromTenantResponse400,
-        UnassignUserFromTenantResponse403,
-        UnassignUserFromTenantResponse404,
-        UnassignUserFromTenantResponse500,
-        UnassignUserFromTenantResponse503,
-        UnassignUserTaskResponse400,
-        UnassignUserTaskResponse404,
-        UnassignUserTaskResponse409,
-        UnassignUserTaskResponse500,
-        UnassignUserTaskResponse503,
-        UpdateAuthorizationResponse401,
-        UpdateAuthorizationResponse404,
-        UpdateAuthorizationResponse500,
-        UpdateAuthorizationResponse503,
-        UpdateGlobalClusterVariableResponse400,
-        UpdateGlobalClusterVariableResponse401,
-        UpdateGlobalClusterVariableResponse403,
-        UpdateGlobalClusterVariableResponse404,
-        UpdateGlobalClusterVariableResponse500,
-        UpdateGroupResponse400,
-        UpdateGroupResponse401,
-        UpdateGroupResponse404,
-        UpdateGroupResponse500,
-        UpdateGroupResponse503,
-        UpdateJobResponse400,
-        UpdateJobResponse404,
-        UpdateJobResponse409,
-        UpdateJobResponse500,
-        UpdateJobResponse503,
-        UpdateMappingRuleResponse400,
-        UpdateMappingRuleResponse403,
-        UpdateMappingRuleResponse404,
-        UpdateMappingRuleResponse500,
-        UpdateMappingRuleResponse503,
-        UpdateRoleResponse400,
-        UpdateRoleResponse401,
-        UpdateRoleResponse404,
-        UpdateRoleResponse500,
-        UpdateRoleResponse503,
-        UpdateTenantClusterVariableResponse400,
-        UpdateTenantClusterVariableResponse401,
-        UpdateTenantClusterVariableResponse403,
-        UpdateTenantClusterVariableResponse404,
-        UpdateTenantClusterVariableResponse500,
-        UpdateTenantResponse400,
-        UpdateTenantResponse403,
-        UpdateTenantResponse404,
-        UpdateTenantResponse500,
-        UpdateTenantResponse503,
-        UpdateUserResponse400,
-        UpdateUserResponse403,
-        UpdateUserResponse404,
-        UpdateUserResponse500,
-        UpdateUserResponse503,
-        UpdateUserTaskResponse400,
-        UpdateUserTaskResponse404,
-        UpdateUserTaskResponse409,
-        UpdateUserTaskResponse500,
-        UpdateUserTaskResponse503,
+        ProblemDetail,
     )
 
 
@@ -755,2048 +39,1440 @@ class UnexpectedStatus(ApiError):
 class ActivateAdHocSubProcessActivitiesBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: ActivateAdHocSubProcessActivitiesResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ActivateAdHocSubProcessActivitiesResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ActivateAdHocSubProcessActivitiesForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: ActivateAdHocSubProcessActivitiesResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ActivateAdHocSubProcessActivitiesResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ActivateAdHocSubProcessActivitiesInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: ActivateAdHocSubProcessActivitiesResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ActivateAdHocSubProcessActivitiesResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ActivateAdHocSubProcessActivitiesNotFound(ApiError):
     """Raised when the server returns HTTP 404. The ad-hoc sub-process instance is not found or the provided key does not identify an ad-hoc sub-process."""
 
-    parsed: ActivateAdHocSubProcessActivitiesResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ActivateAdHocSubProcessActivitiesResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ActivateAdHocSubProcessActivitiesServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: ActivateAdHocSubProcessActivitiesResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ActivateAdHocSubProcessActivitiesResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ActivateAdHocSubProcessActivitiesUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: ActivateAdHocSubProcessActivitiesResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ActivateAdHocSubProcessActivitiesResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ActivateJobsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: ActivateJobsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ActivateJobsResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ActivateJobsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: ActivateJobsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ActivateJobsResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ActivateJobsServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: ActivateJobsResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ActivateJobsResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ActivateJobsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: ActivateJobsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ActivateJobsResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignClientToGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: AssignClientToGroupResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignClientToGroupResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignClientToGroupConflict(ApiError):
     """Raised when the server returns HTTP 409. The client with the given ID is already assigned to the group."""
 
-    parsed: AssignClientToGroupResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignClientToGroupResponse409,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignClientToGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: AssignClientToGroupResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignClientToGroupResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignClientToGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: AssignClientToGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignClientToGroupResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignClientToGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The group with the given ID was not found."""
 
-    parsed: AssignClientToGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignClientToGroupResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignClientToGroupServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: AssignClientToGroupResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignClientToGroupResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignClientToTenantBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: AssignClientToTenantResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignClientToTenantResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignClientToTenantForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: AssignClientToTenantResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignClientToTenantResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignClientToTenantInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: AssignClientToTenantResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignClientToTenantResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignClientToTenantNotFound(ApiError):
     """Raised when the server returns HTTP 404. The tenant was not found."""
 
-    parsed: AssignClientToTenantResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignClientToTenantResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignClientToTenantServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: AssignClientToTenantResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignClientToTenantResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignGroupToTenantBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: AssignGroupToTenantResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignGroupToTenantResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignGroupToTenantForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: AssignGroupToTenantResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignGroupToTenantResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignGroupToTenantInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: AssignGroupToTenantResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignGroupToTenantResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignGroupToTenantNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found. The tenant or group was not found."""
 
-    parsed: AssignGroupToTenantResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignGroupToTenantResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignGroupToTenantServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: AssignGroupToTenantResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignGroupToTenantResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignMappingRuleToGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: AssignMappingRuleToGroupResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignMappingRuleToGroupResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignMappingRuleToGroupConflict(ApiError):
     """Raised when the server returns HTTP 409. The mapping rule with the given ID is already assigned to the group."""
 
-    parsed: AssignMappingRuleToGroupResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignMappingRuleToGroupResponse409,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignMappingRuleToGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: AssignMappingRuleToGroupResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignMappingRuleToGroupResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignMappingRuleToGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: AssignMappingRuleToGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignMappingRuleToGroupResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignMappingRuleToGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The group or mapping rule with the given ID was not found."""
 
-    parsed: AssignMappingRuleToGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignMappingRuleToGroupResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignMappingRuleToGroupServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: AssignMappingRuleToGroupResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignMappingRuleToGroupResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignMappingRuleToTenantBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: AssignMappingRuleToTenantResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignMappingRuleToTenantResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignMappingRuleToTenantForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: AssignMappingRuleToTenantResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignMappingRuleToTenantResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignMappingRuleToTenantInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: AssignMappingRuleToTenantResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignMappingRuleToTenantResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignMappingRuleToTenantNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found. The tenant or mapping rule was not found."""
 
-    parsed: AssignMappingRuleToTenantResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignMappingRuleToTenantResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignMappingRuleToTenantServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: AssignMappingRuleToTenantResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignMappingRuleToTenantResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToClientBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: AssignRoleToClientResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToClientResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToClientConflict(ApiError):
     """Raised when the server returns HTTP 409. The role was already assigned to the client with the given ID."""
 
-    parsed: AssignRoleToClientResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToClientResponse409
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToClientForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: AssignRoleToClientResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToClientResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToClientInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: AssignRoleToClientResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToClientResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToClientNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role with the given ID was not found."""
 
-    parsed: AssignRoleToClientResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToClientResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToClientServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: AssignRoleToClientResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToClientResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: AssignRoleToGroupResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToGroupResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToGroupConflict(ApiError):
     """Raised when the server returns HTTP 409. The role is already assigned to the group with the given ID."""
 
-    parsed: AssignRoleToGroupResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToGroupResponse409
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: AssignRoleToGroupResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToGroupResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: AssignRoleToGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToGroupResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role or group with the given ID was not found."""
 
-    parsed: AssignRoleToGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToGroupResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToGroupServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: AssignRoleToGroupResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToGroupResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToMappingRuleBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: AssignRoleToMappingRuleResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignRoleToMappingRuleResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToMappingRuleConflict(ApiError):
     """Raised when the server returns HTTP 409. The role is already assigned to the mapping rule with the given ID."""
 
-    parsed: AssignRoleToMappingRuleResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignRoleToMappingRuleResponse409,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToMappingRuleForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: AssignRoleToMappingRuleResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignRoleToMappingRuleResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToMappingRuleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: AssignRoleToMappingRuleResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignRoleToMappingRuleResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToMappingRuleNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role or mapping rule with the given ID was not found."""
 
-    parsed: AssignRoleToMappingRuleResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignRoleToMappingRuleResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToMappingRuleServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: AssignRoleToMappingRuleResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: AssignRoleToMappingRuleResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToTenantBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: AssignRoleToTenantResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToTenantResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToTenantForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: AssignRoleToTenantResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToTenantResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToTenantInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: AssignRoleToTenantResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToTenantResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToTenantNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found. The tenant or role was not found."""
 
-    parsed: AssignRoleToTenantResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToTenantResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToTenantServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: AssignRoleToTenantResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToTenantResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToUserBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: AssignRoleToUserResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToUserResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToUserConflict(ApiError):
     """Raised when the server returns HTTP 409. The role is already assigned to the user with the given ID."""
 
-    parsed: AssignRoleToUserResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToUserResponse409
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToUserForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: AssignRoleToUserResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToUserResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToUserInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: AssignRoleToUserResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToUserResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToUserNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role or user with the given ID or username was not found."""
 
-    parsed: AssignRoleToUserResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToUserResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignRoleToUserServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: AssignRoleToUserResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignRoleToUserResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserTaskBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: AssignUserTaskResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserTaskResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserTaskConflict(ApiError):
     """Raised when the server returns HTTP 409. The user task with the given key is in the wrong state currently. More details are provided in the response body."""
 
-    parsed: AssignUserTaskResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserTaskResponse409
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserTaskInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: AssignUserTaskResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserTaskResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserTaskNotFound(ApiError):
     """Raised when the server returns HTTP 404. The user task with the given key was not found."""
 
-    parsed: AssignUserTaskResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserTaskResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserTaskServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: AssignUserTaskResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserTaskResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserToGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: AssignUserToGroupResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserToGroupResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserToGroupConflict(ApiError):
     """Raised when the server returns HTTP 409. The user with the given ID is already assigned to the group."""
 
-    parsed: AssignUserToGroupResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserToGroupResponse409
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserToGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: AssignUserToGroupResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserToGroupResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserToGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: AssignUserToGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserToGroupResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserToGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The group or user with the given ID or username was not found."""
 
-    parsed: AssignUserToGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserToGroupResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserToGroupServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: AssignUserToGroupResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserToGroupResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserToTenantBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: AssignUserToTenantResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserToTenantResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserToTenantForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: AssignUserToTenantResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserToTenantResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserToTenantInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: AssignUserToTenantResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserToTenantResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserToTenantNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found. The tenant or user was not found."""
 
-    parsed: AssignUserToTenantResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserToTenantResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class AssignUserToTenantServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: AssignUserToTenantResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: AssignUserToTenantResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class BroadcastSignalBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: BroadcastSignalResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: BroadcastSignalResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class BroadcastSignalInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: BroadcastSignalResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: BroadcastSignalResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class BroadcastSignalNotFound(ApiError):
     """Raised when the server returns HTTP 404. The signal is not found."""
 
-    parsed: BroadcastSignalResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: BroadcastSignalResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class BroadcastSignalServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: BroadcastSignalResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: BroadcastSignalResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CancelBatchOperationBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CancelBatchOperationResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CancelBatchOperationResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CancelBatchOperationForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: CancelBatchOperationResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CancelBatchOperationResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CancelBatchOperationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CancelBatchOperationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CancelBatchOperationResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CancelBatchOperationNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found. The batch operation was not found."""
 
-    parsed: CancelBatchOperationResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CancelBatchOperationResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CancelProcessInstanceBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CancelProcessInstanceResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CancelProcessInstanceResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CancelProcessInstanceInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CancelProcessInstanceResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CancelProcessInstanceResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CancelProcessInstanceNotFound(ApiError):
     """Raised when the server returns HTTP 404. The process instance is not found."""
 
-    parsed: CancelProcessInstanceResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CancelProcessInstanceResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CancelProcessInstanceServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: CancelProcessInstanceResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CancelProcessInstanceResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CancelProcessInstancesBatchOperationBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The process instance batch operation failed. More details are provided in the response body."""
 
-    parsed: CancelProcessInstancesBatchOperationResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CancelProcessInstancesBatchOperationResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CancelProcessInstancesBatchOperationForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: CancelProcessInstancesBatchOperationResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CancelProcessInstancesBatchOperationResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CancelProcessInstancesBatchOperationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CancelProcessInstancesBatchOperationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CancelProcessInstancesBatchOperationResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CancelProcessInstancesBatchOperationUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: CancelProcessInstancesBatchOperationResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CancelProcessInstancesBatchOperationResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CompleteJobBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CompleteJobResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CompleteJobResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CompleteJobConflict(ApiError):
     """Raised when the server returns HTTP 409. The job with the given key is in the wrong state currently. More details are provided in the response body."""
 
-    parsed: CompleteJobResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CompleteJobResponse409
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CompleteJobInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CompleteJobResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CompleteJobResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CompleteJobNotFound(ApiError):
     """Raised when the server returns HTTP 404. The job with the given key was not found."""
 
-    parsed: CompleteJobResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CompleteJobResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CompleteJobServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: CompleteJobResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CompleteJobResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CompleteUserTaskBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CompleteUserTaskResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CompleteUserTaskResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CompleteUserTaskConflict(ApiError):
     """Raised when the server returns HTTP 409. The user task with the given key is in the wrong state currently. More details are provided in the response body."""
 
-    parsed: CompleteUserTaskResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CompleteUserTaskResponse409
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CompleteUserTaskInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CompleteUserTaskResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CompleteUserTaskResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CompleteUserTaskNotFound(ApiError):
     """Raised when the server returns HTTP 404. The user task with the given key was not found."""
 
-    parsed: CompleteUserTaskResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CompleteUserTaskResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CompleteUserTaskServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: CompleteUserTaskResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CompleteUserTaskResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CorrelateMessageBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CorrelateMessageResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CorrelateMessageResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CorrelateMessageForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: CorrelateMessageResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CorrelateMessageResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CorrelateMessageInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CorrelateMessageResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CorrelateMessageResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CorrelateMessageNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found"""
 
-    parsed: CorrelateMessageResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CorrelateMessageResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CorrelateMessageServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: CorrelateMessageResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CorrelateMessageResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateAdminUserBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateAdminUserResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateAdminUserResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateAdminUserForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: CreateAdminUserResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateAdminUserResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateAdminUserInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CreateAdminUserResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateAdminUserResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateAdminUserServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: CreateAdminUserResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateAdminUserResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateAuthorizationBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateAuthorizationResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateAuthorizationResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateAuthorizationForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: CreateAuthorizationResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateAuthorizationResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateAuthorizationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CreateAuthorizationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateAuthorizationResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateAuthorizationNotFound(ApiError):
     """Raised when the server returns HTTP 404. The owner was not found."""
 
-    parsed: CreateAuthorizationResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateAuthorizationResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateAuthorizationServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: CreateAuthorizationResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateAuthorizationResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateAuthorizationUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: CreateAuthorizationResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateAuthorizationResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateDeploymentBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateDeploymentResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateDeploymentResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateDeploymentServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: CreateDeploymentResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateDeploymentResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateDocumentBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateDocumentResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateDocumentResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateDocumentLinkBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateDocumentLinkResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateDocumentLinkResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateDocumentUnsupportedMediaType(ApiError):
     """Raised when the server returns HTTP 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method."""
 
-    parsed: CreateDocumentResponse415
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateDocumentResponse415
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateDocumentsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateDocumentsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateDocumentsResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateDocumentsUnsupportedMediaType(ApiError):
     """Raised when the server returns HTTP 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method."""
 
-    parsed: CreateDocumentsResponse415
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateDocumentsResponse415
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateElementInstanceVariablesBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateElementInstanceVariablesResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateElementInstanceVariablesResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateElementInstanceVariablesInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CreateElementInstanceVariablesResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateElementInstanceVariablesResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateElementInstanceVariablesServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: CreateElementInstanceVariablesResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateElementInstanceVariablesResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateGlobalClusterVariableBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateGlobalClusterVariableResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateGlobalClusterVariableResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateGlobalClusterVariableForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: CreateGlobalClusterVariableResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateGlobalClusterVariableResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateGlobalClusterVariableInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CreateGlobalClusterVariableResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateGlobalClusterVariableResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateGlobalClusterVariableUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: CreateGlobalClusterVariableResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateGlobalClusterVariableResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateGroupResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateGroupResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: CreateGroupResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateGroupResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CreateGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateGroupResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateGroupServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: CreateGroupResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateGroupResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateGroupUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: CreateGroupResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateGroupResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateMappingRuleBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateMappingRuleResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateMappingRuleResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateMappingRuleForbidden(ApiError):
     """Raised when the server returns HTTP 403. The request to create a mapping rule was denied. More details are provided in the response body."""
 
-    parsed: CreateMappingRuleResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateMappingRuleResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateMappingRuleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CreateMappingRuleResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateMappingRuleResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateMappingRuleNotFound(ApiError):
     """Raised when the server returns HTTP 404. The request to create a mapping rule was denied."""
 
-    parsed: CreateMappingRuleResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateMappingRuleResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateProcessInstanceBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateProcessInstanceResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateProcessInstanceResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateProcessInstanceGatewayTimeout(ApiError):
     """Raised when the server returns HTTP 504. The process instance creation request timed out in the gateway. This can happen if the `awaitCompletion` request parameter is set to `true` and the created process instance did not complete within the defined request timeout. This often happens when the created instance is not fully automated or contains wait states."""
 
-    parsed: CreateProcessInstanceResponse504
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateProcessInstanceResponse504,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateProcessInstanceInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CreateProcessInstanceResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateProcessInstanceResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateProcessInstanceServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: CreateProcessInstanceResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateProcessInstanceResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateRoleBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateRoleResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateRoleResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateRoleForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: CreateRoleResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateRoleResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateRoleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CreateRoleResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateRoleResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateRoleServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: CreateRoleResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateRoleResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateRoleUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: CreateRoleResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateRoleResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateTenantBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateTenantResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateTenantResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateTenantClusterVariableBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateTenantClusterVariableResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateTenantClusterVariableResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateTenantClusterVariableForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: CreateTenantClusterVariableResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateTenantClusterVariableResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateTenantClusterVariableInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CreateTenantClusterVariableResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateTenantClusterVariableResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateTenantClusterVariableUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: CreateTenantClusterVariableResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: CreateTenantClusterVariableResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
@@ -2812,999 +1488,693 @@ class CreateTenantConflict(ApiError):
 class CreateTenantForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: CreateTenantResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateTenantResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateTenantInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CreateTenantResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateTenantResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateTenantNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found. The resource was not found."""
 
-    parsed: CreateTenantResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateTenantResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateTenantServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: CreateTenantResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateTenantResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateUserBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: CreateUserResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateUserResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateUserConflict(ApiError):
     """Raised when the server returns HTTP 409. A user with this username already exists."""
 
-    parsed: CreateUserResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateUserResponse409
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateUserForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: CreateUserResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateUserResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateUserInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: CreateUserResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateUserResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateUserServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: CreateUserResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateUserResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class CreateUserUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: CreateUserResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: CreateUserResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteAuthorizationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: DeleteAuthorizationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteAuthorizationResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteAuthorizationNotFound(ApiError):
     """Raised when the server returns HTTP 404. The authorization with the authorizationKey was not found."""
 
-    parsed: DeleteAuthorizationResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteAuthorizationResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteAuthorizationServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: DeleteAuthorizationResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteAuthorizationResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteAuthorizationUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: DeleteAuthorizationResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteAuthorizationResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteDecisionInstanceForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: DeleteDecisionInstanceResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteDecisionInstanceResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteDecisionInstanceInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: DeleteDecisionInstanceResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteDecisionInstanceResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteDecisionInstanceNotFound(ApiError):
     """Raised when the server returns HTTP 404. The decision instance is not found."""
 
-    parsed: DeleteDecisionInstanceResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteDecisionInstanceResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteDecisionInstanceServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: DeleteDecisionInstanceResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteDecisionInstanceResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteDecisionInstanceUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: DeleteDecisionInstanceResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteDecisionInstanceResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteDecisionInstancesBatchOperationBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The decision instance batch operation failed. More details are provided in the response body."""
 
-    parsed: DeleteDecisionInstancesBatchOperationResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteDecisionInstancesBatchOperationResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteDecisionInstancesBatchOperationForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: DeleteDecisionInstancesBatchOperationResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteDecisionInstancesBatchOperationResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteDecisionInstancesBatchOperationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: DeleteDecisionInstancesBatchOperationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteDecisionInstancesBatchOperationResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteDecisionInstancesBatchOperationUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: DeleteDecisionInstancesBatchOperationResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteDecisionInstancesBatchOperationResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteDocumentInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: DeleteDocumentResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteDocumentResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteDocumentNotFound(ApiError):
     """Raised when the server returns HTTP 404. The document with the given ID was not found."""
 
-    parsed: DeleteDocumentResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteDocumentResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteGlobalClusterVariableBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: DeleteGlobalClusterVariableResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteGlobalClusterVariableResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteGlobalClusterVariableForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: DeleteGlobalClusterVariableResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteGlobalClusterVariableResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteGlobalClusterVariableInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: DeleteGlobalClusterVariableResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteGlobalClusterVariableResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteGlobalClusterVariableNotFound(ApiError):
     """Raised when the server returns HTTP 404. Cluster variable not found"""
 
-    parsed: DeleteGlobalClusterVariableResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteGlobalClusterVariableResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteGlobalClusterVariableUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: DeleteGlobalClusterVariableResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteGlobalClusterVariableResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: DeleteGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteGroupResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The group with the given ID was not found."""
 
-    parsed: DeleteGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteGroupResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteGroupServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: DeleteGroupResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteGroupResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteGroupUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: DeleteGroupResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteGroupResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteMappingRuleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: DeleteMappingRuleResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteMappingRuleResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteMappingRuleNotFound(ApiError):
     """Raised when the server returns HTTP 404. The mapping rule with the mappingRuleId was not found."""
 
-    parsed: DeleteMappingRuleResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteMappingRuleResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteMappingRuleServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: DeleteMappingRuleResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteMappingRuleResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteMappingRuleUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: DeleteMappingRuleResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteMappingRuleResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteProcessInstanceConflict(ApiError):
     """Raised when the server returns HTTP 409. The process instance is not in a completed or terminated state and cannot be deleted."""
 
-    parsed: DeleteProcessInstanceResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteProcessInstanceResponse409,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteProcessInstanceForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: DeleteProcessInstanceResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteProcessInstanceResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteProcessInstanceInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: DeleteProcessInstanceResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteProcessInstanceResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteProcessInstanceNotFound(ApiError):
     """Raised when the server returns HTTP 404. The process instance is not found."""
 
-    parsed: DeleteProcessInstanceResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteProcessInstanceResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteProcessInstanceServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: DeleteProcessInstanceResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteProcessInstanceResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteProcessInstanceUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: DeleteProcessInstanceResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteProcessInstanceResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteProcessInstancesBatchOperationBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The process instance batch operation failed. More details are provided in the response body."""
 
-    parsed: DeleteProcessInstancesBatchOperationResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteProcessInstancesBatchOperationResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteProcessInstancesBatchOperationForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: DeleteProcessInstancesBatchOperationResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteProcessInstancesBatchOperationResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteProcessInstancesBatchOperationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: DeleteProcessInstancesBatchOperationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteProcessInstancesBatchOperationResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteProcessInstancesBatchOperationUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: DeleteProcessInstancesBatchOperationResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteProcessInstancesBatchOperationResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteResourceBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: DeleteResourceResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteResourceResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteResourceInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: DeleteResourceResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteResourceResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteResourceNotFound(ApiError):
     """Raised when the server returns HTTP 404. The resource is not found."""
 
-    parsed: DeleteResourceResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteResourceResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteResourceServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: DeleteResourceResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteResourceResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteRoleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: DeleteRoleResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteRoleResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteRoleNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role with the ID was not found."""
 
-    parsed: DeleteRoleResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteRoleResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteRoleServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: DeleteRoleResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteRoleResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteRoleUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: DeleteRoleResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteRoleResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteTenantBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: DeleteTenantResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteTenantResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteTenantClusterVariableBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: DeleteTenantClusterVariableResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteTenantClusterVariableResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteTenantClusterVariableForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: DeleteTenantClusterVariableResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteTenantClusterVariableResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteTenantClusterVariableInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: DeleteTenantClusterVariableResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteTenantClusterVariableResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteTenantClusterVariableNotFound(ApiError):
     """Raised when the server returns HTTP 404. Cluster variable not found"""
 
-    parsed: DeleteTenantClusterVariableResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteTenantClusterVariableResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteTenantClusterVariableUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: DeleteTenantClusterVariableResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: DeleteTenantClusterVariableResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteTenantForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: DeleteTenantResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteTenantResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteTenantInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: DeleteTenantResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteTenantResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteTenantNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found. The tenant was not found."""
 
-    parsed: DeleteTenantResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteTenantResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteTenantServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: DeleteTenantResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteTenantResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteUserBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: DeleteUserResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteUserResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteUserInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: DeleteUserResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteUserResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteUserNotFound(ApiError):
     """Raised when the server returns HTTP 404. The user is not found."""
 
-    parsed: DeleteUserResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteUserResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class DeleteUserServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: DeleteUserResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: DeleteUserResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class EvaluateConditionalsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: EvaluateConditionalsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: EvaluateConditionalsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class EvaluateConditionalsForbidden(ApiError):
     """Raised when the server returns HTTP 403. The client is not authorized to start process instances for the specified process definition. If a processDefinitionKey is not provided, this indicates that the client is not authorized to start process instances for at least one of the matched process definitions."""
 
-    parsed: EvaluateConditionalsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: EvaluateConditionalsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class EvaluateConditionalsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: EvaluateConditionalsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: EvaluateConditionalsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class EvaluateConditionalsNotFound(ApiError):
     """Raised when the server returns HTTP 404. The process definition was not found for the given processDefinitionKey."""
 
-    parsed: EvaluateConditionalsResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: EvaluateConditionalsResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class EvaluateConditionalsServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: EvaluateConditionalsResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: EvaluateConditionalsResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class EvaluateDecisionBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: EvaluateDecisionResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: EvaluateDecisionResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class EvaluateDecisionInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: EvaluateDecisionResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: EvaluateDecisionResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
@@ -3820,1899 +2190,1287 @@ class EvaluateDecisionNotFound(ApiError):
 class EvaluateDecisionServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: EvaluateDecisionResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: EvaluateDecisionResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class EvaluateExpressionBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: EvaluateExpressionResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: EvaluateExpressionResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class EvaluateExpressionForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: EvaluateExpressionResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: EvaluateExpressionResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class EvaluateExpressionInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: EvaluateExpressionResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: EvaluateExpressionResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class EvaluateExpressionUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: EvaluateExpressionResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: EvaluateExpressionResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class FailJobBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: FailJobResponse400
+    parsed: ProblemDetail
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: FailJobResponse400):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class FailJobConflict(ApiError):
     """Raised when the server returns HTTP 409. The job with the given key is in the wrong state (i.e: not ACTIVATED or ACTIVATABLE). The job was failed by another worker with retries = 0, and the process is now in an incident state."""
 
-    parsed: FailJobResponse409
+    parsed: ProblemDetail
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: FailJobResponse409):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class FailJobInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: FailJobResponse500
+    parsed: ProblemDetail
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: FailJobResponse500):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class FailJobNotFound(ApiError):
     """Raised when the server returns HTTP 404. The job with the given jobKey is not found. It was completed by another worker, or the process instance itself was canceled."""
 
-    parsed: FailJobResponse404
+    parsed: ProblemDetail
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: FailJobResponse404):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class FailJobServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: FailJobResponse503
+    parsed: ProblemDetail
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: FailJobResponse503):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetAuditLogForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetAuditLogResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetAuditLogResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetAuditLogInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetAuditLogResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetAuditLogResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetAuditLogNotFound(ApiError):
     """Raised when the server returns HTTP 404. The audit log with the given key was not found."""
 
-    parsed: GetAuditLogResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetAuditLogResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetAuditLogUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetAuditLogResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetAuditLogResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetAuthenticationForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetAuthenticationResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetAuthenticationResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetAuthenticationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetAuthenticationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetAuthenticationResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetAuthenticationUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetAuthenticationResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetAuthenticationResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetAuthorizationForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetAuthorizationResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetAuthorizationResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetAuthorizationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetAuthorizationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetAuthorizationResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetAuthorizationNotFound(ApiError):
     """Raised when the server returns HTTP 404. The authorization with the given key was not found."""
 
-    parsed: GetAuthorizationResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetAuthorizationResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetAuthorizationUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetAuthorizationResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetAuthorizationResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetBatchOperationBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetBatchOperationResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetBatchOperationResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetBatchOperationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetBatchOperationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetBatchOperationResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetBatchOperationNotFound(ApiError):
     """Raised when the server returns HTTP 404. The batch operation is not found."""
 
-    parsed: GetBatchOperationResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetBatchOperationResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionDefinitionBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetDecisionDefinitionResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionDefinitionResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionDefinitionForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetDecisionDefinitionResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionDefinitionResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionDefinitionInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetDecisionDefinitionResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionDefinitionResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionDefinitionNotFound(ApiError):
     """Raised when the server returns HTTP 404. The decision definition with the given key was not found. More details are provided in the response body."""
 
-    parsed: GetDecisionDefinitionResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionDefinitionResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionDefinitionUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetDecisionDefinitionResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionDefinitionResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionDefinitionXmlBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetDecisionDefinitionXMLResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionDefinitionXMLResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionDefinitionXmlForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetDecisionDefinitionXMLResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionDefinitionXMLResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionDefinitionXmlInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetDecisionDefinitionXMLResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionDefinitionXMLResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionDefinitionXmlNotFound(ApiError):
     """Raised when the server returns HTTP 404. The decision definition with the given key was not found. More details are provided in the response body."""
 
-    parsed: GetDecisionDefinitionXMLResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionDefinitionXMLResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionDefinitionXmlUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetDecisionDefinitionXMLResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionDefinitionXMLResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionInstanceBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetDecisionInstanceResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionInstanceResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionInstanceForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetDecisionInstanceResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionInstanceResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionInstanceInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetDecisionInstanceResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionInstanceResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionInstanceNotFound(ApiError):
     """Raised when the server returns HTTP 404. The decision instance with the given key was not found. More details are provided in the response body."""
 
-    parsed: GetDecisionInstanceResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionInstanceResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionInstanceUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetDecisionInstanceResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionInstanceResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionRequirementsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetDecisionRequirementsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionRequirementsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionRequirementsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetDecisionRequirementsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionRequirementsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionRequirementsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetDecisionRequirementsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionRequirementsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionRequirementsNotFound(ApiError):
     """Raised when the server returns HTTP 404. The decision requirements with the given key was not found. More details are provided in the response body."""
 
-    parsed: GetDecisionRequirementsResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionRequirementsResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionRequirementsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetDecisionRequirementsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionRequirementsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionRequirementsXmlBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetDecisionRequirementsXMLResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionRequirementsXMLResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionRequirementsXmlForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetDecisionRequirementsXMLResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionRequirementsXMLResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionRequirementsXmlInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetDecisionRequirementsXMLResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionRequirementsXMLResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionRequirementsXmlNotFound(ApiError):
     """Raised when the server returns HTTP 404. The decision requirements with the given key was not found. More details are provided in the response body."""
 
-    parsed: GetDecisionRequirementsXMLResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionRequirementsXMLResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDecisionRequirementsXmlUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetDecisionRequirementsXMLResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetDecisionRequirementsXMLResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDocumentInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetDocumentResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetDocumentResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetDocumentNotFound(ApiError):
     """Raised when the server returns HTTP 404. The document with the given ID was not found."""
 
-    parsed: GetDocumentResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetDocumentResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetElementInstanceBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetElementInstanceResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetElementInstanceResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetElementInstanceForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetElementInstanceResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetElementInstanceResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetElementInstanceInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetElementInstanceResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetElementInstanceResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetElementInstanceNotFound(ApiError):
     """Raised when the server returns HTTP 404. The element instance with the given key was not found. More details are provided in the response body."""
 
-    parsed: GetElementInstanceResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetElementInstanceResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetElementInstanceUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetElementInstanceResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetElementInstanceResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetGlobalClusterVariableBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetGlobalClusterVariableResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetGlobalClusterVariableResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetGlobalClusterVariableForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetGlobalClusterVariableResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetGlobalClusterVariableResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetGlobalClusterVariableInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetGlobalClusterVariableResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetGlobalClusterVariableResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetGlobalClusterVariableNotFound(ApiError):
     """Raised when the server returns HTTP 404. Cluster variable not found"""
 
-    parsed: GetGlobalClusterVariableResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetGlobalClusterVariableResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetGlobalClusterVariableUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetGlobalClusterVariableResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetGlobalClusterVariableResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetGlobalJobStatisticsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetGlobalJobStatisticsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetGlobalJobStatisticsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetGlobalJobStatisticsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetGlobalJobStatisticsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetGlobalJobStatisticsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetGlobalJobStatisticsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetGlobalJobStatisticsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetGlobalJobStatisticsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetGlobalJobStatisticsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetGlobalJobStatisticsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetGlobalJobStatisticsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetGroupResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetGroupResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetGroupResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The group with the given ID was not found."""
 
-    parsed: GetGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetGroupResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetGroupUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetGroupResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetGroupResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetIncidentBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetIncidentResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetIncidentResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetIncidentForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetIncidentResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetIncidentResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetIncidentInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetIncidentResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetIncidentResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetIncidentNotFound(ApiError):
     """Raised when the server returns HTTP 404. The incident with the given key was not found."""
 
-    parsed: GetIncidentResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetIncidentResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetIncidentUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetIncidentResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetIncidentResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetLicenseInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetLicenseResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetLicenseResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetMappingRuleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetMappingRuleResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetMappingRuleResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetMappingRuleNotFound(ApiError):
     """Raised when the server returns HTTP 404. The mapping rule with the mappingRuleId was not found."""
 
-    parsed: GetMappingRuleResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetMappingRuleResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetMappingRuleUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetMappingRuleResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetMappingRuleResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetProcessDefinitionResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetProcessDefinitionResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionInstanceStatisticsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetProcessDefinitionInstanceStatisticsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionInstanceStatisticsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionInstanceStatisticsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetProcessDefinitionInstanceStatisticsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionInstanceStatisticsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionInstanceStatisticsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetProcessDefinitionInstanceStatisticsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionInstanceStatisticsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionInstanceStatisticsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetProcessDefinitionInstanceStatisticsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionInstanceStatisticsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionInstanceVersionStatisticsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetProcessDefinitionInstanceVersionStatisticsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionInstanceVersionStatisticsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionInstanceVersionStatisticsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetProcessDefinitionInstanceVersionStatisticsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionInstanceVersionStatisticsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionInstanceVersionStatisticsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetProcessDefinitionInstanceVersionStatisticsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionInstanceVersionStatisticsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionInstanceVersionStatisticsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetProcessDefinitionInstanceVersionStatisticsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionInstanceVersionStatisticsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetProcessDefinitionResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionMessageSubscriptionStatisticsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetProcessDefinitionMessageSubscriptionStatisticsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionMessageSubscriptionStatisticsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionMessageSubscriptionStatisticsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetProcessDefinitionMessageSubscriptionStatisticsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionMessageSubscriptionStatisticsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionMessageSubscriptionStatisticsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetProcessDefinitionMessageSubscriptionStatisticsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionMessageSubscriptionStatisticsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionMessageSubscriptionStatisticsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetProcessDefinitionMessageSubscriptionStatisticsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionMessageSubscriptionStatisticsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionNotFound(ApiError):
     """Raised when the server returns HTTP 404. The process definition with the given key was not found. More details are provided in the response body."""
 
-    parsed: GetProcessDefinitionResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionStatisticsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetProcessDefinitionStatisticsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionStatisticsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionStatisticsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetProcessDefinitionStatisticsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionStatisticsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionStatisticsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetProcessDefinitionStatisticsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionStatisticsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionStatisticsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetProcessDefinitionStatisticsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionStatisticsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetProcessDefinitionResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionXmlBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetProcessDefinitionXMLResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionXMLResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionXmlForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetProcessDefinitionXMLResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionXMLResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionXmlInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetProcessDefinitionXMLResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionXMLResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionXmlNotFound(ApiError):
     """Raised when the server returns HTTP 404. The process definition with the given key was not found. More details are provided in the response body."""
 
-    parsed: GetProcessDefinitionXMLResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionXMLResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessDefinitionXmlUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetProcessDefinitionXMLResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessDefinitionXMLResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetProcessInstanceResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetProcessInstanceResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceCallHierarchyBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetProcessInstanceCallHierarchyResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceCallHierarchyResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceCallHierarchyForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetProcessInstanceCallHierarchyResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceCallHierarchyResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceCallHierarchyInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetProcessInstanceCallHierarchyResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceCallHierarchyResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceCallHierarchyNotFound(ApiError):
     """Raised when the server returns HTTP 404. The process instance is not found."""
 
-    parsed: GetProcessInstanceCallHierarchyResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceCallHierarchyResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceCallHierarchyUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetProcessInstanceCallHierarchyResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceCallHierarchyResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetProcessInstanceResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetProcessInstanceResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetProcessInstanceResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetProcessInstanceResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceNotFound(ApiError):
     """Raised when the server returns HTTP 404. The process instance with the given key was not found."""
 
-    parsed: GetProcessInstanceResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetProcessInstanceResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceSequenceFlowsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetProcessInstanceSequenceFlowsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceSequenceFlowsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceSequenceFlowsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetProcessInstanceSequenceFlowsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceSequenceFlowsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceSequenceFlowsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetProcessInstanceSequenceFlowsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceSequenceFlowsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceSequenceFlowsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetProcessInstanceSequenceFlowsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceSequenceFlowsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceStatisticsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetProcessInstanceStatisticsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceStatisticsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceStatisticsByDefinitionBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetProcessInstanceStatisticsByDefinitionResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceStatisticsByDefinitionResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceStatisticsByDefinitionForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetProcessInstanceStatisticsByDefinitionResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceStatisticsByDefinitionResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceStatisticsByDefinitionInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetProcessInstanceStatisticsByDefinitionResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceStatisticsByDefinitionResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceStatisticsByDefinitionUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetProcessInstanceStatisticsByDefinitionResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceStatisticsByDefinitionResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceStatisticsByErrorBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetProcessInstanceStatisticsByErrorResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceStatisticsByErrorResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceStatisticsByErrorForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetProcessInstanceStatisticsByErrorResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceStatisticsByErrorResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceStatisticsByErrorInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetProcessInstanceStatisticsByErrorResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceStatisticsByErrorResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceStatisticsByErrorUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetProcessInstanceStatisticsByErrorResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceStatisticsByErrorResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceStatisticsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetProcessInstanceStatisticsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceStatisticsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceStatisticsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetProcessInstanceStatisticsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceStatisticsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceStatisticsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetProcessInstanceStatisticsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetProcessInstanceStatisticsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetProcessInstanceUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetProcessInstanceResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetProcessInstanceResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetResourceContentInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetResourceContentResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetResourceContentResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetResourceContentNotFound(ApiError):
     """Raised when the server returns HTTP 404. A resource with the given key was not found."""
 
-    parsed: GetResourceContentResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetResourceContentResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetResourceInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetResourceResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetResourceResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetResourceNotFound(ApiError):
     """Raised when the server returns HTTP 404. A resource with the given key was not found."""
 
-    parsed: GetResourceResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetResourceResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetRoleForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetRoleResponse403
+    parsed: ProblemDetail
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: GetRoleResponse403):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetRoleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetRoleResponse500
+    parsed: ProblemDetail
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: GetRoleResponse500):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetRoleNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role with the given ID was not found."""
 
-    parsed: GetRoleResponse404
+    parsed: ProblemDetail
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: GetRoleResponse404):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetRoleUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetRoleResponse401
+    parsed: ProblemDetail
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: GetRoleResponse401):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetStartProcessFormBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetStartProcessFormResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetStartProcessFormResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetStartProcessFormForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetStartProcessFormResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetStartProcessFormResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetStartProcessFormInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetStartProcessFormResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetStartProcessFormResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetStartProcessFormNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found"""
 
-    parsed: GetStartProcessFormResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetStartProcessFormResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetStartProcessFormUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetStartProcessFormResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetStartProcessFormResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
@@ -5728,1016 +3486,720 @@ class GetStatusServiceUnavailable(ApiError):
 class GetTenantBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetTenantResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetTenantResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetTenantClusterVariableBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetTenantClusterVariableResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetTenantClusterVariableResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetTenantClusterVariableForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetTenantClusterVariableResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetTenantClusterVariableResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetTenantClusterVariableInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetTenantClusterVariableResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetTenantClusterVariableResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetTenantClusterVariableNotFound(ApiError):
     """Raised when the server returns HTTP 404. Cluster variable not found"""
 
-    parsed: GetTenantClusterVariableResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetTenantClusterVariableResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetTenantClusterVariableUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetTenantClusterVariableResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: GetTenantClusterVariableResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetTenantForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetTenantResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetTenantResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetTenantInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetTenantResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetTenantResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetTenantNotFound(ApiError):
     """Raised when the server returns HTTP 404. Tenant not found."""
 
-    parsed: GetTenantResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetTenantResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetTenantUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetTenantResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetTenantResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetTopologyInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetTopologyResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetTopologyResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetTopologyUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetTopologyResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetTopologyResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUsageMetricsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetUsageMetricsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetUsageMetricsResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUsageMetricsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetUsageMetricsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetUsageMetricsResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUsageMetricsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetUsageMetricsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetUsageMetricsResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUsageMetricsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetUsageMetricsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetUsageMetricsResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUserForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetUserResponse403
+    parsed: ProblemDetail
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: GetUserResponse403):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUserInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetUserResponse500
+    parsed: ProblemDetail
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: GetUserResponse500):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUserNotFound(ApiError):
     """Raised when the server returns HTTP 404. The user with the given username was not found."""
 
-    parsed: GetUserResponse404
+    parsed: ProblemDetail
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: GetUserResponse404):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUserTaskBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetUserTaskResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetUserTaskResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUserTaskForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetUserTaskResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetUserTaskResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUserTaskFormBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetUserTaskFormResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetUserTaskFormResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUserTaskFormForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetUserTaskFormResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetUserTaskFormResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUserTaskFormInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetUserTaskFormResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetUserTaskFormResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUserTaskFormNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found"""
 
-    parsed: GetUserTaskFormResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetUserTaskFormResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUserTaskFormUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetUserTaskFormResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetUserTaskFormResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUserTaskInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetUserTaskResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetUserTaskResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUserTaskNotFound(ApiError):
     """Raised when the server returns HTTP 404. The user task with the given key was not found."""
 
-    parsed: GetUserTaskResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetUserTaskResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUserTaskUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetUserTaskResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetUserTaskResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetUserUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetUserResponse401
+    parsed: ProblemDetail
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: GetUserResponse401):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetVariableBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: GetVariableResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetVariableResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetVariableForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: GetVariableResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetVariableResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetVariableInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: GetVariableResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetVariableResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetVariableNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found"""
 
-    parsed: GetVariableResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetVariableResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class GetVariableUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: GetVariableResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: GetVariableResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class MigrateProcessInstanceBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: MigrateProcessInstanceResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: MigrateProcessInstanceResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class MigrateProcessInstanceConflict(ApiError):
     """Raised when the server returns HTTP 409. The process instance migration failed. More details are provided in the response body."""
 
-    parsed: MigrateProcessInstanceResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: MigrateProcessInstanceResponse409,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class MigrateProcessInstanceInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: MigrateProcessInstanceResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: MigrateProcessInstanceResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class MigrateProcessInstanceNotFound(ApiError):
     """Raised when the server returns HTTP 404. The process instance is not found."""
 
-    parsed: MigrateProcessInstanceResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: MigrateProcessInstanceResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class MigrateProcessInstanceServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: MigrateProcessInstanceResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: MigrateProcessInstanceResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class MigrateProcessInstancesBatchOperationBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The process instance batch operation failed. More details are provided in the response body."""
 
-    parsed: MigrateProcessInstancesBatchOperationResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: MigrateProcessInstancesBatchOperationResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class MigrateProcessInstancesBatchOperationForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: MigrateProcessInstancesBatchOperationResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: MigrateProcessInstancesBatchOperationResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class MigrateProcessInstancesBatchOperationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: MigrateProcessInstancesBatchOperationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: MigrateProcessInstancesBatchOperationResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class MigrateProcessInstancesBatchOperationUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: MigrateProcessInstancesBatchOperationResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: MigrateProcessInstancesBatchOperationResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ModifyProcessInstanceBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: ModifyProcessInstanceResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ModifyProcessInstanceResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ModifyProcessInstanceInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: ModifyProcessInstanceResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ModifyProcessInstanceResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ModifyProcessInstanceNotFound(ApiError):
     """Raised when the server returns HTTP 404. The process instance is not found."""
 
-    parsed: ModifyProcessInstanceResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ModifyProcessInstanceResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ModifyProcessInstanceServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: ModifyProcessInstanceResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ModifyProcessInstanceResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ModifyProcessInstancesBatchOperationBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The process instance batch operation failed. More details are provided in the response body."""
 
-    parsed: ModifyProcessInstancesBatchOperationResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ModifyProcessInstancesBatchOperationResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ModifyProcessInstancesBatchOperationForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: ModifyProcessInstancesBatchOperationResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ModifyProcessInstancesBatchOperationResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ModifyProcessInstancesBatchOperationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: ModifyProcessInstancesBatchOperationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ModifyProcessInstancesBatchOperationResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ModifyProcessInstancesBatchOperationUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: ModifyProcessInstancesBatchOperationResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ModifyProcessInstancesBatchOperationResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class PinClockBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: PinClockResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: PinClockResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class PinClockInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: PinClockResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: PinClockResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class PinClockServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: PinClockResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: PinClockResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class PublishMessageBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: PublishMessageResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: PublishMessageResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class PublishMessageInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: PublishMessageResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: PublishMessageResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class PublishMessageServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: PublishMessageResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: PublishMessageResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResetClockInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: ResetClockResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ResetClockResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResetClockServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: ResetClockResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ResetClockResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResolveIncidentBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: ResolveIncidentResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ResolveIncidentResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResolveIncidentInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: ResolveIncidentResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ResolveIncidentResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResolveIncidentNotFound(ApiError):
     """Raised when the server returns HTTP 404. The incident with the incidentKey is not found."""
 
-    parsed: ResolveIncidentResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ResolveIncidentResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResolveIncidentServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: ResolveIncidentResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ResolveIncidentResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResolveIncidentsBatchOperationBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The process instance batch operation failed. More details are provided in the response body."""
 
-    parsed: ResolveIncidentsBatchOperationResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ResolveIncidentsBatchOperationResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResolveIncidentsBatchOperationForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: ResolveIncidentsBatchOperationResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ResolveIncidentsBatchOperationResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResolveIncidentsBatchOperationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: ResolveIncidentsBatchOperationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ResolveIncidentsBatchOperationResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResolveIncidentsBatchOperationUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: ResolveIncidentsBatchOperationResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ResolveIncidentsBatchOperationResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResolveProcessInstanceIncidentsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: ResolveProcessInstanceIncidentsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ResolveProcessInstanceIncidentsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResolveProcessInstanceIncidentsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: ResolveProcessInstanceIncidentsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ResolveProcessInstanceIncidentsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResolveProcessInstanceIncidentsNotFound(ApiError):
     """Raised when the server returns HTTP 404. The process instance is not found."""
 
-    parsed: ResolveProcessInstanceIncidentsResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ResolveProcessInstanceIncidentsResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResolveProcessInstanceIncidentsServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: ResolveProcessInstanceIncidentsResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ResolveProcessInstanceIncidentsResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResolveProcessInstanceIncidentsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: ResolveProcessInstanceIncidentsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ResolveProcessInstanceIncidentsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResumeBatchOperationBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: ResumeBatchOperationResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ResumeBatchOperationResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResumeBatchOperationForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: ResumeBatchOperationResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ResumeBatchOperationResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResumeBatchOperationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: ResumeBatchOperationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ResumeBatchOperationResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResumeBatchOperationNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found. The batch operation was not found."""
 
-    parsed: ResumeBatchOperationResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ResumeBatchOperationResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ResumeBatchOperationServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: ResumeBatchOperationResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: ResumeBatchOperationResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchAuditLogsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchAuditLogsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchAuditLogsResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchAuditLogsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchAuditLogsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchAuditLogsResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
@@ -6753,813 +4215,495 @@ class SearchAuditLogsInternalServerError(ApiError):
 class SearchAuditLogsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchAuditLogsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchAuditLogsResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchAuthorizationsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchAuthorizationsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchAuthorizationsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchAuthorizationsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchAuthorizationsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchAuthorizationsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchAuthorizationsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchAuthorizationsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchAuthorizationsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchAuthorizationsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchAuthorizationsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchAuthorizationsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchBatchOperationItemsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchBatchOperationItemsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchBatchOperationItemsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchBatchOperationItemsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchBatchOperationItemsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchBatchOperationItemsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchBatchOperationsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchBatchOperationsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchBatchOperationsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchBatchOperationsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchBatchOperationsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchBatchOperationsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchClientsForGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchClientsForGroupResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchClientsForGroupResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchClientsForGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchClientsForGroupResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchClientsForGroupResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchClientsForGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchClientsForGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchClientsForGroupResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchClientsForGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The group with the given ID was not found."""
 
-    parsed: SearchClientsForGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchClientsForGroupResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchClientsForGroupUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchClientsForGroupResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchClientsForGroupResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchClientsForRoleBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchClientsForRoleResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchClientsForRoleResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchClientsForRoleForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchClientsForRoleResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchClientsForRoleResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchClientsForRoleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchClientsForRoleResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchClientsForRoleResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchClientsForRoleNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role with the given ID was not found."""
 
-    parsed: SearchClientsForRoleResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchClientsForRoleResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchClientsForRoleUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchClientsForRoleResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchClientsForRoleResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchClusterVariablesBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchClusterVariablesResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchClusterVariablesResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchClusterVariablesForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchClusterVariablesResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchClusterVariablesResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchClusterVariablesInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchClusterVariablesResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchClusterVariablesResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchClusterVariablesUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchClusterVariablesResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchClusterVariablesResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchCorrelatedMessageSubscriptionsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchCorrelatedMessageSubscriptionsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchCorrelatedMessageSubscriptionsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchCorrelatedMessageSubscriptionsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchCorrelatedMessageSubscriptionsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchCorrelatedMessageSubscriptionsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchCorrelatedMessageSubscriptionsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchCorrelatedMessageSubscriptionsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchCorrelatedMessageSubscriptionsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchCorrelatedMessageSubscriptionsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchCorrelatedMessageSubscriptionsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchCorrelatedMessageSubscriptionsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchDecisionDefinitionsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchDecisionDefinitionsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchDecisionDefinitionsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchDecisionDefinitionsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchDecisionDefinitionsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchDecisionDefinitionsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchDecisionDefinitionsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchDecisionDefinitionsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchDecisionDefinitionsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchDecisionDefinitionsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchDecisionDefinitionsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchDecisionDefinitionsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchDecisionInstancesBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchDecisionInstancesResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchDecisionInstancesResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchDecisionInstancesForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchDecisionInstancesResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchDecisionInstancesResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchDecisionInstancesInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchDecisionInstancesResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchDecisionInstancesResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchDecisionInstancesUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchDecisionInstancesResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchDecisionInstancesResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchDecisionRequirementsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchDecisionRequirementsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchDecisionRequirementsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchDecisionRequirementsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchDecisionRequirementsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchDecisionRequirementsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchDecisionRequirementsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchDecisionRequirementsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchDecisionRequirementsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchDecisionRequirementsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchDecisionRequirementsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchDecisionRequirementsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchElementInstanceIncidentsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchElementInstanceIncidentsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchElementInstanceIncidentsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchElementInstanceIncidentsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchElementInstanceIncidentsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchElementInstanceIncidentsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchElementInstanceIncidentsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchElementInstanceIncidentsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchElementInstanceIncidentsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchElementInstanceIncidentsNotFound(ApiError):
     """Raised when the server returns HTTP 404. The element instance with the given key was not found."""
 
-    parsed: SearchElementInstanceIncidentsResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchElementInstanceIncidentsResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchElementInstanceIncidentsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchElementInstanceIncidentsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchElementInstanceIncidentsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchElementInstancesBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchElementInstancesResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchElementInstancesResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchElementInstancesForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchElementInstancesResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchElementInstancesResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchElementInstancesInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchElementInstancesResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchElementInstancesResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchElementInstancesUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchElementInstancesResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchElementInstancesResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchGroupsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchGroupsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchGroupsResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchGroupsForRoleBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchGroupsForRoleResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchGroupsForRoleResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchGroupsForRoleForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchGroupsForRoleResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchGroupsForRoleResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchGroupsForRoleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchGroupsForRoleResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchGroupsForRoleResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchGroupsForRoleNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role with the given ID was not found."""
 
-    parsed: SearchGroupsForRoleResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchGroupsForRoleResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchGroupsForRoleUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchGroupsForRoleResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchGroupsForRoleResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchGroupsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchGroupsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchGroupsResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
@@ -7575,645 +4719,423 @@ class SearchGroupsInternalServerError(ApiError):
 class SearchGroupsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchGroupsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchGroupsResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchIncidentsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchIncidentsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchIncidentsResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchIncidentsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchIncidentsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchIncidentsResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchIncidentsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchIncidentsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchIncidentsResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchIncidentsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchIncidentsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchIncidentsResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchJobsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchJobsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchJobsResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchJobsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchJobsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchJobsResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchJobsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchJobsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchJobsResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchJobsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchJobsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchJobsResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMappingRuleBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchMappingRuleResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchMappingRuleResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMappingRuleForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchMappingRuleResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchMappingRuleResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMappingRuleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchMappingRuleResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchMappingRuleResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMappingRuleUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchMappingRuleResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchMappingRuleResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMappingRulesForGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchMappingRulesForGroupResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchMappingRulesForGroupResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMappingRulesForGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchMappingRulesForGroupResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchMappingRulesForGroupResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMappingRulesForGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchMappingRulesForGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchMappingRulesForGroupResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMappingRulesForGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The group with the given ID was not found."""
 
-    parsed: SearchMappingRulesForGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchMappingRulesForGroupResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMappingRulesForGroupUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchMappingRulesForGroupResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchMappingRulesForGroupResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMappingRulesForRoleBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchMappingRulesForRoleResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchMappingRulesForRoleResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMappingRulesForRoleForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchMappingRulesForRoleResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchMappingRulesForRoleResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMappingRulesForRoleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchMappingRulesForRoleResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchMappingRulesForRoleResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMappingRulesForRoleNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role with the given ID was not found."""
 
-    parsed: SearchMappingRulesForRoleResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchMappingRulesForRoleResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMappingRulesForRoleUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchMappingRulesForRoleResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchMappingRulesForRoleResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMessageSubscriptionsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchMessageSubscriptionsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchMessageSubscriptionsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMessageSubscriptionsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchMessageSubscriptionsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchMessageSubscriptionsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMessageSubscriptionsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchMessageSubscriptionsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchMessageSubscriptionsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchMessageSubscriptionsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchMessageSubscriptionsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchMessageSubscriptionsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchProcessDefinitionsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchProcessDefinitionsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchProcessDefinitionsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchProcessDefinitionsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchProcessDefinitionsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchProcessDefinitionsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchProcessDefinitionsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchProcessDefinitionsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchProcessDefinitionsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchProcessDefinitionsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchProcessDefinitionsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchProcessDefinitionsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchProcessInstanceIncidentsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchProcessInstanceIncidentsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchProcessInstanceIncidentsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchProcessInstanceIncidentsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchProcessInstanceIncidentsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchProcessInstanceIncidentsResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchProcessInstanceIncidentsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchProcessInstanceIncidentsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchProcessInstanceIncidentsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchProcessInstanceIncidentsNotFound(ApiError):
     """Raised when the server returns HTTP 404. The process instance with the given key was not found."""
 
-    parsed: SearchProcessInstanceIncidentsResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchProcessInstanceIncidentsResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchProcessInstanceIncidentsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchProcessInstanceIncidentsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchProcessInstanceIncidentsResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchProcessInstancesBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchProcessInstancesResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchProcessInstancesResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchProcessInstancesForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchProcessInstancesResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchProcessInstancesResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchProcessInstancesInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchProcessInstancesResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchProcessInstancesResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchProcessInstancesUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchProcessInstancesResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchProcessInstancesResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchRolesBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchRolesResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchRolesResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchRolesForGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchRolesForGroupResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchRolesForGroupResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchRolesForGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchRolesForGroupResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchRolesForGroupResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchRolesForGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchRolesForGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchRolesForGroupResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchRolesForGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The group with the given ID was not found."""
 
-    parsed: SearchRolesForGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchRolesForGroupResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchRolesForGroupUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchRolesForGroupResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchRolesForGroupResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchRolesForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchRolesResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchRolesResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
@@ -8229,44 +5151,36 @@ class SearchRolesInternalServerError(ApiError):
 class SearchRolesUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchRolesResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchRolesResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchTenantsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchTenantsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchTenantsResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchTenantsForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchTenantsResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchTenantsResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchTenantsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchTenantsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchTenantsResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
@@ -8282,2013 +5196,1359 @@ class SearchTenantsNotFound(ApiError):
 class SearchTenantsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchTenantsResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchTenantsResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUserTaskAuditLogsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchUserTaskAuditLogsResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchUserTaskAuditLogsResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUserTaskAuditLogsInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchUserTaskAuditLogsResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchUserTaskAuditLogsResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUserTaskVariablesBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchUserTaskVariablesResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchUserTaskVariablesResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUserTaskVariablesInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchUserTaskVariablesResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchUserTaskVariablesResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUserTasksBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchUserTasksResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchUserTasksResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUserTasksForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchUserTasksResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchUserTasksResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUserTasksInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchUserTasksResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchUserTasksResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUserTasksUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchUserTasksResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchUserTasksResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUsersBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchUsersResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchUsersResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUsersForGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchUsersForGroupResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchUsersForGroupResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUsersForGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchUsersForGroupResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchUsersForGroupResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUsersForGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchUsersForGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchUsersForGroupResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUsersForGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The group with the given ID was not found."""
 
-    parsed: SearchUsersForGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchUsersForGroupResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUsersForGroupUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchUsersForGroupResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SearchUsersForGroupResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUsersForRoleBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchUsersForRoleResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchUsersForRoleResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUsersForRoleForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchUsersForRoleResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchUsersForRoleResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUsersForRoleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchUsersForRoleResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchUsersForRoleResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUsersForRoleNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role with the given ID was not found."""
 
-    parsed: SearchUsersForRoleResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchUsersForRoleResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUsersForRoleUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchUsersForRoleResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchUsersForRoleResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUsersForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchUsersResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchUsersResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUsersInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchUsersResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchUsersResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchUsersUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchUsersResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchUsersResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchVariablesBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SearchVariablesResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchVariablesResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchVariablesForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SearchVariablesResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchVariablesResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchVariablesInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SearchVariablesResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchVariablesResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SearchVariablesUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: SearchVariablesResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: SearchVariablesResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SuspendBatchOperationBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: SuspendBatchOperationResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SuspendBatchOperationResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SuspendBatchOperationForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: SuspendBatchOperationResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SuspendBatchOperationResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SuspendBatchOperationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: SuspendBatchOperationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SuspendBatchOperationResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SuspendBatchOperationNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found. The batch operation was not found."""
 
-    parsed: SuspendBatchOperationResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SuspendBatchOperationResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class SuspendBatchOperationServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: SuspendBatchOperationResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: SuspendBatchOperationResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ThrowJobErrorBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: ThrowJobErrorResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ThrowJobErrorResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ThrowJobErrorConflict(ApiError):
     """Raised when the server returns HTTP 409. The job with the given key is in the wrong state currently. More details are provided in the response body."""
 
-    parsed: ThrowJobErrorResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ThrowJobErrorResponse409
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ThrowJobErrorInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: ThrowJobErrorResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ThrowJobErrorResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ThrowJobErrorNotFound(ApiError):
     """Raised when the server returns HTTP 404. The job with the given key was not found or is not activated."""
 
-    parsed: ThrowJobErrorResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ThrowJobErrorResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class ThrowJobErrorServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: ThrowJobErrorResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: ThrowJobErrorResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignClientFromGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UnassignClientFromGroupResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignClientFromGroupResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignClientFromGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UnassignClientFromGroupResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignClientFromGroupResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignClientFromGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UnassignClientFromGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignClientFromGroupResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignClientFromGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The group with the given ID was not found, or the client is not assigned to this group."""
 
-    parsed: UnassignClientFromGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignClientFromGroupResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignClientFromGroupServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UnassignClientFromGroupResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignClientFromGroupResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignClientFromTenantBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UnassignClientFromTenantResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignClientFromTenantResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignClientFromTenantForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UnassignClientFromTenantResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignClientFromTenantResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignClientFromTenantInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UnassignClientFromTenantResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignClientFromTenantResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignClientFromTenantNotFound(ApiError):
     """Raised when the server returns HTTP 404. The tenant does not exist or the client was not assigned to it."""
 
-    parsed: UnassignClientFromTenantResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignClientFromTenantResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignClientFromTenantServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UnassignClientFromTenantResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignClientFromTenantResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignGroupFromTenantBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UnassignGroupFromTenantResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignGroupFromTenantResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignGroupFromTenantForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UnassignGroupFromTenantResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignGroupFromTenantResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignGroupFromTenantInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UnassignGroupFromTenantResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignGroupFromTenantResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignGroupFromTenantNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found. The tenant or group was not found."""
 
-    parsed: UnassignGroupFromTenantResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignGroupFromTenantResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignGroupFromTenantServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UnassignGroupFromTenantResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignGroupFromTenantResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignMappingRuleFromGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UnassignMappingRuleFromGroupResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignMappingRuleFromGroupResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignMappingRuleFromGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UnassignMappingRuleFromGroupResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignMappingRuleFromGroupResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignMappingRuleFromGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UnassignMappingRuleFromGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignMappingRuleFromGroupResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignMappingRuleFromGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The group or mapping rule with the given ID was not found, or the mapping rule is not assigned to this group."""
 
-    parsed: UnassignMappingRuleFromGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignMappingRuleFromGroupResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignMappingRuleFromGroupServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UnassignMappingRuleFromGroupResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignMappingRuleFromGroupResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignMappingRuleFromTenantBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UnassignMappingRuleFromTenantResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignMappingRuleFromTenantResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignMappingRuleFromTenantForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UnassignMappingRuleFromTenantResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignMappingRuleFromTenantResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignMappingRuleFromTenantInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UnassignMappingRuleFromTenantResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignMappingRuleFromTenantResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignMappingRuleFromTenantNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found. The tenant or mapping rule was not found."""
 
-    parsed: UnassignMappingRuleFromTenantResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignMappingRuleFromTenantResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignMappingRuleFromTenantServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UnassignMappingRuleFromTenantResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignMappingRuleFromTenantResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromClientBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UnassignRoleFromClientResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromClientResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromClientForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UnassignRoleFromClientResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromClientResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromClientInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UnassignRoleFromClientResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromClientResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromClientNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role or client with the given ID or username was not found."""
 
-    parsed: UnassignRoleFromClientResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromClientResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromClientServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UnassignRoleFromClientResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromClientResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UnassignRoleFromGroupResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromGroupResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UnassignRoleFromGroupResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromGroupResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UnassignRoleFromGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromGroupResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role or group with the given ID was not found."""
 
-    parsed: UnassignRoleFromGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromGroupResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromGroupServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UnassignRoleFromGroupResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromGroupResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromMappingRuleBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UnassignRoleFromMappingRuleResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromMappingRuleResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromMappingRuleForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UnassignRoleFromMappingRuleResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromMappingRuleResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromMappingRuleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UnassignRoleFromMappingRuleResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromMappingRuleResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromMappingRuleNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role or mapping rule with the given ID was not found."""
 
-    parsed: UnassignRoleFromMappingRuleResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromMappingRuleResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromMappingRuleServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UnassignRoleFromMappingRuleResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromMappingRuleResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromTenantBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UnassignRoleFromTenantResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromTenantResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromTenantForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UnassignRoleFromTenantResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromTenantResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromTenantInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UnassignRoleFromTenantResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromTenantResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromTenantNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found. The tenant or role was not found."""
 
-    parsed: UnassignRoleFromTenantResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromTenantResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromTenantServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UnassignRoleFromTenantResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromTenantResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromUserBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UnassignRoleFromUserResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromUserResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromUserForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UnassignRoleFromUserResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromUserResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromUserInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UnassignRoleFromUserResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromUserResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromUserNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role or user with the given ID or username was not found."""
 
-    parsed: UnassignRoleFromUserResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromUserResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignRoleFromUserServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UnassignRoleFromUserResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignRoleFromUserResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserFromGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UnassignUserFromGroupResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignUserFromGroupResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserFromGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UnassignUserFromGroupResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignUserFromGroupResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserFromGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UnassignUserFromGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignUserFromGroupResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserFromGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The group or user with the given ID was not found, or the user is not assigned to this group."""
 
-    parsed: UnassignUserFromGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignUserFromGroupResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserFromGroupServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UnassignUserFromGroupResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignUserFromGroupResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserFromTenantBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UnassignUserFromTenantResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignUserFromTenantResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserFromTenantForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UnassignUserFromTenantResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignUserFromTenantResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserFromTenantInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UnassignUserFromTenantResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignUserFromTenantResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserFromTenantNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found. The tenant or user was not found."""
 
-    parsed: UnassignUserFromTenantResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignUserFromTenantResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserFromTenantServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UnassignUserFromTenantResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UnassignUserFromTenantResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserTaskBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UnassignUserTaskResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UnassignUserTaskResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserTaskConflict(ApiError):
     """Raised when the server returns HTTP 409. The user task with the given key is in the wrong state currently. More details are provided in the response body."""
 
-    parsed: UnassignUserTaskResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UnassignUserTaskResponse409
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserTaskInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UnassignUserTaskResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UnassignUserTaskResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserTaskNotFound(ApiError):
     """Raised when the server returns HTTP 404. The user task with the given key was not found."""
 
-    parsed: UnassignUserTaskResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UnassignUserTaskResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UnassignUserTaskServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UnassignUserTaskResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UnassignUserTaskResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateAuthorizationInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UpdateAuthorizationResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UpdateAuthorizationResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateAuthorizationNotFound(ApiError):
     """Raised when the server returns HTTP 404. The authorization with the authorizationKey was not found."""
 
-    parsed: UpdateAuthorizationResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UpdateAuthorizationResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateAuthorizationServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UpdateAuthorizationResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UpdateAuthorizationResponse503,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateAuthorizationUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: UpdateAuthorizationResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UpdateAuthorizationResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateGlobalClusterVariableBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UpdateGlobalClusterVariableResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UpdateGlobalClusterVariableResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateGlobalClusterVariableForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UpdateGlobalClusterVariableResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UpdateGlobalClusterVariableResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateGlobalClusterVariableInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UpdateGlobalClusterVariableResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UpdateGlobalClusterVariableResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateGlobalClusterVariableNotFound(ApiError):
     """Raised when the server returns HTTP 404. Cluster variable not found"""
 
-    parsed: UpdateGlobalClusterVariableResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UpdateGlobalClusterVariableResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateGlobalClusterVariableUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: UpdateGlobalClusterVariableResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UpdateGlobalClusterVariableResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UpdateGroupResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateGroupResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UpdateGroupResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateGroupResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateGroupNotFound(ApiError):
     """Raised when the server returns HTTP 404. The group with the given ID was not found."""
 
-    parsed: UpdateGroupResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateGroupResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateGroupServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UpdateGroupResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateGroupResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateGroupUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: UpdateGroupResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateGroupResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateJobBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UpdateJobResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateJobResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateJobConflict(ApiError):
     """Raised when the server returns HTTP 409. The job with the given key is in the wrong state currently. More details are provided in the response body."""
 
-    parsed: UpdateJobResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateJobResponse409
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateJobInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UpdateJobResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateJobResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateJobNotFound(ApiError):
     """Raised when the server returns HTTP 404. The job with the jobKey is not found."""
 
-    parsed: UpdateJobResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateJobResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateJobServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UpdateJobResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateJobResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateMappingRuleBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UpdateMappingRuleResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateMappingRuleResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateMappingRuleForbidden(ApiError):
     """Raised when the server returns HTTP 403. The request to update a mapping rule was denied. More details are provided in the response body."""
 
-    parsed: UpdateMappingRuleResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateMappingRuleResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateMappingRuleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UpdateMappingRuleResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateMappingRuleResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateMappingRuleNotFound(ApiError):
     """Raised when the server returns HTTP 404. The request to update a mapping rule was denied."""
 
-    parsed: UpdateMappingRuleResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateMappingRuleResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateMappingRuleServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UpdateMappingRuleResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateMappingRuleResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateRoleBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UpdateRoleResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateRoleResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateRoleInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UpdateRoleResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateRoleResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateRoleNotFound(ApiError):
     """Raised when the server returns HTTP 404. The role with the ID is not found."""
 
-    parsed: UpdateRoleResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateRoleResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateRoleServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UpdateRoleResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateRoleResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateRoleUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: UpdateRoleResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateRoleResponse401
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateTenantBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UpdateTenantResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateTenantResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateTenantClusterVariableBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UpdateTenantClusterVariableResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UpdateTenantClusterVariableResponse400,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateTenantClusterVariableForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UpdateTenantClusterVariableResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UpdateTenantClusterVariableResponse403,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateTenantClusterVariableInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UpdateTenantClusterVariableResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UpdateTenantClusterVariableResponse500,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateTenantClusterVariableNotFound(ApiError):
     """Raised when the server returns HTTP 404. Cluster variable not found"""
 
-    parsed: UpdateTenantClusterVariableResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UpdateTenantClusterVariableResponse404,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateTenantClusterVariableUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
-    parsed: UpdateTenantClusterVariableResponse401
+    parsed: ProblemDetail
 
-    def __init__(
-        self,
-        *,
-        status_code: int,
-        content: bytes,
-        parsed: UpdateTenantClusterVariableResponse401,
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateTenantForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UpdateTenantResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateTenantResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateTenantInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UpdateTenantResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateTenantResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateTenantNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found. The tenant was not found."""
 
-    parsed: UpdateTenantResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateTenantResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateTenantServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UpdateTenantResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateTenantResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateUserBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UpdateUserResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateUserResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateUserForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
-    parsed: UpdateUserResponse403
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateUserResponse403
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateUserInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UpdateUserResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateUserResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateUserNotFound(ApiError):
     """Raised when the server returns HTTP 404. The user was not found."""
 
-    parsed: UpdateUserResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateUserResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateUserServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UpdateUserResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateUserResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateUserTaskBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
-    parsed: UpdateUserTaskResponse400
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateUserTaskResponse400
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateUserTaskConflict(ApiError):
     """Raised when the server returns HTTP 409. The user task with the given key is in the wrong state currently. More details are provided in the response body."""
 
-    parsed: UpdateUserTaskResponse409
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateUserTaskResponse409
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateUserTaskInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: UpdateUserTaskResponse500
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateUserTaskResponse500
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateUserTaskNotFound(ApiError):
     """Raised when the server returns HTTP 404. The user task with the given key was not found."""
 
-    parsed: UpdateUserTaskResponse404
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateUserTaskResponse404
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
 class UpdateUserTaskServiceUnavailable(ApiError):
     """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
 
-    parsed: UpdateUserTaskResponse503
+    parsed: ProblemDetail
 
-    def __init__(
-        self, *, status_code: int, content: bytes, parsed: UpdateUserTaskResponse503
-    ):
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 

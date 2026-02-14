@@ -1,20 +1,20 @@
 import os
-from camunda_orchestration_sdk.models.create_deployment_response_200_deployments_item_process_definition import (
-    CreateDeploymentResponse200DeploymentsItemProcessDefinition,
+from camunda_orchestration_sdk.models.deployment_process_result import (
+    DeploymentProcessResult,
 )
-from camunda_orchestration_sdk.models.processcreationbykey import Processcreationbykey
+from camunda_orchestration_sdk.models.process_creation_by_key import ProcessCreationByKey
 from camunda_orchestration_sdk.types import File
 
 from camunda_orchestration_sdk.models.create_deployment_data import CreateDeploymentData
 from camunda_orchestration_sdk.models.search_process_instances_data import (
     SearchProcessInstancesData,
 )
-from camunda_orchestration_sdk.models.search_process_instances_data_filter import (
-    SearchProcessInstancesDataFilter,
+from camunda_orchestration_sdk.models.process_instance_search_query_filter import (
+    ProcessInstanceSearchQueryFilter,
 )
-from camunda_orchestration_sdk.models.state_advancedfilter_6 import StateAdvancedfilter6
-from camunda_orchestration_sdk.models.state_advancedfilter_6_eq import (
-    StateAdvancedfilter6Eq,
+from camunda_orchestration_sdk.models.advanced_process_instance_state_filter import AdvancedProcessInstanceStateFilter
+from camunda_orchestration_sdk.models.advanced_process_instance_state_filter_eq import (
+    AdvancedProcessInstanceStateFilterEq,
 )
 from loguru import logger
 import pytest
@@ -56,16 +56,16 @@ async def test_job_worker_performance():
                 data=CreateDeploymentData(resources=[process_file])
             )
 
-        process_definition = cast(CreateDeploymentResponse200DeploymentsItemProcessDefinition, deployed_resources.deployments[0].process_definition)  
+        process_definition = cast(DeploymentProcessResult, deployed_resources.deployments[0].process_definition)  
 
         process_definition_key = process_definition.process_definition_key
         _ = process_definition.process_definition_id
 
         # Cancel all running instances of process
         searchQuery = SearchProcessInstancesData(
-            filter_=SearchProcessInstancesDataFilter(
+            filter_=ProcessInstanceSearchQueryFilter(
                 process_definition_key=process_definition_key,
-                state=StateAdvancedfilter6(eq=StateAdvancedfilter6Eq("ACTIVE")),
+                state=AdvancedProcessInstanceStateFilter(eq=AdvancedProcessInstanceStateFilterEq("ACTIVE")),
             )
         )
         alreadyRunningProcesses = await camunda.search_process_instances(data=searchQuery)
@@ -86,7 +86,7 @@ async def test_job_worker_performance():
         _ = camunda.create_job_worker(config=config, callback=callback)
 
         process_instance = await camunda.create_process_instance(
-            data=Processcreationbykey(
+            data=ProcessCreationByKey(
                 process_definition_key=process_definition_key
             )
         )

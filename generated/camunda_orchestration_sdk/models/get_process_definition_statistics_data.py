@@ -8,8 +8,8 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.get_process_definition_statistics_data_filter import (
-        GetProcessDefinitionStatisticsDataFilter,
+    from ..models.get_process_definition_statistics_filter import (
+        GetProcessDefinitionStatisticsFilter,
     )
 
 
@@ -21,10 +21,10 @@ class GetProcessDefinitionStatisticsData:
     """Process definition element statistics request.
 
     Attributes:
-        filter_ (GetProcessDefinitionStatisticsDataFilter | Unset): The process definition statistics search filters.
+        filter_ (GetProcessDefinitionStatisticsFilter | Unset): The process definition statistics search filters.
     """
 
-    filter_: GetProcessDefinitionStatisticsDataFilter | Unset = UNSET
+    filter_: GetProcessDefinitionStatisticsFilter | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         filter_: dict[str, Any] | Unset = UNSET
@@ -41,17 +41,17 @@ class GetProcessDefinitionStatisticsData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.get_process_definition_statistics_data_filter import (
-            GetProcessDefinitionStatisticsDataFilter,
+        from ..models.get_process_definition_statistics_filter import (
+            GetProcessDefinitionStatisticsFilter,
         )
 
         d = dict(src_dict)
         _filter_ = d.pop("filter", UNSET)
-        filter_: GetProcessDefinitionStatisticsDataFilter | Unset
+        filter_: GetProcessDefinitionStatisticsFilter | Unset
         if isinstance(_filter_, Unset):
             filter_ = UNSET
         else:
-            filter_ = GetProcessDefinitionStatisticsDataFilter.from_dict(_filter_)
+            filter_ = GetProcessDefinitionStatisticsFilter.from_dict(_filter_)
 
         get_process_definition_statistics_data = cls(
             filter_=filter_,

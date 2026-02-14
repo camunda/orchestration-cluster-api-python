@@ -4,18 +4,14 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.update_mapping_rule_data import UpdateMappingRuleData
-from ...models.update_mapping_rule_response_200 import UpdateMappingRuleResponse200
-from ...models.update_mapping_rule_response_400 import UpdateMappingRuleResponse400
-from ...models.update_mapping_rule_response_403 import UpdateMappingRuleResponse403
-from ...models.update_mapping_rule_response_404 import UpdateMappingRuleResponse404
-from ...models.update_mapping_rule_response_500 import UpdateMappingRuleResponse500
-from ...models.update_mapping_rule_response_503 import UpdateMappingRuleResponse503
+from ...models.mapping_rule_update_request import MappingRuleUpdateRequest
+from ...models.mapping_rule_update_result import MappingRuleUpdateResult
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    mapping_rule_id: str, *, body: UpdateMappingRuleData | Unset = UNSET
+    mapping_rule_id: str, *, body: MappingRuleUpdateRequest | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -33,32 +29,24 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    UpdateMappingRuleResponse200
-    | UpdateMappingRuleResponse400
-    | UpdateMappingRuleResponse403
-    | UpdateMappingRuleResponse404
-    | UpdateMappingRuleResponse500
-    | UpdateMappingRuleResponse503
-    | None
-):
+) -> MappingRuleUpdateResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = UpdateMappingRuleResponse200.from_dict(response.json())
+        response_200 = MappingRuleUpdateResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = UpdateMappingRuleResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 403:
-        response_403 = UpdateMappingRuleResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = UpdateMappingRuleResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = UpdateMappingRuleResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = UpdateMappingRuleResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -68,14 +56,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    UpdateMappingRuleResponse200
-    | UpdateMappingRuleResponse400
-    | UpdateMappingRuleResponse403
-    | UpdateMappingRuleResponse404
-    | UpdateMappingRuleResponse500
-    | UpdateMappingRuleResponse503
-]:
+) -> Response[MappingRuleUpdateResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -88,29 +69,22 @@ def sync_detailed(
     mapping_rule_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateMappingRuleData | Unset = UNSET,
-) -> Response[
-    UpdateMappingRuleResponse200
-    | UpdateMappingRuleResponse400
-    | UpdateMappingRuleResponse403
-    | UpdateMappingRuleResponse404
-    | UpdateMappingRuleResponse500
-    | UpdateMappingRuleResponse503
-]:
+    body: MappingRuleUpdateRequest | Unset = UNSET,
+) -> Response[MappingRuleUpdateResult | ProblemDetail]:
     """Update mapping rule
 
      Update a mapping rule.
 
     Args:
         mapping_rule_id (str):
-        body (UpdateMappingRuleData | Unset):
+        body (MappingRuleUpdateRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]
+        Response[MappingRuleUpdateResult | ProblemDetail]
     """
     kwargs = _get_kwargs(mapping_rule_id=mapping_rule_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -121,16 +95,16 @@ def sync(
     mapping_rule_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateMappingRuleData | Unset = UNSET,
+    body: MappingRuleUpdateRequest | Unset = UNSET,
     **kwargs: Any,
-) -> UpdateMappingRuleResponse200:
+) -> MappingRuleUpdateResult:
     """Update mapping rule
 
      Update a mapping rule.
 
     Args:
         mapping_rule_id (str):
-        body (UpdateMappingRuleData | Unset):
+        body (MappingRuleUpdateRequest | Unset):
 
     Raises:
         errors.UpdateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
@@ -141,71 +115,64 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UpdateMappingRuleResponse200"""
+        MappingRuleUpdateResult"""
     response = sync_detailed(mapping_rule_id=mapping_rule_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.UpdateMappingRuleBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateMappingRuleResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.UpdateMappingRuleForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateMappingRuleResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UpdateMappingRuleNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateMappingRuleResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UpdateMappingRuleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateMappingRuleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.UpdateMappingRuleServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateMappingRuleResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UpdateMappingRuleResponse200, response.parsed)
+    return cast(MappingRuleUpdateResult, response.parsed)
 
 
 async def asyncio_detailed(
     mapping_rule_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateMappingRuleData | Unset = UNSET,
-) -> Response[
-    UpdateMappingRuleResponse200
-    | UpdateMappingRuleResponse400
-    | UpdateMappingRuleResponse403
-    | UpdateMappingRuleResponse404
-    | UpdateMappingRuleResponse500
-    | UpdateMappingRuleResponse503
-]:
+    body: MappingRuleUpdateRequest | Unset = UNSET,
+) -> Response[MappingRuleUpdateResult | ProblemDetail]:
     """Update mapping rule
 
      Update a mapping rule.
 
     Args:
         mapping_rule_id (str):
-        body (UpdateMappingRuleData | Unset):
+        body (MappingRuleUpdateRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[UpdateMappingRuleResponse200 | UpdateMappingRuleResponse400 | UpdateMappingRuleResponse403 | UpdateMappingRuleResponse404 | UpdateMappingRuleResponse500 | UpdateMappingRuleResponse503]
+        Response[MappingRuleUpdateResult | ProblemDetail]
     """
     kwargs = _get_kwargs(mapping_rule_id=mapping_rule_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -216,16 +183,16 @@ async def asyncio(
     mapping_rule_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateMappingRuleData | Unset = UNSET,
+    body: MappingRuleUpdateRequest | Unset = UNSET,
     **kwargs: Any,
-) -> UpdateMappingRuleResponse200:
+) -> MappingRuleUpdateResult:
     """Update mapping rule
 
      Update a mapping rule.
 
     Args:
         mapping_rule_id (str):
-        body (UpdateMappingRuleData | Unset):
+        body (MappingRuleUpdateRequest | Unset):
 
     Raises:
         errors.UpdateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
@@ -236,7 +203,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UpdateMappingRuleResponse200"""
+        MappingRuleUpdateResult"""
     response = await asyncio_detailed(
         mapping_rule_id=mapping_rule_id, client=client, body=body
     )
@@ -245,32 +212,32 @@ async def asyncio(
             raise errors.UpdateMappingRuleBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateMappingRuleResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.UpdateMappingRuleForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateMappingRuleResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UpdateMappingRuleNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateMappingRuleResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UpdateMappingRuleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateMappingRuleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.UpdateMappingRuleServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateMappingRuleResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UpdateMappingRuleResponse200, response.parsed)
+    return cast(MappingRuleUpdateResult, response.parsed)

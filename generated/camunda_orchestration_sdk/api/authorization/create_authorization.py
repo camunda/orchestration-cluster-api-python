@@ -3,22 +3,21 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.create_authorization_response_201 import CreateAuthorizationResponse201
-from ...models.create_authorization_response_400 import CreateAuthorizationResponse400
-from ...models.create_authorization_response_401 import CreateAuthorizationResponse401
-from ...models.create_authorization_response_403 import CreateAuthorizationResponse403
-from ...models.create_authorization_response_404 import CreateAuthorizationResponse404
-from ...models.create_authorization_response_500 import CreateAuthorizationResponse500
-from ...models.create_authorization_response_503 import CreateAuthorizationResponse503
-from ...models.object_ import Object
-from ...models.object_1 import Object1
+from ...models.authorization_create_result import AuthorizationCreateResult
+from ...models.authorization_id_based_request import AuthorizationIdBasedRequest
+from ...models.authorization_property_based_request import (
+    AuthorizationPropertyBasedRequest,
+)
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
-def _get_kwargs(*, body: Object | Object1) -> dict[str, Any]:
+def _get_kwargs(
+    *, body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/authorizations"}
-    if isinstance(body, Object):
+    if isinstance(body, AuthorizationIdBasedRequest):
         _kwargs["json"] = body.to_dict()
     else:
         _kwargs["json"] = body.to_dict()
@@ -29,36 +28,27 @@ def _get_kwargs(*, body: Object | Object1) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    CreateAuthorizationResponse201
-    | CreateAuthorizationResponse400
-    | CreateAuthorizationResponse401
-    | CreateAuthorizationResponse403
-    | CreateAuthorizationResponse404
-    | CreateAuthorizationResponse500
-    | CreateAuthorizationResponse503
-    | None
-):
+) -> AuthorizationCreateResult | ProblemDetail | None:
     if response.status_code == 201:
-        response_201 = CreateAuthorizationResponse201.from_dict(response.json())
+        response_201 = AuthorizationCreateResult.from_dict(response.json())
         return response_201
     if response.status_code == 400:
-        response_400 = CreateAuthorizationResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = CreateAuthorizationResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = CreateAuthorizationResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = CreateAuthorizationResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = CreateAuthorizationResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = CreateAuthorizationResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -68,15 +58,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    CreateAuthorizationResponse201
-    | CreateAuthorizationResponse400
-    | CreateAuthorizationResponse401
-    | CreateAuthorizationResponse403
-    | CreateAuthorizationResponse404
-    | CreateAuthorizationResponse500
-    | CreateAuthorizationResponse503
-]:
+) -> Response[AuthorizationCreateResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -86,30 +68,23 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: Object | Object1
-) -> Response[
-    CreateAuthorizationResponse201
-    | CreateAuthorizationResponse400
-    | CreateAuthorizationResponse401
-    | CreateAuthorizationResponse403
-    | CreateAuthorizationResponse404
-    | CreateAuthorizationResponse500
-    | CreateAuthorizationResponse503
-]:
+    *,
+    client: AuthenticatedClient | Client,
+    body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+) -> Response[AuthorizationCreateResult | ProblemDetail]:
     """Create authorization
 
      Create the authorization.
 
     Args:
-        body (Object | Object1): Defines an authorization request.
-            Either an id-based or a property-based authorization can be provided.
+        body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateAuthorizationResponse201 | CreateAuthorizationResponse400 | CreateAuthorizationResponse401 | CreateAuthorizationResponse403 | CreateAuthorizationResponse404 | CreateAuthorizationResponse500 | CreateAuthorizationResponse503]
+        Response[AuthorizationCreateResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -117,15 +92,17 @@ def sync_detailed(
 
 
 def sync(
-    *, client: AuthenticatedClient | Client, body: Object | Object1, **kwargs: Any
-) -> CreateAuthorizationResponse201:
+    *,
+    client: AuthenticatedClient | Client,
+    body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+    **kwargs: Any,
+) -> AuthorizationCreateResult:
     """Create authorization
 
      Create the authorization.
 
     Args:
-        body (Object | Object1): Defines an authorization request.
-            Either an id-based or a property-based authorization can be provided.
+        body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
 
     Raises:
         errors.CreateAuthorizationBadRequest: If the response status code is 400. The provided data is not valid.
@@ -137,75 +114,68 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CreateAuthorizationResponse201"""
+        AuthorizationCreateResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.CreateAuthorizationBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAuthorizationResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.CreateAuthorizationUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAuthorizationResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.CreateAuthorizationForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAuthorizationResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.CreateAuthorizationNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAuthorizationResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CreateAuthorizationInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAuthorizationResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CreateAuthorizationServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAuthorizationResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CreateAuthorizationResponse201, response.parsed)
+    return cast(AuthorizationCreateResult, response.parsed)
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: Object | Object1
-) -> Response[
-    CreateAuthorizationResponse201
-    | CreateAuthorizationResponse400
-    | CreateAuthorizationResponse401
-    | CreateAuthorizationResponse403
-    | CreateAuthorizationResponse404
-    | CreateAuthorizationResponse500
-    | CreateAuthorizationResponse503
-]:
+    *,
+    client: AuthenticatedClient | Client,
+    body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+) -> Response[AuthorizationCreateResult | ProblemDetail]:
     """Create authorization
 
      Create the authorization.
 
     Args:
-        body (Object | Object1): Defines an authorization request.
-            Either an id-based or a property-based authorization can be provided.
+        body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateAuthorizationResponse201 | CreateAuthorizationResponse400 | CreateAuthorizationResponse401 | CreateAuthorizationResponse403 | CreateAuthorizationResponse404 | CreateAuthorizationResponse500 | CreateAuthorizationResponse503]
+        Response[AuthorizationCreateResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -213,15 +183,17 @@ async def asyncio_detailed(
 
 
 async def asyncio(
-    *, client: AuthenticatedClient | Client, body: Object | Object1, **kwargs: Any
-) -> CreateAuthorizationResponse201:
+    *,
+    client: AuthenticatedClient | Client,
+    body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+    **kwargs: Any,
+) -> AuthorizationCreateResult:
     """Create authorization
 
      Create the authorization.
 
     Args:
-        body (Object | Object1): Defines an authorization request.
-            Either an id-based or a property-based authorization can be provided.
+        body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
 
     Raises:
         errors.CreateAuthorizationBadRequest: If the response status code is 400. The provided data is not valid.
@@ -233,45 +205,45 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CreateAuthorizationResponse201"""
+        AuthorizationCreateResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.CreateAuthorizationBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAuthorizationResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.CreateAuthorizationUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAuthorizationResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.CreateAuthorizationForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAuthorizationResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.CreateAuthorizationNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAuthorizationResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.CreateAuthorizationInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAuthorizationResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.CreateAuthorizationServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateAuthorizationResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CreateAuthorizationResponse201, response.parsed)
+    return cast(AuthorizationCreateResult, response.parsed)

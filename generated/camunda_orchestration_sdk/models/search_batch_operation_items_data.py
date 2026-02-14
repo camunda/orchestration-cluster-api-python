@@ -1,21 +1,22 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.search_batch_operation_items_data_filter import (
-        SearchBatchOperationItemsDataFilter,
+    from ..models.batch_operation_item_search_query_sort_request import (
+        BatchOperationItemSearchQuerySortRequest,
     )
-    from ..models.search_batch_operation_items_data_page import (
-        SearchBatchOperationItemsDataPage,
-    )
-    from ..models.search_batch_operation_items_data_sort_item import (
-        SearchBatchOperationItemsDataSortItem,
+    from ..models.cursor_based_backward_pagination import CursorBasedBackwardPagination
+    from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
+    from ..models.limit_based_pagination import LimitBasedPagination
+    from ..models.offset_based_pagination import OffsetBasedPagination
+    from ..models.search_batch_operation_items_filter import (
+        SearchBatchOperationItemsFilter,
     )
 
 
@@ -27,16 +28,29 @@ class SearchBatchOperationItemsData:
     """Batch operation item search request.
 
     Attributes:
-        sort (list[SearchBatchOperationItemsDataSortItem] | Unset): Sort field criteria.
-        filter_ (SearchBatchOperationItemsDataFilter | Unset): The batch operation item search filters.
-        page (SearchBatchOperationItemsDataPage | Unset): Pagination criteria.
+        sort (list[BatchOperationItemSearchQuerySortRequest] | Unset): Sort field criteria.
+        filter_ (SearchBatchOperationItemsFilter | Unset): The batch operation item search filters.
+        page (CursorBasedBackwardPagination | CursorBasedForwardPagination | LimitBasedPagination |
+            OffsetBasedPagination | Unset): Pagination criteria.
     """
 
-    sort: list[SearchBatchOperationItemsDataSortItem] | Unset = UNSET
-    filter_: SearchBatchOperationItemsDataFilter | Unset = UNSET
-    page: SearchBatchOperationItemsDataPage | Unset = UNSET
+    sort: list[BatchOperationItemSearchQuerySortRequest] | Unset = UNSET
+    filter_: SearchBatchOperationItemsFilter | Unset = UNSET
+    page: (
+        CursorBasedBackwardPagination
+        | CursorBasedForwardPagination
+        | LimitBasedPagination
+        | OffsetBasedPagination
+        | Unset
+    ) = UNSET
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.cursor_based_forward_pagination import (
+            CursorBasedForwardPagination,
+        )
+        from ..models.limit_based_pagination import LimitBasedPagination
+        from ..models.offset_based_pagination import OffsetBasedPagination
+
         sort: list[dict[str, Any]] | Unset = UNSET
         if not isinstance(self.sort, Unset):
             sort = []
@@ -48,8 +62,16 @@ class SearchBatchOperationItemsData:
         if not isinstance(self.filter_, Unset):
             filter_ = self.filter_.to_dict()
 
-        page: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.page, Unset):
+        page: dict[str, Any] | Unset
+        if isinstance(self.page, Unset):
+            page = UNSET
+        elif isinstance(self.page, LimitBasedPagination):
+            page = self.page.to_dict()
+        elif isinstance(self.page, OffsetBasedPagination):
+            page = self.page.to_dict()
+        elif isinstance(self.page, CursorBasedForwardPagination):
+            page = self.page.to_dict()
+        else:
             page = self.page.to_dict()
 
         field_dict: dict[str, Any] = {}
@@ -66,41 +88,90 @@ class SearchBatchOperationItemsData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.search_batch_operation_items_data_filter import (
-            SearchBatchOperationItemsDataFilter,
+        from ..models.batch_operation_item_search_query_sort_request import (
+            BatchOperationItemSearchQuerySortRequest,
         )
-        from ..models.search_batch_operation_items_data_page import (
-            SearchBatchOperationItemsDataPage,
+        from ..models.cursor_based_backward_pagination import (
+            CursorBasedBackwardPagination,
         )
-        from ..models.search_batch_operation_items_data_sort_item import (
-            SearchBatchOperationItemsDataSortItem,
+        from ..models.cursor_based_forward_pagination import (
+            CursorBasedForwardPagination,
+        )
+        from ..models.limit_based_pagination import LimitBasedPagination
+        from ..models.offset_based_pagination import OffsetBasedPagination
+        from ..models.search_batch_operation_items_filter import (
+            SearchBatchOperationItemsFilter,
         )
 
         d = dict(src_dict)
         _sort = d.pop("sort", UNSET)
-        sort: list[SearchBatchOperationItemsDataSortItem] | Unset = UNSET
+        sort: list[BatchOperationItemSearchQuerySortRequest] | Unset = UNSET
         if _sort is not UNSET:
             sort = []
             for sort_item_data in _sort:
-                sort_item = SearchBatchOperationItemsDataSortItem.from_dict(
+                sort_item = BatchOperationItemSearchQuerySortRequest.from_dict(
                     sort_item_data
                 )
 
                 sort.append(sort_item)
 
         _filter_ = d.pop("filter", UNSET)
-        filter_: SearchBatchOperationItemsDataFilter | Unset
+        filter_: SearchBatchOperationItemsFilter | Unset
         if isinstance(_filter_, Unset):
             filter_ = UNSET
         else:
-            filter_ = SearchBatchOperationItemsDataFilter.from_dict(_filter_)
+            filter_ = SearchBatchOperationItemsFilter.from_dict(_filter_)
 
-        _page = d.pop("page", UNSET)
-        page: SearchBatchOperationItemsDataPage | Unset
-        if isinstance(_page, Unset):
-            page = UNSET
-        else:
-            page = SearchBatchOperationItemsDataPage.from_dict(_page)
+        def _parse_page(
+            data: object,
+        ) -> (
+            CursorBasedBackwardPagination
+            | CursorBasedForwardPagination
+            | LimitBasedPagination
+            | OffsetBasedPagination
+            | Unset
+        ):
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                page_type_0 = LimitBasedPagination.from_dict(data)
+
+                return page_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                page_type_1 = OffsetBasedPagination.from_dict(data)
+
+                return page_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                page_type_2 = CursorBasedForwardPagination.from_dict(data)
+
+                return page_type_2
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+
+            data = cast(dict[str, Any], data)
+            page_type_3 = CursorBasedBackwardPagination.from_dict(data)
+
+            return page_type_3
+
+        page = _parse_page(d.pop("page", UNSET))
 
         search_batch_operation_items_data = cls(
             sort=sort,

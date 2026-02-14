@@ -9,10 +9,8 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.search_jobs_response_200_items_item import (
-        SearchJobsResponse200ItemsItem,
-    )
-    from ..models.search_jobs_response_200_page import SearchJobsResponse200Page
+    from ..models.job_search_result import JobSearchResult
+    from ..models.search_query_page_response import SearchQueryPageResponse
 
 
 T = TypeVar("T", bound="SearchJobsResponse200")
@@ -23,13 +21,13 @@ class SearchJobsResponse200:
     """Job search response.
 
     Attributes:
-        page (SearchJobsResponse200Page): Pagination information about the search results. Example: {'totalItems': 1,
+        page (SearchQueryPageResponse): Pagination information about the search results. Example: {'totalItems': 1,
             'hasMoreTotalItems': False}.
-        items (list[SearchJobsResponse200ItemsItem] | Unset): The matching jobs.
+        items (list[JobSearchResult] | Unset): The matching jobs.
     """
 
-    page: SearchJobsResponse200Page
-    items: list[SearchJobsResponse200ItemsItem] | Unset = UNSET
+    page: SearchQueryPageResponse
+    items: list[JobSearchResult] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -58,20 +56,18 @@ class SearchJobsResponse200:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.search_jobs_response_200_items_item import (
-            SearchJobsResponse200ItemsItem,
-        )
-        from ..models.search_jobs_response_200_page import SearchJobsResponse200Page
+        from ..models.job_search_result import JobSearchResult
+        from ..models.search_query_page_response import SearchQueryPageResponse
 
         d = dict(src_dict)
-        page = SearchJobsResponse200Page.from_dict(d.pop("page"))
+        page = SearchQueryPageResponse.from_dict(d.pop("page"))
 
         _items = d.pop("items", UNSET)
-        items: list[SearchJobsResponse200ItemsItem] | Unset = UNSET
+        items: list[JobSearchResult] | Unset = UNSET
         if _items is not UNSET:
             items = []
             for items_item_data in _items:
-                items_item = SearchJobsResponse200ItemsItem.from_dict(items_item_data)
+                items_item = JobSearchResult.from_dict(items_item_data)
 
                 items.append(items_item)
 

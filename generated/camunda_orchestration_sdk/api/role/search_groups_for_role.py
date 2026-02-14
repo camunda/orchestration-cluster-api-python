@@ -4,13 +4,9 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.problem_detail import ProblemDetail
+from ...models.role_group_search_result import RoleGroupSearchResult
 from ...models.search_groups_for_role_data import SearchGroupsForRoleData
-from ...models.search_groups_for_role_response_200 import SearchGroupsForRoleResponse200
-from ...models.search_groups_for_role_response_400 import SearchGroupsForRoleResponse400
-from ...models.search_groups_for_role_response_401 import SearchGroupsForRoleResponse401
-from ...models.search_groups_for_role_response_403 import SearchGroupsForRoleResponse403
-from ...models.search_groups_for_role_response_404 import SearchGroupsForRoleResponse404
-from ...models.search_groups_for_role_response_500 import SearchGroupsForRoleResponse500
 from ...types import UNSET, Response, Unset
 
 
@@ -33,32 +29,24 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    SearchGroupsForRoleResponse200
-    | SearchGroupsForRoleResponse400
-    | SearchGroupsForRoleResponse401
-    | SearchGroupsForRoleResponse403
-    | SearchGroupsForRoleResponse404
-    | SearchGroupsForRoleResponse500
-    | None
-):
+) -> ProblemDetail | RoleGroupSearchResult | None:
     if response.status_code == 200:
-        response_200 = SearchGroupsForRoleResponse200.from_dict(response.json())
+        response_200 = RoleGroupSearchResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = SearchGroupsForRoleResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = SearchGroupsForRoleResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = SearchGroupsForRoleResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = SearchGroupsForRoleResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = SearchGroupsForRoleResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -68,14 +56,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    SearchGroupsForRoleResponse200
-    | SearchGroupsForRoleResponse400
-    | SearchGroupsForRoleResponse401
-    | SearchGroupsForRoleResponse403
-    | SearchGroupsForRoleResponse404
-    | SearchGroupsForRoleResponse500
-]:
+) -> Response[ProblemDetail | RoleGroupSearchResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -89,14 +70,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: SearchGroupsForRoleData | Unset = UNSET,
-) -> Response[
-    SearchGroupsForRoleResponse200
-    | SearchGroupsForRoleResponse400
-    | SearchGroupsForRoleResponse401
-    | SearchGroupsForRoleResponse403
-    | SearchGroupsForRoleResponse404
-    | SearchGroupsForRoleResponse500
-]:
+) -> Response[ProblemDetail | RoleGroupSearchResult]:
     """Search role groups
 
      Search groups with assigned role.
@@ -110,7 +84,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchGroupsForRoleResponse200 | SearchGroupsForRoleResponse400 | SearchGroupsForRoleResponse401 | SearchGroupsForRoleResponse403 | SearchGroupsForRoleResponse404 | SearchGroupsForRoleResponse500]
+        Response[ProblemDetail | RoleGroupSearchResult]
     """
     kwargs = _get_kwargs(role_id=role_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -123,7 +97,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: SearchGroupsForRoleData | Unset = UNSET,
     **kwargs: Any,
-) -> SearchGroupsForRoleResponse200:
+) -> RoleGroupSearchResult:
     """Search role groups
 
      Search groups with assigned role.
@@ -141,42 +115,42 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchGroupsForRoleResponse200"""
+        RoleGroupSearchResult"""
     response = sync_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.SearchGroupsForRoleBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchGroupsForRoleResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchGroupsForRoleUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchGroupsForRoleResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchGroupsForRoleForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchGroupsForRoleResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.SearchGroupsForRoleNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchGroupsForRoleResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchGroupsForRoleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchGroupsForRoleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchGroupsForRoleResponse200, response.parsed)
+    return cast(RoleGroupSearchResult, response.parsed)
 
 
 async def asyncio_detailed(
@@ -184,14 +158,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: SearchGroupsForRoleData | Unset = UNSET,
-) -> Response[
-    SearchGroupsForRoleResponse200
-    | SearchGroupsForRoleResponse400
-    | SearchGroupsForRoleResponse401
-    | SearchGroupsForRoleResponse403
-    | SearchGroupsForRoleResponse404
-    | SearchGroupsForRoleResponse500
-]:
+) -> Response[ProblemDetail | RoleGroupSearchResult]:
     """Search role groups
 
      Search groups with assigned role.
@@ -205,7 +172,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchGroupsForRoleResponse200 | SearchGroupsForRoleResponse400 | SearchGroupsForRoleResponse401 | SearchGroupsForRoleResponse403 | SearchGroupsForRoleResponse404 | SearchGroupsForRoleResponse500]
+        Response[ProblemDetail | RoleGroupSearchResult]
     """
     kwargs = _get_kwargs(role_id=role_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -218,7 +185,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: SearchGroupsForRoleData | Unset = UNSET,
     **kwargs: Any,
-) -> SearchGroupsForRoleResponse200:
+) -> RoleGroupSearchResult:
     """Search role groups
 
      Search groups with assigned role.
@@ -236,39 +203,39 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchGroupsForRoleResponse200"""
+        RoleGroupSearchResult"""
     response = await asyncio_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.SearchGroupsForRoleBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchGroupsForRoleResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchGroupsForRoleUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchGroupsForRoleResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchGroupsForRoleForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchGroupsForRoleResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.SearchGroupsForRoleNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchGroupsForRoleResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchGroupsForRoleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchGroupsForRoleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchGroupsForRoleResponse200, response.parsed)
+    return cast(RoleGroupSearchResult, response.parsed)

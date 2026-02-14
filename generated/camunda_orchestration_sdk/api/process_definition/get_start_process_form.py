@@ -5,11 +5,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.get_start_process_form_response_200 import GetStartProcessFormResponse200
-from ...models.get_start_process_form_response_400 import GetStartProcessFormResponse400
-from ...models.get_start_process_form_response_401 import GetStartProcessFormResponse401
-from ...models.get_start_process_form_response_403 import GetStartProcessFormResponse403
-from ...models.get_start_process_form_response_404 import GetStartProcessFormResponse404
-from ...models.get_start_process_form_response_500 import GetStartProcessFormResponse500
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -25,16 +21,7 @@ def _get_kwargs(process_definition_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | GetStartProcessFormResponse200
-    | GetStartProcessFormResponse400
-    | GetStartProcessFormResponse401
-    | GetStartProcessFormResponse403
-    | GetStartProcessFormResponse404
-    | GetStartProcessFormResponse500
-    | None
-):
+) -> Any | GetStartProcessFormResponse200 | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = GetStartProcessFormResponse200.from_dict(response.json())
         return response_200
@@ -42,19 +29,19 @@ def _parse_response(
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = GetStartProcessFormResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = GetStartProcessFormResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetStartProcessFormResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = GetStartProcessFormResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetStartProcessFormResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -64,15 +51,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | GetStartProcessFormResponse200
-    | GetStartProcessFormResponse400
-    | GetStartProcessFormResponse401
-    | GetStartProcessFormResponse403
-    | GetStartProcessFormResponse404
-    | GetStartProcessFormResponse500
-]:
+) -> Response[Any | GetStartProcessFormResponse200 | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -83,15 +62,7 @@ def _build_response(
 
 def sync_detailed(
     process_definition_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | GetStartProcessFormResponse200
-    | GetStartProcessFormResponse400
-    | GetStartProcessFormResponse401
-    | GetStartProcessFormResponse403
-    | GetStartProcessFormResponse404
-    | GetStartProcessFormResponse500
-]:
+) -> Response[Any | GetStartProcessFormResponse200 | ProblemDetail]:
     """Get process start form
 
      Get the start form of a process.
@@ -107,7 +78,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | GetStartProcessFormResponse200 | GetStartProcessFormResponse400 | GetStartProcessFormResponse401 | GetStartProcessFormResponse403 | GetStartProcessFormResponse404 | GetStartProcessFormResponse500]
+        Response[Any | GetStartProcessFormResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(process_definition_key=process_definition_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -145,31 +116,31 @@ def sync(
             raise errors.GetStartProcessFormBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetStartProcessFormResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetStartProcessFormUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetStartProcessFormResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetStartProcessFormForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetStartProcessFormResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetStartProcessFormNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetStartProcessFormResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetStartProcessFormInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetStartProcessFormResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
@@ -178,15 +149,7 @@ def sync(
 
 async def asyncio_detailed(
     process_definition_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    Any
-    | GetStartProcessFormResponse200
-    | GetStartProcessFormResponse400
-    | GetStartProcessFormResponse401
-    | GetStartProcessFormResponse403
-    | GetStartProcessFormResponse404
-    | GetStartProcessFormResponse500
-]:
+) -> Response[Any | GetStartProcessFormResponse200 | ProblemDetail]:
     """Get process start form
 
      Get the start form of a process.
@@ -202,7 +165,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | GetStartProcessFormResponse200 | GetStartProcessFormResponse400 | GetStartProcessFormResponse401 | GetStartProcessFormResponse403 | GetStartProcessFormResponse404 | GetStartProcessFormResponse500]
+        Response[Any | GetStartProcessFormResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(process_definition_key=process_definition_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -240,31 +203,31 @@ async def asyncio(
             raise errors.GetStartProcessFormBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetStartProcessFormResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetStartProcessFormUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetStartProcessFormResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetStartProcessFormForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetStartProcessFormResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetStartProcessFormNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetStartProcessFormResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetStartProcessFormInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetStartProcessFormResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

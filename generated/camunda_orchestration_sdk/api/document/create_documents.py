@@ -4,10 +4,8 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.create_documents_data import CreateDocumentsData
-from ...models.create_documents_response_201 import CreateDocumentsResponse201
-from ...models.create_documents_response_207 import CreateDocumentsResponse207
-from ...models.create_documents_response_400 import CreateDocumentsResponse400
-from ...models.create_documents_response_415 import CreateDocumentsResponse415
+from ...models.document_creation_batch_response import DocumentCreationBatchResponse
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
@@ -30,24 +28,18 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    CreateDocumentsResponse201
-    | CreateDocumentsResponse207
-    | CreateDocumentsResponse400
-    | CreateDocumentsResponse415
-    | None
-):
+) -> DocumentCreationBatchResponse | ProblemDetail | None:
     if response.status_code == 201:
-        response_201 = CreateDocumentsResponse201.from_dict(response.json())
+        response_201 = DocumentCreationBatchResponse.from_dict(response.json())
         return response_201
     if response.status_code == 207:
-        response_207 = CreateDocumentsResponse207.from_dict(response.json())
+        response_207 = DocumentCreationBatchResponse.from_dict(response.json())
         return response_207
     if response.status_code == 400:
-        response_400 = CreateDocumentsResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 415:
-        response_415 = CreateDocumentsResponse415.from_dict(response.json())
+        response_415 = ProblemDetail.from_dict(response.json())
         return response_415
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -57,12 +49,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    CreateDocumentsResponse201
-    | CreateDocumentsResponse207
-    | CreateDocumentsResponse400
-    | CreateDocumentsResponse415
-]:
+) -> Response[DocumentCreationBatchResponse | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -76,12 +63,7 @@ def sync_detailed(
     client: AuthenticatedClient | Client,
     body: CreateDocumentsData,
     store_id: str | Unset = UNSET,
-) -> Response[
-    CreateDocumentsResponse201
-    | CreateDocumentsResponse207
-    | CreateDocumentsResponse400
-    | CreateDocumentsResponse415
-]:
+) -> Response[DocumentCreationBatchResponse | ProblemDetail]:
     """Upload multiple documents
 
      Upload multiple documents to the Camunda 8 cluster.
@@ -116,7 +98,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateDocumentsResponse201 | CreateDocumentsResponse207 | CreateDocumentsResponse400 | CreateDocumentsResponse415]
+        Response[DocumentCreationBatchResponse | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body, store_id=store_id)
     response = client.get_httpx_client().request(**kwargs)
@@ -129,7 +111,7 @@ def sync(
     body: CreateDocumentsData,
     store_id: str | Unset = UNSET,
     **kwargs: Any,
-) -> CreateDocumentsResponse201:
+) -> DocumentCreationBatchResponse:
     """Upload multiple documents
 
      Upload multiple documents to the Camunda 8 cluster.
@@ -165,24 +147,24 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CreateDocumentsResponse201"""
+        DocumentCreationBatchResponse"""
     response = sync_detailed(client=client, body=body, store_id=store_id)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.CreateDocumentsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateDocumentsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 415:
             raise errors.CreateDocumentsUnsupportedMediaType(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateDocumentsResponse415, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CreateDocumentsResponse201, response.parsed)
+    return cast(DocumentCreationBatchResponse, response.parsed)
 
 
 async def asyncio_detailed(
@@ -190,12 +172,7 @@ async def asyncio_detailed(
     client: AuthenticatedClient | Client,
     body: CreateDocumentsData,
     store_id: str | Unset = UNSET,
-) -> Response[
-    CreateDocumentsResponse201
-    | CreateDocumentsResponse207
-    | CreateDocumentsResponse400
-    | CreateDocumentsResponse415
-]:
+) -> Response[DocumentCreationBatchResponse | ProblemDetail]:
     """Upload multiple documents
 
      Upload multiple documents to the Camunda 8 cluster.
@@ -230,7 +207,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[CreateDocumentsResponse201 | CreateDocumentsResponse207 | CreateDocumentsResponse400 | CreateDocumentsResponse415]
+        Response[DocumentCreationBatchResponse | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body, store_id=store_id)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -243,7 +220,7 @@ async def asyncio(
     body: CreateDocumentsData,
     store_id: str | Unset = UNSET,
     **kwargs: Any,
-) -> CreateDocumentsResponse201:
+) -> DocumentCreationBatchResponse:
     """Upload multiple documents
 
      Upload multiple documents to the Camunda 8 cluster.
@@ -279,21 +256,21 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        CreateDocumentsResponse201"""
+        DocumentCreationBatchResponse"""
     response = await asyncio_detailed(client=client, body=body, store_id=store_id)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.CreateDocumentsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateDocumentsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 415:
             raise errors.CreateDocumentsUnsupportedMediaType(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(CreateDocumentsResponse415, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(CreateDocumentsResponse201, response.parsed)
+    return cast(DocumentCreationBatchResponse, response.parsed)

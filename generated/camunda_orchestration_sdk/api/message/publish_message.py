@@ -3,15 +3,13 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.publish_message_data import PublishMessageData
+from ...models.message_publication_request import MessagePublicationRequest
+from ...models.problem_detail import ProblemDetail
 from ...models.publish_message_response_200 import PublishMessageResponse200
-from ...models.publish_message_response_400 import PublishMessageResponse400
-from ...models.publish_message_response_500 import PublishMessageResponse500
-from ...models.publish_message_response_503 import PublishMessageResponse503
 from ...types import Response
 
 
-def _get_kwargs(*, body: PublishMessageData) -> dict[str, Any]:
+def _get_kwargs(*, body: MessagePublicationRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/messages/publication"}
     _kwargs["json"] = body.to_dict()
@@ -22,24 +20,18 @@ def _get_kwargs(*, body: PublishMessageData) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    PublishMessageResponse200
-    | PublishMessageResponse400
-    | PublishMessageResponse500
-    | PublishMessageResponse503
-    | None
-):
+) -> ProblemDetail | PublishMessageResponse200 | None:
     if response.status_code == 200:
         response_200 = PublishMessageResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = PublishMessageResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 500:
-        response_500 = PublishMessageResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = PublishMessageResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -49,12 +41,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    PublishMessageResponse200
-    | PublishMessageResponse400
-    | PublishMessageResponse500
-    | PublishMessageResponse503
-]:
+) -> Response[ProblemDetail | PublishMessageResponse200]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -64,13 +51,8 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: PublishMessageData
-) -> Response[
-    PublishMessageResponse200
-    | PublishMessageResponse400
-    | PublishMessageResponse500
-    | PublishMessageResponse503
-]:
+    *, client: AuthenticatedClient | Client, body: MessagePublicationRequest
+) -> Response[ProblemDetail | PublishMessageResponse200]:
     """Publish message
 
      Publishes a single message.
@@ -80,14 +62,14 @@ def sync_detailed(
     Use the message correlation endpoint for such use cases.
 
     Args:
-        body (PublishMessageData):
+        body (MessagePublicationRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[PublishMessageResponse200 | PublishMessageResponse400 | PublishMessageResponse500 | PublishMessageResponse503]
+        Response[ProblemDetail | PublishMessageResponse200]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -95,7 +77,10 @@ def sync_detailed(
 
 
 def sync(
-    *, client: AuthenticatedClient | Client, body: PublishMessageData, **kwargs: Any
+    *,
+    client: AuthenticatedClient | Client,
+    body: MessagePublicationRequest,
+    **kwargs: Any,
 ) -> PublishMessageResponse200:
     """Publish message
 
@@ -106,7 +91,7 @@ def sync(
     Use the message correlation endpoint for such use cases.
 
     Args:
-        body (PublishMessageData):
+        body (MessagePublicationRequest):
 
     Raises:
         errors.PublishMessageBadRequest: If the response status code is 400. The provided data is not valid.
@@ -122,19 +107,19 @@ def sync(
             raise errors.PublishMessageBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(PublishMessageResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.PublishMessageInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(PublishMessageResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.PublishMessageServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(PublishMessageResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
@@ -142,13 +127,8 @@ def sync(
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: PublishMessageData
-) -> Response[
-    PublishMessageResponse200
-    | PublishMessageResponse400
-    | PublishMessageResponse500
-    | PublishMessageResponse503
-]:
+    *, client: AuthenticatedClient | Client, body: MessagePublicationRequest
+) -> Response[ProblemDetail | PublishMessageResponse200]:
     """Publish message
 
      Publishes a single message.
@@ -158,14 +138,14 @@ async def asyncio_detailed(
     Use the message correlation endpoint for such use cases.
 
     Args:
-        body (PublishMessageData):
+        body (MessagePublicationRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[PublishMessageResponse200 | PublishMessageResponse400 | PublishMessageResponse500 | PublishMessageResponse503]
+        Response[ProblemDetail | PublishMessageResponse200]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -173,7 +153,10 @@ async def asyncio_detailed(
 
 
 async def asyncio(
-    *, client: AuthenticatedClient | Client, body: PublishMessageData, **kwargs: Any
+    *,
+    client: AuthenticatedClient | Client,
+    body: MessagePublicationRequest,
+    **kwargs: Any,
 ) -> PublishMessageResponse200:
     """Publish message
 
@@ -184,7 +167,7 @@ async def asyncio(
     Use the message correlation endpoint for such use cases.
 
     Args:
-        body (PublishMessageData):
+        body (MessagePublicationRequest):
 
     Raises:
         errors.PublishMessageBadRequest: If the response status code is 400. The provided data is not valid.
@@ -200,19 +183,19 @@ async def asyncio(
             raise errors.PublishMessageBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(PublishMessageResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.PublishMessageInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(PublishMessageResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.PublishMessageServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(PublishMessageResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

@@ -4,16 +4,19 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.object_ import Object
-from ...models.object_1 import Object1
-from ...models.update_authorization_response_401 import UpdateAuthorizationResponse401
-from ...models.update_authorization_response_404 import UpdateAuthorizationResponse404
-from ...models.update_authorization_response_500 import UpdateAuthorizationResponse500
-from ...models.update_authorization_response_503 import UpdateAuthorizationResponse503
+from ...models.authorization_id_based_request import AuthorizationIdBasedRequest
+from ...models.authorization_property_based_request import (
+    AuthorizationPropertyBasedRequest,
+)
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
-def _get_kwargs(authorization_key: str, *, body: Object | Object1) -> dict[str, Any]:
+def _get_kwargs(
+    authorization_key: str,
+    *,
+    body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
         "method": "put",
@@ -21,7 +24,7 @@ def _get_kwargs(authorization_key: str, *, body: Object | Object1) -> dict[str, 
             authorization_key=quote(str(authorization_key), safe="")
         ),
     }
-    if isinstance(body, Object):
+    if isinstance(body, AuthorizationIdBasedRequest):
         _kwargs["json"] = body.to_dict()
     else:
         _kwargs["json"] = body.to_dict()
@@ -32,28 +35,21 @@ def _get_kwargs(authorization_key: str, *, body: Object | Object1) -> dict[str, 
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | UpdateAuthorizationResponse401
-    | UpdateAuthorizationResponse404
-    | UpdateAuthorizationResponse500
-    | UpdateAuthorizationResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 401:
-        response_401 = UpdateAuthorizationResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 404:
-        response_404 = UpdateAuthorizationResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = UpdateAuthorizationResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = UpdateAuthorizationResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -63,13 +59,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | UpdateAuthorizationResponse401
-    | UpdateAuthorizationResponse404
-    | UpdateAuthorizationResponse500
-    | UpdateAuthorizationResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -82,14 +72,8 @@ def sync_detailed(
     authorization_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: Object | Object1,
-) -> Response[
-    Any
-    | UpdateAuthorizationResponse401
-    | UpdateAuthorizationResponse404
-    | UpdateAuthorizationResponse500
-    | UpdateAuthorizationResponse503
-]:
+    body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+) -> Response[Any | ProblemDetail]:
     """Update authorization
 
      Update the authorization with the given key.
@@ -97,15 +81,14 @@ def sync_detailed(
     Args:
         authorization_key (str): System-generated key for an authorization. Example:
             2251799813684332.
-        body (Object | Object1): Defines an authorization request.
-            Either an id-based or a property-based authorization can be provided.
+        body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | UpdateAuthorizationResponse401 | UpdateAuthorizationResponse404 | UpdateAuthorizationResponse500 | UpdateAuthorizationResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(authorization_key=authorization_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -116,7 +99,7 @@ def sync(
     authorization_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: Object | Object1,
+    body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
     **kwargs: Any,
 ) -> None:
     """Update authorization
@@ -126,8 +109,7 @@ def sync(
     Args:
         authorization_key (str): System-generated key for an authorization. Example:
             2251799813684332.
-        body (Object | Object1): Defines an authorization request.
-            Either an id-based or a property-based authorization can be provided.
+        body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
 
     Raises:
         errors.UpdateAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
@@ -146,25 +128,25 @@ def sync(
             raise errors.UpdateAuthorizationUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateAuthorizationResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UpdateAuthorizationNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateAuthorizationResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UpdateAuthorizationInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateAuthorizationResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.UpdateAuthorizationServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateAuthorizationResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -174,14 +156,8 @@ async def asyncio_detailed(
     authorization_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: Object | Object1,
-) -> Response[
-    Any
-    | UpdateAuthorizationResponse401
-    | UpdateAuthorizationResponse404
-    | UpdateAuthorizationResponse500
-    | UpdateAuthorizationResponse503
-]:
+    body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+) -> Response[Any | ProblemDetail]:
     """Update authorization
 
      Update the authorization with the given key.
@@ -189,15 +165,14 @@ async def asyncio_detailed(
     Args:
         authorization_key (str): System-generated key for an authorization. Example:
             2251799813684332.
-        body (Object | Object1): Defines an authorization request.
-            Either an id-based or a property-based authorization can be provided.
+        body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | UpdateAuthorizationResponse401 | UpdateAuthorizationResponse404 | UpdateAuthorizationResponse500 | UpdateAuthorizationResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(authorization_key=authorization_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -208,7 +183,7 @@ async def asyncio(
     authorization_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: Object | Object1,
+    body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
     **kwargs: Any,
 ) -> None:
     """Update authorization
@@ -218,8 +193,7 @@ async def asyncio(
     Args:
         authorization_key (str): System-generated key for an authorization. Example:
             2251799813684332.
-        body (Object | Object1): Defines an authorization request.
-            Either an id-based or a property-based authorization can be provided.
+        body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
 
     Raises:
         errors.UpdateAuthorizationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
@@ -238,25 +212,25 @@ async def asyncio(
             raise errors.UpdateAuthorizationUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateAuthorizationResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UpdateAuthorizationNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateAuthorizationResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UpdateAuthorizationInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateAuthorizationResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.UpdateAuthorizationServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateAuthorizationResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

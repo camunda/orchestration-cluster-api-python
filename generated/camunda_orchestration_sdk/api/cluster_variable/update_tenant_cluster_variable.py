@@ -4,32 +4,14 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.update_tenant_cluster_variable_data import (
-    UpdateTenantClusterVariableData,
-)
-from ...models.update_tenant_cluster_variable_response_200 import (
-    UpdateTenantClusterVariableResponse200,
-)
-from ...models.update_tenant_cluster_variable_response_400 import (
-    UpdateTenantClusterVariableResponse400,
-)
-from ...models.update_tenant_cluster_variable_response_401 import (
-    UpdateTenantClusterVariableResponse401,
-)
-from ...models.update_tenant_cluster_variable_response_403 import (
-    UpdateTenantClusterVariableResponse403,
-)
-from ...models.update_tenant_cluster_variable_response_404 import (
-    UpdateTenantClusterVariableResponse404,
-)
-from ...models.update_tenant_cluster_variable_response_500 import (
-    UpdateTenantClusterVariableResponse500,
-)
+from ...models.cluster_variable_result import ClusterVariableResult
+from ...models.problem_detail import ProblemDetail
+from ...models.update_cluster_variable_request import UpdateClusterVariableRequest
 from ...types import Response
 
 
 def _get_kwargs(
-    tenant_id: str, name: str, *, body: UpdateTenantClusterVariableData
+    tenant_id: str, name: str, *, body: UpdateClusterVariableRequest
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -46,32 +28,24 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    UpdateTenantClusterVariableResponse200
-    | UpdateTenantClusterVariableResponse400
-    | UpdateTenantClusterVariableResponse401
-    | UpdateTenantClusterVariableResponse403
-    | UpdateTenantClusterVariableResponse404
-    | UpdateTenantClusterVariableResponse500
-    | None
-):
+) -> ClusterVariableResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = UpdateTenantClusterVariableResponse200.from_dict(response.json())
+        response_200 = ClusterVariableResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = UpdateTenantClusterVariableResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = UpdateTenantClusterVariableResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = UpdateTenantClusterVariableResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = UpdateTenantClusterVariableResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = UpdateTenantClusterVariableResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -81,14 +55,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    UpdateTenantClusterVariableResponse200
-    | UpdateTenantClusterVariableResponse400
-    | UpdateTenantClusterVariableResponse401
-    | UpdateTenantClusterVariableResponse403
-    | UpdateTenantClusterVariableResponse404
-    | UpdateTenantClusterVariableResponse500
-]:
+) -> Response[ClusterVariableResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -102,15 +69,8 @@ def sync_detailed(
     name: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateTenantClusterVariableData,
-) -> Response[
-    UpdateTenantClusterVariableResponse200
-    | UpdateTenantClusterVariableResponse400
-    | UpdateTenantClusterVariableResponse401
-    | UpdateTenantClusterVariableResponse403
-    | UpdateTenantClusterVariableResponse404
-    | UpdateTenantClusterVariableResponse500
-]:
+    body: UpdateClusterVariableRequest,
+) -> Response[ClusterVariableResult | ProblemDetail]:
     """Update a tenant-scoped cluster variable
 
      Updates the value of an existing tenant-scoped cluster variable.
@@ -119,14 +79,14 @@ def sync_detailed(
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
         name (str):
-        body (UpdateTenantClusterVariableData):
+        body (UpdateClusterVariableRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[UpdateTenantClusterVariableResponse200 | UpdateTenantClusterVariableResponse400 | UpdateTenantClusterVariableResponse401 | UpdateTenantClusterVariableResponse403 | UpdateTenantClusterVariableResponse404 | UpdateTenantClusterVariableResponse500]
+        Response[ClusterVariableResult | ProblemDetail]
     """
     kwargs = _get_kwargs(tenant_id=tenant_id, name=name, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -138,9 +98,9 @@ def sync(
     name: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateTenantClusterVariableData,
+    body: UpdateClusterVariableRequest,
     **kwargs: Any,
-) -> UpdateTenantClusterVariableResponse200:
+) -> ClusterVariableResult:
     """Update a tenant-scoped cluster variable
 
      Updates the value of an existing tenant-scoped cluster variable.
@@ -149,7 +109,7 @@ def sync(
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
         name (str):
-        body (UpdateTenantClusterVariableData):
+        body (UpdateClusterVariableRequest):
 
     Raises:
         errors.UpdateTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
@@ -160,42 +120,42 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UpdateTenantClusterVariableResponse200"""
+        ClusterVariableResult"""
     response = sync_detailed(tenant_id=tenant_id, name=name, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.UpdateTenantClusterVariableBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantClusterVariableResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.UpdateTenantClusterVariableUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantClusterVariableResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.UpdateTenantClusterVariableForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantClusterVariableResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UpdateTenantClusterVariableNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantClusterVariableResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UpdateTenantClusterVariableInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantClusterVariableResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UpdateTenantClusterVariableResponse200, response.parsed)
+    return cast(ClusterVariableResult, response.parsed)
 
 
 async def asyncio_detailed(
@@ -203,15 +163,8 @@ async def asyncio_detailed(
     name: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateTenantClusterVariableData,
-) -> Response[
-    UpdateTenantClusterVariableResponse200
-    | UpdateTenantClusterVariableResponse400
-    | UpdateTenantClusterVariableResponse401
-    | UpdateTenantClusterVariableResponse403
-    | UpdateTenantClusterVariableResponse404
-    | UpdateTenantClusterVariableResponse500
-]:
+    body: UpdateClusterVariableRequest,
+) -> Response[ClusterVariableResult | ProblemDetail]:
     """Update a tenant-scoped cluster variable
 
      Updates the value of an existing tenant-scoped cluster variable.
@@ -220,14 +173,14 @@ async def asyncio_detailed(
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
         name (str):
-        body (UpdateTenantClusterVariableData):
+        body (UpdateClusterVariableRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[UpdateTenantClusterVariableResponse200 | UpdateTenantClusterVariableResponse400 | UpdateTenantClusterVariableResponse401 | UpdateTenantClusterVariableResponse403 | UpdateTenantClusterVariableResponse404 | UpdateTenantClusterVariableResponse500]
+        Response[ClusterVariableResult | ProblemDetail]
     """
     kwargs = _get_kwargs(tenant_id=tenant_id, name=name, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -239,9 +192,9 @@ async def asyncio(
     name: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateTenantClusterVariableData,
+    body: UpdateClusterVariableRequest,
     **kwargs: Any,
-) -> UpdateTenantClusterVariableResponse200:
+) -> ClusterVariableResult:
     """Update a tenant-scoped cluster variable
 
      Updates the value of an existing tenant-scoped cluster variable.
@@ -250,7 +203,7 @@ async def asyncio(
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
         name (str):
-        body (UpdateTenantClusterVariableData):
+        body (UpdateClusterVariableRequest):
 
     Raises:
         errors.UpdateTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
@@ -261,7 +214,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UpdateTenantClusterVariableResponse200"""
+        ClusterVariableResult"""
     response = await asyncio_detailed(
         tenant_id=tenant_id, name=name, client=client, body=body
     )
@@ -270,32 +223,32 @@ async def asyncio(
             raise errors.UpdateTenantClusterVariableBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantClusterVariableResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.UpdateTenantClusterVariableUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantClusterVariableResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.UpdateTenantClusterVariableForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantClusterVariableResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UpdateTenantClusterVariableNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantClusterVariableResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UpdateTenantClusterVariableInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantClusterVariableResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UpdateTenantClusterVariableResponse200, response.parsed)
+    return cast(ClusterVariableResult, response.parsed)

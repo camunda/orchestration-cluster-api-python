@@ -2,7 +2,19 @@
 
 [![PyPI - Version](https://img.shields.io/pypi/v/camunda-orchestration-sdk)](https://pypi.org/project/camunda-orchestration-sdk/)
 
+A fully typed Python client for the [Camunda 8 Orchestration Cluster REST API](https://docs.camunda.io/docs/apis-tools/camunda-api-rest/camunda-api-rest-overview/). Auto-generated from the upstream OpenAPI spec with hand-written runtime infrastructure for authentication, configuration, and job workers.
+
+- **Sync and async** — `CamundaClient` (synchronous) and `CamundaAsyncClient` (async/await)
+- **Strict typing** — pyright-strict compatible with PEP 561 `py.typed` marker
+- **Zero-config** — reads `CAMUNDA_*` environment variables (12-factor style)
+- **Job workers** — long-poll workers with thread, process, or async execution strategies
+- **OAuth & Basic auth** — pluggable authentication with automatic token management
+
 ## Installing the SDK to your project
+
+### Requirements
+
+- Python 3.10 or later
 
 ### Stable release (recommended for production)
 
@@ -224,9 +236,96 @@ async def main():
 asyncio.run(main())
 ```
 
+### Deploying Resources
+
+Deploy BPMN, DMN, or Form files from disk:
+
+```python
+from camunda_orchestration_sdk import CamundaClient
+
+with CamundaClient() as client:
+    result = client.deploy_resources_from_files(["process.bpmn", "decision.dmn"])
+
+    print(f"Deployment key: {result.deployment_key}")
+    for process in result.processes:
+        print(f"  Process: {process.bpmn_process_id} (key: {process.process_definition_key})")
+```
+
+### Creating a Process Instance
+
+```python
+from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk.models.process_creation_by_key import ProcessCreationByKey
+
+with CamundaClient() as client:
+    result = client.create_process_instance(
+        data=ProcessCreationByKey(process_definition_key=2251799813685249)
+    )
+    print(f"Process instance key: {result.process_instance_key}")
+```
+
+### Job Workers
+
+Job workers long-poll for available jobs, execute a callback, and automatically complete or fail the job based on the return value. Workers are available on `CamundaAsyncClient`.
+
+```python
+import asyncio
+from camunda_orchestration_sdk import CamundaAsyncClient, WorkerConfig
+from camunda_orchestration_sdk.runtime.job_worker import JobContext
+
+async def handle_job(job_context: JobContext) -> dict:
+    variables = job_context.variables.to_dict()
+    print(f"Processing job {job_context.job_key}: {variables}")
+    # Return a dict to set output variables
+    return {"result": "processed"}
+
+async def main():
+    async with CamundaAsyncClient() as client:
+        config = WorkerConfig(
+            job_type="my-service-task",
+            job_timeout_milliseconds=30_000,
+        )
+        client.create_job_worker(config=config, callback=handle_job)
+
+        # Keep workers running until cancelled
+        await client.run_workers()
+
+asyncio.run(main())
+```
+
+#### Worker Configuration
+
+`WorkerConfig` supports:
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `job_type` | *(required)* | The BPMN service task type to poll for |
+| `job_timeout_milliseconds` | `30000` | How long the worker has to complete the job |
+| `request_timeout_milliseconds` | `20000` | Long-poll request timeout |
+| `max_concurrent_jobs` | `10` | Maximum jobs to activate per poll |
+| `execution_strategy` | `"auto"` | `"auto"`, `"thread"`, `"process"`, or `"async"` |
+
+### Error Handling
+
+The SDK raises typed exceptions for API errors. Each operation has specific exception classes for each HTTP error status code:
+
+```python
+from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk.models.process_creation_by_key import ProcessCreationByKey
+from camunda_orchestration_sdk.errors import CreateProcessInstanceBadRequest
+
+with CamundaClient() as client:
+    try:
+        result = client.create_process_instance(
+            data=ProcessCreationByKey(process_definition_key=99999)
+        )
+    except CreateProcessInstanceBadRequest as e:
+        print(f"Bad request: {e}")
+```
+
 ### Logging
 
-The SDK uses [loguru](https://github.com/Delgan/loguru) for logging. You can control the log level by setting the `LOGURU_LEVEL` environment variable.
+The SDK uses [loguru](https://github.com/Delgan/loguru) for logging. Control the log level with the `LOGURU_LEVEL` environment variable or `CAMUNDA_SDK_LOG_LEVEL` in configuration.
 
 ```bash
 # Run with INFO level (default is DEBUG)
@@ -238,6 +337,10 @@ LOGURU_LEVEL=WARNING python your_script.py
 # Run with TRACE level (more verbose than DEBUG)
 LOGURU_LEVEL=TRACE python your_script.py
 ```
+
+### Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and generation workflow. See [MAINTAINER.md](MAINTAINER.md) for architecture and pipeline documentation.
 
 ### License
 

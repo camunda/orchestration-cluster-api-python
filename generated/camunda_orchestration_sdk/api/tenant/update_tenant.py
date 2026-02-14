@@ -4,17 +4,13 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.update_tenant_data import UpdateTenantData
-from ...models.update_tenant_response_200 import UpdateTenantResponse200
-from ...models.update_tenant_response_400 import UpdateTenantResponse400
-from ...models.update_tenant_response_403 import UpdateTenantResponse403
-from ...models.update_tenant_response_404 import UpdateTenantResponse404
-from ...models.update_tenant_response_500 import UpdateTenantResponse500
-from ...models.update_tenant_response_503 import UpdateTenantResponse503
+from ...models.problem_detail import ProblemDetail
+from ...models.tenant_update_request import TenantUpdateRequest
+from ...models.tenant_update_result import TenantUpdateResult
 from ...types import Response
 
 
-def _get_kwargs(tenant_id: str, *, body: UpdateTenantData) -> dict[str, Any]:
+def _get_kwargs(tenant_id: str, *, body: TenantUpdateRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
         "method": "put",
@@ -28,32 +24,24 @@ def _get_kwargs(tenant_id: str, *, body: UpdateTenantData) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    UpdateTenantResponse200
-    | UpdateTenantResponse400
-    | UpdateTenantResponse403
-    | UpdateTenantResponse404
-    | UpdateTenantResponse500
-    | UpdateTenantResponse503
-    | None
-):
+) -> ProblemDetail | TenantUpdateResult | None:
     if response.status_code == 200:
-        response_200 = UpdateTenantResponse200.from_dict(response.json())
+        response_200 = TenantUpdateResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = UpdateTenantResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 403:
-        response_403 = UpdateTenantResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = UpdateTenantResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = UpdateTenantResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = UpdateTenantResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -63,14 +51,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    UpdateTenantResponse200
-    | UpdateTenantResponse400
-    | UpdateTenantResponse403
-    | UpdateTenantResponse404
-    | UpdateTenantResponse500
-    | UpdateTenantResponse503
-]:
+) -> Response[ProblemDetail | TenantUpdateResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -80,29 +61,22 @@ def _build_response(
 
 
 def sync_detailed(
-    tenant_id: str, *, client: AuthenticatedClient | Client, body: UpdateTenantData
-) -> Response[
-    UpdateTenantResponse200
-    | UpdateTenantResponse400
-    | UpdateTenantResponse403
-    | UpdateTenantResponse404
-    | UpdateTenantResponse500
-    | UpdateTenantResponse503
-]:
+    tenant_id: str, *, client: AuthenticatedClient | Client, body: TenantUpdateRequest
+) -> Response[ProblemDetail | TenantUpdateResult]:
     """Update tenant
 
      Updates an existing tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (UpdateTenantData):
+        body (TenantUpdateRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[UpdateTenantResponse200 | UpdateTenantResponse400 | UpdateTenantResponse403 | UpdateTenantResponse404 | UpdateTenantResponse500 | UpdateTenantResponse503]
+        Response[ProblemDetail | TenantUpdateResult]
     """
     kwargs = _get_kwargs(tenant_id=tenant_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -113,16 +87,16 @@ def sync(
     tenant_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateTenantData,
+    body: TenantUpdateRequest,
     **kwargs: Any,
-) -> UpdateTenantResponse200:
+) -> TenantUpdateResult:
     """Update tenant
 
      Updates an existing tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (UpdateTenantData):
+        body (TenantUpdateRequest):
 
     Raises:
         errors.UpdateTenantBadRequest: If the response status code is 400. The provided data is not valid.
@@ -133,68 +107,61 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UpdateTenantResponse200"""
+        TenantUpdateResult"""
     response = sync_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.UpdateTenantBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.UpdateTenantForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UpdateTenantNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UpdateTenantInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.UpdateTenantServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UpdateTenantResponse200, response.parsed)
+    return cast(TenantUpdateResult, response.parsed)
 
 
 async def asyncio_detailed(
-    tenant_id: str, *, client: AuthenticatedClient | Client, body: UpdateTenantData
-) -> Response[
-    UpdateTenantResponse200
-    | UpdateTenantResponse400
-    | UpdateTenantResponse403
-    | UpdateTenantResponse404
-    | UpdateTenantResponse500
-    | UpdateTenantResponse503
-]:
+    tenant_id: str, *, client: AuthenticatedClient | Client, body: TenantUpdateRequest
+) -> Response[ProblemDetail | TenantUpdateResult]:
     """Update tenant
 
      Updates an existing tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (UpdateTenantData):
+        body (TenantUpdateRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[UpdateTenantResponse200 | UpdateTenantResponse400 | UpdateTenantResponse403 | UpdateTenantResponse404 | UpdateTenantResponse500 | UpdateTenantResponse503]
+        Response[ProblemDetail | TenantUpdateResult]
     """
     kwargs = _get_kwargs(tenant_id=tenant_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -205,16 +172,16 @@ async def asyncio(
     tenant_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateTenantData,
+    body: TenantUpdateRequest,
     **kwargs: Any,
-) -> UpdateTenantResponse200:
+) -> TenantUpdateResult:
     """Update tenant
 
      Updates an existing tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (UpdateTenantData):
+        body (TenantUpdateRequest):
 
     Raises:
         errors.UpdateTenantBadRequest: If the response status code is 400. The provided data is not valid.
@@ -225,39 +192,39 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UpdateTenantResponse200"""
+        TenantUpdateResult"""
     response = await asyncio_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.UpdateTenantBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.UpdateTenantForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UpdateTenantNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UpdateTenantInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.UpdateTenantServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateTenantResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UpdateTenantResponse200, response.parsed)
+    return cast(TenantUpdateResult, response.parsed)

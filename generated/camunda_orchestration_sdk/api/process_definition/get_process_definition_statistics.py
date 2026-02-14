@@ -10,18 +10,7 @@ from ...models.get_process_definition_statistics_data import (
 from ...models.get_process_definition_statistics_response_200 import (
     GetProcessDefinitionStatisticsResponse200,
 )
-from ...models.get_process_definition_statistics_response_400 import (
-    GetProcessDefinitionStatisticsResponse400,
-)
-from ...models.get_process_definition_statistics_response_401 import (
-    GetProcessDefinitionStatisticsResponse401,
-)
-from ...models.get_process_definition_statistics_response_403 import (
-    GetProcessDefinitionStatisticsResponse403,
-)
-from ...models.get_process_definition_statistics_response_500 import (
-    GetProcessDefinitionStatisticsResponse500,
-)
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
@@ -46,38 +35,23 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetProcessDefinitionStatisticsResponse200
-    | GetProcessDefinitionStatisticsResponse400
-    | GetProcessDefinitionStatisticsResponse401
-    | GetProcessDefinitionStatisticsResponse403
-    | GetProcessDefinitionStatisticsResponse500
-    | None
-):
+) -> GetProcessDefinitionStatisticsResponse200 | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = GetProcessDefinitionStatisticsResponse200.from_dict(
             response.json()
         )
         return response_200
     if response.status_code == 400:
-        response_400 = GetProcessDefinitionStatisticsResponse400.from_dict(
-            response.json()
-        )
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = GetProcessDefinitionStatisticsResponse401.from_dict(
-            response.json()
-        )
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetProcessDefinitionStatisticsResponse403.from_dict(
-            response.json()
-        )
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = GetProcessDefinitionStatisticsResponse500.from_dict(
-            response.json()
-        )
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -87,13 +61,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetProcessDefinitionStatisticsResponse200
-    | GetProcessDefinitionStatisticsResponse400
-    | GetProcessDefinitionStatisticsResponse401
-    | GetProcessDefinitionStatisticsResponse403
-    | GetProcessDefinitionStatisticsResponse500
-]:
+) -> Response[GetProcessDefinitionStatisticsResponse200 | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -107,13 +75,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: GetProcessDefinitionStatisticsData | Unset = UNSET,
-) -> Response[
-    GetProcessDefinitionStatisticsResponse200
-    | GetProcessDefinitionStatisticsResponse400
-    | GetProcessDefinitionStatisticsResponse401
-    | GetProcessDefinitionStatisticsResponse403
-    | GetProcessDefinitionStatisticsResponse500
-]:
+) -> Response[GetProcessDefinitionStatisticsResponse200 | ProblemDetail]:
     """Get process definition statistics
 
      Get statistics about elements in currently running process instances by process definition key and
@@ -130,7 +92,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetProcessDefinitionStatisticsResponse200 | GetProcessDefinitionStatisticsResponse400 | GetProcessDefinitionStatisticsResponse401 | GetProcessDefinitionStatisticsResponse403 | GetProcessDefinitionStatisticsResponse500]
+        Response[GetProcessDefinitionStatisticsResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(process_definition_key=process_definition_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -172,25 +134,25 @@ def sync(
             raise errors.GetProcessDefinitionStatisticsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessDefinitionStatisticsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetProcessDefinitionStatisticsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessDefinitionStatisticsResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetProcessDefinitionStatisticsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessDefinitionStatisticsResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetProcessDefinitionStatisticsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessDefinitionStatisticsResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
@@ -202,13 +164,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: GetProcessDefinitionStatisticsData | Unset = UNSET,
-) -> Response[
-    GetProcessDefinitionStatisticsResponse200
-    | GetProcessDefinitionStatisticsResponse400
-    | GetProcessDefinitionStatisticsResponse401
-    | GetProcessDefinitionStatisticsResponse403
-    | GetProcessDefinitionStatisticsResponse500
-]:
+) -> Response[GetProcessDefinitionStatisticsResponse200 | ProblemDetail]:
     """Get process definition statistics
 
      Get statistics about elements in currently running process instances by process definition key and
@@ -225,7 +181,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetProcessDefinitionStatisticsResponse200 | GetProcessDefinitionStatisticsResponse400 | GetProcessDefinitionStatisticsResponse401 | GetProcessDefinitionStatisticsResponse403 | GetProcessDefinitionStatisticsResponse500]
+        Response[GetProcessDefinitionStatisticsResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(process_definition_key=process_definition_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -267,25 +223,25 @@ async def asyncio(
             raise errors.GetProcessDefinitionStatisticsBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessDefinitionStatisticsResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetProcessDefinitionStatisticsUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessDefinitionStatisticsResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetProcessDefinitionStatisticsForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessDefinitionStatisticsResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetProcessDefinitionStatisticsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetProcessDefinitionStatisticsResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

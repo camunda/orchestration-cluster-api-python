@@ -4,12 +4,8 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_incident_response_200 import GetIncidentResponse200
-from ...models.get_incident_response_400 import GetIncidentResponse400
-from ...models.get_incident_response_401 import GetIncidentResponse401
-from ...models.get_incident_response_403 import GetIncidentResponse403
-from ...models.get_incident_response_404 import GetIncidentResponse404
-from ...models.get_incident_response_500 import GetIncidentResponse500
+from ...models.incident_result import IncidentResult
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -25,32 +21,24 @@ def _get_kwargs(incident_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetIncidentResponse200
-    | GetIncidentResponse400
-    | GetIncidentResponse401
-    | GetIncidentResponse403
-    | GetIncidentResponse404
-    | GetIncidentResponse500
-    | None
-):
+) -> IncidentResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = GetIncidentResponse200.from_dict(response.json())
+        response_200 = IncidentResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = GetIncidentResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = GetIncidentResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetIncidentResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = GetIncidentResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetIncidentResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -60,14 +48,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetIncidentResponse200
-    | GetIncidentResponse400
-    | GetIncidentResponse401
-    | GetIncidentResponse403
-    | GetIncidentResponse404
-    | GetIncidentResponse500
-]:
+) -> Response[IncidentResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -78,14 +59,7 @@ def _build_response(
 
 def sync_detailed(
     incident_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetIncidentResponse200
-    | GetIncidentResponse400
-    | GetIncidentResponse401
-    | GetIncidentResponse403
-    | GetIncidentResponse404
-    | GetIncidentResponse500
-]:
+) -> Response[IncidentResult | ProblemDetail]:
     """Get incident
 
      Returns incident as JSON.
@@ -98,7 +72,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetIncidentResponse200 | GetIncidentResponse400 | GetIncidentResponse401 | GetIncidentResponse403 | GetIncidentResponse404 | GetIncidentResponse500]
+        Response[IncidentResult | ProblemDetail]
     """
     kwargs = _get_kwargs(incident_key=incident_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -107,7 +81,7 @@ def sync_detailed(
 
 def sync(
     incident_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetIncidentResponse200:
+) -> IncidentResult:
     """Get incident
 
      Returns incident as JSON.
@@ -124,54 +98,47 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetIncidentResponse200"""
+        IncidentResult"""
     response = sync_detailed(incident_key=incident_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.GetIncidentBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetIncidentResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetIncidentUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetIncidentResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetIncidentForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetIncidentResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetIncidentNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetIncidentResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetIncidentInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetIncidentResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetIncidentResponse200, response.parsed)
+    return cast(IncidentResult, response.parsed)
 
 
 async def asyncio_detailed(
     incident_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetIncidentResponse200
-    | GetIncidentResponse400
-    | GetIncidentResponse401
-    | GetIncidentResponse403
-    | GetIncidentResponse404
-    | GetIncidentResponse500
-]:
+) -> Response[IncidentResult | ProblemDetail]:
     """Get incident
 
      Returns incident as JSON.
@@ -184,7 +151,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetIncidentResponse200 | GetIncidentResponse400 | GetIncidentResponse401 | GetIncidentResponse403 | GetIncidentResponse404 | GetIncidentResponse500]
+        Response[IncidentResult | ProblemDetail]
     """
     kwargs = _get_kwargs(incident_key=incident_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -193,7 +160,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     incident_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetIncidentResponse200:
+) -> IncidentResult:
     """Get incident
 
      Returns incident as JSON.
@@ -210,39 +177,39 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetIncidentResponse200"""
+        IncidentResult"""
     response = await asyncio_detailed(incident_key=incident_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.GetIncidentBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetIncidentResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetIncidentUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetIncidentResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetIncidentForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetIncidentResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetIncidentNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetIncidentResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetIncidentInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetIncidentResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetIncidentResponse200, response.parsed)
+    return cast(IncidentResult, response.parsed)

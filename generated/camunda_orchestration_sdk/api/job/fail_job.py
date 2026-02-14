@@ -4,16 +4,14 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.fail_job_data import FailJobData
-from ...models.fail_job_response_400 import FailJobResponse400
-from ...models.fail_job_response_404 import FailJobResponse404
-from ...models.fail_job_response_409 import FailJobResponse409
-from ...models.fail_job_response_500 import FailJobResponse500
-from ...models.fail_job_response_503 import FailJobResponse503
+from ...models.job_fail_request import JobFailRequest
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
-def _get_kwargs(job_key: str, *, body: FailJobData | Unset = UNSET) -> dict[str, Any]:
+def _get_kwargs(
+    job_key: str, *, body: JobFailRequest | Unset = UNSET
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
         "method": "post",
@@ -28,32 +26,24 @@ def _get_kwargs(job_key: str, *, body: FailJobData | Unset = UNSET) -> dict[str,
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | FailJobResponse400
-    | FailJobResponse404
-    | FailJobResponse409
-    | FailJobResponse500
-    | FailJobResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = FailJobResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 404:
-        response_404 = FailJobResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 409:
-        response_409 = FailJobResponse409.from_dict(response.json())
+        response_409 = ProblemDetail.from_dict(response.json())
         return response_409
     if response.status_code == 500:
-        response_500 = FailJobResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = FailJobResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -63,14 +53,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | FailJobResponse400
-    | FailJobResponse404
-    | FailJobResponse409
-    | FailJobResponse500
-    | FailJobResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -83,29 +66,22 @@ def sync_detailed(
     job_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: FailJobData | Unset = UNSET,
-) -> Response[
-    Any
-    | FailJobResponse400
-    | FailJobResponse404
-    | FailJobResponse409
-    | FailJobResponse500
-    | FailJobResponse503
-]:
+    body: JobFailRequest | Unset = UNSET,
+) -> Response[Any | ProblemDetail]:
     """Fail job
 
      Mark the job as failed.
 
     Args:
         job_key (str): System-generated key for a job. Example: 2251799813653498.
-        body (FailJobData | Unset):
+        body (JobFailRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | FailJobResponse400 | FailJobResponse404 | FailJobResponse409 | FailJobResponse500 | FailJobResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(job_key=job_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -116,7 +92,7 @@ def sync(
     job_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: FailJobData | Unset = UNSET,
+    body: JobFailRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Fail job
@@ -125,7 +101,7 @@ def sync(
 
     Args:
         job_key (str): System-generated key for a job. Example: 2251799813653498.
-        body (FailJobData | Unset):
+        body (JobFailRequest | Unset):
 
     Raises:
         errors.FailJobBadRequest: If the response status code is 400. The provided data is not valid.
@@ -143,31 +119,31 @@ def sync(
             raise errors.FailJobBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(FailJobResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.FailJobNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(FailJobResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 409:
             raise errors.FailJobConflict(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(FailJobResponse409, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.FailJobInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(FailJobResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.FailJobServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(FailJobResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -177,29 +153,22 @@ async def asyncio_detailed(
     job_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: FailJobData | Unset = UNSET,
-) -> Response[
-    Any
-    | FailJobResponse400
-    | FailJobResponse404
-    | FailJobResponse409
-    | FailJobResponse500
-    | FailJobResponse503
-]:
+    body: JobFailRequest | Unset = UNSET,
+) -> Response[Any | ProblemDetail]:
     """Fail job
 
      Mark the job as failed.
 
     Args:
         job_key (str): System-generated key for a job. Example: 2251799813653498.
-        body (FailJobData | Unset):
+        body (JobFailRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | FailJobResponse400 | FailJobResponse404 | FailJobResponse409 | FailJobResponse500 | FailJobResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(job_key=job_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -210,7 +179,7 @@ async def asyncio(
     job_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: FailJobData | Unset = UNSET,
+    body: JobFailRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Fail job
@@ -219,7 +188,7 @@ async def asyncio(
 
     Args:
         job_key (str): System-generated key for a job. Example: 2251799813653498.
-        body (FailJobData | Unset):
+        body (JobFailRequest | Unset):
 
     Raises:
         errors.FailJobBadRequest: If the response status code is 400. The provided data is not valid.
@@ -237,31 +206,31 @@ async def asyncio(
             raise errors.FailJobBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(FailJobResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.FailJobNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(FailJobResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 409:
             raise errors.FailJobConflict(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(FailJobResponse409, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.FailJobInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(FailJobResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.FailJobServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(FailJobResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

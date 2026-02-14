@@ -4,16 +4,13 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.resolve_incident_data import ResolveIncidentData
-from ...models.resolve_incident_response_400 import ResolveIncidentResponse400
-from ...models.resolve_incident_response_404 import ResolveIncidentResponse404
-from ...models.resolve_incident_response_500 import ResolveIncidentResponse500
-from ...models.resolve_incident_response_503 import ResolveIncidentResponse503
+from ...models.incident_resolution_request import IncidentResolutionRequest
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    incident_key: str, *, body: ResolveIncidentData | Unset = UNSET
+    incident_key: str, *, body: IncidentResolutionRequest | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -31,28 +28,21 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    Any
-    | ResolveIncidentResponse400
-    | ResolveIncidentResponse404
-    | ResolveIncidentResponse500
-    | ResolveIncidentResponse503
-    | None
-):
+) -> Any | ProblemDetail | None:
     if response.status_code == 204:
         response_204 = cast(Any, None)
         return response_204
     if response.status_code == 400:
-        response_400 = ResolveIncidentResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 404:
-        response_404 = ResolveIncidentResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = ResolveIncidentResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = ResolveIncidentResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -62,13 +52,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    Any
-    | ResolveIncidentResponse400
-    | ResolveIncidentResponse404
-    | ResolveIncidentResponse500
-    | ResolveIncidentResponse503
-]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -81,14 +65,8 @@ def sync_detailed(
     incident_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ResolveIncidentData | Unset = UNSET,
-) -> Response[
-    Any
-    | ResolveIncidentResponse400
-    | ResolveIncidentResponse404
-    | ResolveIncidentResponse500
-    | ResolveIncidentResponse503
-]:
+    body: IncidentResolutionRequest | Unset = UNSET,
+) -> Response[Any | ProblemDetail]:
     """Resolve incident
 
      Marks the incident as resolved; most likely a call to Update job will be necessary
@@ -96,14 +74,14 @@ def sync_detailed(
 
     Args:
         incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-        body (ResolveIncidentData | Unset):
+        body (IncidentResolutionRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(incident_key=incident_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -114,7 +92,7 @@ def sync(
     incident_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ResolveIncidentData | Unset = UNSET,
+    body: IncidentResolutionRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Resolve incident
@@ -124,7 +102,7 @@ def sync(
 
     Args:
         incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-        body (ResolveIncidentData | Unset):
+        body (IncidentResolutionRequest | Unset):
 
     Raises:
         errors.ResolveIncidentBadRequest: If the response status code is 400. The provided data is not valid.
@@ -141,25 +119,25 @@ def sync(
             raise errors.ResolveIncidentBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.ResolveIncidentNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.ResolveIncidentInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.ResolveIncidentServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
@@ -169,14 +147,8 @@ async def asyncio_detailed(
     incident_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ResolveIncidentData | Unset = UNSET,
-) -> Response[
-    Any
-    | ResolveIncidentResponse400
-    | ResolveIncidentResponse404
-    | ResolveIncidentResponse500
-    | ResolveIncidentResponse503
-]:
+    body: IncidentResolutionRequest | Unset = UNSET,
+) -> Response[Any | ProblemDetail]:
     """Resolve incident
 
      Marks the incident as resolved; most likely a call to Update job will be necessary
@@ -184,14 +156,14 @@ async def asyncio_detailed(
 
     Args:
         incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-        body (ResolveIncidentData | Unset):
+        body (IncidentResolutionRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ResolveIncidentResponse400 | ResolveIncidentResponse404 | ResolveIncidentResponse500 | ResolveIncidentResponse503]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(incident_key=incident_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -202,7 +174,7 @@ async def asyncio(
     incident_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ResolveIncidentData | Unset = UNSET,
+    body: IncidentResolutionRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Resolve incident
@@ -212,7 +184,7 @@ async def asyncio(
 
     Args:
         incident_key (str): System-generated key for a incident. Example: 2251799813689432.
-        body (ResolveIncidentData | Unset):
+        body (IncidentResolutionRequest | Unset):
 
     Raises:
         errors.ResolveIncidentBadRequest: If the response status code is 400. The provided data is not valid.
@@ -231,25 +203,25 @@ async def asyncio(
             raise errors.ResolveIncidentBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.ResolveIncidentNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.ResolveIncidentInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.ResolveIncidentServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ResolveIncidentResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None

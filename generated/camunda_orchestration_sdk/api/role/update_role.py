@@ -4,17 +4,13 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.update_role_data import UpdateRoleData
-from ...models.update_role_response_200 import UpdateRoleResponse200
-from ...models.update_role_response_400 import UpdateRoleResponse400
-from ...models.update_role_response_401 import UpdateRoleResponse401
-from ...models.update_role_response_404 import UpdateRoleResponse404
-from ...models.update_role_response_500 import UpdateRoleResponse500
-from ...models.update_role_response_503 import UpdateRoleResponse503
+from ...models.problem_detail import ProblemDetail
+from ...models.role_update_request import RoleUpdateRequest
+from ...models.role_update_result import RoleUpdateResult
 from ...types import Response
 
 
-def _get_kwargs(role_id: str, *, body: UpdateRoleData) -> dict[str, Any]:
+def _get_kwargs(role_id: str, *, body: RoleUpdateRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
         "method": "put",
@@ -28,32 +24,24 @@ def _get_kwargs(role_id: str, *, body: UpdateRoleData) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    UpdateRoleResponse200
-    | UpdateRoleResponse400
-    | UpdateRoleResponse401
-    | UpdateRoleResponse404
-    | UpdateRoleResponse500
-    | UpdateRoleResponse503
-    | None
-):
+) -> ProblemDetail | RoleUpdateResult | None:
     if response.status_code == 200:
-        response_200 = UpdateRoleResponse200.from_dict(response.json())
+        response_200 = RoleUpdateResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = UpdateRoleResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = UpdateRoleResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 404:
-        response_404 = UpdateRoleResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = UpdateRoleResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = UpdateRoleResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -63,14 +51,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    UpdateRoleResponse200
-    | UpdateRoleResponse400
-    | UpdateRoleResponse401
-    | UpdateRoleResponse404
-    | UpdateRoleResponse500
-    | UpdateRoleResponse503
-]:
+) -> Response[ProblemDetail | RoleUpdateResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -80,29 +61,22 @@ def _build_response(
 
 
 def sync_detailed(
-    role_id: str, *, client: AuthenticatedClient | Client, body: UpdateRoleData
-) -> Response[
-    UpdateRoleResponse200
-    | UpdateRoleResponse400
-    | UpdateRoleResponse401
-    | UpdateRoleResponse404
-    | UpdateRoleResponse500
-    | UpdateRoleResponse503
-]:
+    role_id: str, *, client: AuthenticatedClient | Client, body: RoleUpdateRequest
+) -> Response[ProblemDetail | RoleUpdateResult]:
     """Update role
 
      Update a role with the given ID.
 
     Args:
         role_id (str):
-        body (UpdateRoleData):
+        body (RoleUpdateRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[UpdateRoleResponse200 | UpdateRoleResponse400 | UpdateRoleResponse401 | UpdateRoleResponse404 | UpdateRoleResponse500 | UpdateRoleResponse503]
+        Response[ProblemDetail | RoleUpdateResult]
     """
     kwargs = _get_kwargs(role_id=role_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -113,16 +87,16 @@ def sync(
     role_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateRoleData,
+    body: RoleUpdateRequest,
     **kwargs: Any,
-) -> UpdateRoleResponse200:
+) -> RoleUpdateResult:
     """Update role
 
      Update a role with the given ID.
 
     Args:
         role_id (str):
-        body (UpdateRoleData):
+        body (RoleUpdateRequest):
 
     Raises:
         errors.UpdateRoleBadRequest: If the response status code is 400. The provided data is not valid.
@@ -133,68 +107,61 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UpdateRoleResponse200"""
+        RoleUpdateResult"""
     response = sync_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.UpdateRoleBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateRoleResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.UpdateRoleUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateRoleResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UpdateRoleNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateRoleResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UpdateRoleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateRoleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.UpdateRoleServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateRoleResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UpdateRoleResponse200, response.parsed)
+    return cast(RoleUpdateResult, response.parsed)
 
 
 async def asyncio_detailed(
-    role_id: str, *, client: AuthenticatedClient | Client, body: UpdateRoleData
-) -> Response[
-    UpdateRoleResponse200
-    | UpdateRoleResponse400
-    | UpdateRoleResponse401
-    | UpdateRoleResponse404
-    | UpdateRoleResponse500
-    | UpdateRoleResponse503
-]:
+    role_id: str, *, client: AuthenticatedClient | Client, body: RoleUpdateRequest
+) -> Response[ProblemDetail | RoleUpdateResult]:
     """Update role
 
      Update a role with the given ID.
 
     Args:
         role_id (str):
-        body (UpdateRoleData):
+        body (RoleUpdateRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[UpdateRoleResponse200 | UpdateRoleResponse400 | UpdateRoleResponse401 | UpdateRoleResponse404 | UpdateRoleResponse500 | UpdateRoleResponse503]
+        Response[ProblemDetail | RoleUpdateResult]
     """
     kwargs = _get_kwargs(role_id=role_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -205,16 +172,16 @@ async def asyncio(
     role_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: UpdateRoleData,
+    body: RoleUpdateRequest,
     **kwargs: Any,
-) -> UpdateRoleResponse200:
+) -> RoleUpdateResult:
     """Update role
 
      Update a role with the given ID.
 
     Args:
         role_id (str):
-        body (UpdateRoleData):
+        body (RoleUpdateRequest):
 
     Raises:
         errors.UpdateRoleBadRequest: If the response status code is 400. The provided data is not valid.
@@ -225,39 +192,39 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UpdateRoleResponse200"""
+        RoleUpdateResult"""
     response = await asyncio_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.UpdateRoleBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateRoleResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.UpdateRoleUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateRoleResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.UpdateRoleNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateRoleResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.UpdateRoleInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateRoleResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.UpdateRoleServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(UpdateRoleResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UpdateRoleResponse200, response.parsed)
+    return cast(RoleUpdateResult, response.parsed)

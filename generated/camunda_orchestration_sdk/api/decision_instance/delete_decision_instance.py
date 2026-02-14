@@ -4,34 +4,18 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.delete_decision_instance_data_type_0 import (
-    DeleteDecisionInstanceDataType0,
+from ...models.batch_operation_created_result import BatchOperationCreatedResult
+from ...models.delete_process_instance_request_type_0 import (
+    DeleteProcessInstanceRequestType0,
 )
-from ...models.delete_decision_instance_response_200 import (
-    DeleteDecisionInstanceResponse200,
-)
-from ...models.delete_decision_instance_response_401 import (
-    DeleteDecisionInstanceResponse401,
-)
-from ...models.delete_decision_instance_response_403 import (
-    DeleteDecisionInstanceResponse403,
-)
-from ...models.delete_decision_instance_response_404 import (
-    DeleteDecisionInstanceResponse404,
-)
-from ...models.delete_decision_instance_response_500 import (
-    DeleteDecisionInstanceResponse500,
-)
-from ...models.delete_decision_instance_response_503 import (
-    DeleteDecisionInstanceResponse503,
-)
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     decision_instance_key: str,
     *,
-    body: DeleteDecisionInstanceDataType0 | None | Unset = UNSET,
+    body: DeleteProcessInstanceRequestType0 | None | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -40,7 +24,7 @@ def _get_kwargs(
             decision_instance_key=quote(str(decision_instance_key), safe="")
         ),
     }
-    if isinstance(body, DeleteDecisionInstanceDataType0):
+    if isinstance(body, DeleteProcessInstanceRequestType0):
         _kwargs["json"] = body.to_dict()
     else:
         _kwargs["json"] = body
@@ -51,32 +35,24 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    DeleteDecisionInstanceResponse200
-    | DeleteDecisionInstanceResponse401
-    | DeleteDecisionInstanceResponse403
-    | DeleteDecisionInstanceResponse404
-    | DeleteDecisionInstanceResponse500
-    | DeleteDecisionInstanceResponse503
-    | None
-):
+) -> BatchOperationCreatedResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = DeleteDecisionInstanceResponse200.from_dict(response.json())
+        response_200 = BatchOperationCreatedResult.from_dict(response.json())
         return response_200
     if response.status_code == 401:
-        response_401 = DeleteDecisionInstanceResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = DeleteDecisionInstanceResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = DeleteDecisionInstanceResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = DeleteDecisionInstanceResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if response.status_code == 503:
-        response_503 = DeleteDecisionInstanceResponse503.from_dict(response.json())
+        response_503 = ProblemDetail.from_dict(response.json())
         return response_503
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -86,14 +62,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    DeleteDecisionInstanceResponse200
-    | DeleteDecisionInstanceResponse401
-    | DeleteDecisionInstanceResponse403
-    | DeleteDecisionInstanceResponse404
-    | DeleteDecisionInstanceResponse500
-    | DeleteDecisionInstanceResponse503
-]:
+) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -106,15 +75,8 @@ def sync_detailed(
     decision_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceDataType0 | None | Unset = UNSET,
-) -> Response[
-    DeleteDecisionInstanceResponse200
-    | DeleteDecisionInstanceResponse401
-    | DeleteDecisionInstanceResponse403
-    | DeleteDecisionInstanceResponse404
-    | DeleteDecisionInstanceResponse500
-    | DeleteDecisionInstanceResponse503
-]:
+    body: DeleteProcessInstanceRequestType0 | None | Unset = UNSET,
+) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Delete decision instance
 
      Delete all associated decision evaluations based on provided key.
@@ -122,14 +84,14 @@ def sync_detailed(
     Args:
         decision_instance_key (str): System-generated key for a deployed decision instance.
             Example: 22517998136843567.
-        body (DeleteDecisionInstanceDataType0 | None | Unset):
+        body (DeleteProcessInstanceRequestType0 | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[DeleteDecisionInstanceResponse200 | DeleteDecisionInstanceResponse401 | DeleteDecisionInstanceResponse403 | DeleteDecisionInstanceResponse404 | DeleteDecisionInstanceResponse500 | DeleteDecisionInstanceResponse503]
+        Response[BatchOperationCreatedResult | ProblemDetail]
     """
     kwargs = _get_kwargs(decision_instance_key=decision_instance_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -140,9 +102,9 @@ def sync(
     decision_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceDataType0 | None | Unset = UNSET,
+    body: DeleteProcessInstanceRequestType0 | None | Unset = UNSET,
     **kwargs: Any,
-) -> DeleteDecisionInstanceResponse200:
+) -> BatchOperationCreatedResult:
     """Delete decision instance
 
      Delete all associated decision evaluations based on provided key.
@@ -150,7 +112,7 @@ def sync(
     Args:
         decision_instance_key (str): System-generated key for a deployed decision instance.
             Example: 22517998136843567.
-        body (DeleteDecisionInstanceDataType0 | None | Unset):
+        body (DeleteProcessInstanceRequestType0 | None | Unset):
 
     Raises:
         errors.DeleteDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
@@ -161,7 +123,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        DeleteDecisionInstanceResponse200"""
+        BatchOperationCreatedResult"""
     response = sync_detailed(
         decision_instance_key=decision_instance_key, client=client, body=body
     )
@@ -170,50 +132,43 @@ def sync(
             raise errors.DeleteDecisionInstanceUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteDecisionInstanceResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.DeleteDecisionInstanceForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteDecisionInstanceResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.DeleteDecisionInstanceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteDecisionInstanceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.DeleteDecisionInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteDecisionInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.DeleteDecisionInstanceServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteDecisionInstanceResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(DeleteDecisionInstanceResponse200, response.parsed)
+    return cast(BatchOperationCreatedResult, response.parsed)
 
 
 async def asyncio_detailed(
     decision_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceDataType0 | None | Unset = UNSET,
-) -> Response[
-    DeleteDecisionInstanceResponse200
-    | DeleteDecisionInstanceResponse401
-    | DeleteDecisionInstanceResponse403
-    | DeleteDecisionInstanceResponse404
-    | DeleteDecisionInstanceResponse500
-    | DeleteDecisionInstanceResponse503
-]:
+    body: DeleteProcessInstanceRequestType0 | None | Unset = UNSET,
+) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Delete decision instance
 
      Delete all associated decision evaluations based on provided key.
@@ -221,14 +176,14 @@ async def asyncio_detailed(
     Args:
         decision_instance_key (str): System-generated key for a deployed decision instance.
             Example: 22517998136843567.
-        body (DeleteDecisionInstanceDataType0 | None | Unset):
+        body (DeleteProcessInstanceRequestType0 | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[DeleteDecisionInstanceResponse200 | DeleteDecisionInstanceResponse401 | DeleteDecisionInstanceResponse403 | DeleteDecisionInstanceResponse404 | DeleteDecisionInstanceResponse500 | DeleteDecisionInstanceResponse503]
+        Response[BatchOperationCreatedResult | ProblemDetail]
     """
     kwargs = _get_kwargs(decision_instance_key=decision_instance_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -239,9 +194,9 @@ async def asyncio(
     decision_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceDataType0 | None | Unset = UNSET,
+    body: DeleteProcessInstanceRequestType0 | None | Unset = UNSET,
     **kwargs: Any,
-) -> DeleteDecisionInstanceResponse200:
+) -> BatchOperationCreatedResult:
     """Delete decision instance
 
      Delete all associated decision evaluations based on provided key.
@@ -249,7 +204,7 @@ async def asyncio(
     Args:
         decision_instance_key (str): System-generated key for a deployed decision instance.
             Example: 22517998136843567.
-        body (DeleteDecisionInstanceDataType0 | None | Unset):
+        body (DeleteProcessInstanceRequestType0 | None | Unset):
 
     Raises:
         errors.DeleteDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
@@ -260,7 +215,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        DeleteDecisionInstanceResponse200"""
+        BatchOperationCreatedResult"""
     response = await asyncio_detailed(
         decision_instance_key=decision_instance_key, client=client, body=body
     )
@@ -269,32 +224,32 @@ async def asyncio(
             raise errors.DeleteDecisionInstanceUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteDecisionInstanceResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.DeleteDecisionInstanceForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteDecisionInstanceResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.DeleteDecisionInstanceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteDecisionInstanceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.DeleteDecisionInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteDecisionInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 503:
             raise errors.DeleteDecisionInstanceServiceUnavailable(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(DeleteDecisionInstanceResponse503, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(DeleteDecisionInstanceResponse200, response.parsed)
+    return cast(BatchOperationCreatedResult, response.parsed)

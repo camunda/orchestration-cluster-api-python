@@ -4,12 +4,8 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_element_instance_response_200 import GetElementInstanceResponse200
-from ...models.get_element_instance_response_400 import GetElementInstanceResponse400
-from ...models.get_element_instance_response_401 import GetElementInstanceResponse401
-from ...models.get_element_instance_response_403 import GetElementInstanceResponse403
-from ...models.get_element_instance_response_404 import GetElementInstanceResponse404
-from ...models.get_element_instance_response_500 import GetElementInstanceResponse500
+from ...models.element_instance_result import ElementInstanceResult
+from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
 
@@ -25,32 +21,24 @@ def _get_kwargs(element_instance_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    GetElementInstanceResponse200
-    | GetElementInstanceResponse400
-    | GetElementInstanceResponse401
-    | GetElementInstanceResponse403
-    | GetElementInstanceResponse404
-    | GetElementInstanceResponse500
-    | None
-):
+) -> ElementInstanceResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = GetElementInstanceResponse200.from_dict(response.json())
+        response_200 = ElementInstanceResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = GetElementInstanceResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = GetElementInstanceResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = GetElementInstanceResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = GetElementInstanceResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = GetElementInstanceResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -60,14 +48,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    GetElementInstanceResponse200
-    | GetElementInstanceResponse400
-    | GetElementInstanceResponse401
-    | GetElementInstanceResponse403
-    | GetElementInstanceResponse404
-    | GetElementInstanceResponse500
-]:
+) -> Response[ElementInstanceResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -78,14 +59,7 @@ def _build_response(
 
 def sync_detailed(
     element_instance_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetElementInstanceResponse200
-    | GetElementInstanceResponse400
-    | GetElementInstanceResponse401
-    | GetElementInstanceResponse403
-    | GetElementInstanceResponse404
-    | GetElementInstanceResponse500
-]:
+) -> Response[ElementInstanceResult | ProblemDetail]:
     """Get element instance
 
      Returns element instance as JSON.
@@ -99,7 +73,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]
+        Response[ElementInstanceResult | ProblemDetail]
     """
     kwargs = _get_kwargs(element_instance_key=element_instance_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -108,7 +82,7 @@ def sync_detailed(
 
 def sync(
     element_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetElementInstanceResponse200:
+) -> ElementInstanceResult:
     """Get element instance
 
      Returns element instance as JSON.
@@ -126,54 +100,47 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetElementInstanceResponse200"""
+        ElementInstanceResult"""
     response = sync_detailed(element_instance_key=element_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.GetElementInstanceBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetElementInstanceResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetElementInstanceUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetElementInstanceResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetElementInstanceForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetElementInstanceResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetElementInstanceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetElementInstanceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetElementInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetElementInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetElementInstanceResponse200, response.parsed)
+    return cast(ElementInstanceResult, response.parsed)
 
 
 async def asyncio_detailed(
     element_instance_key: str, *, client: AuthenticatedClient | Client
-) -> Response[
-    GetElementInstanceResponse200
-    | GetElementInstanceResponse400
-    | GetElementInstanceResponse401
-    | GetElementInstanceResponse403
-    | GetElementInstanceResponse404
-    | GetElementInstanceResponse500
-]:
+) -> Response[ElementInstanceResult | ProblemDetail]:
     """Get element instance
 
      Returns element instance as JSON.
@@ -187,7 +154,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetElementInstanceResponse200 | GetElementInstanceResponse400 | GetElementInstanceResponse401 | GetElementInstanceResponse403 | GetElementInstanceResponse404 | GetElementInstanceResponse500]
+        Response[ElementInstanceResult | ProblemDetail]
     """
     kwargs = _get_kwargs(element_instance_key=element_instance_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -196,7 +163,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     element_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetElementInstanceResponse200:
+) -> ElementInstanceResult:
     """Get element instance
 
      Returns element instance as JSON.
@@ -214,7 +181,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetElementInstanceResponse200"""
+        ElementInstanceResult"""
     response = await asyncio_detailed(
         element_instance_key=element_instance_key, client=client
     )
@@ -223,32 +190,32 @@ async def asyncio(
             raise errors.GetElementInstanceBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetElementInstanceResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.GetElementInstanceUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetElementInstanceResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.GetElementInstanceForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetElementInstanceResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.GetElementInstanceNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetElementInstanceResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.GetElementInstanceInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(GetElementInstanceResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetElementInstanceResponse200, response.parsed)
+    return cast(ElementInstanceResult, response.parsed)

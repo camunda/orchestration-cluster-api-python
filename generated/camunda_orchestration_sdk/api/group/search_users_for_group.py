@@ -4,13 +4,9 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.problem_detail import ProblemDetail
 from ...models.search_users_for_group_data import SearchUsersForGroupData
-from ...models.search_users_for_group_response_200 import SearchUsersForGroupResponse200
-from ...models.search_users_for_group_response_400 import SearchUsersForGroupResponse400
-from ...models.search_users_for_group_response_401 import SearchUsersForGroupResponse401
-from ...models.search_users_for_group_response_403 import SearchUsersForGroupResponse403
-from ...models.search_users_for_group_response_404 import SearchUsersForGroupResponse404
-from ...models.search_users_for_group_response_500 import SearchUsersForGroupResponse500
+from ...models.tenant_user_search_result import TenantUserSearchResult
 from ...types import UNSET, Response, Unset
 
 
@@ -33,32 +29,24 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> (
-    SearchUsersForGroupResponse200
-    | SearchUsersForGroupResponse400
-    | SearchUsersForGroupResponse401
-    | SearchUsersForGroupResponse403
-    | SearchUsersForGroupResponse404
-    | SearchUsersForGroupResponse500
-    | None
-):
+) -> ProblemDetail | TenantUserSearchResult | None:
     if response.status_code == 200:
-        response_200 = SearchUsersForGroupResponse200.from_dict(response.json())
+        response_200 = TenantUserSearchResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
-        response_400 = SearchUsersForGroupResponse400.from_dict(response.json())
+        response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 401:
-        response_401 = SearchUsersForGroupResponse401.from_dict(response.json())
+        response_401 = ProblemDetail.from_dict(response.json())
         return response_401
     if response.status_code == 403:
-        response_403 = SearchUsersForGroupResponse403.from_dict(response.json())
+        response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = SearchUsersForGroupResponse404.from_dict(response.json())
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
-        response_500 = SearchUsersForGroupResponse500.from_dict(response.json())
+        response_500 = ProblemDetail.from_dict(response.json())
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -68,14 +56,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[
-    SearchUsersForGroupResponse200
-    | SearchUsersForGroupResponse400
-    | SearchUsersForGroupResponse401
-    | SearchUsersForGroupResponse403
-    | SearchUsersForGroupResponse404
-    | SearchUsersForGroupResponse500
-]:
+) -> Response[ProblemDetail | TenantUserSearchResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -89,14 +70,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: SearchUsersForGroupData | Unset = UNSET,
-) -> Response[
-    SearchUsersForGroupResponse200
-    | SearchUsersForGroupResponse400
-    | SearchUsersForGroupResponse401
-    | SearchUsersForGroupResponse403
-    | SearchUsersForGroupResponse404
-    | SearchUsersForGroupResponse500
-]:
+) -> Response[ProblemDetail | TenantUserSearchResult]:
     """Search group users
 
      Search users assigned to a group.
@@ -110,7 +84,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchUsersForGroupResponse200 | SearchUsersForGroupResponse400 | SearchUsersForGroupResponse401 | SearchUsersForGroupResponse403 | SearchUsersForGroupResponse404 | SearchUsersForGroupResponse500]
+        Response[ProblemDetail | TenantUserSearchResult]
     """
     kwargs = _get_kwargs(group_id=group_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -123,7 +97,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: SearchUsersForGroupData | Unset = UNSET,
     **kwargs: Any,
-) -> SearchUsersForGroupResponse200:
+) -> TenantUserSearchResult:
     """Search group users
 
      Search users assigned to a group.
@@ -141,42 +115,42 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchUsersForGroupResponse200"""
+        TenantUserSearchResult"""
     response = sync_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.SearchUsersForGroupBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchUsersForGroupResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchUsersForGroupUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchUsersForGroupResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchUsersForGroupForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchUsersForGroupResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.SearchUsersForGroupNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchUsersForGroupResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchUsersForGroupInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchUsersForGroupResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchUsersForGroupResponse200, response.parsed)
+    return cast(TenantUserSearchResult, response.parsed)
 
 
 async def asyncio_detailed(
@@ -184,14 +158,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: SearchUsersForGroupData | Unset = UNSET,
-) -> Response[
-    SearchUsersForGroupResponse200
-    | SearchUsersForGroupResponse400
-    | SearchUsersForGroupResponse401
-    | SearchUsersForGroupResponse403
-    | SearchUsersForGroupResponse404
-    | SearchUsersForGroupResponse500
-]:
+) -> Response[ProblemDetail | TenantUserSearchResult]:
     """Search group users
 
      Search users assigned to a group.
@@ -205,7 +172,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[SearchUsersForGroupResponse200 | SearchUsersForGroupResponse400 | SearchUsersForGroupResponse401 | SearchUsersForGroupResponse403 | SearchUsersForGroupResponse404 | SearchUsersForGroupResponse500]
+        Response[ProblemDetail | TenantUserSearchResult]
     """
     kwargs = _get_kwargs(group_id=group_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -218,7 +185,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: SearchUsersForGroupData | Unset = UNSET,
     **kwargs: Any,
-) -> SearchUsersForGroupResponse200:
+) -> TenantUserSearchResult:
     """Search group users
 
      Search users assigned to a group.
@@ -236,39 +203,39 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchUsersForGroupResponse200"""
+        TenantUserSearchResult"""
     response = await asyncio_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.SearchUsersForGroupBadRequest(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchUsersForGroupResponse400, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 401:
             raise errors.SearchUsersForGroupUnauthorized(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchUsersForGroupResponse401, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 403:
             raise errors.SearchUsersForGroupForbidden(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchUsersForGroupResponse403, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 404:
             raise errors.SearchUsersForGroupNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchUsersForGroupResponse404, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchUsersForGroupInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(SearchUsersForGroupResponse500, response.parsed),
+                parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchUsersForGroupResponse200, response.parsed)
+    return cast(TenantUserSearchResult, response.parsed)
