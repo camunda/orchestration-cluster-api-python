@@ -17,12 +17,13 @@ import argparse
 import sys
 from pathlib import Path
 
-# Ensure the runtime package is importable.
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "runtime"))
+# Ensure the runtime package is importable (as a package, not bare module,
+# to avoid shadowing stdlib modules like ``logging``).
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 # Also allow importing from the generated package (not strictly needed here).
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "generated"))
 
-from configuration_resolver import CamundaSdkConfiguration  # noqa: E402
+from runtime.configuration_resolver import CamundaSdkConfiguration  # noqa: E402
 
 BEGIN_MARKER = "<!-- BEGIN_CONFIG_REFERENCE -->"
 END_MARKER = "<!-- END_CONFIG_REFERENCE -->"
