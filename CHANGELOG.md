@@ -2,6 +2,66 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.5 (2026-02-14)
+
+### Bug Fixes
+
+- Lift path params to semantic types
+  ([`886ca70`](https://github.com/camunda/orchestration-cluster-api-python/commit/886ca7070e2976419d95d28a6ef80197a0eb849f))
+
+- Use camunda-schema-bundler for generation
+  ([`9e50ea1`](https://github.com/camunda/orchestration-cluster-api-python/commit/9e50ea1e6c9b04714f6b87e76af3dd3c3bedb88c))
+
+### Chores
+
+- Fix config reference generator for logging config
+  ([`8ad5cb5`](https://github.com/camunda/orchestration-cluster-api-python/commit/8ad5cb5f8503b495474bfba8b0249c8c80c0c8f0))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`2a98370`](https://github.com/camunda/orchestration-cluster-api-python/commit/2a983709c36b8b4de07548222fb42eea2369a80d))
+
+### Code Style
+
+- Format code
+  ([`eba92de`](https://github.com/camunda/orchestration-cluster-api-python/commit/eba92deb453195723c869e483deb70199bdcf1dc))
+
+### Continuous Integration
+
+- Use camunda-schema-bundler binary
+  ([`64a6275`](https://github.com/camunda/orchestration-cluster-api-python/commit/64a6275d39a8dcb0c5ce3230a450853e1544d7f4))
+
+- Use npx for camunda-schema-bundler
+  ([`5908320`](https://github.com/camunda/orchestration-cluster-api-python/commit/59083203879cbf71f7170536a39f80bcd9471c05))
+
+### Documentation
+
+- Add link to docs
+  ([`c6e13b4`](https://github.com/camunda/orchestration-cluster-api-python/commit/c6e13b4cc0bf9d4f1c5e09adf939a375ecb5de99))
+
+- Add type-checked examples
+  ([`4daac2d`](https://github.com/camunda/orchestration-cluster-api-python/commit/4daac2dfbb0d5bec34fb08e74cdcddc5a7470702))
+
+- Explain Sync and Async clients
+  ([`2355c82`](https://github.com/camunda/orchestration-cluster-api-python/commit/2355c82a6806c60b141918d76c70b250f4bed75f))
+
+- Generate docs with Sphinx
+  ([`b2782f3`](https://github.com/camunda/orchestration-cluster-api-python/commit/b2782f30308120d893194d29f779116f1f18504b))
+
+- Inject examples into generated code
+  ([`94a5bf3`](https://github.com/camunda/orchestration-cluster-api-python/commit/94a5bf360c2d94c322a0148400c135cf81607927))
+
+- Minor edit
+  ([`9c3d6a3`](https://github.com/camunda/orchestration-cluster-api-python/commit/9c3d6a3997349a69329b521210d2a15dfa9e90a4))
+
+### Features
+
+- Add custom logging support
+  ([`0c29eac`](https://github.com/camunda/orchestration-cluster-api-python/commit/0c29eacaa2aff9e1f98d430e4564fc4a83e2a05a))
+
+- Add logger to worker JobContext
+  ([`e9f742c`](https://github.com/camunda/orchestration-cluster-api-python/commit/e9f742c21bd4859e70075a8056953cc755427130))
+
+
 ## v8.9.0-dev.4 (2026-02-12)
 
 ### Bug Fixes
