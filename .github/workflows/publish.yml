@@ -64,11 +64,19 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev
 
+      - name: Download camunda-schema-bundler
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download --repo camunda/camunda-schema-bundler --pattern 'camunda-schema-bundler-linux-x64' --dir /tmp/bundler
+          chmod +x /tmp/bundler/camunda-schema-bundler-linux-x64
+          echo "BUNDLER_BIN=/tmp/bundler/camunda-schema-bundler-linux-x64" >> "$GITHUB_ENV"
+
       - name: Start Docker Compose
         run: docker compose -f docker/docker-compose.yaml up -d --wait
 
       - name: Run integration tests
-        run: make itest SPEC_REF=${SPEC_REF}
+        run: make itest
 
   generate:
     needs: test
@@ -120,11 +128,16 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev
 
-      - name: Generate SDK
-        run: uv run generate.py --generator openapi-python-client --config generator-config-python-client.yaml --skip-tests --spec-ref "${SPEC_REF}"
+      - name: Download camunda-schema-bundler
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download --repo camunda/camunda-schema-bundler --pattern 'camunda-schema-bundler-linux-x64' --dir /tmp/bundler
+          chmod +x /tmp/bundler/camunda-schema-bundler-linux-x64
+          echo "BUNDLER_BIN=/tmp/bundler/camunda-schema-bundler-linux-x64" >> "$GITHUB_ENV"
 
-      - name: Run acceptance tests
-        run: uv run pytest -q tests/acceptance
+      - name: Generate SDK
+        run: make generate SPEC_REF=${SPEC_REF}
 
       # If the following task fails, run make config-reference to update the config reference in README and push the changes
       - name: Check config reference is up-to-date
