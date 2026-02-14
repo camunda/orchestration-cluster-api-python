@@ -62,7 +62,9 @@ dev = [
     "fastapi>=0.128.0",
     "uvicorn>=0.40.0",
     "python-semantic-release>=9.15.0",
-    "pdoc>=16.0.0",
+    "sphinx>=8.0.0",
+    "sphinx-markdown-builder>=0.6.0",
+    "sphinx-book-theme>=1.1.0",
 ]
 
 [tool.semantic_release]

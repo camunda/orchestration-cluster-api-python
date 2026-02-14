@@ -78,9 +78,8 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # `make docs-api` writes the static site output to `public/`.
-          # GitHub Pages expects an `index.html` at the artifact root.
-          path: './public'
+          # Sphinx HTML output for GitHub Pages
+          path: './public/html'
 
       - name: Deploy to GitHub Pages
         id: deployment

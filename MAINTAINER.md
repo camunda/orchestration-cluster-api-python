@@ -213,11 +213,11 @@ Pyright is configured in `pyproject.toml` with `typeCheckingMode = "strict"`.
 
 ### API Docs
 
-Generated with `pdoc`:
+Generated with Sphinx (HTML + Markdown for Docusaurus):
 
 ```bash
-make docs-api        # Generate to ./public/
-make preview-docs    # Live preview at http://localhost:8080
+make docs-api        # Generate to ./public/html/ and ./public/html/markdown/
+make preview-docs    # Serve HTML docs at http://localhost:8080
 ```
 
 ### Configuration Reference

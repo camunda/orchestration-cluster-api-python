@@ -1,4 +1,4 @@
-.PHONY: install generate clean test itest docs-api bundle-spec typecheck-examples
+.PHONY: install generate clean test itest docs-api bundle-spec typecheck-examples clean-docs preview-docs
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
@@ -53,7 +53,19 @@ typecheck-examples:
 	uv run pyright examples/
 
 docs-api:
-	PYTHONPATH=./generated uv run pdoc camunda_orchestration_sdk -o ./public --docformat google
+	rm -rf public
+	# Build HTML for GitHub Pages preview
+	PYTHONPATH=./generated uv run sphinx-build -M html docs-sphinx public
+	touch ./public/html/.nojekyll
+	# Build Markdown for Docusaurus integration
+	PYTHONPATH=./generated uv run sphinx-build -M markdown docs-sphinx public
+	# Post-process markdown for Docusaurus compatibility
+	uv run python scripts/postprocess_markdown.py ./public/markdown/index.md
+	# Copy markdown into HTML folder for GitHub Pages access at /markdown/
+	cp -R ./public/markdown ./public/html/markdown
+	@echo "HTML docs:  ./public/html  (GitHub Pages root)"
+	@echo "Markdown:   ./public/html/markdown  (GitHub Pages /markdown/)"
+
 
 config-reference:
 	uv run scripts/generate_config_reference.py
@@ -65,5 +77,5 @@ clean-docs:
 	rm -rf ./public
 
 preview-docs: clean-docs docs-api
-	@echo "Starting pdoc server at http://localhost:8080..."
-	PYTHONPATH=./generated uv run pdoc camunda_orchestration_sdk --docformat google
+	@echo "Serving HTML docs at http://localhost:8080..."
+	python3 -m http.server 8080 --directory public/html

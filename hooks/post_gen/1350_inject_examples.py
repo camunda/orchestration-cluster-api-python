@@ -3,7 +3,7 @@
 Uses AST to locate method docstrings in CamundaClient and CamundaAsyncClient,
 then injects example code blocks as Google-style ``Examples:`` sections.
 
-This makes examples visible in pdoc-generated API documentation.
+This makes examples visible in Sphinx-generated API documentation.
 """
 from __future__ import annotations
 
@@ -53,25 +53,28 @@ def _build_examples_text(
 ) -> str:
     """Build a Google-style Examples section to append to a docstring.
 
+    Uses RST ``.. code-block:: python`` directives so that Sphinx/Napoleon
+    renders syntax-highlighted code blocks.
+
     Args:
         examples: List of (label, code) tuples.
         base_indent: Indentation for section headers (matches Args/Returns).
     """
     inner = base_indent + "    "
+    code_indent = inner + "    "
     blocks: list[str] = []
     for label, code in examples:
         indented_lines: list[str] = []
         for line in code.splitlines():
             if line.strip():
-                indented_lines.append(inner + line)
+                indented_lines.append(code_indent + line)
             else:
                 indented_lines.append("")
         indented_code = "\n".join(indented_lines)
         blocks.append(
             f"{inner}**{label}:**\n\n"
-            f"{inner}```python\n"
-            f"{indented_code}\n"
-            f"{inner}```"
+            f"{inner}.. code-block:: python\n\n"
+            f"{indented_code}"
         )
     return f"\n\n{base_indent}Examples:\n" + "\n\n".join(blocks) + "\n"
 

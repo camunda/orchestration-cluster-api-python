@@ -17,4 +17,5 @@ demo/.DS_Store
 
 # Generated documentation
 public/
+website/docs/api/
 .DS_Store

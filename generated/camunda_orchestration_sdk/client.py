@@ -1628,17 +1628,17 @@ class CamundaClient:
         Examples:
             **Get cluster topology:**
 
-            ```python
-            def get_topology_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                topology = client.get_topology()
+                def get_topology_example() -> None:
+                    client = CamundaClient()
 
-                print(f"Cluster size: {topology.cluster_size}")
-                print(f"Partitions: {topology.partitions_count}")
-                for broker in topology.brokers:
-                    print(f"  Broker {broker.node_id}: {broker.host}:{broker.port}")
-            ```
+                    topology = client.get_topology()
+
+                    print(f"Cluster size: {topology.cluster_size}")
+                    print(f"Partitions: {topology.partitions_count}")
+                    for broker in topology.brokers:
+                        print(f"  Broker {broker.node_id}: {broker.host}:{broker.port}")
         """
         from .api.cluster.get_topology import sync as get_topology_sync
 
@@ -3313,21 +3313,21 @@ class CamundaClient:
         Examples:
             **Publish a message:**
 
-            ```python
-            def publish_message_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.publish_message(
-                    data=MessagePublicationRequest(
-                        name="order-created",
-                        correlation_key="order-12345",
-                        time_to_live=60000,
+                def publish_message_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.publish_message(
+                        data=MessagePublicationRequest(
+                            name="order-created",
+                            correlation_key="order-12345",
+                            time_to_live=60000,
+                        )
                     )
-                )
 
-                if not isinstance(result.message_key, Unset):
-                    print(f"Message key: {result.message_key}")
-            ```
+                    if not isinstance(result.message_key, Unset):
+                        print(f"Message key: {result.message_key}")
         """
         from .api.message.publish_message import sync as publish_message_sync
 
@@ -3366,20 +3366,20 @@ class CamundaClient:
         Examples:
             **Correlate a message:**
 
-            ```python
-            def correlate_message_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.correlate_message(
-                    data=MessageCorrelationRequest(
-                        name="payment-received",
-                        correlation_key="order-12345",
+                def correlate_message_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.correlate_message(
+                        data=MessageCorrelationRequest(
+                            name="payment-received",
+                            correlation_key="order-12345",
+                        )
                     )
-                )
 
-                if not isinstance(result.message_key, Unset):
-                    print(f"Message key: {result.message_key}")
-            ```
+                    if not isinstance(result.message_key, Unset):
+                        print(f"Message key: {result.message_key}")
         """
         from .api.message.correlate_message import sync as correlate_message_sync
 
@@ -4019,19 +4019,19 @@ class CamundaClient:
         Examples:
             **Fail a job with retry:**
 
-            ```python
-            def fail_job_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                client.fail_job(
-                    job_key=JobKey("2251799813685249"),
-                    data=JobFailRequest(
-                        retries=2,
-                        error_message="Payment gateway timeout",
-                        retry_back_off=5000,
-                    ),
-                )
-            ```
+                def fail_job_example() -> None:
+                    client = CamundaClient()
+
+                    client.fail_job(
+                        job_key=JobKey("2251799813685249"),
+                        data=JobFailRequest(
+                            retries=2,
+                            error_message="Payment gateway timeout",
+                            retry_back_off=5000,
+                        ),
+                    )
         """
         from .api.job.fail_job import sync as fail_job_sync
 
@@ -4093,20 +4093,20 @@ class CamundaClient:
         Examples:
             **Activate and process jobs:**
 
-            ```python
-            async def activate_jobs_example() -> None:
-                async with CamundaAsyncClient() as client:
-                    result = await client.activate_jobs(
-                        data=JobActivationRequest(
-                            type_="payment-processing",
-                            timeout=30000,
-                            max_jobs_to_activate=5,
-                        )
-                    )
+            .. code-block:: python
 
-                    for job in result.jobs:
-                        print(f"Job {job.job_key}: {job.type_}")
-            ```
+                async def activate_jobs_example() -> None:
+                    async with CamundaAsyncClient() as client:
+                        result = await client.activate_jobs(
+                            data=JobActivationRequest(
+                                type_="payment-processing",
+                                timeout=30000,
+                                max_jobs_to_activate=5,
+                            )
+                        )
+
+                        for job in result.jobs:
+                            print(f"Job {job.job_key}: {job.type_}")
         """
         from .api.job.activate_jobs import sync as activate_jobs_sync
 
@@ -4210,19 +4210,19 @@ class CamundaClient:
         Examples:
             **Complete a job:**
 
-            ```python
-            def complete_job_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                client.complete_job(
-                    job_key=JobKey("2251799813685249"),
-                    data=CompleteJobData(
-                        variables=JobCompletionRequestVariables.from_dict(
-                            {"paymentId": "PAY-123", "status": "completed"}
-                        )
-                    ),
-                )
-            ```
+                def complete_job_example() -> None:
+                    client = CamundaClient()
+
+                    client.complete_job(
+                        job_key=JobKey("2251799813685249"),
+                        data=CompleteJobData(
+                            variables=JobCompletionRequestVariables.from_dict(
+                                {"paymentId": "PAY-123", "status": "completed"}
+                            )
+                        ),
+                    )
         """
         from .api.job.complete_job import sync as complete_job_sync
 
@@ -4324,12 +4324,12 @@ class CamundaClient:
         Examples:
             **Resolve an incident:**
 
-            ```python
-            def resolve_incident_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                client.resolve_incident(incident_key=IncidentKey("123456"))
-            ```
+                def resolve_incident_example() -> None:
+                    client = CamundaClient()
+
+                    client.resolve_incident(incident_key=IncidentKey("123456"))
         """
         from .api.incident.resolve_incident import sync as resolve_incident_sync
 
@@ -4363,18 +4363,18 @@ class CamundaClient:
         Examples:
             **Search incidents:**
 
-            ```python
-            def search_incidents_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.search_incidents(
-                    data=IncidentSearchQuery()
-                )
+                def search_incidents_example() -> None:
+                    client = CamundaClient()
 
-                if not isinstance(result.items, Unset):
-                    for incident in result.items:
-                        print(f"Incident key: {incident.incident_key}")
-            ```
+                    result = client.search_incidents(
+                        data=IncidentSearchQuery()
+                    )
+
+                    if not isinstance(result.items, Unset):
+                        for incident in result.items:
+                            print(f"Incident key: {incident.incident_key}")
         """
         from .api.incident.search_incidents import sync as search_incidents_sync
 
@@ -4441,14 +4441,14 @@ class CamundaClient:
         Examples:
             **Get an incident:**
 
-            ```python
-            def get_incident_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                incident = client.get_incident(incident_key=IncidentKey("123456"))
+                def get_incident_example() -> None:
+                    client = CamundaClient()
 
-                print(f"Incident error type: {incident.error_type}")
-            ```
+                    incident = client.get_incident(incident_key=IncidentKey("123456"))
+
+                    print(f"Incident error type: {incident.error_type}")
         """
         from .api.incident.get_incident import sync as get_incident_sync
 
@@ -4484,16 +4484,16 @@ class CamundaClient:
         Examples:
             **Get a decision definition:**
 
-            ```python
-            def get_decision_definition_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                definition = client.get_decision_definition(
-                    decision_definition_key=DecisionDefinitionKey("123456")
-                )
+                def get_decision_definition_example() -> None:
+                    client = CamundaClient()
 
-                print(f"Decision: {definition.decision_definition_id}")
-            ```
+                    definition = client.get_decision_definition(
+                        decision_definition_key=DecisionDefinitionKey("123456")
+                    )
+
+                    print(f"Decision: {definition.decision_definition_id}")
         """
         from .api.decision_definition.get_decision_definition import (
             sync as get_decision_definition_sync,
@@ -4532,33 +4532,33 @@ class CamundaClient:
         Examples:
             **Evaluate by decision definition key:**
 
-            ```python
-            def evaluate_decision_by_key_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.evaluate_decision(
-                    data=DecisionEvaluationByKey(
-                        decision_definition_key=DecisionDefinitionKey("123456"),
+                def evaluate_decision_by_key_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.evaluate_decision(
+                        data=DecisionEvaluationByKey(
+                            decision_definition_key=DecisionDefinitionKey("123456"),
+                        )
                     )
-                )
 
-                print(f"Decision key: {result.decision_definition_key}")
-            ```
+                    print(f"Decision key: {result.decision_definition_key}")
 
             **Evaluate by decision definition ID:**
 
-            ```python
-            def evaluate_decision_by_id_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.evaluate_decision(
-                    data=DecisionEvaluationByID(
-                        decision_definition_id=DecisionDefinitionId("invoice-classification"),
+                def evaluate_decision_by_id_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.evaluate_decision(
+                        data=DecisionEvaluationByID(
+                            decision_definition_id=DecisionDefinitionId("invoice-classification"),
+                        )
                     )
-                )
 
-                print(f"Decision key: {result.decision_definition_key}")
-            ```
+                    print(f"Decision key: {result.decision_definition_key}")
         """
         from .api.decision_definition.evaluate_decision import (
             sync as evaluate_decision_sync,
@@ -4594,18 +4594,18 @@ class CamundaClient:
         Examples:
             **Search decision definitions:**
 
-            ```python
-            def search_decision_definitions_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.search_decision_definitions(
-                    data=DecisionDefinitionSearchQuery()
-                )
+                def search_decision_definitions_example() -> None:
+                    client = CamundaClient()
 
-                if not isinstance(result.items, Unset):
-                    for definition in result.items:
-                        print(f"Decision: {definition.decision_definition_id}")
-            ```
+                    result = client.search_decision_definitions(
+                        data=DecisionDefinitionSearchQuery()
+                    )
+
+                    if not isinstance(result.items, Unset):
+                        for definition in result.items:
+                            print(f"Decision: {definition.decision_definition_id}")
         """
         from .api.decision_definition.search_decision_definitions import (
             sync as search_decision_definitions_sync,
@@ -4701,12 +4701,12 @@ class CamundaClient:
         Examples:
             **Unassign a user task:**
 
-            ```python
-            def unassign_user_task_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                client.unassign_user_task(user_task_key=UserTaskKey("123456"))
-            ```
+                def unassign_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    client.unassign_user_task(user_task_key=UserTaskKey("123456"))
         """
         from .api.user_task.unassign_user_task import sync as unassign_user_task_sync
 
@@ -4782,17 +4782,17 @@ class CamundaClient:
         Examples:
             **Assign a user task:**
 
-            ```python
-            def assign_user_task_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                client.assign_user_task(
-                    user_task_key=UserTaskKey("123456"),
-                    data=UserTaskAssignmentRequest(
-                        assignee="user@example.com",
-                    ),
-                )
-            ```
+                def assign_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    client.assign_user_task(
+                        user_task_key=UserTaskKey("123456"),
+                        data=UserTaskAssignmentRequest(
+                            assignee="user@example.com",
+                        ),
+                    )
         """
         from .api.user_task.assign_user_task import sync as assign_user_task_sync
 
@@ -4832,19 +4832,19 @@ class CamundaClient:
         Examples:
             **Update a user task:**
 
-            ```python
-            def update_user_task_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                client.update_user_task(
-                    user_task_key=UserTaskKey("123456"),
-                    data=UserTaskUpdateRequest(
-                        changeset=ChangesetType0(
-                            due_date=datetime.datetime(2025, 12, 31, 23, 59, 59),
+                def update_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    client.update_user_task(
+                        user_task_key=UserTaskKey("123456"),
+                        data=UserTaskUpdateRequest(
+                            changeset=ChangesetType0(
+                                due_date=datetime.datetime(2025, 12, 31, 23, 59, 59),
+                            ),
                         ),
-                    ),
-                )
-            ```
+                    )
         """
         from .api.user_task.update_user_task import sync as update_user_task_sync
 
@@ -4910,14 +4910,14 @@ class CamundaClient:
         Examples:
             **Get a user task:**
 
-            ```python
-            def get_user_task_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                task = client.get_user_task(user_task_key=UserTaskKey("123456"))
+                def get_user_task_example() -> None:
+                    client = CamundaClient()
 
-                print(f"Task: {task.user_task_key}")
-            ```
+                    task = client.get_user_task(user_task_key=UserTaskKey("123456"))
+
+                    print(f"Task: {task.user_task_key}")
         """
         from .api.user_task.get_user_task import sync as get_user_task_sync
 
@@ -4984,18 +4984,18 @@ class CamundaClient:
         Examples:
             **Search user tasks:**
 
-            ```python
-            def search_user_tasks_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.search_user_tasks(
-                    data=SearchUserTasksData()
-                )
+                def search_user_tasks_example() -> None:
+                    client = CamundaClient()
 
-                if not isinstance(result.items, Unset):
-                    for task in result.items:
-                        print(f"Task: {task.user_task_key}")
-            ```
+                    result = client.search_user_tasks(
+                        data=SearchUserTasksData()
+                    )
+
+                    if not isinstance(result.items, Unset):
+                        for task in result.items:
+                            print(f"Task: {task.user_task_key}")
         """
         from .api.user_task.search_user_tasks import sync as search_user_tasks_sync
 
@@ -5035,20 +5035,20 @@ class CamundaClient:
         Examples:
             **Complete a user task:**
 
-            ```python
-            def complete_user_task_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                variables = UserTaskCompletionRequestVariables()
-                variables["approved"] = True
+                def complete_user_task_example() -> None:
+                    client = CamundaClient()
 
-                client.complete_user_task(
-                    user_task_key=UserTaskKey("123456"),
-                    data=UserTaskCompletionRequest(
-                        variables=variables,
-                    ),
-                )
-            ```
+                    variables = UserTaskCompletionRequestVariables()
+                    variables["approved"] = True
+
+                    client.complete_user_task(
+                        user_task_key=UserTaskKey("123456"),
+                        data=UserTaskCompletionRequest(
+                            variables=variables,
+                        ),
+                    )
         """
         from .api.user_task.complete_user_task import sync as complete_user_task_sync
 
@@ -5099,13 +5099,13 @@ class CamundaClient:
         Examples:
             **Delete a resource:**
 
-            ```python
-            def delete_resource_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                # Use a resource key from a previous deployment response
-                client.delete_resource(resource_key="2251799813685249")
-            ```
+                def delete_resource_example() -> None:
+                    client = CamundaClient()
+
+                    # Use a resource key from a previous deployment response
+                    client.delete_resource(resource_key="2251799813685249")
         """
         from .api.resource.delete_resource import sync as delete_resource_sync
 
@@ -5165,37 +5165,37 @@ class CamundaClient:
         Examples:
             **Deploy resources from files:**
 
-            ```python
-            def deploy_resources_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.deploy_resources_from_files(
-                    ["order-process.bpmn", "decision.dmn"]
-                )
+                def deploy_resources_example() -> None:
+                    client = CamundaClient()
 
-                print(f"Deployment key: {result.deployment_key}")
-                for process in result.processes:
-                    print(
-                        f"  Process: {process.process_definition_id} v{process.process_definition_version}"
+                    result = client.deploy_resources_from_files(
+                        ["order-process.bpmn", "decision.dmn"]
                     )
-                for decision in result.decisions:
-                    print(f"  Decision: {decision.decision_definition_id}")
-            ```
+
+                    print(f"Deployment key: {result.deployment_key}")
+                    for process in result.processes:
+                        print(
+                            f"  Process: {process.process_definition_id} v{process.process_definition_version}"
+                        )
+                    for decision in result.decisions:
+                        print(f"  Decision: {decision.decision_definition_id}")
 
             **Deploy resources with tenant ID:**
 
-            ```python
-            def deploy_resources_with_tenant_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.deploy_resources_from_files(
-                    ["order-process.bpmn"],
-                    tenant_id="my-tenant",
-                )
+                def deploy_resources_with_tenant_example() -> None:
+                    client = CamundaClient()
 
-                print(f"Deployment key: {result.deployment_key}")
-                print(f"Tenant: {result.tenant_id}")
-            ```
+                    result = client.deploy_resources_from_files(
+                        ["order-process.bpmn"],
+                        tenant_id="my-tenant",
+                    )
+
+                    print(f"Deployment key: {result.deployment_key}")
+                    print(f"Tenant: {result.tenant_id}")
         """
         from .api.resource.create_deployment import sync as create_deployment_sync
 
@@ -5535,18 +5535,18 @@ class CamundaClient:
         Examples:
             **Broadcast a signal:**
 
-            ```python
-            def broadcast_signal_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.broadcast_signal(
-                    data=SignalBroadcastRequest(
-                        signal_name="order-cancelled",
+                def broadcast_signal_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.broadcast_signal(
+                        data=SignalBroadcastRequest(
+                            signal_name="order-cancelled",
+                        )
                     )
-                )
 
-                print(f"Signal key: {result.signal_key}")
-            ```
+                    print(f"Signal key: {result.signal_key}")
         """
         from .api.signal.broadcast_signal import sync as broadcast_signal_sync
 
@@ -6121,56 +6121,56 @@ class CamundaClient:
         Examples:
             **Create by process definition key:**
 
-            ```python
-            def create_process_instance_by_key_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                # Deploy a process and obtain the typed key from the response
-                deployment = client.deploy_resources_from_files(["order-process.bpmn"])
-                process_key = deployment.processes[0].process_definition_key
+                def create_process_instance_by_key_example() -> None:
+                    client = CamundaClient()
 
-                # Use the typed key directly — no manual string lifting needed
-                result = client.create_process_instance(
-                    data=ProcessCreationByKey(
-                        process_definition_key=process_key,
+                    # Deploy a process and obtain the typed key from the response
+                    deployment = client.deploy_resources_from_files(["order-process.bpmn"])
+                    process_key = deployment.processes[0].process_definition_key
+
+                    # Use the typed key directly — no manual string lifting needed
+                    result = client.create_process_instance(
+                        data=ProcessCreationByKey(
+                            process_definition_key=process_key,
+                        )
                     )
-                )
 
-                print(f"Process instance key: {result.process_instance_key}")
-            ```
+                    print(f"Process instance key: {result.process_instance_key}")
 
             **Create from a stored key:**
 
-            ```python
-            def create_process_instance_by_key_from_storage_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                # When restoring a key from a database or message queue,
-                # wrap the raw string with the semantic type constructor:
-                stored_key = "2251799813685249"  # e.g. from a DB row
-                result = client.create_process_instance(
-                    data=ProcessCreationByKey(
-                        process_definition_key=ProcessDefinitionKey(stored_key),
+                def create_process_instance_by_key_from_storage_example() -> None:
+                    client = CamundaClient()
+
+                    # When restoring a key from a database or message queue,
+                    # wrap the raw string with the semantic type constructor:
+                    stored_key = "2251799813685249"  # e.g. from a DB row
+                    result = client.create_process_instance(
+                        data=ProcessCreationByKey(
+                            process_definition_key=ProcessDefinitionKey(stored_key),
+                        )
                     )
-                )
 
-                print(f"Process instance key: {result.process_instance_key}")
-            ```
+                    print(f"Process instance key: {result.process_instance_key}")
 
             **Create by process definition ID:**
 
-            ```python
-            def create_process_instance_by_id_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.create_process_instance(
-                    data=ProcessCreationById(
-                        process_definition_id=ProcessDefinitionId("order-process"),
+                def create_process_instance_by_id_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.create_process_instance(
+                        data=ProcessCreationById(
+                            process_definition_id=ProcessDefinitionId("order-process"),
+                        )
                     )
-                )
 
-                print(f"Process instance key: {result.process_instance_key}")
-            ```
+                    print(f"Process instance key: {result.process_instance_key}")
         """
         from .api.process_instance.create_process_instance import (
             sync as create_process_instance_sync,
@@ -6213,20 +6213,20 @@ class CamundaClient:
         Examples:
             **Cancel a process instance:**
 
-            ```python
-            def cancel_process_instance_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                # Create a process instance and get its key from the response
-                created = client.create_process_instance(
-                    data=ProcessCreationById(process_definition_id=ProcessDefinitionId("order-process"))
-                )
+                def cancel_process_instance_example() -> None:
+                    client = CamundaClient()
 
-                # Cancel it using the key from the creation response
-                client.cancel_process_instance(
-                    process_instance_key=created.process_instance_key,
-                )
-            ```
+                    # Create a process instance and get its key from the response
+                    created = client.create_process_instance(
+                        data=ProcessCreationById(process_definition_id=ProcessDefinitionId("order-process"))
+                    )
+
+                    # Cancel it using the key from the creation response
+                    client.cancel_process_instance(
+                        process_instance_key=created.process_instance_key,
+                    )
         """
         from .api.process_instance.cancel_process_instance import (
             sync as cancel_process_instance_sync,
@@ -6352,29 +6352,29 @@ class CamundaClient:
         Examples:
             **Search process instances:**
 
-            ```python
-            def search_process_instances_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.search_process_instances(
-                    data=SearchProcessInstancesData(
-                        filter_=ProcessInstanceSearchQueryFilter(
-                            process_definition_id="order-process",
-                        ),
-                        sort=[
-                            ProcessInstanceSearchQuerySortRequest(
-                                field=ProcessInstanceSearchQuerySortRequestField.STARTDATE,
-                                order=SortOrderEnum.DESC,
-                            )
-                        ],
-                        page=LimitBasedPagination(limit=10),
+                def search_process_instances_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_process_instances(
+                        data=SearchProcessInstancesData(
+                            filter_=ProcessInstanceSearchQueryFilter(
+                                process_definition_id="order-process",
+                            ),
+                            sort=[
+                                ProcessInstanceSearchQuerySortRequest(
+                                    field=ProcessInstanceSearchQuerySortRequestField.STARTDATE,
+                                    order=SortOrderEnum.DESC,
+                                )
+                            ],
+                            page=LimitBasedPagination(limit=10),
+                        )
                     )
-                )
 
-                for instance in result.items:
-                    print(f"{instance.process_instance_key}: {instance.state}")
-                print(f"Total: {result.page.total_items}")
-            ```
+                    for instance in result.items:
+                        print(f"{instance.process_instance_key}: {instance.state}")
+                    print(f"Total: {result.page.total_items}")
         """
         from .api.process_instance.search_process_instances import (
             sync as search_process_instances_sync,
@@ -7777,17 +7777,17 @@ class CamundaAsyncClient:
         Examples:
             **Get cluster topology:**
 
-            ```python
-            def get_topology_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                topology = client.get_topology()
+                def get_topology_example() -> None:
+                    client = CamundaClient()
 
-                print(f"Cluster size: {topology.cluster_size}")
-                print(f"Partitions: {topology.partitions_count}")
-                for broker in topology.brokers:
-                    print(f"  Broker {broker.node_id}: {broker.host}:{broker.port}")
-            ```
+                    topology = client.get_topology()
+
+                    print(f"Cluster size: {topology.cluster_size}")
+                    print(f"Partitions: {topology.partitions_count}")
+                    for broker in topology.brokers:
+                        print(f"  Broker {broker.node_id}: {broker.host}:{broker.port}")
         """
         from .api.cluster.get_topology import asyncio as get_topology_asyncio
 
@@ -9476,21 +9476,21 @@ class CamundaAsyncClient:
         Examples:
             **Publish a message:**
 
-            ```python
-            def publish_message_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.publish_message(
-                    data=MessagePublicationRequest(
-                        name="order-created",
-                        correlation_key="order-12345",
-                        time_to_live=60000,
+                def publish_message_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.publish_message(
+                        data=MessagePublicationRequest(
+                            name="order-created",
+                            correlation_key="order-12345",
+                            time_to_live=60000,
+                        )
                     )
-                )
 
-                if not isinstance(result.message_key, Unset):
-                    print(f"Message key: {result.message_key}")
-            ```
+                    if not isinstance(result.message_key, Unset):
+                        print(f"Message key: {result.message_key}")
         """
         from .api.message.publish_message import asyncio as publish_message_asyncio
 
@@ -9529,20 +9529,20 @@ class CamundaAsyncClient:
         Examples:
             **Correlate a message:**
 
-            ```python
-            def correlate_message_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.correlate_message(
-                    data=MessageCorrelationRequest(
-                        name="payment-received",
-                        correlation_key="order-12345",
+                def correlate_message_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.correlate_message(
+                        data=MessageCorrelationRequest(
+                            name="payment-received",
+                            correlation_key="order-12345",
+                        )
                     )
-                )
 
-                if not isinstance(result.message_key, Unset):
-                    print(f"Message key: {result.message_key}")
-            ```
+                    if not isinstance(result.message_key, Unset):
+                        print(f"Message key: {result.message_key}")
         """
         from .api.message.correlate_message import asyncio as correlate_message_asyncio
 
@@ -10188,19 +10188,19 @@ class CamundaAsyncClient:
         Examples:
             **Fail a job with retry:**
 
-            ```python
-            def fail_job_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                client.fail_job(
-                    job_key=JobKey("2251799813685249"),
-                    data=JobFailRequest(
-                        retries=2,
-                        error_message="Payment gateway timeout",
-                        retry_back_off=5000,
-                    ),
-                )
-            ```
+                def fail_job_example() -> None:
+                    client = CamundaClient()
+
+                    client.fail_job(
+                        job_key=JobKey("2251799813685249"),
+                        data=JobFailRequest(
+                            retries=2,
+                            error_message="Payment gateway timeout",
+                            retry_back_off=5000,
+                        ),
+                    )
         """
         from .api.job.fail_job import asyncio as fail_job_asyncio
 
@@ -10262,20 +10262,20 @@ class CamundaAsyncClient:
         Examples:
             **Activate and process jobs:**
 
-            ```python
-            async def activate_jobs_example() -> None:
-                async with CamundaAsyncClient() as client:
-                    result = await client.activate_jobs(
-                        data=JobActivationRequest(
-                            type_="payment-processing",
-                            timeout=30000,
-                            max_jobs_to_activate=5,
-                        )
-                    )
+            .. code-block:: python
 
-                    for job in result.jobs:
-                        print(f"Job {job.job_key}: {job.type_}")
-            ```
+                async def activate_jobs_example() -> None:
+                    async with CamundaAsyncClient() as client:
+                        result = await client.activate_jobs(
+                            data=JobActivationRequest(
+                                type_="payment-processing",
+                                timeout=30000,
+                                max_jobs_to_activate=5,
+                            )
+                        )
+
+                        for job in result.jobs:
+                            print(f"Job {job.job_key}: {job.type_}")
         """
         from .api.job.activate_jobs import asyncio as activate_jobs_asyncio
 
@@ -10379,19 +10379,19 @@ class CamundaAsyncClient:
         Examples:
             **Complete a job:**
 
-            ```python
-            def complete_job_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                client.complete_job(
-                    job_key=JobKey("2251799813685249"),
-                    data=CompleteJobData(
-                        variables=JobCompletionRequestVariables.from_dict(
-                            {"paymentId": "PAY-123", "status": "completed"}
-                        )
-                    ),
-                )
-            ```
+                def complete_job_example() -> None:
+                    client = CamundaClient()
+
+                    client.complete_job(
+                        job_key=JobKey("2251799813685249"),
+                        data=CompleteJobData(
+                            variables=JobCompletionRequestVariables.from_dict(
+                                {"paymentId": "PAY-123", "status": "completed"}
+                            )
+                        ),
+                    )
         """
         from .api.job.complete_job import asyncio as complete_job_asyncio
 
@@ -10493,12 +10493,12 @@ class CamundaAsyncClient:
         Examples:
             **Resolve an incident:**
 
-            ```python
-            def resolve_incident_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                client.resolve_incident(incident_key=IncidentKey("123456"))
-            ```
+                def resolve_incident_example() -> None:
+                    client = CamundaClient()
+
+                    client.resolve_incident(incident_key=IncidentKey("123456"))
         """
         from .api.incident.resolve_incident import asyncio as resolve_incident_asyncio
 
@@ -10532,18 +10532,18 @@ class CamundaAsyncClient:
         Examples:
             **Search incidents:**
 
-            ```python
-            def search_incidents_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.search_incidents(
-                    data=IncidentSearchQuery()
-                )
+                def search_incidents_example() -> None:
+                    client = CamundaClient()
 
-                if not isinstance(result.items, Unset):
-                    for incident in result.items:
-                        print(f"Incident key: {incident.incident_key}")
-            ```
+                    result = client.search_incidents(
+                        data=IncidentSearchQuery()
+                    )
+
+                    if not isinstance(result.items, Unset):
+                        for incident in result.items:
+                            print(f"Incident key: {incident.incident_key}")
         """
         from .api.incident.search_incidents import asyncio as search_incidents_asyncio
 
@@ -10612,14 +10612,14 @@ class CamundaAsyncClient:
         Examples:
             **Get an incident:**
 
-            ```python
-            def get_incident_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                incident = client.get_incident(incident_key=IncidentKey("123456"))
+                def get_incident_example() -> None:
+                    client = CamundaClient()
 
-                print(f"Incident error type: {incident.error_type}")
-            ```
+                    incident = client.get_incident(incident_key=IncidentKey("123456"))
+
+                    print(f"Incident error type: {incident.error_type}")
         """
         from .api.incident.get_incident import asyncio as get_incident_asyncio
 
@@ -10655,16 +10655,16 @@ class CamundaAsyncClient:
         Examples:
             **Get a decision definition:**
 
-            ```python
-            def get_decision_definition_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                definition = client.get_decision_definition(
-                    decision_definition_key=DecisionDefinitionKey("123456")
-                )
+                def get_decision_definition_example() -> None:
+                    client = CamundaClient()
 
-                print(f"Decision: {definition.decision_definition_id}")
-            ```
+                    definition = client.get_decision_definition(
+                        decision_definition_key=DecisionDefinitionKey("123456")
+                    )
+
+                    print(f"Decision: {definition.decision_definition_id}")
         """
         from .api.decision_definition.get_decision_definition import (
             asyncio as get_decision_definition_asyncio,
@@ -10703,33 +10703,33 @@ class CamundaAsyncClient:
         Examples:
             **Evaluate by decision definition key:**
 
-            ```python
-            def evaluate_decision_by_key_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.evaluate_decision(
-                    data=DecisionEvaluationByKey(
-                        decision_definition_key=DecisionDefinitionKey("123456"),
+                def evaluate_decision_by_key_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.evaluate_decision(
+                        data=DecisionEvaluationByKey(
+                            decision_definition_key=DecisionDefinitionKey("123456"),
+                        )
                     )
-                )
 
-                print(f"Decision key: {result.decision_definition_key}")
-            ```
+                    print(f"Decision key: {result.decision_definition_key}")
 
             **Evaluate by decision definition ID:**
 
-            ```python
-            def evaluate_decision_by_id_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.evaluate_decision(
-                    data=DecisionEvaluationByID(
-                        decision_definition_id=DecisionDefinitionId("invoice-classification"),
+                def evaluate_decision_by_id_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.evaluate_decision(
+                        data=DecisionEvaluationByID(
+                            decision_definition_id=DecisionDefinitionId("invoice-classification"),
+                        )
                     )
-                )
 
-                print(f"Decision key: {result.decision_definition_key}")
-            ```
+                    print(f"Decision key: {result.decision_definition_key}")
         """
         from .api.decision_definition.evaluate_decision import (
             asyncio as evaluate_decision_asyncio,
@@ -10765,18 +10765,18 @@ class CamundaAsyncClient:
         Examples:
             **Search decision definitions:**
 
-            ```python
-            def search_decision_definitions_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.search_decision_definitions(
-                    data=DecisionDefinitionSearchQuery()
-                )
+                def search_decision_definitions_example() -> None:
+                    client = CamundaClient()
 
-                if not isinstance(result.items, Unset):
-                    for definition in result.items:
-                        print(f"Decision: {definition.decision_definition_id}")
-            ```
+                    result = client.search_decision_definitions(
+                        data=DecisionDefinitionSearchQuery()
+                    )
+
+                    if not isinstance(result.items, Unset):
+                        for definition in result.items:
+                            print(f"Decision: {definition.decision_definition_id}")
         """
         from .api.decision_definition.search_decision_definitions import (
             asyncio as search_decision_definitions_asyncio,
@@ -10876,12 +10876,12 @@ class CamundaAsyncClient:
         Examples:
             **Unassign a user task:**
 
-            ```python
-            def unassign_user_task_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                client.unassign_user_task(user_task_key=UserTaskKey("123456"))
-            ```
+                def unassign_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    client.unassign_user_task(user_task_key=UserTaskKey("123456"))
         """
         from .api.user_task.unassign_user_task import (
             asyncio as unassign_user_task_asyncio,
@@ -10959,17 +10959,17 @@ class CamundaAsyncClient:
         Examples:
             **Assign a user task:**
 
-            ```python
-            def assign_user_task_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                client.assign_user_task(
-                    user_task_key=UserTaskKey("123456"),
-                    data=UserTaskAssignmentRequest(
-                        assignee="user@example.com",
-                    ),
-                )
-            ```
+                def assign_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    client.assign_user_task(
+                        user_task_key=UserTaskKey("123456"),
+                        data=UserTaskAssignmentRequest(
+                            assignee="user@example.com",
+                        ),
+                    )
         """
         from .api.user_task.assign_user_task import asyncio as assign_user_task_asyncio
 
@@ -11009,19 +11009,19 @@ class CamundaAsyncClient:
         Examples:
             **Update a user task:**
 
-            ```python
-            def update_user_task_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                client.update_user_task(
-                    user_task_key=UserTaskKey("123456"),
-                    data=UserTaskUpdateRequest(
-                        changeset=ChangesetType0(
-                            due_date=datetime.datetime(2025, 12, 31, 23, 59, 59),
+                def update_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    client.update_user_task(
+                        user_task_key=UserTaskKey("123456"),
+                        data=UserTaskUpdateRequest(
+                            changeset=ChangesetType0(
+                                due_date=datetime.datetime(2025, 12, 31, 23, 59, 59),
+                            ),
                         ),
-                    ),
-                )
-            ```
+                    )
         """
         from .api.user_task.update_user_task import asyncio as update_user_task_asyncio
 
@@ -11089,14 +11089,14 @@ class CamundaAsyncClient:
         Examples:
             **Get a user task:**
 
-            ```python
-            def get_user_task_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                task = client.get_user_task(user_task_key=UserTaskKey("123456"))
+                def get_user_task_example() -> None:
+                    client = CamundaClient()
 
-                print(f"Task: {task.user_task_key}")
-            ```
+                    task = client.get_user_task(user_task_key=UserTaskKey("123456"))
+
+                    print(f"Task: {task.user_task_key}")
         """
         from .api.user_task.get_user_task import asyncio as get_user_task_asyncio
 
@@ -11163,18 +11163,18 @@ class CamundaAsyncClient:
         Examples:
             **Search user tasks:**
 
-            ```python
-            def search_user_tasks_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.search_user_tasks(
-                    data=SearchUserTasksData()
-                )
+                def search_user_tasks_example() -> None:
+                    client = CamundaClient()
 
-                if not isinstance(result.items, Unset):
-                    for task in result.items:
-                        print(f"Task: {task.user_task_key}")
-            ```
+                    result = client.search_user_tasks(
+                        data=SearchUserTasksData()
+                    )
+
+                    if not isinstance(result.items, Unset):
+                        for task in result.items:
+                            print(f"Task: {task.user_task_key}")
         """
         from .api.user_task.search_user_tasks import (
             asyncio as search_user_tasks_asyncio,
@@ -11216,20 +11216,20 @@ class CamundaAsyncClient:
         Examples:
             **Complete a user task:**
 
-            ```python
-            def complete_user_task_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                variables = UserTaskCompletionRequestVariables()
-                variables["approved"] = True
+                def complete_user_task_example() -> None:
+                    client = CamundaClient()
 
-                client.complete_user_task(
-                    user_task_key=UserTaskKey("123456"),
-                    data=UserTaskCompletionRequest(
-                        variables=variables,
-                    ),
-                )
-            ```
+                    variables = UserTaskCompletionRequestVariables()
+                    variables["approved"] = True
+
+                    client.complete_user_task(
+                        user_task_key=UserTaskKey("123456"),
+                        data=UserTaskCompletionRequest(
+                            variables=variables,
+                        ),
+                    )
         """
         from .api.user_task.complete_user_task import (
             asyncio as complete_user_task_asyncio,
@@ -11282,13 +11282,13 @@ class CamundaAsyncClient:
         Examples:
             **Delete a resource:**
 
-            ```python
-            def delete_resource_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                # Use a resource key from a previous deployment response
-                client.delete_resource(resource_key="2251799813685249")
-            ```
+                def delete_resource_example() -> None:
+                    client = CamundaClient()
+
+                    # Use a resource key from a previous deployment response
+                    client.delete_resource(resource_key="2251799813685249")
         """
         from .api.resource.delete_resource import asyncio as delete_resource_asyncio
 
@@ -11350,37 +11350,37 @@ class CamundaAsyncClient:
         Examples:
             **Deploy resources from files:**
 
-            ```python
-            def deploy_resources_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.deploy_resources_from_files(
-                    ["order-process.bpmn", "decision.dmn"]
-                )
+                def deploy_resources_example() -> None:
+                    client = CamundaClient()
 
-                print(f"Deployment key: {result.deployment_key}")
-                for process in result.processes:
-                    print(
-                        f"  Process: {process.process_definition_id} v{process.process_definition_version}"
+                    result = client.deploy_resources_from_files(
+                        ["order-process.bpmn", "decision.dmn"]
                     )
-                for decision in result.decisions:
-                    print(f"  Decision: {decision.decision_definition_id}")
-            ```
+
+                    print(f"Deployment key: {result.deployment_key}")
+                    for process in result.processes:
+                        print(
+                            f"  Process: {process.process_definition_id} v{process.process_definition_version}"
+                        )
+                    for decision in result.decisions:
+                        print(f"  Decision: {decision.decision_definition_id}")
 
             **Deploy resources with tenant ID:**
 
-            ```python
-            def deploy_resources_with_tenant_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.deploy_resources_from_files(
-                    ["order-process.bpmn"],
-                    tenant_id="my-tenant",
-                )
+                def deploy_resources_with_tenant_example() -> None:
+                    client = CamundaClient()
 
-                print(f"Deployment key: {result.deployment_key}")
-                print(f"Tenant: {result.tenant_id}")
-            ```
+                    result = client.deploy_resources_from_files(
+                        ["order-process.bpmn"],
+                        tenant_id="my-tenant",
+                    )
+
+                    print(f"Deployment key: {result.deployment_key}")
+                    print(f"Tenant: {result.tenant_id}")
         """
         from .api.resource.create_deployment import asyncio as create_deployment_asyncio
 
@@ -11722,18 +11722,18 @@ class CamundaAsyncClient:
         Examples:
             **Broadcast a signal:**
 
-            ```python
-            def broadcast_signal_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.broadcast_signal(
-                    data=SignalBroadcastRequest(
-                        signal_name="order-cancelled",
+                def broadcast_signal_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.broadcast_signal(
+                        data=SignalBroadcastRequest(
+                            signal_name="order-cancelled",
+                        )
                     )
-                )
 
-                print(f"Signal key: {result.signal_key}")
-            ```
+                    print(f"Signal key: {result.signal_key}")
         """
         from .api.signal.broadcast_signal import asyncio as broadcast_signal_asyncio
 
@@ -12310,56 +12310,56 @@ class CamundaAsyncClient:
         Examples:
             **Create by process definition key:**
 
-            ```python
-            def create_process_instance_by_key_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                # Deploy a process and obtain the typed key from the response
-                deployment = client.deploy_resources_from_files(["order-process.bpmn"])
-                process_key = deployment.processes[0].process_definition_key
+                def create_process_instance_by_key_example() -> None:
+                    client = CamundaClient()
 
-                # Use the typed key directly — no manual string lifting needed
-                result = client.create_process_instance(
-                    data=ProcessCreationByKey(
-                        process_definition_key=process_key,
+                    # Deploy a process and obtain the typed key from the response
+                    deployment = client.deploy_resources_from_files(["order-process.bpmn"])
+                    process_key = deployment.processes[0].process_definition_key
+
+                    # Use the typed key directly — no manual string lifting needed
+                    result = client.create_process_instance(
+                        data=ProcessCreationByKey(
+                            process_definition_key=process_key,
+                        )
                     )
-                )
 
-                print(f"Process instance key: {result.process_instance_key}")
-            ```
+                    print(f"Process instance key: {result.process_instance_key}")
 
             **Create from a stored key:**
 
-            ```python
-            def create_process_instance_by_key_from_storage_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                # When restoring a key from a database or message queue,
-                # wrap the raw string with the semantic type constructor:
-                stored_key = "2251799813685249"  # e.g. from a DB row
-                result = client.create_process_instance(
-                    data=ProcessCreationByKey(
-                        process_definition_key=ProcessDefinitionKey(stored_key),
+                def create_process_instance_by_key_from_storage_example() -> None:
+                    client = CamundaClient()
+
+                    # When restoring a key from a database or message queue,
+                    # wrap the raw string with the semantic type constructor:
+                    stored_key = "2251799813685249"  # e.g. from a DB row
+                    result = client.create_process_instance(
+                        data=ProcessCreationByKey(
+                            process_definition_key=ProcessDefinitionKey(stored_key),
+                        )
                     )
-                )
 
-                print(f"Process instance key: {result.process_instance_key}")
-            ```
+                    print(f"Process instance key: {result.process_instance_key}")
 
             **Create by process definition ID:**
 
-            ```python
-            def create_process_instance_by_id_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.create_process_instance(
-                    data=ProcessCreationById(
-                        process_definition_id=ProcessDefinitionId("order-process"),
+                def create_process_instance_by_id_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.create_process_instance(
+                        data=ProcessCreationById(
+                            process_definition_id=ProcessDefinitionId("order-process"),
+                        )
                     )
-                )
 
-                print(f"Process instance key: {result.process_instance_key}")
-            ```
+                    print(f"Process instance key: {result.process_instance_key}")
         """
         from .api.process_instance.create_process_instance import (
             asyncio as create_process_instance_asyncio,
@@ -12402,20 +12402,20 @@ class CamundaAsyncClient:
         Examples:
             **Cancel a process instance:**
 
-            ```python
-            def cancel_process_instance_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                # Create a process instance and get its key from the response
-                created = client.create_process_instance(
-                    data=ProcessCreationById(process_definition_id=ProcessDefinitionId("order-process"))
-                )
+                def cancel_process_instance_example() -> None:
+                    client = CamundaClient()
 
-                # Cancel it using the key from the creation response
-                client.cancel_process_instance(
-                    process_instance_key=created.process_instance_key,
-                )
-            ```
+                    # Create a process instance and get its key from the response
+                    created = client.create_process_instance(
+                        data=ProcessCreationById(process_definition_id=ProcessDefinitionId("order-process"))
+                    )
+
+                    # Cancel it using the key from the creation response
+                    client.cancel_process_instance(
+                        process_instance_key=created.process_instance_key,
+                    )
         """
         from .api.process_instance.cancel_process_instance import (
             asyncio as cancel_process_instance_asyncio,
@@ -12541,29 +12541,29 @@ class CamundaAsyncClient:
         Examples:
             **Search process instances:**
 
-            ```python
-            def search_process_instances_example() -> None:
-                client = CamundaClient()
+            .. code-block:: python
 
-                result = client.search_process_instances(
-                    data=SearchProcessInstancesData(
-                        filter_=ProcessInstanceSearchQueryFilter(
-                            process_definition_id="order-process",
-                        ),
-                        sort=[
-                            ProcessInstanceSearchQuerySortRequest(
-                                field=ProcessInstanceSearchQuerySortRequestField.STARTDATE,
-                                order=SortOrderEnum.DESC,
-                            )
-                        ],
-                        page=LimitBasedPagination(limit=10),
+                def search_process_instances_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_process_instances(
+                        data=SearchProcessInstancesData(
+                            filter_=ProcessInstanceSearchQueryFilter(
+                                process_definition_id="order-process",
+                            ),
+                            sort=[
+                                ProcessInstanceSearchQuerySortRequest(
+                                    field=ProcessInstanceSearchQuerySortRequestField.STARTDATE,
+                                    order=SortOrderEnum.DESC,
+                                )
+                            ],
+                            page=LimitBasedPagination(limit=10),
+                        )
                     )
-                )
 
-                for instance in result.items:
-                    print(f"{instance.process_instance_key}: {instance.state}")
-                print(f"Total: {result.page.total_items}")
-            ```
+                    for instance in result.items:
+                        print(f"{instance.process_instance_key}: {instance.state}")
+                    print(f"Total: {result.page.total_items}")
         """
         from .api.process_instance.search_process_instances import (
             asyncio as search_process_instances_asyncio,
