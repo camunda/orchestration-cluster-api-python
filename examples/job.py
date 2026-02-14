@@ -75,7 +75,7 @@ async def create_job_worker_example() -> None:
         )
 
         async def handler(job: JobContext) -> dict[str, object]:
-            print(f"Processing job {job.job_key}")
+            job.log.info(f"Processing job {job.job_key}")
             return {"processed": True}
 
         client.create_job_worker(config=config, callback=handler)

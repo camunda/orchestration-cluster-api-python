@@ -7,7 +7,7 @@ import attrs
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from typing import Callable, Literal, Protocol, Any, runtime_checkable, TYPE_CHECKING, Awaitable, cast, Coroutine, Union, Tuple
 from dataclasses import dataclass
-from .logging import SdkLogger, create_logger
+from .logging import SdkLogger, NullLogger, create_logger
 from camunda_orchestration_sdk.models.job_activation_request import JobActivationRequest
 from camunda_orchestration_sdk.models.activate_jobs_jobs_item import ActivateJobsJobsItem
 from camunda_orchestration_sdk.models.complete_job_data import CompleteJobData
@@ -38,16 +38,26 @@ class HintedCallable(Protocol):
 
 @attrs.define
 class JobContext(ActivateJobsJobsItem):
-    """Read-only context for a job execution."""
+    """Read-only context for a job execution.
+
+    Attributes:
+        log: A scoped logger bound to this job's context (job type, job key).
+            Use ``job.log.info(...)`` etc. inside your handler to emit
+            structured log messages.
+    """
+
+    log: SdkLogger = attrs.field(factory=lambda: SdkLogger(NullLogger()))
 
     @classmethod
-    def from_job(cls, job: ActivateJobsJobsItem) -> "JobContext":
-        # Extract init fields
+    def from_job(cls, job: ActivateJobsJobsItem, logger: SdkLogger | None = None) -> "JobContext":
+        # Extract init fields from the parent data class
         init_fields = {
             f.name: getattr(job, f.name)
             for f in attrs.fields(ActivateJobsJobsItem)
             if f.init
         }
+        if logger is not None:
+            init_fields["log"] = logger
         return cls(**init_fields)
 
 AsyncJobHandler = Callable[[JobContext], Coroutine[Any, Any, dict[str, Any] | CompleteJobData | None]]
@@ -288,8 +298,9 @@ class JobWorker:
     async def _execute_job(self, job_item: ActivateJobsJobsItem):
         """Execute a single job with appropriate strategy"""
         
-        # Create context (picklable data container)
-        job_context = JobContext.from_job(job_item)
+        # Create context with a job-scoped child logger
+        job_logger = self.logger.bind(job_key=str(job_item.job_key))
+        job_context = JobContext.from_job(job_item, logger=job_logger)
         
         # Unwrap partials to check the actual function
         actual_func = self.callback

@@ -104,6 +104,15 @@ class SdkLogger:
         new_prefix = f"{self._prefix} {ctx}".strip() if self._prefix else ctx
         return SdkLogger(self._logger, new_prefix)
 
+    def __reduce__(self) -> tuple[type[SdkLogger], tuple[NullLogger]]:
+        """Pickle support: deserialise as a silent logger.
+
+        Loguru and other loggers are not always picklable, so when a
+        ``SdkLogger`` is sent across process boundaries (e.g.
+        ``ProcessPoolExecutor``) it degrades to a :class:`NullLogger`.
+        """
+        return (SdkLogger, (NullLogger(),))
+
 
 def create_logger(logger: CamundaLogger | None = None) -> SdkLogger:
     """Create an :class:`SdkLogger`.
