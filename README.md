@@ -1,6 +1,7 @@
 ## Camunda Orchestration Cluster API – Python SDK
 
 [![PyPI - Version](https://img.shields.io/pypi/v/camunda-orchestration-sdk)](https://pypi.org/project/camunda-orchestration-sdk/)
+[![Documentation](https://img.shields.io/badge/docs-API%20Reference-blue)](https://camunda.github.io/orchestration-cluster-api-python/)
 
 A fully typed Python client for the [Camunda 8 Orchestration Cluster REST API](https://docs.camunda.io/docs/apis-tools/camunda-api-rest/camunda-api-rest-overview/). Auto-generated from the upstream OpenAPI spec with hand-written runtime infrastructure for authentication, configuration, and job workers.
 
