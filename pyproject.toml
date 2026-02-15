@@ -26,7 +26,6 @@ extraPaths = ["generated"]
 exclude = [
     "demo",
     "scripts",
-    "stubs",
     ".venv",
     "**/__pycache__",
     "**/node_modules", 

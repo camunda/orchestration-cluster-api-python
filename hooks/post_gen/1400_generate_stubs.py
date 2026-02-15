@@ -309,6 +309,9 @@ def _render_function(
         ret_src = _get_segment(source_lines, node.returns)
         if ret_src:
             returns = f" -> {ret_src}"
+    if not returns:
+        # Stubs require explicit return types; default to -> None
+        returns = " -> None"
 
     prefix = "async def" if isinstance(node, ast.AsyncFunctionDef) else "def"
     dec_str = "\n".join(decorators)

@@ -91,7 +91,7 @@ make clean
 ### Key Directories
 - **`generate.py`**: The main entry point script for the generation process.
 - **`generated/`**: The output directory for the generated Python package. **Do not edit files here directly**; they will be overwritten.
-- **`stubs/`**: Generated `.pyi` stub files for downstream tooling (e.g., API changelog generation). Mirrors the `generated/` package structure. Excluded from pyright checking — do **not** place stubs alongside `.py` files in `generated/`, as that overrides pyright's type inference.
+- **`stubs/`**: Generated `.pyi` stub files for downstream tooling (e.g., API changelog generation). Mirrors the `generated/` package structure. These stubs are type-checked by pyright alongside the rest of the project — they must remain error-free.
 - **`runtime/`**: Contains the manually written runtime logic (e.g., `JobWorker`) that is injected into the generated SDK. **Edit files here** if you need to modify the runtime behavior.
 - **`hooks/`**: Contains Python scripts that run during the generation process to modify the spec or the generated code (e.g., renaming classes, fixing imports).
 - **`tests/acceptance/`**: Tests that validate the generated code's structure and logic without a server.
