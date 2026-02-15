@@ -1,0 +1,3 @@
+from pydantic import RootModel, StrictStr
+class ElementInstanceKey(RootModel[StrictStr]):
+    ...

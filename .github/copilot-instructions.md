@@ -78,6 +78,8 @@ make typecheck
 ```
 *Precondition*: The SDK must be generated first (`make generate`).
 
+**Always Green**: The `main` branch must have **0 errors** from `uv run pyright`. Any change that introduces pyright errors must be fixed before merging. Do not dismiss new errors as "pre-existing" without verifying by checking the baseline. If a change produces errors, fix them — do not leave regressions.
+
 ### 6. Clean
 To remove generated artifacts:
 ```bash
@@ -89,6 +91,7 @@ make clean
 ### Key Directories
 - **`generate.py`**: The main entry point script for the generation process.
 - **`generated/`**: The output directory for the generated Python package. **Do not edit files here directly**; they will be overwritten.
+- **`stubs/`**: Generated `.pyi` stub files for downstream tooling (e.g., API changelog generation). Mirrors the `generated/` package structure. Excluded from pyright checking — do **not** place stubs alongside `.py` files in `generated/`, as that overrides pyright's type inference.
 - **`runtime/`**: Contains the manually written runtime logic (e.g., `JobWorker`) that is injected into the generated SDK. **Edit files here** if you need to modify the runtime behavior.
 - **`hooks/`**: Contains Python scripts that run during the generation process to modify the spec or the generated code (e.g., renaming classes, fixing imports).
 - **`tests/acceptance/`**: Tests that validate the generated code's structure and logic without a server.
