@@ -11,9 +11,7 @@ class MappingRuleCreateUpdateRequest:
     claim_name: str
     claim_value: str
     name: str
-    additional_properties: dict[str, Any] = _attrs_field(
-            init=False, factory=str_any_dict_factory
-        )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

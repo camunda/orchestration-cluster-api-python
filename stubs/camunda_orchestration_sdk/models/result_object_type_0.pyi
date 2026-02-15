@@ -13,9 +13,7 @@ class ResultObjectType0:
     is_completion_condition_fulfilled: bool | Unset = False
     is_cancel_remaining_instances: bool | Unset = False
     type_: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-            init=False, factory=str_any_dict_factory
-        )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

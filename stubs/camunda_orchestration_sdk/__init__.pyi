@@ -5,6 +5,7 @@ from .runtime.logging import CamundaLogger, NullLogger
 __all__ = (
     "AuthenticatedClient",
     "Client",
+
     "AuditLogEntityKey",
     "AuditLogKey",
     "AuthorizationKey",

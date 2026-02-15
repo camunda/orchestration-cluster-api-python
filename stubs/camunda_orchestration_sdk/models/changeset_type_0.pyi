@@ -14,9 +14,7 @@ class ChangesetType0:
     candidate_users: list[str] | None | Unset = UNSET
     candidate_groups: list[str] | None | Unset = UNSET
     priority: int | None | Unset = 50
-    additional_properties: dict[str, Any] = _attrs_field(
-            init=False, factory=str_any_dict_factory
-        )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

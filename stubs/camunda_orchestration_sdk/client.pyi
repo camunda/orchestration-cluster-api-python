@@ -191,17 +191,14 @@ from .models.variable_result import VariableResult
 from .models.variable_search_query_result import VariableSearchQueryResult
 from .semantic_types import AuditLogKey, AuthorizationKey, BatchOperationKey, DecisionDefinitionKey, DecisionEvaluationInstanceKey, DecisionInstanceKey, DecisionRequirementsKey, DocumentId, ElementInstanceKey, IncidentKey, JobKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId, UserTaskKey, Username, VariableKey
 from .types import File
+from .types import File
 import datetime
 @define
 class Client:
     raise_on_unexpected_status: bool = field(default=False, kw_only=True)
     _base_url: str = field(alias="base_url")
-    _cookies: dict[str, str] = field(
-            factory=str_str_dict_factory, kw_only=True, alias="cookies"
-        )
-    _headers: dict[str, str] = field(
-            factory=str_str_dict_factory, kw_only=True, alias="headers"
-        )
+    _cookies: dict[str, str] = field(factory=str_str_dict_factory, kw_only=True, alias="cookies")
+    _headers: dict[str, str] = field(factory=str_str_dict_factory, kw_only=True, alias="headers")
     _timeout: httpx.Timeout | None = field(default=None, kw_only=True, alias="timeout")
     _verify_ssl: str | bool | ssl.SSLContext = field(
             default=True, kw_only=True, alias="verify_ssl"
@@ -209,9 +206,7 @@ class Client:
     _follow_redirects: bool = field(
             default=False, kw_only=True, alias="follow_redirects"
         )
-    _httpx_args: dict[str, Any] = field(
-            factory=str_any_dict_factory, kw_only=True, alias="httpx_args"
-        )
+    _httpx_args: dict[str, Any] = field(factory=str_any_dict_factory, kw_only=True, alias="httpx_args")
     _client: httpx.Client | None = field(default=None, init=False)
     _async_client: httpx.AsyncClient | None = field(default=None, init=False)
     def with_headers(self, headers: dict[str, str]) -> "Client": ...
@@ -229,12 +224,8 @@ class Client:
 class AuthenticatedClient:
     raise_on_unexpected_status: bool = field(default=False, kw_only=True)
     _base_url: str = field(alias="base_url")
-    _cookies: dict[str, str] = field(
-            factory=str_str_dict_factory, kw_only=True, alias="cookies"
-        )
-    _headers: dict[str, str] = field(
-            factory=str_str_dict_factory, kw_only=True, alias="headers"
-        )
+    _cookies: dict[str, str] = field(factory=str_str_dict_factory, kw_only=True, alias="cookies")
+    _headers: dict[str, str] = field(factory=str_str_dict_factory, kw_only=True, alias="headers")
     _timeout: httpx.Timeout | None = field(default=None, kw_only=True, alias="timeout")
     _verify_ssl: str | bool | ssl.SSLContext = field(
             default=True, kw_only=True, alias="verify_ssl"
@@ -242,9 +233,7 @@ class AuthenticatedClient:
     _follow_redirects: bool = field(
             default=False, kw_only=True, alias="follow_redirects"
         )
-    _httpx_args: dict[str, Any] = field(
-            factory=str_any_dict_factory, kw_only=True, alias="httpx_args"
-        )
+    _httpx_args: dict[str, Any] = field(factory=str_any_dict_factory, kw_only=True, alias="httpx_args")
     _client: httpx.Client | None = field(default=None, init=False)
     _async_client: httpx.AsyncClient | None = field(default=None, init=False)
     token: str

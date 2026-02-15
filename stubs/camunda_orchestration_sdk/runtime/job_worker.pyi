@@ -9,9 +9,7 @@ from camunda_orchestration_sdk.models.complete_job_data import CompleteJobData
 from camunda_orchestration_sdk import CamundaAsyncClient
 _EFFECTIVE_EXECUTION_STRATEGY = Literal["thread", "process", "async"]
 EXECUTION_STRATEGY = _EFFECTIVE_EXECUTION_STRATEGY | Literal["auto"]
-ActionComplete = Tuple[
-    Literal["complete"], Union[dict[str, Any], CompleteJobData, None]
-]
+ActionComplete = Tuple[Literal["complete"], Union[dict[str, Any], CompleteJobData, None]]
 ActionFail = Tuple[Literal["fail"], Tuple[str, int | None, int]]
 ActionError = Tuple[Literal["error"], Tuple[str, str]]
 ActionSubprocessError = Tuple[Literal["subprocess_error"], str]
@@ -25,9 +23,7 @@ class JobContext(ActivateJobsJobsItem):
     log: SdkLogger = attrs.field(factory=lambda: SdkLogger(NullLogger()))
     @classmethod
     def from_job(cls, job: ActivateJobsJobsItem, logger: SdkLogger | None = None) -> "JobContext": ...
-AsyncJobHandler = Callable[
-    [JobContext], Coroutine[Any, Any, dict[str, Any] | CompleteJobData | None]
-]
+AsyncJobHandler = Callable[[JobContext], Coroutine[Any, Any, dict[str, Any] | CompleteJobData | None]]
 SyncJobHandler = Callable[[JobContext], dict[str, Any] | None]
 JobHandler = AsyncJobHandler | SyncJobHandler | HintedCallable
 @dataclass

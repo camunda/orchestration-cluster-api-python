@@ -42,6 +42,7 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "CAMUNDA_CLIENT_AUTH_CLIENTID",
     "CAMUNDA_CLIENT_AUTH_CLIENTSECRET",
     "CAMUNDA_SDK_LOG_LEVEL",
+
     # Optional OAuth disk cache / tarpit persistence
     "CAMUNDA_TOKEN_CACHE_DIR",
     "CAMUNDA_TOKEN_DISK_CACHE_DISABLE",
@@ -121,9 +122,7 @@ class ConfigurationResolver:
             ("CAMUNDA_CLIENT_ID", "CAMUNDA_CLIENT_AUTH_CLIENTID", None),
             ("CAMUNDA_CLIENT_SECRET", "CAMUNDA_CLIENT_AUTH_CLIENTSECRET", None),
         )
-    def __init__(self, environment: CamundaSdkConfigPartial | Mapping[str, Any], explicit_configuration: CamundaSdkConfigPartial
-        | Mapping[str, Any]
-        | None = None) -> None: ...
+    def __init__(self, environment: CamundaSdkConfigPartial | Mapping[str, Any], explicit_configuration: CamundaSdkConfigPartial | Mapping[str, Any] | None = None) -> None: ...
     def resolve(self) -> ResolvedCamundaSdkConfiguration: ...
     @classmethod
     def _apply_alias_resolution(cls, merged: dict[str, Any], environment: Mapping[str, Any], explicit: Mapping[str, Any] | None) -> dict[str, Any]: ...

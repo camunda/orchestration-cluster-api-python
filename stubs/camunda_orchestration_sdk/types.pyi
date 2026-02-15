@@ -26,15 +26,6 @@ class Response(Generic[T]):
     content: bytes
     headers: MutableMapping[str, str]
     parsed: T | None
-__all__ = [
-    "UNSET",
-    "File",
-    "FileTypes",
-    "RequestFiles",
-    "Response",
-    "Unset",
-    "str_any_dict_factory",
-    "str_str_dict_factory",
-]
+__all__ = ["UNSET", "File", "FileTypes", "RequestFiles", "Response", "Unset", "str_any_dict_factory", "str_str_dict_factory"]
 def str_any_dict_factory() -> "dict[str, Any]": ...
 def str_str_dict_factory() -> dict[str, str]: ...
