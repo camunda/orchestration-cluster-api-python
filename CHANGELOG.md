@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.6 (2026-02-15)
+
+### Bug Fixes
+
+- Fix errors in type declarations
+  ([`0d3a0b6`](https://github.com/camunda/orchestration-cluster-api-python/commit/0d3a0b6234357d9aa8d7af9dee4dc7c231e077fe))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`99c3c8b`](https://github.com/camunda/orchestration-cluster-api-python/commit/99c3c8babb56378564d3d9884dfb5463569c84f5))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`64bd5aa`](https://github.com/camunda/orchestration-cluster-api-python/commit/64bd5aa617eef85c0b318cdc3072880fcad445ec))
+
+### Documentation
+
+- Add note on versioning and breaking changes
+  ([`8abaf62`](https://github.com/camunda/orchestration-cluster-api-python/commit/8abaf627a3c67576da3ad39e1c64b896e9b5db5e))
+
+### Features
+
+- Add typing declarations
+  ([`b65b72f`](https://github.com/camunda/orchestration-cluster-api-python/commit/b65b72fba66cdae24c01ba138a871090b0ef30ef))
+
+
 ## v8.9.0-dev.5 (2026-02-14)
 
 ### Bug Fixes
