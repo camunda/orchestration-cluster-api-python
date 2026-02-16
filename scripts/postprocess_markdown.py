@@ -1,18 +1,57 @@
 #!/usr/bin/env python3
-"""Post-process Sphinx-generated markdown for Docusaurus compatibility."""
+"""Post-process Sphinx-generated markdown for Docusaurus compatibility.
+
+Supports both single-file and multi-file (directory) modes:
+  postprocess_markdown.py <file.md>           # single file (legacy)
+  postprocess_markdown.py <directory/>         # all .md files in dir
+"""
 
 import re
 import sys
 from pathlib import Path
 
+# Mapping from Sphinx output filename (stem) to Docusaurus frontmatter.
+# Files not listed here get auto-generated frontmatter from their H1.
+PAGE_METADATA: dict[str, dict[str, str]] = {
+    "index": {
+        "id": "api-reference",
+        "title": "Python SDK API Reference",
+        "sidebar_label": "Overview",
+    },
+    "client": {
+        "id": "client",
+        "title": "CamundaClient",
+        "sidebar_label": "CamundaClient",
+    },
+    "async-client": {
+        "id": "async-client",
+        "title": "CamundaAsyncClient",
+        "sidebar_label": "CamundaAsyncClient",
+    },
+    "configuration": {
+        "id": "configuration",
+        "title": "Configuration",
+        "sidebar_label": "Configuration",
+    },
+    "runtime": {
+        "id": "runtime",
+        "title": "Runtime",
+        "sidebar_label": "Runtime",
+    },
+    "types": {
+        "id": "types",
+        "title": "Semantic Types",
+        "sidebar_label": "Semantic Types",
+    },
+}
+
 
 def simplify_class_heading(match: re.Match[str]) -> str:
     """Transform class heading: keep simple name, move full signature to code block."""
     hashes = match.group(1)
-    class_name = match.group(2)  # e.g., "AuthenticatedClient" (module prefix removed by Sphinx)
-    params = match.group(3) or ""  # constructor parameters, may be empty
+    class_name = match.group(2)
+    params = match.group(3) or ""
 
-    # Build the full signature for the code block
     if params:
         signature = f"class {class_name}({params})"
     else:
@@ -29,7 +68,6 @@ def simplify_method_heading(match: re.Match[str]) -> str:
     params = match.group(4)
     return_type = match.group(5) or ""
 
-    # Build the full signature for the code block
     async_prefix = "async " if async_marker else ""
     if return_type:
         signature = f"{async_prefix}def {method_name}({params}) -> {return_type}"
@@ -59,16 +97,13 @@ def fix_anchor_links(content: str) -> str:
         link_text = match.group(1)
         anchor = match.group(2)
 
-        # Extract the last component (class or method name)
         parts = anchor.split(".")
         name = parts[-1]
 
-        # Docusaurus lowercases heading anchors
         new_anchor = name.lower()
 
         return f"[{link_text}](#{new_anchor})"
 
-    # Match markdown links with module-prefixed anchors
     content = re.sub(
         r"\[([^\]]+)\]\(#(camunda_orchestration_sdk\.[^)]+)\)",
         fix_anchor,
@@ -89,7 +124,6 @@ def postprocess_markdown(content: str) -> str:
     content = re.sub(r"^#### ", "### ", content, flags=re.MULTILINE)
 
     # Simplify class headings and add signature code block
-    # Pattern: "## *class* module.ClassName(params)" or "## *class* module.ClassName"
     content = re.sub(
         r"^(#{2,3}) \*class\* ([\w.]+)(?:\(([^)]*)\))?$",
         simplify_class_heading,
@@ -98,7 +132,6 @@ def postprocess_markdown(content: str) -> str:
     )
 
     # Simplify method headings and add signature code block
-    # Pattern: "### method_name(...) → ReturnType" or "### *async* method_name(...) → ReturnType"
     content = re.sub(
         r"^(#{2,3}) (\*async\* )?(\w+)\(([^)]*)\)(?: → (.+))?$",
         simplify_method_heading,
@@ -107,7 +140,6 @@ def postprocess_markdown(content: str) -> str:
     )
 
     # Simplify property headings and add type code block
-    # Pattern: "### property_name *: type*"
     content = re.sub(
         r"^(#{2,3}) (\w+) \*: (.+)\*$",
         simplify_property_heading,
@@ -133,38 +165,65 @@ def postprocess_markdown(content: str) -> str:
     # Fix broken admonition syntax (:: at end of :::info blocks)
     content = re.sub(r"^::\s*$", ":::", content, flags=re.MULTILINE)
 
+    # Rewrite Sphinx cross-page links for Docusaurus.
+    # Sphinx emits links like [CamundaClient](client.md#...) which work as-is,
+    # but also toctree links that use .md extensions. Keep .md extensions since
+    # Docusaurus resolves them correctly when slug-based routing is configured.
+
     return content
 
 
-def add_frontmatter(content: str) -> str:
-    """Add Docusaurus frontmatter to the beginning of the content."""
-    frontmatter = """---
-id: api-reference
-title: Python SDK API Reference
-sidebar_label: API Reference
----
+def add_frontmatter(content: str, stem: str) -> str:
+    """Add Docusaurus frontmatter. Uses PAGE_METADATA if available, else derives from the H1."""
+    if stem in PAGE_METADATA:
+        meta = PAGE_METADATA[stem]
+    else:
+        # Derive from the first H1 heading in the content
+        h1_match = re.search(r"^#\s+(.+)$", content, re.MULTILINE)
+        title = h1_match.group(1).strip() if h1_match else stem.replace("-", " ").title()
+        meta = {"id": stem, "title": title, "sidebar_label": title}
 
-"""
-    return frontmatter + content
+    lines = ["---"]
+    for key, value in meta.items():
+        lines.append(f"{key}: {value}")
+    lines.append("---")
+    lines.append("")
+    lines.append("")
+
+    return "\n".join(lines) + content
+
+
+def process_file(path: Path) -> None:
+    """Post-process a single markdown file in-place."""
+    content = path.read_text()
+    content = postprocess_markdown(content)
+    content = add_frontmatter(content, stem=path.stem)
+    path.write_text(content)
 
 
 def main() -> None:
     if len(sys.argv) < 2:
         print(
-            "Usage: postprocess_markdown.py <input_file> [output_file]",
+            "Usage: postprocess_markdown.py <file_or_directory>",
             file=sys.stderr,
         )
         sys.exit(1)
 
-    input_path = Path(sys.argv[1])
-    output_path = Path(sys.argv[2]) if len(sys.argv) > 2 else input_path
+    target = Path(sys.argv[1])
 
-    content = input_path.read_text()
-    content = postprocess_markdown(content)
-    content = add_frontmatter(content)
-    output_path.write_text(content)
-
-    print(f"Processed: {input_path} -> {output_path}")
+    if target.is_dir():
+        md_files = sorted(target.glob("*.md"))
+        for md_file in md_files:
+            process_file(md_file)
+            print(f"Processed: {md_file}")
+        print(f"Post-processed {len(md_files)} markdown files in {target}")
+    else:
+        output_path = Path(sys.argv[2]) if len(sys.argv) > 2 else target
+        content = target.read_text()
+        content = postprocess_markdown(content)
+        content = add_frontmatter(content, stem=target.stem)
+        output_path.write_text(content)
+        print(f"Processed: {target} -> {output_path}")
 
 
 if __name__ == "__main__":

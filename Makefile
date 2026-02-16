@@ -1,4 +1,4 @@
-.PHONY: install generate clean test itest docs-api bundle-spec typecheck-examples clean-docs preview-docs
+.PHONY: install generate clean test itest docs-api docs-md bundle-spec typecheck-examples clean-docs preview-docs
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
@@ -57,14 +57,21 @@ docs-api:
 	# Build HTML for GitHub Pages preview
 	PYTHONPATH=./generated uv run sphinx-build -M html docs-sphinx public
 	touch ./public/html/.nojekyll
-	# Build Markdown for Docusaurus integration
+	# Build multi-page Markdown for Docusaurus integration
 	PYTHONPATH=./generated uv run sphinx-build -M markdown docs-sphinx public
-	# Post-process markdown for Docusaurus compatibility
-	uv run python scripts/postprocess_markdown.py ./public/markdown/index.md
+	# Post-process all markdown files for Docusaurus compatibility
+	uv run python scripts/postprocess_markdown.py ./public/markdown/
 	# Copy markdown into HTML folder for GitHub Pages access at /markdown/
 	cp -R ./public/markdown ./public/html/markdown
 	@echo "HTML docs:  ./public/html  (GitHub Pages root)"
 	@echo "Markdown:   ./public/html/markdown  (GitHub Pages /markdown/)"
+
+# Generate only the Docusaurus-ready markdown (no HTML, used by CI sync)
+docs-md:
+	rm -rf public/markdown
+	PYTHONPATH=./generated uv run sphinx-build -M markdown docs-sphinx public
+	uv run python scripts/postprocess_markdown.py ./public/markdown/
+	@echo "Markdown docs: ./public/markdown/"
 
 
 config-reference:
