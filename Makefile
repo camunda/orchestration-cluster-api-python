@@ -61,6 +61,8 @@ docs-api:
 	PYTHONPATH=./generated uv run sphinx-build -M markdown docs-sphinx public
 	# Post-process all markdown files for Docusaurus compatibility
 	uv run python scripts/postprocess_markdown.py ./public/markdown/
+	# Generate landing page from README
+	uv run python scripts/generate_landing_page.py
 	# Copy markdown into HTML folder for GitHub Pages access at /markdown/
 	cp -R ./public/markdown ./public/html/markdown
 	@echo "HTML docs:  ./public/html  (GitHub Pages root)"
@@ -71,6 +73,7 @@ docs-md:
 	rm -rf public/markdown
 	PYTHONPATH=./generated uv run sphinx-build -M markdown docs-sphinx public
 	uv run python scripts/postprocess_markdown.py ./public/markdown/
+	uv run python scripts/generate_landing_page.py
 	@echo "Markdown docs: ./public/markdown/"
 
 

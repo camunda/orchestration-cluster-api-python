@@ -1,7 +1,9 @@
 ## Camunda Orchestration Cluster API – Python SDK
 
+<!-- docs:cut:start -->
 [![PyPI - Version](https://img.shields.io/pypi/v/camunda-orchestration-sdk)](https://pypi.org/project/camunda-orchestration-sdk/)
 [![Documentation](https://img.shields.io/badge/docs-API%20Reference-blue)](https://camunda.github.io/orchestration-cluster-api-python/)
+<!-- docs:cut:end -->
 
 A fully typed Python client for the [Camunda 8 Orchestration Cluster REST API](https://docs.camunda.io/docs/apis-tools/camunda-api-rest/camunda-api-rest-overview/). Generated from the upstream OpenAPI spec with hand-written runtime infrastructure for authentication, configuration, and job workers.
 
@@ -172,7 +174,7 @@ from camunda_orchestration_sdk import CamundaClient
 client = CamundaClient(configuration={"CAMUNDA_LOAD_ENVFILE": "true"})
 ```
 
-### Authentication
+## Authentication
 
 The SDK supports three authentication strategies, controlled by `CAMUNDA_AUTH_STRATEGY`:
 
@@ -182,7 +184,7 @@ The SDK supports three authentication strategies, controlled by `CAMUNDA_AUTH_ST
 | `OAUTH`  | Camunda SaaS or any OAuth 2.0 Client Credentials endpoint |
 | `BASIC`  | Self-Managed Camunda with Basic auth (username/password) |
 
-#### Auto-detection
+### Auto-detection
 
 If you omit `CAMUNDA_AUTH_STRATEGY`, the SDK infers it from the credentials you provide:
 
@@ -191,7 +193,7 @@ If you omit `CAMUNDA_AUTH_STRATEGY`, the SDK infers it from the credentials you 
 - No credentials → **NONE**
 - Both OAuth and Basic credentials present → **error** (set `CAMUNDA_AUTH_STRATEGY` explicitly)
 
-#### OAuth 2.0
+### OAuth 2.0
 
 ```bash
 CAMUNDA_REST_ADDRESS=https://cluster.example/v2
@@ -203,7 +205,7 @@ CAMUNDA_CLIENT_SECRET=your-client-secret
 # CAMUNDA_TOKEN_AUDIENCE=zeebe.camunda.io
 ```
 
-#### Basic authentication
+### Basic authentication
 
 ```bash
 CAMUNDA_REST_ADDRESS=http://localhost:8080/v2
@@ -227,7 +229,7 @@ client = CamundaClient(
 )
 ```
 
-### Configuration reference
+## Configuration reference
 
 All `CAMUNDA_*` environment variables recognised by the SDK. These can also be passed as keys in the `configuration={...}` dict.
 
@@ -253,7 +255,7 @@ All `CAMUNDA_*` environment variables recognised by the SDK. These can also be p
 
 <!-- END_CONFIG_REFERENCE -->
 
-### Deploying Resources
+## Deploying Resources
 
 Deploy BPMN, DMN, or Form files from disk:
 
@@ -268,7 +270,7 @@ with CamundaClient() as client:
         print(f"  Process: {process.process_definition_id} (key: {process.process_definition_key})")
 ```
 
-### Creating a Process Instance
+## Creating a Process Instance
 
 The recommended pattern is to obtain keys from a prior API response (e.g. a deployment) and pass them directly — no manual lifting needed:
 
@@ -302,17 +304,17 @@ with CamundaClient() as client:
     print(f"Process instance key: {result.process_instance_key}")
 ```
 
-### Semantic Types
+## Semantic Types
 
 The SDK uses Python `NewType` wrappers for identifiers like `ProcessDefinitionKey`, `ProcessInstanceKey`, `JobKey`, `TenantId`, etc. These are defined in `camunda_orchestration_sdk.semantic_types` and re-exported from the top-level package.
 
-#### Why they exist
+### Why they exist
 
 Camunda's API has many operations that accept string keys — process definition keys, process instance keys, incident keys, job keys, and so on. Without semantic types, it is easy to accidentally pass a process instance key where a process definition key is expected, or mix up a job key with an incident key. The type checker cannot help you if everything is `str`.
 
 Semantic types make these identifiers **distinct at the type level**. Pyright (and other type checkers) will flag an error if you pass a `ProcessInstanceKey` where a `ProcessDefinitionKey` is expected, catching bugs before runtime.
 
-#### How to use them
+### How to use them
 
 Treat semantic types as **opaque identifiers** — receive them from API responses and pass them to subsequent API calls without inspecting or transforming the underlying value:
 
@@ -336,7 +338,7 @@ instance_key = result.process_instance_key  # ProcessInstanceKey
 client.cancel_process_instance(process_instance_key=instance_key)
 ```
 
-#### Serialising in and out of the type system
+### Serialising in and out of the type system
 
 Semantic types are `NewType` wrappers over `str`, so they serialise transparently:
 
@@ -361,7 +363,7 @@ result = client.create_process_instance(
 
 The available semantic types include: `ProcessDefinitionKey`, `ProcessDefinitionId`, `ProcessInstanceKey`, `JobKey`, `IncidentKey`, `DecisionDefinitionKey`, `DecisionDefinitionId`, `DeploymentKey`, `UserTaskKey`, `MessageKey`, `SignalKey`, `TenantId`, `ElementId`, `FormKey`, and others. All are importable from `camunda_orchestration_sdk` or `camunda_orchestration_sdk.semantic_types`.
 
-### Job Workers
+## Job Workers
 
 Job workers long-poll for available jobs, execute a callback, and automatically complete or fail the job based on the return value. Workers are available on `CamundaAsyncClient`.
 
@@ -390,7 +392,7 @@ async def main():
 asyncio.run(main())
 ```
 
-#### Job Logger
+### Job Logger
 
 Each `JobContext` exposes a `log` property — a scoped logger automatically bound with the job's context (job type, worker name, and job key). Use it inside your handler for structured, per-job log output:
 
@@ -406,7 +408,7 @@ The job logger inherits the SDK's logger configuration (loguru by default, or wh
 
 > **Note:** When using the `"process"` execution strategy, the job logger silently degrades to a no-op (`NullLogger`) because loggers cannot be pickled across process boundaries. The worker's main-process logger still records all job lifecycle events (activation, completion, failure, errors). If you need per-job logging from a process-isolated handler, configure a logger inside the handler itself.
 
-#### Execution Strategies
+### Execution Strategies
 
 Job workers support multiple execution strategies to match your workload type. Set `execution_strategy` in `WorkerConfig` or let the SDK auto-detect.
 
@@ -441,7 +443,7 @@ config = WorkerConfig(
 - `job.log` degrades to a silent no-op logger in the child process (see [Job Logger](#job-logger)).
 - There is additional overhead per job from serialisation and inter-process communication.
 
-#### Worker Configuration
+### Worker Configuration
 
 `WorkerConfig` supports:
 
@@ -455,7 +457,7 @@ config = WorkerConfig(
 | `fetch_variables` | `None` | List of variable names to fetch (None = all) |
 | `worker_name` | `"camunda-python-sdk-worker"` | Identifier for this worker in Camunda |
 
-### Error Handling
+## Error Handling
 
 The SDK raises typed exceptions for API errors. Each operation has specific exception classes for each HTTP error status code:
 
@@ -473,11 +475,11 @@ with CamundaClient() as client:
         print(f"Bad request: {e}")
 ```
 
-### Logging
+## Logging
 
 By default the SDK logs via [loguru](https://github.com/Delgan/loguru). You can inject any logger that exposes `debug`, `info`, `warning`, and `error` methods — including Python's built-in `logging.Logger`.
 
-#### Using the default logger (loguru)
+### Using the default logger (loguru)
 
 No configuration needed. Control verbosity with `CAMUNDA_SDK_LOG_LEVEL` or loguru's own `LOGURU_LEVEL` environment variable:
 
@@ -485,7 +487,7 @@ No configuration needed. Control verbosity with `CAMUNDA_SDK_LOG_LEVEL` or logur
 CAMUNDA_SDK_LOG_LEVEL=debug python your_script.py
 ```
 
-#### Injecting a custom logger
+### Injecting a custom logger
 
 Pass a `logger=` argument to `CamundaClient` or `CamundaAsyncClient`. The logger is forwarded to all internal components (auth providers, HTTP hooks, job workers).
 
@@ -519,7 +521,7 @@ class MyLogger:
 client = CamundaClient(logger=MyLogger())
 ```
 
-#### Disabling logging
+### Disabling logging
 
 Pass an instance of `NullLogger` to silence all SDK output:
 
@@ -529,12 +531,14 @@ from camunda_orchestration_sdk import CamundaClient, NullLogger
 client = CamundaClient(logger=NullLogger())
 ```
 
-### Contributing
+<!-- docs:cut:start -->
+## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and generation workflow. See [MAINTAINER.md](MAINTAINER.md) for architecture and pipeline documentation.
 
-### License
+## License
 
 Apache-2.0
+<!-- docs:cut:end -->
 
 

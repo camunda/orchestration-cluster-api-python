@@ -14,32 +14,26 @@ from pathlib import Path
 # Files not listed here get auto-generated frontmatter from their H1.
 PAGE_METADATA: dict[str, dict[str, str]] = {
     "index": {
-        "id": "api-reference",
         "title": "Python SDK API Reference",
         "sidebar_label": "Overview",
     },
     "client": {
-        "id": "client",
         "title": "CamundaClient",
         "sidebar_label": "CamundaClient",
     },
     "async-client": {
-        "id": "async-client",
         "title": "CamundaAsyncClient",
         "sidebar_label": "CamundaAsyncClient",
     },
     "configuration": {
-        "id": "configuration",
         "title": "Configuration",
         "sidebar_label": "Configuration",
     },
     "runtime": {
-        "id": "runtime",
         "title": "Runtime",
         "sidebar_label": "Runtime",
     },
     "types": {
-        "id": "types",
         "title": "Semantic Types",
         "sidebar_label": "Semantic Types",
     },
@@ -147,13 +141,8 @@ def postprocess_markdown(content: str) -> str:
         flags=re.MULTILINE,
     )
 
-    # Escape <...> and {...} to prevent MDX parsing as JSX (but not inside code blocks)
-    parts = re.split(r"(```[\s\S]*?```)", content)
-    for i, part in enumerate(parts):
-        if not part.startswith("```"):
-            parts[i] = re.sub(r"<([a-zA-Z_][^>]*)>", r"`<\1>`", part)
-            parts[i] = re.sub(r"\{([a-zA-Z_][^}]*)\}", r"`{\1}`", parts[i])
-    content = "".join(parts)
+    # No longer need to escape <...> or {...} for MDX since we use
+    # mdx.format: md in frontmatter (CommonMark mode).
 
     # Remove malformed code blocks with :param/:type (RST leftovers)
     content = re.sub(r"^```default\s*\n", "", content, flags=re.MULTILINE)
@@ -175,17 +164,23 @@ def postprocess_markdown(content: str) -> str:
 
 def add_frontmatter(content: str, stem: str) -> str:
     """Add Docusaurus frontmatter. Uses PAGE_METADATA if available, else derives from the H1."""
+    # Skip if frontmatter already exists
+    if content.startswith("---\n"):
+        return content
+
     if stem in PAGE_METADATA:
         meta = PAGE_METADATA[stem]
     else:
         # Derive from the first H1 heading in the content
         h1_match = re.search(r"^#\s+(.+)$", content, re.MULTILINE)
         title = h1_match.group(1).strip() if h1_match else stem.replace("-", " ").title()
-        meta = {"id": stem, "title": title, "sidebar_label": title}
+        meta = {"title": title, "sidebar_label": title}
 
     lines = ["---"]
     for key, value in meta.items():
         lines.append(f"{key}: {value}")
+    lines.append("mdx:")
+    lines.append("  format: md")
     lines.append("---")
     lines.append("")
     lines.append("")
