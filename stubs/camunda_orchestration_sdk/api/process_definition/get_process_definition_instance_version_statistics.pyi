@@ -2,13 +2,49 @@ from typing import Any
 import httpx
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.process_definition_instance_version_statistics_query import ProcessDefinitionInstanceVersionStatisticsQuery
-from ...models.process_definition_instance_version_statistics_query_result import ProcessDefinitionInstanceVersionStatisticsQueryResult
+from ...models.process_definition_instance_version_statistics_query import (
+    ProcessDefinitionInstanceVersionStatisticsQuery,
+)
+from ...models.process_definition_instance_version_statistics_query_result import (
+    ProcessDefinitionInstanceVersionStatisticsQueryResult,
+)
 from ...types import UNSET, Response, Unset
-def _get_kwargs(process_definition_id: str, body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET) -> dict[str, Any]: ...
-def _parse_response(client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult | None: ...
-def _build_response(client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]: ...
-def sync_detailed(process_definition_id: str, client: AuthenticatedClient | Client, body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET) -> Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]: ...
-def sync(process_definition_id: str, client: AuthenticatedClient | Client, body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET, **kwargs: Any) -> ProcessDefinitionInstanceVersionStatisticsQueryResult: ...
-async def asyncio_detailed(process_definition_id: str, client: AuthenticatedClient | Client, body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET) -> Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]: ...
-async def asyncio(process_definition_id: str, client: AuthenticatedClient | Client, body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET, **kwargs: Any) -> ProcessDefinitionInstanceVersionStatisticsQueryResult: ...
+
+def _get_kwargs(
+    process_definition_id: str,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
+) -> dict[str, Any]: ...
+def _parse_response(
+    client: AuthenticatedClient | Client, response: httpx.Response
+) -> ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult | None: ...
+def _build_response(
+    client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[
+    ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult
+]: ...
+def sync_detailed(
+    process_definition_id: str,
+    client: AuthenticatedClient | Client,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
+) -> Response[
+    ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult
+]: ...
+def sync(
+    process_definition_id: str,
+    client: AuthenticatedClient | Client,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
+    **kwargs: Any,
+) -> ProcessDefinitionInstanceVersionStatisticsQueryResult: ...
+async def asyncio_detailed(
+    process_definition_id: str,
+    client: AuthenticatedClient | Client,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
+) -> Response[
+    ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult
+]: ...
+async def asyncio(
+    process_definition_id: str,
+    client: AuthenticatedClient | Client,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
+    **kwargs: Any,
+) -> ProcessDefinitionInstanceVersionStatisticsQueryResult: ...

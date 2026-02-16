@@ -46,7 +46,7 @@ def _fix_parse_isinstance_guard(content: str) -> str:
     """Insert ``data = cast(dict[str, Any], data)`` after isinstance guards."""
     if "raise TypeError()" not in content:
         return content
-    if 'data = cast(dict[str, Any], data)' in content:
+    if "data = cast(dict[str, Any], data)" in content:
         return content
 
     def _insert_cast(match: re.Match[str]) -> str:
@@ -132,7 +132,7 @@ def _fix_todict_list_accumulators(content: str) -> str:
         method = match.group(3)
         # Only skip if this variable was already declared with a type annotation
         # INSIDE the to_dict method (after to_dict_pos), not as a class attribute
-        after_todict = content[todict_pos:match.start()]
+        after_todict = content[todict_pos : match.start()]
         if re.search(rf"\b{re.escape(var)}: list\[", after_todict):
             return match.group(0)
         if method == "to_dict":
@@ -151,7 +151,7 @@ def _fix_todict_list_accumulators(content: str) -> str:
     def _annotate_value(match: re.Match[str]) -> str:
         indent = match.group(1)
         var = match.group(2)
-        after_todict = content[todict_pos:match.start()]
+        after_todict = content[todict_pos : match.start()]
         if re.search(rf"\b{re.escape(var)}: list\[", after_todict):
             return match.group(0)
         return (
@@ -193,10 +193,8 @@ def _fix_api_parse_response_lists(content: str) -> str:
         var = m.group(2)  # e.g., "response_200"
         indent = m.group(1)
         # Look for the from_dict call that uses this var's items
-        after = content[m.end():]
-        from_dict_m = re.search(
-            rf"{var}_item = (\w+)\.from_dict\(", after
-        )
+        after = content[m.end() :]
+        from_dict_m = re.search(rf"{var}_item = (\w+)\.from_dict\(", after)
         if from_dict_m:
             model_name = from_dict_m.group(1)
             old = f"{indent}{var} = []"
@@ -236,22 +234,22 @@ _SINGLE_VARIANT_ISINSTANCE_RE = re.compile(
 
 def _fix_single_variant_isinstance(content: str) -> str:
     """Replace single-variant isinstance guards with direct .to_dict() calls.
-    
+
     Also removes the now-unused import of the Type0 class.
     """
     removed_types: set[str] = set()
 
     def _simplify(match: re.Match[str]) -> str:
         indent = match.group(1)
-        var = match.group(2)          # e.g., runtime_instructions_item
-        data_var = match.group(3)     # e.g., runtime_instructions_item_data
-        type_name = match.group(4)    # e.g., ProcesscreationbyidRuntimeInstructionsItemType0
-        list_var = match.group(5)     # e.g., runtime_instructions
+        var = match.group(2)  # e.g., runtime_instructions_item
+        data_var = match.group(3)  # e.g., runtime_instructions_item_data
+        type_name = match.group(
+            4
+        )  # e.g., ProcesscreationbyidRuntimeInstructionsItemType0
+        list_var = match.group(5)  # e.g., runtime_instructions
         removed_types.add(type_name)
         return (
-            f"{indent}{var} = {data_var}.to_dict()\n"
-            f"\n"
-            f"{indent}{list_var}.append({var})"
+            f"{indent}{var} = {data_var}.to_dict()\n\n{indent}{list_var}.append({var})"
         )
 
     content = _SINGLE_VARIANT_ISINSTANCE_RE.sub(_simplify, content)
@@ -273,7 +271,7 @@ def _fix_single_variant_isinstance(content: str) -> str:
         # Process in reverse order so positions stay valid.
         for match in reversed(import_blocks):
             # Strip JUST this one import block and count remaining references
-            stripped = content[:match.start()] + content[match.end():]
+            stripped = content[: match.start()] + content[match.end() :]
             remaining_refs = len(re.findall(rf"\b{re.escape(type_name)}\b", stripped))
             if remaining_refs == 0:
                 # No more references at all — safe to remove
@@ -282,18 +280,18 @@ def _fix_single_variant_isinstance(content: str) -> str:
                 # Check if this specific import block is inside a function
                 # where the type is no longer used (e.g. to_dict after
                 # isinstance removal).  Find the enclosing def.
-                before = content[:match.start()]
+                before = content[: match.start()]
                 last_def = before.rfind("\n    def ")
                 if last_def == -1:
                     continue
                 # Find the end of this function (next def at same indent or EOF)
                 next_def = content.find("\n    def ", match.end())
                 func_end = next_def if next_def != -1 else len(content)
-                func_body = content[match.end():func_end]
+                func_body = content[match.end() : func_end]
                 # If the type name doesn't appear in the rest of this function,
                 # the import is unused locally — remove it.
                 if not re.search(rf"\b{re.escape(type_name)}\b", func_body):
-                    content = content[:match.start()] + content[match.end():]
+                    content = content[: match.start()] + content[match.end() :]
 
     return content
 
@@ -338,6 +336,7 @@ def _fix_tag_set_typing(content: str) -> str:
 # Ensure typing imports
 # ---------------------------------------------------------------------------
 
+
 def _ensure_typing_imports(content: str, needs_cast: bool) -> str:
     """Ensure needed typing imports are present.
 
@@ -373,6 +372,7 @@ def _ensure_typing_imports(content: str, needs_cast: bool) -> str:
 # Entry point
 # ---------------------------------------------------------------------------
 
+
 def run(context: dict[str, str]) -> None:
     out_dir = Path(context["out_dir"])
     models_dir = out_dir / "camunda_orchestration_sdk" / "models"
@@ -393,7 +393,10 @@ def run(context: dict[str, str]) -> None:
         content = model_file.read_text(encoding="utf-8")
         original = content
 
-        added_isinstance_cast = "raise TypeError()" in content and "cast(dict[str, Any], data)" not in content
+        added_isinstance_cast = (
+            "raise TypeError()" in content
+            and "cast(dict[str, Any], data)" not in content
+        )
         content = _fix_parse_isinstance_guard(content)
         content = _fix_list_accumulators(content)
         content = _fix_todict_list_accumulators(content)
@@ -410,13 +413,18 @@ def run(context: dict[str, str]) -> None:
                 patched_cast += 1
             if ": list[" in content and ": list[" not in original:
                 patched_list += 1
-            if "list[dict[str, Any]]" in content and "list[dict[str, Any]]" not in original:
+            if (
+                "list[dict[str, Any]]" in content
+                and "list[dict[str, Any]]" not in original
+            ):
                 patched_todict += 1
             if original != content and _SINGLE_VARIANT_ISINSTANCE_RE.search(original):
                 patched_isinstance += 1
 
-    print(f"Fixed isinstance→cast in {patched_cast} files, from_dict list typing in {patched_list} files, "
-          f"to_dict list typing in {patched_todict} files, single-variant isinstance in {patched_isinstance} files")
+    print(
+        f"Fixed isinstance→cast in {patched_cast} files, from_dict list typing in {patched_list} files, "
+        f"to_dict list typing in {patched_todict} files, single-variant isinstance in {patched_isinstance} files"
+    )
 
     # Also fix API files (Pattern 4)
     if api_dir.exists():

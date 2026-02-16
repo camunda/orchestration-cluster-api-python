@@ -1,4 +1,5 @@
 from enum import Enum
+
 class OperationTypeExactMatch(str, Enum):
     ASSIGN = "ASSIGN"
     CANCEL = "CANCEL"

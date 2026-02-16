@@ -4,15 +4,21 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from ..models.decision_definition_search_query_sort_request_field import DecisionDefinitionSearchQuerySortRequestField
+from ..models.decision_definition_search_query_sort_request_field import (
+    DecisionDefinitionSearchQuerySortRequestField,
+)
 from ..models.sort_order_enum import SortOrderEnum
 from ..types import UNSET, Unset, str_any_dict_factory
+
 T = TypeVar("T", bound="DecisionDefinitionSearchQuerySortRequest")
+
 @_attrs_define
 class DecisionDefinitionSearchQuerySortRequest:
     field: DecisionDefinitionSearchQuerySortRequestField
     order: SortOrderEnum | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

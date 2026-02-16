@@ -7,6 +7,7 @@ pytestmark = pytest.mark.skipif(
     reason="Integration tests are disabled unless CAMUNDA_INTEGRATION=1",
 )
 
+
 def _make_client():
     return CamundaAsyncClient()
 
@@ -19,5 +20,8 @@ async def test_get_topology_smoke():
         assert resp is not None
         # Basic shape checks if available
         # TopologyResponse fields are spec-defined; we only smoke-check here
-        assert hasattr(resp, "brokers") or hasattr(resp, "clusterSize") or hasattr(resp, "gatewayVersion")
-
+        assert (
+            hasattr(resp, "brokers")
+            or hasattr(resp, "clusterSize")
+            or hasattr(resp, "gatewayVersion")
+        )

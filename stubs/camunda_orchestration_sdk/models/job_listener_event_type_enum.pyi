@@ -1,4 +1,5 @@
 from enum import Enum
+
 class JobListenerEventTypeEnum(str, Enum):
     ASSIGNING = "ASSIGNING"
     CANCELING = "CANCELING"

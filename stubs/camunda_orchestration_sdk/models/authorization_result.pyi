@@ -9,7 +9,9 @@ from ..models.authorization_result_resource_type import AuthorizationResultResou
 from ..models.owner_type_enum import OwnerTypeEnum
 from ..models.permission_type_enum import PermissionTypeEnum
 from ..types import UNSET, Unset, str_any_dict_factory
+
 T = TypeVar("T", bound="AuthorizationResult")
+
 @_attrs_define
 class AuthorizationResult:
     owner_id: str | Unset = UNSET
@@ -19,7 +21,9 @@ class AuthorizationResult:
     resource_property_name: str | Unset = UNSET
     permission_types: list[PermissionTypeEnum] | Unset = UNSET
     authorization_key: AuthorizationKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

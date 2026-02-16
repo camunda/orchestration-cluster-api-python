@@ -7,13 +7,13 @@ import yaml
 
 
 def _snake(name: str) -> str:
-    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-    s2 = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1)
+    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
+    s2 = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1)
     return s2.replace("__", "_").lower()
 
 
 def _is_primitive_alias(name: str, schema: Dict[str, Any]) -> bool:
-    if not isinstance(schema, dict): # type: ignore
+    if not isinstance(schema, dict):  # type: ignore
         return False
     t = schema.get("type")
     if t in {"string", "integer", "number", "boolean"}:
@@ -25,7 +25,9 @@ def _is_primitive_alias(name: str, schema: Dict[str, Any]) -> bool:
     return False
 
 
-def _extract_constraints(schema: Dict[str, Any], schemas: Dict[str, Any]) -> Dict[str, Any]:
+def _extract_constraints(
+    schema: Dict[str, Any], schemas: Dict[str, Any]
+) -> Dict[str, Any]:
     constraints: Dict[str, Any] = {}
 
     if "$ref" in schema:
@@ -90,34 +92,50 @@ def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -
         func_name = _snake(f"lift_{alias_name}")
         func.append(f"def {func_name}(value: Any) -> {alias_name}:\n")
         func.append(f"\tif not isinstance(value, {py_base}):\n")
-        func.append(f"\t\traise TypeError(f\"{alias_name} must be {py_base}, got {{type(value).__name__}}: {{value!r}}\")\n")
+        func.append(
+            f'\t\traise TypeError(f"{alias_name} must be {py_base}, got {{type(value).__name__}}: {{value!r}}")\n'
+        )
         pattern = constraints.get("pattern")
         if pattern and isinstance(pattern, str):
             # Use fullmatch to validate the whole value
             func.append(f"\tif re.fullmatch(r{pattern!r}, value) is None:\n")
-            func.append(f"\t\traise ValueError(f\"{alias_name} does not match pattern {pattern!r}, got {{value!r}}\")\n")
+            func.append(
+                f'\t\traise ValueError(f"{alias_name} does not match pattern {pattern!r}, got {{value!r}}")\n'
+            )
         if "minLength" in constraints:
             func.append(f"\tif len(value) < {int(constraints['minLength'])}:\n")
-            func.append(f"\t\traise ValueError(f\"{alias_name} shorter than minLength {int(constraints['minLength'])}, got {{value!r}}\")\n")
+            func.append(
+                f'\t\traise ValueError(f"{alias_name} shorter than minLength {int(constraints["minLength"])}, got {{value!r}}")\n'
+            )
         if "maxLength" in constraints:
             func.append(f"\tif len(value) > {int(constraints['maxLength'])}:\n")
-            func.append(f"\t\traise ValueError(f\"{alias_name} longer than maxLength {int(constraints['maxLength'])}, got {{value!r}}\")\n")
+            func.append(
+                f'\t\traise ValueError(f"{alias_name} longer than maxLength {int(constraints["maxLength"])}, got {{value!r}}")\n'
+            )
         if base in {"integer", "number"}:
             if "minimum" in constraints:
                 func.append(f"\tif value < {constraints['minimum']}:\n")
-                func.append(f"\t\traise ValueError(f\"{alias_name} smaller than minimum {constraints['minimum']}, got {{value!r}}\")\n")
+                func.append(
+                    f'\t\traise ValueError(f"{alias_name} smaller than minimum {constraints["minimum"]}, got {{value!r}}")\n'
+                )
             if "maximum" in constraints:
                 func.append(f"\tif value > {constraints['maximum']}:\n")
-                func.append(f"\t\traise ValueError(f\"{alias_name} larger than maximum {constraints['maximum']}, got {{value!r}}\")\n")
+                func.append(
+                    f'\t\traise ValueError(f"{alias_name} larger than maximum {constraints["maximum"]}, got {{value!r}}")\n'
+                )
         if "enum" in constraints and isinstance(constraints["enum"], list):
             enum_vals = constraints["enum"]
             func.append(f"\tif value not in {enum_vals!r}:\n")
-            func.append(f"\t\traise ValueError(f\"{alias_name} must be one of {enum_vals}, got {{value!r}}\")\n")
+            func.append(
+                f'\t\traise ValueError(f"{alias_name} must be one of {enum_vals}, got {{value!r}}")\n'
+            )
         func.append(f"\treturn {alias_name}(value)\n\n")
 
         # try_lift variant returning (ok, value_or_error)
         try_func_name = _snake(f"try_lift_{alias_name}")
-        func.append(f"def {try_func_name}(value: Any) -> Tuple[bool, {alias_name} | Exception]:\n")
+        func.append(
+            f"def {try_func_name}(value: Any) -> Tuple[bool, {alias_name} | Exception]:\n"
+        )
         func.append("\ttry:\n")
         func.append(f"\t\treturn True, {func_name}(value)\n")
         func.append("\texcept Exception as e:\n")
@@ -139,15 +157,22 @@ def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -
         init_txt = init_txt.replace(wildcard_line, "")
         # Add explicit import
         export_names = ", ".join(sorted(all_exported_names))
-        explicit_line = f"from camunda_orchestration_sdk.semantic_types import {export_names}\n"
+        explicit_line = (
+            f"from camunda_orchestration_sdk.semantic_types import {export_names}\n"
+        )
         if explicit_line not in init_txt:
             init_txt += "\n" + explicit_line
 
         # Extend __all__ to include the semantic type names so pyright
         # considers them intentional re-exports.
         import re as _re
+
         # Support both tuple (__all__ = (...)) and list (__all__: list[str] = [...]) formats
-        all_match = _re.search(r'__all__(?::\s*list\[str\])?\s*=\s*[\(\[]([^\)\]]*)[\)\]]', init_txt, _re.DOTALL)
+        all_match = _re.search(
+            r"__all__(?::\s*list\[str\])?\s*=\s*[\(\[]([^\)\]]*)[\)\]]",
+            init_txt,
+            _re.DOTALL,
+        )
         if all_match:
             existing_all = all_match.group(0)
             is_list = existing_all.rstrip().endswith("]")
@@ -166,6 +191,7 @@ def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -
 def _load_spec_file(path: Path) -> Dict[str, Any] | None:
     """Load a spec file (YAML or JSON)."""
     import json as _json
+
     try:
         with open(path, "r", encoding="utf-8") as f:
             if path.suffix == ".json":
@@ -179,6 +205,7 @@ def _load_spec_file(path: Path) -> Dict[str, Any] | None:
 def _aliases_from_metadata(metadata_path: Path) -> Dict[str, Dict[str, Any]]:
     """Build aliases dict from spec-metadata.json semanticKeys."""
     import json as _json
+
     with open(metadata_path, "r", encoding="utf-8") as f:
         meta: Dict[str, Any] = _json.load(f)
     aliases: Dict[str, Dict[str, Any]] = {}
@@ -233,7 +260,7 @@ def run(context: dict[str, str]) -> None:
 
     aliases: Dict[str, Dict[str, Any]] = {}
     if metadata_path and metadata_path.exists():
-        print(f"Using spec-metadata.json for semantic types")
+        print("Using spec-metadata.json for semantic types")
         aliases = _aliases_from_metadata(metadata_path)
     else:
         # Fallback: scan spec
@@ -244,5 +271,3 @@ def run(context: dict[str, str]) -> None:
 
     if aliases:
         _emit_semantic_types_py(out_dir, aliases)
-
-

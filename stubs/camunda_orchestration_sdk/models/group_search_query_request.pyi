@@ -10,18 +10,20 @@ from ..models.group_search_query_request_filter import GroupSearchQueryRequestFi
 from ..models.group_search_query_sort_request import GroupSearchQuerySortRequest
 from ..models.limit_based_pagination import LimitBasedPagination
 from ..models.offset_based_pagination import OffsetBasedPagination
+
 T = TypeVar("T", bound="GroupSearchQueryRequest")
+
 @_attrs_define
 class GroupSearchQueryRequest:
     sort: list[GroupSearchQuerySortRequest] | Unset = UNSET
     filter_: GroupSearchQueryRequestFilter | Unset = UNSET
     page: (
-            CursorBasedBackwardPagination
-            | CursorBasedForwardPagination
-            | LimitBasedPagination
-            | OffsetBasedPagination
-            | Unset
-        ) = UNSET
+        CursorBasedBackwardPagination
+        | CursorBasedForwardPagination
+        | LimitBasedPagination
+        | OffsetBasedPagination
+        | Unset
+    ) = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

@@ -5,13 +5,29 @@ import threading
 import functools
 import attrs
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-from typing import Callable, Literal, Protocol, Any, runtime_checkable, TYPE_CHECKING, Awaitable, cast, Coroutine, Union, Tuple
+from typing import (
+    Callable,
+    Literal,
+    Protocol,
+    Any,
+    runtime_checkable,
+    TYPE_CHECKING,
+    Awaitable,
+    cast,
+    Coroutine,
+    Union,
+    Tuple,
+)
 from dataclasses import dataclass
 from .logging import SdkLogger, NullLogger, create_logger
 from camunda_orchestration_sdk.models.job_activation_request import JobActivationRequest
-from camunda_orchestration_sdk.models.activate_jobs_jobs_item import ActivateJobsJobsItem
+from camunda_orchestration_sdk.models.activate_jobs_jobs_item import (
+    ActivateJobsJobsItem,
+)
 from camunda_orchestration_sdk.models.complete_job_data import CompleteJobData
-from camunda_orchestration_sdk.models.job_completion_request_variables import JobCompletionRequestVariables
+from camunda_orchestration_sdk.models.job_completion_request_variables import (
+    JobCompletionRequestVariables,
+)
 from camunda_orchestration_sdk.models.job_fail_request import JobFailRequest
 from camunda_orchestration_sdk.models.job_error_request import JobErrorRequest
 from camunda_orchestration_sdk.types import UNSET
@@ -23,17 +39,23 @@ _EFFECTIVE_EXECUTION_STRATEGY = Literal["thread", "process", "async"]
 EXECUTION_STRATEGY = _EFFECTIVE_EXECUTION_STRATEGY | Literal["auto"]
 
 # Define action types for type narrowing
-ActionComplete = Tuple[Literal["complete"], Union[dict[str, Any], CompleteJobData, None]]
+ActionComplete = Tuple[
+    Literal["complete"], Union[dict[str, Any], CompleteJobData, None]
+]
 ActionFail = Tuple[Literal["fail"], Tuple[str, int | None, int]]
 ActionError = Tuple[Literal["error"], Tuple[str, str]]
 ActionSubprocessError = Tuple[Literal["subprocess_error"], str]
 
 JobAction = Union[ActionComplete, ActionFail, ActionError, ActionSubprocessError]
 
+
 @runtime_checkable
 class HintedCallable(Protocol):
     _execution_hint: _EFFECTIVE_EXECUTION_STRATEGY
-    def __call__(self, job: Any) -> dict[str, Any] | None | Awaitable[dict[str, Any] | None]: ...
+
+    def __call__(
+        self, job: Any
+    ) -> dict[str, Any] | None | Awaitable[dict[str, Any] | None]: ...
 
 
 @attrs.define
@@ -49,7 +71,9 @@ class JobContext(ActivateJobsJobsItem):
     log: SdkLogger = attrs.field(factory=lambda: SdkLogger(NullLogger()))
 
     @classmethod
-    def from_job(cls, job: ActivateJobsJobsItem, logger: SdkLogger | None = None) -> "JobContext":
+    def from_job(
+        cls, job: ActivateJobsJobsItem, logger: SdkLogger | None = None
+    ) -> "JobContext":
         # Extract init fields from the parent data class
         init_fields = {
             f.name: getattr(job, f.name)
@@ -60,62 +84,83 @@ class JobContext(ActivateJobsJobsItem):
             init_fields["log"] = logger
         return cls(**init_fields)
 
-AsyncJobHandler = Callable[[JobContext], Coroutine[Any, Any, dict[str, Any] | CompleteJobData | None]]
+
+AsyncJobHandler = Callable[
+    [JobContext], Coroutine[Any, Any, dict[str, Any] | CompleteJobData | None]
+]
 SyncJobHandler = Callable[[JobContext], dict[str, Any] | None]
 JobHandler = AsyncJobHandler | SyncJobHandler | HintedCallable
+
 
 @dataclass
 class WorkerConfig:
     """User-facing configuration"""
+
     job_type: str
     """How long the job is reserved for this worker only"""
     job_timeout_milliseconds: int
     """Long-poll request timeout in milliseconds. Defaults to 0, which allows the server to set the request timeout"""
-    request_timeout_milliseconds: int = 0 
+    request_timeout_milliseconds: int = 0
     max_concurrent_jobs: int = 10  # Max jobs executing at once
     execution_strategy: EXECUTION_STRATEGY = "auto"
     fetch_variables: list[str] | None = None
     worker_name: str = "camunda-python-sdk-worker"
 
+
 class ExecutionHint:
     """Decorators for users to hint at their workload execution potential"""
-    
+
     @staticmethod
-    def prefer(strategy: _EFFECTIVE_EXECUTION_STRATEGY) -> Callable[[Callable[..., Any]], HintedCallable]:
+    def prefer(
+        strategy: _EFFECTIVE_EXECUTION_STRATEGY,
+    ) -> Callable[[Callable[..., Any]], HintedCallable]:
         def decorator(func: Callable[..., Any]) -> HintedCallable:
-            func._execution_preference = strategy # type: ignore
+            func._execution_preference = strategy  # type: ignore
             # Implicitly permit the preferred strategy
             if not hasattr(func, "_execution_permits"):
-                func._execution_permits = set() # type: ignore
-            func._execution_permits.add(strategy) # type: ignore
-            return func # type: ignore
+                func._execution_permits = set()  # type: ignore
+            func._execution_permits.add(strategy)  # type: ignore
+            return func  # type: ignore
+
         return decorator
 
     @staticmethod
-    def permit(strategy: _EFFECTIVE_EXECUTION_STRATEGY) -> Callable[[Callable[..., Any]], HintedCallable]:
+    def permit(
+        strategy: _EFFECTIVE_EXECUTION_STRATEGY,
+    ) -> Callable[[Callable[..., Any]], HintedCallable]:
         def decorator(func: Callable[..., Any]) -> HintedCallable:
             if not hasattr(func, "_execution_permits"):
-                func._execution_permits = set() # type: ignore
-            func._execution_permits.add(strategy) # type: ignore
-            return func # type: ignore
+                func._execution_permits = set()  # type: ignore
+            func._execution_permits.add(strategy)  # type: ignore
+            return func  # type: ignore
+
         return decorator
+
 
 class JobError(Exception):
     """Raise this exception to throw a BPMN error."""
+
     def __init__(self, error_code: str, message: str = ""):
         self.error_code = error_code
         self.message = message
         super().__init__(f"JobError[{error_code}]: {message}")
 
+
 class JobFailure(Exception):
     """Raise this exception to explicitly fail a job with custom retries/backoff."""
-    def __init__(self, message: str, retries: int | None = None, retry_back_off: int = 0):
+
+    def __init__(
+        self, message: str, retries: int | None = None, retry_back_off: int = 0
+    ):
         self.message = message
         self.retries = retries
         self.retry_back_off = retry_back_off
         super().__init__(f"JobFailure: {message}")
 
-def _execute_task_isolated(callback: JobHandler, job_context: JobContext) -> JobAction | None:
+
+def _execute_task_isolated(
+    callback: JobHandler, job_context: JobContext
+) -> JobAction | None:
     """
     Universal wrapper to execute a job in an isolated context (Thread or Process).
     Handles both sync and async callbacks by creating a fresh event loop for async code.
@@ -136,10 +181,10 @@ def _execute_task_isolated(callback: JobHandler, job_context: JobContext) -> Job
             # Sync callback: run directly
             sync_callback = cast(SyncJobHandler, callback)
             result = sync_callback(job_context)
-        
+
         # If we got here, the job completed successfully
         return ("complete", result)
-        
+
     except JobError as e:
         return ("error", (e.error_code, e.message))
     except JobFailure as e:
@@ -151,33 +196,40 @@ def _execute_task_isolated(callback: JobHandler, job_context: JobContext) -> Job
 
 class JobWorker:
     _strategy: _EFFECTIVE_EXECUTION_STRATEGY = "async"
-    def __init__(self, client: "CamundaAsyncClient", callback: JobHandler, config: WorkerConfig, logger: SdkLogger | None = None):
+
+    def __init__(
+        self,
+        client: "CamundaAsyncClient",
+        callback: JobHandler,
+        config: WorkerConfig,
+        logger: SdkLogger | None = None,
+    ):
         self.callback = callback
         self.config = config
         self.client = client
-        
+
         # Bind logger with context
         base_logger = logger if logger is not None else create_logger()
         self.logger = base_logger.bind(
             sdk="camunda_orchestration_sdk",
             worker=config.worker_name,
-            job_type=config.job_type
+            job_type=config.job_type,
         )
 
         # Execution strategy detection
         self._strategy = self._determine_strategy()
         self._validate_strategy()
-        
+
         # Resource pools
         self.thread_pool = ThreadPoolExecutor(max_workers=config.max_concurrent_jobs)
         self.process_pool = ProcessPoolExecutor(max_workers=config.max_concurrent_jobs)
-        
+
         # Semaphore to limit concurrent executions
         self.semaphore = asyncio.Semaphore(config.max_concurrent_jobs)
-        
+
         self.running = False
         self.polling_task = None
-        
+
         self.active_jobs = 0
         self.lock = threading.Lock()
 
@@ -185,20 +237,20 @@ class JobWorker:
         self.worker_loop = asyncio.new_event_loop()
         self.worker_thread = threading.Thread(target=self._run_worker_loop, daemon=True)
         self.worker_thread.start()
-        
+
         self.logger.info(f"Using execution strategy: {self._strategy}")
-    
+
     def _run_worker_loop(self):
         """Runs the dedicated event loop for async user code"""
         asyncio.set_event_loop(self.worker_loop)
         self.worker_loop.run_forever()
-    
+
     def _determine_strategy(self) -> _EFFECTIVE_EXECUTION_STRATEGY:
         """Smart detection of execution strategy"""
         # User explicitly configured?
         if self.config.execution_strategy != "auto":
             return self.config.execution_strategy
-        
+
         # Unwrap partials to check the actual function
         actual_func = self.callback
         while isinstance(actual_func, functools.partial):
@@ -207,14 +259,14 @@ class JobWorker:
         # Check for preference
         if hasattr(actual_func, "_execution_preference"):
             return getattr(actual_func, "_execution_preference")
-        
+
         # Auto-detect default preference based on function signature
         if inspect.iscoroutinefunction(actual_func):
             return "async"
-        
+
         # Default to thread for sync functions (safe for most I/O work)
         return "thread"
-    
+
     def _validate_strategy(self):
         """Ensure the strategy matches the callback type"""
         # Validation relaxed to allow dynamic exploration.
@@ -236,7 +288,7 @@ class JobWorker:
             self.running = False
             if self.polling_task:
                 self.polling_task.cancel()
-            
+
             # Stop the worker loop
             if self.worker_loop.is_running():
                 self.worker_loop.call_soon_threadsafe(self.worker_loop.stop)
@@ -251,57 +303,61 @@ class JobWorker:
             try:
                 # Non-blocking HTTP poll using httpx
                 jobs = await self._poll_for_jobs()
-                
+
                 # Spawn tasks for each job
                 if jobs:
                     tasks = [self._execute_job(job) for job in jobs]
                     # Don't await - let them run in background
                     for task in tasks:
                         asyncio.create_task(task)
-                
+
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 self.logger.error(f"Error polling: {e}")
-            
+
             await asyncio.sleep(1)  # Polling interval
-    
+
     async def _poll_for_jobs(self):
         """SDK's async HTTP polling logic"""
         with self.lock:
             current_active = self.active_jobs
-        
+
         capacity = self.config.max_concurrent_jobs - current_active
         if capacity <= 0:
             self.logger.trace("Max concurrent jobs reached, skipping poll")
             empty_jobs: list[ActivateJobsJobsItem] = []
             return empty_jobs
 
-        self.logger.debug(f'Polling for jobs of type {self.config.job_type} (capacity: {capacity} | request_timeout: {self.config.request_timeout_milliseconds})...')
-        jobsResult = await self.client.activate_jobs(data=
-            JobActivationRequest(
-                type_=self.config.job_type, 
-                timeout=self.config.job_timeout_milliseconds, 
+        self.logger.debug(
+            f"Polling for jobs of type {self.config.job_type} (capacity: {capacity} | request_timeout: {self.config.request_timeout_milliseconds})..."
+        )
+        jobsResult = await self.client.activate_jobs(
+            data=JobActivationRequest(
+                type_=self.config.job_type,
+                timeout=self.config.job_timeout_milliseconds,
                 max_jobs_to_activate=capacity,
-                request_timeout=self.config.request_timeout_milliseconds, # 0 means that the server will use its default timeout 
-                fetch_variable = self.config.fetch_variables if self.config.fetch_variables is not None else UNSET,
-                worker=self.config.worker_name
+                request_timeout=self.config.request_timeout_milliseconds,  # 0 means that the server will use its default timeout
+                fetch_variable=self.config.fetch_variables
+                if self.config.fetch_variables is not None
+                else UNSET,
+                worker=self.config.worker_name,
             )
         )
-        self.logger.trace(f'Received {len(jobsResult.jobs)}')
-        self.logger.trace(f'Jobs received: {[job.job_key for job in jobsResult.jobs]}')
+        self.logger.trace(f"Received {len(jobsResult.jobs)}")
+        self.logger.trace(f"Jobs received: {[job.job_key for job in jobsResult.jobs]}")
         if jobsResult.jobs:
             with self.lock:
                 self.active_jobs += len(jobsResult.jobs)
         return jobsResult.jobs  # Return list of jobs
-    
+
     async def _execute_job(self, job_item: ActivateJobsJobsItem):
         """Execute a single job with appropriate strategy"""
-        
+
         # Create context with a job-scoped child logger
         job_logger = self.logger.bind(job_key=str(job_item.job_key))
         job_context = JobContext.from_job(job_item, logger=job_logger)
-        
+
         # Unwrap partials to check the actual function
         actual_func = self.callback
         while isinstance(actual_func, functools.partial):
@@ -311,7 +367,7 @@ class JobWorker:
         try:
             async with self.semaphore:  # Limit concurrent executions
                 action: JobAction | None = None
-                
+
                 if self._strategy == "async":
                     # Run on dedicated worker loop
                     try:
@@ -320,8 +376,7 @@ class JobWorker:
                             async_callback = cast(AsyncJobHandler, self.callback)
                             # Schedule on worker loop and wait for result in main loop
                             future = asyncio.run_coroutine_threadsafe(
-                                async_callback(job_context), 
-                                self.worker_loop
+                                async_callback(job_context), self.worker_loop
                             )
                             result = await asyncio.wrap_future(future)
                         else:
@@ -334,18 +389,19 @@ class JobWorker:
                         action = ("fail", (e.message, e.retries, e.retry_back_off))
                     except Exception as e:
                         action = ("fail", (str(e), None, 0))
-                
+
                 elif self._strategy in ["thread", "process"]:
                     # Run in Pool (Isolated)
-                    pool = self.thread_pool if self._strategy == "thread" else self.process_pool
-                    
-                    action = await asyncio.get_event_loop().run_in_executor(
-                        pool, 
-                        _execute_task_isolated, 
-                        self.callback, 
-                        job_context
+                    pool = (
+                        self.thread_pool
+                        if self._strategy == "thread"
+                        else self.process_pool
                     )
-                
+
+                    action = await asyncio.get_event_loop().run_in_executor(
+                        pool, _execute_task_isolated, self.callback, job_context
+                    )
+
                 # Handle the returned action
                 if action:
                     if action[0] == "complete":
@@ -353,45 +409,58 @@ class JobWorker:
                         # Ensure data is in correct format
                         complete_data = CompleteJobData()
                         if isinstance(action_data, dict):
-                            complete_data = CompleteJobData(variables=JobCompletionRequestVariables.from_dict(action_data))
+                            complete_data = CompleteJobData(
+                                variables=JobCompletionRequestVariables.from_dict(
+                                    action_data
+                                )
+                            )
                         elif isinstance(action_data, CompleteJobData):
                             complete_data = action_data
-                            
-                        await self.client.complete_job(job_key=job_context.job_key, data=complete_data)
+
+                        await self.client.complete_job(
+                            job_key=job_context.job_key, data=complete_data
+                        )
                         self.logger.debug(f"Job completed: {job_context.job_key}")
-                        
+
                     elif action[0] == "fail":
                         _, (error_message, retries, retry_back_off) = action
                         # Calculate retries if not provided
                         if retries is None:
-                            retries = job_context.retries - 1 if job_context.retries > 0 else 0
-                            
+                            retries = (
+                                job_context.retries - 1
+                                if job_context.retries > 0
+                                else 0
+                            )
+
                         await self.client.fail_job(
-                            job_key=job_context.job_key, 
+                            job_key=job_context.job_key,
                             data=JobFailRequest(
                                 error_message=error_message,
                                 retries=retries,
-                                retry_back_off=retry_back_off
-                            )
+                                retry_back_off=retry_back_off,
+                            ),
                         )
-                        self.logger.info(f"Job failed: {job_context.job_key} - {error_message}")
-                        
+                        self.logger.info(
+                            f"Job failed: {job_context.job_key} - {error_message}"
+                        )
+
                     elif action[0] == "error":
                         _, (error_code, error_message) = action
                         await self.client.throw_job_error(
-                            job_key=job_context.job_key, 
+                            job_key=job_context.job_key,
                             data=JobErrorRequest(
-                                error_code=error_code,
-                                error_message=error_message
-                            )
+                                error_code=error_code, error_message=error_message
+                            ),
                         )
-                        self.logger.info(f"Job error thrown: {job_context.job_key} - {error_code}")
-                    
+                        self.logger.info(
+                            f"Job error thrown: {job_context.job_key} - {error_code}"
+                        )
+
                     elif action[0] == "subprocess_error":
                         _, error_details = action
                         # This is a system error in the worker infrastructure, not the job logic
                         raise RuntimeError(f"Worker execution error: {error_details}")
-                
+
         except Exception as e:
             self.logger.error(f"System error executing job {job_item.job_key}: {e}")
             # Try to fail the job if possible
@@ -401,11 +470,9 @@ class JobWorker:
                     data=JobFailRequest(
                         error_message=f"System error: {str(e)}",
                         retries=job_item.retries - 1 if job_item.retries else 0,
-                    )
+                    ),
                 )
             except Exception:
-                pass # Best effort
+                pass  # Best effort
         finally:
             self._decrement_active_jobs()
-
-

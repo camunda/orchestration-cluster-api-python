@@ -5,8 +5,12 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
-from ..models.message_correlation_request_variables import MessageCorrelationRequestVariables
+from ..models.message_correlation_request_variables import (
+    MessageCorrelationRequestVariables,
+)
+
 T = TypeVar("T", bound="MessageCorrelationRequest")
+
 @_attrs_define
 class MessageCorrelationRequest:
     name: str

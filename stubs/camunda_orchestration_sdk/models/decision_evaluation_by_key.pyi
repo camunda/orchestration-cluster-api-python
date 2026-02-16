@@ -6,7 +6,9 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 from ..models.decision_evaluation_by_id_variables import DecisionEvaluationByIdVariables
+
 T = TypeVar("T", bound="DecisionEvaluationByKey")
+
 @_attrs_define
 class DecisionEvaluationByKey:
     decision_definition_key: DecisionDefinitionKey

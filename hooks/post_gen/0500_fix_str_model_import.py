@@ -8,14 +8,10 @@ def run(context: dict[str, str]) -> None:
     shim = models_dir / "str.py"
     # Provide a shim so imports like `from ...models.str import str` succeed.
     if not shim.exists():
-        shim.write_text("""
+        shim.write_text(
+            """
 # auto-generated shim to satisfy imports of a pseudo-model named `str`
 str = str
-""".lstrip(), encoding="utf-8")
-
-
-
-
-
-
-
+""".lstrip(),
+            encoding="utf-8",
+        )

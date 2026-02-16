@@ -43,7 +43,9 @@ def _patch_types_py(types_path: Path) -> None:
     typing_import_pattern = re.compile(r"(from typing import )(.+)")
     match = typing_import_pattern.search(content)
     if match and "Any" not in match.group(2):
-        content = content.replace(match.group(0), f"{match.group(1)}Any, {match.group(2)}", 1)
+        content = content.replace(
+            match.group(0), f"{match.group(1)}Any, {match.group(2)}", 1
+        )
 
     # Add factory functions
     content += _TYPES_PY_FACTORIES
@@ -106,15 +108,15 @@ def _patch_client_file(client_path: Path) -> None:
 
     # _cookies and _headers are dict[str, str]
     content = re.sub(
-        r'(_(cookies|headers)\s*:\s*dict\[str,\s*str\]\s*=\s*field\(factory=)dict',
-        r'\1str_str_dict_factory',
+        r"(_(cookies|headers)\s*:\s*dict\[str,\s*str\]\s*=\s*field\(factory=)dict",
+        r"\1str_str_dict_factory",
         content,
     )
 
     # _httpx_args is dict[str, Any]
     content = re.sub(
-        r'(_httpx_args\s*:\s*dict\[str,\s*Any\]\s*=\s*field\(factory=)dict',
-        r'\1str_any_dict_factory',
+        r"(_httpx_args\s*:\s*dict\[str,\s*Any\]\s*=\s*field\(factory=)dict",
+        r"\1str_any_dict_factory",
         content,
     )
 

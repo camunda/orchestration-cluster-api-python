@@ -2,2181 +2,5071 @@ from __future__ import annotations
 
 from typing import Any
 from .models import ProblemDetail
+
 class ApiError(Exception):
-    def __init__(self, status_code: int, content: bytes, parsed: Any | None = None) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: Any | None = None
+    ) -> None: ...
     def _build_message(self) -> str: ...
+
 class UnexpectedStatus(ApiError):
     def __init__(self, status_code: int, content: bytes) -> None: ...
+
 class ActivateAdHocSubProcessActivitiesBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ActivateAdHocSubProcessActivitiesForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ActivateAdHocSubProcessActivitiesInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ActivateAdHocSubProcessActivitiesNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ActivateAdHocSubProcessActivitiesServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ActivateAdHocSubProcessActivitiesUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ActivateJobsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ActivateJobsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ActivateJobsServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ActivateJobsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignClientToGroupBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignClientToGroupConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignClientToGroupForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignClientToGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignClientToGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignClientToGroupServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignClientToTenantBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignClientToTenantForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignClientToTenantInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignClientToTenantNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignClientToTenantServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignGroupToTenantBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignGroupToTenantForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignGroupToTenantInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignGroupToTenantNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignGroupToTenantServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignMappingRuleToGroupBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignMappingRuleToGroupConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignMappingRuleToGroupForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignMappingRuleToGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignMappingRuleToGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignMappingRuleToGroupServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignMappingRuleToTenantBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignMappingRuleToTenantForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignMappingRuleToTenantInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignMappingRuleToTenantNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignMappingRuleToTenantServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToClientBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToClientConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToClientForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToClientInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToClientNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToClientServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToGroupBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToGroupConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToGroupForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToGroupServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToMappingRuleBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToMappingRuleConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToMappingRuleForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToMappingRuleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToMappingRuleNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToMappingRuleServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToTenantBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToTenantForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToTenantInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToTenantNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToTenantServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToUserBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToUserConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToUserForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToUserInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToUserNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignRoleToUserServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserTaskBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserTaskConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserTaskInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserTaskNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserTaskServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserToGroupBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserToGroupConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserToGroupForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserToGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserToGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserToGroupServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserToTenantBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserToTenantForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserToTenantInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserToTenantNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class AssignUserToTenantServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class BroadcastSignalBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class BroadcastSignalInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class BroadcastSignalNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class BroadcastSignalServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CancelBatchOperationBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CancelBatchOperationForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CancelBatchOperationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CancelBatchOperationNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CancelProcessInstanceBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CancelProcessInstanceInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CancelProcessInstanceNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CancelProcessInstanceServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CancelProcessInstancesBatchOperationBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CancelProcessInstancesBatchOperationForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CancelProcessInstancesBatchOperationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CancelProcessInstancesBatchOperationUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CompleteJobBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CompleteJobConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CompleteJobInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CompleteJobNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CompleteJobServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CompleteUserTaskBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CompleteUserTaskConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CompleteUserTaskInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CompleteUserTaskNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CompleteUserTaskServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CorrelateMessageBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CorrelateMessageForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CorrelateMessageInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CorrelateMessageNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CorrelateMessageServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateAdminUserBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateAdminUserForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateAdminUserInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateAdminUserServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateAuthorizationBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateAuthorizationForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateAuthorizationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateAuthorizationNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateAuthorizationServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateAuthorizationUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateDeploymentBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateDeploymentServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateDocumentBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateDocumentLinkBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateDocumentUnsupportedMediaType(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateDocumentsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateDocumentsUnsupportedMediaType(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateElementInstanceVariablesBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateElementInstanceVariablesInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateElementInstanceVariablesServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateGlobalClusterVariableBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateGlobalClusterVariableForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateGlobalClusterVariableInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateGlobalClusterVariableUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateGroupBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateGroupForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateGroupServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateGroupUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateMappingRuleBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateMappingRuleForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateMappingRuleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateMappingRuleNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateProcessInstanceBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateProcessInstanceGatewayTimeout(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateProcessInstanceInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateProcessInstanceServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateRoleBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateRoleForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateRoleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateRoleServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateRoleUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateTenantBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateTenantClusterVariableBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateTenantClusterVariableForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateTenantClusterVariableInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateTenantClusterVariableUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateTenantConflict(ApiError):
     parsed: Any
     def __init__(self, status_code: int, content: bytes, parsed: Any) -> None: ...
+
 class CreateTenantForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateTenantInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateTenantNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateTenantServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateUserBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateUserConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateUserForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateUserInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateUserServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class CreateUserUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteAuthorizationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteAuthorizationNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteAuthorizationServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteAuthorizationUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteDecisionInstanceForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteDecisionInstanceInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteDecisionInstanceNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteDecisionInstanceServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteDecisionInstanceUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteDecisionInstancesBatchOperationBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteDecisionInstancesBatchOperationForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteDecisionInstancesBatchOperationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteDecisionInstancesBatchOperationUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteDocumentInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteDocumentNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteGlobalClusterVariableBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteGlobalClusterVariableForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteGlobalClusterVariableInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteGlobalClusterVariableNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteGlobalClusterVariableUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteGroupServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteGroupUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteMappingRuleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteMappingRuleNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteMappingRuleServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteMappingRuleUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteProcessInstanceConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteProcessInstanceForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteProcessInstanceInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteProcessInstanceNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteProcessInstanceServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteProcessInstanceUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteProcessInstancesBatchOperationBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteProcessInstancesBatchOperationForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteProcessInstancesBatchOperationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteProcessInstancesBatchOperationUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteResourceBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteResourceInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteResourceNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteResourceServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteRoleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteRoleNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteRoleServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteRoleUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteTenantBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteTenantClusterVariableBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteTenantClusterVariableForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteTenantClusterVariableInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteTenantClusterVariableNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteTenantClusterVariableUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteTenantForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteTenantInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteTenantNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteTenantServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteUserBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteUserInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteUserNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class DeleteUserServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class EvaluateConditionalsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class EvaluateConditionalsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class EvaluateConditionalsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class EvaluateConditionalsNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class EvaluateConditionalsServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class EvaluateDecisionBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class EvaluateDecisionInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class EvaluateDecisionNotFound(ApiError):
     parsed: Any
     def __init__(self, status_code: int, content: bytes, parsed: Any) -> None: ...
+
 class EvaluateDecisionServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class EvaluateExpressionBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class EvaluateExpressionForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class EvaluateExpressionInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class EvaluateExpressionUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class FailJobBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class FailJobConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class FailJobInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class FailJobNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class FailJobServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetAuditLogForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetAuditLogInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetAuditLogNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetAuditLogUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetAuthenticationForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetAuthenticationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetAuthenticationUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetAuthorizationForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetAuthorizationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetAuthorizationNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetAuthorizationUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetBatchOperationBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetBatchOperationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetBatchOperationNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionDefinitionBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionDefinitionForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionDefinitionInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionDefinitionNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionDefinitionUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionDefinitionXmlBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionDefinitionXmlForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionDefinitionXmlInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionDefinitionXmlNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionDefinitionXmlUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionInstanceBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionInstanceForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionInstanceInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionInstanceNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionInstanceUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionRequirementsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionRequirementsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionRequirementsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionRequirementsNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionRequirementsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionRequirementsXmlBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionRequirementsXmlForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionRequirementsXmlInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionRequirementsXmlNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDecisionRequirementsXmlUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDocumentInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetDocumentNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetElementInstanceBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetElementInstanceForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetElementInstanceInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetElementInstanceNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetElementInstanceUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetGlobalClusterVariableBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetGlobalClusterVariableForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetGlobalClusterVariableInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetGlobalClusterVariableNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetGlobalClusterVariableUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetGlobalJobStatisticsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetGlobalJobStatisticsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetGlobalJobStatisticsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetGlobalJobStatisticsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetGroupForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetGroupUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetIncidentBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetIncidentForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetIncidentInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetIncidentNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetIncidentUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetLicenseInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetMappingRuleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetMappingRuleNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetMappingRuleUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionInstanceStatisticsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionInstanceStatisticsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionInstanceStatisticsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionInstanceStatisticsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionInstanceVersionStatisticsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionInstanceVersionStatisticsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionInstanceVersionStatisticsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionInstanceVersionStatisticsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionMessageSubscriptionStatisticsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionMessageSubscriptionStatisticsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionMessageSubscriptionStatisticsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionMessageSubscriptionStatisticsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionStatisticsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionStatisticsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionStatisticsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionStatisticsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionXmlBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionXmlForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionXmlInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionXmlNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessDefinitionXmlUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceCallHierarchyBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceCallHierarchyForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceCallHierarchyInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceCallHierarchyNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceCallHierarchyUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceSequenceFlowsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceSequenceFlowsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceSequenceFlowsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceSequenceFlowsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceStatisticsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceStatisticsByDefinitionBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceStatisticsByDefinitionForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceStatisticsByDefinitionInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceStatisticsByDefinitionUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceStatisticsByErrorBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceStatisticsByErrorForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceStatisticsByErrorInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceStatisticsByErrorUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceStatisticsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceStatisticsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceStatisticsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetProcessInstanceUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetResourceContentInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetResourceContentNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetResourceInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetResourceNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetRoleForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetRoleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetRoleNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetRoleUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetStartProcessFormBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetStartProcessFormForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetStartProcessFormInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetStartProcessFormNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetStartProcessFormUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetStatusServiceUnavailable(ApiError):
     parsed: None
     def __init__(self, status_code: int, content: bytes, parsed: None) -> None: ...
+
 class GetTenantBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetTenantClusterVariableBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetTenantClusterVariableForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetTenantClusterVariableInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetTenantClusterVariableNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetTenantClusterVariableUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetTenantForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetTenantInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetTenantNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetTenantUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetTopologyInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetTopologyUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUsageMetricsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUsageMetricsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUsageMetricsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUsageMetricsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUserForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUserInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUserNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUserTaskBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUserTaskForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUserTaskFormBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUserTaskFormForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUserTaskFormInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUserTaskFormNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUserTaskFormUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUserTaskInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUserTaskNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUserTaskUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetUserUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetVariableBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetVariableForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetVariableInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetVariableNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class GetVariableUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class MigrateProcessInstanceBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class MigrateProcessInstanceConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class MigrateProcessInstanceInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class MigrateProcessInstanceNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class MigrateProcessInstanceServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class MigrateProcessInstancesBatchOperationBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class MigrateProcessInstancesBatchOperationForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class MigrateProcessInstancesBatchOperationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class MigrateProcessInstancesBatchOperationUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ModifyProcessInstanceBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ModifyProcessInstanceInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ModifyProcessInstanceNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ModifyProcessInstanceServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ModifyProcessInstancesBatchOperationBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ModifyProcessInstancesBatchOperationForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ModifyProcessInstancesBatchOperationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ModifyProcessInstancesBatchOperationUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class PinClockBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class PinClockInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class PinClockServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class PublishMessageBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class PublishMessageInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class PublishMessageServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResetClockInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResetClockServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResolveIncidentBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResolveIncidentInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResolveIncidentNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResolveIncidentServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResolveIncidentsBatchOperationBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResolveIncidentsBatchOperationForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResolveIncidentsBatchOperationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResolveIncidentsBatchOperationUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResolveProcessInstanceIncidentsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResolveProcessInstanceIncidentsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResolveProcessInstanceIncidentsNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResolveProcessInstanceIncidentsServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResolveProcessInstanceIncidentsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResumeBatchOperationBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResumeBatchOperationForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResumeBatchOperationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResumeBatchOperationNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ResumeBatchOperationServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchAuditLogsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchAuditLogsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchAuditLogsInternalServerError(ApiError):
     parsed: Any
     def __init__(self, status_code: int, content: bytes, parsed: Any) -> None: ...
+
 class SearchAuditLogsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchAuthorizationsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchAuthorizationsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchAuthorizationsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchAuthorizationsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchBatchOperationItemsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchBatchOperationItemsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchBatchOperationsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchBatchOperationsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchClientsForGroupBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchClientsForGroupForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchClientsForGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchClientsForGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchClientsForGroupUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchClientsForRoleBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchClientsForRoleForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchClientsForRoleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchClientsForRoleNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchClientsForRoleUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchClusterVariablesBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchClusterVariablesForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchClusterVariablesInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchClusterVariablesUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchCorrelatedMessageSubscriptionsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchCorrelatedMessageSubscriptionsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchCorrelatedMessageSubscriptionsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchCorrelatedMessageSubscriptionsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchDecisionDefinitionsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchDecisionDefinitionsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchDecisionDefinitionsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchDecisionDefinitionsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchDecisionInstancesBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchDecisionInstancesForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchDecisionInstancesInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchDecisionInstancesUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchDecisionRequirementsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchDecisionRequirementsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchDecisionRequirementsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchDecisionRequirementsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchElementInstanceIncidentsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchElementInstanceIncidentsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchElementInstanceIncidentsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchElementInstanceIncidentsNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchElementInstanceIncidentsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchElementInstancesBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchElementInstancesForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchElementInstancesInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchElementInstancesUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchGroupsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchGroupsForRoleBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchGroupsForRoleForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchGroupsForRoleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchGroupsForRoleNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchGroupsForRoleUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchGroupsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchGroupsInternalServerError(ApiError):
     parsed: Any
     def __init__(self, status_code: int, content: bytes, parsed: Any) -> None: ...
+
 class SearchGroupsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchIncidentsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchIncidentsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchIncidentsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchIncidentsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchJobsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchJobsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchJobsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchJobsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMappingRuleBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMappingRuleForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMappingRuleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMappingRuleUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMappingRulesForGroupBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMappingRulesForGroupForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMappingRulesForGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMappingRulesForGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMappingRulesForGroupUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMappingRulesForRoleBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMappingRulesForRoleForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMappingRulesForRoleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMappingRulesForRoleNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMappingRulesForRoleUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMessageSubscriptionsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMessageSubscriptionsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMessageSubscriptionsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchMessageSubscriptionsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchProcessDefinitionsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchProcessDefinitionsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchProcessDefinitionsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchProcessDefinitionsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchProcessInstanceIncidentsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchProcessInstanceIncidentsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchProcessInstanceIncidentsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchProcessInstanceIncidentsNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchProcessInstanceIncidentsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchProcessInstancesBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchProcessInstancesForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchProcessInstancesInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchProcessInstancesUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchRolesBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchRolesForGroupBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchRolesForGroupForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchRolesForGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchRolesForGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchRolesForGroupUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchRolesForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchRolesInternalServerError(ApiError):
     parsed: Any
     def __init__(self, status_code: int, content: bytes, parsed: Any) -> None: ...
+
 class SearchRolesUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchTenantsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchTenantsForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchTenantsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchTenantsNotFound(ApiError):
     parsed: Any
     def __init__(self, status_code: int, content: bytes, parsed: Any) -> None: ...
+
 class SearchTenantsUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUserTaskAuditLogsBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUserTaskAuditLogsInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUserTaskVariablesBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUserTaskVariablesInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUserTasksBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUserTasksForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUserTasksInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUserTasksUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUsersBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUsersForGroupBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUsersForGroupForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUsersForGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUsersForGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUsersForGroupUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUsersForRoleBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUsersForRoleForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUsersForRoleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUsersForRoleNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUsersForRoleUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUsersForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUsersInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchUsersUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchVariablesBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchVariablesForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchVariablesInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SearchVariablesUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SuspendBatchOperationBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SuspendBatchOperationForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SuspendBatchOperationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SuspendBatchOperationNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class SuspendBatchOperationServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ThrowJobErrorBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ThrowJobErrorConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ThrowJobErrorInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ThrowJobErrorNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class ThrowJobErrorServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignClientFromGroupBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignClientFromGroupForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignClientFromGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignClientFromGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignClientFromGroupServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignClientFromTenantBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignClientFromTenantForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignClientFromTenantInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignClientFromTenantNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignClientFromTenantServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignGroupFromTenantBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignGroupFromTenantForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignGroupFromTenantInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignGroupFromTenantNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignGroupFromTenantServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignMappingRuleFromGroupBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignMappingRuleFromGroupForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignMappingRuleFromGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignMappingRuleFromGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignMappingRuleFromGroupServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignMappingRuleFromTenantBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignMappingRuleFromTenantForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignMappingRuleFromTenantInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignMappingRuleFromTenantNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignMappingRuleFromTenantServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromClientBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromClientForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromClientInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromClientNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromClientServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromGroupBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromGroupForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromGroupServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromMappingRuleBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromMappingRuleForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromMappingRuleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromMappingRuleNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromMappingRuleServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromTenantBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromTenantForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromTenantInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromTenantNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromTenantServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromUserBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromUserForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromUserInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromUserNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignRoleFromUserServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserFromGroupBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserFromGroupForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserFromGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserFromGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserFromGroupServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserFromTenantBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserFromTenantForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserFromTenantInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserFromTenantNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserFromTenantServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserTaskBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserTaskConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserTaskInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserTaskNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UnassignUserTaskServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateAuthorizationInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateAuthorizationNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateAuthorizationServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateAuthorizationUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateGlobalClusterVariableBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateGlobalClusterVariableForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateGlobalClusterVariableInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateGlobalClusterVariableNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateGlobalClusterVariableUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateGroupBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateGroupInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateGroupNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateGroupServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateGroupUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateJobBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateJobConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateJobInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateJobNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateJobServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateMappingRuleBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateMappingRuleForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateMappingRuleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateMappingRuleNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateMappingRuleServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateRoleBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateRoleInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateRoleNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateRoleServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateRoleUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateTenantBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateTenantClusterVariableBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateTenantClusterVariableForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateTenantClusterVariableInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateTenantClusterVariableNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateTenantClusterVariableUnauthorized(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateTenantForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateTenantInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateTenantNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateTenantServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateUserBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateUserForbidden(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateUserInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateUserNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateUserServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateUserTaskBadRequest(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateUserTaskConflict(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateUserTaskInternalServerError(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateUserTaskNotFound(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
 class UpdateUserTaskServiceUnavailable(ApiError):
     parsed: ProblemDetail
-    def __init__(self, status_code: int, content: bytes, parsed: ProblemDetail) -> None: ...
-__all__ = ['ActivateAdHocSubProcessActivitiesBadRequest', 'ActivateAdHocSubProcessActivitiesForbidden', 'ActivateAdHocSubProcessActivitiesInternalServerError', 'ActivateAdHocSubProcessActivitiesNotFound', 'ActivateAdHocSubProcessActivitiesServiceUnavailable', 'ActivateAdHocSubProcessActivitiesUnauthorized', 'ActivateJobsBadRequest', 'ActivateJobsInternalServerError', 'ActivateJobsServiceUnavailable', 'ActivateJobsUnauthorized', 'ApiError', 'AssignClientToGroupBadRequest', 'AssignClientToGroupConflict', 'AssignClientToGroupForbidden', 'AssignClientToGroupInternalServerError', 'AssignClientToGroupNotFound', 'AssignClientToGroupServiceUnavailable', 'AssignClientToTenantBadRequest', 'AssignClientToTenantForbidden', 'AssignClientToTenantInternalServerError', 'AssignClientToTenantNotFound', 'AssignClientToTenantServiceUnavailable', 'AssignGroupToTenantBadRequest', 'AssignGroupToTenantForbidden', 'AssignGroupToTenantInternalServerError', 'AssignGroupToTenantNotFound', 'AssignGroupToTenantServiceUnavailable', 'AssignMappingRuleToGroupBadRequest', 'AssignMappingRuleToGroupConflict', 'AssignMappingRuleToGroupForbidden', 'AssignMappingRuleToGroupInternalServerError', 'AssignMappingRuleToGroupNotFound', 'AssignMappingRuleToGroupServiceUnavailable', 'AssignMappingRuleToTenantBadRequest', 'AssignMappingRuleToTenantForbidden', 'AssignMappingRuleToTenantInternalServerError', 'AssignMappingRuleToTenantNotFound', 'AssignMappingRuleToTenantServiceUnavailable', 'AssignRoleToClientBadRequest', 'AssignRoleToClientConflict', 'AssignRoleToClientForbidden', 'AssignRoleToClientInternalServerError', 'AssignRoleToClientNotFound', 'AssignRoleToClientServiceUnavailable', 'AssignRoleToGroupBadRequest', 'AssignRoleToGroupConflict', 'AssignRoleToGroupForbidden', 'AssignRoleToGroupInternalServerError', 'AssignRoleToGroupNotFound', 'AssignRoleToGroupServiceUnavailable', 'AssignRoleToMappingRuleBadRequest', 'AssignRoleToMappingRuleConflict', 'AssignRoleToMappingRuleForbidden', 'AssignRoleToMappingRuleInternalServerError', 'AssignRoleToMappingRuleNotFound', 'AssignRoleToMappingRuleServiceUnavailable', 'AssignRoleToTenantBadRequest', 'AssignRoleToTenantForbidden', 'AssignRoleToTenantInternalServerError', 'AssignRoleToTenantNotFound', 'AssignRoleToTenantServiceUnavailable', 'AssignRoleToUserBadRequest', 'AssignRoleToUserConflict', 'AssignRoleToUserForbidden', 'AssignRoleToUserInternalServerError', 'AssignRoleToUserNotFound', 'AssignRoleToUserServiceUnavailable', 'AssignUserTaskBadRequest', 'AssignUserTaskConflict', 'AssignUserTaskInternalServerError', 'AssignUserTaskNotFound', 'AssignUserTaskServiceUnavailable', 'AssignUserToGroupBadRequest', 'AssignUserToGroupConflict', 'AssignUserToGroupForbidden', 'AssignUserToGroupInternalServerError', 'AssignUserToGroupNotFound', 'AssignUserToGroupServiceUnavailable', 'AssignUserToTenantBadRequest', 'AssignUserToTenantForbidden', 'AssignUserToTenantInternalServerError', 'AssignUserToTenantNotFound', 'AssignUserToTenantServiceUnavailable', 'BroadcastSignalBadRequest', 'BroadcastSignalInternalServerError', 'BroadcastSignalNotFound', 'BroadcastSignalServiceUnavailable', 'CancelBatchOperationBadRequest', 'CancelBatchOperationForbidden', 'CancelBatchOperationInternalServerError', 'CancelBatchOperationNotFound', 'CancelProcessInstanceBadRequest', 'CancelProcessInstanceInternalServerError', 'CancelProcessInstanceNotFound', 'CancelProcessInstanceServiceUnavailable', 'CancelProcessInstancesBatchOperationBadRequest', 'CancelProcessInstancesBatchOperationForbidden', 'CancelProcessInstancesBatchOperationInternalServerError', 'CancelProcessInstancesBatchOperationUnauthorized', 'CompleteJobBadRequest', 'CompleteJobConflict', 'CompleteJobInternalServerError', 'CompleteJobNotFound', 'CompleteJobServiceUnavailable', 'CompleteUserTaskBadRequest', 'CompleteUserTaskConflict', 'CompleteUserTaskInternalServerError', 'CompleteUserTaskNotFound', 'CompleteUserTaskServiceUnavailable', 'CorrelateMessageBadRequest', 'CorrelateMessageForbidden', 'CorrelateMessageInternalServerError', 'CorrelateMessageNotFound', 'CorrelateMessageServiceUnavailable', 'CreateAdminUserBadRequest', 'CreateAdminUserForbidden', 'CreateAdminUserInternalServerError', 'CreateAdminUserServiceUnavailable', 'CreateAuthorizationBadRequest', 'CreateAuthorizationForbidden', 'CreateAuthorizationInternalServerError', 'CreateAuthorizationNotFound', 'CreateAuthorizationServiceUnavailable', 'CreateAuthorizationUnauthorized', 'CreateDeploymentBadRequest', 'CreateDeploymentServiceUnavailable', 'CreateDocumentBadRequest', 'CreateDocumentLinkBadRequest', 'CreateDocumentUnsupportedMediaType', 'CreateDocumentsBadRequest', 'CreateDocumentsUnsupportedMediaType', 'CreateElementInstanceVariablesBadRequest', 'CreateElementInstanceVariablesInternalServerError', 'CreateElementInstanceVariablesServiceUnavailable', 'CreateGlobalClusterVariableBadRequest', 'CreateGlobalClusterVariableForbidden', 'CreateGlobalClusterVariableInternalServerError', 'CreateGlobalClusterVariableUnauthorized', 'CreateGroupBadRequest', 'CreateGroupForbidden', 'CreateGroupInternalServerError', 'CreateGroupServiceUnavailable', 'CreateGroupUnauthorized', 'CreateMappingRuleBadRequest', 'CreateMappingRuleForbidden', 'CreateMappingRuleInternalServerError', 'CreateMappingRuleNotFound', 'CreateProcessInstanceBadRequest', 'CreateProcessInstanceGatewayTimeout', 'CreateProcessInstanceInternalServerError', 'CreateProcessInstanceServiceUnavailable', 'CreateRoleBadRequest', 'CreateRoleForbidden', 'CreateRoleInternalServerError', 'CreateRoleServiceUnavailable', 'CreateRoleUnauthorized', 'CreateTenantBadRequest', 'CreateTenantClusterVariableBadRequest', 'CreateTenantClusterVariableForbidden', 'CreateTenantClusterVariableInternalServerError', 'CreateTenantClusterVariableUnauthorized', 'CreateTenantConflict', 'CreateTenantForbidden', 'CreateTenantInternalServerError', 'CreateTenantNotFound', 'CreateTenantServiceUnavailable', 'CreateUserBadRequest', 'CreateUserConflict', 'CreateUserForbidden', 'CreateUserInternalServerError', 'CreateUserServiceUnavailable', 'CreateUserUnauthorized', 'DeleteAuthorizationInternalServerError', 'DeleteAuthorizationNotFound', 'DeleteAuthorizationServiceUnavailable', 'DeleteAuthorizationUnauthorized', 'DeleteDecisionInstanceForbidden', 'DeleteDecisionInstanceInternalServerError', 'DeleteDecisionInstanceNotFound', 'DeleteDecisionInstanceServiceUnavailable', 'DeleteDecisionInstanceUnauthorized', 'DeleteDecisionInstancesBatchOperationBadRequest', 'DeleteDecisionInstancesBatchOperationForbidden', 'DeleteDecisionInstancesBatchOperationInternalServerError', 'DeleteDecisionInstancesBatchOperationUnauthorized', 'DeleteDocumentInternalServerError', 'DeleteDocumentNotFound', 'DeleteGlobalClusterVariableBadRequest', 'DeleteGlobalClusterVariableForbidden', 'DeleteGlobalClusterVariableInternalServerError', 'DeleteGlobalClusterVariableNotFound', 'DeleteGlobalClusterVariableUnauthorized', 'DeleteGroupInternalServerError', 'DeleteGroupNotFound', 'DeleteGroupServiceUnavailable', 'DeleteGroupUnauthorized', 'DeleteMappingRuleInternalServerError', 'DeleteMappingRuleNotFound', 'DeleteMappingRuleServiceUnavailable', 'DeleteMappingRuleUnauthorized', 'DeleteProcessInstanceConflict', 'DeleteProcessInstanceForbidden', 'DeleteProcessInstanceInternalServerError', 'DeleteProcessInstanceNotFound', 'DeleteProcessInstanceServiceUnavailable', 'DeleteProcessInstanceUnauthorized', 'DeleteProcessInstancesBatchOperationBadRequest', 'DeleteProcessInstancesBatchOperationForbidden', 'DeleteProcessInstancesBatchOperationInternalServerError', 'DeleteProcessInstancesBatchOperationUnauthorized', 'DeleteResourceBadRequest', 'DeleteResourceInternalServerError', 'DeleteResourceNotFound', 'DeleteResourceServiceUnavailable', 'DeleteRoleInternalServerError', 'DeleteRoleNotFound', 'DeleteRoleServiceUnavailable', 'DeleteRoleUnauthorized', 'DeleteTenantBadRequest', 'DeleteTenantClusterVariableBadRequest', 'DeleteTenantClusterVariableForbidden', 'DeleteTenantClusterVariableInternalServerError', 'DeleteTenantClusterVariableNotFound', 'DeleteTenantClusterVariableUnauthorized', 'DeleteTenantForbidden', 'DeleteTenantInternalServerError', 'DeleteTenantNotFound', 'DeleteTenantServiceUnavailable', 'DeleteUserBadRequest', 'DeleteUserInternalServerError', 'DeleteUserNotFound', 'DeleteUserServiceUnavailable', 'EvaluateConditionalsBadRequest', 'EvaluateConditionalsForbidden', 'EvaluateConditionalsInternalServerError', 'EvaluateConditionalsNotFound', 'EvaluateConditionalsServiceUnavailable', 'EvaluateDecisionBadRequest', 'EvaluateDecisionInternalServerError', 'EvaluateDecisionNotFound', 'EvaluateDecisionServiceUnavailable', 'EvaluateExpressionBadRequest', 'EvaluateExpressionForbidden', 'EvaluateExpressionInternalServerError', 'EvaluateExpressionUnauthorized', 'FailJobBadRequest', 'FailJobConflict', 'FailJobInternalServerError', 'FailJobNotFound', 'FailJobServiceUnavailable', 'GetAuditLogForbidden', 'GetAuditLogInternalServerError', 'GetAuditLogNotFound', 'GetAuditLogUnauthorized', 'GetAuthenticationForbidden', 'GetAuthenticationInternalServerError', 'GetAuthenticationUnauthorized', 'GetAuthorizationForbidden', 'GetAuthorizationInternalServerError', 'GetAuthorizationNotFound', 'GetAuthorizationUnauthorized', 'GetBatchOperationBadRequest', 'GetBatchOperationInternalServerError', 'GetBatchOperationNotFound', 'GetDecisionDefinitionBadRequest', 'GetDecisionDefinitionForbidden', 'GetDecisionDefinitionInternalServerError', 'GetDecisionDefinitionNotFound', 'GetDecisionDefinitionUnauthorized', 'GetDecisionDefinitionXmlBadRequest', 'GetDecisionDefinitionXmlForbidden', 'GetDecisionDefinitionXmlInternalServerError', 'GetDecisionDefinitionXmlNotFound', 'GetDecisionDefinitionXmlUnauthorized', 'GetDecisionInstanceBadRequest', 'GetDecisionInstanceForbidden', 'GetDecisionInstanceInternalServerError', 'GetDecisionInstanceNotFound', 'GetDecisionInstanceUnauthorized', 'GetDecisionRequirementsBadRequest', 'GetDecisionRequirementsForbidden', 'GetDecisionRequirementsInternalServerError', 'GetDecisionRequirementsNotFound', 'GetDecisionRequirementsUnauthorized', 'GetDecisionRequirementsXmlBadRequest', 'GetDecisionRequirementsXmlForbidden', 'GetDecisionRequirementsXmlInternalServerError', 'GetDecisionRequirementsXmlNotFound', 'GetDecisionRequirementsXmlUnauthorized', 'GetDocumentInternalServerError', 'GetDocumentNotFound', 'GetElementInstanceBadRequest', 'GetElementInstanceForbidden', 'GetElementInstanceInternalServerError', 'GetElementInstanceNotFound', 'GetElementInstanceUnauthorized', 'GetGlobalClusterVariableBadRequest', 'GetGlobalClusterVariableForbidden', 'GetGlobalClusterVariableInternalServerError', 'GetGlobalClusterVariableNotFound', 'GetGlobalClusterVariableUnauthorized', 'GetGlobalJobStatisticsBadRequest', 'GetGlobalJobStatisticsForbidden', 'GetGlobalJobStatisticsInternalServerError', 'GetGlobalJobStatisticsUnauthorized', 'GetGroupForbidden', 'GetGroupInternalServerError', 'GetGroupNotFound', 'GetGroupUnauthorized', 'GetIncidentBadRequest', 'GetIncidentForbidden', 'GetIncidentInternalServerError', 'GetIncidentNotFound', 'GetIncidentUnauthorized', 'GetLicenseInternalServerError', 'GetMappingRuleInternalServerError', 'GetMappingRuleNotFound', 'GetMappingRuleUnauthorized', 'GetProcessDefinitionBadRequest', 'GetProcessDefinitionForbidden', 'GetProcessDefinitionInstanceStatisticsBadRequest', 'GetProcessDefinitionInstanceStatisticsForbidden', 'GetProcessDefinitionInstanceStatisticsInternalServerError', 'GetProcessDefinitionInstanceStatisticsUnauthorized', 'GetProcessDefinitionInstanceVersionStatisticsBadRequest', 'GetProcessDefinitionInstanceVersionStatisticsForbidden', 'GetProcessDefinitionInstanceVersionStatisticsInternalServerError', 'GetProcessDefinitionInstanceVersionStatisticsUnauthorized', 'GetProcessDefinitionInternalServerError', 'GetProcessDefinitionMessageSubscriptionStatisticsBadRequest', 'GetProcessDefinitionMessageSubscriptionStatisticsForbidden', 'GetProcessDefinitionMessageSubscriptionStatisticsInternalServerError', 'GetProcessDefinitionMessageSubscriptionStatisticsUnauthorized', 'GetProcessDefinitionNotFound', 'GetProcessDefinitionStatisticsBadRequest', 'GetProcessDefinitionStatisticsForbidden', 'GetProcessDefinitionStatisticsInternalServerError', 'GetProcessDefinitionStatisticsUnauthorized', 'GetProcessDefinitionUnauthorized', 'GetProcessDefinitionXmlBadRequest', 'GetProcessDefinitionXmlForbidden', 'GetProcessDefinitionXmlInternalServerError', 'GetProcessDefinitionXmlNotFound', 'GetProcessDefinitionXmlUnauthorized', 'GetProcessInstanceBadRequest', 'GetProcessInstanceCallHierarchyBadRequest', 'GetProcessInstanceCallHierarchyForbidden', 'GetProcessInstanceCallHierarchyInternalServerError', 'GetProcessInstanceCallHierarchyNotFound', 'GetProcessInstanceCallHierarchyUnauthorized', 'GetProcessInstanceForbidden', 'GetProcessInstanceInternalServerError', 'GetProcessInstanceNotFound', 'GetProcessInstanceSequenceFlowsBadRequest', 'GetProcessInstanceSequenceFlowsForbidden', 'GetProcessInstanceSequenceFlowsInternalServerError', 'GetProcessInstanceSequenceFlowsUnauthorized', 'GetProcessInstanceStatisticsBadRequest', 'GetProcessInstanceStatisticsByDefinitionBadRequest', 'GetProcessInstanceStatisticsByDefinitionForbidden', 'GetProcessInstanceStatisticsByDefinitionInternalServerError', 'GetProcessInstanceStatisticsByDefinitionUnauthorized', 'GetProcessInstanceStatisticsByErrorBadRequest', 'GetProcessInstanceStatisticsByErrorForbidden', 'GetProcessInstanceStatisticsByErrorInternalServerError', 'GetProcessInstanceStatisticsByErrorUnauthorized', 'GetProcessInstanceStatisticsForbidden', 'GetProcessInstanceStatisticsInternalServerError', 'GetProcessInstanceStatisticsUnauthorized', 'GetProcessInstanceUnauthorized', 'GetResourceContentInternalServerError', 'GetResourceContentNotFound', 'GetResourceInternalServerError', 'GetResourceNotFound', 'GetRoleForbidden', 'GetRoleInternalServerError', 'GetRoleNotFound', 'GetRoleUnauthorized', 'GetStartProcessFormBadRequest', 'GetStartProcessFormForbidden', 'GetStartProcessFormInternalServerError', 'GetStartProcessFormNotFound', 'GetStartProcessFormUnauthorized', 'GetStatusServiceUnavailable', 'GetTenantBadRequest', 'GetTenantClusterVariableBadRequest', 'GetTenantClusterVariableForbidden', 'GetTenantClusterVariableInternalServerError', 'GetTenantClusterVariableNotFound', 'GetTenantClusterVariableUnauthorized', 'GetTenantForbidden', 'GetTenantInternalServerError', 'GetTenantNotFound', 'GetTenantUnauthorized', 'GetTopologyInternalServerError', 'GetTopologyUnauthorized', 'GetUsageMetricsBadRequest', 'GetUsageMetricsForbidden', 'GetUsageMetricsInternalServerError', 'GetUsageMetricsUnauthorized', 'GetUserForbidden', 'GetUserInternalServerError', 'GetUserNotFound', 'GetUserTaskBadRequest', 'GetUserTaskForbidden', 'GetUserTaskFormBadRequest', 'GetUserTaskFormForbidden', 'GetUserTaskFormInternalServerError', 'GetUserTaskFormNotFound', 'GetUserTaskFormUnauthorized', 'GetUserTaskInternalServerError', 'GetUserTaskNotFound', 'GetUserTaskUnauthorized', 'GetUserUnauthorized', 'GetVariableBadRequest', 'GetVariableForbidden', 'GetVariableInternalServerError', 'GetVariableNotFound', 'GetVariableUnauthorized', 'MigrateProcessInstanceBadRequest', 'MigrateProcessInstanceConflict', 'MigrateProcessInstanceInternalServerError', 'MigrateProcessInstanceNotFound', 'MigrateProcessInstanceServiceUnavailable', 'MigrateProcessInstancesBatchOperationBadRequest', 'MigrateProcessInstancesBatchOperationForbidden', 'MigrateProcessInstancesBatchOperationInternalServerError', 'MigrateProcessInstancesBatchOperationUnauthorized', 'ModifyProcessInstanceBadRequest', 'ModifyProcessInstanceInternalServerError', 'ModifyProcessInstanceNotFound', 'ModifyProcessInstanceServiceUnavailable', 'ModifyProcessInstancesBatchOperationBadRequest', 'ModifyProcessInstancesBatchOperationForbidden', 'ModifyProcessInstancesBatchOperationInternalServerError', 'ModifyProcessInstancesBatchOperationUnauthorized', 'PinClockBadRequest', 'PinClockInternalServerError', 'PinClockServiceUnavailable', 'PublishMessageBadRequest', 'PublishMessageInternalServerError', 'PublishMessageServiceUnavailable', 'ResetClockInternalServerError', 'ResetClockServiceUnavailable', 'ResolveIncidentBadRequest', 'ResolveIncidentInternalServerError', 'ResolveIncidentNotFound', 'ResolveIncidentServiceUnavailable', 'ResolveIncidentsBatchOperationBadRequest', 'ResolveIncidentsBatchOperationForbidden', 'ResolveIncidentsBatchOperationInternalServerError', 'ResolveIncidentsBatchOperationUnauthorized', 'ResolveProcessInstanceIncidentsBadRequest', 'ResolveProcessInstanceIncidentsInternalServerError', 'ResolveProcessInstanceIncidentsNotFound', 'ResolveProcessInstanceIncidentsServiceUnavailable', 'ResolveProcessInstanceIncidentsUnauthorized', 'ResumeBatchOperationBadRequest', 'ResumeBatchOperationForbidden', 'ResumeBatchOperationInternalServerError', 'ResumeBatchOperationNotFound', 'ResumeBatchOperationServiceUnavailable', 'SearchAuditLogsBadRequest', 'SearchAuditLogsForbidden', 'SearchAuditLogsInternalServerError', 'SearchAuditLogsUnauthorized', 'SearchAuthorizationsBadRequest', 'SearchAuthorizationsForbidden', 'SearchAuthorizationsInternalServerError', 'SearchAuthorizationsUnauthorized', 'SearchBatchOperationItemsBadRequest', 'SearchBatchOperationItemsInternalServerError', 'SearchBatchOperationsBadRequest', 'SearchBatchOperationsInternalServerError', 'SearchClientsForGroupBadRequest', 'SearchClientsForGroupForbidden', 'SearchClientsForGroupInternalServerError', 'SearchClientsForGroupNotFound', 'SearchClientsForGroupUnauthorized', 'SearchClientsForRoleBadRequest', 'SearchClientsForRoleForbidden', 'SearchClientsForRoleInternalServerError', 'SearchClientsForRoleNotFound', 'SearchClientsForRoleUnauthorized', 'SearchClusterVariablesBadRequest', 'SearchClusterVariablesForbidden', 'SearchClusterVariablesInternalServerError', 'SearchClusterVariablesUnauthorized', 'SearchCorrelatedMessageSubscriptionsBadRequest', 'SearchCorrelatedMessageSubscriptionsForbidden', 'SearchCorrelatedMessageSubscriptionsInternalServerError', 'SearchCorrelatedMessageSubscriptionsUnauthorized', 'SearchDecisionDefinitionsBadRequest', 'SearchDecisionDefinitionsForbidden', 'SearchDecisionDefinitionsInternalServerError', 'SearchDecisionDefinitionsUnauthorized', 'SearchDecisionInstancesBadRequest', 'SearchDecisionInstancesForbidden', 'SearchDecisionInstancesInternalServerError', 'SearchDecisionInstancesUnauthorized', 'SearchDecisionRequirementsBadRequest', 'SearchDecisionRequirementsForbidden', 'SearchDecisionRequirementsInternalServerError', 'SearchDecisionRequirementsUnauthorized', 'SearchElementInstanceIncidentsBadRequest', 'SearchElementInstanceIncidentsForbidden', 'SearchElementInstanceIncidentsInternalServerError', 'SearchElementInstanceIncidentsNotFound', 'SearchElementInstanceIncidentsUnauthorized', 'SearchElementInstancesBadRequest', 'SearchElementInstancesForbidden', 'SearchElementInstancesInternalServerError', 'SearchElementInstancesUnauthorized', 'SearchGroupsBadRequest', 'SearchGroupsForRoleBadRequest', 'SearchGroupsForRoleForbidden', 'SearchGroupsForRoleInternalServerError', 'SearchGroupsForRoleNotFound', 'SearchGroupsForRoleUnauthorized', 'SearchGroupsForbidden', 'SearchGroupsInternalServerError', 'SearchGroupsUnauthorized', 'SearchIncidentsBadRequest', 'SearchIncidentsForbidden', 'SearchIncidentsInternalServerError', 'SearchIncidentsUnauthorized', 'SearchJobsBadRequest', 'SearchJobsForbidden', 'SearchJobsInternalServerError', 'SearchJobsUnauthorized', 'SearchMappingRuleBadRequest', 'SearchMappingRuleForbidden', 'SearchMappingRuleInternalServerError', 'SearchMappingRuleUnauthorized', 'SearchMappingRulesForGroupBadRequest', 'SearchMappingRulesForGroupForbidden', 'SearchMappingRulesForGroupInternalServerError', 'SearchMappingRulesForGroupNotFound', 'SearchMappingRulesForGroupUnauthorized', 'SearchMappingRulesForRoleBadRequest', 'SearchMappingRulesForRoleForbidden', 'SearchMappingRulesForRoleInternalServerError', 'SearchMappingRulesForRoleNotFound', 'SearchMappingRulesForRoleUnauthorized', 'SearchMessageSubscriptionsBadRequest', 'SearchMessageSubscriptionsForbidden', 'SearchMessageSubscriptionsInternalServerError', 'SearchMessageSubscriptionsUnauthorized', 'SearchProcessDefinitionsBadRequest', 'SearchProcessDefinitionsForbidden', 'SearchProcessDefinitionsInternalServerError', 'SearchProcessDefinitionsUnauthorized', 'SearchProcessInstanceIncidentsBadRequest', 'SearchProcessInstanceIncidentsForbidden', 'SearchProcessInstanceIncidentsInternalServerError', 'SearchProcessInstanceIncidentsNotFound', 'SearchProcessInstanceIncidentsUnauthorized', 'SearchProcessInstancesBadRequest', 'SearchProcessInstancesForbidden', 'SearchProcessInstancesInternalServerError', 'SearchProcessInstancesUnauthorized', 'SearchRolesBadRequest', 'SearchRolesForGroupBadRequest', 'SearchRolesForGroupForbidden', 'SearchRolesForGroupInternalServerError', 'SearchRolesForGroupNotFound', 'SearchRolesForGroupUnauthorized', 'SearchRolesForbidden', 'SearchRolesInternalServerError', 'SearchRolesUnauthorized', 'SearchTenantsBadRequest', 'SearchTenantsForbidden', 'SearchTenantsInternalServerError', 'SearchTenantsNotFound', 'SearchTenantsUnauthorized', 'SearchUserTaskAuditLogsBadRequest', 'SearchUserTaskAuditLogsInternalServerError', 'SearchUserTaskVariablesBadRequest', 'SearchUserTaskVariablesInternalServerError', 'SearchUserTasksBadRequest', 'SearchUserTasksForbidden', 'SearchUserTasksInternalServerError', 'SearchUserTasksUnauthorized', 'SearchUsersBadRequest', 'SearchUsersForGroupBadRequest', 'SearchUsersForGroupForbidden', 'SearchUsersForGroupInternalServerError', 'SearchUsersForGroupNotFound', 'SearchUsersForGroupUnauthorized', 'SearchUsersForRoleBadRequest', 'SearchUsersForRoleForbidden', 'SearchUsersForRoleInternalServerError', 'SearchUsersForRoleNotFound', 'SearchUsersForRoleUnauthorized', 'SearchUsersForbidden', 'SearchUsersInternalServerError', 'SearchUsersUnauthorized', 'SearchVariablesBadRequest', 'SearchVariablesForbidden', 'SearchVariablesInternalServerError', 'SearchVariablesUnauthorized', 'SuspendBatchOperationBadRequest', 'SuspendBatchOperationForbidden', 'SuspendBatchOperationInternalServerError', 'SuspendBatchOperationNotFound', 'SuspendBatchOperationServiceUnavailable', 'ThrowJobErrorBadRequest', 'ThrowJobErrorConflict', 'ThrowJobErrorInternalServerError', 'ThrowJobErrorNotFound', 'ThrowJobErrorServiceUnavailable', 'UnassignClientFromGroupBadRequest', 'UnassignClientFromGroupForbidden', 'UnassignClientFromGroupInternalServerError', 'UnassignClientFromGroupNotFound', 'UnassignClientFromGroupServiceUnavailable', 'UnassignClientFromTenantBadRequest', 'UnassignClientFromTenantForbidden', 'UnassignClientFromTenantInternalServerError', 'UnassignClientFromTenantNotFound', 'UnassignClientFromTenantServiceUnavailable', 'UnassignGroupFromTenantBadRequest', 'UnassignGroupFromTenantForbidden', 'UnassignGroupFromTenantInternalServerError', 'UnassignGroupFromTenantNotFound', 'UnassignGroupFromTenantServiceUnavailable', 'UnassignMappingRuleFromGroupBadRequest', 'UnassignMappingRuleFromGroupForbidden', 'UnassignMappingRuleFromGroupInternalServerError', 'UnassignMappingRuleFromGroupNotFound', 'UnassignMappingRuleFromGroupServiceUnavailable', 'UnassignMappingRuleFromTenantBadRequest', 'UnassignMappingRuleFromTenantForbidden', 'UnassignMappingRuleFromTenantInternalServerError', 'UnassignMappingRuleFromTenantNotFound', 'UnassignMappingRuleFromTenantServiceUnavailable', 'UnassignRoleFromClientBadRequest', 'UnassignRoleFromClientForbidden', 'UnassignRoleFromClientInternalServerError', 'UnassignRoleFromClientNotFound', 'UnassignRoleFromClientServiceUnavailable', 'UnassignRoleFromGroupBadRequest', 'UnassignRoleFromGroupForbidden', 'UnassignRoleFromGroupInternalServerError', 'UnassignRoleFromGroupNotFound', 'UnassignRoleFromGroupServiceUnavailable', 'UnassignRoleFromMappingRuleBadRequest', 'UnassignRoleFromMappingRuleForbidden', 'UnassignRoleFromMappingRuleInternalServerError', 'UnassignRoleFromMappingRuleNotFound', 'UnassignRoleFromMappingRuleServiceUnavailable', 'UnassignRoleFromTenantBadRequest', 'UnassignRoleFromTenantForbidden', 'UnassignRoleFromTenantInternalServerError', 'UnassignRoleFromTenantNotFound', 'UnassignRoleFromTenantServiceUnavailable', 'UnassignRoleFromUserBadRequest', 'UnassignRoleFromUserForbidden', 'UnassignRoleFromUserInternalServerError', 'UnassignRoleFromUserNotFound', 'UnassignRoleFromUserServiceUnavailable', 'UnassignUserFromGroupBadRequest', 'UnassignUserFromGroupForbidden', 'UnassignUserFromGroupInternalServerError', 'UnassignUserFromGroupNotFound', 'UnassignUserFromGroupServiceUnavailable', 'UnassignUserFromTenantBadRequest', 'UnassignUserFromTenantForbidden', 'UnassignUserFromTenantInternalServerError', 'UnassignUserFromTenantNotFound', 'UnassignUserFromTenantServiceUnavailable', 'UnassignUserTaskBadRequest', 'UnassignUserTaskConflict', 'UnassignUserTaskInternalServerError', 'UnassignUserTaskNotFound', 'UnassignUserTaskServiceUnavailable', 'UnexpectedStatus', 'UpdateAuthorizationInternalServerError', 'UpdateAuthorizationNotFound', 'UpdateAuthorizationServiceUnavailable', 'UpdateAuthorizationUnauthorized', 'UpdateGlobalClusterVariableBadRequest', 'UpdateGlobalClusterVariableForbidden', 'UpdateGlobalClusterVariableInternalServerError', 'UpdateGlobalClusterVariableNotFound', 'UpdateGlobalClusterVariableUnauthorized', 'UpdateGroupBadRequest', 'UpdateGroupInternalServerError', 'UpdateGroupNotFound', 'UpdateGroupServiceUnavailable', 'UpdateGroupUnauthorized', 'UpdateJobBadRequest', 'UpdateJobConflict', 'UpdateJobInternalServerError', 'UpdateJobNotFound', 'UpdateJobServiceUnavailable', 'UpdateMappingRuleBadRequest', 'UpdateMappingRuleForbidden', 'UpdateMappingRuleInternalServerError', 'UpdateMappingRuleNotFound', 'UpdateMappingRuleServiceUnavailable', 'UpdateRoleBadRequest', 'UpdateRoleInternalServerError', 'UpdateRoleNotFound', 'UpdateRoleServiceUnavailable', 'UpdateRoleUnauthorized', 'UpdateTenantBadRequest', 'UpdateTenantClusterVariableBadRequest', 'UpdateTenantClusterVariableForbidden', 'UpdateTenantClusterVariableInternalServerError', 'UpdateTenantClusterVariableNotFound', 'UpdateTenantClusterVariableUnauthorized', 'UpdateTenantForbidden', 'UpdateTenantInternalServerError', 'UpdateTenantNotFound', 'UpdateTenantServiceUnavailable', 'UpdateUserBadRequest', 'UpdateUserForbidden', 'UpdateUserInternalServerError', 'UpdateUserNotFound', 'UpdateUserServiceUnavailable', 'UpdateUserTaskBadRequest', 'UpdateUserTaskConflict', 'UpdateUserTaskInternalServerError', 'UpdateUserTaskNotFound', 'UpdateUserTaskServiceUnavailable']
+    def __init__(
+        self, status_code: int, content: bytes, parsed: ProblemDetail
+    ) -> None: ...
+
+__all__ = [
+    "ActivateAdHocSubProcessActivitiesBadRequest",
+    "ActivateAdHocSubProcessActivitiesForbidden",
+    "ActivateAdHocSubProcessActivitiesInternalServerError",
+    "ActivateAdHocSubProcessActivitiesNotFound",
+    "ActivateAdHocSubProcessActivitiesServiceUnavailable",
+    "ActivateAdHocSubProcessActivitiesUnauthorized",
+    "ActivateJobsBadRequest",
+    "ActivateJobsInternalServerError",
+    "ActivateJobsServiceUnavailable",
+    "ActivateJobsUnauthorized",
+    "ApiError",
+    "AssignClientToGroupBadRequest",
+    "AssignClientToGroupConflict",
+    "AssignClientToGroupForbidden",
+    "AssignClientToGroupInternalServerError",
+    "AssignClientToGroupNotFound",
+    "AssignClientToGroupServiceUnavailable",
+    "AssignClientToTenantBadRequest",
+    "AssignClientToTenantForbidden",
+    "AssignClientToTenantInternalServerError",
+    "AssignClientToTenantNotFound",
+    "AssignClientToTenantServiceUnavailable",
+    "AssignGroupToTenantBadRequest",
+    "AssignGroupToTenantForbidden",
+    "AssignGroupToTenantInternalServerError",
+    "AssignGroupToTenantNotFound",
+    "AssignGroupToTenantServiceUnavailable",
+    "AssignMappingRuleToGroupBadRequest",
+    "AssignMappingRuleToGroupConflict",
+    "AssignMappingRuleToGroupForbidden",
+    "AssignMappingRuleToGroupInternalServerError",
+    "AssignMappingRuleToGroupNotFound",
+    "AssignMappingRuleToGroupServiceUnavailable",
+    "AssignMappingRuleToTenantBadRequest",
+    "AssignMappingRuleToTenantForbidden",
+    "AssignMappingRuleToTenantInternalServerError",
+    "AssignMappingRuleToTenantNotFound",
+    "AssignMappingRuleToTenantServiceUnavailable",
+    "AssignRoleToClientBadRequest",
+    "AssignRoleToClientConflict",
+    "AssignRoleToClientForbidden",
+    "AssignRoleToClientInternalServerError",
+    "AssignRoleToClientNotFound",
+    "AssignRoleToClientServiceUnavailable",
+    "AssignRoleToGroupBadRequest",
+    "AssignRoleToGroupConflict",
+    "AssignRoleToGroupForbidden",
+    "AssignRoleToGroupInternalServerError",
+    "AssignRoleToGroupNotFound",
+    "AssignRoleToGroupServiceUnavailable",
+    "AssignRoleToMappingRuleBadRequest",
+    "AssignRoleToMappingRuleConflict",
+    "AssignRoleToMappingRuleForbidden",
+    "AssignRoleToMappingRuleInternalServerError",
+    "AssignRoleToMappingRuleNotFound",
+    "AssignRoleToMappingRuleServiceUnavailable",
+    "AssignRoleToTenantBadRequest",
+    "AssignRoleToTenantForbidden",
+    "AssignRoleToTenantInternalServerError",
+    "AssignRoleToTenantNotFound",
+    "AssignRoleToTenantServiceUnavailable",
+    "AssignRoleToUserBadRequest",
+    "AssignRoleToUserConflict",
+    "AssignRoleToUserForbidden",
+    "AssignRoleToUserInternalServerError",
+    "AssignRoleToUserNotFound",
+    "AssignRoleToUserServiceUnavailable",
+    "AssignUserTaskBadRequest",
+    "AssignUserTaskConflict",
+    "AssignUserTaskInternalServerError",
+    "AssignUserTaskNotFound",
+    "AssignUserTaskServiceUnavailable",
+    "AssignUserToGroupBadRequest",
+    "AssignUserToGroupConflict",
+    "AssignUserToGroupForbidden",
+    "AssignUserToGroupInternalServerError",
+    "AssignUserToGroupNotFound",
+    "AssignUserToGroupServiceUnavailable",
+    "AssignUserToTenantBadRequest",
+    "AssignUserToTenantForbidden",
+    "AssignUserToTenantInternalServerError",
+    "AssignUserToTenantNotFound",
+    "AssignUserToTenantServiceUnavailable",
+    "BroadcastSignalBadRequest",
+    "BroadcastSignalInternalServerError",
+    "BroadcastSignalNotFound",
+    "BroadcastSignalServiceUnavailable",
+    "CancelBatchOperationBadRequest",
+    "CancelBatchOperationForbidden",
+    "CancelBatchOperationInternalServerError",
+    "CancelBatchOperationNotFound",
+    "CancelProcessInstanceBadRequest",
+    "CancelProcessInstanceInternalServerError",
+    "CancelProcessInstanceNotFound",
+    "CancelProcessInstanceServiceUnavailable",
+    "CancelProcessInstancesBatchOperationBadRequest",
+    "CancelProcessInstancesBatchOperationForbidden",
+    "CancelProcessInstancesBatchOperationInternalServerError",
+    "CancelProcessInstancesBatchOperationUnauthorized",
+    "CompleteJobBadRequest",
+    "CompleteJobConflict",
+    "CompleteJobInternalServerError",
+    "CompleteJobNotFound",
+    "CompleteJobServiceUnavailable",
+    "CompleteUserTaskBadRequest",
+    "CompleteUserTaskConflict",
+    "CompleteUserTaskInternalServerError",
+    "CompleteUserTaskNotFound",
+    "CompleteUserTaskServiceUnavailable",
+    "CorrelateMessageBadRequest",
+    "CorrelateMessageForbidden",
+    "CorrelateMessageInternalServerError",
+    "CorrelateMessageNotFound",
+    "CorrelateMessageServiceUnavailable",
+    "CreateAdminUserBadRequest",
+    "CreateAdminUserForbidden",
+    "CreateAdminUserInternalServerError",
+    "CreateAdminUserServiceUnavailable",
+    "CreateAuthorizationBadRequest",
+    "CreateAuthorizationForbidden",
+    "CreateAuthorizationInternalServerError",
+    "CreateAuthorizationNotFound",
+    "CreateAuthorizationServiceUnavailable",
+    "CreateAuthorizationUnauthorized",
+    "CreateDeploymentBadRequest",
+    "CreateDeploymentServiceUnavailable",
+    "CreateDocumentBadRequest",
+    "CreateDocumentLinkBadRequest",
+    "CreateDocumentUnsupportedMediaType",
+    "CreateDocumentsBadRequest",
+    "CreateDocumentsUnsupportedMediaType",
+    "CreateElementInstanceVariablesBadRequest",
+    "CreateElementInstanceVariablesInternalServerError",
+    "CreateElementInstanceVariablesServiceUnavailable",
+    "CreateGlobalClusterVariableBadRequest",
+    "CreateGlobalClusterVariableForbidden",
+    "CreateGlobalClusterVariableInternalServerError",
+    "CreateGlobalClusterVariableUnauthorized",
+    "CreateGroupBadRequest",
+    "CreateGroupForbidden",
+    "CreateGroupInternalServerError",
+    "CreateGroupServiceUnavailable",
+    "CreateGroupUnauthorized",
+    "CreateMappingRuleBadRequest",
+    "CreateMappingRuleForbidden",
+    "CreateMappingRuleInternalServerError",
+    "CreateMappingRuleNotFound",
+    "CreateProcessInstanceBadRequest",
+    "CreateProcessInstanceGatewayTimeout",
+    "CreateProcessInstanceInternalServerError",
+    "CreateProcessInstanceServiceUnavailable",
+    "CreateRoleBadRequest",
+    "CreateRoleForbidden",
+    "CreateRoleInternalServerError",
+    "CreateRoleServiceUnavailable",
+    "CreateRoleUnauthorized",
+    "CreateTenantBadRequest",
+    "CreateTenantClusterVariableBadRequest",
+    "CreateTenantClusterVariableForbidden",
+    "CreateTenantClusterVariableInternalServerError",
+    "CreateTenantClusterVariableUnauthorized",
+    "CreateTenantConflict",
+    "CreateTenantForbidden",
+    "CreateTenantInternalServerError",
+    "CreateTenantNotFound",
+    "CreateTenantServiceUnavailable",
+    "CreateUserBadRequest",
+    "CreateUserConflict",
+    "CreateUserForbidden",
+    "CreateUserInternalServerError",
+    "CreateUserServiceUnavailable",
+    "CreateUserUnauthorized",
+    "DeleteAuthorizationInternalServerError",
+    "DeleteAuthorizationNotFound",
+    "DeleteAuthorizationServiceUnavailable",
+    "DeleteAuthorizationUnauthorized",
+    "DeleteDecisionInstanceForbidden",
+    "DeleteDecisionInstanceInternalServerError",
+    "DeleteDecisionInstanceNotFound",
+    "DeleteDecisionInstanceServiceUnavailable",
+    "DeleteDecisionInstanceUnauthorized",
+    "DeleteDecisionInstancesBatchOperationBadRequest",
+    "DeleteDecisionInstancesBatchOperationForbidden",
+    "DeleteDecisionInstancesBatchOperationInternalServerError",
+    "DeleteDecisionInstancesBatchOperationUnauthorized",
+    "DeleteDocumentInternalServerError",
+    "DeleteDocumentNotFound",
+    "DeleteGlobalClusterVariableBadRequest",
+    "DeleteGlobalClusterVariableForbidden",
+    "DeleteGlobalClusterVariableInternalServerError",
+    "DeleteGlobalClusterVariableNotFound",
+    "DeleteGlobalClusterVariableUnauthorized",
+    "DeleteGroupInternalServerError",
+    "DeleteGroupNotFound",
+    "DeleteGroupServiceUnavailable",
+    "DeleteGroupUnauthorized",
+    "DeleteMappingRuleInternalServerError",
+    "DeleteMappingRuleNotFound",
+    "DeleteMappingRuleServiceUnavailable",
+    "DeleteMappingRuleUnauthorized",
+    "DeleteProcessInstanceConflict",
+    "DeleteProcessInstanceForbidden",
+    "DeleteProcessInstanceInternalServerError",
+    "DeleteProcessInstanceNotFound",
+    "DeleteProcessInstanceServiceUnavailable",
+    "DeleteProcessInstanceUnauthorized",
+    "DeleteProcessInstancesBatchOperationBadRequest",
+    "DeleteProcessInstancesBatchOperationForbidden",
+    "DeleteProcessInstancesBatchOperationInternalServerError",
+    "DeleteProcessInstancesBatchOperationUnauthorized",
+    "DeleteResourceBadRequest",
+    "DeleteResourceInternalServerError",
+    "DeleteResourceNotFound",
+    "DeleteResourceServiceUnavailable",
+    "DeleteRoleInternalServerError",
+    "DeleteRoleNotFound",
+    "DeleteRoleServiceUnavailable",
+    "DeleteRoleUnauthorized",
+    "DeleteTenantBadRequest",
+    "DeleteTenantClusterVariableBadRequest",
+    "DeleteTenantClusterVariableForbidden",
+    "DeleteTenantClusterVariableInternalServerError",
+    "DeleteTenantClusterVariableNotFound",
+    "DeleteTenantClusterVariableUnauthorized",
+    "DeleteTenantForbidden",
+    "DeleteTenantInternalServerError",
+    "DeleteTenantNotFound",
+    "DeleteTenantServiceUnavailable",
+    "DeleteUserBadRequest",
+    "DeleteUserInternalServerError",
+    "DeleteUserNotFound",
+    "DeleteUserServiceUnavailable",
+    "EvaluateConditionalsBadRequest",
+    "EvaluateConditionalsForbidden",
+    "EvaluateConditionalsInternalServerError",
+    "EvaluateConditionalsNotFound",
+    "EvaluateConditionalsServiceUnavailable",
+    "EvaluateDecisionBadRequest",
+    "EvaluateDecisionInternalServerError",
+    "EvaluateDecisionNotFound",
+    "EvaluateDecisionServiceUnavailable",
+    "EvaluateExpressionBadRequest",
+    "EvaluateExpressionForbidden",
+    "EvaluateExpressionInternalServerError",
+    "EvaluateExpressionUnauthorized",
+    "FailJobBadRequest",
+    "FailJobConflict",
+    "FailJobInternalServerError",
+    "FailJobNotFound",
+    "FailJobServiceUnavailable",
+    "GetAuditLogForbidden",
+    "GetAuditLogInternalServerError",
+    "GetAuditLogNotFound",
+    "GetAuditLogUnauthorized",
+    "GetAuthenticationForbidden",
+    "GetAuthenticationInternalServerError",
+    "GetAuthenticationUnauthorized",
+    "GetAuthorizationForbidden",
+    "GetAuthorizationInternalServerError",
+    "GetAuthorizationNotFound",
+    "GetAuthorizationUnauthorized",
+    "GetBatchOperationBadRequest",
+    "GetBatchOperationInternalServerError",
+    "GetBatchOperationNotFound",
+    "GetDecisionDefinitionBadRequest",
+    "GetDecisionDefinitionForbidden",
+    "GetDecisionDefinitionInternalServerError",
+    "GetDecisionDefinitionNotFound",
+    "GetDecisionDefinitionUnauthorized",
+    "GetDecisionDefinitionXmlBadRequest",
+    "GetDecisionDefinitionXmlForbidden",
+    "GetDecisionDefinitionXmlInternalServerError",
+    "GetDecisionDefinitionXmlNotFound",
+    "GetDecisionDefinitionXmlUnauthorized",
+    "GetDecisionInstanceBadRequest",
+    "GetDecisionInstanceForbidden",
+    "GetDecisionInstanceInternalServerError",
+    "GetDecisionInstanceNotFound",
+    "GetDecisionInstanceUnauthorized",
+    "GetDecisionRequirementsBadRequest",
+    "GetDecisionRequirementsForbidden",
+    "GetDecisionRequirementsInternalServerError",
+    "GetDecisionRequirementsNotFound",
+    "GetDecisionRequirementsUnauthorized",
+    "GetDecisionRequirementsXmlBadRequest",
+    "GetDecisionRequirementsXmlForbidden",
+    "GetDecisionRequirementsXmlInternalServerError",
+    "GetDecisionRequirementsXmlNotFound",
+    "GetDecisionRequirementsXmlUnauthorized",
+    "GetDocumentInternalServerError",
+    "GetDocumentNotFound",
+    "GetElementInstanceBadRequest",
+    "GetElementInstanceForbidden",
+    "GetElementInstanceInternalServerError",
+    "GetElementInstanceNotFound",
+    "GetElementInstanceUnauthorized",
+    "GetGlobalClusterVariableBadRequest",
+    "GetGlobalClusterVariableForbidden",
+    "GetGlobalClusterVariableInternalServerError",
+    "GetGlobalClusterVariableNotFound",
+    "GetGlobalClusterVariableUnauthorized",
+    "GetGlobalJobStatisticsBadRequest",
+    "GetGlobalJobStatisticsForbidden",
+    "GetGlobalJobStatisticsInternalServerError",
+    "GetGlobalJobStatisticsUnauthorized",
+    "GetGroupForbidden",
+    "GetGroupInternalServerError",
+    "GetGroupNotFound",
+    "GetGroupUnauthorized",
+    "GetIncidentBadRequest",
+    "GetIncidentForbidden",
+    "GetIncidentInternalServerError",
+    "GetIncidentNotFound",
+    "GetIncidentUnauthorized",
+    "GetLicenseInternalServerError",
+    "GetMappingRuleInternalServerError",
+    "GetMappingRuleNotFound",
+    "GetMappingRuleUnauthorized",
+    "GetProcessDefinitionBadRequest",
+    "GetProcessDefinitionForbidden",
+    "GetProcessDefinitionInstanceStatisticsBadRequest",
+    "GetProcessDefinitionInstanceStatisticsForbidden",
+    "GetProcessDefinitionInstanceStatisticsInternalServerError",
+    "GetProcessDefinitionInstanceStatisticsUnauthorized",
+    "GetProcessDefinitionInstanceVersionStatisticsBadRequest",
+    "GetProcessDefinitionInstanceVersionStatisticsForbidden",
+    "GetProcessDefinitionInstanceVersionStatisticsInternalServerError",
+    "GetProcessDefinitionInstanceVersionStatisticsUnauthorized",
+    "GetProcessDefinitionInternalServerError",
+    "GetProcessDefinitionMessageSubscriptionStatisticsBadRequest",
+    "GetProcessDefinitionMessageSubscriptionStatisticsForbidden",
+    "GetProcessDefinitionMessageSubscriptionStatisticsInternalServerError",
+    "GetProcessDefinitionMessageSubscriptionStatisticsUnauthorized",
+    "GetProcessDefinitionNotFound",
+    "GetProcessDefinitionStatisticsBadRequest",
+    "GetProcessDefinitionStatisticsForbidden",
+    "GetProcessDefinitionStatisticsInternalServerError",
+    "GetProcessDefinitionStatisticsUnauthorized",
+    "GetProcessDefinitionUnauthorized",
+    "GetProcessDefinitionXmlBadRequest",
+    "GetProcessDefinitionXmlForbidden",
+    "GetProcessDefinitionXmlInternalServerError",
+    "GetProcessDefinitionXmlNotFound",
+    "GetProcessDefinitionXmlUnauthorized",
+    "GetProcessInstanceBadRequest",
+    "GetProcessInstanceCallHierarchyBadRequest",
+    "GetProcessInstanceCallHierarchyForbidden",
+    "GetProcessInstanceCallHierarchyInternalServerError",
+    "GetProcessInstanceCallHierarchyNotFound",
+    "GetProcessInstanceCallHierarchyUnauthorized",
+    "GetProcessInstanceForbidden",
+    "GetProcessInstanceInternalServerError",
+    "GetProcessInstanceNotFound",
+    "GetProcessInstanceSequenceFlowsBadRequest",
+    "GetProcessInstanceSequenceFlowsForbidden",
+    "GetProcessInstanceSequenceFlowsInternalServerError",
+    "GetProcessInstanceSequenceFlowsUnauthorized",
+    "GetProcessInstanceStatisticsBadRequest",
+    "GetProcessInstanceStatisticsByDefinitionBadRequest",
+    "GetProcessInstanceStatisticsByDefinitionForbidden",
+    "GetProcessInstanceStatisticsByDefinitionInternalServerError",
+    "GetProcessInstanceStatisticsByDefinitionUnauthorized",
+    "GetProcessInstanceStatisticsByErrorBadRequest",
+    "GetProcessInstanceStatisticsByErrorForbidden",
+    "GetProcessInstanceStatisticsByErrorInternalServerError",
+    "GetProcessInstanceStatisticsByErrorUnauthorized",
+    "GetProcessInstanceStatisticsForbidden",
+    "GetProcessInstanceStatisticsInternalServerError",
+    "GetProcessInstanceStatisticsUnauthorized",
+    "GetProcessInstanceUnauthorized",
+    "GetResourceContentInternalServerError",
+    "GetResourceContentNotFound",
+    "GetResourceInternalServerError",
+    "GetResourceNotFound",
+    "GetRoleForbidden",
+    "GetRoleInternalServerError",
+    "GetRoleNotFound",
+    "GetRoleUnauthorized",
+    "GetStartProcessFormBadRequest",
+    "GetStartProcessFormForbidden",
+    "GetStartProcessFormInternalServerError",
+    "GetStartProcessFormNotFound",
+    "GetStartProcessFormUnauthorized",
+    "GetStatusServiceUnavailable",
+    "GetTenantBadRequest",
+    "GetTenantClusterVariableBadRequest",
+    "GetTenantClusterVariableForbidden",
+    "GetTenantClusterVariableInternalServerError",
+    "GetTenantClusterVariableNotFound",
+    "GetTenantClusterVariableUnauthorized",
+    "GetTenantForbidden",
+    "GetTenantInternalServerError",
+    "GetTenantNotFound",
+    "GetTenantUnauthorized",
+    "GetTopologyInternalServerError",
+    "GetTopologyUnauthorized",
+    "GetUsageMetricsBadRequest",
+    "GetUsageMetricsForbidden",
+    "GetUsageMetricsInternalServerError",
+    "GetUsageMetricsUnauthorized",
+    "GetUserForbidden",
+    "GetUserInternalServerError",
+    "GetUserNotFound",
+    "GetUserTaskBadRequest",
+    "GetUserTaskForbidden",
+    "GetUserTaskFormBadRequest",
+    "GetUserTaskFormForbidden",
+    "GetUserTaskFormInternalServerError",
+    "GetUserTaskFormNotFound",
+    "GetUserTaskFormUnauthorized",
+    "GetUserTaskInternalServerError",
+    "GetUserTaskNotFound",
+    "GetUserTaskUnauthorized",
+    "GetUserUnauthorized",
+    "GetVariableBadRequest",
+    "GetVariableForbidden",
+    "GetVariableInternalServerError",
+    "GetVariableNotFound",
+    "GetVariableUnauthorized",
+    "MigrateProcessInstanceBadRequest",
+    "MigrateProcessInstanceConflict",
+    "MigrateProcessInstanceInternalServerError",
+    "MigrateProcessInstanceNotFound",
+    "MigrateProcessInstanceServiceUnavailable",
+    "MigrateProcessInstancesBatchOperationBadRequest",
+    "MigrateProcessInstancesBatchOperationForbidden",
+    "MigrateProcessInstancesBatchOperationInternalServerError",
+    "MigrateProcessInstancesBatchOperationUnauthorized",
+    "ModifyProcessInstanceBadRequest",
+    "ModifyProcessInstanceInternalServerError",
+    "ModifyProcessInstanceNotFound",
+    "ModifyProcessInstanceServiceUnavailable",
+    "ModifyProcessInstancesBatchOperationBadRequest",
+    "ModifyProcessInstancesBatchOperationForbidden",
+    "ModifyProcessInstancesBatchOperationInternalServerError",
+    "ModifyProcessInstancesBatchOperationUnauthorized",
+    "PinClockBadRequest",
+    "PinClockInternalServerError",
+    "PinClockServiceUnavailable",
+    "PublishMessageBadRequest",
+    "PublishMessageInternalServerError",
+    "PublishMessageServiceUnavailable",
+    "ResetClockInternalServerError",
+    "ResetClockServiceUnavailable",
+    "ResolveIncidentBadRequest",
+    "ResolveIncidentInternalServerError",
+    "ResolveIncidentNotFound",
+    "ResolveIncidentServiceUnavailable",
+    "ResolveIncidentsBatchOperationBadRequest",
+    "ResolveIncidentsBatchOperationForbidden",
+    "ResolveIncidentsBatchOperationInternalServerError",
+    "ResolveIncidentsBatchOperationUnauthorized",
+    "ResolveProcessInstanceIncidentsBadRequest",
+    "ResolveProcessInstanceIncidentsInternalServerError",
+    "ResolveProcessInstanceIncidentsNotFound",
+    "ResolveProcessInstanceIncidentsServiceUnavailable",
+    "ResolveProcessInstanceIncidentsUnauthorized",
+    "ResumeBatchOperationBadRequest",
+    "ResumeBatchOperationForbidden",
+    "ResumeBatchOperationInternalServerError",
+    "ResumeBatchOperationNotFound",
+    "ResumeBatchOperationServiceUnavailable",
+    "SearchAuditLogsBadRequest",
+    "SearchAuditLogsForbidden",
+    "SearchAuditLogsInternalServerError",
+    "SearchAuditLogsUnauthorized",
+    "SearchAuthorizationsBadRequest",
+    "SearchAuthorizationsForbidden",
+    "SearchAuthorizationsInternalServerError",
+    "SearchAuthorizationsUnauthorized",
+    "SearchBatchOperationItemsBadRequest",
+    "SearchBatchOperationItemsInternalServerError",
+    "SearchBatchOperationsBadRequest",
+    "SearchBatchOperationsInternalServerError",
+    "SearchClientsForGroupBadRequest",
+    "SearchClientsForGroupForbidden",
+    "SearchClientsForGroupInternalServerError",
+    "SearchClientsForGroupNotFound",
+    "SearchClientsForGroupUnauthorized",
+    "SearchClientsForRoleBadRequest",
+    "SearchClientsForRoleForbidden",
+    "SearchClientsForRoleInternalServerError",
+    "SearchClientsForRoleNotFound",
+    "SearchClientsForRoleUnauthorized",
+    "SearchClusterVariablesBadRequest",
+    "SearchClusterVariablesForbidden",
+    "SearchClusterVariablesInternalServerError",
+    "SearchClusterVariablesUnauthorized",
+    "SearchCorrelatedMessageSubscriptionsBadRequest",
+    "SearchCorrelatedMessageSubscriptionsForbidden",
+    "SearchCorrelatedMessageSubscriptionsInternalServerError",
+    "SearchCorrelatedMessageSubscriptionsUnauthorized",
+    "SearchDecisionDefinitionsBadRequest",
+    "SearchDecisionDefinitionsForbidden",
+    "SearchDecisionDefinitionsInternalServerError",
+    "SearchDecisionDefinitionsUnauthorized",
+    "SearchDecisionInstancesBadRequest",
+    "SearchDecisionInstancesForbidden",
+    "SearchDecisionInstancesInternalServerError",
+    "SearchDecisionInstancesUnauthorized",
+    "SearchDecisionRequirementsBadRequest",
+    "SearchDecisionRequirementsForbidden",
+    "SearchDecisionRequirementsInternalServerError",
+    "SearchDecisionRequirementsUnauthorized",
+    "SearchElementInstanceIncidentsBadRequest",
+    "SearchElementInstanceIncidentsForbidden",
+    "SearchElementInstanceIncidentsInternalServerError",
+    "SearchElementInstanceIncidentsNotFound",
+    "SearchElementInstanceIncidentsUnauthorized",
+    "SearchElementInstancesBadRequest",
+    "SearchElementInstancesForbidden",
+    "SearchElementInstancesInternalServerError",
+    "SearchElementInstancesUnauthorized",
+    "SearchGroupsBadRequest",
+    "SearchGroupsForRoleBadRequest",
+    "SearchGroupsForRoleForbidden",
+    "SearchGroupsForRoleInternalServerError",
+    "SearchGroupsForRoleNotFound",
+    "SearchGroupsForRoleUnauthorized",
+    "SearchGroupsForbidden",
+    "SearchGroupsInternalServerError",
+    "SearchGroupsUnauthorized",
+    "SearchIncidentsBadRequest",
+    "SearchIncidentsForbidden",
+    "SearchIncidentsInternalServerError",
+    "SearchIncidentsUnauthorized",
+    "SearchJobsBadRequest",
+    "SearchJobsForbidden",
+    "SearchJobsInternalServerError",
+    "SearchJobsUnauthorized",
+    "SearchMappingRuleBadRequest",
+    "SearchMappingRuleForbidden",
+    "SearchMappingRuleInternalServerError",
+    "SearchMappingRuleUnauthorized",
+    "SearchMappingRulesForGroupBadRequest",
+    "SearchMappingRulesForGroupForbidden",
+    "SearchMappingRulesForGroupInternalServerError",
+    "SearchMappingRulesForGroupNotFound",
+    "SearchMappingRulesForGroupUnauthorized",
+    "SearchMappingRulesForRoleBadRequest",
+    "SearchMappingRulesForRoleForbidden",
+    "SearchMappingRulesForRoleInternalServerError",
+    "SearchMappingRulesForRoleNotFound",
+    "SearchMappingRulesForRoleUnauthorized",
+    "SearchMessageSubscriptionsBadRequest",
+    "SearchMessageSubscriptionsForbidden",
+    "SearchMessageSubscriptionsInternalServerError",
+    "SearchMessageSubscriptionsUnauthorized",
+    "SearchProcessDefinitionsBadRequest",
+    "SearchProcessDefinitionsForbidden",
+    "SearchProcessDefinitionsInternalServerError",
+    "SearchProcessDefinitionsUnauthorized",
+    "SearchProcessInstanceIncidentsBadRequest",
+    "SearchProcessInstanceIncidentsForbidden",
+    "SearchProcessInstanceIncidentsInternalServerError",
+    "SearchProcessInstanceIncidentsNotFound",
+    "SearchProcessInstanceIncidentsUnauthorized",
+    "SearchProcessInstancesBadRequest",
+    "SearchProcessInstancesForbidden",
+    "SearchProcessInstancesInternalServerError",
+    "SearchProcessInstancesUnauthorized",
+    "SearchRolesBadRequest",
+    "SearchRolesForGroupBadRequest",
+    "SearchRolesForGroupForbidden",
+    "SearchRolesForGroupInternalServerError",
+    "SearchRolesForGroupNotFound",
+    "SearchRolesForGroupUnauthorized",
+    "SearchRolesForbidden",
+    "SearchRolesInternalServerError",
+    "SearchRolesUnauthorized",
+    "SearchTenantsBadRequest",
+    "SearchTenantsForbidden",
+    "SearchTenantsInternalServerError",
+    "SearchTenantsNotFound",
+    "SearchTenantsUnauthorized",
+    "SearchUserTaskAuditLogsBadRequest",
+    "SearchUserTaskAuditLogsInternalServerError",
+    "SearchUserTaskVariablesBadRequest",
+    "SearchUserTaskVariablesInternalServerError",
+    "SearchUserTasksBadRequest",
+    "SearchUserTasksForbidden",
+    "SearchUserTasksInternalServerError",
+    "SearchUserTasksUnauthorized",
+    "SearchUsersBadRequest",
+    "SearchUsersForGroupBadRequest",
+    "SearchUsersForGroupForbidden",
+    "SearchUsersForGroupInternalServerError",
+    "SearchUsersForGroupNotFound",
+    "SearchUsersForGroupUnauthorized",
+    "SearchUsersForRoleBadRequest",
+    "SearchUsersForRoleForbidden",
+    "SearchUsersForRoleInternalServerError",
+    "SearchUsersForRoleNotFound",
+    "SearchUsersForRoleUnauthorized",
+    "SearchUsersForbidden",
+    "SearchUsersInternalServerError",
+    "SearchUsersUnauthorized",
+    "SearchVariablesBadRequest",
+    "SearchVariablesForbidden",
+    "SearchVariablesInternalServerError",
+    "SearchVariablesUnauthorized",
+    "SuspendBatchOperationBadRequest",
+    "SuspendBatchOperationForbidden",
+    "SuspendBatchOperationInternalServerError",
+    "SuspendBatchOperationNotFound",
+    "SuspendBatchOperationServiceUnavailable",
+    "ThrowJobErrorBadRequest",
+    "ThrowJobErrorConflict",
+    "ThrowJobErrorInternalServerError",
+    "ThrowJobErrorNotFound",
+    "ThrowJobErrorServiceUnavailable",
+    "UnassignClientFromGroupBadRequest",
+    "UnassignClientFromGroupForbidden",
+    "UnassignClientFromGroupInternalServerError",
+    "UnassignClientFromGroupNotFound",
+    "UnassignClientFromGroupServiceUnavailable",
+    "UnassignClientFromTenantBadRequest",
+    "UnassignClientFromTenantForbidden",
+    "UnassignClientFromTenantInternalServerError",
+    "UnassignClientFromTenantNotFound",
+    "UnassignClientFromTenantServiceUnavailable",
+    "UnassignGroupFromTenantBadRequest",
+    "UnassignGroupFromTenantForbidden",
+    "UnassignGroupFromTenantInternalServerError",
+    "UnassignGroupFromTenantNotFound",
+    "UnassignGroupFromTenantServiceUnavailable",
+    "UnassignMappingRuleFromGroupBadRequest",
+    "UnassignMappingRuleFromGroupForbidden",
+    "UnassignMappingRuleFromGroupInternalServerError",
+    "UnassignMappingRuleFromGroupNotFound",
+    "UnassignMappingRuleFromGroupServiceUnavailable",
+    "UnassignMappingRuleFromTenantBadRequest",
+    "UnassignMappingRuleFromTenantForbidden",
+    "UnassignMappingRuleFromTenantInternalServerError",
+    "UnassignMappingRuleFromTenantNotFound",
+    "UnassignMappingRuleFromTenantServiceUnavailable",
+    "UnassignRoleFromClientBadRequest",
+    "UnassignRoleFromClientForbidden",
+    "UnassignRoleFromClientInternalServerError",
+    "UnassignRoleFromClientNotFound",
+    "UnassignRoleFromClientServiceUnavailable",
+    "UnassignRoleFromGroupBadRequest",
+    "UnassignRoleFromGroupForbidden",
+    "UnassignRoleFromGroupInternalServerError",
+    "UnassignRoleFromGroupNotFound",
+    "UnassignRoleFromGroupServiceUnavailable",
+    "UnassignRoleFromMappingRuleBadRequest",
+    "UnassignRoleFromMappingRuleForbidden",
+    "UnassignRoleFromMappingRuleInternalServerError",
+    "UnassignRoleFromMappingRuleNotFound",
+    "UnassignRoleFromMappingRuleServiceUnavailable",
+    "UnassignRoleFromTenantBadRequest",
+    "UnassignRoleFromTenantForbidden",
+    "UnassignRoleFromTenantInternalServerError",
+    "UnassignRoleFromTenantNotFound",
+    "UnassignRoleFromTenantServiceUnavailable",
+    "UnassignRoleFromUserBadRequest",
+    "UnassignRoleFromUserForbidden",
+    "UnassignRoleFromUserInternalServerError",
+    "UnassignRoleFromUserNotFound",
+    "UnassignRoleFromUserServiceUnavailable",
+    "UnassignUserFromGroupBadRequest",
+    "UnassignUserFromGroupForbidden",
+    "UnassignUserFromGroupInternalServerError",
+    "UnassignUserFromGroupNotFound",
+    "UnassignUserFromGroupServiceUnavailable",
+    "UnassignUserFromTenantBadRequest",
+    "UnassignUserFromTenantForbidden",
+    "UnassignUserFromTenantInternalServerError",
+    "UnassignUserFromTenantNotFound",
+    "UnassignUserFromTenantServiceUnavailable",
+    "UnassignUserTaskBadRequest",
+    "UnassignUserTaskConflict",
+    "UnassignUserTaskInternalServerError",
+    "UnassignUserTaskNotFound",
+    "UnassignUserTaskServiceUnavailable",
+    "UnexpectedStatus",
+    "UpdateAuthorizationInternalServerError",
+    "UpdateAuthorizationNotFound",
+    "UpdateAuthorizationServiceUnavailable",
+    "UpdateAuthorizationUnauthorized",
+    "UpdateGlobalClusterVariableBadRequest",
+    "UpdateGlobalClusterVariableForbidden",
+    "UpdateGlobalClusterVariableInternalServerError",
+    "UpdateGlobalClusterVariableNotFound",
+    "UpdateGlobalClusterVariableUnauthorized",
+    "UpdateGroupBadRequest",
+    "UpdateGroupInternalServerError",
+    "UpdateGroupNotFound",
+    "UpdateGroupServiceUnavailable",
+    "UpdateGroupUnauthorized",
+    "UpdateJobBadRequest",
+    "UpdateJobConflict",
+    "UpdateJobInternalServerError",
+    "UpdateJobNotFound",
+    "UpdateJobServiceUnavailable",
+    "UpdateMappingRuleBadRequest",
+    "UpdateMappingRuleForbidden",
+    "UpdateMappingRuleInternalServerError",
+    "UpdateMappingRuleNotFound",
+    "UpdateMappingRuleServiceUnavailable",
+    "UpdateRoleBadRequest",
+    "UpdateRoleInternalServerError",
+    "UpdateRoleNotFound",
+    "UpdateRoleServiceUnavailable",
+    "UpdateRoleUnauthorized",
+    "UpdateTenantBadRequest",
+    "UpdateTenantClusterVariableBadRequest",
+    "UpdateTenantClusterVariableForbidden",
+    "UpdateTenantClusterVariableInternalServerError",
+    "UpdateTenantClusterVariableNotFound",
+    "UpdateTenantClusterVariableUnauthorized",
+    "UpdateTenantForbidden",
+    "UpdateTenantInternalServerError",
+    "UpdateTenantNotFound",
+    "UpdateTenantServiceUnavailable",
+    "UpdateUserBadRequest",
+    "UpdateUserForbidden",
+    "UpdateUserInternalServerError",
+    "UpdateUserNotFound",
+    "UpdateUserServiceUnavailable",
+    "UpdateUserTaskBadRequest",
+    "UpdateUserTaskConflict",
+    "UpdateUserTaskInternalServerError",
+    "UpdateUserTaskNotFound",
+    "UpdateUserTaskServiceUnavailable",
+]

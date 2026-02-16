@@ -5,19 +5,25 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..models.usage_metrics_response_tenants_the_tenant_id import UsageMetricsResponseTenantsTheTenantID
+from ..models.usage_metrics_response_tenants_the_tenant_id import (
+    UsageMetricsResponseTenantsTheTenantID,
+)
+
 T = TypeVar("T", bound="UsageMetricsResponseTenants")
+
 @_attrs_define
 class UsageMetricsResponseTenants:
     additional_properties: dict[str, UsageMetricsResponseTenantsTheTenantID] = (
-            _attrs_field(init=False, factory=str_any_dict_factory)
-        )
+        _attrs_field(init=False, factory=str_any_dict_factory)
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...
     @property
     def additional_keys(self) -> list[str]: ...
     def __getitem__(self, key: str) -> UsageMetricsResponseTenantsTheTenantID: ...
-    def __setitem__(self, key: str, value: UsageMetricsResponseTenantsTheTenantID) -> None: ...
+    def __setitem__(
+        self, key: str, value: UsageMetricsResponseTenantsTheTenantID
+    ) -> None: ...
     def __delitem__(self, key: str) -> None: ...
     def __contains__(self, key: str) -> bool: ...

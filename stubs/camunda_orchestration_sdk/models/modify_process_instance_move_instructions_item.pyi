@@ -8,27 +8,35 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.direct_ancestor_key_instruction import DirectAncestorKeyInstruction
 from ..models.inferred_ancestor_key_instruction import InferredAncestorKeyInstruction
-from ..models.modify_process_instance_variable_instruction import ModifyProcessInstanceVariableInstruction
-from ..models.source_element_instance_key_instruction import SourceElementInstanceKeyInstruction
+from ..models.modify_process_instance_variable_instruction import (
+    ModifyProcessInstanceVariableInstruction,
+)
+from ..models.source_element_instance_key_instruction import (
+    SourceElementInstanceKeyInstruction,
+)
 from ..models.source_element_instruction_object import SourceElementInstructionObject
 from ..models.use_source_parent_key_instruction import UseSourceParentKeyInstruction
+
 T = TypeVar("T", bound="ModifyProcessInstanceMoveInstructionsItem")
+
 @_attrs_define
 class ModifyProcessInstanceMoveInstructionsItem:
     source_element_instruction: (
-            SourceElementInstanceKeyInstruction | SourceElementInstructionObject
-        )
+        SourceElementInstanceKeyInstruction | SourceElementInstructionObject
+    )
     target_element_id: ElementId
     ancestor_scope_instruction: (
-            DirectAncestorKeyInstruction
-            | InferredAncestorKeyInstruction
-            | Unset
-            | UseSourceParentKeyInstruction
-        ) = UNSET
+        DirectAncestorKeyInstruction
+        | InferredAncestorKeyInstruction
+        | Unset
+        | UseSourceParentKeyInstruction
+    ) = UNSET
     variable_instructions: list[ModifyProcessInstanceVariableInstruction] | Unset = (
-            UNSET
-        )
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+        UNSET
+    )
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

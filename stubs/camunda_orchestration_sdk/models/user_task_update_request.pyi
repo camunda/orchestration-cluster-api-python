@@ -5,7 +5,9 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 from ..models.changeset_type_0 import ChangesetType0
+
 T = TypeVar("T", bound="UserTaskUpdateRequest")
+
 @_attrs_define
 class UserTaskUpdateRequest:
     changeset: ChangesetType0 | None | Unset = UNSET

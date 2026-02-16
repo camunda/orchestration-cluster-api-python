@@ -1,6 +1,22 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import AuditLogKey, BatchOperationKey, DecisionDefinitionId, DecisionDefinitionKey, DecisionEvaluationKey, DecisionRequirementsKey, DeploymentKey, ElementInstanceKey, FormKey, JobKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId, UserTaskKey
+from camunda_orchestration_sdk.semantic_types import (
+    AuditLogKey,
+    BatchOperationKey,
+    DecisionDefinitionId,
+    DecisionDefinitionKey,
+    DecisionEvaluationKey,
+    DecisionRequirementsKey,
+    DeploymentKey,
+    ElementInstanceKey,
+    FormKey,
+    JobKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+    UserTaskKey,
+)
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -10,10 +26,14 @@ from ..models.audit_log_actor_type_enum import AuditLogActorTypeEnum
 from ..models.audit_log_category_enum import AuditLogCategoryEnum
 from ..models.audit_log_entity_type_enum import AuditLogEntityTypeEnum
 from ..models.audit_log_operation_type_enum import AuditLogOperationTypeEnum
-from ..models.audit_log_result_batch_operation_type import AuditLogResultBatchOperationType
+from ..models.audit_log_result_batch_operation_type import (
+    AuditLogResultBatchOperationType,
+)
 from ..models.audit_log_result_enum import AuditLogResultEnum
 from ..types import UNSET, Unset, str_any_dict_factory
+
 T = TypeVar("T", bound="AuditLogResult")
+
 @_attrs_define
 class AuditLogResult:
     audit_log_key: AuditLogKey | Unset = UNSET
@@ -43,7 +63,9 @@ class AuditLogResult:
     deployment_key: DeploymentKey | Unset = UNSET
     form_key: FormKey | Unset = UNSET
     resource_key: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

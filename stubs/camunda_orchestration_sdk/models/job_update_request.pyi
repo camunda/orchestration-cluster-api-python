@@ -5,7 +5,9 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 from ..models.job_changeset import JobChangeset
+
 T = TypeVar("T", bound="JobUpdateRequest")
+
 @_attrs_define
 class JobUpdateRequest:
     changeset: JobChangeset

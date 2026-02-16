@@ -1,14 +1,39 @@
 from typing import Any
 import httpx
 from ...client import AuthenticatedClient, Client
-from ...models.correlated_message_subscription_search_query import CorrelatedMessageSubscriptionSearchQuery
-from ...models.correlated_message_subscription_search_query_result import CorrelatedMessageSubscriptionSearchQueryResult
+from ...models.correlated_message_subscription_search_query import (
+    CorrelatedMessageSubscriptionSearchQuery,
+)
+from ...models.correlated_message_subscription_search_query_result import (
+    CorrelatedMessageSubscriptionSearchQueryResult,
+)
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
-def _get_kwargs(body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET) -> dict[str, Any]: ...
-def _parse_response(client: AuthenticatedClient | Client, response: httpx.Response) -> CorrelatedMessageSubscriptionSearchQueryResult | ProblemDetail | None: ...
-def _build_response(client: AuthenticatedClient | Client, response: httpx.Response) -> Response[CorrelatedMessageSubscriptionSearchQueryResult | ProblemDetail]: ...
-def sync_detailed(client: AuthenticatedClient | Client, body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET) -> Response[CorrelatedMessageSubscriptionSearchQueryResult | ProblemDetail]: ...
-def sync(client: AuthenticatedClient | Client, body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET, **kwargs: Any) -> CorrelatedMessageSubscriptionSearchQueryResult: ...
-async def asyncio_detailed(client: AuthenticatedClient | Client, body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET) -> Response[CorrelatedMessageSubscriptionSearchQueryResult | ProblemDetail]: ...
-async def asyncio(client: AuthenticatedClient | Client, body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET, **kwargs: Any) -> CorrelatedMessageSubscriptionSearchQueryResult: ...
+
+def _get_kwargs(
+    body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET,
+) -> dict[str, Any]: ...
+def _parse_response(
+    client: AuthenticatedClient | Client, response: httpx.Response
+) -> CorrelatedMessageSubscriptionSearchQueryResult | ProblemDetail | None: ...
+def _build_response(
+    client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[CorrelatedMessageSubscriptionSearchQueryResult | ProblemDetail]: ...
+def sync_detailed(
+    client: AuthenticatedClient | Client,
+    body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET,
+) -> Response[CorrelatedMessageSubscriptionSearchQueryResult | ProblemDetail]: ...
+def sync(
+    client: AuthenticatedClient | Client,
+    body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET,
+    **kwargs: Any,
+) -> CorrelatedMessageSubscriptionSearchQueryResult: ...
+async def asyncio_detailed(
+    client: AuthenticatedClient | Client,
+    body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET,
+) -> Response[CorrelatedMessageSubscriptionSearchQueryResult | ProblemDetail]: ...
+async def asyncio(
+    client: AuthenticatedClient | Client,
+    body: CorrelatedMessageSubscriptionSearchQuery | Unset = UNSET,
+    **kwargs: Any,
+) -> CorrelatedMessageSubscriptionSearchQueryResult: ...

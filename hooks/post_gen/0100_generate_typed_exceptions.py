@@ -66,16 +66,26 @@ def _extract_status_type_map(tree: ast.Module) -> dict[int, str]:
         if isinstance(return_expr, ast.Name):
             returned_name = return_expr.id
             for stmt in if_node.body:
-                if isinstance(stmt, ast.Assign) and len(stmt.targets) == 1 and isinstance(stmt.targets[0], ast.Name):
+                if (
+                    isinstance(stmt, ast.Assign)
+                    and len(stmt.targets) == 1
+                    and isinstance(stmt.targets[0], ast.Name)
+                ):
                     if stmt.targets[0].id != returned_name:
                         continue
                     value = stmt.value
                     if isinstance(value, ast.Call):
                         # Model.from_dict(...)
-                        if isinstance(value.func, ast.Attribute) and isinstance(value.func.value, ast.Name):
+                        if isinstance(value.func, ast.Attribute) and isinstance(
+                            value.func.value, ast.Name
+                        ):
                             return value.func.value.id
                         # cast(Type, ...)
-                        if isinstance(value.func, ast.Name) and value.func.id == "cast" and value.args:
+                        if (
+                            isinstance(value.func, ast.Name)
+                            and value.func.id == "cast"
+                            and value.args
+                        ):
                             return ast.unparse(value.args[0])
                     return ast.unparse(value)
 
@@ -83,9 +93,15 @@ def _extract_status_type_map(tree: ast.Module) -> dict[int, str]:
 
         # Other patterns: return Model.from_dict(...)
         if isinstance(return_expr, ast.Call):
-            if isinstance(return_expr.func, ast.Attribute) and isinstance(return_expr.func.value, ast.Name):
+            if isinstance(return_expr.func, ast.Attribute) and isinstance(
+                return_expr.func.value, ast.Name
+            ):
                 return return_expr.func.value.id
-            if isinstance(return_expr.func, ast.Name) and return_expr.func.id == "cast" and return_expr.args:
+            if (
+                isinstance(return_expr.func, ast.Name)
+                and return_expr.func.id == "cast"
+                and return_expr.args
+            ):
                 return ast.unparse(return_expr.args[0])
 
         return ast.unparse(return_expr)
@@ -146,7 +162,11 @@ def _extract_method_and_url(tree: ast.Module) -> tuple[str, str] | None:
             return node.value
 
         # Pattern: '/path/{x}'.format(x=...)
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "format":
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "format"
+        ):
             base = node.func.value
             if isinstance(base, ast.Constant) and isinstance(base.value, str):
                 return base.value
@@ -192,22 +212,34 @@ def _extract_method_and_url(tree: ast.Module) -> tuple[str, str] | None:
             for k, v in zip(dict_value.keys, dict_value.values, strict=False):
                 if not isinstance(k, ast.Constant) or not isinstance(k.value, str):
                     continue
-                if k.value == "method" and isinstance(v, ast.Constant) and isinstance(v.value, str):
+                if (
+                    k.value == "method"
+                    and isinstance(v, ast.Constant)
+                    and isinstance(v.value, str)
+                ):
                     method = v.value
                 elif k.value == "url":
                     url = _string_template_from_node(v)
 
         # Pattern 2: _kwargs['method'] = 'post' / _kwargs['url'] = '/...'
-        if isinstance(stmt, ast.Assign) and len(stmt.targets) == 1 and isinstance(stmt.targets[0], ast.Subscript):
+        if (
+            isinstance(stmt, ast.Assign)
+            and len(stmt.targets) == 1
+            and isinstance(stmt.targets[0], ast.Subscript)
+        ):
             target = stmt.targets[0]
-            if not (isinstance(target.value, ast.Name) and target.value.id == "_kwargs"):
+            if not (
+                isinstance(target.value, ast.Name) and target.value.id == "_kwargs"
+            ):
                 continue
             value_str = _string_template_from_node(stmt.value)
 
             key_node = target.slice
             if isinstance(key_node, ast.Constant) and isinstance(key_node.value, str):
                 if key_node.value == "method":
-                    if isinstance(stmt.value, ast.Constant) and isinstance(stmt.value.value, str):
+                    if isinstance(stmt.value, ast.Constant) and isinstance(
+                        stmt.value.value, str
+                    ):
                         method = stmt.value.value
                 elif key_node.value == "url":
                     url = value_str
@@ -314,14 +346,26 @@ def _generate_errors_py(exceptions: list[tuple[str, int, str, str | None]]) -> s
     exceptions_sorted = sorted(exceptions, key=lambda x: (x[0], x[1], x[2], x[3] or ""))
 
     # Collect model types that need TYPE_CHECKING imports
-    builtin_types = {"Any", "None", "str", "int", "float", "bool", "bytes", "dict", "list"}
+    builtin_types = {
+        "Any",
+        "None",
+        "str",
+        "int",
+        "float",
+        "bool",
+        "bytes",
+        "dict",
+        "list",
+    }
     model_types: set[str] = set()
     for _exc_name, _code, parsed_type, _desc in exceptions_sorted:
         if parsed_type not in builtin_types:
             model_types.add(parsed_type)
 
     lines: list[str] = []
-    lines.append('"""Contains shared errors types that can be raised from API functions"""')
+    lines.append(
+        '"""Contains shared errors types that can be raised from API functions"""'
+    )
     lines.append("from __future__ import annotations")
     lines.append("")
     lines.append("from typing import TYPE_CHECKING, Any")
@@ -339,7 +383,9 @@ def _generate_errors_py(exceptions: list[tuple[str, int, str, str | None]]) -> s
     lines.append("class ApiError(Exception):")
     lines.append('    """Base class for API errors raised by convenience wrappers."""')
     lines.append("")
-    lines.append("    def __init__(self, *, status_code: int, content: bytes, parsed: Any | None = None):")
+    lines.append(
+        "    def __init__(self, *, status_code: int, content: bytes, parsed: Any | None = None):"
+    )
     lines.append("        self.status_code = status_code")
     lines.append("        self.content = content")
     lines.append("        self.parsed = parsed")
@@ -347,19 +393,27 @@ def _generate_errors_py(exceptions: list[tuple[str, int, str, str | None]]) -> s
     lines.append("        super().__init__(self._build_message())")
     lines.append("")
     lines.append("    def _build_message(self) -> str:")
-    lines.append("        parsed_name = type(self.parsed).__name__ if self.parsed is not None else 'None'")
+    lines.append(
+        "        parsed_name = type(self.parsed).__name__ if self.parsed is not None else 'None'"
+    )
     lines.append("        try:")
     lines.append("            content_text = self.content.decode(errors='ignore')")
     lines.append("        except Exception:")
     lines.append("            content_text = '<binary>'")
-    lines.append("        return f'HTTP {self.status_code} ({parsed_name})\\n\\nResponse content:\\n{content_text}'")
+    lines.append(
+        "        return f'HTTP {self.status_code} ({parsed_name})\\n\\nResponse content:\\n{content_text}'"
+    )
     lines.append("")
     lines.append("")
     lines.append("class UnexpectedStatus(ApiError):")
-    lines.append('    """Raised when the server returns a status code that is not handled/parsed by the SDK."""')
+    lines.append(
+        '    """Raised when the server returns a status code that is not handled/parsed by the SDK."""'
+    )
     lines.append("")
     lines.append("    def __init__(self, status_code: int, content: bytes):")
-    lines.append("        super().__init__(status_code=status_code, content=content, parsed=None)")
+    lines.append(
+        "        super().__init__(status_code=status_code, content=content, parsed=None)"
+    )
     lines.append("")
     lines.append("")
 
@@ -369,13 +423,19 @@ def _generate_errors_py(exceptions: list[tuple[str, int, str, str | None]]) -> s
         exported.append(exc_name)
         lines.append(f"class {exc_name}(ApiError):")
         if description:
-            lines.append(f"    \"\"\"Raised when the server returns HTTP {code}. {description}\"\"\"")
+            lines.append(
+                f'    """Raised when the server returns HTTP {code}. {description}"""'
+            )
         else:
-            lines.append(f"    \"\"\"Raised when the server returns HTTP {code}.\"\"\"")
+            lines.append(f'    """Raised when the server returns HTTP {code}."""')
         lines.append(f"    parsed: {parsed_type}")
         lines.append("")
-        lines.append(f"    def __init__(self, *, status_code: int, content: bytes, parsed: {parsed_type}):")
-        lines.append("        super().__init__(status_code=status_code, content=content, parsed=parsed)")
+        lines.append(
+            f"    def __init__(self, *, status_code: int, content: bytes, parsed: {parsed_type}):"
+        )
+        lines.append(
+            "        super().__init__(status_code=status_code, content=content, parsed=parsed)"
+        )
         lines.append("")
         lines.append("")
 
@@ -422,7 +482,9 @@ def run(context: dict[str, str]) -> None:
             response_desc: dict[int, str] = {}
             if method_url and spec:
                 method, url = method_url
-                response_desc = _get_response_descriptions_for_endpoint(spec=spec, method=method, url=url)
+                response_desc = _get_response_descriptions_for_endpoint(
+                    spec=spec, method=method, url=url
+                )
 
             status_map = _extract_status_type_map(tree)
             for status_code, parsed_type in status_map.items():
@@ -430,7 +492,9 @@ def run(context: dict[str, str]) -> None:
                 if 200 <= status_code < 300:
                     continue
                 exc_name = f"{endpoint_name}{_status_suffix(status_code)}"
-                exceptions.append((exc_name, status_code, parsed_type, response_desc.get(status_code)))
+                exceptions.append(
+                    (exc_name, status_code, parsed_type, response_desc.get(status_code))
+                )
 
     errors_py = package_dir / "errors.py"
     errors_py.write_text(_generate_errors_py(exceptions))

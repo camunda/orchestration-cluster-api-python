@@ -4,10 +4,14 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from ..models.authorization_search_query_filter_resource_type import AuthorizationSearchQueryFilterResourceType
+from ..models.authorization_search_query_filter_resource_type import (
+    AuthorizationSearchQueryFilterResourceType,
+)
 from ..models.owner_type_enum import OwnerTypeEnum
 from ..types import UNSET, Unset, str_any_dict_factory
+
 T = TypeVar("T", bound="AuthorizationSearchQueryFilter")
+
 @_attrs_define
 class AuthorizationSearchQueryFilter:
     owner_id: str | Unset = UNSET
@@ -15,7 +19,9 @@ class AuthorizationSearchQueryFilter:
     resource_ids: list[str] | Unset = UNSET
     resource_property_names: list[str] | Unset = UNSET
     resource_type: AuthorizationSearchQueryFilterResourceType | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

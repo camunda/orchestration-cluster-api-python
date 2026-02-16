@@ -1,13 +1,18 @@
 import os
 import pytest
 from camunda_orchestration_sdk import CamundaAsyncClient
-from camunda_orchestration_sdk.models.search_process_instances_data import SearchProcessInstancesData
-from camunda_orchestration_sdk.models.offset_based_pagination import OffsetBasedPagination
+from camunda_orchestration_sdk.models.search_process_instances_data import (
+    SearchProcessInstancesData,
+)
+from camunda_orchestration_sdk.models.offset_based_pagination import (
+    OffsetBasedPagination,
+)
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("CAMUNDA_INTEGRATION") != "1",
     reason="Integration tests are disabled unless CAMUNDA_INTEGRATION=1",
 )
+
 
 def _make_client():
     return CamundaAsyncClient()
@@ -19,12 +24,10 @@ async def test_searchProcessInstances_smoke():
         # Construct the query
         # Note: 'from' is aliased to 'var_from' in Python because 'from' is a reserved keyword
         # But since SearchProcessInstancesDataPage is a dict wrapper, we use dict assignment.
-        
+
         page = OffsetBasedPagination(from_=0, limit=50)
-        
-        query = SearchProcessInstancesData(
-            page=page
-        )        
+
+        query = SearchProcessInstancesData(page=page)
         resp = await camunda.search_process_instances(data=query)
 
         print(resp)
@@ -32,4 +35,3 @@ async def test_searchProcessInstances_smoke():
         # Check for expected fields in SearchProcessInstancesResponse200
         assert hasattr(resp, "items")
         assert hasattr(resp, "page")
-

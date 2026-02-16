@@ -6,13 +6,19 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
-from ..models.process_definition_message_subscription_statistics_query_filter import ProcessDefinitionMessageSubscriptionStatisticsQueryFilter
+from ..models.process_definition_message_subscription_statistics_query_filter import (
+    ProcessDefinitionMessageSubscriptionStatisticsQueryFilter,
+)
+
 T = TypeVar("T", bound="ProcessDefinitionMessageSubscriptionStatisticsQuery")
+
 @_attrs_define
 class ProcessDefinitionMessageSubscriptionStatisticsQuery:
     page: CursorBasedForwardPagination | Unset = UNSET
     filter_: ProcessDefinitionMessageSubscriptionStatisticsQueryFilter | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

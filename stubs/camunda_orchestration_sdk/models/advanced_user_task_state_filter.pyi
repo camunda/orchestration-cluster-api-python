@@ -8,7 +8,9 @@ from ..models.advanced_user_task_state_filter_eq import AdvancedUserTaskStateFil
 from ..models.advanced_user_task_state_filter_neq import AdvancedUserTaskStateFilterNeq
 from ..models.user_task_state_enum import UserTaskStateEnum
 from ..types import UNSET, Unset, str_any_dict_factory
+
 T = TypeVar("T", bound="AdvancedUserTaskStateFilter")
+
 @_attrs_define
 class AdvancedUserTaskStateFilter:
     eq: AdvancedUserTaskStateFilterEq | Unset = UNSET
@@ -16,7 +18,9 @@ class AdvancedUserTaskStateFilter:
     exists: bool | Unset = UNSET
     in_: list[UserTaskStateEnum] | Unset = UNSET
     like: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

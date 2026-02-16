@@ -20,17 +20,13 @@ def run(context: dict[str, str]) -> None:
         )
 
         # Replace any import of null<...> with builtins or remove; then fix class base
-        new = re.sub(r"from camunda_orchestration_sdk\.models\.null<[^>]+> import null<[^>]+>", "", new)
+        new = re.sub(
+            r"from camunda_orchestration_sdk\.models\.null<[^>]+> import null<[^>]+>",
+            "",
+            new,
+        )
         new = re.sub(r"class (\w+)\(null<[^>]+>\):", r"class \1(object):", new)
 
         if new != txt:
             path.write_text(new, encoding="utf-8")
-            print(f'Patched {path}')
-
-
-
-
-
-
-
-
+            print(f"Patched {path}")

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Check which operations are in the spec but missing from generated output."""
+
 import json
+import re
 from pathlib import Path
 
 spec = json.load(open("external-spec/bundled/rest-api.bundle.json"))
@@ -12,7 +14,7 @@ for path, methods in spec.get("paths", {}).items():
         if isinstance(op, dict) and "operationId" in op:
             spec_ops[op["operationId"]] = (method.upper(), path)
 
-# All operation files in generated output  
+# All operation files in generated output
 gen_dir = Path("generated/camunda_orchestration_sdk/api")
 gen_ops = set()
 for py_file in gen_dir.rglob("*.py"):
@@ -21,10 +23,12 @@ for py_file in gen_dir.rglob("*.py"):
     gen_ops.add(py_file.stem)
 
 # Map operationId to expected filename
-import re
+
+
 def to_snake(name):
-    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
+    return re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
+
 
 missing = []
 for op_id, (method, path) in sorted(spec_ops.items()):
@@ -37,7 +41,7 @@ for op_id, (method, path) in sorted(spec_ops.items()):
             if isinstance(o, dict) and o.get("operationId") == op_id:
                 op = o
                 break
-        
+
         rb_info = ""
         if op and "requestBody" in op:
             content = op["requestBody"].get("content", {})
@@ -48,7 +52,7 @@ for op_id, (method, path) in sorted(spec_ops.items()):
                 else:
                     keys = list(schema.keys())
                     rb_info = f" body=inline({keys})"
-        
+
         missing.append(f"  {method} {path} -> {op_id} (expected: {snake}){rb_info}")
 
 print(f"Spec has {len(spec_ops)} operations")

@@ -1,4 +1,5 @@
 from enum import Enum
+
 class PartitionHealth(str, Enum):
     DEAD = "dead"
     HEALTHY = "healthy"

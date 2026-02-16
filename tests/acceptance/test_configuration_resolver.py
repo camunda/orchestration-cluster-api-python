@@ -1,5 +1,7 @@
 import pytest
 from pydantic import ValidationError
+
+
 @pytest.fixture(autouse=True)
 def _clear_camunda_env(monkeypatch: pytest.MonkeyPatch) -> None:  # pyright: ignore[reportUnusedFunction]
     """Acceptance tests must not depend on the developer shell environment."""
@@ -38,7 +40,9 @@ def test_camunda_client_explicit_overrides_environment(monkeypatch: pytest.Monke
 
     monkeypatch.setenv("ZEEBE_REST_ADDRESS", "http://env:8080/v2")
 
-    client = CamundaClient(configuration={"CAMUNDA_REST_ADDRESS": "http://explicit:8080/v2"})
+    client = CamundaClient(
+        configuration={"CAMUNDA_REST_ADDRESS": "http://explicit:8080/v2"}
+    )
 
     # Explicit should win even across alias keys, and effective config should populate both.
     assert client.configuration.ZEEBE_REST_ADDRESS == "http://explicit:8080/v2"
@@ -61,7 +65,9 @@ def test_camunda_client_conflicting_alias_values_raises():
 
 
 def test_rest_address_normalization_appends_v2():
-    from camunda_orchestration_sdk.runtime.configuration_resolver import ConfigurationResolver
+    from camunda_orchestration_sdk.runtime.configuration_resolver import (
+        ConfigurationResolver,
+    )
 
     resolved = ConfigurationResolver(
         environment={
@@ -71,12 +77,16 @@ def test_rest_address_normalization_appends_v2():
         explicit_configuration=None,
     ).resolve()
 
-    assert resolved.effective.CAMUNDA_REST_ADDRESS == "https://example.invalid/cluster/v2"
+    assert (
+        resolved.effective.CAMUNDA_REST_ADDRESS == "https://example.invalid/cluster/v2"
+    )
     assert resolved.effective.ZEEBE_REST_ADDRESS == "https://example.invalid/cluster/v2"
 
 
 def test_rest_address_normalization_preserves_existing_v2():
-    from camunda_orchestration_sdk.runtime.configuration_resolver import ConfigurationResolver
+    from camunda_orchestration_sdk.runtime.configuration_resolver import (
+        ConfigurationResolver,
+    )
 
     resolved = ConfigurationResolver(
         environment={
@@ -89,7 +99,9 @@ def test_rest_address_normalization_preserves_existing_v2():
 
 
 def test_auth_strategy_infers_oauth_when_credentials_present():
-    from camunda_orchestration_sdk.runtime.configuration_resolver import ConfigurationResolver
+    from camunda_orchestration_sdk.runtime.configuration_resolver import (
+        ConfigurationResolver,
+    )
 
     resolved = ConfigurationResolver(
         environment={
@@ -101,8 +113,13 @@ def test_auth_strategy_infers_oauth_when_credentials_present():
 
     assert resolved.effective.CAMUNDA_AUTH_STRATEGY == "OAUTH"
 
-def test_auth_strategy_is_not_inferred_when_explicitly_set_none_even_if_oauth_credentials_present() -> None:
-    from camunda_orchestration_sdk.runtime.configuration_resolver import ConfigurationResolver
+
+def test_auth_strategy_is_not_inferred_when_explicitly_set_none_even_if_oauth_credentials_present() -> (
+    None
+):
+    from camunda_orchestration_sdk.runtime.configuration_resolver import (
+        ConfigurationResolver,
+    )
 
     resolver = ConfigurationResolver(
         environment={
@@ -114,8 +131,11 @@ def test_auth_strategy_is_not_inferred_when_explicitly_set_none_even_if_oauth_cr
     resolved = resolver.resolve()
     assert resolved.effective.CAMUNDA_AUTH_STRATEGY == "NONE"
 
+
 def test_auth_strategy_infers_basic_when_credentials_present():
-    from camunda_orchestration_sdk.runtime.configuration_resolver import ConfigurationResolver
+    from camunda_orchestration_sdk.runtime.configuration_resolver import (
+        ConfigurationResolver,
+    )
 
     resolved = ConfigurationResolver(
         environment={
@@ -136,7 +156,9 @@ def test_camunda_client_oauth_requires_client_credentials():
 
 
 def test_auth_strategy_conflict_raises_when_both_oauth_and_basic_credentials_present():
-    from camunda_orchestration_sdk.runtime.configuration_resolver import ConfigurationResolver
+    from camunda_orchestration_sdk.runtime.configuration_resolver import (
+        ConfigurationResolver,
+    )
 
     with pytest.raises(ValueError, match="Both OAuth.*and Basic auth"):
         ConfigurationResolver(
@@ -151,7 +173,9 @@ def test_auth_strategy_conflict_raises_when_both_oauth_and_basic_credentials_pre
 
 
 def test_auth_strategy_conflict_resolves_when_explicit_strategy_set():
-    from camunda_orchestration_sdk.runtime.configuration_resolver import ConfigurationResolver
+    from camunda_orchestration_sdk.runtime.configuration_resolver import (
+        ConfigurationResolver,
+    )
 
     resolved = ConfigurationResolver(
         environment={

@@ -1,4 +1,5 @@
 from enum import Enum
+
 class ProcessDefinitionSearchQuerySortRequestField(str, Enum):
     NAME = "name"
     PROCESSDEFINITIONID = "processDefinitionId"

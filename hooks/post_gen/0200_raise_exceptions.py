@@ -80,7 +80,9 @@ def _infer_return_type_from_if(if_node: ast.If) -> str | None:
                 value = stmt.value
                 if isinstance(value, ast.Call):
                     # Model.from_dict(...)
-                    if isinstance(value.func, ast.Attribute) and isinstance(value.func.value, ast.Name):
+                    if isinstance(value.func, ast.Attribute) and isinstance(
+                        value.func.value, ast.Name
+                    ):
                         return value.func.value.id
                     # cast(Type, ...) or just SomeType(...)
                     if isinstance(value.func, ast.Name):
@@ -96,13 +98,19 @@ def _infer_return_type_from_if(if_node: ast.If) -> str | None:
                 if isinstance(value, ast.List) and not value.elts:
                     # Look for pattern: response_200_item = ModelName.from_dict(...)
                     for s in if_node.body:
-                        if (isinstance(s, ast.Assign)
-                                and len(s.targets) == 1
-                                and isinstance(s.targets[0], ast.Name)
-                                and s.targets[0].id.endswith("_item")):
+                        if (
+                            isinstance(s, ast.Assign)
+                            and len(s.targets) == 1
+                            and isinstance(s.targets[0], ast.Name)
+                            and s.targets[0].id.endswith("_item")
+                        ):
                             val = s.value
-                            if isinstance(val, ast.Call) and isinstance(val.func, ast.Attribute):
-                                if val.func.attr == "from_dict" and isinstance(val.func.value, ast.Name):
+                            if isinstance(val, ast.Call) and isinstance(
+                                val.func, ast.Attribute
+                            ):
+                                if val.func.attr == "from_dict" and isinstance(
+                                    val.func.value, ast.Name
+                                ):
                                     return f"list[{val.func.value.id}]"
                     return "list[Any]"
 
@@ -111,9 +119,15 @@ def _infer_return_type_from_if(if_node: ast.If) -> str | None:
 
     # Other patterns: return Model.from_dict(...)
     if isinstance(return_expr, ast.Call):
-        if isinstance(return_expr.func, ast.Attribute) and isinstance(return_expr.func.value, ast.Name):
+        if isinstance(return_expr.func, ast.Attribute) and isinstance(
+            return_expr.func.value, ast.Name
+        ):
             return return_expr.func.value.id
-        if isinstance(return_expr.func, ast.Name) and return_expr.func.id == "cast" and return_expr.args:
+        if (
+            isinstance(return_expr.func, ast.Name)
+            and return_expr.func.id == "cast"
+            and return_expr.args
+        ):
             return ast.unparse(return_expr.args[0])
 
     return ast.unparse(return_expr)
@@ -187,7 +201,11 @@ def _extract_method_and_url(tree: ast.Module) -> tuple[str, str] | None:
             return node.value
 
         # Pattern: '/path/{x}'.format(x=...)
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "format":
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "format"
+        ):
             base = node.func.value
             if isinstance(base, ast.Constant) and isinstance(base.value, str):
                 return base.value
@@ -233,21 +251,33 @@ def _extract_method_and_url(tree: ast.Module) -> tuple[str, str] | None:
             for k, v in zip(dict_value.keys, dict_value.values, strict=False):
                 if not isinstance(k, ast.Constant) or not isinstance(k.value, str):
                     continue
-                if k.value == "method" and isinstance(v, ast.Constant) and isinstance(v.value, str):
+                if (
+                    k.value == "method"
+                    and isinstance(v, ast.Constant)
+                    and isinstance(v.value, str)
+                ):
                     method = v.value
                 elif k.value == "url":
                     url = _string_template_from_node(v)
 
-        if isinstance(stmt, ast.Assign) and len(stmt.targets) == 1 and isinstance(stmt.targets[0], ast.Subscript):
+        if (
+            isinstance(stmt, ast.Assign)
+            and len(stmt.targets) == 1
+            and isinstance(stmt.targets[0], ast.Subscript)
+        ):
             target = stmt.targets[0]
-            if not (isinstance(target.value, ast.Name) and target.value.id == "_kwargs"):
+            if not (
+                isinstance(target.value, ast.Name) and target.value.id == "_kwargs"
+            ):
                 continue
             value_str = _string_template_from_node(stmt.value)
 
             key_node = target.slice
             if isinstance(key_node, ast.Constant) and isinstance(key_node.value, str):
                 if key_node.value == "method":
-                    if isinstance(stmt.value, ast.Constant) and isinstance(stmt.value.value, str):
+                    if isinstance(stmt.value, ast.Constant) and isinstance(
+                        stmt.value.value, str
+                    ):
                         method = stmt.value.value
                 elif key_node.value == "url":
                     url = value_str
@@ -284,7 +314,9 @@ def _get_response_descriptions_for_endpoint(
 
     # Try direct match first.
     path_entry: dict[str, Any] = cast(dict[str, Any], paths.get(url) or {})
-    operation: dict[str, Any] | None = cast(dict[str, Any], path_entry.get(method)) if method in path_entry else None
+    operation: dict[str, Any] | None = (
+        cast(dict[str, Any], path_entry.get(method)) if method in path_entry else None
+    )
 
     # Fallback: match normalized templates (handles generated snake_case params).
     if operation is None:
@@ -294,13 +326,19 @@ def _get_response_descriptions_for_endpoint(
                 continue
             ops: dict[str, Any] = cast(dict[str, Any], candidate_ops)
             if _normalize_path_template(str(candidate_url)) == normalized_url:
-                operation = cast(dict[str, Any], ops.get(method)) if method in ops else None
+                operation = (
+                    cast(dict[str, Any], ops.get(method)) if method in ops else None
+                )
                 break
 
     if operation is None:
         return {}
 
-    responses: dict[str, Any] = cast(dict[str, Any], operation.get("responses")) if "responses" in operation else {}
+    responses: dict[str, Any] = (
+        cast(dict[str, Any], operation.get("responses"))
+        if "responses" in operation
+        else {}
+    )
 
     out: dict[int, str] = {}
     for code_str_raw, resp_raw in responses.items():
@@ -314,7 +352,9 @@ def _get_response_descriptions_for_endpoint(
             if "$ref" in resp_dict_raw:
                 ref_val: str = str(resp_dict_raw["$ref"])
                 resolved = _resolve_ref(spec, ref_val)
-                resp = resolved if resolved is not None else cast(dict[str, Any], resp_raw)
+                resp = (
+                    resolved if resolved is not None else cast(dict[str, Any], resp_raw)
+                )
         if not isinstance(resp, dict):
             continue
         resp_dict = cast(dict[str, Any], resp)
@@ -328,7 +368,11 @@ def _ensure_typing_import(tree: ast.Module, name: str) -> None:
     """Ensure `from typing import <name>` exists (prefer augmenting existing typing imports)."""
 
     for stmt in tree.body:
-        if isinstance(stmt, ast.ImportFrom) and stmt.module == "typing" and stmt.level == 0:
+        if (
+            isinstance(stmt, ast.ImportFrom)
+            and stmt.module == "typing"
+            and stmt.level == 0
+        ):
             if any(alias.name == name for alias in stmt.names):
                 return
             stmt.names.append(ast.alias(name=name, asname=None))
@@ -337,7 +381,11 @@ def _ensure_typing_import(tree: ast.Module, name: str) -> None:
     # Insert a new import after any __future__ import / module docstring and other imports.
     insert_at = 0
     first_stmt = tree.body[0] if tree.body else None
-    if isinstance(first_stmt, ast.Expr) and isinstance(first_stmt.value, ast.Constant) and isinstance(first_stmt.value.value, str):
+    if (
+        isinstance(first_stmt, ast.Expr)
+        and isinstance(first_stmt.value, ast.Constant)
+        and isinstance(first_stmt.value.value, str)
+    ):
         insert_at = 1
     while insert_at < len(tree.body):
         s = tree.body[insert_at]
@@ -345,20 +393,34 @@ def _ensure_typing_import(tree: ast.Module, name: str) -> None:
             insert_at += 1
         else:
             break
-    while insert_at < len(tree.body) and isinstance(tree.body[insert_at], (ast.Import, ast.ImportFrom)):
+    while insert_at < len(tree.body) and isinstance(
+        tree.body[insert_at], (ast.Import, ast.ImportFrom)
+    ):
         insert_at += 1
 
-    tree.body.insert(insert_at, ast.ImportFrom(module="typing", names=[ast.alias(name=name, asname=None)], level=0))
+    tree.body.insert(
+        insert_at,
+        ast.ImportFrom(
+            module="typing", names=[ast.alias(name=name, asname=None)], level=0
+        ),
+    )
 
 
-def _rewrite_docstring(docstring: str, return_type_str: str, raise_lines: list[str]) -> str:
+def _rewrite_docstring(
+    docstring: str, return_type_str: str, raise_lines: list[str]
+) -> str:
     lines = docstring.splitlines()
     if not lines:
         return docstring
 
     def is_section_header(line: str) -> bool:
         stripped = line.strip()
-        return stripped.endswith(":") and stripped[:-1] in {"Args", "Raises", "Returns", "Attributes"}
+        return stripped.endswith(":") and stripped[:-1] in {
+            "Args",
+            "Raises",
+            "Returns",
+            "Attributes",
+        }
 
     def find_section(name: str) -> int | None:
         for i, line in enumerate(lines):
@@ -373,7 +435,9 @@ def _rewrite_docstring(docstring: str, return_type_str: str, raise_lines: list[s
 
     new_raises_block = ["", "Raises:"]
     new_raises_block.extend([f"{indent}{line}" for line in raise_lines])
-    new_raises_block.append(f"{indent}httpx.TimeoutException: If the request takes longer than Client.timeout.")
+    new_raises_block.append(
+        f"{indent}httpx.TimeoutException: If the request takes longer than Client.timeout."
+    )
 
     if raises_i is None:
         insert_at = returns_i if returns_i is not None else len(lines)
@@ -402,19 +466,22 @@ def _rewrite_docstring(docstring: str, return_type_str: str, raise_lines: list[s
         # Determine indentation to use for the content line
         indent = "    "
         if content_start < len(lines) and lines[content_start].strip() != "":
-            indent = lines[content_start][: len(lines[content_start]) - len(lines[content_start].lstrip())]
+            indent = lines[content_start][
+                : len(lines[content_start]) - len(lines[content_start].lstrip())
+            ]
 
         lines[content_start:content_end] = [f"{indent}{return_type_str}"]
 
     return "\n".join(lines)
 
+
 def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
     with open(file_path, "r") as f:
         code = f.read()
-    
+
     tree = ast.parse(code)
     modified = False
-    
+
     module_stem = Path(file_path).stem
     endpoint_name = _to_camel_case(module_stem)
     status_type_map = _extract_status_type_map(tree)
@@ -424,7 +491,9 @@ def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
     method_url = _extract_method_and_url(tree)
     if method_url and spec:
         method, url = method_url
-        response_desc = _get_response_descriptions_for_endpoint(spec=spec, method=method, url=url)
+        response_desc = _get_response_descriptions_for_endpoint(
+            spec=spec, method=method, url=url
+        )
 
     # We need to find the sync and asyncio functions
     for node in tree.body:
@@ -449,7 +518,8 @@ def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
             (
                 n
                 for n in tree.body
-                if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == detailed_func_name
+                if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and n.name == detailed_func_name
             ),
             None,
         )
@@ -471,7 +541,9 @@ def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
         return_type_str = ast.unparse(node.returns)
 
         # Ensure cast is available if we need to cast parsed error models.
-        needs_cast = any(status_type_map.get(c) not in {None, "Any"} for c in error_codes)
+        needs_cast = any(
+            status_type_map.get(c) not in {None, "Any"} for c in error_codes
+        )
         if needs_cast:
             _ensure_typing_import(tree, "cast")
             modified = True
@@ -493,9 +565,13 @@ def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
             exc_name = f"{endpoint_name}{_status_suffix(code)}"
             desc = response_desc.get(code)
             if desc:
-                raise_lines.append(f"errors.{exc_name}: If the response status code is {code}. {desc}")
+                raise_lines.append(
+                    f"errors.{exc_name}: If the response status code is {code}. {desc}"
+                )
             else:
-                raise_lines.append(f"errors.{exc_name}: If the response status code is {code}.")
+                raise_lines.append(
+                    f"errors.{exc_name}: If the response status code is {code}."
+                )
 
             if parsed_type and parsed_type != "Any":
                 parsed_expr = f"cast({parsed_type}, response.parsed)"
@@ -509,18 +585,22 @@ def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
                 f"            raise errors.{exc_name}(status_code=response.status_code, content=response.content, parsed={parsed_expr})\n"
             )
 
-        raise_lines.append("errors.UnexpectedStatus: If the response status code is not documented.")
+        raise_lines.append(
+            "errors.UnexpectedStatus: If the response status code is not documented."
+        )
 
         # For 204 No Content and similar endpoints that return None,
         # skip the assert and just return None.
         # When there are no error codes, _parse_response returns SuccessType | None,
         # so the assert alone is sufficient for type narrowing (no cast needed).
-        is_none_return = (return_type_str == "None")
+        is_none_return = return_type_str == "None"
         if is_none_return:
             return_stmt = "    return None"
         elif not error_codes:
             # Simple return type — assert narrows it, cast not needed
-            return_stmt = "    assert response.parsed is not None\n    return response.parsed"
+            return_stmt = (
+                "    assert response.parsed is not None\n    return response.parsed"
+            )
         else:
             _ensure_typing_import(tree, "cast")
             return_stmt = f"    assert response.parsed is not None\n    return cast({return_type_str}, response.parsed)"
@@ -544,7 +624,9 @@ def temp():
             docstring = ast.get_docstring(detailed_node)
 
         if docstring:
-            updated_docstring = _rewrite_docstring(docstring, return_type_str, raise_lines)
+            updated_docstring = _rewrite_docstring(
+                docstring, return_type_str, raise_lines
+            )
             _set_docstring(node, updated_docstring)
             modified = True
 
@@ -553,6 +635,7 @@ def temp():
         with open(file_path, "w") as f:
             f.write(ast.unparse(tree))
         print(f"Modified {file_path}")
+
 
 def run(context: dict[str, str]) -> None:
     out_dir = Path(context["out_dir"])
@@ -563,7 +646,7 @@ def run(context: dict[str, str]) -> None:
     spec: dict[str, Any] = {}
     if spec_path.exists():
         spec = yaml.safe_load(spec_path.read_text()) or {}
-    
+
     if not api_dir.exists():
         print(f"API directory not found at {api_dir}")
         return
@@ -572,6 +655,7 @@ def run(context: dict[str, str]) -> None:
         for file in files:
             if file.endswith(".py") and file != "__init__.py":
                 modify_api_file(Path(root) / file, spec=spec)
+
 
 if __name__ == "__main__":
     # For testing

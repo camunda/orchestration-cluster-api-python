@@ -1,4 +1,5 @@
 from enum import Enum
+
 class AdvancedDecisionInstanceStateFilterNeq(str, Enum):
     EVALUATED = "EVALUATED"
     FAILED = "FAILED"

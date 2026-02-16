@@ -1,4 +1,5 @@
 from enum import Enum
+
 class AuditLogResultEnum(str, Enum):
     FAIL = "FAIL"
     SUCCESS = "SUCCESS"

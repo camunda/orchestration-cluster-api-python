@@ -100,7 +100,7 @@ def _generate_stub(py_file: Path) -> str | None:
                 continue  # skip module docstrings in stubs
 
     # Filter out empty results
-    content = [l for l in lines if l.strip()]
+    content = [line for line in lines if line.strip()]
     if not content:
         return None
 
@@ -111,7 +111,7 @@ def _generate_stub(py_file: Path) -> str | None:
             header = "from __future__ import annotations\n\n"
             # Remove the duplicate from content
             future_line = _render_import_from(node)
-            content = [l for l in content if l.strip() != future_line.strip()]
+            content = [line for line in content if line.strip() != future_line.strip()]
             break
 
     # Filter out unused imports: keep only imported names that appear
@@ -136,7 +136,7 @@ def _filter_unused_imports(lines: list[str]) -> list[str]:
     body_text = "\n".join(other_lines)
 
     def _name_used(name: str) -> bool:
-        return bool(re.search(r'\b' + re.escape(name) + r'\b', body_text))
+        return bool(re.search(r"\b" + re.escape(name) + r"\b", body_text))
 
     result: list[str] = []
     for line in import_lines:
@@ -156,11 +156,13 @@ def _filter_unused_imports(lines: list[str]) -> list[str]:
     return result
 
 
-def _filter_from_import(import_line: str, name_used: Callable[[str], bool]) -> str | None:
+def _filter_from_import(
+    import_line: str, name_used: Callable[[str], bool]
+) -> str | None:
     """Filter a 'from X import a, b, c' line to only keep names used in the body."""
     idx = import_line.index(" import ")
     prefix = import_line[: idx + 8]  # "from X import "
-    names_part = import_line[idx + 8:]
+    names_part = import_line[idx + 8 :]
 
     kept: list[str] = []
     for part in names_part.split(","):
@@ -383,9 +385,7 @@ def _render_args(args: ast.arguments, source_lines: list[str]) -> str:
     return ", ".join(parts)
 
 
-def _render_assign(
-    node: ast.Assign, source_lines: list[str], indent: str = ""
-) -> str:
+def _render_assign(node: ast.Assign, source_lines: list[str], indent: str = "") -> str:
     """Render module/class-level assignments like T = TypeVar(...)."""
     if len(node.targets) != 1:
         return ""

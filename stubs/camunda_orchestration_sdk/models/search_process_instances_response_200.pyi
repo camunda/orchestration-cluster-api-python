@@ -7,12 +7,16 @@ from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.search_process_instances_items_item import SearchProcessInstancesItemsItem
 from ..models.search_query_page_response import SearchQueryPageResponse
+
 T = TypeVar("T", bound="SearchProcessInstancesResponse200")
+
 @_attrs_define
 class SearchProcessInstancesResponse200:
     items: list[SearchProcessInstancesItemsItem]
     page: SearchQueryPageResponse
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

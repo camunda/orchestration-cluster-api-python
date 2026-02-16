@@ -5,7 +5,9 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 from ..models.job_fail_request_variables import JobFailRequestVariables
+
 T = TypeVar("T", bound="JobFailRequest")
+
 @_attrs_define
 class JobFailRequest:
     retries: int | Unset = 0

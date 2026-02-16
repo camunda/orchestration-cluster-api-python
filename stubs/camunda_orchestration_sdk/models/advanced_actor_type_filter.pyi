@@ -8,7 +8,9 @@ from ..models.advanced_actor_type_filter_eq import AdvancedActorTypeFilterEq
 from ..models.advanced_actor_type_filter_neq import AdvancedActorTypeFilterNeq
 from ..models.audit_log_actor_type_enum import AuditLogActorTypeEnum
 from ..types import UNSET, Unset, str_any_dict_factory
+
 T = TypeVar("T", bound="AdvancedActorTypeFilter")
+
 @_attrs_define
 class AdvancedActorTypeFilter:
     eq: AdvancedActorTypeFilterEq | Unset = UNSET
@@ -16,7 +18,9 @@ class AdvancedActorTypeFilter:
     exists: bool | Unset = UNSET
     in_: list[AuditLogActorTypeEnum] | Unset = UNSET
     like: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

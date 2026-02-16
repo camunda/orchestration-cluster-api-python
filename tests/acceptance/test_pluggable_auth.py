@@ -5,7 +5,9 @@ from pathlib import Path
 import httpx
 import pytest
 
-from camunda_orchestration_sdk.runtime.configuration_resolver import CamundaSdkConfigPartial
+from camunda_orchestration_sdk.runtime.configuration_resolver import (
+    CamundaSdkConfigPartial,
+)
 
 
 class _StaticAuthProvider:
@@ -138,7 +140,9 @@ def test_builtin_oauth_strategy_applies_bearer_header_sync():
 
 
 def test_oauth_401_is_memoized_to_avoid_repeated_token_requests_sync() -> None:
-    from camunda_orchestration_sdk.runtime.auth import OAuthClientCredentialsAuthProvider
+    from camunda_orchestration_sdk.runtime.auth import (
+        OAuthClientCredentialsAuthProvider,
+    )
 
     calls = {"count": 0}
 
@@ -163,8 +167,12 @@ def test_oauth_401_is_memoized_to_avoid_repeated_token_requests_sync() -> None:
     assert calls["count"] == 1
 
 
-def test_oauth_401_tarpit_file_prevents_subsequent_requests_when_file_cache_enabled_sync(tmp_path: Path) -> None:
-    from camunda_orchestration_sdk.runtime.auth import OAuthClientCredentialsAuthProvider
+def test_oauth_401_tarpit_file_prevents_subsequent_requests_when_file_cache_enabled_sync(
+    tmp_path: Path,
+) -> None:
+    from camunda_orchestration_sdk.runtime.auth import (
+        OAuthClientCredentialsAuthProvider,
+    )
 
     calls = {"count": 0}
 
@@ -212,13 +220,17 @@ def test_oauth_401_tarpit_file_prevents_subsequent_requests_when_file_cache_enab
 
 
 def test_oauth_token_is_cached_to_disk_and_reused_sync(tmp_path: Path) -> None:
-    from camunda_orchestration_sdk.runtime.auth import OAuthClientCredentialsAuthProvider
+    from camunda_orchestration_sdk.runtime.auth import (
+        OAuthClientCredentialsAuthProvider,
+    )
 
     calls = {"count": 0}
 
     def handler(request: httpx.Request) -> httpx.Response:
         calls["count"] += 1
-        return httpx.Response(200, json={"access_token": "t1", "expires_in": 3600}, request=request)
+        return httpx.Response(
+            200, json={"access_token": "t1", "expires_in": 3600}, request=request
+        )
 
     provider = OAuthClientCredentialsAuthProvider(
         oauth_url="http://auth.local/oauth/token",
@@ -253,16 +265,24 @@ def test_oauth_token_is_cached_to_disk_and_reused_sync(tmp_path: Path) -> None:
     assert calls["count"] == 0
 
 
-def test_oauth_disk_cache_is_disabled_when_cache_dir_cannot_be_created_sync(tmp_path: Path) -> None:
+def test_oauth_disk_cache_is_disabled_when_cache_dir_cannot_be_created_sync(
+    tmp_path: Path,
+) -> None:
     """If cache_dir can't be created, file cache should disable and not crash."""
 
-    from camunda_orchestration_sdk.runtime.auth import OAuthClientCredentialsAuthProvider
+    from camunda_orchestration_sdk.runtime.auth import (
+        OAuthClientCredentialsAuthProvider,
+    )
 
     calls = {"count": 0}
 
     def handler(request: httpx.Request) -> httpx.Response:
         calls["count"] += 1
-        return httpx.Response(200, json={"access_token": f"t{calls['count']}", "expires_in": 3600}, request=request)
+        return httpx.Response(
+            200,
+            json={"access_token": f"t{calls['count']}", "expires_in": 3600},
+            request=request,
+        )
 
     # Make a non-directory path so mkdir(parents=True) fails.
     not_a_dir = tmp_path / "not-a-dir"
@@ -300,10 +320,14 @@ def test_oauth_disk_cache_is_disabled_when_cache_dir_cannot_be_created_sync(tmp_
     provider2.close()
 
 
-def test_oauth_disk_cache_is_disabled_when_cache_dir_is_not_writable_sync(tmp_path: Path) -> None:
+def test_oauth_disk_cache_is_disabled_when_cache_dir_is_not_writable_sync(
+    tmp_path: Path,
+) -> None:
     """If cache_dir isn't writable, file cache should disable and not crash."""
 
-    from camunda_orchestration_sdk.runtime.auth import OAuthClientCredentialsAuthProvider
+    from camunda_orchestration_sdk.runtime.auth import (
+        OAuthClientCredentialsAuthProvider,
+    )
 
     readonly_dir = tmp_path / "readonly"
     readonly_dir.mkdir()
@@ -315,13 +339,19 @@ def test_oauth_disk_cache_is_disabled_when_cache_dir_is_not_writable_sync(tmp_pa
     except Exception:
         pass
     else:
-        pytest.skip("Environment allows writing to chmod 0555 directory; cannot reliably test permissions")
+        pytest.skip(
+            "Environment allows writing to chmod 0555 directory; cannot reliably test permissions"
+        )
 
     calls = {"count": 0}
 
     def handler(request: httpx.Request) -> httpx.Response:
         calls["count"] += 1
-        return httpx.Response(200, json={"access_token": f"t{calls['count']}", "expires_in": 3600}, request=request)
+        return httpx.Response(
+            200,
+            json={"access_token": f"t{calls['count']}", "expires_in": 3600},
+            request=request,
+        )
 
     provider = OAuthClientCredentialsAuthProvider(
         oauth_url="http://auth.local/oauth/token",
@@ -356,13 +386,17 @@ def test_oauth_disk_cache_is_disabled_when_cache_dir_is_not_writable_sync(tmp_pa
 def test_oauth_disk_cache_tolerates_corrupt_cache_file_sync(tmp_path: Path) -> None:
     """Simulate a race/partial write by seeding an invalid JSON cache file."""
 
-    from camunda_orchestration_sdk.runtime.auth import OAuthClientCredentialsAuthProvider
+    from camunda_orchestration_sdk.runtime.auth import (
+        OAuthClientCredentialsAuthProvider,
+    )
 
     calls = {"count": 0}
 
     def handler(request: httpx.Request) -> httpx.Response:
         calls["count"] += 1
-        return httpx.Response(200, json={"access_token": "t1", "expires_in": 3600}, request=request)
+        return httpx.Response(
+            200, json={"access_token": "t1", "expires_in": 3600}, request=request
+        )
 
     # Pre-create a corrupt cache file at the expected path.
     token_file = Path(tmp_path) / "oauth-token-id-aud-auth.local.json"
@@ -441,7 +475,9 @@ async def test_builtin_oauth_strategy_applies_bearer_header_async():
         "CAMUNDA_CLIENT_SECRET": "secret",
     }
 
-    client = CamundaAsyncClient(configuration=config, httpx_args={"transport": transport})
+    client = CamundaAsyncClient(
+        configuration=config, httpx_args={"transport": transport}
+    )
     response = await client.client.get_async_httpx_client().get("/ping")
 
     assert response.status_code == 200

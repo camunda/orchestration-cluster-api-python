@@ -5,14 +5,20 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
-from ..models.process_definition_instance_version_statistics_result import ProcessDefinitionInstanceVersionStatisticsResult
+from ..models.process_definition_instance_version_statistics_result import (
+    ProcessDefinitionInstanceVersionStatisticsResult,
+)
 from ..models.search_query_page_response import SearchQueryPageResponse
+
 T = TypeVar("T", bound="ProcessDefinitionInstanceVersionStatisticsQueryResult")
+
 @_attrs_define
 class ProcessDefinitionInstanceVersionStatisticsQueryResult:
     page: SearchQueryPageResponse
     items: list[ProcessDefinitionInstanceVersionStatisticsResult] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

@@ -1,12 +1,18 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ProcessDefinitionId, ProcessDefinitionKey, TenantId
+from camunda_orchestration_sdk.semantic_types import (
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    TenantId,
+)
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
+
 T = TypeVar("T", bound="ProcessDefinitionResult")
+
 @_attrs_define
 class ProcessDefinitionResult:
     name: str | Unset = UNSET
@@ -17,7 +23,9 @@ class ProcessDefinitionResult:
     tenant_id: TenantId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     has_start_form: bool | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

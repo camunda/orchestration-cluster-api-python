@@ -7,8 +7,8 @@ import yaml
 
 
 def _snake(name: str) -> str:
-    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-    s2 = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1)
+    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
+    s2 = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1)
     return s2.replace("__", "_").lower()
 
 
@@ -19,7 +19,12 @@ def _resolve_ref(schemas: Dict[str, Any], ref: str) -> Optional[Dict[str, Any]]:
     return schemas.get(name)
 
 
-def _emit_array_alias_model(models_dir: Path, alias: str, item_schema: Dict[str, Any], array_schema: Dict[str, Any]) -> None:
+def _emit_array_alias_model(
+    models_dir: Path,
+    alias: str,
+    item_schema: Dict[str, Any],
+    array_schema: Dict[str, Any],
+) -> None:
     filename = models_dir / f"{_snake(alias)}.py"
 
     # Determine python base type for item
@@ -39,7 +44,9 @@ def _emit_array_alias_model(models_dir: Path, alias: str, item_schema: Dict[str,
     pattern = item_schema.get("pattern") if item_type == "string" else None
     min_len = item_schema.get("minLength") if item_type == "string" else None
     max_len = item_schema.get("maxLength") if item_type == "string" else None
-    enum_vals = item_schema.get("enum") if isinstance(item_schema.get("enum"), list) else None
+    enum_vals = (
+        item_schema.get("enum") if isinstance(item_schema.get("enum"), list) else None
+    )
 
     unique_items = bool(array_schema.get("uniqueItems", False))
     min_items = array_schema.get("minItems")
@@ -56,13 +63,21 @@ def _emit_array_alias_model(models_dir: Path, alias: str, item_schema: Dict[str,
     # Array-level validation
     lines.append("\t@field_validator('root')\n")
     lines.append("\t@classmethod\n")
-    lines.append(f"\tdef _validate_array(cls, v: list[{py_item}]) -> list[{py_item}]:\n")
+    lines.append(
+        f"\tdef _validate_array(cls, v: list[{py_item}]) -> list[{py_item}]:\n"
+    )
     if min_items is not None:
-        lines.append(f"\t\tif len(v) < {int(min_items)}: raise ValueError('minItems {int(min_items)}')\n")
+        lines.append(
+            f"\t\tif len(v) < {int(min_items)}: raise ValueError('minItems {int(min_items)}')\n"
+        )
     if max_items is not None:
-        lines.append(f"\t\tif len(v) > {int(max_items)}: raise ValueError('maxItems {int(max_items)}')\n")
+        lines.append(
+            f"\t\tif len(v) > {int(max_items)}: raise ValueError('maxItems {int(max_items)}')\n"
+        )
     if unique_items:
-        lines.append("\t\tif len(v) != len(set(v)): raise ValueError('uniqueItems violated')\n")
+        lines.append(
+            "\t\tif len(v) != len(set(v)): raise ValueError('uniqueItems violated')\n"
+        )
 
     # Item-level validation
     if pattern or min_len is not None or max_len is not None or enum_vals is not None:
@@ -70,13 +85,21 @@ def _emit_array_alias_model(models_dir: Path, alias: str, item_schema: Dict[str,
             lines.append(f"\t\t_pat = re.compile(r{pattern!r})\n")
         lines.append("\t\tfor _i, _x in enumerate(v):\n")
         if pattern:
-            lines.append("\t\t\tif _pat.fullmatch(str(_x)) is None: raise ValueError(f'item {{_i}} pattern mismatch')\n")
+            lines.append(
+                "\t\t\tif _pat.fullmatch(str(_x)) is None: raise ValueError(f'item {{_i}} pattern mismatch')\n"
+            )
         if min_len is not None:
-            lines.append(f"\t\t\tif len(str(_x)) < {int(min_len)}: raise ValueError(f'item {{_i}} minLength {int(min_len)}')\n")
+            lines.append(
+                f"\t\t\tif len(str(_x)) < {int(min_len)}: raise ValueError(f'item {{_i}} minLength {int(min_len)}')\n"
+            )
         if max_len is not None:
-            lines.append(f"\t\t\tif len(str(_x)) > {int(max_len)}: raise ValueError(f'item {{_i}} maxLength {int(max_len)}')\n")
+            lines.append(
+                f"\t\t\tif len(str(_x)) > {int(max_len)}: raise ValueError(f'item {{_i}} maxLength {int(max_len)}')\n"
+            )
         if enum_vals is not None:
-            lines.append(f"\t\t\tif _x not in {enum_vals!r}: raise ValueError(f'item {{_i}} not in enum')\n")
+            lines.append(
+                f"\t\t\tif _x not in {enum_vals!r}: raise ValueError(f'item {{_i}} not in enum')\n"
+            )
 
     lines.append("\t\treturn v\n")
 
@@ -107,13 +130,8 @@ def run(context: dict[str, str]) -> None:
                 item_schema = items
             # Only synthesize when item resolves to a primitive alias or primitive
             base_type = item_schema.get("type")
-            if base_type in {"string", "integer", "number", "boolean"} or "x-semantic-type" in item_schema:
+            if (
+                base_type in {"string", "integer", "number", "boolean"}
+                or "x-semantic-type" in item_schema
+            ):
                 _emit_array_alias_model(models_dir, name, item_schema, schema)
-
-
-
-
-
-
-
-

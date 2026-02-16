@@ -6,7 +6,9 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from .. import types
 from ..types import UNSET, File, Unset
+
 T = TypeVar("T", bound="CreateDeploymentData")
+
 @_attrs_define
 class CreateDeploymentData:
     resources: list[File]

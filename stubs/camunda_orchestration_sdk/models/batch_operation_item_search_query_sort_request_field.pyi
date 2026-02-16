@@ -1,4 +1,5 @@
 from enum import Enum
+
 class BatchOperationItemSearchQuerySortRequestField(str, Enum):
     BATCHOPERATIONKEY = "batchOperationKey"
     ITEMKEY = "itemKey"

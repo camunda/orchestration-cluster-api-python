@@ -3,9 +3,11 @@ import os
 from pathlib import Path
 import re
 
+
 def to_camel_case(snake_str: str) -> str:
-    components = snake_str.split('_')
-    return components[0] + ''.join(x.title() for x in components[1:])
+    components = snake_str.split("_")
+    return components[0] + "".join(x.title() for x in components[1:])
+
 
 ImportNode = ast.Import | ast.ImportFrom
 
@@ -25,8 +27,8 @@ def _build_semantic_type_map(package_path: Path) -> dict[str, str]:
                 call = node.value
                 if isinstance(call.func, ast.Name) and call.func.id == "NewType":
                     type_name = target.id
-                    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', type_name)
-                    snake = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+                    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", type_name)
+                    snake = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
                     mapping[snake] = type_name
     return mapping
 
@@ -38,10 +40,12 @@ def _lift_semantic_annotations(
 ) -> None:
     """Replace str annotations on path parameters with semantic types in-place."""
     for arg in func.args.posonlyargs + func.args.args:
-        if (arg.annotation
-                and isinstance(arg.annotation, ast.Name)
-                and arg.annotation.id == "str"
-                and arg.arg in semantic_type_map):
+        if (
+            arg.annotation
+            and isinstance(arg.annotation, ast.Name)
+            and arg.annotation.id == "str"
+            and arg.arg in semantic_type_map
+        ):
             semantic_type = semantic_type_map[arg.arg]
             arg.annotation = ast.Name(id=semantic_type, ctx=ast.Load())
             semantic_types_used.add(semantic_type)
@@ -53,13 +57,13 @@ def get_imports_and_signature(
 ) -> tuple[list[ImportNode], ast.FunctionDef | None, ast.AsyncFunctionDef | None]:
     with open(file_path, "r") as f:
         code = f.read()
-    
+
     tree = ast.parse(code)
-    
+
     imports: list[ImportNode] = []
     sync_func: ast.FunctionDef | None = None
     async_func: ast.AsyncFunctionDef | None = None
-    
+
     for node in tree.body:
         if isinstance(node, (ast.Import, ast.ImportFrom)):
             imports.append(node)
@@ -67,11 +71,11 @@ def get_imports_and_signature(
             sync_func = node
         elif isinstance(node, ast.AsyncFunctionDef) and node.name == "asyncio":
             async_func = node
-                
+
     rel_path = file_path.relative_to(package_root)
     # depth = number of parts in parent directory
     # e.g. api/group/module.py -> api/group -> depth=2
-    
+
     adjusted_imports: list[ImportNode] = []
     for node in imports:
         if isinstance(node, ast.ImportFrom) and node.level > 0:
@@ -92,7 +96,9 @@ def get_imports_and_signature(
             else:
                 final_module = base_module
 
-            if final_module == "client" or (final_module and final_module.startswith("client.")):
+            if final_module == "client" or (
+                final_module and final_module.startswith("client.")
+            ):
                 continue
 
             new_node = ast.ImportFrom(
@@ -103,8 +109,9 @@ def get_imports_and_signature(
             adjusted_imports.append(new_node)
         else:
             adjusted_imports.append(node)
-            
+
     return adjusted_imports, sync_func, async_func
+
 
 def generate_flat_client(package_path: Path) -> None:
     api_dir = package_path / "api"
@@ -131,17 +138,29 @@ def generate_flat_client(package_path: Path) -> None:
                 continue
 
             file_path = Path(root) / file
-            imports, sync_func, async_func = get_imports_and_signature(file_path, package_path)
-            
+            imports, sync_func, async_func = get_imports_and_signature(
+                file_path, package_path
+            )
+
             for imp in imports:
                 if isinstance(imp, ast.ImportFrom):
                     module = imp.module
-                    names = ", ".join(n.name + (f" as {n.asname}" if n.asname else "") for n in imp.names)
+                    names = ", ".join(
+                        n.name + (f" as {n.asname}" if n.asname else "")
+                        for n in imp.names
+                    )
                     level = "." * imp.level
-                    import_stmt = f"from {level}{module} import {names}" if module else f"from {level} import {names}"
+                    import_stmt = (
+                        f"from {level}{module} import {names}"
+                        if module
+                        else f"from {level} import {names}"
+                    )
                     all_imports.add(import_stmt)
                 else:
-                    names = ", ".join(n.name + (f" as {n.asname}" if n.asname else "") for n in imp.names)
+                    names = ", ".join(
+                        n.name + (f" as {n.asname}" if n.asname else "")
+                        for n in imp.names
+                    )
                     import_stmt = f"import {names}"
                     all_imports.add(import_stmt)
 
@@ -162,48 +181,58 @@ def generate_flat_client(package_path: Path) -> None:
                     needed_type_names.update(_extract_annotation_names(_arg.annotation))
                 new_args: list[ast.arg] = []
                 for arg in args.posonlyargs:
-                    if arg.arg != 'client':
+                    if arg.arg != "client":
                         new_args.append(arg)
                 for arg in args.args:
-                    if arg.arg != 'client':
+                    if arg.arg != "client":
                         new_args.append(arg)
-                
+
                 new_kwonlyargs: list[ast.arg] = []
                 new_kw_defaults: list[ast.expr | None] = []
                 for arg, default in zip(args.kwonlyargs, args.kw_defaults):
-                    if arg.arg != 'client':
+                    if arg.arg != "client":
                         new_kwonlyargs.append(arg)
                         new_kw_defaults.append(default)
-                
+
                 arg_strs: list[str] = ["self"]
                 for arg in new_args:
                     arg_name = "data" if arg.arg == "body" else arg.arg
                     ann = f": {ast.unparse(arg.annotation)}" if arg.annotation else ""
                     arg_strs.append(f"{arg_name}{ann}")
-                    
+
                 if args.vararg:
-                    ann = f": {ast.unparse(args.vararg.annotation)}" if args.vararg.annotation else ""
+                    ann = (
+                        f": {ast.unparse(args.vararg.annotation)}"
+                        if args.vararg.annotation
+                        else ""
+                    )
                     arg_strs.append(f"*{args.vararg.arg}{ann}")
                 elif new_kwonlyargs:
                     arg_strs.append("*")
-                    
+
                 for arg, default in zip(new_kwonlyargs, new_kw_defaults):
                     arg_name = "data" if arg.arg == "body" else arg.arg
                     ann = f": {ast.unparse(arg.annotation)}" if arg.annotation else ""
                     default_str = f" = {ast.unparse(default)}" if default else ""
                     arg_strs.append(f"{arg_name}{ann}{default_str}")
-                    
+
                 if args.kwarg:
-                    ann = f": {ast.unparse(args.kwarg.annotation)}" if args.kwarg.annotation else ": Any"
+                    ann = (
+                        f": {ast.unparse(args.kwarg.annotation)}"
+                        if args.kwarg.annotation
+                        else ": Any"
+                    )
                     arg_strs.append(f"**{args.kwarg.arg}{ann}")
                 else:
                     arg_strs.append("**kwargs: Any")
-                
+
                 sig_str = ", ".join(arg_strs)
-                return_ann = f" -> {ast.unparse(sync_func.returns)}" if sync_func.returns else ""
+                return_ann = (
+                    f" -> {ast.unparse(sync_func.returns)}" if sync_func.returns else ""
+                )
                 docstring = ast.get_docstring(sync_func)
                 docstring_str = f'        """{docstring}"""\n' if docstring else ""
-                
+
                 sync_methods.append(f"""
     def {method_name}({sig_str}){return_ann}:
 {docstring_str}        from {import_path} import sync as {method_name}_sync
@@ -223,48 +252,60 @@ def generate_flat_client(package_path: Path) -> None:
                     needed_type_names.update(_extract_annotation_names(_arg.annotation))
                 new_args: list[ast.arg] = []
                 for arg in args.posonlyargs:
-                    if arg.arg != 'client':
+                    if arg.arg != "client":
                         new_args.append(arg)
                 for arg in args.args:
-                    if arg.arg != 'client':
+                    if arg.arg != "client":
                         new_args.append(arg)
-                
+
                 new_kwonlyargs: list[ast.arg] = []
                 new_kw_defaults: list[ast.expr | None] = []
                 for arg, default in zip(args.kwonlyargs, args.kw_defaults):
-                    if arg.arg != 'client':
+                    if arg.arg != "client":
                         new_kwonlyargs.append(arg)
                         new_kw_defaults.append(default)
-                
+
                 arg_strs: list[str] = ["self"]
                 for arg in new_args:
                     arg_name = "data" if arg.arg == "body" else arg.arg
                     ann = f": {ast.unparse(arg.annotation)}" if arg.annotation else ""
                     arg_strs.append(f"{arg_name}{ann}")
-                    
+
                 if args.vararg:
-                    ann = f": {ast.unparse(args.vararg.annotation)}" if args.vararg.annotation else ""
+                    ann = (
+                        f": {ast.unparse(args.vararg.annotation)}"
+                        if args.vararg.annotation
+                        else ""
+                    )
                     arg_strs.append(f"*{args.vararg.arg}{ann}")
                 elif new_kwonlyargs:
                     arg_strs.append("*")
-                    
+
                 for arg, default in zip(new_kwonlyargs, new_kw_defaults):
                     arg_name = "data" if arg.arg == "body" else arg.arg
                     ann = f": {ast.unparse(arg.annotation)}" if arg.annotation else ""
                     default_str = f" = {ast.unparse(default)}" if default else ""
                     arg_strs.append(f"{arg_name}{ann}{default_str}")
-                    
+
                 if args.kwarg:
-                    ann = f": {ast.unparse(args.kwarg.annotation)}" if args.kwarg.annotation else ": Any"
+                    ann = (
+                        f": {ast.unparse(args.kwarg.annotation)}"
+                        if args.kwarg.annotation
+                        else ": Any"
+                    )
                     arg_strs.append(f"**{args.kwarg.arg}{ann}")
                 else:
                     arg_strs.append("**kwargs: Any")
 
                 sig_str = ", ".join(arg_strs)
-                return_ann = f" -> {ast.unparse(async_func.returns)}" if async_func.returns else ""
+                return_ann = (
+                    f" -> {ast.unparse(async_func.returns)}"
+                    if async_func.returns
+                    else ""
+                )
                 docstring = ast.get_docstring(async_func)
                 docstring_str = f'        """{docstring}"""\n' if docstring else ""
-                
+
                 async_methods.append(f"""
     async def {method_name}({sig_str}){return_ann}:
 {docstring_str}        from {import_path} import asyncio as {method_name}_asyncio
@@ -278,7 +319,9 @@ def generate_flat_client(package_path: Path) -> None:
 
     # Add semantic type import for TYPE_CHECKING block
     if semantic_types_used:
-        all_imports.add(f"from .semantic_types import {', '.join(sorted(semantic_types_used))}")
+        all_imports.add(
+            f"from .semantic_types import {', '.join(sorted(semantic_types_used))}"
+        )
 
     client_file = package_path / "client.py"
     if not client_file.exists():
@@ -293,11 +336,11 @@ def generate_flat_client(package_path: Path) -> None:
     import_lines: list[str] = []
     class_lines: list[str] = []
     in_classes = False
-    
+
     for line in lines:
         if line.startswith("class ") or line.startswith("@define"):
             in_classes = True
-        
+
         if in_classes:
             class_lines.append(line)
         else:
@@ -312,7 +355,7 @@ def generate_flat_client(package_path: Path) -> None:
     imports_content = "\n".join(import_lines)
     if "from __future__ import annotations" not in imports_content:
         imports_content = "from __future__ import annotations\n" + imports_content
-    
+
     if "from .types import UNSET, Unset" not in imports_content:
         imports_content += "\nfrom .types import UNSET, Unset"
 
@@ -320,22 +363,31 @@ def generate_flat_client(package_path: Path) -> None:
         imports_content += "\nfrom typing import TYPE_CHECKING"
 
     imports_content += "\nimport asyncio"
-    imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, JobHandler"
+    imports_content += (
+        "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, JobHandler"
+    )
     imports_content += "\nfrom .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
     imports_content += "\nfrom .runtime.auth import AuthProvider, BasicAuthProvider, NullAuthProvider, OAuthClientCredentialsAuthProvider, AsyncOAuthClientCredentialsAuthProvider, inject_auth_event_hooks"
     imports_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger, SdkLogger, create_logger"
     imports_content += "\nfrom pathlib import Path"
     imports_content += "\nfrom .models.create_deployment_response_200 import CreateDeploymentResponse200"
-    imports_content += "\nfrom .models.deployment_process_result import DeploymentProcessResult"
-    imports_content += "\nfrom .models.deployment_decision_result import DeploymentDecisionResult"
+    imports_content += (
+        "\nfrom .models.deployment_process_result import DeploymentProcessResult"
+    )
+    imports_content += (
+        "\nfrom .models.deployment_decision_result import DeploymentDecisionResult"
+    )
     imports_content += "\nfrom .models.deployment_decision_requirements_result import DeploymentDecisionRequirementsResult"
-    imports_content += "\nfrom .models.deployment_form_result import DeploymentFormResult"
+    imports_content += (
+        "\nfrom .models.deployment_form_result import DeploymentFormResult"
+    )
 
     # Prepare TYPE_CHECKING block — only include imports that provide type names
     # actually used in method signatures (return types and parameter types).
     # Skip imports already available at the top level of this file.
     top_level_modules = {
-        "UNSET", "Unset",  # from .types
+        "UNSET",
+        "Unset",  # from .types
         "Any",  # from typing
         "Callable",  # from typing
         "cast",  # from typing
@@ -347,10 +399,13 @@ def generate_flat_client(package_path: Path) -> None:
     sorted_imports = sorted(list(all_imports))
     for imp in sorted_imports:
         # Extract imported names from the import statement
-        import_match = re.search(r'import\s+(.+)$', imp)
+        import_match = re.search(r"import\s+(.+)$", imp)
         if not import_match:
             continue
-        imported_names = [n.strip().split(' as ')[-1].strip() for n in import_match.group(1).split(',')]
+        imported_names = [
+            n.strip().split(" as ")[-1].strip()
+            for n in import_match.group(1).split(",")
+        ]
         # Skip if all imported names are already available at the top level
         if all(name in top_level_modules for name in imported_names):
             continue
@@ -361,7 +416,7 @@ def generate_flat_client(package_path: Path) -> None:
         # Only include if at least one filtered name is needed for annotations
         if any(name in needed_type_names for name in filtered_names):
             # Rebuild import statement with only needed names
-            module_match = re.match(r'(from\s+\S+\s+import\s+)', imp)
+            module_match = re.match(r"(from\s+\S+\s+import\s+)", imp)
             if module_match and len(filtered_names) < len(imported_names):
                 # Reconstruct import with filtered names only
                 rebuilt_imp = module_match.group(1) + ", ".join(filtered_names)
@@ -702,12 +757,12 @@ class CamundaAsyncClient:
 
 {new_async_methods}
 '''
-    
+
     final_content = f"{imports_content}\n{type_checking_block}\n{class_content}\n{extended_result_code}\n{camunda_client_code}"
 
     with open(client_file, "w") as f:
         f.write(final_content)
-    
+
     print(f"Successfully added CamundaClient and CamundaAsyncClient to {client_file}")
 
     init_file = package_path / "__init__.py"
@@ -735,8 +790,8 @@ class CamundaAsyncClient:
                     existing: set[str] = set()
                     for tl in tuple_lines:
                         stripped = tl.strip()
-                        if stripped.startswith('"') and stripped.endswith(','):
-                            existing.add(stripped.strip(',').strip('"'))
+                        if stripped.startswith('"') and stripped.endswith(","):
+                            existing.add(stripped.strip(",").strip('"'))
 
                     indent = "    "
                     for tl in tuple_lines:
@@ -760,8 +815,14 @@ class CamundaAsyncClient:
             return "\n".join(out) + "\n"
 
         # Ensure clients are exported
-        if "from .client import AuthenticatedClient, Client, CamundaClient, CamundaAsyncClient" not in init_content:
-            if "from .client import AuthenticatedClient, Client, CamundaClient" in init_content:
+        if (
+            "from .client import AuthenticatedClient, Client, CamundaClient, CamundaAsyncClient"
+            not in init_content
+        ):
+            if (
+                "from .client import AuthenticatedClient, Client, CamundaClient"
+                in init_content
+            ):
                 init_content = init_content.replace(
                     "from .client import AuthenticatedClient, Client, CamundaClient",
                     "from .client import AuthenticatedClient, Client, CamundaClient, CamundaAsyncClient",
@@ -774,7 +835,13 @@ class CamundaAsyncClient:
 
         init_content = _ensure_all_tuple_exports(
             init_content,
-            ["CamundaClient", "CamundaAsyncClient", "WorkerConfig", "CamundaLogger", "NullLogger"],
+            [
+                "CamundaClient",
+                "CamundaAsyncClient",
+                "WorkerConfig",
+                "CamundaLogger",
+                "NullLogger",
+            ],
         )
 
         if "from .runtime.job_worker import WorkerConfig" not in init_content:
@@ -785,7 +852,10 @@ class CamundaAsyncClient:
 
         with open(init_file, "w") as f:
             f.write(init_content)
-        print(f"Successfully exported CamundaClient, CamundaAsyncClient, and WorkerConfig in {init_file}")
+        print(
+            f"Successfully exported CamundaClient, CamundaAsyncClient, and WorkerConfig in {init_file}"
+        )
+
 
 def run(context: dict[str, str]) -> None:
     out_dir = Path(context["out_dir"])
@@ -794,6 +864,7 @@ def run(context: dict[str, str]) -> None:
         print(f"Could not find package directory in {out_dir}")
         return
     generate_flat_client(package_dir)
+
 
 if __name__ == "__main__":
     base_dir = Path(__file__).parent.parent.parent

@@ -5,10 +5,46 @@ from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
 from ...models.usage_metrics_response import UsageMetricsResponse
 from ...types import UNSET, Response, Unset
-def _get_kwargs(start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = False) -> dict[str, Any]: ...
-def _parse_response(client: AuthenticatedClient | Client, response: httpx.Response) -> ProblemDetail | UsageMetricsResponse | None: ...
-def _build_response(client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ProblemDetail | UsageMetricsResponse]: ...
-def sync_detailed(client: AuthenticatedClient | Client, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = False) -> Response[ProblemDetail | UsageMetricsResponse]: ...
-def sync(client: AuthenticatedClient | Client, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = False, **kwargs: Any) -> UsageMetricsResponse: ...
-async def asyncio_detailed(client: AuthenticatedClient | Client, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = False) -> Response[ProblemDetail | UsageMetricsResponse]: ...
-async def asyncio(client: AuthenticatedClient | Client, start_time: datetime.datetime, end_time: datetime.datetime, tenant_id: str | Unset = UNSET, with_tenants: bool | Unset = False, **kwargs: Any) -> UsageMetricsResponse: ...
+
+def _get_kwargs(
+    start_time: datetime.datetime,
+    end_time: datetime.datetime,
+    tenant_id: str | Unset = UNSET,
+    with_tenants: bool | Unset = False,
+) -> dict[str, Any]: ...
+def _parse_response(
+    client: AuthenticatedClient | Client, response: httpx.Response
+) -> ProblemDetail | UsageMetricsResponse | None: ...
+def _build_response(
+    client: AuthenticatedClient | Client, response: httpx.Response
+) -> Response[ProblemDetail | UsageMetricsResponse]: ...
+def sync_detailed(
+    client: AuthenticatedClient | Client,
+    start_time: datetime.datetime,
+    end_time: datetime.datetime,
+    tenant_id: str | Unset = UNSET,
+    with_tenants: bool | Unset = False,
+) -> Response[ProblemDetail | UsageMetricsResponse]: ...
+def sync(
+    client: AuthenticatedClient | Client,
+    start_time: datetime.datetime,
+    end_time: datetime.datetime,
+    tenant_id: str | Unset = UNSET,
+    with_tenants: bool | Unset = False,
+    **kwargs: Any,
+) -> UsageMetricsResponse: ...
+async def asyncio_detailed(
+    client: AuthenticatedClient | Client,
+    start_time: datetime.datetime,
+    end_time: datetime.datetime,
+    tenant_id: str | Unset = UNSET,
+    with_tenants: bool | Unset = False,
+) -> Response[ProblemDetail | UsageMetricsResponse]: ...
+async def asyncio(
+    client: AuthenticatedClient | Client,
+    start_time: datetime.datetime,
+    end_time: datetime.datetime,
+    tenant_id: str | Unset = UNSET,
+    with_tenants: bool | Unset = False,
+    **kwargs: Any,
+) -> UsageMetricsResponse: ...

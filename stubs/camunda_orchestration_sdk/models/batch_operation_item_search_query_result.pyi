@@ -7,12 +7,16 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.batch_operation_item_response import BatchOperationItemResponse
 from ..models.search_query_page_response import SearchQueryPageResponse
+
 T = TypeVar("T", bound="BatchOperationItemSearchQueryResult")
+
 @_attrs_define
 class BatchOperationItemSearchQueryResult:
     page: SearchQueryPageResponse
     items: list[BatchOperationItemResponse] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

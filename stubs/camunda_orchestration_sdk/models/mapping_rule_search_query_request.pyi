@@ -7,21 +7,27 @@ from ..types import UNSET, Unset
 from ..models.cursor_based_backward_pagination import CursorBasedBackwardPagination
 from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
 from ..models.limit_based_pagination import LimitBasedPagination
-from ..models.mapping_rule_search_query_request_filter import MappingRuleSearchQueryRequestFilter
-from ..models.mapping_rule_search_query_sort_request import MappingRuleSearchQuerySortRequest
+from ..models.mapping_rule_search_query_request_filter import (
+    MappingRuleSearchQueryRequestFilter,
+)
+from ..models.mapping_rule_search_query_sort_request import (
+    MappingRuleSearchQuerySortRequest,
+)
 from ..models.offset_based_pagination import OffsetBasedPagination
+
 T = TypeVar("T", bound="MappingRuleSearchQueryRequest")
+
 @_attrs_define
 class MappingRuleSearchQueryRequest:
     sort: list[MappingRuleSearchQuerySortRequest] | Unset = UNSET
     filter_: MappingRuleSearchQueryRequestFilter | Unset = UNSET
     page: (
-            CursorBasedBackwardPagination
-            | CursorBasedForwardPagination
-            | LimitBasedPagination
-            | OffsetBasedPagination
-            | Unset
-        ) = UNSET
+        CursorBasedBackwardPagination
+        | CursorBasedForwardPagination
+        | LimitBasedPagination
+        | OffsetBasedPagination
+        | Unset
+    ) = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

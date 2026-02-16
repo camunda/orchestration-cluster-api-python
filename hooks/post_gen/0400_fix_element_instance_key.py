@@ -19,7 +19,10 @@ class ElementInstanceKey(RootModel[StrictStr]):
 
 
 def ensure_import_in_wrapper(models_dir: Path) -> None:
-    wrapper = models_dir / "process_instance_modification_activate_instruction_ancestor_element_instance_key.py"
+    wrapper = (
+        models_dir
+        / "process_instance_modification_activate_instruction_ancestor_element_instance_key.py"
+    )
     if not wrapper.exists():
         return
     content = wrapper.read_text(encoding="utf-8")
@@ -41,15 +44,9 @@ def ensure_import_in_wrapper(models_dir: Path) -> None:
 
 
 def run(context: dict[str, str]) -> None:
-    models_dir = Path(context["out_dir"]).resolve() / "camunda_orchestration_sdk" / "models"
+    models_dir = (
+        Path(context["out_dir"]).resolve() / "camunda_orchestration_sdk" / "models"
+    )
     models_dir.mkdir(parents=True, exist_ok=True)
     ensure_element_instance_key_model(models_dir)
     ensure_import_in_wrapper(models_dir)
-
-
-
-
-
-
-
-

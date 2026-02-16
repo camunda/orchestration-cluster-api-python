@@ -1,6 +1,14 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, JobKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ElementInstanceKey,
+    JobKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+)
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -11,7 +19,9 @@ from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.activated_job_result_custom_headers import ActivatedJobResultCustomHeaders
 from ..models.activated_job_result_variables import ActivatedJobResultVariables
 from ..models.user_task_properties import UserTaskProperties
+
 T = TypeVar("T", bound="ActivatedJobResult")
+
 @_attrs_define
 class ActivatedJobResult:
     type_: str
@@ -32,7 +42,9 @@ class ActivatedJobResult:
     listener_event_type: JobListenerEventTypeEnum
     user_task: UserTaskProperties | Unset = UNSET
     tags: list[str] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

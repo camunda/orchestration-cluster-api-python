@@ -1,4 +1,5 @@
 from enum import Enum
+
 class OwnerTypeEnum(str, Enum):
     CLIENT = "CLIENT"
     GROUP = "GROUP"

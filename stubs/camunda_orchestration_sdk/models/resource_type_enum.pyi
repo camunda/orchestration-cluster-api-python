@@ -1,4 +1,5 @@
 from enum import Enum
+
 class ResourceTypeEnum(str, Enum):
     AUDIT_LOG = "AUDIT_LOG"
     AUTHORIZATION = "AUTHORIZATION"

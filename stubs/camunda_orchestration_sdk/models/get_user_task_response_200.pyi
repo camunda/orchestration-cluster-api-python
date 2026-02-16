@@ -1,6 +1,15 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, FormKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId, UserTaskKey
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ElementInstanceKey,
+    FormKey,
+    ProcessDefinitionId,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+    UserTaskKey,
+)
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -9,7 +18,9 @@ from attrs import field as _attrs_field
 from ..models.user_task_state_enum import UserTaskStateEnum
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.user_task_result_custom_headers import UserTaskResultCustomHeaders
+
 T = TypeVar("T", bound="GetUserTaskResponse200")
+
 @_attrs_define
 class GetUserTaskResponse200:
     name: str | Unset = UNSET
@@ -35,7 +46,9 @@ class GetUserTaskResponse200:
     process_instance_key: ProcessInstanceKey | Unset = UNSET
     form_key: FormKey | Unset = UNSET
     tags: list[str] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

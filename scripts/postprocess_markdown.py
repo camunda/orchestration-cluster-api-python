@@ -232,7 +232,9 @@ def add_frontmatter(content: str, stem: str) -> str:
     else:
         # Derive from the first H1 heading in the content
         h1_match = re.search(r"^#\s+(.+)$", content, re.MULTILINE)
-        title = h1_match.group(1).strip() if h1_match else stem.replace("-", " ").title()
+        title = (
+            h1_match.group(1).strip() if h1_match else stem.replace("-", " ").title()
+        )
         meta = {"title": title, "sidebar_label": title}
 
     lines = ["---"]

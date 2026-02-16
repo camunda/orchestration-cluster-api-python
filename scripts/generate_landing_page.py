@@ -47,7 +47,7 @@ def rewrite_camunda_docs_links(content: str, depth: int = _LANDING_PAGE_DEPTH) -
         text = match.group(1)
         url = match.group(2)
 
-        rel_path = url[len(base_url):]
+        rel_path = url[len(base_url) :]
 
         fragment = ""
         if "#" in rel_path:
@@ -110,7 +110,9 @@ def generate_landing_page(readme_path: Path, output_path: Path) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate Docusaurus landing page from README")
+    parser = argparse.ArgumentParser(
+        description="Generate Docusaurus landing page from README"
+    )
     parser.add_argument(
         "--readme",
         default="README.md",

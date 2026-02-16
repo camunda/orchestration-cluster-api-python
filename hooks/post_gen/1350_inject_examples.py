@@ -5,6 +5,7 @@ then injects example code blocks as Google-style ``Examples:`` sections.
 
 This makes examples visible in Sphinx-generated API documentation.
 """
+
 from __future__ import annotations
 
 import ast
@@ -33,10 +34,12 @@ def _extract_region(file_path: Path, region_name: str) -> str | None:
         return None
 
     # Dedent: remove common leading whitespace
-    non_empty = [l for l in captured if l.strip()]
+    non_empty = [line for line in captured if line.strip()]
     if non_empty:
-        min_indent = min(len(l) - len(l.lstrip()) for l in non_empty)
-        captured = [l[min_indent:] if len(l) >= min_indent else l for l in captured]
+        min_indent = min(len(line) - len(line.lstrip()) for line in non_empty)
+        captured = [
+            line[min_indent:] if len(line) >= min_indent else line for line in captured
+        ]
 
     # Strip leading/trailing blank lines
     while captured and not captured[0].strip():
@@ -72,9 +75,7 @@ def _build_examples_text(
                 indented_lines.append("")
         indented_code = "\n".join(indented_lines)
         blocks.append(
-            f"{inner}**{label}:**\n\n"
-            f"{inner}.. code-block:: python\n\n"
-            f"{indented_code}"
+            f"{inner}**{label}:**\n\n{inner}.. code-block:: python\n\n{indented_code}"
         )
     return f"\n\n{base_indent}Examples:\n" + "\n\n".join(blocks) + "\n"
 
@@ -184,4 +185,6 @@ def run(context: dict[str, str]) -> None:
         source = source[:start] + text + source[end:]
 
     client_file.write_text(source, encoding="utf-8")
-    print(f"[inject-examples] Injected {len(replacements)} example blocks into client.py")
+    print(
+        f"[inject-examples] Injected {len(replacements)} example blocks into client.py"
+    )

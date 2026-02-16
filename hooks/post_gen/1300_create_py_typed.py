@@ -7,13 +7,13 @@ def run(context: dict[str, str]) -> None:
     """
     out_dir = Path(context["out_dir"])
     package_dir = out_dir / "camunda_orchestration_sdk"
-    
+
     if not package_dir.exists():
         print(f"Package directory not found at {package_dir}")
         return
 
     py_typed_file = package_dir / "py.typed"
-    
+
     # Create empty file
     py_typed_file.touch()
     print(f"Created {py_typed_file}")

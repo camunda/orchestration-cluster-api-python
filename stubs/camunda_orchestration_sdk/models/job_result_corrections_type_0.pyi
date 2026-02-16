@@ -6,7 +6,9 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
+
 T = TypeVar("T", bound="JobResultCorrectionsType0")
+
 @_attrs_define
 class JobResultCorrectionsType0:
     assignee: None | str | Unset = UNSET
@@ -15,7 +17,9 @@ class JobResultCorrectionsType0:
     candidate_users: list[str] | None | Unset = UNSET
     candidate_groups: list[str] | None | Unset = UNSET
     priority: int | None | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

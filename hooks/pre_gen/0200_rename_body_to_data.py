@@ -17,13 +17,13 @@ def run(context: dict[str, str]) -> None:
         return
 
     print(f"Patching spec at {spec_path} to rename Body to Data...")
-    
+
     with open(spec_path, "r") as f:
         spec: dict[str, Any] = yaml.safe_load(f)
 
     schemas: dict[str, Any] = spec.get("components", {}).get("schemas", {})
     paths: dict[str, Any] = spec.get("paths", {})
-    
+
     # Track renamed schemas to update refs later
     renamed_schemas: dict[str, str] = {}
 
@@ -34,7 +34,9 @@ def run(context: dict[str, str]) -> None:
             print(f"Renaming schema {name} -> {new_name}")
             schemas[new_name] = schema
             del schemas[name]
-            renamed_schemas[f"#/components/schemas/{name}"] = f"#/components/schemas/{new_name}"
+            renamed_schemas[f"#/components/schemas/{name}"] = (
+                f"#/components/schemas/{new_name}"
+            )
 
     # 2. Extract and name inline request bodies
     for _path, methods in paths.items():
@@ -46,42 +48,46 @@ def run(context: dict[str, str]) -> None:
             request_body: dict[str, Any] = operation.get("requestBody", {})
             content: dict[str, Any] = request_body.get("content", {})
             # Check for both application/json and multipart/form-data
-            target_content: dict[str, Any] | None = content.get("application/json") or content.get("multipart/form-data")
-            
+            target_content: dict[str, Any] | None = content.get(
+                "application/json"
+            ) or content.get("multipart/form-data")
+
             if not target_content:
                 continue
 
             schema: dict[str, Any] = target_content.get("schema", {})
-            
+
             # If it's an inline schema (no $ref)
             if schema and "$ref" not in schema:
                 op_id: str | None = operation.get("operationId")
                 if not op_id:
                     continue
-                    
+
                 # Create a name: {OperationId}Data
                 # Capitalize first letter of op_id
                 model_name = op_id[0].upper() + op_id[1:] + "Data"
-                
+
                 print(f"Extracting inline body for {op_id} -> {model_name}")
-                
+
                 # Move schema to components
                 schemas[model_name] = schema
-                
+
                 # Replace with ref
-                target_content["schema"] = {"$ref": f"#/components/schemas/{model_name}"}
+                target_content["schema"] = {
+                    "$ref": f"#/components/schemas/{model_name}"
+                }
 
     # 3. Update all references
-    # This is a simple string replacement on the dumped YAML. 
+    # This is a simple string replacement on the dumped YAML.
     # It's safer than traversing the dict for deep refs.
-    
+
     # First dump to string
     spec_str: str = yaml.safe_dump(spec, sort_keys=False)
-    
+
     # Replace old refs with new refs
     for old_ref, new_ref in renamed_schemas.items():
         spec_str = spec_str.replace(old_ref, new_ref)
-        
+
     # Write back
     with open(spec_path, "w") as f:
         f.write(spec_str)

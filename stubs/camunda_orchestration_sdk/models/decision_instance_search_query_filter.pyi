@@ -1,6 +1,12 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, DecisionEvaluationKey, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import (
+    DecisionDefinitionId,
+    DecisionEvaluationKey,
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    TenantId,
+)
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -10,19 +16,29 @@ from ..models.decision_definition_type_enum import DecisionDefinitionTypeEnum
 from ..models.decision_instance_state_exact_match import DecisionInstanceStateExactMatch
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
-from ..models.advanced_decision_definition_key_filter import AdvancedDecisionDefinitionKeyFilter
-from ..models.advanced_decision_evaluation_instance_key_filter import AdvancedDecisionEvaluationInstanceKeyFilter
-from ..models.advanced_decision_instance_state_filter import AdvancedDecisionInstanceStateFilter
-from ..models.advanced_element_instance_key_filter import AdvancedElementInstanceKeyFilter
+from ..models.advanced_decision_definition_key_filter import (
+    AdvancedDecisionDefinitionKeyFilter,
+)
+from ..models.advanced_decision_evaluation_instance_key_filter import (
+    AdvancedDecisionEvaluationInstanceKeyFilter,
+)
+from ..models.advanced_decision_instance_state_filter import (
+    AdvancedDecisionInstanceStateFilter,
+)
+from ..models.advanced_element_instance_key_filter import (
+    AdvancedElementInstanceKeyFilter,
+)
+
 T = TypeVar("T", bound="DecisionInstanceSearchQueryFilter")
+
 @_attrs_define
 class DecisionInstanceSearchQueryFilter:
     decision_evaluation_instance_key: (
-            AdvancedDecisionEvaluationInstanceKeyFilter | str | Unset
-        ) = UNSET
+        AdvancedDecisionEvaluationInstanceKeyFilter | str | Unset
+    ) = UNSET
     state: (
-            AdvancedDecisionInstanceStateFilter | DecisionInstanceStateExactMatch | Unset
-        ) = UNSET
+        AdvancedDecisionInstanceStateFilter | DecisionInstanceStateExactMatch | Unset
+    ) = UNSET
     evaluation_failure: str | Unset = UNSET
     evaluation_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     decision_definition_id: DecisionDefinitionId | Unset = UNSET
@@ -36,9 +52,11 @@ class DecisionInstanceSearchQueryFilter:
     decision_definition_key: AdvancedDecisionDefinitionKeyFilter | str | Unset = UNSET
     element_instance_key: AdvancedElementInstanceKeyFilter | str | Unset = UNSET
     root_decision_definition_key: AdvancedDecisionDefinitionKeyFilter | str | Unset = (
-            UNSET
-        )
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+        UNSET
+    )
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

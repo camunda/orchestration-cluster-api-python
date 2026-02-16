@@ -9,19 +9,25 @@ from ..models.cursor_based_backward_pagination import CursorBasedBackwardPaginat
 from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
 from ..models.limit_based_pagination import LimitBasedPagination
 from ..models.offset_based_pagination import OffsetBasedPagination
-from ..models.tenant_client_search_query_sort_request import TenantClientSearchQuerySortRequest
+from ..models.tenant_client_search_query_sort_request import (
+    TenantClientSearchQuerySortRequest,
+)
+
 T = TypeVar("T", bound="SearchClientsForGroupData")
+
 @_attrs_define
 class SearchClientsForGroupData:
     sort: list[TenantClientSearchQuerySortRequest] | Unset = UNSET
     page: (
-            CursorBasedBackwardPagination
-            | CursorBasedForwardPagination
-            | LimitBasedPagination
-            | OffsetBasedPagination
-            | Unset
-        ) = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+        CursorBasedBackwardPagination
+        | CursorBasedForwardPagination
+        | LimitBasedPagination
+        | OffsetBasedPagination
+        | Unset
+    ) = UNSET
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

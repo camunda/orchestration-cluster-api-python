@@ -64,7 +64,9 @@ def _build_table() -> str:
             f"| `{extra['variable']}` | {extra['default']} | {extra['description']} |"
         )
 
-    header = "| Variable | Default | Description |\n|----------|---------|-------------|"
+    header = (
+        "| Variable | Default | Description |\n|----------|---------|-------------|"
+    )
     return header + "\n" + "\n".join(rows)
 
 

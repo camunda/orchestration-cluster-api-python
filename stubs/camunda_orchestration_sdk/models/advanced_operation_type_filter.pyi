@@ -8,7 +8,9 @@ from ..models.advanced_operation_type_filter_eq import AdvancedOperationTypeFilt
 from ..models.advanced_operation_type_filter_neq import AdvancedOperationTypeFilterNeq
 from ..models.audit_log_operation_type_enum import AuditLogOperationTypeEnum
 from ..types import UNSET, Unset, str_any_dict_factory
+
 T = TypeVar("T", bound="AdvancedOperationTypeFilter")
+
 @_attrs_define
 class AdvancedOperationTypeFilter:
     eq: AdvancedOperationTypeFilterEq | Unset = UNSET
@@ -16,7 +18,9 @@ class AdvancedOperationTypeFilter:
     exists: bool | Unset = UNSET
     in_: list[AuditLogOperationTypeEnum] | Unset = UNSET
     like: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
+    additional_properties: dict[str, Any] = _attrs_field(
+        init=False, factory=str_any_dict_factory
+    )
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

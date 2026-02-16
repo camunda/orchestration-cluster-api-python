@@ -40,9 +40,13 @@ def _assert_value_or_throw_doc(func: Any) -> None:
     # Should document typed exceptions + fallback UnexpectedStatus.
     assert "errors.UnexpectedStatus" in doc
 
-    expected_return = _annotation_to_doc_return_text(inspect.signature(func).return_annotation)
+    expected_return = _annotation_to_doc_return_text(
+        inspect.signature(func).return_annotation
+    )
     returns_line = _get_returns_line(doc)
-    assert returns_line == expected_return, f"Returns line mismatch: {returns_line!r} != {expected_return!r}"
+    assert returns_line == expected_return, (
+        f"Returns line mismatch: {returns_line!r} != {expected_return!r}"
+    )
 
 
 def test_api_wrapper_docstrings_match_rewritten_signature():

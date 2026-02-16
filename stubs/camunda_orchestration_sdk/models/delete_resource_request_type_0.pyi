@@ -4,7 +4,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
+
 T = TypeVar("T", bound="DeleteResourceRequestType0")
+
 @_attrs_define
 class DeleteResourceRequestType0:
     operation_reference: int | Unset = UNSET

@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Count path-local refs in the patched bundled spec."""
+
 import yaml
 
 spec = yaml.safe_load(open("generated/bundled_spec.yaml"))
 
 count = 0
 examples = []
+
 
 def walk(node, path=""):
     global count
@@ -22,6 +24,7 @@ def walk(node, path=""):
             examples.append(path + " -> " + ref)
     for k, v in node.items():
         walk(v, path + "/" + k)
+
 
 walk(spec)
 print("Total path-local refs:", count)

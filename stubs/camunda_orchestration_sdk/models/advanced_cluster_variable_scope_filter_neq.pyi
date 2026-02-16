@@ -1,4 +1,5 @@
 from enum import Enum
+
 class AdvancedClusterVariableScopeFilterNeq(str, Enum):
     GLOBAL = "GLOBAL"
     TENANT = "TENANT"
