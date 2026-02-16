@@ -12500,9 +12500,9 @@ components:
           type: string
           description: Only provided if the cluster variable scope is TENANT.
       required:
-      - name
-      - scope
       - value
+      - scope
+      - name
     ClusterVariableSearchResult:
       description: Cluster variable search response item.
       type: object
@@ -12523,9 +12523,9 @@ components:
           type: string
           description: Only provided if the cluster variable scope is TENANT.
       required:
-      - name
-      - scope
       - value
+      - scope
+      - name
     ClusterVariableResultBase:
       description: Cluster variable response item.
       type: object
@@ -17426,8 +17426,8 @@ components:
       required:
       - claimName
       - name
-      - claimValue
       - mappingRuleId
+      - claimValue
     MappingRuleUpdateRequest:
       type: object
       properties:
