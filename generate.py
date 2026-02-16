@@ -14,11 +14,14 @@ REPO_URL = "https://github.com/camunda/camunda.git"
 SPEC_DIR = "zeebe/gateway-protocol/src/main/proto/v2"
 SPEC_FILE = "rest-api.yaml"
 
+
 def log(msg: str) -> None:
     print(msg)
 
+
 def ensure_cache_dir(cache_dir: Path) -> None:
     cache_dir.mkdir(parents=True, exist_ok=True)
+
 
 def fetch_spec(cache_dir: Path, ref: str) -> Path:
     """Clone repo sparsely and return path to the spec."""
@@ -31,9 +34,17 @@ def fetch_spec(cache_dir: Path, ref: str) -> Path:
             log("Initializing sparse clone...")
             repo_dir.mkdir(parents=True, exist_ok=True)
             subprocess.run(["git", "init"], cwd=str(repo_dir), check=True)
-            subprocess.run(["git", "remote", "add", "origin", REPO_URL], cwd=str(repo_dir), check=True)
-            subprocess.run(["git", "config", "core.sparseCheckout", "true"], cwd=str(repo_dir), check=True)
-            
+            subprocess.run(
+                ["git", "remote", "add", "origin", REPO_URL],
+                cwd=str(repo_dir),
+                check=True,
+            )
+            subprocess.run(
+                ["git", "config", "core.sparseCheckout", "true"],
+                cwd=str(repo_dir),
+                check=True,
+            )
+
             sparse_checkout_file = repo_dir / ".git" / "info" / "sparse-checkout"
             sparse_checkout_file.parent.mkdir(parents=True, exist_ok=True)
             with open(sparse_checkout_file, "w") as f:
@@ -41,9 +52,15 @@ def fetch_spec(cache_dir: Path, ref: str) -> Path:
 
         log("Updating repository...")
         # Fetch specific ref
-        subprocess.run(["git", "fetch", "--depth", "1", "origin", ref], cwd=str(repo_dir), check=True)
+        subprocess.run(
+            ["git", "fetch", "--depth", "1", "origin", ref],
+            cwd=str(repo_dir),
+            check=True,
+        )
         # Checkout FETCH_HEAD
-        subprocess.run(["git", "checkout", "-f", "FETCH_HEAD"], cwd=str(repo_dir), check=True)
+        subprocess.run(
+            ["git", "checkout", "-f", "FETCH_HEAD"], cwd=str(repo_dir), check=True
+        )
 
     except Exception as e:
         log(f"Warning: failed to update/clone remote repo: {e}")
@@ -53,6 +70,7 @@ def fetch_spec(cache_dir: Path, ref: str) -> Path:
         return spec_path
 
     raise FileNotFoundError(f"OpenAPI spec not found at {spec_path}")
+
 
 def load_hooks(hooks_dir: Path) -> list[Callable[[dict[str, str]], None]]:
     hooks: list[Callable[[dict[str, str]], None]] = []
@@ -67,33 +85,65 @@ def load_hooks(hooks_dir: Path) -> list[Callable[[dict[str, str]], None]]:
                 hooks.append(module.run)
     return hooks
 
-def run_hooks(hooks: list[Callable[[dict[str, str]], None]], context: dict[str, str]) -> None:
+
+def run_hooks(
+    hooks: list[Callable[[dict[str, str]], None]], context: dict[str, str]
+) -> None:
     for hook in hooks:
         log(f"Running hook: {hook.__module__}")
         hook(context)
+
 
 def run_acceptance_tests(root: Path, out_dir: Path) -> None:
     log("Running acceptance tests...")
     env = os.environ.copy()
     existing = env.get("PYTHONPATH", "")
     # Ensure generated code is importable by tests
-    env["PYTHONPATH"] = f"{str(out_dir)}{os.pathsep}{existing}" if existing else str(out_dir)
+    env["PYTHONPATH"] = (
+        f"{str(out_dir)}{os.pathsep}{existing}" if existing else str(out_dir)
+    )
     tests_dir = root / "tests" / "acceptance"
     cmd = [sys.executable, "-m", "pytest", "-q", str(tests_dir)]
     subprocess.run(cmd, check=True, env=env, cwd=str(root))
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Generate Python SDK for Camunda Orchestration Cluster API")
-    parser.add_argument("--out-dir", default="generated", help="Output directory for generated SDK")
-    parser.add_argument("--cache-dir", default=".openapi-cache", help="Cache directory for spec repo")
-    parser.add_argument("--spec-ref", default="main", help="Git ref/branch/tag for the spec repo")
-    parser.add_argument("--generator", default="openapi-python-client", help="OpenAPI generator name")
-    parser.add_argument("--config", default="generator-config.yaml", help="Path to generator config")
-    parser.add_argument("--skip-generate", action="store_true", help="Skip generation (run hooks only)")
-    parser.add_argument("--package-name", default=None, help="Override packageName in config (in-memory)")
-    parser.add_argument("--skip-tests", action="store_true", help="Skip acceptance tests")
-    parser.add_argument("--local-spec", help="Path to local OpenAPI spec file (skips git fetch)")
-    parser.add_argument("--bundled-spec", help="Path to a pre-bundled spec (from camunda-schema-bundler). Skips fetch and bundling.")
+    parser = argparse.ArgumentParser(
+        description="Generate Python SDK for Camunda Orchestration Cluster API"
+    )
+    parser.add_argument(
+        "--out-dir", default="generated", help="Output directory for generated SDK"
+    )
+    parser.add_argument(
+        "--cache-dir", default=".openapi-cache", help="Cache directory for spec repo"
+    )
+    parser.add_argument(
+        "--spec-ref", default="main", help="Git ref/branch/tag for the spec repo"
+    )
+    parser.add_argument(
+        "--generator", default="openapi-python-client", help="OpenAPI generator name"
+    )
+    parser.add_argument(
+        "--config", default="generator-config.yaml", help="Path to generator config"
+    )
+    parser.add_argument(
+        "--skip-generate", action="store_true", help="Skip generation (run hooks only)"
+    )
+    parser.add_argument(
+        "--package-name",
+        default=None,
+        help="Override packageName in config (in-memory)",
+    )
+    parser.add_argument(
+        "--skip-tests", action="store_true", help="Skip acceptance tests"
+    )
+    parser.add_argument(
+        "--local-spec", help="Path to local OpenAPI spec file (skips git fetch)"
+    )
+    parser.add_argument(
+        "--bundled-spec",
+        help="Path to a pre-bundled spec (from camunda-schema-bundler). Skips fetch and bundling.",
+    )
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parent
@@ -121,6 +171,7 @@ def main():
     tmp_config = None
     if args.package_name is not None:
         import yaml  # lazy import
+
         with open(config_path, "r", encoding="utf-8") as f:
             cfg: dict[str, Any] = yaml.safe_load(f) or {}
         cfg["packageName"] = args.package_name
@@ -143,12 +194,14 @@ def main():
         if args.bundled_spec:
             # Use pre-bundled spec from camunda-schema-bundler
             import shutil as _shutil
+
             assert bundled_spec_input is not None
             _shutil.copy2(bundled_spec_input, bundled_spec_path)
             log(f"Using pre-bundled spec: {bundled_spec_input}")
         else:
             # Bundle from raw spec
             from bundle import bundle_spec
+
             log(f"Bundling spec from {spec_path} to {bundled_spec_path}...")
             bundle_spec(spec_path, bundled_spec_path)
 
@@ -174,12 +227,17 @@ def main():
         actual_out_dir = out_dir / package_name
 
         cmd = [
-            "openapi-python-client", "generate",
-            "--path", str(bundled_spec_path),
-            "--config", str(effective_config),
-            "--output-path", str(actual_out_dir),
+            "openapi-python-client",
+            "generate",
+            "--path",
+            str(bundled_spec_path),
+            "--config",
+            str(effective_config),
+            "--output-path",
+            str(actual_out_dir),
             "--overwrite",
-            "--meta", "none"
+            "--meta",
+            "none",
         ]
         log(f"Running openapi-python-client with config {effective_config}...")
         subprocess.run(cmd, check=True)
@@ -194,7 +252,6 @@ def main():
 
     log("Done.")
 
+
 if __name__ == "__main__":
     main()
-
-

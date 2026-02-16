@@ -9,6 +9,7 @@ BUNDLED_SPEC = external-spec/bundled/rest-api.bundle.json
 install:
 	mkdir -p generated
 	uv sync
+	uv run pre-commit install
 
 # Fetch & bundle the upstream OpenAPI spec using camunda-schema-bundler.
 # Produces external-spec/bundled/rest-api.bundle.json + spec-metadata.json

@@ -1,0 +1,19 @@
+# See https://pre-commit.com for more information
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.11
+    hooks:
+      - id: ruff-format
+        exclude: ^(examples|generated)/
+      - id: ruff
+        args: [--fix]
+        exclude: ^(examples|generated)/
+
+  - repo: local
+    hooks:
+      - id: pyright
+        name: pyright type checking
+        entry: uv run pyright
+        language: system
+        pass_filenames: false
+        types: [python]
