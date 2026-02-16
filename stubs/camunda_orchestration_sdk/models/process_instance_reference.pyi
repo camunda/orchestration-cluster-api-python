@@ -1,24 +1,17 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import (
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-)
+from camunda_orchestration_sdk.semantic_types import ProcessDefinitionKey, ProcessInstanceKey
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
-
 T = TypeVar("T", bound="ProcessInstanceReference")
-
 @_attrs_define
 class ProcessInstanceReference:
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

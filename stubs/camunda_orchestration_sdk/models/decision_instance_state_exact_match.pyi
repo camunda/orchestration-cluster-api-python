@@ -1,5 +1,4 @@
 from enum import Enum
-
 class DecisionInstanceStateExactMatch(str, Enum):
     EVALUATED = "EVALUATED"
     FAILED = "FAILED"

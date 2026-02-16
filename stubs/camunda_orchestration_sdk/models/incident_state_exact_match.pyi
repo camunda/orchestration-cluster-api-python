@@ -1,5 +1,4 @@
 from enum import Enum
-
 class IncidentStateExactMatch(str, Enum):
     ACTIVE = "ACTIVE"
     MIGRATED = "MIGRATED"

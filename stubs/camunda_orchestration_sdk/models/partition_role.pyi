@@ -1,5 +1,4 @@
 from enum import Enum
-
 class PartitionRole(str, Enum):
     FOLLOWER = "follower"
     INACTIVE = "inactive"

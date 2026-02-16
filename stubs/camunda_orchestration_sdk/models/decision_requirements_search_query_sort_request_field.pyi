@@ -1,5 +1,4 @@
 from enum import Enum
-
 class DecisionRequirementsSearchQuerySortRequestField(str, Enum):
     DECISIONREQUIREMENTSID = "decisionRequirementsId"
     DECISIONREQUIREMENTSKEY = "decisionRequirementsKey"

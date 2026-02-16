@@ -1,5 +1,4 @@
 from enum import Enum
-
 class SearchBatchOperationsFilterActorType(str, Enum):
     ANONYMOUS = "ANONYMOUS"
     CLIENT = "CLIENT"

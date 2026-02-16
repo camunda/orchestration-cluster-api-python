@@ -4,12 +4,8 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
-from ..models.process_definition_element_statistics_query_filter import (
-    ProcessDefinitionElementStatisticsQueryFilter,
-)
-
+from ..models.process_definition_element_statistics_query_filter import ProcessDefinitionElementStatisticsQueryFilter
 T = TypeVar("T", bound="ProcessDefinitionElementStatisticsQuery")
-
 @_attrs_define
 class ProcessDefinitionElementStatisticsQuery:
     filter_: ProcessDefinitionElementStatisticsQueryFilter | Unset = UNSET

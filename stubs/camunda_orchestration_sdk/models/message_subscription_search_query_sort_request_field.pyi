@@ -1,5 +1,4 @@
 from enum import Enum
-
 class MessageSubscriptionSearchQuerySortRequestField(str, Enum):
     CORRELATIONKEY = "correlationKey"
     ELEMENTID = "elementId"

@@ -1,44 +1,14 @@
 from typing import Any
 import httpx
 from ...client import AuthenticatedClient, Client
-from ...models.cluster_variable_search_query_request import (
-    ClusterVariableSearchQueryRequest,
-)
-from ...models.cluster_variable_search_query_result import (
-    ClusterVariableSearchQueryResult,
-)
+from ...models.cluster_variable_search_query_request import ClusterVariableSearchQueryRequest
+from ...models.cluster_variable_search_query_result import ClusterVariableSearchQueryResult
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
-
-def _get_kwargs(
-    body: ClusterVariableSearchQueryRequest | Unset = UNSET,
-    truncate_values: bool | Unset = UNSET,
-) -> dict[str, Any]: ...
-def _parse_response(
-    client: AuthenticatedClient | Client, response: httpx.Response
-) -> ClusterVariableSearchQueryResult | ProblemDetail | None: ...
-def _build_response(
-    client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ClusterVariableSearchQueryResult | ProblemDetail]: ...
-def sync_detailed(
-    client: AuthenticatedClient | Client,
-    body: ClusterVariableSearchQueryRequest | Unset = UNSET,
-    truncate_values: bool | Unset = UNSET,
-) -> Response[ClusterVariableSearchQueryResult | ProblemDetail]: ...
-def sync(
-    client: AuthenticatedClient | Client,
-    body: ClusterVariableSearchQueryRequest | Unset = UNSET,
-    truncate_values: bool | Unset = UNSET,
-    **kwargs: Any,
-) -> ClusterVariableSearchQueryResult: ...
-async def asyncio_detailed(
-    client: AuthenticatedClient | Client,
-    body: ClusterVariableSearchQueryRequest | Unset = UNSET,
-    truncate_values: bool | Unset = UNSET,
-) -> Response[ClusterVariableSearchQueryResult | ProblemDetail]: ...
-async def asyncio(
-    client: AuthenticatedClient | Client,
-    body: ClusterVariableSearchQueryRequest | Unset = UNSET,
-    truncate_values: bool | Unset = UNSET,
-    **kwargs: Any,
-) -> ClusterVariableSearchQueryResult: ...
+def _get_kwargs(body: ClusterVariableSearchQueryRequest | Unset = UNSET, truncate_values: bool | Unset = UNSET) -> dict[str, Any]: ...
+def _parse_response(client: AuthenticatedClient | Client, response: httpx.Response) -> ClusterVariableSearchQueryResult | ProblemDetail | None: ...
+def _build_response(client: AuthenticatedClient | Client, response: httpx.Response) -> Response[ClusterVariableSearchQueryResult | ProblemDetail]: ...
+def sync_detailed(client: AuthenticatedClient | Client, body: ClusterVariableSearchQueryRequest | Unset = UNSET, truncate_values: bool | Unset = UNSET) -> Response[ClusterVariableSearchQueryResult | ProblemDetail]: ...
+def sync(client: AuthenticatedClient | Client, body: ClusterVariableSearchQueryRequest | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> ClusterVariableSearchQueryResult: ...
+async def asyncio_detailed(client: AuthenticatedClient | Client, body: ClusterVariableSearchQueryRequest | Unset = UNSET, truncate_values: bool | Unset = UNSET) -> Response[ClusterVariableSearchQueryResult | ProblemDetail]: ...
+async def asyncio(client: AuthenticatedClient | Client, body: ClusterVariableSearchQueryRequest | Unset = UNSET, truncate_values: bool | Unset = UNSET, **kwargs: Any) -> ClusterVariableSearchQueryResult: ...

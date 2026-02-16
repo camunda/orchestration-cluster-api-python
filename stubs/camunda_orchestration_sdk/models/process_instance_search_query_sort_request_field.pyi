@@ -1,5 +1,4 @@
 from enum import Enum
-
 class ProcessInstanceSearchQuerySortRequestField(str, Enum):
     ENDDATE = "endDate"
     HASINCIDENT = "hasIncident"

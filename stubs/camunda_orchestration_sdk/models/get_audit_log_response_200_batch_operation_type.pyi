@@ -1,5 +1,4 @@
 from enum import Enum
-
 class GetAuditLogResponse200BatchOperationType(str, Enum):
     ADD_VARIABLE = "ADD_VARIABLE"
     CANCEL_PROCESS_INSTANCE = "CANCEL_PROCESS_INSTANCE"

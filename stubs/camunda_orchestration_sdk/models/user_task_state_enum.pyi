@@ -1,5 +1,4 @@
 from enum import Enum
-
 class UserTaskStateEnum(str, Enum):
     ASSIGNING = "ASSIGNING"
     CANCELED = "CANCELED"

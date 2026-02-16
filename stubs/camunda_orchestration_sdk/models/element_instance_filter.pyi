@@ -1,14 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import (
-    ElementId,
-    ElementInstanceKey,
-    IncidentKey,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    TenantId,
-)
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, IncidentKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -18,18 +10,14 @@ from ..models.element_instance_filter_type import ElementInstanceFilterType
 from ..models.element_instance_state_exact_match import ElementInstanceStateExactMatch
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
-from ..models.advanced_element_instance_state_filter import (
-    AdvancedElementInstanceStateFilter,
-)
-
+from ..models.advanced_element_instance_state_filter import AdvancedElementInstanceStateFilter
 T = TypeVar("T", bound="ElementInstanceFilter")
-
 @_attrs_define
 class ElementInstanceFilter:
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     state: (
-        AdvancedElementInstanceStateFilter | ElementInstanceStateExactMatch | Unset
-    ) = UNSET
+            AdvancedElementInstanceStateFilter | ElementInstanceStateExactMatch | Unset
+        ) = UNSET
     type_: ElementInstanceFilterType | Unset = UNSET
     element_id: ElementId | Unset = UNSET
     element_name: str | Unset = UNSET
@@ -42,9 +30,7 @@ class ElementInstanceFilter:
     start_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     end_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     element_instance_scope_key: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

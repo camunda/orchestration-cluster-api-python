@@ -1,5 +1,4 @@
 from enum import Enum
-
 class AdvancedCategoryFilterNeq(str, Enum):
     ADMIN = "ADMIN"
     DEPLOYED_RESOURCES = "DEPLOYED_RESOURCES"

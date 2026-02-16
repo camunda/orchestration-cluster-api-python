@@ -7,9 +7,7 @@ from ..types import UNSET, Unset
 from ..models.job_completion_request_variables import JobCompletionRequestVariables
 from ..models.job_result_user_task_type_0 import JobResultUserTaskType0
 from ..models.result_object_type_0 import ResultObjectType0
-
 T = TypeVar("T", bound="CompleteJobData")
-
 @_attrs_define
 class CompleteJobData:
     variables: JobCompletionRequestVariables | None | Unset = UNSET

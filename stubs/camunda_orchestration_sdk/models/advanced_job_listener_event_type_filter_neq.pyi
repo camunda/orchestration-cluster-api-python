@@ -1,5 +1,4 @@
 from enum import Enum
-
 class AdvancedJobListenerEventTypeFilterNeq(str, Enum):
     ASSIGNING = "ASSIGNING"
     CANCELING = "CANCELING"

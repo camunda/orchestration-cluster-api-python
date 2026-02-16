@@ -10,26 +10,16 @@ from ..models.job_listener_event_type_exact_match import JobListenerEventTypeExa
 from ..models.job_state_exact_match import JobStateExactMatch
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
-from ..models.advanced_element_instance_key_filter import (
-    AdvancedElementInstanceKeyFilter,
-)
+from ..models.advanced_element_instance_key_filter import AdvancedElementInstanceKeyFilter
 from ..models.advanced_integer_filter import AdvancedIntegerFilter
 from ..models.advanced_job_key_filter import AdvancedJobKeyFilter
 from ..models.advanced_job_kind_filter import AdvancedJobKindFilter
-from ..models.advanced_job_listener_event_type_filter import (
-    AdvancedJobListenerEventTypeFilter,
-)
+from ..models.advanced_job_listener_event_type_filter import AdvancedJobListenerEventTypeFilter
 from ..models.advanced_job_state_filter import AdvancedJobStateFilter
-from ..models.advanced_process_definition_key_filter import (
-    AdvancedProcessDefinitionKeyFilter,
-)
-from ..models.advanced_process_instance_key_filter import (
-    AdvancedProcessInstanceKeyFilter,
-)
+from ..models.advanced_process_definition_key_filter import AdvancedProcessDefinitionKeyFilter
+from ..models.advanced_process_instance_key_filter import AdvancedProcessInstanceKeyFilter
 from ..models.advanced_string_filter import AdvancedStringFilter
-
 T = TypeVar("T", bound="JobFilter")
-
 @_attrs_define
 class JobFilter:
     deadline: AdvancedDateTimeFilter | datetime.datetime | None | Unset = UNSET
@@ -44,8 +34,8 @@ class JobFilter:
     job_key: AdvancedJobKeyFilter | str | Unset = UNSET
     kind: AdvancedJobKindFilter | JobKindExactMatch | Unset = UNSET
     listener_event_type: (
-        AdvancedJobListenerEventTypeFilter | JobListenerEventTypeExactMatch | Unset
-    ) = UNSET
+            AdvancedJobListenerEventTypeFilter | JobListenerEventTypeExactMatch | Unset
+        ) = UNSET
     process_definition_id: AdvancedStringFilter | str | Unset = UNSET
     process_definition_key: AdvancedProcessDefinitionKeyFilter | str | Unset = UNSET
     process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
@@ -56,9 +46,7 @@ class JobFilter:
     worker: AdvancedStringFilter | str | Unset = UNSET
     creation_time: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     last_update_time: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

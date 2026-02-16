@@ -1,5 +1,4 @@
 from enum import Enum
-
 class BatchOperationTypeExactMatch(str, Enum):
     ADD_VARIABLE = "ADD_VARIABLE"
     CANCEL_PROCESS_INSTANCE = "CANCEL_PROCESS_INSTANCE"

@@ -1,5 +1,4 @@
 from enum import Enum
-
 class GroupSearchQuerySortRequestField(str, Enum):
     GROUPID = "groupId"
     NAME = "name"

@@ -1,14 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import (
-    ElementId,
-    ElementInstanceKey,
-    MessageSubscriptionKey,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    TenantId,
-)
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, MessageSubscriptionKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -16,9 +8,7 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..models.message_subscription_state_enum import MessageSubscriptionStateEnum
 from ..types import UNSET, Unset, str_any_dict_factory
-
 T = TypeVar("T", bound="MessageSubscriptionResult")
-
 @_attrs_define
 class MessageSubscriptionResult:
     message_subscription_key: MessageSubscriptionKey | Unset = UNSET
@@ -32,9 +22,7 @@ class MessageSubscriptionResult:
     message_name: str | Unset = UNSET
     correlation_key: str | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

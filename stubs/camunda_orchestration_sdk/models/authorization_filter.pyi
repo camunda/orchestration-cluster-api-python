@@ -7,9 +7,7 @@ from attrs import field as _attrs_field
 from ..models.authorization_filter_resource_type import AuthorizationFilterResourceType
 from ..models.owner_type_enum import OwnerTypeEnum
 from ..types import UNSET, Unset, str_any_dict_factory
-
 T = TypeVar("T", bound="AuthorizationFilter")
-
 @_attrs_define
 class AuthorizationFilter:
     owner_id: str | Unset = UNSET
@@ -17,9 +15,7 @@ class AuthorizationFilter:
     resource_ids: list[str] | Unset = UNSET
     resource_property_names: list[str] | Unset = UNSET
     resource_type: AuthorizationFilterResourceType | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

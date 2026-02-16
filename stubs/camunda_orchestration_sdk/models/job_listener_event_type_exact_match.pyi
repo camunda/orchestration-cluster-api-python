@@ -1,5 +1,4 @@
 from enum import Enum
-
 class JobListenerEventTypeExactMatch(str, Enum):
     ASSIGNING = "ASSIGNING"
     CANCELING = "CANCELING"

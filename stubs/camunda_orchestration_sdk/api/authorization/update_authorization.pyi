@@ -2,41 +2,13 @@ from typing import Any
 import httpx
 from ...client import AuthenticatedClient, Client
 from ...models.authorization_id_based_request import AuthorizationIdBasedRequest
-from ...models.authorization_property_based_request import (
-    AuthorizationPropertyBasedRequest,
-)
+from ...models.authorization_property_based_request import AuthorizationPropertyBasedRequest
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
-
-def _get_kwargs(
-    authorization_key: str,
-    body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
-) -> dict[str, Any]: ...
-def _parse_response(
-    client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | ProblemDetail | None: ...
-def _build_response(
-    client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | ProblemDetail]: ...
-def sync_detailed(
-    authorization_key: str,
-    client: AuthenticatedClient | Client,
-    body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
-) -> Response[Any | ProblemDetail]: ...
-def sync(
-    authorization_key: str,
-    client: AuthenticatedClient | Client,
-    body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
-    **kwargs: Any,
-) -> None: ...
-async def asyncio_detailed(
-    authorization_key: str,
-    client: AuthenticatedClient | Client,
-    body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
-) -> Response[Any | ProblemDetail]: ...
-async def asyncio(
-    authorization_key: str,
-    client: AuthenticatedClient | Client,
-    body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
-    **kwargs: Any,
-) -> None: ...
+def _get_kwargs(authorization_key: str, body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest) -> dict[str, Any]: ...
+def _parse_response(client: AuthenticatedClient | Client, response: httpx.Response) -> Any | ProblemDetail | None: ...
+def _build_response(client: AuthenticatedClient | Client, response: httpx.Response) -> Response[Any | ProblemDetail]: ...
+def sync_detailed(authorization_key: str, client: AuthenticatedClient | Client, body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest) -> Response[Any | ProblemDetail]: ...
+def sync(authorization_key: str, client: AuthenticatedClient | Client, body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest, **kwargs: Any) -> None: ...
+async def asyncio_detailed(authorization_key: str, client: AuthenticatedClient | Client, body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest) -> Response[Any | ProblemDetail]: ...
+async def asyncio(authorization_key: str, client: AuthenticatedClient | Client, body: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest, **kwargs: Any) -> None: ...

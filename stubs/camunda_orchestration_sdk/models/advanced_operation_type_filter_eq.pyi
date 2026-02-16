@@ -1,5 +1,4 @@
 from enum import Enum
-
 class AdvancedOperationTypeFilterEq(str, Enum):
     ASSIGN = "ASSIGN"
     CANCEL = "CANCEL"

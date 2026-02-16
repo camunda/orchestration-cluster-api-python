@@ -1,302 +1,103 @@
 from __future__ import annotations
 
 from typing import NewType, Any, Tuple
-
-AuditLogEntityKey = NewType("AuditLogEntityKey", str)
-
+AuditLogEntityKey = NewType('AuditLogEntityKey', str)
 def lift_audit_log_entity_key(value: Any) -> AuditLogEntityKey: ...
-def try_lift_audit_log_entity_key(
-    value: Any,
-) -> Tuple[bool, AuditLogEntityKey | Exception]: ...
-
-AuditLogKey = NewType("AuditLogKey", str)
-
+def try_lift_audit_log_entity_key(value: Any) -> Tuple[bool, AuditLogEntityKey | Exception]: ...
+AuditLogKey = NewType('AuditLogKey', str)
 def lift_audit_log_key(value: Any) -> AuditLogKey: ...
 def try_lift_audit_log_key(value: Any) -> Tuple[bool, AuditLogKey | Exception]: ...
-
-AuthorizationKey = NewType("AuthorizationKey", str)
-
+AuthorizationKey = NewType('AuthorizationKey', str)
 def lift_authorization_key(value: Any) -> AuthorizationKey: ...
-def try_lift_authorization_key(
-    value: Any,
-) -> Tuple[bool, AuthorizationKey | Exception]: ...
-
-BatchOperationKey = NewType("BatchOperationKey", str)
-
+def try_lift_authorization_key(value: Any) -> Tuple[bool, AuthorizationKey | Exception]: ...
+BatchOperationKey = NewType('BatchOperationKey', str)
 def lift_batch_operation_key(value: Any) -> BatchOperationKey: ...
-def try_lift_batch_operation_key(
-    value: Any,
-) -> Tuple[bool, BatchOperationKey | Exception]: ...
-
-ConditionalEvaluationKey = NewType("ConditionalEvaluationKey", str)
-
+def try_lift_batch_operation_key(value: Any) -> Tuple[bool, BatchOperationKey | Exception]: ...
+ConditionalEvaluationKey = NewType('ConditionalEvaluationKey', str)
 def lift_conditional_evaluation_key(value: Any) -> ConditionalEvaluationKey: ...
-def try_lift_conditional_evaluation_key(
-    value: Any,
-) -> Tuple[bool, ConditionalEvaluationKey | Exception]: ...
-
-DecisionDefinitionId = NewType("DecisionDefinitionId", str)
-
+def try_lift_conditional_evaluation_key(value: Any) -> Tuple[bool, ConditionalEvaluationKey | Exception]: ...
+DecisionDefinitionId = NewType('DecisionDefinitionId', str)
 def lift_decision_definition_id(value: Any) -> DecisionDefinitionId: ...
-def try_lift_decision_definition_id(
-    value: Any,
-) -> Tuple[bool, DecisionDefinitionId | Exception]: ...
-
-DecisionDefinitionKey = NewType("DecisionDefinitionKey", str)
-
+def try_lift_decision_definition_id(value: Any) -> Tuple[bool, DecisionDefinitionId | Exception]: ...
+DecisionDefinitionKey = NewType('DecisionDefinitionKey', str)
 def lift_decision_definition_key(value: Any) -> DecisionDefinitionKey: ...
-def try_lift_decision_definition_key(
-    value: Any,
-) -> Tuple[bool, DecisionDefinitionKey | Exception]: ...
-
-DecisionEvaluationInstanceKey = NewType("DecisionEvaluationInstanceKey", str)
-
-def lift_decision_evaluation_instance_key(
-    value: Any,
-) -> DecisionEvaluationInstanceKey: ...
-def try_lift_decision_evaluation_instance_key(
-    value: Any,
-) -> Tuple[bool, DecisionEvaluationInstanceKey | Exception]: ...
-
-DecisionEvaluationKey = NewType("DecisionEvaluationKey", str)
-
+def try_lift_decision_definition_key(value: Any) -> Tuple[bool, DecisionDefinitionKey | Exception]: ...
+DecisionEvaluationInstanceKey = NewType('DecisionEvaluationInstanceKey', str)
+def lift_decision_evaluation_instance_key(value: Any) -> DecisionEvaluationInstanceKey: ...
+def try_lift_decision_evaluation_instance_key(value: Any) -> Tuple[bool, DecisionEvaluationInstanceKey | Exception]: ...
+DecisionEvaluationKey = NewType('DecisionEvaluationKey', str)
 def lift_decision_evaluation_key(value: Any) -> DecisionEvaluationKey: ...
-def try_lift_decision_evaluation_key(
-    value: Any,
-) -> Tuple[bool, DecisionEvaluationKey | Exception]: ...
-
-DecisionInstanceKey = NewType("DecisionInstanceKey", str)
-
+def try_lift_decision_evaluation_key(value: Any) -> Tuple[bool, DecisionEvaluationKey | Exception]: ...
+DecisionInstanceKey = NewType('DecisionInstanceKey', str)
 def lift_decision_instance_key(value: Any) -> DecisionInstanceKey: ...
-def try_lift_decision_instance_key(
-    value: Any,
-) -> Tuple[bool, DecisionInstanceKey | Exception]: ...
-
-DecisionRequirementsKey = NewType("DecisionRequirementsKey", str)
-
+def try_lift_decision_instance_key(value: Any) -> Tuple[bool, DecisionInstanceKey | Exception]: ...
+DecisionRequirementsKey = NewType('DecisionRequirementsKey', str)
 def lift_decision_requirements_key(value: Any) -> DecisionRequirementsKey: ...
-def try_lift_decision_requirements_key(
-    value: Any,
-) -> Tuple[bool, DecisionRequirementsKey | Exception]: ...
-
-DeploymentKey = NewType("DeploymentKey", str)
-
+def try_lift_decision_requirements_key(value: Any) -> Tuple[bool, DecisionRequirementsKey | Exception]: ...
+DeploymentKey = NewType('DeploymentKey', str)
 def lift_deployment_key(value: Any) -> DeploymentKey: ...
 def try_lift_deployment_key(value: Any) -> Tuple[bool, DeploymentKey | Exception]: ...
-
-DocumentId = NewType("DocumentId", str)
-
+DocumentId = NewType('DocumentId', str)
 def lift_document_id(value: Any) -> DocumentId: ...
 def try_lift_document_id(value: Any) -> Tuple[bool, DocumentId | Exception]: ...
-
-ElementId = NewType("ElementId", str)
-
+ElementId = NewType('ElementId', str)
 def lift_element_id(value: Any) -> ElementId: ...
 def try_lift_element_id(value: Any) -> Tuple[bool, ElementId | Exception]: ...
-
-ElementInstanceKey = NewType("ElementInstanceKey", str)
-
+ElementInstanceKey = NewType('ElementInstanceKey', str)
 def lift_element_instance_key(value: Any) -> ElementInstanceKey: ...
-def try_lift_element_instance_key(
-    value: Any,
-) -> Tuple[bool, ElementInstanceKey | Exception]: ...
-
-EndCursor = NewType("EndCursor", str)
-
+def try_lift_element_instance_key(value: Any) -> Tuple[bool, ElementInstanceKey | Exception]: ...
+EndCursor = NewType('EndCursor', str)
 def lift_end_cursor(value: Any) -> EndCursor: ...
 def try_lift_end_cursor(value: Any) -> Tuple[bool, EndCursor | Exception]: ...
-
-FormId = NewType("FormId", str)
-
+FormId = NewType('FormId', str)
 def lift_form_id(value: Any) -> FormId: ...
 def try_lift_form_id(value: Any) -> Tuple[bool, FormId | Exception]: ...
-
-FormKey = NewType("FormKey", str)
-
+FormKey = NewType('FormKey', str)
 def lift_form_key(value: Any) -> FormKey: ...
 def try_lift_form_key(value: Any) -> Tuple[bool, FormKey | Exception]: ...
-
-IncidentKey = NewType("IncidentKey", str)
-
+IncidentKey = NewType('IncidentKey', str)
 def lift_incident_key(value: Any) -> IncidentKey: ...
 def try_lift_incident_key(value: Any) -> Tuple[bool, IncidentKey | Exception]: ...
-
-JobKey = NewType("JobKey", str)
-
+JobKey = NewType('JobKey', str)
 def lift_job_key(value: Any) -> JobKey: ...
 def try_lift_job_key(value: Any) -> Tuple[bool, JobKey | Exception]: ...
-
-MessageKey = NewType("MessageKey", str)
-
+MessageKey = NewType('MessageKey', str)
 def lift_message_key(value: Any) -> MessageKey: ...
 def try_lift_message_key(value: Any) -> Tuple[bool, MessageKey | Exception]: ...
-
-MessageSubscriptionKey = NewType("MessageSubscriptionKey", str)
-
+MessageSubscriptionKey = NewType('MessageSubscriptionKey', str)
 def lift_message_subscription_key(value: Any) -> MessageSubscriptionKey: ...
-def try_lift_message_subscription_key(
-    value: Any,
-) -> Tuple[bool, MessageSubscriptionKey | Exception]: ...
-
-ProcessDefinitionId = NewType("ProcessDefinitionId", str)
-
+def try_lift_message_subscription_key(value: Any) -> Tuple[bool, MessageSubscriptionKey | Exception]: ...
+ProcessDefinitionId = NewType('ProcessDefinitionId', str)
 def lift_process_definition_id(value: Any) -> ProcessDefinitionId: ...
-def try_lift_process_definition_id(
-    value: Any,
-) -> Tuple[bool, ProcessDefinitionId | Exception]: ...
-
-ProcessDefinitionKey = NewType("ProcessDefinitionKey", str)
-
+def try_lift_process_definition_id(value: Any) -> Tuple[bool, ProcessDefinitionId | Exception]: ...
+ProcessDefinitionKey = NewType('ProcessDefinitionKey', str)
 def lift_process_definition_key(value: Any) -> ProcessDefinitionKey: ...
-def try_lift_process_definition_key(
-    value: Any,
-) -> Tuple[bool, ProcessDefinitionKey | Exception]: ...
-
-ProcessInstanceKey = NewType("ProcessInstanceKey", str)
-
+def try_lift_process_definition_key(value: Any) -> Tuple[bool, ProcessDefinitionKey | Exception]: ...
+ProcessInstanceKey = NewType('ProcessInstanceKey', str)
 def lift_process_instance_key(value: Any) -> ProcessInstanceKey: ...
-def try_lift_process_instance_key(
-    value: Any,
-) -> Tuple[bool, ProcessInstanceKey | Exception]: ...
-
-ScopeKey = NewType("ScopeKey", str)
-
+def try_lift_process_instance_key(value: Any) -> Tuple[bool, ProcessInstanceKey | Exception]: ...
+ScopeKey = NewType('ScopeKey', str)
 def lift_scope_key(value: Any) -> ScopeKey: ...
 def try_lift_scope_key(value: Any) -> Tuple[bool, ScopeKey | Exception]: ...
-
-SignalKey = NewType("SignalKey", str)
-
+SignalKey = NewType('SignalKey', str)
 def lift_signal_key(value: Any) -> SignalKey: ...
 def try_lift_signal_key(value: Any) -> Tuple[bool, SignalKey | Exception]: ...
-
-StartCursor = NewType("StartCursor", str)
-
+StartCursor = NewType('StartCursor', str)
 def lift_start_cursor(value: Any) -> StartCursor: ...
 def try_lift_start_cursor(value: Any) -> Tuple[bool, StartCursor | Exception]: ...
-
-Tag = NewType("Tag", str)
-
+Tag = NewType('Tag', str)
 def lift_tag(value: Any) -> Tag: ...
 def try_lift_tag(value: Any) -> Tuple[bool, Tag | Exception]: ...
-
-TenantId = NewType("TenantId", str)
-
+TenantId = NewType('TenantId', str)
 def lift_tenant_id(value: Any) -> TenantId: ...
 def try_lift_tenant_id(value: Any) -> Tuple[bool, TenantId | Exception]: ...
-
-UserTaskKey = NewType("UserTaskKey", str)
-
+UserTaskKey = NewType('UserTaskKey', str)
 def lift_user_task_key(value: Any) -> UserTaskKey: ...
 def try_lift_user_task_key(value: Any) -> Tuple[bool, UserTaskKey | Exception]: ...
-
-Username = NewType("Username", str)
-
+Username = NewType('Username', str)
 def lift_username(value: Any) -> Username: ...
 def try_lift_username(value: Any) -> Tuple[bool, Username | Exception]: ...
-
-VariableKey = NewType("VariableKey", str)
-
+VariableKey = NewType('VariableKey', str)
 def lift_variable_key(value: Any) -> VariableKey: ...
 def try_lift_variable_key(value: Any) -> Tuple[bool, VariableKey | Exception]: ...
-
-__all__ = [
-    "AuditLogEntityKey",
-    "AuditLogKey",
-    "AuthorizationKey",
-    "BatchOperationKey",
-    "ConditionalEvaluationKey",
-    "DecisionDefinitionId",
-    "DecisionDefinitionKey",
-    "DecisionEvaluationInstanceKey",
-    "DecisionEvaluationKey",
-    "DecisionInstanceKey",
-    "DecisionRequirementsKey",
-    "DeploymentKey",
-    "DocumentId",
-    "ElementId",
-    "ElementInstanceKey",
-    "EndCursor",
-    "FormId",
-    "FormKey",
-    "IncidentKey",
-    "JobKey",
-    "MessageKey",
-    "MessageSubscriptionKey",
-    "ProcessDefinitionId",
-    "ProcessDefinitionKey",
-    "ProcessInstanceKey",
-    "ScopeKey",
-    "SignalKey",
-    "StartCursor",
-    "Tag",
-    "TenantId",
-    "UserTaskKey",
-    "Username",
-    "VariableKey",
-    "lift_audit_log_entity_key",
-    "lift_audit_log_key",
-    "lift_authorization_key",
-    "lift_batch_operation_key",
-    "lift_conditional_evaluation_key",
-    "lift_decision_definition_id",
-    "lift_decision_definition_key",
-    "lift_decision_evaluation_instance_key",
-    "lift_decision_evaluation_key",
-    "lift_decision_instance_key",
-    "lift_decision_requirements_key",
-    "lift_deployment_key",
-    "lift_document_id",
-    "lift_element_id",
-    "lift_element_instance_key",
-    "lift_end_cursor",
-    "lift_form_id",
-    "lift_form_key",
-    "lift_incident_key",
-    "lift_job_key",
-    "lift_message_key",
-    "lift_message_subscription_key",
-    "lift_process_definition_id",
-    "lift_process_definition_key",
-    "lift_process_instance_key",
-    "lift_scope_key",
-    "lift_signal_key",
-    "lift_start_cursor",
-    "lift_tag",
-    "lift_tenant_id",
-    "lift_user_task_key",
-    "lift_username",
-    "lift_variable_key",
-    "try_lift_audit_log_entity_key",
-    "try_lift_audit_log_key",
-    "try_lift_authorization_key",
-    "try_lift_batch_operation_key",
-    "try_lift_conditional_evaluation_key",
-    "try_lift_decision_definition_id",
-    "try_lift_decision_definition_key",
-    "try_lift_decision_evaluation_instance_key",
-    "try_lift_decision_evaluation_key",
-    "try_lift_decision_instance_key",
-    "try_lift_decision_requirements_key",
-    "try_lift_deployment_key",
-    "try_lift_document_id",
-    "try_lift_element_id",
-    "try_lift_element_instance_key",
-    "try_lift_end_cursor",
-    "try_lift_form_id",
-    "try_lift_form_key",
-    "try_lift_incident_key",
-    "try_lift_job_key",
-    "try_lift_message_key",
-    "try_lift_message_subscription_key",
-    "try_lift_process_definition_id",
-    "try_lift_process_definition_key",
-    "try_lift_process_instance_key",
-    "try_lift_scope_key",
-    "try_lift_signal_key",
-    "try_lift_start_cursor",
-    "try_lift_tag",
-    "try_lift_tenant_id",
-    "try_lift_user_task_key",
-    "try_lift_username",
-    "try_lift_variable_key",
-]
+__all__ = ['AuditLogEntityKey', 'AuditLogKey', 'AuthorizationKey', 'BatchOperationKey', 'ConditionalEvaluationKey', 'DecisionDefinitionId', 'DecisionDefinitionKey', 'DecisionEvaluationInstanceKey', 'DecisionEvaluationKey', 'DecisionInstanceKey', 'DecisionRequirementsKey', 'DeploymentKey', 'DocumentId', 'ElementId', 'ElementInstanceKey', 'EndCursor', 'FormId', 'FormKey', 'IncidentKey', 'JobKey', 'MessageKey', 'MessageSubscriptionKey', 'ProcessDefinitionId', 'ProcessDefinitionKey', 'ProcessInstanceKey', 'ScopeKey', 'SignalKey', 'StartCursor', 'Tag', 'TenantId', 'UserTaskKey', 'Username', 'VariableKey', 'lift_audit_log_entity_key', 'lift_audit_log_key', 'lift_authorization_key', 'lift_batch_operation_key', 'lift_conditional_evaluation_key', 'lift_decision_definition_id', 'lift_decision_definition_key', 'lift_decision_evaluation_instance_key', 'lift_decision_evaluation_key', 'lift_decision_instance_key', 'lift_decision_requirements_key', 'lift_deployment_key', 'lift_document_id', 'lift_element_id', 'lift_element_instance_key', 'lift_end_cursor', 'lift_form_id', 'lift_form_key', 'lift_incident_key', 'lift_job_key', 'lift_message_key', 'lift_message_subscription_key', 'lift_process_definition_id', 'lift_process_definition_key', 'lift_process_instance_key', 'lift_scope_key', 'lift_signal_key', 'lift_start_cursor', 'lift_tag', 'lift_tenant_id', 'lift_user_task_key', 'lift_username', 'lift_variable_key', 'try_lift_audit_log_entity_key', 'try_lift_audit_log_key', 'try_lift_authorization_key', 'try_lift_batch_operation_key', 'try_lift_conditional_evaluation_key', 'try_lift_decision_definition_id', 'try_lift_decision_definition_key', 'try_lift_decision_evaluation_instance_key', 'try_lift_decision_evaluation_key', 'try_lift_decision_instance_key', 'try_lift_decision_requirements_key', 'try_lift_deployment_key', 'try_lift_document_id', 'try_lift_element_id', 'try_lift_element_instance_key', 'try_lift_end_cursor', 'try_lift_form_id', 'try_lift_form_key', 'try_lift_incident_key', 'try_lift_job_key', 'try_lift_message_key', 'try_lift_message_subscription_key', 'try_lift_process_definition_id', 'try_lift_process_definition_key', 'try_lift_process_instance_key', 'try_lift_scope_key', 'try_lift_signal_key', 'try_lift_start_cursor', 'try_lift_tag', 'try_lift_tenant_id', 'try_lift_user_task_key', 'try_lift_username', 'try_lift_variable_key']

@@ -3,76 +3,42 @@ from .activate_jobs_response_200 import ActivateJobsResponse200
 from .activated_job_result import ActivatedJobResult
 from .activated_job_result_custom_headers import ActivatedJobResultCustomHeaders
 from .activated_job_result_variables import ActivatedJobResultVariables
-from .ad_hoc_sub_process_activate_activities_instruction import (
-    AdHocSubProcessActivateActivitiesInstruction,
-)
-from .ad_hoc_sub_process_activate_activity_reference import (
-    AdHocSubProcessActivateActivityReference,
-)
-from .ad_hoc_sub_process_activate_activity_reference_variables import (
-    AdHocSubProcessActivateActivityReferenceVariables,
-)
+from .ad_hoc_sub_process_activate_activities_instruction import AdHocSubProcessActivateActivitiesInstruction
+from .ad_hoc_sub_process_activate_activity_reference import AdHocSubProcessActivateActivityReference
+from .ad_hoc_sub_process_activate_activity_reference_variables import AdHocSubProcessActivateActivityReferenceVariables
 from .advanced_actor_type_filter import AdvancedActorTypeFilter
 from .advanced_actor_type_filter_eq import AdvancedActorTypeFilterEq
 from .advanced_actor_type_filter_neq import AdvancedActorTypeFilterNeq
 from .advanced_audit_log_entity_key_filter import AdvancedAuditLogEntityKeyFilter
 from .advanced_audit_log_key_filter import AdvancedAuditLogKeyFilter
-from .advanced_batch_operation_item_state_filter import (
-    AdvancedBatchOperationItemStateFilter,
-)
-from .advanced_batch_operation_item_state_filter_eq import (
-    AdvancedBatchOperationItemStateFilterEq,
-)
-from .advanced_batch_operation_item_state_filter_neq import (
-    AdvancedBatchOperationItemStateFilterNeq,
-)
+from .advanced_batch_operation_item_state_filter import AdvancedBatchOperationItemStateFilter
+from .advanced_batch_operation_item_state_filter_eq import AdvancedBatchOperationItemStateFilterEq
+from .advanced_batch_operation_item_state_filter_neq import AdvancedBatchOperationItemStateFilterNeq
 from .advanced_batch_operation_state_filter import AdvancedBatchOperationStateFilter
-from .advanced_batch_operation_state_filter_eq import (
-    AdvancedBatchOperationStateFilterEq,
-)
-from .advanced_batch_operation_state_filter_neq import (
-    AdvancedBatchOperationStateFilterNeq,
-)
+from .advanced_batch_operation_state_filter_eq import AdvancedBatchOperationStateFilterEq
+from .advanced_batch_operation_state_filter_neq import AdvancedBatchOperationStateFilterNeq
 from .advanced_batch_operation_type_filter import AdvancedBatchOperationTypeFilter
 from .advanced_batch_operation_type_filter_eq import AdvancedBatchOperationTypeFilterEq
-from .advanced_batch_operation_type_filter_neq import (
-    AdvancedBatchOperationTypeFilterNeq,
-)
+from .advanced_batch_operation_type_filter_neq import AdvancedBatchOperationTypeFilterNeq
 from .advanced_category_filter import AdvancedCategoryFilter
 from .advanced_category_filter_eq import AdvancedCategoryFilterEq
 from .advanced_category_filter_neq import AdvancedCategoryFilterNeq
 from .advanced_cluster_variable_scope_filter import AdvancedClusterVariableScopeFilter
-from .advanced_cluster_variable_scope_filter_eq import (
-    AdvancedClusterVariableScopeFilterEq,
-)
-from .advanced_cluster_variable_scope_filter_neq import (
-    AdvancedClusterVariableScopeFilterNeq,
-)
+from .advanced_cluster_variable_scope_filter_eq import AdvancedClusterVariableScopeFilterEq
+from .advanced_cluster_variable_scope_filter_neq import AdvancedClusterVariableScopeFilterNeq
 from .advanced_date_time_filter import AdvancedDateTimeFilter
 from .advanced_decision_definition_key_filter import AdvancedDecisionDefinitionKeyFilter
-from .advanced_decision_evaluation_instance_key_filter import (
-    AdvancedDecisionEvaluationInstanceKeyFilter,
-)
+from .advanced_decision_evaluation_instance_key_filter import AdvancedDecisionEvaluationInstanceKeyFilter
 from .advanced_decision_evaluation_key_filter import AdvancedDecisionEvaluationKeyFilter
 from .advanced_decision_instance_state_filter import AdvancedDecisionInstanceStateFilter
-from .advanced_decision_instance_state_filter_eq import (
-    AdvancedDecisionInstanceStateFilterEq,
-)
-from .advanced_decision_instance_state_filter_neq import (
-    AdvancedDecisionInstanceStateFilterNeq,
-)
-from .advanced_decision_requirements_key_filter import (
-    AdvancedDecisionRequirementsKeyFilter,
-)
+from .advanced_decision_instance_state_filter_eq import AdvancedDecisionInstanceStateFilterEq
+from .advanced_decision_instance_state_filter_neq import AdvancedDecisionInstanceStateFilterNeq
+from .advanced_decision_requirements_key_filter import AdvancedDecisionRequirementsKeyFilter
 from .advanced_deployment_key_filter import AdvancedDeploymentKeyFilter
 from .advanced_element_instance_key_filter import AdvancedElementInstanceKeyFilter
 from .advanced_element_instance_state_filter import AdvancedElementInstanceStateFilter
-from .advanced_element_instance_state_filter_eq import (
-    AdvancedElementInstanceStateFilterEq,
-)
-from .advanced_element_instance_state_filter_neq import (
-    AdvancedElementInstanceStateFilterNeq,
-)
+from .advanced_element_instance_state_filter_eq import AdvancedElementInstanceStateFilterEq
+from .advanced_element_instance_state_filter_neq import AdvancedElementInstanceStateFilterNeq
 from .advanced_entity_type_filter import AdvancedEntityTypeFilter
 from .advanced_entity_type_filter_eq import AdvancedEntityTypeFilterEq
 from .advanced_entity_type_filter_neq import AdvancedEntityTypeFilterNeq
@@ -89,39 +55,23 @@ from .advanced_job_kind_filter import AdvancedJobKindFilter
 from .advanced_job_kind_filter_eq import AdvancedJobKindFilterEq
 from .advanced_job_kind_filter_neq import AdvancedJobKindFilterNeq
 from .advanced_job_listener_event_type_filter import AdvancedJobListenerEventTypeFilter
-from .advanced_job_listener_event_type_filter_eq import (
-    AdvancedJobListenerEventTypeFilterEq,
-)
-from .advanced_job_listener_event_type_filter_neq import (
-    AdvancedJobListenerEventTypeFilterNeq,
-)
+from .advanced_job_listener_event_type_filter_eq import AdvancedJobListenerEventTypeFilterEq
+from .advanced_job_listener_event_type_filter_neq import AdvancedJobListenerEventTypeFilterNeq
 from .advanced_job_state_filter import AdvancedJobStateFilter
 from .advanced_job_state_filter_eq import AdvancedJobStateFilterEq
 from .advanced_job_state_filter_neq import AdvancedJobStateFilterNeq
-from .advanced_message_subscription_key_filter import (
-    AdvancedMessageSubscriptionKeyFilter,
-)
-from .advanced_message_subscription_state_filter import (
-    AdvancedMessageSubscriptionStateFilter,
-)
-from .advanced_message_subscription_state_filter_eq import (
-    AdvancedMessageSubscriptionStateFilterEq,
-)
-from .advanced_message_subscription_state_filter_neq import (
-    AdvancedMessageSubscriptionStateFilterNeq,
-)
+from .advanced_message_subscription_key_filter import AdvancedMessageSubscriptionKeyFilter
+from .advanced_message_subscription_state_filter import AdvancedMessageSubscriptionStateFilter
+from .advanced_message_subscription_state_filter_eq import AdvancedMessageSubscriptionStateFilterEq
+from .advanced_message_subscription_state_filter_neq import AdvancedMessageSubscriptionStateFilterNeq
 from .advanced_operation_type_filter import AdvancedOperationTypeFilter
 from .advanced_operation_type_filter_eq import AdvancedOperationTypeFilterEq
 from .advanced_operation_type_filter_neq import AdvancedOperationTypeFilterNeq
 from .advanced_process_definition_key_filter import AdvancedProcessDefinitionKeyFilter
 from .advanced_process_instance_key_filter import AdvancedProcessInstanceKeyFilter
 from .advanced_process_instance_state_filter import AdvancedProcessInstanceStateFilter
-from .advanced_process_instance_state_filter_eq import (
-    AdvancedProcessInstanceStateFilterEq,
-)
-from .advanced_process_instance_state_filter_neq import (
-    AdvancedProcessInstanceStateFilterNeq,
-)
+from .advanced_process_instance_state_filter_eq import AdvancedProcessInstanceStateFilterEq
+from .advanced_process_instance_state_filter_neq import AdvancedProcessInstanceStateFilterNeq
 from .advanced_resource_key_filter import AdvancedResourceKeyFilter
 from .advanced_result_filter import AdvancedResultFilter
 from .advanced_result_filter_eq import AdvancedResultFilterEq
@@ -146,37 +96,23 @@ from .audit_log_search_query_request import AuditLogSearchQueryRequest
 from .audit_log_search_query_request_filter import AuditLogSearchQueryRequestFilter
 from .audit_log_search_query_result import AuditLogSearchQueryResult
 from .audit_log_search_query_sort_request import AuditLogSearchQuerySortRequest
-from .audit_log_search_query_sort_request_field import (
-    AuditLogSearchQuerySortRequestField,
-)
+from .audit_log_search_query_sort_request_field import AuditLogSearchQuerySortRequestField
 from .authorization_create_result import AuthorizationCreateResult
 from .authorization_filter import AuthorizationFilter
 from .authorization_filter_resource_type import AuthorizationFilterResourceType
 from .authorization_id_based_request import AuthorizationIdBasedRequest
-from .authorization_id_based_request_permission_types_item import (
-    AuthorizationIdBasedRequestPermissionTypesItem,
-)
-from .authorization_id_based_request_resource_type import (
-    AuthorizationIdBasedRequestResourceType,
-)
+from .authorization_id_based_request_permission_types_item import AuthorizationIdBasedRequestPermissionTypesItem
+from .authorization_id_based_request_resource_type import AuthorizationIdBasedRequestResourceType
 from .authorization_property_based_request import AuthorizationPropertyBasedRequest
-from .authorization_property_based_request_permission_types_item import (
-    AuthorizationPropertyBasedRequestPermissionTypesItem,
-)
-from .authorization_property_based_request_resource_type import (
-    AuthorizationPropertyBasedRequestResourceType,
-)
+from .authorization_property_based_request_permission_types_item import AuthorizationPropertyBasedRequestPermissionTypesItem
+from .authorization_property_based_request_resource_type import AuthorizationPropertyBasedRequestResourceType
 from .authorization_result import AuthorizationResult
 from .authorization_result_resource_type import AuthorizationResultResourceType
 from .authorization_search_query import AuthorizationSearchQuery
 from .authorization_search_query_filter import AuthorizationSearchQueryFilter
-from .authorization_search_query_filter_resource_type import (
-    AuthorizationSearchQueryFilterResourceType,
-)
+from .authorization_search_query_filter_resource_type import AuthorizationSearchQueryFilterResourceType
 from .authorization_search_query_sort_request import AuthorizationSearchQuerySortRequest
-from .authorization_search_query_sort_request_field import (
-    AuthorizationSearchQuerySortRequestField,
-)
+from .authorization_search_query_sort_request_field import AuthorizationSearchQuerySortRequestField
 from .authorization_search_result import AuthorizationSearchResult
 from .base_process_instance_filter_fields import BaseProcessInstanceFilterFields
 from .basic_string_filter import BasicStringFilter
@@ -189,33 +125,19 @@ from .batch_operation_item_filter import BatchOperationItemFilter
 from .batch_operation_item_response import BatchOperationItemResponse
 from .batch_operation_item_response_state import BatchOperationItemResponseState
 from .batch_operation_item_search_query import BatchOperationItemSearchQuery
-from .batch_operation_item_search_query_filter import (
-    BatchOperationItemSearchQueryFilter,
-)
-from .batch_operation_item_search_query_result import (
-    BatchOperationItemSearchQueryResult,
-)
-from .batch_operation_item_search_query_sort_request import (
-    BatchOperationItemSearchQuerySortRequest,
-)
-from .batch_operation_item_search_query_sort_request_field import (
-    BatchOperationItemSearchQuerySortRequestField,
-)
+from .batch_operation_item_search_query_filter import BatchOperationItemSearchQueryFilter
+from .batch_operation_item_search_query_result import BatchOperationItemSearchQueryResult
+from .batch_operation_item_search_query_sort_request import BatchOperationItemSearchQuerySortRequest
+from .batch_operation_item_search_query_sort_request_field import BatchOperationItemSearchQuerySortRequestField
 from .batch_operation_item_state_enum import BatchOperationItemStateEnum
 from .batch_operation_item_state_exact_match import BatchOperationItemStateExactMatch
 from .batch_operation_response import BatchOperationResponse
 from .batch_operation_search_query import BatchOperationSearchQuery
 from .batch_operation_search_query_filter import BatchOperationSearchQueryFilter
-from .batch_operation_search_query_filter_actor_type import (
-    BatchOperationSearchQueryFilterActorType,
-)
+from .batch_operation_search_query_filter_actor_type import BatchOperationSearchQueryFilterActorType
 from .batch_operation_search_query_result import BatchOperationSearchQueryResult
-from .batch_operation_search_query_sort_request import (
-    BatchOperationSearchQuerySortRequest,
-)
-from .batch_operation_search_query_sort_request_field import (
-    BatchOperationSearchQuerySortRequestField,
-)
+from .batch_operation_search_query_sort_request import BatchOperationSearchQuerySortRequest
+from .batch_operation_search_query_sort_request_field import BatchOperationSearchQuerySortRequestField
 from .batch_operation_state_enum import BatchOperationStateEnum
 from .batch_operation_state_exact_match import BatchOperationStateExactMatch
 from .batch_operation_type_enum import BatchOperationTypeEnum
@@ -225,9 +147,7 @@ from .camunda_user_result import CamundaUserResult
 from .camunda_user_result_c8_links import CamundaUserResultC8Links
 from .cancel_process_instance_data_type_0 import CancelProcessInstanceDataType0
 from .cancel_process_instance_request_type_0 import CancelProcessInstanceRequestType0
-from .cancel_process_instances_batch_operation_data import (
-    CancelProcessInstancesBatchOperationData,
-)
+from .cancel_process_instances_batch_operation_data import CancelProcessInstancesBatchOperationData
 from .category_exact_match import CategoryExactMatch
 from .changeset_type_0 import ChangesetType0
 from .clock_pin_request import ClockPinRequest
@@ -235,43 +155,23 @@ from .cluster_variable_result import ClusterVariableResult
 from .cluster_variable_result_base import ClusterVariableResultBase
 from .cluster_variable_scope_enum import ClusterVariableScopeEnum
 from .cluster_variable_scope_exact_match import ClusterVariableScopeExactMatch
-from .cluster_variable_search_query_filter_request import (
-    ClusterVariableSearchQueryFilterRequest,
-)
+from .cluster_variable_search_query_filter_request import ClusterVariableSearchQueryFilterRequest
 from .cluster_variable_search_query_request import ClusterVariableSearchQueryRequest
-from .cluster_variable_search_query_request_filter import (
-    ClusterVariableSearchQueryRequestFilter,
-)
+from .cluster_variable_search_query_request_filter import ClusterVariableSearchQueryRequestFilter
 from .cluster_variable_search_query_result import ClusterVariableSearchQueryResult
-from .cluster_variable_search_query_sort_request import (
-    ClusterVariableSearchQuerySortRequest,
-)
-from .cluster_variable_search_query_sort_request_field import (
-    ClusterVariableSearchQuerySortRequestField,
-)
+from .cluster_variable_search_query_sort_request import ClusterVariableSearchQuerySortRequest
+from .cluster_variable_search_query_sort_request_field import ClusterVariableSearchQuerySortRequestField
 from .cluster_variable_search_result import ClusterVariableSearchResult
 from .complete_job_data import CompleteJobData
 from .conditional_evaluation_instruction import ConditionalEvaluationInstruction
-from .conditional_evaluation_instruction_variables import (
-    ConditionalEvaluationInstructionVariables,
-)
+from .conditional_evaluation_instruction_variables import ConditionalEvaluationInstructionVariables
 from .correlated_message_subscription_filter import CorrelatedMessageSubscriptionFilter
 from .correlated_message_subscription_result import CorrelatedMessageSubscriptionResult
-from .correlated_message_subscription_search_query import (
-    CorrelatedMessageSubscriptionSearchQuery,
-)
-from .correlated_message_subscription_search_query_filter import (
-    CorrelatedMessageSubscriptionSearchQueryFilter,
-)
-from .correlated_message_subscription_search_query_result import (
-    CorrelatedMessageSubscriptionSearchQueryResult,
-)
-from .correlated_message_subscription_search_query_sort_request import (
-    CorrelatedMessageSubscriptionSearchQuerySortRequest,
-)
-from .correlated_message_subscription_search_query_sort_request_field import (
-    CorrelatedMessageSubscriptionSearchQuerySortRequestField,
-)
+from .correlated_message_subscription_search_query import CorrelatedMessageSubscriptionSearchQuery
+from .correlated_message_subscription_search_query_filter import CorrelatedMessageSubscriptionSearchQueryFilter
+from .correlated_message_subscription_search_query_result import CorrelatedMessageSubscriptionSearchQueryResult
+from .correlated_message_subscription_search_query_sort_request import CorrelatedMessageSubscriptionSearchQuerySortRequest
+from .correlated_message_subscription_search_query_sort_request_field import CorrelatedMessageSubscriptionSearchQuerySortRequestField
 from .create_cluster_variable_request import CreateClusterVariableRequest
 from .create_cluster_variable_request_value import CreateClusterVariableRequestValue
 from .create_deployment_data import CreateDeploymentData
@@ -280,9 +180,7 @@ from .create_deployment_response_200 import CreateDeploymentResponse200
 from .create_document_data import CreateDocumentData
 from .create_documents_data import CreateDocumentsData
 from .create_process_instance_result import CreateProcessInstanceResult
-from .create_process_instance_result_variables import (
-    CreateProcessInstanceResultVariables,
-)
+from .create_process_instance_result_variables import CreateProcessInstanceResultVariables
 from .cursor_based_backward_pagination import CursorBasedBackwardPagination
 from .cursor_based_forward_pagination import CursorBasedForwardPagination
 from .decision_definition_filter import DecisionDefinitionFilter
@@ -290,66 +188,40 @@ from .decision_definition_result import DecisionDefinitionResult
 from .decision_definition_search_query import DecisionDefinitionSearchQuery
 from .decision_definition_search_query_filter import DecisionDefinitionSearchQueryFilter
 from .decision_definition_search_query_result import DecisionDefinitionSearchQueryResult
-from .decision_definition_search_query_sort_request import (
-    DecisionDefinitionSearchQuerySortRequest,
-)
-from .decision_definition_search_query_sort_request_field import (
-    DecisionDefinitionSearchQuerySortRequestField,
-)
+from .decision_definition_search_query_sort_request import DecisionDefinitionSearchQuerySortRequest
+from .decision_definition_search_query_sort_request_field import DecisionDefinitionSearchQuerySortRequestField
 from .decision_definition_type_enum import DecisionDefinitionTypeEnum
 from .decision_evaluation_by_id import DecisionEvaluationByID
 from .decision_evaluation_by_id_variables import DecisionEvaluationByIdVariables
 from .decision_evaluation_by_key import DecisionEvaluationByKey
-from .decision_instance_deletion_batch_operation_request import (
-    DecisionInstanceDeletionBatchOperationRequest,
-)
-from .decision_instance_deletion_batch_operation_request_filter import (
-    DecisionInstanceDeletionBatchOperationRequestFilter,
-)
+from .decision_instance_deletion_batch_operation_request import DecisionInstanceDeletionBatchOperationRequest
+from .decision_instance_deletion_batch_operation_request_filter import DecisionInstanceDeletionBatchOperationRequestFilter
 from .decision_instance_filter import DecisionInstanceFilter
 from .decision_instance_get_query_result import DecisionInstanceGetQueryResult
 from .decision_instance_result import DecisionInstanceResult
 from .decision_instance_search_query import DecisionInstanceSearchQuery
 from .decision_instance_search_query_filter import DecisionInstanceSearchQueryFilter
 from .decision_instance_search_query_result import DecisionInstanceSearchQueryResult
-from .decision_instance_search_query_sort_request import (
-    DecisionInstanceSearchQuerySortRequest,
-)
-from .decision_instance_search_query_sort_request_field import (
-    DecisionInstanceSearchQuerySortRequestField,
-)
+from .decision_instance_search_query_sort_request import DecisionInstanceSearchQuerySortRequest
+from .decision_instance_search_query_sort_request_field import DecisionInstanceSearchQuerySortRequestField
 from .decision_instance_state_enum import DecisionInstanceStateEnum
 from .decision_instance_state_exact_match import DecisionInstanceStateExactMatch
 from .decision_requirements_filter import DecisionRequirementsFilter
 from .decision_requirements_result import DecisionRequirementsResult
 from .decision_requirements_search_query import DecisionRequirementsSearchQuery
-from .decision_requirements_search_query_filter import (
-    DecisionRequirementsSearchQueryFilter,
-)
-from .decision_requirements_search_query_result import (
-    DecisionRequirementsSearchQueryResult,
-)
-from .decision_requirements_search_query_sort_request import (
-    DecisionRequirementsSearchQuerySortRequest,
-)
-from .decision_requirements_search_query_sort_request_field import (
-    DecisionRequirementsSearchQuerySortRequestField,
-)
+from .decision_requirements_search_query_filter import DecisionRequirementsSearchQueryFilter
+from .decision_requirements_search_query_result import DecisionRequirementsSearchQueryResult
+from .decision_requirements_search_query_sort_request import DecisionRequirementsSearchQuerySortRequest
+from .decision_requirements_search_query_sort_request_field import DecisionRequirementsSearchQuerySortRequestField
 from .delete_decision_instance_request_type_0 import DeleteDecisionInstanceRequestType0
 from .delete_process_instance_data_type_0 import DeleteProcessInstanceDataType0
 from .delete_process_instance_request_type_0 import DeleteProcessInstanceRequestType0
-from .delete_process_instances_batch_operation_data import (
-    DeleteProcessInstancesBatchOperationData,
-)
+from .delete_process_instances_batch_operation_data import DeleteProcessInstancesBatchOperationData
 from .delete_resource_data_type_0 import DeleteResourceDataType0
 from .delete_resource_request_type_0 import DeleteResourceRequestType0
 from .delete_resource_response import DeleteResourceResponse
-from .delete_resource_response_batch_operation import (
-    DeleteResourceResponseBatchOperation,
-)
-from .deployment_decision_requirements_result import (
-    DeploymentDecisionRequirementsResult,
-)
+from .delete_resource_response_batch_operation import DeleteResourceResponseBatchOperation
+from .deployment_decision_requirements_result import DeploymentDecisionRequirementsResult
 from .deployment_decision_result import DeploymentDecisionResult
 from .deployment_form_result import DeploymentFormResult
 from .deployment_metadata_result import DeploymentMetadataResult
@@ -364,9 +236,7 @@ from .document_link_request import DocumentLinkRequest
 from .document_metadata import DocumentMetadata
 from .document_metadata_custom_properties import DocumentMetadataCustomProperties
 from .document_reference import DocumentReference
-from .document_reference_camunda_document_type import (
-    DocumentReferenceCamundaDocumentType,
-)
+from .document_reference_camunda_document_type import DocumentReferenceCamundaDocumentType
 from .element_instance_filter import ElementInstanceFilter
 from .element_instance_filter_type import ElementInstanceFilterType
 from .element_instance_result import ElementInstanceResult
@@ -374,23 +244,13 @@ from .element_instance_result_state import ElementInstanceResultState
 from .element_instance_result_type import ElementInstanceResultType
 from .element_instance_search_query import ElementInstanceSearchQuery
 from .element_instance_search_query_filter import ElementInstanceSearchQueryFilter
-from .element_instance_search_query_filter_type import (
-    ElementInstanceSearchQueryFilterType,
-)
+from .element_instance_search_query_filter_type import ElementInstanceSearchQueryFilterType
 from .element_instance_search_query_result import ElementInstanceSearchQueryResult
-from .element_instance_search_query_sort_request import (
-    ElementInstanceSearchQuerySortRequest,
-)
-from .element_instance_search_query_sort_request_field import (
-    ElementInstanceSearchQuerySortRequestField,
-)
+from .element_instance_search_query_sort_request import ElementInstanceSearchQuerySortRequest
+from .element_instance_search_query_sort_request_field import ElementInstanceSearchQuerySortRequestField
 from .element_instance_state_advanced_filter import ElementInstanceStateAdvancedFilter
-from .element_instance_state_advanced_filter_eq import (
-    ElementInstanceStateAdvancedFilterEq,
-)
-from .element_instance_state_advanced_filter_neq import (
-    ElementInstanceStateAdvancedFilterNeq,
-)
+from .element_instance_state_advanced_filter_eq import ElementInstanceStateAdvancedFilterEq
+from .element_instance_state_advanced_filter_neq import ElementInstanceStateAdvancedFilterNeq
 from .element_instance_state_enum import ElementInstanceStateEnum
 from .element_instance_state_exact_match import ElementInstanceStateExactMatch
 from .entity_type_exact_match import EntityTypeExactMatch
@@ -405,27 +265,15 @@ from .expression_evaluation_result_result import ExpressionEvaluationResultResul
 from .form_result import FormResult
 from .form_result_schema import FormResultSchema
 from .get_audit_log_response_200 import GetAuditLogResponse200
-from .get_audit_log_response_200_batch_operation_type import (
-    GetAuditLogResponse200BatchOperationType,
-)
+from .get_audit_log_response_200_batch_operation_type import GetAuditLogResponse200BatchOperationType
 from .get_process_definition_statistics_data import GetProcessDefinitionStatisticsData
-from .get_process_definition_statistics_filter import (
-    GetProcessDefinitionStatisticsFilter,
-)
-from .get_process_definition_statistics_response_200 import (
-    GetProcessDefinitionStatisticsResponse200,
-)
+from .get_process_definition_statistics_filter import GetProcessDefinitionStatisticsFilter
+from .get_process_definition_statistics_response_200 import GetProcessDefinitionStatisticsResponse200
 from .get_process_instance_response_200 import GetProcessInstanceResponse200
-from .get_process_instance_sequence_flows_response_200 import (
-    GetProcessInstanceSequenceFlowsResponse200,
-)
-from .get_process_instance_statistics_response_200 import (
-    GetProcessInstanceStatisticsResponse200,
-)
+from .get_process_instance_sequence_flows_response_200 import GetProcessInstanceSequenceFlowsResponse200
+from .get_process_instance_statistics_response_200 import GetProcessInstanceStatisticsResponse200
 from .get_start_process_form_response_200 import GetStartProcessFormResponse200
-from .get_start_process_form_response_200_schema import (
-    GetStartProcessFormResponse200Schema,
-)
+from .get_start_process_form_response_200_schema import GetStartProcessFormResponse200Schema
 from .get_user_task_form_response_200 import GetUserTaskFormResponse200
 from .get_user_task_form_response_200_schema import GetUserTaskFormResponse200Schema
 from .get_user_task_response_200 import GetUserTaskResponse200
@@ -433,9 +281,7 @@ from .global_job_statistics_query_result import GlobalJobStatisticsQueryResult
 from .group_client_result import GroupClientResult
 from .group_client_search_query_request import GroupClientSearchQueryRequest
 from .group_client_search_query_sort_request import GroupClientSearchQuerySortRequest
-from .group_client_search_query_sort_request_field import (
-    GroupClientSearchQuerySortRequestField,
-)
+from .group_client_search_query_sort_request_field import GroupClientSearchQuerySortRequestField
 from .group_client_search_result import GroupClientSearchResult
 from .group_create_request import GroupCreateRequest
 from .group_create_result import GroupCreateResult
@@ -451,55 +297,25 @@ from .group_update_result import GroupUpdateResult
 from .group_user_result import GroupUserResult
 from .group_user_search_query_request import GroupUserSearchQueryRequest
 from .group_user_search_query_sort_request import GroupUserSearchQuerySortRequest
-from .group_user_search_query_sort_request_field import (
-    GroupUserSearchQuerySortRequestField,
-)
+from .group_user_search_query_sort_request_field import GroupUserSearchQuerySortRequestField
 from .group_user_search_result import GroupUserSearchResult
 from .incident_error_type_enum import IncidentErrorTypeEnum
 from .incident_error_type_exact_match import IncidentErrorTypeExactMatch
 from .incident_filter import IncidentFilter
-from .incident_process_instance_statistics_by_definition_filter import (
-    IncidentProcessInstanceStatisticsByDefinitionFilter,
-)
-from .incident_process_instance_statistics_by_definition_query import (
-    IncidentProcessInstanceStatisticsByDefinitionQuery,
-)
-from .incident_process_instance_statistics_by_definition_query_filter import (
-    IncidentProcessInstanceStatisticsByDefinitionQueryFilter,
-)
-from .incident_process_instance_statistics_by_definition_query_page import (
-    IncidentProcessInstanceStatisticsByDefinitionQueryPage,
-)
-from .incident_process_instance_statistics_by_definition_query_result import (
-    IncidentProcessInstanceStatisticsByDefinitionQueryResult,
-)
-from .incident_process_instance_statistics_by_definition_query_sort_request import (
-    IncidentProcessInstanceStatisticsByDefinitionQuerySortRequest,
-)
-from .incident_process_instance_statistics_by_definition_query_sort_request_field import (
-    IncidentProcessInstanceStatisticsByDefinitionQuerySortRequestField,
-)
-from .incident_process_instance_statistics_by_definition_result import (
-    IncidentProcessInstanceStatisticsByDefinitionResult,
-)
-from .incident_process_instance_statistics_by_error_query import (
-    IncidentProcessInstanceStatisticsByErrorQuery,
-)
-from .incident_process_instance_statistics_by_error_query_page import (
-    IncidentProcessInstanceStatisticsByErrorQueryPage,
-)
-from .incident_process_instance_statistics_by_error_query_result import (
-    IncidentProcessInstanceStatisticsByErrorQueryResult,
-)
-from .incident_process_instance_statistics_by_error_query_sort_request import (
-    IncidentProcessInstanceStatisticsByErrorQuerySortRequest,
-)
-from .incident_process_instance_statistics_by_error_query_sort_request_field import (
-    IncidentProcessInstanceStatisticsByErrorQuerySortRequestField,
-)
-from .incident_process_instance_statistics_by_error_result import (
-    IncidentProcessInstanceStatisticsByErrorResult,
-)
+from .incident_process_instance_statistics_by_definition_filter import IncidentProcessInstanceStatisticsByDefinitionFilter
+from .incident_process_instance_statistics_by_definition_query import IncidentProcessInstanceStatisticsByDefinitionQuery
+from .incident_process_instance_statistics_by_definition_query_filter import IncidentProcessInstanceStatisticsByDefinitionQueryFilter
+from .incident_process_instance_statistics_by_definition_query_page import IncidentProcessInstanceStatisticsByDefinitionQueryPage
+from .incident_process_instance_statistics_by_definition_query_result import IncidentProcessInstanceStatisticsByDefinitionQueryResult
+from .incident_process_instance_statistics_by_definition_query_sort_request import IncidentProcessInstanceStatisticsByDefinitionQuerySortRequest
+from .incident_process_instance_statistics_by_definition_query_sort_request_field import IncidentProcessInstanceStatisticsByDefinitionQuerySortRequestField
+from .incident_process_instance_statistics_by_definition_result import IncidentProcessInstanceStatisticsByDefinitionResult
+from .incident_process_instance_statistics_by_error_query import IncidentProcessInstanceStatisticsByErrorQuery
+from .incident_process_instance_statistics_by_error_query_page import IncidentProcessInstanceStatisticsByErrorQueryPage
+from .incident_process_instance_statistics_by_error_query_result import IncidentProcessInstanceStatisticsByErrorQueryResult
+from .incident_process_instance_statistics_by_error_query_sort_request import IncidentProcessInstanceStatisticsByErrorQuerySortRequest
+from .incident_process_instance_statistics_by_error_query_sort_request_field import IncidentProcessInstanceStatisticsByErrorQuerySortRequestField
+from .incident_process_instance_statistics_by_error_result import IncidentProcessInstanceStatisticsByErrorResult
 from .incident_resolution_request import IncidentResolutionRequest
 from .incident_result import IncidentResult
 from .incident_result_error_type import IncidentResultErrorType
@@ -508,9 +324,7 @@ from .incident_search_query import IncidentSearchQuery
 from .incident_search_query_filter import IncidentSearchQueryFilter
 from .incident_search_query_result import IncidentSearchQueryResult
 from .incident_search_query_sort_request import IncidentSearchQuerySortRequest
-from .incident_search_query_sort_request_field import (
-    IncidentSearchQuerySortRequestField,
-)
+from .incident_search_query_sort_request_field import IncidentSearchQuerySortRequestField
 from .incident_state_enum import IncidentStateEnum
 from .incident_state_exact_match import IncidentStateExactMatch
 from .inferred_ancestor_key_instruction import InferredAncestorKeyInstruction
@@ -552,14 +366,10 @@ from .mapping_rule_create_update_result import MappingRuleCreateUpdateResult
 from .mapping_rule_filter import MappingRuleFilter
 from .mapping_rule_result import MappingRuleResult
 from .mapping_rule_search_query_request import MappingRuleSearchQueryRequest
-from .mapping_rule_search_query_request_filter import (
-    MappingRuleSearchQueryRequestFilter,
-)
+from .mapping_rule_search_query_request_filter import MappingRuleSearchQueryRequestFilter
 from .mapping_rule_search_query_result import MappingRuleSearchQueryResult
 from .mapping_rule_search_query_sort_request import MappingRuleSearchQuerySortRequest
-from .mapping_rule_search_query_sort_request_field import (
-    MappingRuleSearchQuerySortRequestField,
-)
+from .mapping_rule_search_query_sort_request_field import MappingRuleSearchQuerySortRequestField
 from .mapping_rule_update_request import MappingRuleUpdateRequest
 from .mapping_rule_update_result import MappingRuleUpdateResult
 from .matched_decision_rule_item import MatchedDecisionRuleItem
@@ -571,43 +381,21 @@ from .message_publication_result import MessagePublicationResult
 from .message_subscription_filter import MessageSubscriptionFilter
 from .message_subscription_result import MessageSubscriptionResult
 from .message_subscription_search_query import MessageSubscriptionSearchQuery
-from .message_subscription_search_query_filter import (
-    MessageSubscriptionSearchQueryFilter,
-)
-from .message_subscription_search_query_result import (
-    MessageSubscriptionSearchQueryResult,
-)
-from .message_subscription_search_query_sort_request import (
-    MessageSubscriptionSearchQuerySortRequest,
-)
-from .message_subscription_search_query_sort_request_field import (
-    MessageSubscriptionSearchQuerySortRequestField,
-)
+from .message_subscription_search_query_filter import MessageSubscriptionSearchQueryFilter
+from .message_subscription_search_query_result import MessageSubscriptionSearchQueryResult
+from .message_subscription_search_query_sort_request import MessageSubscriptionSearchQuerySortRequest
+from .message_subscription_search_query_sort_request_field import MessageSubscriptionSearchQuerySortRequestField
 from .message_subscription_state_enum import MessageSubscriptionStateEnum
 from .message_subscription_state_exact_match import MessageSubscriptionStateExactMatch
 from .migrate_process_instance_data import MigrateProcessInstanceData
-from .migrate_process_instance_mapping_instruction import (
-    MigrateProcessInstanceMappingInstruction,
-)
-from .migrate_process_instances_batch_operation_data import (
-    MigrateProcessInstancesBatchOperationData,
-)
-from .migrate_process_instances_batch_operation_migration_plan import (
-    MigrateProcessInstancesBatchOperationMigrationPlan,
-)
+from .migrate_process_instance_mapping_instruction import MigrateProcessInstanceMappingInstruction
+from .migrate_process_instances_batch_operation_data import MigrateProcessInstancesBatchOperationData
+from .migrate_process_instances_batch_operation_migration_plan import MigrateProcessInstancesBatchOperationMigrationPlan
 from .modify_process_instance_data import ModifyProcessInstanceData
-from .modify_process_instance_move_instructions_item import (
-    ModifyProcessInstanceMoveInstructionsItem,
-)
-from .modify_process_instance_variable_instruction import (
-    ModifyProcessInstanceVariableInstruction,
-)
-from .modify_process_instance_variable_instruction_variables import (
-    ModifyProcessInstanceVariableInstructionVariables,
-)
-from .modify_process_instances_batch_operation_data import (
-    ModifyProcessInstancesBatchOperationData,
-)
+from .modify_process_instance_move_instructions_item import ModifyProcessInstanceMoveInstructionsItem
+from .modify_process_instance_variable_instruction import ModifyProcessInstanceVariableInstruction
+from .modify_process_instance_variable_instruction_variables import ModifyProcessInstanceVariableInstructionVariables
+from .modify_process_instances_batch_operation_data import ModifyProcessInstancesBatchOperationData
 from .name_advanced_filter import NameAdvancedFilter
 from .offset_based_pagination import OffsetBasedPagination
 from .operation_type_advanced_filter import OperationTypeAdvancedFilter
@@ -622,165 +410,71 @@ from .partition_role import PartitionRole
 from .permission_type_enum import PermissionTypeEnum
 from .problem_detail import ProblemDetail
 from .process_creation_by_id import ProcessCreationById
-from .process_creation_by_id_runtime_instructions_item_type_0 import (
-    ProcessCreationByIdRuntimeInstructionsItemType0,
-)
+from .process_creation_by_id_runtime_instructions_item_type_0 import ProcessCreationByIdRuntimeInstructionsItemType0
 from .process_creation_by_key import ProcessCreationByKey
-from .process_creation_by_key_runtime_instructions_item_type_0 import (
-    ProcessCreationByKeyRuntimeInstructionsItemType0,
-)
-from .process_definition_element_statistics_query import (
-    ProcessDefinitionElementStatisticsQuery,
-)
-from .process_definition_element_statistics_query_filter import (
-    ProcessDefinitionElementStatisticsQueryFilter,
-)
-from .process_definition_element_statistics_query_result import (
-    ProcessDefinitionElementStatisticsQueryResult,
-)
+from .process_creation_by_key_runtime_instructions_item_type_0 import ProcessCreationByKeyRuntimeInstructionsItemType0
+from .process_definition_element_statistics_query import ProcessDefinitionElementStatisticsQuery
+from .process_definition_element_statistics_query_filter import ProcessDefinitionElementStatisticsQueryFilter
+from .process_definition_element_statistics_query_result import ProcessDefinitionElementStatisticsQueryResult
 from .process_definition_filter import ProcessDefinitionFilter
-from .process_definition_instance_statistics_query import (
-    ProcessDefinitionInstanceStatisticsQuery,
-)
-from .process_definition_instance_statistics_query_result import (
-    ProcessDefinitionInstanceStatisticsQueryResult,
-)
-from .process_definition_instance_statistics_query_sort_request import (
-    ProcessDefinitionInstanceStatisticsQuerySortRequest,
-)
-from .process_definition_instance_statistics_query_sort_request_field import (
-    ProcessDefinitionInstanceStatisticsQuerySortRequestField,
-)
-from .process_definition_instance_statistics_result import (
-    ProcessDefinitionInstanceStatisticsResult,
-)
-from .process_definition_instance_version_statistics_filter import (
-    ProcessDefinitionInstanceVersionStatisticsFilter,
-)
-from .process_definition_instance_version_statistics_query import (
-    ProcessDefinitionInstanceVersionStatisticsQuery,
-)
-from .process_definition_instance_version_statistics_query_filter import (
-    ProcessDefinitionInstanceVersionStatisticsQueryFilter,
-)
-from .process_definition_instance_version_statistics_query_page import (
-    ProcessDefinitionInstanceVersionStatisticsQueryPage,
-)
-from .process_definition_instance_version_statistics_query_result import (
-    ProcessDefinitionInstanceVersionStatisticsQueryResult,
-)
-from .process_definition_instance_version_statistics_query_sort_request import (
-    ProcessDefinitionInstanceVersionStatisticsQuerySortRequest,
-)
-from .process_definition_instance_version_statistics_query_sort_request_field import (
-    ProcessDefinitionInstanceVersionStatisticsQuerySortRequestField,
-)
-from .process_definition_instance_version_statistics_result import (
-    ProcessDefinitionInstanceVersionStatisticsResult,
-)
-from .process_definition_message_subscription_statistics_query import (
-    ProcessDefinitionMessageSubscriptionStatisticsQuery,
-)
-from .process_definition_message_subscription_statistics_query_filter import (
-    ProcessDefinitionMessageSubscriptionStatisticsQueryFilter,
-)
-from .process_definition_message_subscription_statistics_query_result import (
-    ProcessDefinitionMessageSubscriptionStatisticsQueryResult,
-)
-from .process_definition_message_subscription_statistics_result import (
-    ProcessDefinitionMessageSubscriptionStatisticsResult,
-)
+from .process_definition_instance_statistics_query import ProcessDefinitionInstanceStatisticsQuery
+from .process_definition_instance_statistics_query_result import ProcessDefinitionInstanceStatisticsQueryResult
+from .process_definition_instance_statistics_query_sort_request import ProcessDefinitionInstanceStatisticsQuerySortRequest
+from .process_definition_instance_statistics_query_sort_request_field import ProcessDefinitionInstanceStatisticsQuerySortRequestField
+from .process_definition_instance_statistics_result import ProcessDefinitionInstanceStatisticsResult
+from .process_definition_instance_version_statistics_filter import ProcessDefinitionInstanceVersionStatisticsFilter
+from .process_definition_instance_version_statistics_query import ProcessDefinitionInstanceVersionStatisticsQuery
+from .process_definition_instance_version_statistics_query_filter import ProcessDefinitionInstanceVersionStatisticsQueryFilter
+from .process_definition_instance_version_statistics_query_page import ProcessDefinitionInstanceVersionStatisticsQueryPage
+from .process_definition_instance_version_statistics_query_result import ProcessDefinitionInstanceVersionStatisticsQueryResult
+from .process_definition_instance_version_statistics_query_sort_request import ProcessDefinitionInstanceVersionStatisticsQuerySortRequest
+from .process_definition_instance_version_statistics_query_sort_request_field import ProcessDefinitionInstanceVersionStatisticsQuerySortRequestField
+from .process_definition_instance_version_statistics_result import ProcessDefinitionInstanceVersionStatisticsResult
+from .process_definition_message_subscription_statistics_query import ProcessDefinitionMessageSubscriptionStatisticsQuery
+from .process_definition_message_subscription_statistics_query_filter import ProcessDefinitionMessageSubscriptionStatisticsQueryFilter
+from .process_definition_message_subscription_statistics_query_result import ProcessDefinitionMessageSubscriptionStatisticsQueryResult
+from .process_definition_message_subscription_statistics_result import ProcessDefinitionMessageSubscriptionStatisticsResult
 from .process_definition_result import ProcessDefinitionResult
 from .process_definition_search_query import ProcessDefinitionSearchQuery
 from .process_definition_search_query_filter import ProcessDefinitionSearchQueryFilter
 from .process_definition_search_query_result import ProcessDefinitionSearchQueryResult
-from .process_definition_search_query_sort_request import (
-    ProcessDefinitionSearchQuerySortRequest,
-)
-from .process_definition_search_query_sort_request_field import (
-    ProcessDefinitionSearchQuerySortRequestField,
-)
+from .process_definition_search_query_sort_request import ProcessDefinitionSearchQuerySortRequest
+from .process_definition_search_query_sort_request_field import ProcessDefinitionSearchQuerySortRequestField
 from .process_definition_statistics_filter import ProcessDefinitionStatisticsFilter
 from .process_element_statistics_result import ProcessElementStatisticsResult
 from .process_instance_call_hierarchy_entry import ProcessInstanceCallHierarchyEntry
-from .process_instance_cancellation_batch_operation_request import (
-    ProcessInstanceCancellationBatchOperationRequest,
-)
-from .process_instance_cancellation_batch_operation_request_filter import (
-    ProcessInstanceCancellationBatchOperationRequestFilter,
-)
-from .process_instance_creation_instruction_by_id import (
-    ProcessInstanceCreationInstructionById,
-)
-from .process_instance_creation_instruction_by_id_variables import (
-    ProcessInstanceCreationInstructionByIdVariables,
-)
-from .process_instance_creation_instruction_by_key import (
-    ProcessInstanceCreationInstructionByKey,
-)
-from .process_instance_creation_start_instruction import (
-    ProcessInstanceCreationStartInstruction,
-)
-from .process_instance_creation_terminate_instruction import (
-    ProcessInstanceCreationTerminateInstruction,
-)
-from .process_instance_deletion_batch_operation_request import (
-    ProcessInstanceDeletionBatchOperationRequest,
-)
-from .process_instance_element_statistics_query_result import (
-    ProcessInstanceElementStatisticsQueryResult,
-)
+from .process_instance_cancellation_batch_operation_request import ProcessInstanceCancellationBatchOperationRequest
+from .process_instance_cancellation_batch_operation_request_filter import ProcessInstanceCancellationBatchOperationRequestFilter
+from .process_instance_creation_instruction_by_id import ProcessInstanceCreationInstructionById
+from .process_instance_creation_instruction_by_id_variables import ProcessInstanceCreationInstructionByIdVariables
+from .process_instance_creation_instruction_by_key import ProcessInstanceCreationInstructionByKey
+from .process_instance_creation_start_instruction import ProcessInstanceCreationStartInstruction
+from .process_instance_creation_terminate_instruction import ProcessInstanceCreationTerminateInstruction
+from .process_instance_deletion_batch_operation_request import ProcessInstanceDeletionBatchOperationRequest
+from .process_instance_element_statistics_query_result import ProcessInstanceElementStatisticsQueryResult
 from .process_instance_filter import ProcessInstanceFilter
 from .process_instance_filter_fields import ProcessInstanceFilterFields
-from .process_instance_incident_resolution_batch_operation_request import (
-    ProcessInstanceIncidentResolutionBatchOperationRequest,
-)
-from .process_instance_migration_batch_operation_plan import (
-    ProcessInstanceMigrationBatchOperationPlan,
-)
-from .process_instance_migration_batch_operation_request import (
-    ProcessInstanceMigrationBatchOperationRequest,
-)
-from .process_instance_migration_batch_operation_request_migration_plan import (
-    ProcessInstanceMigrationBatchOperationRequestMigrationPlan,
-)
+from .process_instance_incident_resolution_batch_operation_request import ProcessInstanceIncidentResolutionBatchOperationRequest
+from .process_instance_migration_batch_operation_plan import ProcessInstanceMigrationBatchOperationPlan
+from .process_instance_migration_batch_operation_request import ProcessInstanceMigrationBatchOperationRequest
+from .process_instance_migration_batch_operation_request_migration_plan import ProcessInstanceMigrationBatchOperationRequestMigrationPlan
 from .process_instance_migration_instruction import ProcessInstanceMigrationInstruction
-from .process_instance_modification_activate_instruction import (
-    ProcessInstanceModificationActivateInstruction,
-)
-from .process_instance_modification_batch_operation_request import (
-    ProcessInstanceModificationBatchOperationRequest,
-)
-from .process_instance_modification_instruction import (
-    ProcessInstanceModificationInstruction,
-)
-from .process_instance_modification_move_batch_operation_instruction import (
-    ProcessInstanceModificationMoveBatchOperationInstruction,
-)
-from .process_instance_modification_move_instruction import (
-    ProcessInstanceModificationMoveInstruction,
-)
-from .process_instance_modification_terminate_by_id_instruction import (
-    ProcessInstanceModificationTerminateByIdInstruction,
-)
-from .process_instance_modification_terminate_by_key_instruction import (
-    ProcessInstanceModificationTerminateByKeyInstruction,
-)
+from .process_instance_modification_activate_instruction import ProcessInstanceModificationActivateInstruction
+from .process_instance_modification_batch_operation_request import ProcessInstanceModificationBatchOperationRequest
+from .process_instance_modification_instruction import ProcessInstanceModificationInstruction
+from .process_instance_modification_move_batch_operation_instruction import ProcessInstanceModificationMoveBatchOperationInstruction
+from .process_instance_modification_move_instruction import ProcessInstanceModificationMoveInstruction
+from .process_instance_modification_terminate_by_id_instruction import ProcessInstanceModificationTerminateByIdInstruction
+from .process_instance_modification_terminate_by_key_instruction import ProcessInstanceModificationTerminateByKeyInstruction
 from .process_instance_reference import ProcessInstanceReference
 from .process_instance_result import ProcessInstanceResult
 from .process_instance_search_query import ProcessInstanceSearchQuery
 from .process_instance_search_query_filter import ProcessInstanceSearchQueryFilter
 from .process_instance_search_query_result import ProcessInstanceSearchQueryResult
-from .process_instance_search_query_sort_request import (
-    ProcessInstanceSearchQuerySortRequest,
-)
-from .process_instance_search_query_sort_request_field import (
-    ProcessInstanceSearchQuerySortRequestField,
-)
+from .process_instance_search_query_sort_request import ProcessInstanceSearchQuerySortRequest
+from .process_instance_search_query_sort_request_field import ProcessInstanceSearchQuerySortRequestField
 from .process_instance_sequence_flow_result import ProcessInstanceSequenceFlowResult
-from .process_instance_sequence_flows_query_result import (
-    ProcessInstanceSequenceFlowsQueryResult,
-)
+from .process_instance_sequence_flows_query_result import ProcessInstanceSequenceFlowsQueryResult
 from .process_instance_state_enum import ProcessInstanceStateEnum
 from .process_instance_state_exact_match import ProcessInstanceStateExactMatch
 from .publish_message_response_200 import PublishMessageResponse200
@@ -791,9 +485,7 @@ from .result_object_type_0 import ResultObjectType0
 from .role_client_result import RoleClientResult
 from .role_client_search_query_request import RoleClientSearchQueryRequest
 from .role_client_search_query_sort_request import RoleClientSearchQuerySortRequest
-from .role_client_search_query_sort_request_field import (
-    RoleClientSearchQuerySortRequestField,
-)
+from .role_client_search_query_sort_request_field import RoleClientSearchQuerySortRequestField
 from .role_client_search_result import RoleClientSearchResult
 from .role_create_request import RoleCreateRequest
 from .role_create_result import RoleCreateResult
@@ -801,9 +493,7 @@ from .role_filter import RoleFilter
 from .role_group_result import RoleGroupResult
 from .role_group_search_query_request import RoleGroupSearchQueryRequest
 from .role_group_search_query_sort_request import RoleGroupSearchQuerySortRequest
-from .role_group_search_query_sort_request_field import (
-    RoleGroupSearchQuerySortRequestField,
-)
+from .role_group_search_query_sort_request_field import RoleGroupSearchQuerySortRequestField
 from .role_group_search_result import RoleGroupSearchResult
 from .role_result import RoleResult
 from .role_search_query_request import RoleSearchQueryRequest
@@ -816,9 +506,7 @@ from .role_update_result import RoleUpdateResult
 from .role_user_result import RoleUserResult
 from .role_user_search_query_request import RoleUserSearchQueryRequest
 from .role_user_search_query_sort_request import RoleUserSearchQuerySortRequest
-from .role_user_search_query_sort_request_field import (
-    RoleUserSearchQuerySortRequestField,
-)
+from .role_user_search_query_sort_request_field import RoleUserSearchQuerySortRequestField
 from .role_user_search_result import RoleUserSearchResult
 from .scope_key_advanced_filter import ScopeKeyAdvancedFilter
 from .search_audit_logs_response_200 import SearchAuditLogsResponse200
@@ -826,9 +514,7 @@ from .search_batch_operation_items_data import SearchBatchOperationItemsData
 from .search_batch_operation_items_filter import SearchBatchOperationItemsFilter
 from .search_batch_operations_data import SearchBatchOperationsData
 from .search_batch_operations_filter import SearchBatchOperationsFilter
-from .search_batch_operations_filter_actor_type import (
-    SearchBatchOperationsFilterActorType,
-)
+from .search_batch_operations_filter_actor_type import SearchBatchOperationsFilterActorType
 from .search_clients_for_group_data import SearchClientsForGroupData
 from .search_clients_for_role_data import SearchClientsForRoleData
 from .search_clients_for_tenant_data import SearchClientsForTenantData
@@ -836,9 +522,7 @@ from .search_group_ids_for_tenant_data import SearchGroupIdsForTenantData
 from .search_groups_for_role_data import SearchGroupsForRoleData
 from .search_jobs_response_200 import SearchJobsResponse200
 from .search_message_subscriptions_data import SearchMessageSubscriptionsData
-from .search_message_subscriptions_response_200 import (
-    SearchMessageSubscriptionsResponse200,
-)
+from .search_message_subscriptions_response_200 import SearchMessageSubscriptionsResponse200
 from .search_process_definitions_data import SearchProcessDefinitionsData
 from .search_process_instances_data import SearchProcessInstancesData
 from .search_process_instances_items_item import SearchProcessInstancesItemsItem
@@ -874,9 +558,7 @@ from .status_metric import StatusMetric
 from .tenant_client_result import TenantClientResult
 from .tenant_client_search_query_request import TenantClientSearchQueryRequest
 from .tenant_client_search_query_sort_request import TenantClientSearchQuerySortRequest
-from .tenant_client_search_query_sort_request_field import (
-    TenantClientSearchQuerySortRequestField,
-)
+from .tenant_client_search_query_sort_request_field import TenantClientSearchQuerySortRequestField
 from .tenant_client_search_result import TenantClientSearchResult
 from .tenant_create_request import TenantCreateRequest
 from .tenant_create_result import TenantCreateResult
@@ -884,9 +566,7 @@ from .tenant_filter import TenantFilter
 from .tenant_group_result import TenantGroupResult
 from .tenant_group_search_query_request import TenantGroupSearchQueryRequest
 from .tenant_group_search_query_sort_request import TenantGroupSearchQuerySortRequest
-from .tenant_group_search_query_sort_request_field import (
-    TenantGroupSearchQuerySortRequestField,
-)
+from .tenant_group_search_query_sort_request_field import TenantGroupSearchQuerySortRequestField
 from .tenant_group_search_result import TenantGroupSearchResult
 from .tenant_result import TenantResult
 from .tenant_search_query_request import TenantSearchQueryRequest
@@ -899,9 +579,7 @@ from .tenant_update_result import TenantUpdateResult
 from .tenant_user_result import TenantUserResult
 from .tenant_user_search_query_request import TenantUserSearchQueryRequest
 from .tenant_user_search_query_sort_request import TenantUserSearchQuerySortRequest
-from .tenant_user_search_query_sort_request_field import (
-    TenantUserSearchQuerySortRequestField,
-)
+from .tenant_user_search_query_sort_request_field import TenantUserSearchQuerySortRequestField
 from .tenant_user_search_result import TenantUserSearchResult
 from .terminate_instructions_item_object import TerminateInstructionsItemObject
 from .topology_response import TopologyResponse
@@ -910,9 +588,7 @@ from .update_cluster_variable_request_value import UpdateClusterVariableRequestV
 from .usage_metrics_response import UsageMetricsResponse
 from .usage_metrics_response_item import UsageMetricsResponseItem
 from .usage_metrics_response_tenants import UsageMetricsResponseTenants
-from .usage_metrics_response_tenants_the_tenant_id import (
-    UsageMetricsResponseTenantsTheTenantID,
-)
+from .usage_metrics_response_tenants_the_tenant_id import UsageMetricsResponseTenantsTheTenantID
 from .use_source_parent_key_instruction import UseSourceParentKeyInstruction
 from .user_create_result import UserCreateResult
 from .user_filter import UserFilter
@@ -936,20 +612,14 @@ from .user_task_search_query import UserTaskSearchQuery
 from .user_task_search_query_filter import UserTaskSearchQueryFilter
 from .user_task_search_query_result import UserTaskSearchQueryResult
 from .user_task_search_query_sort_request import UserTaskSearchQuerySortRequest
-from .user_task_search_query_sort_request_field import (
-    UserTaskSearchQuerySortRequestField,
-)
+from .user_task_search_query_sort_request_field import UserTaskSearchQuerySortRequestField
 from .user_task_state_enum import UserTaskStateEnum
 from .user_task_state_exact_match import UserTaskStateExactMatch
 from .user_task_update_request import UserTaskUpdateRequest
 from .user_task_variable_filter import UserTaskVariableFilter
 from .user_task_variable_search_query_request import UserTaskVariableSearchQueryRequest
-from .user_task_variable_search_query_sort_request import (
-    UserTaskVariableSearchQuerySortRequest,
-)
-from .user_task_variable_search_query_sort_request_field import (
-    UserTaskVariableSearchQuerySortRequestField,
-)
+from .user_task_variable_search_query_sort_request import UserTaskVariableSearchQuerySortRequest
+from .user_task_variable_search_query_sort_request_field import UserTaskVariableSearchQuerySortRequestField
 from .user_update_request import UserUpdateRequest
 from .user_update_result import UserUpdateResult
 from .variable_filter import VariableFilter
@@ -959,12 +629,9 @@ from .variable_search_query import VariableSearchQuery
 from .variable_search_query_filter import VariableSearchQueryFilter
 from .variable_search_query_result import VariableSearchQueryResult
 from .variable_search_query_sort_request import VariableSearchQuerySortRequest
-from .variable_search_query_sort_request_field import (
-    VariableSearchQuerySortRequestField,
-)
+from .variable_search_query_sort_request_field import VariableSearchQuerySortRequestField
 from .variable_search_result import VariableSearchResult
 from .variable_value_filter_property import VariableValueFilterProperty
-
 __all__: list[str] = [
     "ActivatedJobResult",
     "ActivatedJobResultCustomHeaders",

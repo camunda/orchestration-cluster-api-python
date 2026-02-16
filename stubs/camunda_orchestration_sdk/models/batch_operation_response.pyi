@@ -11,9 +11,7 @@ from ..models.batch_operation_state_enum import BatchOperationStateEnum
 from ..models.batch_operation_type_enum import BatchOperationTypeEnum
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.batch_operation_error import BatchOperationError
-
 T = TypeVar("T", bound="BatchOperationResponse")
-
 @_attrs_define
 class BatchOperationResponse:
     batch_operation_key: BatchOperationKey | Unset = UNSET
@@ -27,9 +25,7 @@ class BatchOperationResponse:
     operations_failed_count: int | Unset = UNSET
     operations_completed_count: int | Unset = UNSET
     errors: list[BatchOperationError] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

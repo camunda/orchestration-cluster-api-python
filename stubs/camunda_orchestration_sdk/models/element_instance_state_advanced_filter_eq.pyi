@@ -1,5 +1,4 @@
 from enum import Enum
-
 class ElementInstanceStateAdvancedFilterEq(str, Enum):
     ACTIVE = "ACTIVE"
     COMPLETED = "COMPLETED"

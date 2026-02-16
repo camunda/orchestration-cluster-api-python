@@ -6,18 +6,14 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.job_result_corrections_type_0 import JobResultCorrectionsType0
-
 T = TypeVar("T", bound="JobResultUserTaskType0")
-
 @_attrs_define
 class JobResultUserTaskType0:
     denied: bool | None | Unset = UNSET
     denied_reason: None | str | Unset = UNSET
     corrections: JobResultCorrectionsType0 | None | Unset = UNSET
     type_: str | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

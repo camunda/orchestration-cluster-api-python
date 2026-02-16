@@ -1,14 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import (
-    ElementId,
-    ElementInstanceKey,
-    JobKey,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
-    TenantId,
-)
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, JobKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -19,9 +11,7 @@ from ..models.job_listener_event_type_enum import JobListenerEventTypeEnum
 from ..models.job_state_enum import JobStateEnum
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.job_search_result_custom_headers import JobSearchResultCustomHeaders
-
 T = TypeVar("T", bound="JobSearchResult")
-
 @_attrs_define
 class JobSearchResult:
     custom_headers: JobSearchResultCustomHeaders
@@ -47,9 +37,7 @@ class JobSearchResult:
     is_denied: bool | None | Unset = UNSET
     creation_time: datetime.datetime | Unset = UNSET
     last_update_time: datetime.datetime | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

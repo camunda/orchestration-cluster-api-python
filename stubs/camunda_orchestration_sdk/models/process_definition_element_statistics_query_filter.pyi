@@ -9,32 +9,22 @@ from ..models.element_instance_state_exact_match import ElementInstanceStateExac
 from ..models.process_instance_state_exact_match import ProcessInstanceStateExactMatch
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
-from ..models.advanced_element_instance_key_filter import (
-    AdvancedElementInstanceKeyFilter,
-)
-from ..models.advanced_element_instance_state_filter import (
-    AdvancedElementInstanceStateFilter,
-)
+from ..models.advanced_element_instance_key_filter import AdvancedElementInstanceKeyFilter
+from ..models.advanced_element_instance_state_filter import AdvancedElementInstanceStateFilter
 from ..models.advanced_integer_filter import AdvancedIntegerFilter
-from ..models.advanced_process_instance_key_filter import (
-    AdvancedProcessInstanceKeyFilter,
-)
-from ..models.advanced_process_instance_state_filter import (
-    AdvancedProcessInstanceStateFilter,
-)
+from ..models.advanced_process_instance_key_filter import AdvancedProcessInstanceKeyFilter
+from ..models.advanced_process_instance_state_filter import AdvancedProcessInstanceStateFilter
 from ..models.advanced_string_filter import AdvancedStringFilter
 from ..models.base_process_instance_filter_fields import BaseProcessInstanceFilterFields
 from ..models.variable_value_filter_property import VariableValueFilterProperty
-
 T = TypeVar("T", bound="ProcessDefinitionElementStatisticsQueryFilter")
-
 @_attrs_define
 class ProcessDefinitionElementStatisticsQueryFilter:
     start_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     end_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     state: (
-        AdvancedProcessInstanceStateFilter | ProcessInstanceStateExactMatch | Unset
-    ) = UNSET
+            AdvancedProcessInstanceStateFilter | ProcessInstanceStateExactMatch | Unset
+        ) = UNSET
     has_incident: bool | Unset = UNSET
     tenant_id: AdvancedStringFilter | str | Unset = UNSET
     variables: list[VariableValueFilterProperty] | Unset = UNSET
@@ -45,16 +35,14 @@ class ProcessDefinitionElementStatisticsQueryFilter:
     error_message: AdvancedStringFilter | str | Unset = UNSET
     has_retries_left: bool | Unset = UNSET
     element_instance_state: (
-        AdvancedElementInstanceStateFilter | ElementInstanceStateExactMatch | Unset
-    ) = UNSET
+            AdvancedElementInstanceStateFilter | ElementInstanceStateExactMatch | Unset
+        ) = UNSET
     element_id: AdvancedStringFilter | str | Unset = UNSET
     has_element_instance_incident: bool | Unset = UNSET
     incident_error_hash_code: AdvancedIntegerFilter | int | Unset = UNSET
     tags: list[str] | Unset = UNSET
     or_: list[BaseProcessInstanceFilterFields] | Unset = UNSET
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...
