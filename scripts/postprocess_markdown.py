@@ -10,6 +10,18 @@ import re
 import sys
 from pathlib import Path
 
+# Deployment depth: directory levels from Docusaurus docs/ root to the
+# API reference directory (apis-tools/python-sdk/api-reference/ = 3).
+DEPLOYMENT_DEPTH = 3
+
+# Known URL-path → file-path mappings for docs.camunda.io links whose
+# URL slugs don't match the actual file paths (e.g. directory renames).
+_URL_PATH_OVERRIDES: dict[str, str] = {
+    "apis-tools/camunda-api-rest/camunda-api-rest-overview": (
+        "apis-tools/orchestration-cluster-api-rest/orchestration-cluster-api-rest-overview"
+    ),
+}
+
 # Mapping from Sphinx output filename (stem) to Docusaurus frontmatter.
 # Files not listed here get auto-generated frontmatter from their H1.
 PAGE_METADATA: dict[str, dict[str, str]] = {
@@ -107,11 +119,58 @@ def fix_anchor_links(content: str) -> str:
     return content
 
 
+def rewrite_camunda_docs_links(content: str, depth: int = DEPLOYMENT_DEPTH) -> str:
+    """Rewrite absolute docs.camunda.io links to relative Docusaurus paths.
+
+    Converts ``[text](https://docs.camunda.io/docs/path)`` to a relative
+    file-path link so Docusaurus versioning works correctly.
+    """
+    base_url = "https://docs.camunda.io/docs/"
+    prefix = "../" * depth
+
+    def _replace(match: re.Match[str]) -> str:
+        text = match.group(1)
+        url = match.group(2)
+
+        rel_path = url[len(base_url) :]
+
+        # Separate fragment
+        fragment = ""
+        if "#" in rel_path:
+            rel_path, fragment = rel_path.rsplit("#", 1)
+            fragment = "#" + fragment
+
+        rel_path = rel_path.strip("/")
+
+        # Apply known path overrides (directory renames, etc.)
+        rel_path = _URL_PATH_OVERRIDES.get(rel_path, rel_path)
+
+        # Ensure .md extension
+        if rel_path and not rel_path.endswith((".md", ".mdx")):
+            rel_path += ".md"
+
+        # If link text is the URL itself, derive descriptive text
+        if text.startswith("http"):
+            name = rel_path.rsplit("/", 1)[-1].removesuffix(".md").removesuffix(".mdx")
+            text = name.replace("-", " ")
+
+        return f"[{text}]({prefix}{rel_path}{fragment})"
+
+    return re.sub(
+        r"\[([^\]]+)\]\((https://docs\.camunda\.io/docs/[^)]+)\)",
+        _replace,
+        content,
+    )
+
+
 def postprocess_markdown(content: str) -> str:
     """Apply all post-processing transformations to markdown content."""
 
     # Fix anchor links before other transformations
     content = fix_anchor_links(content)
+
+    # Rewrite absolute docs.camunda.io links to relative Docusaurus paths
+    content = rewrite_camunda_docs_links(content)
 
     # Promote heading levels for proper Docusaurus TOC hierarchy (H3->H2, H4->H3)
     content = re.sub(r"^### \*class\*", "## *class*", content, flags=re.MULTILINE)
