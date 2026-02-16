@@ -231,7 +231,52 @@ make config-reference-check  # Verify up-to-date (CI gate)
 
 ---
 
-## 12. Releasing
+## 12. Docusaurus Integration (camunda-docs)
+
+The SDK's API reference documentation is published on the [Camunda docs site](https://docs.camunda.io) via an inversion-of-control pattern: a GitHub Actions workflow **in the camunda-docs repo** checks out this SDK, generates documentation, and opens a PR to copy the output into the docs site.
+
+### How it works
+
+1. The sync workflow (`sync-python-sdk-docs.yaml` in `camunda/camunda-docs`) runs on a weekly schedule (Thursdays at 4 PM UTC) or on manual dispatch.
+2. It checks out this repo (default: `main` branch) and runs:
+   ```bash
+   uv sync
+   make generate-local
+   make docs-md
+   ```
+3. Specific generated Markdown files (`python-sdk.md`, `index.md`, `client.md`, `async-client.md`, `configuration.md`, `runtime.md`, `types.md`) are copied into the docs repo at:
+   - **Next version:** `docs/apis-tools/python-sdk/api-reference/`
+   - **Released version:** `versioned_docs/version-<X.Y>/apis-tools/python-sdk/api-reference/`
+4. A PR is opened automatically via `peter-evans/create-pull-request`.
+
+### Doc generation commands
+
+- `make docs-md` generates Docusaurus-compatible Markdown using Sphinx with `sphinx-markdown-builder`. Output lands in `docs-md/`.
+- The sync workflow runs `make generate-local` first because docs are generated from the SDK source, which must be generated before Sphinx can introspect it.
+
+### Updating a released version
+
+To backport docs to a released version (e.g. 8.8):
+
+1. Go to the **Actions** tab in `camunda/camunda-docs`.
+2. Select the **Sync Python SDK API Reference** workflow.
+3. Click **Run workflow** and enter `8.8` in the `docs_version` field.
+4. The workflow checks out `stable/8.8` from this repo and copies docs into `versioned_docs/version-8.8/`.
+
+The PR branch is version-scoped (e.g. `update-python-sdk-docs/8.8`), so backport and next-version syncs can coexist.
+
+### What lives where
+
+| What | Location |
+| --- | --- |
+| Sphinx config | `docs-sphinx/conf.py` |
+| Generated Markdown output | `docs-md/` |
+| Sync workflow (in camunda-docs) | `.github/workflows/sync-python-sdk-docs.yaml` |
+| Docs site target (next) | `docs/apis-tools/python-sdk/api-reference/` |
+
+---
+
+## 13. Releasing
 
 Uses [python-semantic-release](https://python-semantic-release.readthedocs.io/) (configured in `pyproject.toml`).
 
@@ -252,7 +297,7 @@ Version is stored in `pyproject.toml` under `project.version`.
 
 ---
 
-## 13. Customizing Generation
+## 14. Customizing Generation
 
 To add a new pipeline step:
 
@@ -282,7 +327,7 @@ Never edit generated files in `generated/` manually—they are overwritten every
 
 ---
 
-## 14. Where Things Live
+## 15. Where Things Live
 
 | What | Path |
 | --- | --- |
@@ -305,7 +350,7 @@ Never edit generated files in `generated/` manually—they are overwritten every
 
 ---
 
-## 15. Troubleshooting
+## 16. Troubleshooting
 
 | Issue | Likely Cause | Action |
 | --- | --- | --- |
@@ -321,7 +366,7 @@ Never edit generated files in `generated/` manually—they are overwritten every
 
 ---
 
-## 16. Maintenance Quick Commands
+## 17. Maintenance Quick Commands
 
 | Task | Command |
 | --- | --- |
