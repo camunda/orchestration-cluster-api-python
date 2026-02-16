@@ -65,7 +65,7 @@ When this happens, we signal it in the [CHANGELOG](https://github.com/camunda/or
   camunda-orchestration-sdk==8.9.3
   ```
 
-### Using the generated SDK
+### Using the SDK
 
 The SDK provides two clients with identical API surfaces:
 
@@ -119,7 +119,7 @@ CAMUNDA_CLIENT_ID=***
 CAMUNDA_CLIENT_SECRET=***
 ```
 
-#### Advanced: Programmatic configuration (use sparingly)
+#### Programmatic configuration (use sparingly)
 
 Only use `configuration={...}` when you must supply or mutate configuration dynamically (e.g. tests, multi-tenant routing, or ephemeral preview environments). Keys mirror their `CAMUNDA_*` environment names.
 

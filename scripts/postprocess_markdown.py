@@ -28,26 +28,32 @@ PAGE_METADATA: dict[str, dict[str, str]] = {
     "index": {
         "title": "Python SDK API Reference",
         "sidebar_label": "Overview",
+        "sidebar_position": "1",
     },
     "client": {
         "title": "CamundaClient",
         "sidebar_label": "CamundaClient",
+        "sidebar_position": "2",
     },
     "async-client": {
         "title": "CamundaAsyncClient",
         "sidebar_label": "CamundaAsyncClient",
+        "sidebar_position": "3",
     },
     "configuration": {
         "title": "Configuration",
         "sidebar_label": "Configuration",
+        "sidebar_position": "4",
     },
     "runtime": {
         "title": "Runtime",
         "sidebar_label": "Runtime",
+        "sidebar_position": "5",
     },
     "types": {
         "title": "Semantic Types",
         "sidebar_label": "Semantic Types",
+        "sidebar_position": "6",
     },
 }
 

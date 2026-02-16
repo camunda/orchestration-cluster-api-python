@@ -211,6 +211,38 @@ Pyright is configured in `pyproject.toml` with `typeCheckingMode = "strict"`.
 
 ## 11. Documentation
 
+### README → Docusaurus Pages
+
+The SDK `README.md` is the single source of truth for end-user documentation. The `make docs-md` pipeline splits it into individual Docusaurus pages:
+
+1. **Landing page** (`python-sdk.md`) — the H1 title and introductory content (everything before the first H2).
+2. **Section pages** — one page per H2 section (e.g., `installing-the-sdk-to-your-project.md`, `authentication.md`, `job-workers.md`). Headings are promoted one level (H2→H1, H3→H2) so each page has a proper top-level heading.
+3. **API Reference** — Sphinx-generated class/method documentation, placed in an `api-reference/` subdirectory with a `_category_.json` that positions it last in the sidebar.
+
+The splitting is handled by `scripts/generate_landing_page.py`. Content between `<!-- docs:cut:start -->` and `<!-- docs:cut:end -->` markers in the README is stripped (badges, contributing section, license).
+
+Resulting Docusaurus sidebar structure:
+
+```
+Python SDK                            (landing page — H1 intro)
+├── Installing the SDK to your project
+├── Authentication
+├── Configuration reference
+├── Deploying Resources
+├── Creating a Process Instance
+├── Semantic Types
+├── Job Workers
+├── Error Handling
+├── Logging
+└── API Reference/                    (last, via _category_.json)
+    ├── Overview
+    ├── CamundaClient
+    ├── CamundaAsyncClient
+    ├── Configuration
+    ├── Runtime
+    └── Semantic Types
+```
+
 ### API Docs
 
 Generated with Sphinx (HTML + Markdown for Docusaurus):
@@ -218,7 +250,15 @@ Generated with Sphinx (HTML + Markdown for Docusaurus):
 ```bash
 make docs-api        # Generate to ./public/html/ and ./public/html/markdown/
 make preview-docs    # Serve HTML docs at http://localhost:8080
+make docs-md         # Markdown only (used by CI sync)
 ```
+
+The `make docs-md` pipeline:
+
+1. Sphinx builds multi-page Markdown from `docs-sphinx/` into `public/markdown/`.
+2. `scripts/postprocess_markdown.py` post-processes Sphinx output for Docusaurus compatibility (heading simplification, anchor fixes, frontmatter).
+3. Sphinx output files are moved into `public/markdown/api-reference/`.
+4. `scripts/generate_landing_page.py` splits the README into pages in `public/markdown/` and generates `api-reference/_category_.json`.
 
 ### Configuration Reference
 
@@ -244,15 +284,18 @@ The SDK's API reference documentation is published on the [Camunda docs site](ht
    make generate-local
    make docs-md
    ```
-3. Specific generated Markdown files (`python-sdk.md`, `index.md`, `client.md`, `async-client.md`, `configuration.md`, `runtime.md`, `types.md`) are copied into the docs repo at:
-   - **Next version:** `docs/apis-tools/python-sdk/api-reference/`
-   - **Released version:** `versioned_docs/version-<X.Y>/apis-tools/python-sdk/api-reference/`
+3. The generated files from `public/markdown/` are copied into the docs repo:
+   - Section pages (from README) and the landing page → `apis-tools/python-sdk/`
+   - API reference pages → `apis-tools/python-sdk/api-reference/`
+   - Target root depends on version:
+     - **Next version:** `docs/apis-tools/python-sdk/`
+     - **Released version:** `versioned_docs/version-<X.Y>/apis-tools/python-sdk/`
 4. A PR is opened automatically via `peter-evans/create-pull-request`.
 
 ### Doc generation commands
 
-- `make docs-md` generates Docusaurus-compatible Markdown using Sphinx with `sphinx-markdown-builder`. Output lands in `docs-md/`.
-- The sync workflow runs `make generate-local` first because docs are generated from the SDK source, which must be generated before Sphinx can introspect it.
+- `make docs-md` generates Docusaurus-compatible Markdown. Output lands in `public/markdown/` (section pages at top level, API reference in `api-reference/` subdirectory).
+- The sync workflow runs `make generate-local` first because API docs are generated from the SDK source, which must be generated before Sphinx can introspect it.
 
 ### Updating a released version
 
@@ -269,10 +312,13 @@ The PR branch is version-scoped (e.g. `update-python-sdk-docs/8.8`), so backport
 
 | What | Location |
 | --- | --- |
-| Sphinx config | `docs-sphinx/conf.py` |
-| Generated Markdown output | `docs-md/` |
+| README (source of truth for user docs) | `README.md` |
+| README splitter / page generator | `scripts/generate_landing_page.py` |
+| Sphinx config (API reference) | `docs-sphinx/conf.py` |
+| Sphinx markdown post-processor | `scripts/postprocess_markdown.py` |
+| Generated Markdown output | `public/markdown/` |
 | Sync workflow (in camunda-docs) | `.github/workflows/sync-python-sdk-docs.yaml` |
-| Docs site target (next) | `docs/apis-tools/python-sdk/api-reference/` |
+| Docs site target (next) | `docs/apis-tools/python-sdk/` |
 
 ---
 
