@@ -1,16 +1,21 @@
 # See https://pre-commit.com for more information
+# All hooks use the project-local ruff/pyright via `uv run` to ensure
+# identical behaviour to `make generate` / `make lint` / `make typecheck`.
 repos:
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.11
-    hooks:
-      - id: ruff-format
-        exclude: ^(examples|generated)/
-      - id: ruff
-        args: [--fix]
-        exclude: ^(examples|generated)/
-
   - repo: local
     hooks:
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+        exclude: ^(examples|generated|demo|stubs)/
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+        exclude: ^(examples|generated|demo|stubs)/
       - id: pyright
         name: pyright type checking
         entry: uv run pyright
