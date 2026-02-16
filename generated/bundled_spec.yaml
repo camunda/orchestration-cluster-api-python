@@ -12500,9 +12500,9 @@ components:
           type: string
           description: Only provided if the cluster variable scope is TENANT.
       required:
-      - scope
       - name
       - value
+      - scope
     ClusterVariableSearchResult:
       description: Cluster variable search response item.
       type: object
@@ -12523,9 +12523,9 @@ components:
           type: string
           description: Only provided if the cluster variable scope is TENANT.
       required:
-      - scope
       - name
       - value
+      - scope
     ClusterVariableResultBase:
       description: Cluster variable response item.
       type: object
@@ -17441,9 +17441,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
+      - claimName
       - name
       - claimValue
-      - claimName
     MappingRuleCreateUpdateResult:
       type: object
       properties:
@@ -22992,8 +22992,8 @@ components:
             $ref: '#/components/schemas/MigrateProcessInstanceMappingInstruction'
           description: The mapping instructions.
       required:
-      - targetProcessDefinitionKey
       - mappingInstructions
+      - targetProcessDefinitionKey
       title: ProcessInstanceMigrationBatchOperationRequestMigrationPlan
     ClusterVariableSearchQueryRequestFilter:
       description: The cluster variable search filters.
@@ -24661,8 +24661,8 @@ components:
             $ref: '#/components/schemas/MigrateProcessInstanceMappingInstruction'
           description: The mapping instructions.
       required:
-      - targetProcessDefinitionKey
       - mappingInstructions
+      - targetProcessDefinitionKey
       title: MigrateProcessInstancesBatchOperationMigrationPlan
     SearchProcessInstancesItemsItem:
       description: Process instance search response item.
