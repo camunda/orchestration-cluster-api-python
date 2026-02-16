@@ -1,7 +1,11 @@
 API Reference
 =============
 
-.. automodule:: camunda_orchestration_sdk
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. toctree::
+   :maxdepth: 2
+
+   client
+   async-client
+   configuration
+   runtime
+   types
