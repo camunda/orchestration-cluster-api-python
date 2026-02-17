@@ -226,14 +226,17 @@ Resulting Docusaurus sidebar structure:
 ```
 Python SDK                            (landing page — H1 intro)
 ├── Installing the SDK to your project
+├── Using the SDK
+├── Semantic Types
+├── Quick start (Zero-config – recommended)
+├── Programmatic configuration (use sparingly)
 ├── Authentication
-├── Configuration reference
 ├── Deploying Resources
 ├── Creating a Process Instance
-├── Semantic Types
 ├── Job Workers
 ├── Error Handling
 ├── Logging
+├── Configuration reference
 └── API Reference/                    (last, via _category_.json)
     ├── Overview
     ├── CamundaClient

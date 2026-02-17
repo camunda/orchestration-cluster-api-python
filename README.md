@@ -1,5 +1,6 @@
-## Camunda Orchestration Cluster API – Python SDK
+# Camunda Orchestration Cluster API – Python SDK
 
+<!-- WARNING: The content and specific structure of this file drives Docusaurus generation in camunda-docs. Please refer to MAINTAINER.md before editing. -->
 <!-- docs:cut:start -->
 [![PyPI - Version](https://img.shields.io/pypi/v/camunda-orchestration-sdk)](https://pypi.org/project/camunda-orchestration-sdk/)
 [![Documentation](https://img.shields.io/badge/docs-API%20Reference-blue)](https://camunda.github.io/orchestration-cluster-api-python/)
