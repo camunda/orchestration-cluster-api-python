@@ -179,21 +179,6 @@ CAMUNDA_CLIENT_ID=***
 CAMUNDA_CLIENT_SECRET=***
 ```
 
-#### Programmatic configuration (use sparingly)
-
-Only use `configuration={...}` when you must supply or mutate configuration dynamically (e.g. tests, multi-tenant routing, or ephemeral preview environments). Keys mirror their `CAMUNDA_*` environment names.
-
-```python
-from camunda_orchestration_sdk import CamundaClient
-
-client = CamundaClient(
-    configuration={
-        "CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2",
-        "CAMUNDA_AUTH_STRATEGY": "NONE",
-    }
-)
-```
-
 #### Loading configuration from a `.env` file (`CAMUNDA_LOAD_ENVFILE`)
 
 The SDK can optionally load configuration values from a dotenv file.
@@ -232,6 +217,21 @@ You can also enable it via the explicit configuration dict:
 from camunda_orchestration_sdk import CamundaClient
 
 client = CamundaClient(configuration={"CAMUNDA_LOAD_ENVFILE": "true"})
+```
+
+## Programmatic configuration (use sparingly)
+
+Only use `configuration={...}` when you must supply or mutate configuration dynamically (e.g. tests, multi-tenant routing, or ephemeral preview environments). Keys mirror their `CAMUNDA_*` environment names.
+
+```python
+from camunda_orchestration_sdk import CamundaClient
+
+client = CamundaClient(
+    configuration={
+        "CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2",
+        "CAMUNDA_AUTH_STRATEGY": "NONE",
+    }
+)
 ```
 
 ## Authentication
