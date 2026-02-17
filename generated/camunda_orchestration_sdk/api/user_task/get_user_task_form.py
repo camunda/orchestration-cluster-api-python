@@ -4,7 +4,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_user_task_form_response_200 import GetUserTaskFormResponse200
+from ...models.form_result import FormResult
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
@@ -21,9 +21,9 @@ def _get_kwargs(user_task_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | GetUserTaskFormResponse200 | ProblemDetail | None:
+) -> Any | FormResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = GetUserTaskFormResponse200.from_dict(response.json())
+        response_200 = FormResult.from_dict(response.json())
         return response_200
     if response.status_code == 204:
         response_204 = cast(Any, None)
@@ -51,7 +51,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | GetUserTaskFormResponse200 | ProblemDetail]:
+) -> Response[Any | FormResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -62,7 +62,7 @@ def _build_response(
 
 def sync_detailed(
     user_task_key: str, *, client: AuthenticatedClient | Client
-) -> Response[Any | GetUserTaskFormResponse200 | ProblemDetail]:
+) -> Response[Any | FormResult | ProblemDetail]:
     """Get user task form
 
      Get the form of a user task.
@@ -77,7 +77,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | GetUserTaskFormResponse200 | ProblemDetail]
+        Response[Any | FormResult | ProblemDetail]
     """
     kwargs = _get_kwargs(user_task_key=user_task_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -86,7 +86,7 @@ def sync_detailed(
 
 def sync(
     user_task_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetUserTaskFormResponse200:
+) -> FormResult:
     """Get user task form
 
      Get the form of a user task.
@@ -105,7 +105,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetUserTaskFormResponse200"""
+        FormResult"""
     response = sync_detailed(user_task_key=user_task_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -140,12 +140,12 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetUserTaskFormResponse200, response.parsed)
+    return cast(FormResult, response.parsed)
 
 
 async def asyncio_detailed(
     user_task_key: str, *, client: AuthenticatedClient | Client
-) -> Response[Any | GetUserTaskFormResponse200 | ProblemDetail]:
+) -> Response[Any | FormResult | ProblemDetail]:
     """Get user task form
 
      Get the form of a user task.
@@ -160,7 +160,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | GetUserTaskFormResponse200 | ProblemDetail]
+        Response[Any | FormResult | ProblemDetail]
     """
     kwargs = _get_kwargs(user_task_key=user_task_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -169,7 +169,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     user_task_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetUserTaskFormResponse200:
+) -> FormResult:
     """Get user task form
 
      Get the form of a user task.
@@ -188,7 +188,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetUserTaskFormResponse200"""
+        FormResult"""
     response = await asyncio_detailed(user_task_key=user_task_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -223,4 +223,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetUserTaskFormResponse200, response.parsed)
+    return cast(FormResult, response.parsed)

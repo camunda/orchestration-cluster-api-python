@@ -4,14 +4,16 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.batch_operation_created_result import BatchOperationCreatedResult
-from ...models.delete_process_instances_batch_operation_data import (
-    DeleteProcessInstancesBatchOperationData,
-)
 from ...models.problem_detail import ProblemDetail
+from ...models.process_instance_deletion_batch_operation_request import (
+    ProcessInstanceDeletionBatchOperationRequest,
+)
 from ...types import Response
 
 
-def _get_kwargs(*, body: DeleteProcessInstancesBatchOperationData) -> dict[str, Any]:
+def _get_kwargs(
+    *, body: ProcessInstanceDeletionBatchOperationRequest
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/process-instances/deletion"}
     _kwargs["json"] = body.to_dict()
@@ -58,7 +60,7 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteProcessInstancesBatchOperationData,
+    body: ProcessInstanceDeletionBatchOperationRequest,
 ) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Delete process instances (batch)
 
@@ -68,8 +70,8 @@ def sync_detailed(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (DeleteProcessInstancesBatchOperationData): The process instance filter that defines
-            which process instances should be deleted.
+        body (ProcessInstanceDeletionBatchOperationRequest): The process instance filter that
+            defines which process instances should be deleted.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -86,7 +88,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteProcessInstancesBatchOperationData,
+    body: ProcessInstanceDeletionBatchOperationRequest,
     **kwargs: Any,
 ) -> BatchOperationCreatedResult:
     """Delete process instances (batch)
@@ -97,8 +99,8 @@ def sync(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (DeleteProcessInstancesBatchOperationData): The process instance filter that defines
-            which process instances should be deleted.
+        body (ProcessInstanceDeletionBatchOperationRequest): The process instance filter that
+            defines which process instances should be deleted.
 
     Raises:
         errors.DeleteProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
@@ -143,7 +145,7 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteProcessInstancesBatchOperationData,
+    body: ProcessInstanceDeletionBatchOperationRequest,
 ) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Delete process instances (batch)
 
@@ -153,8 +155,8 @@ async def asyncio_detailed(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (DeleteProcessInstancesBatchOperationData): The process instance filter that defines
-            which process instances should be deleted.
+        body (ProcessInstanceDeletionBatchOperationRequest): The process instance filter that
+            defines which process instances should be deleted.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -171,7 +173,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteProcessInstancesBatchOperationData,
+    body: ProcessInstanceDeletionBatchOperationRequest,
     **kwargs: Any,
 ) -> BatchOperationCreatedResult:
     """Delete process instances (batch)
@@ -182,8 +184,8 @@ async def asyncio(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (DeleteProcessInstancesBatchOperationData): The process instance filter that defines
-            which process instances should be deleted.
+        body (ProcessInstanceDeletionBatchOperationRequest): The process instance filter that
+            defines which process instances should be deleted.
 
     Raises:
         errors.DeleteProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.

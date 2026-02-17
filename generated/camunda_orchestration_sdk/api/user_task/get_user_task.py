@@ -4,8 +4,8 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_user_task_response_200 import GetUserTaskResponse200
 from ...models.problem_detail import ProblemDetail
+from ...models.user_task_result import UserTaskResult
 from ...types import Response
 
 
@@ -21,9 +21,9 @@ def _get_kwargs(user_task_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> GetUserTaskResponse200 | ProblemDetail | None:
+) -> ProblemDetail | UserTaskResult | None:
     if response.status_code == 200:
-        response_200 = GetUserTaskResponse200.from_dict(response.json())
+        response_200 = UserTaskResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -48,7 +48,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[GetUserTaskResponse200 | ProblemDetail]:
+) -> Response[ProblemDetail | UserTaskResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -59,7 +59,7 @@ def _build_response(
 
 def sync_detailed(
     user_task_key: str, *, client: AuthenticatedClient | Client
-) -> Response[GetUserTaskResponse200 | ProblemDetail]:
+) -> Response[ProblemDetail | UserTaskResult]:
     """Get user task
 
      Get the user task by the user task key.
@@ -72,7 +72,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetUserTaskResponse200 | ProblemDetail]
+        Response[ProblemDetail | UserTaskResult]
     """
     kwargs = _get_kwargs(user_task_key=user_task_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -81,7 +81,7 @@ def sync_detailed(
 
 def sync(
     user_task_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetUserTaskResponse200:
+) -> UserTaskResult:
     """Get user task
 
      Get the user task by the user task key.
@@ -98,7 +98,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetUserTaskResponse200"""
+        UserTaskResult"""
     response = sync_detailed(user_task_key=user_task_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -133,12 +133,12 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetUserTaskResponse200, response.parsed)
+    return cast(UserTaskResult, response.parsed)
 
 
 async def asyncio_detailed(
     user_task_key: str, *, client: AuthenticatedClient | Client
-) -> Response[GetUserTaskResponse200 | ProblemDetail]:
+) -> Response[ProblemDetail | UserTaskResult]:
     """Get user task
 
      Get the user task by the user task key.
@@ -151,7 +151,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetUserTaskResponse200 | ProblemDetail]
+        Response[ProblemDetail | UserTaskResult]
     """
     kwargs = _get_kwargs(user_task_key=user_task_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -160,7 +160,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     user_task_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetUserTaskResponse200:
+) -> UserTaskResult:
     """Get user task
 
      Get the user task by the user task key.
@@ -177,7 +177,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetUserTaskResponse200"""
+        UserTaskResult"""
     response = await asyncio_detailed(user_task_key=user_task_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -212,4 +212,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetUserTaskResponse200, response.parsed)
+    return cast(UserTaskResult, response.parsed)

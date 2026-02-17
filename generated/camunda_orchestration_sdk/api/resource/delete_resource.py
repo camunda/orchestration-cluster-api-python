@@ -4,14 +4,14 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.delete_resource_data_type_0 import DeleteResourceDataType0
+from ...models.delete_resource_request_type_0 import DeleteResourceRequestType0
 from ...models.delete_resource_response import DeleteResourceResponse
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    resource_key: str, *, body: DeleteResourceDataType0 | None | Unset = UNSET
+    resource_key: str, *, body: DeleteResourceRequestType0 | None | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -20,7 +20,7 @@ def _get_kwargs(
             resource_key=quote(str(resource_key), safe="")
         ),
     }
-    if isinstance(body, DeleteResourceDataType0):
+    if isinstance(body, DeleteResourceRequestType0):
         _kwargs["json"] = body.to_dict()
     else:
         _kwargs["json"] = body
@@ -68,7 +68,7 @@ def sync_detailed(
     resource_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteResourceDataType0 | None | Unset = UNSET,
+    body: DeleteResourceRequestType0 | None | Unset = UNSET,
 ) -> Response[DeleteResourceResponse | ProblemDetail]:
     """Delete resource
 
@@ -88,7 +88,7 @@ def sync_detailed(
 
     Args:
         resource_key (str): The system-assigned key for this resource.
-        body (DeleteResourceDataType0 | None | Unset):
+        body (DeleteResourceRequestType0 | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -106,7 +106,7 @@ def sync(
     resource_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteResourceDataType0 | None | Unset = UNSET,
+    body: DeleteResourceRequestType0 | None | Unset = UNSET,
     **kwargs: Any,
 ) -> DeleteResourceResponse:
     """Delete resource
@@ -127,7 +127,7 @@ def sync(
 
     Args:
         resource_key (str): The system-assigned key for this resource.
-        body (DeleteResourceDataType0 | None | Unset):
+        body (DeleteResourceRequestType0 | None | Unset):
 
     Raises:
         errors.DeleteResourceBadRequest: If the response status code is 400. The provided data is not valid.
@@ -173,7 +173,7 @@ async def asyncio_detailed(
     resource_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteResourceDataType0 | None | Unset = UNSET,
+    body: DeleteResourceRequestType0 | None | Unset = UNSET,
 ) -> Response[DeleteResourceResponse | ProblemDetail]:
     """Delete resource
 
@@ -193,7 +193,7 @@ async def asyncio_detailed(
 
     Args:
         resource_key (str): The system-assigned key for this resource.
-        body (DeleteResourceDataType0 | None | Unset):
+        body (DeleteResourceRequestType0 | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -211,7 +211,7 @@ async def asyncio(
     resource_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteResourceDataType0 | None | Unset = UNSET,
+    body: DeleteResourceRequestType0 | None | Unset = UNSET,
     **kwargs: Any,
 ) -> DeleteResourceResponse:
     """Delete resource
@@ -232,7 +232,7 @@ async def asyncio(
 
     Args:
         resource_key (str): The system-assigned key for this resource.
-        body (DeleteResourceDataType0 | None | Unset):
+        body (DeleteResourceRequestType0 | None | Unset):
 
     Raises:
         errors.DeleteResourceBadRequest: If the response status code is 400. The provided data is not valid.

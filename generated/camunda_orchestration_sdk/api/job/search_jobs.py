@@ -4,8 +4,8 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.job_search_query import JobSearchQuery
+from ...models.job_search_query_result import JobSearchQueryResult
 from ...models.problem_detail import ProblemDetail
-from ...models.search_jobs_response_200 import SearchJobsResponse200
 from ...types import UNSET, Response, Unset
 
 
@@ -21,9 +21,9 @@ def _get_kwargs(*, body: JobSearchQuery | Unset = UNSET) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | SearchJobsResponse200 | None:
+) -> JobSearchQueryResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = SearchJobsResponse200.from_dict(response.json())
+        response_200 = JobSearchQueryResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -45,7 +45,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | SearchJobsResponse200]:
+) -> Response[JobSearchQueryResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -56,7 +56,7 @@ def _build_response(
 
 def sync_detailed(
     *, client: AuthenticatedClient | Client, body: JobSearchQuery | Unset = UNSET
-) -> Response[ProblemDetail | SearchJobsResponse200]:
+) -> Response[JobSearchQueryResult | ProblemDetail]:
     """Search jobs
 
      Search for jobs based on given criteria.
@@ -69,7 +69,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchJobsResponse200]
+        Response[JobSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -81,7 +81,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: JobSearchQuery | Unset = UNSET,
     **kwargs: Any,
-) -> SearchJobsResponse200:
+) -> JobSearchQueryResult:
     """Search jobs
 
      Search for jobs based on given criteria.
@@ -97,7 +97,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchJobsResponse200"""
+        JobSearchQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -126,12 +126,12 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchJobsResponse200, response.parsed)
+    return cast(JobSearchQueryResult, response.parsed)
 
 
 async def asyncio_detailed(
     *, client: AuthenticatedClient | Client, body: JobSearchQuery | Unset = UNSET
-) -> Response[ProblemDetail | SearchJobsResponse200]:
+) -> Response[JobSearchQueryResult | ProblemDetail]:
     """Search jobs
 
      Search for jobs based on given criteria.
@@ -144,7 +144,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchJobsResponse200]
+        Response[JobSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -156,7 +156,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: JobSearchQuery | Unset = UNSET,
     **kwargs: Any,
-) -> SearchJobsResponse200:
+) -> JobSearchQueryResult:
     """Search jobs
 
      Search for jobs based on given criteria.
@@ -172,7 +172,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchJobsResponse200"""
+        JobSearchQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -201,4 +201,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchJobsResponse200, response.parsed)
+    return cast(JobSearchQueryResult, response.parsed)

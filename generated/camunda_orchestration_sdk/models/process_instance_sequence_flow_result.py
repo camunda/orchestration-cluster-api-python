@@ -30,6 +30,11 @@ class ProcessInstanceSequenceFlowResult:
     Attributes:
         sequence_flow_id (str | Unset): The sequence flow id.
         process_instance_key (str | Unset): The key of this process instance. Example: 2251799813690746.
+        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
+            top-level
+            ancestor in the process instance hierarchy. This field is only present for data
+            belonging to process instance hierarchies created in version 8.9 or later.
+             Example: 2251799813690746.
         process_definition_key (str | Unset): The process definition key. Example: 2251799813686749.
         process_definition_id (str | Unset): The process definition id. Example: new-account-onboarding-workflow.
         element_id (str | Unset): The element id for this sequence flow, as provided in the BPMN process. Example:
@@ -39,6 +44,7 @@ class ProcessInstanceSequenceFlowResult:
 
     sequence_flow_id: str | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
+    root_process_instance_key: str | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     element_id: ElementId | Unset = UNSET
@@ -51,6 +57,8 @@ class ProcessInstanceSequenceFlowResult:
         sequence_flow_id = self.sequence_flow_id
 
         process_instance_key = self.process_instance_key
+
+        root_process_instance_key = self.root_process_instance_key
 
         process_definition_key = self.process_definition_key
 
@@ -67,6 +75,8 @@ class ProcessInstanceSequenceFlowResult:
             field_dict["sequenceFlowId"] = sequence_flow_id
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
+        if root_process_instance_key is not UNSET:
+            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if process_definition_key is not UNSET:
             field_dict["processDefinitionKey"] = process_definition_key
         if process_definition_id is not UNSET:
@@ -88,6 +98,8 @@ class ProcessInstanceSequenceFlowResult:
             if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
             else UNSET
         )
+
+        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
 
         process_definition_key = (
             lift_process_definition_key(_val)
@@ -116,6 +128,7 @@ class ProcessInstanceSequenceFlowResult:
         process_instance_sequence_flow_result = cls(
             sequence_flow_id=sequence_flow_id,
             process_instance_key=process_instance_key,
+            root_process_instance_key=root_process_instance_key,
             process_definition_key=process_definition_key,
             process_definition_id=process_definition_id,
             element_id=element_id,

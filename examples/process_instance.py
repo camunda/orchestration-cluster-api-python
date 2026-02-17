@@ -21,8 +21,8 @@ from camunda_orchestration_sdk.models.process_instance_search_query_sort_request
 from camunda_orchestration_sdk.models.process_instance_search_query_sort_request_field import (
     ProcessInstanceSearchQuerySortRequestField,
 )
-from camunda_orchestration_sdk.models.search_process_instances_data import (
-    SearchProcessInstancesData,
+from camunda_orchestration_sdk.models.process_instance_search_query import (
+    ProcessInstanceSearchQuery,
 )
 from camunda_orchestration_sdk.models.sort_order_enum import SortOrderEnum
 from camunda_orchestration_sdk.semantic_types import (
@@ -102,7 +102,7 @@ def search_process_instances_example() -> None:
     client = CamundaClient()
 
     result = client.search_process_instances(
-        data=SearchProcessInstancesData(
+        data=ProcessInstanceSearchQuery(
             filter_=ProcessInstanceSearchQueryFilter(
                 process_definition_id="order-process",
             ),

@@ -5,7 +5,9 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.search_users_for_tenant_data import SearchUsersForTenantData
-from ...models.tenant_user_search_result import TenantUserSearchResult
+from ...models.search_users_for_tenant_response_200 import (
+    SearchUsersForTenantResponse200,
+)
 from ...types import UNSET, Response, Unset
 
 
@@ -28,9 +30,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> TenantUserSearchResult | None:
+) -> SearchUsersForTenantResponse200 | None:
     if response.status_code == 200:
-        response_200 = TenantUserSearchResult.from_dict(response.json())
+        response_200 = SearchUsersForTenantResponse200.from_dict(response.json())
         return response_200
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -40,7 +42,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[TenantUserSearchResult]:
+) -> Response[SearchUsersForTenantResponse200]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -54,7 +56,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: SearchUsersForTenantData | Unset = UNSET,
-) -> Response[TenantUserSearchResult]:
+) -> Response[SearchUsersForTenantResponse200]:
     """Search users for tenant
 
      Retrieves a filtered and sorted list of users for a specified tenant.
@@ -68,7 +70,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[TenantUserSearchResult]
+        Response[SearchUsersForTenantResponse200]
     """
     kwargs = _get_kwargs(tenant_id=tenant_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -81,7 +83,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: SearchUsersForTenantData | Unset = UNSET,
     **kwargs: Any,
-) -> TenantUserSearchResult:
+) -> SearchUsersForTenantResponse200:
     """Search users for tenant
 
      Retrieves a filtered and sorted list of users for a specified tenant.
@@ -94,7 +96,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        TenantUserSearchResult"""
+        SearchUsersForTenantResponse200"""
     response = sync_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -107,7 +109,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: SearchUsersForTenantData | Unset = UNSET,
-) -> Response[TenantUserSearchResult]:
+) -> Response[SearchUsersForTenantResponse200]:
     """Search users for tenant
 
      Retrieves a filtered and sorted list of users for a specified tenant.
@@ -121,7 +123,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[TenantUserSearchResult]
+        Response[SearchUsersForTenantResponse200]
     """
     kwargs = _get_kwargs(tenant_id=tenant_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -134,7 +136,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: SearchUsersForTenantData | Unset = UNSET,
     **kwargs: Any,
-) -> TenantUserSearchResult:
+) -> SearchUsersForTenantResponse200:
     """Search users for tenant
 
      Retrieves a filtered and sorted list of users for a specified tenant.
@@ -147,7 +149,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        TenantUserSearchResult"""
+        SearchUsersForTenantResponse200"""
     response = await asyncio_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         raise errors.UnexpectedStatus(response.status_code, response.content)

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from camunda_orchestration_sdk import CamundaAsyncClient, CamundaClient, WorkerConfig
-from camunda_orchestration_sdk.models.complete_job_data import CompleteJobData
+from camunda_orchestration_sdk.models.job_completion_request import JobCompletionRequest
 from camunda_orchestration_sdk.semantic_types import JobKey
 from camunda_orchestration_sdk.models.job_activation_request import (
     JobActivationRequest,
@@ -41,7 +41,7 @@ def complete_job_example() -> None:
 
     client.complete_job(
         job_key=JobKey("2251799813685249"),
-        data=CompleteJobData(
+        data=JobCompletionRequest(
             variables=JobCompletionRequestVariables.from_dict(
                 {"paymentId": "PAY-123", "status": "completed"}
             )

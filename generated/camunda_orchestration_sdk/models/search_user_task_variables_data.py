@@ -8,13 +8,11 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
+    from ..models.cursor_based_backward_pagination import CursorBasedBackwardPagination
     from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
     from ..models.limit_based_pagination import LimitBasedPagination
     from ..models.offset_based_pagination import OffsetBasedPagination
-    from ..models.page_cursor_based_backward_pagination import (
-        PageCursorBasedBackwardPagination,
-    )
-    from ..models.search_user_task_variables_filter import SearchUserTaskVariablesFilter
+    from ..models.user_task_variable_filter import UserTaskVariableFilter
     from ..models.variable_search_query_sort_request import (
         VariableSearchQuerySortRequest,
     )
@@ -29,18 +27,18 @@ class SearchUserTaskVariablesData:
 
     Attributes:
         sort (list[VariableSearchQuerySortRequest] | Unset): Sort field criteria.
-        filter_ (SearchUserTaskVariablesFilter | Unset): The user task variable search filters.
-        page (CursorBasedForwardPagination | LimitBasedPagination | OffsetBasedPagination |
-            PageCursorBasedBackwardPagination | Unset): Pagination criteria.
+        filter_ (UserTaskVariableFilter | Unset): The user task variable search filters.
+        page (CursorBasedBackwardPagination | CursorBasedForwardPagination | LimitBasedPagination |
+            OffsetBasedPagination | Unset): Pagination criteria.
     """
 
     sort: list[VariableSearchQuerySortRequest] | Unset = UNSET
-    filter_: SearchUserTaskVariablesFilter | Unset = UNSET
+    filter_: UserTaskVariableFilter | Unset = UNSET
     page: (
-        CursorBasedForwardPagination
+        CursorBasedBackwardPagination
+        | CursorBasedForwardPagination
         | LimitBasedPagination
         | OffsetBasedPagination
-        | PageCursorBasedBackwardPagination
         | Unset
     ) = UNSET
 
@@ -88,17 +86,15 @@ class SearchUserTaskVariablesData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.cursor_based_backward_pagination import (
+            CursorBasedBackwardPagination,
+        )
         from ..models.cursor_based_forward_pagination import (
             CursorBasedForwardPagination,
         )
         from ..models.limit_based_pagination import LimitBasedPagination
         from ..models.offset_based_pagination import OffsetBasedPagination
-        from ..models.page_cursor_based_backward_pagination import (
-            PageCursorBasedBackwardPagination,
-        )
-        from ..models.search_user_task_variables_filter import (
-            SearchUserTaskVariablesFilter,
-        )
+        from ..models.user_task_variable_filter import UserTaskVariableFilter
         from ..models.variable_search_query_sort_request import (
             VariableSearchQuerySortRequest,
         )
@@ -114,19 +110,19 @@ class SearchUserTaskVariablesData:
                 sort.append(sort_item)
 
         _filter_ = d.pop("filter", UNSET)
-        filter_: SearchUserTaskVariablesFilter | Unset
+        filter_: UserTaskVariableFilter | Unset
         if isinstance(_filter_, Unset):
             filter_ = UNSET
         else:
-            filter_ = SearchUserTaskVariablesFilter.from_dict(_filter_)
+            filter_ = UserTaskVariableFilter.from_dict(_filter_)
 
         def _parse_page(
             data: object,
         ) -> (
-            CursorBasedForwardPagination
+            CursorBasedBackwardPagination
+            | CursorBasedForwardPagination
             | LimitBasedPagination
             | OffsetBasedPagination
-            | PageCursorBasedBackwardPagination
             | Unset
         ):
             if isinstance(data, Unset):
@@ -165,7 +161,7 @@ class SearchUserTaskVariablesData:
                 raise TypeError()
 
             data = cast(dict[str, Any], data)
-            page_type_3 = PageCursorBasedBackwardPagination.from_dict(data)
+            page_type_3 = CursorBasedBackwardPagination.from_dict(data)
 
             return page_type_3
 

@@ -73,6 +73,7 @@ class AuditLogFilter:
         timestamp (AdvancedDateTimeFilter | datetime.datetime | Unset):
         actor_id (AdvancedStringFilter | str | Unset):
         actor_type (AdvancedActorTypeFilter | AuditLogActorTypeExactMatch | Unset):
+        agent_element_id (AdvancedStringFilter | str | Unset):
         entity_key (AdvancedAuditLogEntityKeyFilter | str | Unset):
         entity_type (AdvancedEntityTypeFilter | EntityTypeExactMatch | Unset):
         tenant_id (AdvancedStringFilter | str | Unset):
@@ -89,6 +90,9 @@ class AuditLogFilter:
         decision_definition_id (AdvancedStringFilter | str | Unset):
         decision_definition_key (AdvancedDecisionDefinitionKeyFilter | str | Unset):
         decision_evaluation_key (AdvancedDecisionEvaluationKeyFilter | str | Unset):
+        related_entity_key (AdvancedAuditLogEntityKeyFilter | str | Unset):
+        related_entity_type (AdvancedEntityTypeFilter | EntityTypeExactMatch | Unset):
+        entity_description (AdvancedStringFilter | str | Unset):
     """
 
     audit_log_key: AdvancedAuditLogKeyFilter | str | Unset = UNSET
@@ -102,6 +106,7 @@ class AuditLogFilter:
     timestamp: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     actor_id: AdvancedStringFilter | str | Unset = UNSET
     actor_type: AdvancedActorTypeFilter | AuditLogActorTypeExactMatch | Unset = UNSET
+    agent_element_id: AdvancedStringFilter | str | Unset = UNSET
     entity_key: AdvancedAuditLogEntityKeyFilter | str | Unset = UNSET
     entity_type: AdvancedEntityTypeFilter | EntityTypeExactMatch | Unset = UNSET
     tenant_id: AdvancedStringFilter | str | Unset = UNSET
@@ -122,6 +127,9 @@ class AuditLogFilter:
     decision_definition_id: AdvancedStringFilter | str | Unset = UNSET
     decision_definition_key: AdvancedDecisionDefinitionKeyFilter | str | Unset = UNSET
     decision_evaluation_key: AdvancedDecisionEvaluationKeyFilter | str | Unset = UNSET
+    related_entity_key: AdvancedAuditLogEntityKeyFilter | str | Unset = UNSET
+    related_entity_type: AdvancedEntityTypeFilter | EntityTypeExactMatch | Unset = UNSET
+    entity_description: AdvancedStringFilter | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -229,6 +237,14 @@ class AuditLogFilter:
             actor_type = self.actor_type.value
         else:
             actor_type = self.actor_type.to_dict()
+
+        agent_element_id: dict[str, Any] | str | Unset
+        if isinstance(self.agent_element_id, Unset):
+            agent_element_id = UNSET
+        elif isinstance(self.agent_element_id, AdvancedStringFilter):
+            agent_element_id = self.agent_element_id.to_dict()
+        else:
+            agent_element_id = self.agent_element_id
 
         entity_key: dict[str, Any] | str | Unset
         if isinstance(self.entity_key, Unset):
@@ -364,6 +380,30 @@ class AuditLogFilter:
         else:
             decision_evaluation_key = self.decision_evaluation_key
 
+        related_entity_key: dict[str, Any] | str | Unset
+        if isinstance(self.related_entity_key, Unset):
+            related_entity_key = UNSET
+        elif isinstance(self.related_entity_key, AdvancedAuditLogEntityKeyFilter):
+            related_entity_key = self.related_entity_key.to_dict()
+        else:
+            related_entity_key = self.related_entity_key
+
+        related_entity_type: dict[str, Any] | str | Unset
+        if isinstance(self.related_entity_type, Unset):
+            related_entity_type = UNSET
+        elif isinstance(self.related_entity_type, EntityTypeExactMatch):
+            related_entity_type = self.related_entity_type.value
+        else:
+            related_entity_type = self.related_entity_type.to_dict()
+
+        entity_description: dict[str, Any] | str | Unset
+        if isinstance(self.entity_description, Unset):
+            entity_description = UNSET
+        elif isinstance(self.entity_description, AdvancedStringFilter):
+            entity_description = self.entity_description.to_dict()
+        else:
+            entity_description = self.entity_description
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -385,6 +425,8 @@ class AuditLogFilter:
             field_dict["actorId"] = actor_id
         if actor_type is not UNSET:
             field_dict["actorType"] = actor_type
+        if agent_element_id is not UNSET:
+            field_dict["agentElementId"] = agent_element_id
         if entity_key is not UNSET:
             field_dict["entityKey"] = entity_key
         if entity_type is not UNSET:
@@ -417,6 +459,12 @@ class AuditLogFilter:
             field_dict["decisionDefinitionKey"] = decision_definition_key
         if decision_evaluation_key is not UNSET:
             field_dict["decisionEvaluationKey"] = decision_evaluation_key
+        if related_entity_key is not UNSET:
+            field_dict["relatedEntityKey"] = related_entity_key
+        if related_entity_type is not UNSET:
+            field_dict["relatedEntityType"] = related_entity_type
+        if entity_description is not UNSET:
+            field_dict["entityDescription"] = entity_description
 
         return field_dict
 
@@ -658,6 +706,23 @@ class AuditLogFilter:
             return actor_type_type_1
 
         actor_type = _parse_actor_type(d.pop("actorType", UNSET))
+
+        def _parse_agent_element_id(data: object) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                agent_element_id_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return agent_element_id_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        agent_element_id = _parse_agent_element_id(d.pop("agentElementId", UNSET))
 
         def _parse_entity_key(
             data: object,
@@ -989,6 +1054,73 @@ class AuditLogFilter:
             d.pop("decisionEvaluationKey", UNSET)
         )
 
+        def _parse_related_entity_key(
+            data: object,
+        ) -> AdvancedAuditLogEntityKeyFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                related_entity_key_type_1 = AdvancedAuditLogEntityKeyFilter.from_dict(
+                    data
+                )
+
+                return related_entity_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedAuditLogEntityKeyFilter | str | Unset, data)
+
+        related_entity_key = _parse_related_entity_key(d.pop("relatedEntityKey", UNSET))
+
+        def _parse_related_entity_type(
+            data: object,
+        ) -> AdvancedEntityTypeFilter | EntityTypeExactMatch | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                related_entity_type_type_0 = EntityTypeExactMatch(data)
+
+                return related_entity_type_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+
+            data = cast(dict[str, Any], data)
+            related_entity_type_type_1 = AdvancedEntityTypeFilter.from_dict(data)
+
+            return related_entity_type_type_1
+
+        related_entity_type = _parse_related_entity_type(
+            d.pop("relatedEntityType", UNSET)
+        )
+
+        def _parse_entity_description(
+            data: object,
+        ) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                entity_description_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return entity_description_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        entity_description = _parse_entity_description(
+            d.pop("entityDescription", UNSET)
+        )
+
         audit_log_filter = cls(
             audit_log_key=audit_log_key,
             process_definition_key=process_definition_key,
@@ -999,6 +1131,7 @@ class AuditLogFilter:
             timestamp=timestamp,
             actor_id=actor_id,
             actor_type=actor_type,
+            agent_element_id=agent_element_id,
             entity_key=entity_key,
             entity_type=entity_type,
             tenant_id=tenant_id,
@@ -1015,6 +1148,9 @@ class AuditLogFilter:
             decision_definition_id=decision_definition_id,
             decision_definition_key=decision_definition_key,
             decision_evaluation_key=decision_evaluation_key,
+            related_entity_key=related_entity_key,
+            related_entity_type=related_entity_type,
+            entity_description=entity_description,
         )
 
         audit_log_filter.additional_properties = d

@@ -4,14 +4,16 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.batch_operation_created_result import BatchOperationCreatedResult
-from ...models.modify_process_instances_batch_operation_data import (
-    ModifyProcessInstancesBatchOperationData,
-)
 from ...models.problem_detail import ProblemDetail
+from ...models.process_instance_modification_batch_operation_request import (
+    ProcessInstanceModificationBatchOperationRequest,
+)
 from ...types import Response
 
 
-def _get_kwargs(*, body: ModifyProcessInstancesBatchOperationData) -> dict[str, Any]:
+def _get_kwargs(
+    *, body: ProcessInstanceModificationBatchOperationRequest
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
         "method": "post",
@@ -61,7 +63,7 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: ModifyProcessInstancesBatchOperationData,
+    body: ProcessInstanceModificationBatchOperationRequest,
 ) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Modify process instances (batch)
 
@@ -75,8 +77,8 @@ def sync_detailed(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (ModifyProcessInstancesBatchOperationData): The process instance filter to define on
-            which process instances tokens should be moved,
+        body (ProcessInstanceModificationBatchOperationRequest): The process instance filter to
+            define on which process instances tokens should be moved,
             and new element instances should be activated or terminated.
 
     Raises:
@@ -94,7 +96,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: ModifyProcessInstancesBatchOperationData,
+    body: ProcessInstanceModificationBatchOperationRequest,
     **kwargs: Any,
 ) -> BatchOperationCreatedResult:
     """Modify process instances (batch)
@@ -109,8 +111,8 @@ def sync(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (ModifyProcessInstancesBatchOperationData): The process instance filter to define on
-            which process instances tokens should be moved,
+        body (ProcessInstanceModificationBatchOperationRequest): The process instance filter to
+            define on which process instances tokens should be moved,
             and new element instances should be activated or terminated.
 
     Raises:
@@ -156,7 +158,7 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: ModifyProcessInstancesBatchOperationData,
+    body: ProcessInstanceModificationBatchOperationRequest,
 ) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Modify process instances (batch)
 
@@ -170,8 +172,8 @@ async def asyncio_detailed(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (ModifyProcessInstancesBatchOperationData): The process instance filter to define on
-            which process instances tokens should be moved,
+        body (ProcessInstanceModificationBatchOperationRequest): The process instance filter to
+            define on which process instances tokens should be moved,
             and new element instances should be activated or terminated.
 
     Raises:
@@ -189,7 +191,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: ModifyProcessInstancesBatchOperationData,
+    body: ProcessInstanceModificationBatchOperationRequest,
     **kwargs: Any,
 ) -> BatchOperationCreatedResult:
     """Modify process instances (batch)
@@ -204,8 +206,8 @@ async def asyncio(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (ModifyProcessInstancesBatchOperationData): The process instance filter to define on
-            which process instances tokens should be moved,
+        body (ProcessInstanceModificationBatchOperationRequest): The process instance filter to
+            define on which process instances tokens should be moved,
             and new element instances should be activated or terminated.
 
     Raises:

@@ -31,6 +31,11 @@ class VariableResultBase:
         variable_key (str | Unset): The key for this variable. Example: 2251799813683287.
         scope_key (str | Unset): The key of the scope of this variable. Example: 2251799813683890.
         process_instance_key (str | Unset): The key of the process instance of this variable. Example: 2251799813690746.
+        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
+            top-level
+            ancestor in the process instance hierarchy. This field is only present for data
+            belonging to process instance hierarchies created in version 8.9 or later.
+             Example: 2251799813690746.
     """
 
     name: str | Unset = UNSET
@@ -38,6 +43,7 @@ class VariableResultBase:
     variable_key: VariableKey | Unset = UNSET
     scope_key: ScopeKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
+    root_process_instance_key: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -53,6 +59,8 @@ class VariableResultBase:
 
         process_instance_key = self.process_instance_key
 
+        root_process_instance_key = self.root_process_instance_key
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -66,6 +74,8 @@ class VariableResultBase:
             field_dict["scopeKey"] = scope_key
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
+        if root_process_instance_key is not UNSET:
+            field_dict["rootProcessInstanceKey"] = root_process_instance_key
 
         return field_dict
 
@@ -98,12 +108,15 @@ class VariableResultBase:
             else UNSET
         )
 
+        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
+
         variable_result_base = cls(
             name=name,
             tenant_id=tenant_id,
             variable_key=variable_key,
             scope_key=scope_key,
             process_instance_key=process_instance_key,
+            root_process_instance_key=root_process_instance_key,
         )
 
         variable_result_base.additional_properties = d

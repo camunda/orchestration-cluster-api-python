@@ -4,13 +4,13 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.search_group_ids_for_tenant_data import SearchGroupIdsForTenantData
+from ...models.tenant_group_search_query_request import TenantGroupSearchQueryRequest
 from ...models.tenant_group_search_result import TenantGroupSearchResult
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    tenant_id: str, *, body: SearchGroupIdsForTenantData | Unset = UNSET
+    tenant_id: str, *, body: TenantGroupSearchQueryRequest | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -53,7 +53,7 @@ def sync_detailed(
     tenant_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchGroupIdsForTenantData | Unset = UNSET,
+    body: TenantGroupSearchQueryRequest | Unset = UNSET,
 ) -> Response[TenantGroupSearchResult]:
     """Search groups for tenant
 
@@ -61,7 +61,7 @@ def sync_detailed(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (SearchGroupIdsForTenantData | Unset):
+        body (TenantGroupSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -79,7 +79,7 @@ def sync(
     tenant_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchGroupIdsForTenantData | Unset = UNSET,
+    body: TenantGroupSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> TenantGroupSearchResult:
     """Search groups for tenant
@@ -88,7 +88,7 @@ def sync(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (SearchGroupIdsForTenantData | Unset):
+        body (TenantGroupSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the response status code is not documented.
@@ -106,7 +106,7 @@ async def asyncio_detailed(
     tenant_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchGroupIdsForTenantData | Unset = UNSET,
+    body: TenantGroupSearchQueryRequest | Unset = UNSET,
 ) -> Response[TenantGroupSearchResult]:
     """Search groups for tenant
 
@@ -114,7 +114,7 @@ async def asyncio_detailed(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (SearchGroupIdsForTenantData | Unset):
+        body (TenantGroupSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -132,7 +132,7 @@ async def asyncio(
     tenant_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchGroupIdsForTenantData | Unset = UNSET,
+    body: TenantGroupSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> TenantGroupSearchResult:
     """Search groups for tenant
@@ -141,7 +141,7 @@ async def asyncio(
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
-        body (SearchGroupIdsForTenantData | Unset):
+        body (TenantGroupSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the response status code is not documented.

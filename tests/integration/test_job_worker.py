@@ -8,8 +8,8 @@ from camunda_orchestration_sdk.models.process_creation_by_key import (
 from camunda_orchestration_sdk.types import File
 
 from camunda_orchestration_sdk.models.create_deployment_data import CreateDeploymentData
-from camunda_orchestration_sdk.models.search_process_instances_data import (
-    SearchProcessInstancesData,
+from camunda_orchestration_sdk.models.process_instance_search_query import (
+    ProcessInstanceSearchQuery,
 )
 from camunda_orchestration_sdk.models.process_instance_search_query_filter import (
     ProcessInstanceSearchQueryFilter,
@@ -69,7 +69,7 @@ async def test_job_worker_performance():
         _ = process_definition.process_definition_id
 
         # Cancel all running instances of process
-        searchQuery = SearchProcessInstancesData(
+        searchQuery = ProcessInstanceSearchQuery(
             filter_=ProcessInstanceSearchQueryFilter(
                 process_definition_key=process_definition_key,
                 state=AdvancedProcessInstanceStateFilter(

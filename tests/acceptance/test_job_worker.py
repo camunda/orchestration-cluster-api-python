@@ -9,12 +9,12 @@ from camunda_orchestration_sdk.runtime.job_worker import (
     JobError,
     JobFailure,
 )
-from camunda_orchestration_sdk.models.activate_jobs_jobs_item import (
-    ActivateJobsJobsItem,
+from camunda_orchestration_sdk.models.activated_job_result import (
+    ActivatedJobResult,
 )
-from camunda_orchestration_sdk.models.complete_job_data import CompleteJobData
-from camunda_orchestration_sdk.models.activate_jobs_response_200 import (
-    ActivateJobsResponse200,
+from camunda_orchestration_sdk.models.job_completion_request import JobCompletionRequest
+from camunda_orchestration_sdk.models.job_activation_result import (
+    JobActivationResult,
 )
 from camunda_orchestration_sdk.models.job_fail_request import JobFailRequest
 from camunda_orchestration_sdk.models.job_error_request import JobErrorRequest
@@ -26,7 +26,7 @@ def mock_client():
     client.complete_job = AsyncMock()
     client.fail_job = AsyncMock()
     client.throw_job_error = AsyncMock()
-    client.activate_jobs = AsyncMock(return_value=ActivateJobsResponse200(jobs=[]))
+    client.activate_jobs = AsyncMock(return_value=JobActivationResult(jobs=[]))
     return client
 
 
@@ -40,7 +40,7 @@ def mock_worker():
 
 @pytest.fixture
 def mock_job_item():
-    job = MagicMock(spec=ActivateJobsJobsItem)
+    job = MagicMock(spec=ActivatedJobResult)
     job.job_key = 12345
     job.type_ = "test-job"
     job.process_instance_key = 1
@@ -70,7 +70,7 @@ async def test_job_completion(mock_client: MagicMock, mock_job_item: JobContext)
     mock_client.complete_job.assert_called_once()
     call_args = mock_client.complete_job.call_args
     assert call_args.kwargs["job_key"] == 12345
-    assert isinstance(call_args.kwargs["data"], CompleteJobData)
+    assert isinstance(call_args.kwargs["data"], JobCompletionRequest)
 
 
 @pytest.mark.asyncio
@@ -186,11 +186,11 @@ async def test_worker_concurrency_limit(mock_client: MagicMock):
     worker = JobWorker(mock_client, slow_callback, config)
 
     # Mock poll response to return 2 jobs each time
-    job1 = MagicMock(spec=ActivateJobsJobsItem)
+    job1 = MagicMock(spec=ActivatedJobResult)
     job1.job_key = 1
-    job2 = MagicMock(spec=ActivateJobsJobsItem)
+    job2 = MagicMock(spec=ActivatedJobResult)
     job2.job_key = 2
-    job3 = MagicMock(spec=ActivateJobsJobsItem)
+    job3 = MagicMock(spec=ActivatedJobResult)
     job3.job_key = 3
 
     # First poll returns 2 jobs (filling capacity)
@@ -201,7 +201,7 @@ async def test_worker_concurrency_limit(mock_client: MagicMock):
 
     # 1. Initial state: 0 active jobs
     worker.active_jobs = 0
-    mock_client.activate_jobs.return_value = ActivateJobsResponse200(jobs=[job1, job2])
+    mock_client.activate_jobs.return_value = JobActivationResult(jobs=[job1, job2])
 
     jobs = await worker._poll_for_jobs()  # pyright: ignore[reportPrivateUsage]
     assert len(jobs) == 2
@@ -218,7 +218,7 @@ async def test_worker_concurrency_limit(mock_client: MagicMock):
     assert worker.active_jobs == 1
 
     # 4. Capacity available: should poll again
-    mock_client.activate_jobs.return_value = ActivateJobsResponse200(jobs=[job3])
+    mock_client.activate_jobs.return_value = JobActivationResult(jobs=[job3])
     jobs = await worker._poll_for_jobs()  # pyright: ignore[reportPrivateUsage]
     assert len(jobs) == 1
     assert worker.active_jobs == 2

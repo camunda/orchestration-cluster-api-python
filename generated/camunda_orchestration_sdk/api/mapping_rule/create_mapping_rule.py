@@ -3,8 +3,8 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.create_mapping_rule_response_201 import CreateMappingRuleResponse201
 from ...models.mapping_rule_create_request import MappingRuleCreateRequest
-from ...models.mapping_rule_update_result import MappingRuleUpdateResult
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
@@ -21,9 +21,9 @@ def _get_kwargs(*, body: MappingRuleCreateRequest | Unset = UNSET) -> dict[str, 
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> MappingRuleUpdateResult | ProblemDetail | None:
+) -> CreateMappingRuleResponse201 | ProblemDetail | None:
     if response.status_code == 201:
-        response_201 = MappingRuleUpdateResult.from_dict(response.json())
+        response_201 = CreateMappingRuleResponse201.from_dict(response.json())
         return response_201
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -45,7 +45,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[MappingRuleUpdateResult | ProblemDetail]:
+) -> Response[CreateMappingRuleResponse201 | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -58,7 +58,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: MappingRuleCreateRequest | Unset = UNSET,
-) -> Response[MappingRuleUpdateResult | ProblemDetail]:
+) -> Response[CreateMappingRuleResponse201 | ProblemDetail]:
     """Create mapping rule
 
      Create a new mapping rule
@@ -71,7 +71,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[MappingRuleUpdateResult | ProblemDetail]
+        Response[CreateMappingRuleResponse201 | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -83,7 +83,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: MappingRuleCreateRequest | Unset = UNSET,
     **kwargs: Any,
-) -> MappingRuleUpdateResult:
+) -> CreateMappingRuleResponse201:
     """Create mapping rule
 
      Create a new mapping rule
@@ -99,7 +99,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        MappingRuleUpdateResult"""
+        CreateMappingRuleResponse201"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -128,14 +128,14 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(MappingRuleUpdateResult, response.parsed)
+    return cast(CreateMappingRuleResponse201, response.parsed)
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: MappingRuleCreateRequest | Unset = UNSET,
-) -> Response[MappingRuleUpdateResult | ProblemDetail]:
+) -> Response[CreateMappingRuleResponse201 | ProblemDetail]:
     """Create mapping rule
 
      Create a new mapping rule
@@ -148,7 +148,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[MappingRuleUpdateResult | ProblemDetail]
+        Response[CreateMappingRuleResponse201 | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -160,7 +160,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: MappingRuleCreateRequest | Unset = UNSET,
     **kwargs: Any,
-) -> MappingRuleUpdateResult:
+) -> CreateMappingRuleResponse201:
     """Create mapping rule
 
      Create a new mapping rule
@@ -176,7 +176,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        MappingRuleUpdateResult"""
+        CreateMappingRuleResponse201"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -205,4 +205,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(MappingRuleUpdateResult, response.parsed)
+    return cast(CreateMappingRuleResponse201, response.parsed)

@@ -5,18 +5,19 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
-from ..models.process_creation_by_key_runtime_instructions_item_type_0 import ProcessCreationByKeyRuntimeInstructionsItemType0
 from ..models.process_instance_creation_instruction_by_id_variables import ProcessInstanceCreationInstructionByIdVariables
 from ..models.process_instance_creation_start_instruction import ProcessInstanceCreationStartInstruction
+from ..models.process_instance_creation_terminate_instruction import ProcessInstanceCreationTerminateInstruction
 T = TypeVar("T", bound="ProcessCreationByKey")
 @_attrs_define
 class ProcessCreationByKey:
     process_definition_key: ProcessDefinitionKey
+    process_definition_version: int | Unset = -1
     variables: ProcessInstanceCreationInstructionByIdVariables | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET
-    runtime_instructions: (
-            list[ProcessCreationByKeyRuntimeInstructionsItemType0] | Unset
-        ) = UNSET
+    runtime_instructions: list[ProcessInstanceCreationTerminateInstruction] | Unset = (
+            UNSET
+        )
     tenant_id: TenantId | Unset = UNSET
     operation_reference: int | Unset = UNSET
     await_completion: bool | Unset = False

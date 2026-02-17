@@ -52,6 +52,11 @@ class ElementInstanceResult:
         process_definition_key (str): The process definition key associated to this element instance. Example:
             2251799813686749.
         end_date (datetime.datetime | Unset): Date when element instance finished.
+        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
+            top-level
+            ancestor in the process instance hierarchy. This field is only present for data
+            belonging to process instance hierarchies created in version 8.9 or later.
+             Example: 2251799813690746.
         incident_key (str | Unset): Incident key associated with this element instance. Example: 2251799813689432.
     """
 
@@ -67,6 +72,7 @@ class ElementInstanceResult:
     process_instance_key: ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
     end_date: datetime.datetime | Unset = UNSET
+    root_process_instance_key: str | Unset = UNSET
     incident_key: IncidentKey | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -99,6 +105,8 @@ class ElementInstanceResult:
         if not isinstance(self.end_date, Unset):
             end_date = self.end_date.isoformat()
 
+        root_process_instance_key = self.root_process_instance_key
+
         incident_key = self.incident_key
 
         field_dict: dict[str, Any] = {}
@@ -120,6 +128,8 @@ class ElementInstanceResult:
         )
         if end_date is not UNSET:
             field_dict["endDate"] = end_date
+        if root_process_instance_key is not UNSET:
+            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if incident_key is not UNSET:
             field_dict["incidentKey"] = incident_key
 
@@ -159,6 +169,8 @@ class ElementInstanceResult:
         else:
             end_date = isoparse(_end_date)
 
+        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
+
         incident_key = (
             lift_incident_key(_val)
             if (_val := d.pop("incidentKey", UNSET)) is not UNSET
@@ -178,6 +190,7 @@ class ElementInstanceResult:
             process_instance_key=process_instance_key,
             process_definition_key=process_definition_key,
             end_date=end_date,
+            root_process_instance_key=root_process_instance_key,
             incident_key=incident_key,
         )
 

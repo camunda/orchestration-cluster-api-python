@@ -1,8 +1,8 @@
 import os
 import pytest
 from camunda_orchestration_sdk import CamundaAsyncClient
-from camunda_orchestration_sdk.models.search_process_instances_data import (
-    SearchProcessInstancesData,
+from camunda_orchestration_sdk.models.process_instance_search_query import (
+    ProcessInstanceSearchQuery,
 )
 from camunda_orchestration_sdk.models.offset_based_pagination import (
     OffsetBasedPagination,
@@ -27,7 +27,7 @@ async def test_searchProcessInstances_smoke():
 
         page = OffsetBasedPagination(from_=0, limit=50)
 
-        query = SearchProcessInstancesData(page=page)
+        query = ProcessInstanceSearchQuery(page=page)
         resp = await camunda.search_process_instances(data=query)
 
         print(resp)

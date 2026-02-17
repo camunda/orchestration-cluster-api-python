@@ -14,14 +14,14 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.process_creation_by_key_runtime_instructions_item_type_0 import (
-        ProcessCreationByKeyRuntimeInstructionsItemType0,
-    )
     from ..models.process_instance_creation_instruction_by_id_variables import (
         ProcessInstanceCreationInstructionByIdVariables,
     )
     from ..models.process_instance_creation_start_instruction import (
         ProcessInstanceCreationStartInstruction,
+    )
+    from ..models.process_instance_creation_terminate_instruction import (
+        ProcessInstanceCreationTerminateInstruction,
     )
 
 
@@ -36,6 +36,10 @@ class ProcessCreationByKey:
             process in the
             deploy resources endpoint.
              Example: 2251799813686749.
+        process_definition_version (int | Unset): As the version is already identified by the `processDefinitionKey`,
+            the value of this field is ignored.
+            It's here for backwards-compatibility only as previous releases accepted it in request bodies.
+             Default: -1.
         variables (ProcessInstanceCreationInstructionByIdVariables | Unset): JSON object that will instantiate the
             variables for the root variable scope
             of the process instance.
@@ -43,8 +47,8 @@ class ProcessCreationByKey:
             default, the process instance will start at
             the start event. If provided, the process instance will apply start instructions
             after it has been created.
-        runtime_instructions (list[ProcessCreationByKeyRuntimeInstructionsItemType0] | Unset): Runtime instructions
-            (alpha). List of instructions that affect the runtime behavior of
+        runtime_instructions (list[ProcessInstanceCreationTerminateInstruction] | Unset): Runtime instructions (alpha).
+            List of instructions that affect the runtime behavior of
             the process instance. Refer to specific instruction types for more details.
 
             This parameter is an alpha feature and may be subject to change
@@ -69,11 +73,12 @@ class ProcessCreationByKey:
     """
 
     process_definition_key: ProcessDefinitionKey
+    process_definition_version: int | Unset = -1
     variables: ProcessInstanceCreationInstructionByIdVariables | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET
-    runtime_instructions: (
-        list[ProcessCreationByKeyRuntimeInstructionsItemType0] | Unset
-    ) = UNSET
+    runtime_instructions: list[ProcessInstanceCreationTerminateInstruction] | Unset = (
+        UNSET
+    )
     tenant_id: TenantId | Unset = UNSET
     operation_reference: int | Unset = UNSET
     await_completion: bool | Unset = False
@@ -83,6 +88,8 @@ class ProcessCreationByKey:
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_key = self.process_definition_key
+
+        process_definition_version = self.process_definition_version
 
         variables: dict[str, Any] | Unset = UNSET
         if not isinstance(self.variables, Unset):
@@ -100,7 +107,6 @@ class ProcessCreationByKey:
             runtime_instructions = []
             for runtime_instructions_item_data in self.runtime_instructions:
                 runtime_instructions_item = runtime_instructions_item_data.to_dict()
-
                 runtime_instructions.append(runtime_instructions_item)
 
         tenant_id = self.tenant_id
@@ -126,6 +132,8 @@ class ProcessCreationByKey:
                 "processDefinitionKey": process_definition_key,
             }
         )
+        if process_definition_version is not UNSET:
+            field_dict["processDefinitionVersion"] = process_definition_version
         if variables is not UNSET:
             field_dict["variables"] = variables
         if start_instructions is not UNSET:
@@ -149,20 +157,22 @@ class ProcessCreationByKey:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.process_creation_by_key_runtime_instructions_item_type_0 import (
-            ProcessCreationByKeyRuntimeInstructionsItemType0,
-        )
         from ..models.process_instance_creation_instruction_by_id_variables import (
             ProcessInstanceCreationInstructionByIdVariables,
         )
         from ..models.process_instance_creation_start_instruction import (
             ProcessInstanceCreationStartInstruction,
         )
+        from ..models.process_instance_creation_terminate_instruction import (
+            ProcessInstanceCreationTerminateInstruction,
+        )
 
         d = dict(src_dict)
         process_definition_key = lift_process_definition_key(
             d.pop("processDefinitionKey")
         )
+
+        process_definition_version = d.pop("processDefinitionVersion", UNSET)
 
         _variables = d.pop("variables", UNSET)
         variables: ProcessInstanceCreationInstructionByIdVariables | Unset
@@ -190,27 +200,15 @@ class ProcessCreationByKey:
 
         _runtime_instructions = d.pop("runtimeInstructions", UNSET)
         runtime_instructions: (
-            list[ProcessCreationByKeyRuntimeInstructionsItemType0] | Unset
+            list[ProcessInstanceCreationTerminateInstruction] | Unset
         ) = UNSET
         if _runtime_instructions is not UNSET:
             runtime_instructions = []
             for runtime_instructions_item_data in _runtime_instructions:
-
-                def _parse_runtime_instructions_item(
-                    data: object,
-                ) -> ProcessCreationByKeyRuntimeInstructionsItemType0:
-                    if not isinstance(data, dict):
-                        raise TypeError()
-
-                    data = cast(dict[str, Any], data)
-                    runtime_instructions_item_type_0 = (
-                        ProcessCreationByKeyRuntimeInstructionsItemType0.from_dict(data)
+                runtime_instructions_item = (
+                    ProcessInstanceCreationTerminateInstruction.from_dict(
+                        runtime_instructions_item_data
                     )
-
-                    return runtime_instructions_item_type_0
-
-                runtime_instructions_item = _parse_runtime_instructions_item(
-                    runtime_instructions_item_data
                 )
 
                 runtime_instructions.append(runtime_instructions_item)
@@ -233,6 +231,7 @@ class ProcessCreationByKey:
 
         process_creation_by_key = cls(
             process_definition_key=process_definition_key,
+            process_definition_version=process_definition_version,
             variables=variables,
             start_instructions=start_instructions,
             runtime_instructions=runtime_instructions,

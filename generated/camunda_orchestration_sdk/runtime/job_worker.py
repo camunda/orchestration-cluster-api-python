@@ -21,10 +21,10 @@ from typing import (
 from dataclasses import dataclass
 from .logging import SdkLogger, NullLogger, create_logger
 from camunda_orchestration_sdk.models.job_activation_request import JobActivationRequest
-from camunda_orchestration_sdk.models.activate_jobs_jobs_item import (
-    ActivateJobsJobsItem,
+from camunda_orchestration_sdk.models.activated_job_result import (
+    ActivatedJobResult,
 )
-from camunda_orchestration_sdk.models.complete_job_data import CompleteJobData
+from camunda_orchestration_sdk.models.job_completion_request import JobCompletionRequest
 from camunda_orchestration_sdk.models.job_completion_request_variables import (
     JobCompletionRequestVariables,
 )
@@ -40,7 +40,7 @@ EXECUTION_STRATEGY = _EFFECTIVE_EXECUTION_STRATEGY | Literal["auto"]
 
 # Define action types for type narrowing
 ActionComplete = Tuple[
-    Literal["complete"], Union[dict[str, Any], CompleteJobData, None]
+    Literal["complete"], Union[dict[str, Any], JobCompletionRequest, None]
 ]
 ActionFail = Tuple[Literal["fail"], Tuple[str, int | None, int]]
 ActionError = Tuple[Literal["error"], Tuple[str, str]]
@@ -59,7 +59,7 @@ class HintedCallable(Protocol):
 
 
 @attrs.define
-class JobContext(ActivateJobsJobsItem):
+class JobContext(ActivatedJobResult):
     """Read-only context for a job execution.
 
     Attributes:
@@ -72,12 +72,12 @@ class JobContext(ActivateJobsJobsItem):
 
     @classmethod
     def from_job(
-        cls, job: ActivateJobsJobsItem, logger: SdkLogger | None = None
+        cls, job: ActivatedJobResult, logger: SdkLogger | None = None
     ) -> "JobContext":
         # Extract init fields from the parent data class
         init_fields = {
             f.name: getattr(job, f.name)
-            for f in attrs.fields(ActivateJobsJobsItem)
+            for f in attrs.fields(ActivatedJobResult)
             if f.init
         }
         if logger is not None:
@@ -86,7 +86,7 @@ class JobContext(ActivateJobsJobsItem):
 
 
 AsyncJobHandler = Callable[
-    [JobContext], Coroutine[Any, Any, dict[str, Any] | CompleteJobData | None]
+    [JobContext], Coroutine[Any, Any, dict[str, Any] | JobCompletionRequest | None]
 ]
 SyncJobHandler = Callable[[JobContext], dict[str, Any] | None]
 JobHandler = AsyncJobHandler | SyncJobHandler | HintedCallable
@@ -326,7 +326,7 @@ class JobWorker:
         capacity = self.config.max_concurrent_jobs - current_active
         if capacity <= 0:
             self.logger.trace("Max concurrent jobs reached, skipping poll")
-            empty_jobs: list[ActivateJobsJobsItem] = []
+            empty_jobs: list[ActivatedJobResult] = []
             return empty_jobs
 
         self.logger.debug(
@@ -351,7 +351,7 @@ class JobWorker:
                 self.active_jobs += len(jobsResult.jobs)
         return jobsResult.jobs  # Return list of jobs
 
-    async def _execute_job(self, job_item: ActivateJobsJobsItem):
+    async def _execute_job(self, job_item: ActivatedJobResult):
         """Execute a single job with appropriate strategy"""
 
         # Create context with a job-scoped child logger
@@ -407,14 +407,14 @@ class JobWorker:
                     if action[0] == "complete":
                         _, action_data = action
                         # Ensure data is in correct format
-                        complete_data = CompleteJobData()
+                        complete_data = JobCompletionRequest()
                         if isinstance(action_data, dict):
-                            complete_data = CompleteJobData(
+                            complete_data = JobCompletionRequest(
                                 variables=JobCompletionRequestVariables.from_dict(
                                     action_data
                                 )
                             )
-                        elif isinstance(action_data, CompleteJobData):
+                        elif isinstance(action_data, JobCompletionRequest):
                             complete_data = action_data
 
                         await self.client.complete_job(

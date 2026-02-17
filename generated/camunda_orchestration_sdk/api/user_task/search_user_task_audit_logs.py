@@ -4,16 +4,16 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.audit_log_search_query_result import AuditLogSearchQueryResult
 from ...models.problem_detail import ProblemDetail
-from ...models.search_user_task_audit_logs_data import SearchUserTaskAuditLogsData
-from ...models.search_user_task_audit_logs_response_200 import (
-    SearchUserTaskAuditLogsResponse200,
+from ...models.user_task_audit_log_search_query_request import (
+    UserTaskAuditLogSearchQueryRequest,
 )
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    user_task_key: str, *, body: SearchUserTaskAuditLogsData | Unset = UNSET
+    user_task_key: str, *, body: UserTaskAuditLogSearchQueryRequest | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -31,9 +31,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | SearchUserTaskAuditLogsResponse200 | None:
+) -> AuditLogSearchQueryResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = SearchUserTaskAuditLogsResponse200.from_dict(response.json())
+        response_200 = AuditLogSearchQueryResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -49,7 +49,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | SearchUserTaskAuditLogsResponse200]:
+) -> Response[AuditLogSearchQueryResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -62,22 +62,22 @@ def sync_detailed(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUserTaskAuditLogsData | Unset = UNSET,
-) -> Response[ProblemDetail | SearchUserTaskAuditLogsResponse200]:
+    body: UserTaskAuditLogSearchQueryRequest | Unset = UNSET,
+) -> Response[AuditLogSearchQueryResult | ProblemDetail]:
     """Search user task audit logs
 
      Search for user task audit logs based on given criteria.
 
     Args:
         user_task_key (str): System-generated key for a user task.
-        body (SearchUserTaskAuditLogsData | Unset): User task search query request.
+        body (UserTaskAuditLogSearchQueryRequest | Unset): User task search query request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchUserTaskAuditLogsResponse200]
+        Response[AuditLogSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(user_task_key=user_task_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -88,16 +88,16 @@ def sync(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUserTaskAuditLogsData | Unset = UNSET,
+    body: UserTaskAuditLogSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchUserTaskAuditLogsResponse200:
+) -> AuditLogSearchQueryResult:
     """Search user task audit logs
 
      Search for user task audit logs based on given criteria.
 
     Args:
         user_task_key (str): System-generated key for a user task.
-        body (SearchUserTaskAuditLogsData | Unset): User task search query request.
+        body (UserTaskAuditLogSearchQueryRequest | Unset): User task search query request.
 
     Raises:
         errors.SearchUserTaskAuditLogsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -105,7 +105,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchUserTaskAuditLogsResponse200"""
+        AuditLogSearchQueryResult"""
     response = sync_detailed(user_task_key=user_task_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -122,29 +122,29 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchUserTaskAuditLogsResponse200, response.parsed)
+    return cast(AuditLogSearchQueryResult, response.parsed)
 
 
 async def asyncio_detailed(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUserTaskAuditLogsData | Unset = UNSET,
-) -> Response[ProblemDetail | SearchUserTaskAuditLogsResponse200]:
+    body: UserTaskAuditLogSearchQueryRequest | Unset = UNSET,
+) -> Response[AuditLogSearchQueryResult | ProblemDetail]:
     """Search user task audit logs
 
      Search for user task audit logs based on given criteria.
 
     Args:
         user_task_key (str): System-generated key for a user task.
-        body (SearchUserTaskAuditLogsData | Unset): User task search query request.
+        body (UserTaskAuditLogSearchQueryRequest | Unset): User task search query request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchUserTaskAuditLogsResponse200]
+        Response[AuditLogSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(user_task_key=user_task_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -155,16 +155,16 @@ async def asyncio(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUserTaskAuditLogsData | Unset = UNSET,
+    body: UserTaskAuditLogSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchUserTaskAuditLogsResponse200:
+) -> AuditLogSearchQueryResult:
     """Search user task audit logs
 
      Search for user task audit logs based on given criteria.
 
     Args:
         user_task_key (str): System-generated key for a user task.
-        body (SearchUserTaskAuditLogsData | Unset): User task search query request.
+        body (UserTaskAuditLogSearchQueryRequest | Unset): User task search query request.
 
     Raises:
         errors.SearchUserTaskAuditLogsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -172,7 +172,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchUserTaskAuditLogsResponse200"""
+        AuditLogSearchQueryResult"""
     response = await asyncio_detailed(
         user_task_key=user_task_key, client=client, body=body
     )
@@ -191,4 +191,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchUserTaskAuditLogsResponse200, response.parsed)
+    return cast(AuditLogSearchQueryResult, response.parsed)

@@ -35,6 +35,9 @@ if TYPE_CHECKING:
     from ..models.advanced_decision_instance_state_filter import (
         AdvancedDecisionInstanceStateFilter,
     )
+    from ..models.advanced_decision_requirements_key_filter import (
+        AdvancedDecisionRequirementsKeyFilter,
+    )
     from ..models.advanced_element_instance_key_filter import (
         AdvancedElementInstanceKeyFilter,
     )
@@ -66,6 +69,7 @@ class DecisionInstanceDeletionBatchOperationRequestFilter:
         decision_definition_key (AdvancedDecisionDefinitionKeyFilter | str | Unset):
         element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset):
         root_decision_definition_key (AdvancedDecisionDefinitionKeyFilter | str | Unset):
+        decision_requirements_key (AdvancedDecisionRequirementsKeyFilter | str | Unset):
     """
 
     decision_evaluation_instance_key: (
@@ -89,6 +93,9 @@ class DecisionInstanceDeletionBatchOperationRequestFilter:
     root_decision_definition_key: AdvancedDecisionDefinitionKeyFilter | str | Unset = (
         UNSET
     )
+    decision_requirements_key: AdvancedDecisionRequirementsKeyFilter | str | Unset = (
+        UNSET
+    )
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -99,6 +106,9 @@ class DecisionInstanceDeletionBatchOperationRequestFilter:
         )
         from ..models.advanced_decision_evaluation_instance_key_filter import (
             AdvancedDecisionEvaluationInstanceKeyFilter,
+        )
+        from ..models.advanced_decision_requirements_key_filter import (
+            AdvancedDecisionRequirementsKeyFilter,
         )
         from ..models.advanced_element_instance_key_filter import (
             AdvancedElementInstanceKeyFilter,
@@ -181,6 +191,16 @@ class DecisionInstanceDeletionBatchOperationRequestFilter:
         else:
             root_decision_definition_key = self.root_decision_definition_key
 
+        decision_requirements_key: dict[str, Any] | str | Unset
+        if isinstance(self.decision_requirements_key, Unset):
+            decision_requirements_key = UNSET
+        elif isinstance(
+            self.decision_requirements_key, AdvancedDecisionRequirementsKeyFilter
+        ):
+            decision_requirements_key = self.decision_requirements_key.to_dict()
+        else:
+            decision_requirements_key = self.decision_requirements_key
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -216,6 +236,8 @@ class DecisionInstanceDeletionBatchOperationRequestFilter:
             field_dict["elementInstanceKey"] = element_instance_key
         if root_decision_definition_key is not UNSET:
             field_dict["rootDecisionDefinitionKey"] = root_decision_definition_key
+        if decision_requirements_key is not UNSET:
+            field_dict["decisionRequirementsKey"] = decision_requirements_key
 
         return field_dict
 
@@ -230,6 +252,9 @@ class DecisionInstanceDeletionBatchOperationRequestFilter:
         )
         from ..models.advanced_decision_instance_state_filter import (
             AdvancedDecisionInstanceStateFilter,
+        )
+        from ..models.advanced_decision_requirements_key_filter import (
+            AdvancedDecisionRequirementsKeyFilter,
         )
         from ..models.advanced_element_instance_key_filter import (
             AdvancedElementInstanceKeyFilter,
@@ -424,6 +449,29 @@ class DecisionInstanceDeletionBatchOperationRequestFilter:
             d.pop("rootDecisionDefinitionKey", UNSET)
         )
 
+        def _parse_decision_requirements_key(
+            data: object,
+        ) -> AdvancedDecisionRequirementsKeyFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                decision_requirements_key_type_1 = (
+                    AdvancedDecisionRequirementsKeyFilter.from_dict(data)
+                )
+
+                return decision_requirements_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedDecisionRequirementsKeyFilter | str | Unset, data)
+
+        decision_requirements_key = _parse_decision_requirements_key(
+            d.pop("decisionRequirementsKey", UNSET)
+        )
+
         decision_instance_deletion_batch_operation_request_filter = cls(
             decision_evaluation_instance_key=decision_evaluation_instance_key,
             state=state,
@@ -440,6 +488,7 @@ class DecisionInstanceDeletionBatchOperationRequestFilter:
             decision_definition_key=decision_definition_key,
             element_instance_key=element_instance_key,
             root_decision_definition_key=root_decision_definition_key,
+            decision_requirements_key=decision_requirements_key,
         )
 
         decision_instance_deletion_batch_operation_request_filter.additional_properties = d

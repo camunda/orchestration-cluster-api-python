@@ -4,13 +4,15 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.migrate_process_instance_data import MigrateProcessInstanceData
 from ...models.problem_detail import ProblemDetail
+from ...models.process_instance_migration_instruction import (
+    ProcessInstanceMigrationInstruction,
+)
 from ...types import Response
 
 
 def _get_kwargs(
-    process_instance_key: str, *, body: MigrateProcessInstanceData
+    process_instance_key: str, *, body: ProcessInstanceMigrationInstruction
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -67,7 +69,7 @@ def sync_detailed(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: MigrateProcessInstanceData,
+    body: ProcessInstanceMigrationInstruction,
 ) -> Response[Any | ProblemDetail]:
     """Migrate process instance
 
@@ -82,8 +84,8 @@ def sync_detailed(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (MigrateProcessInstanceData): The migration instructions describe how to migrate a
-            process instance from one process definition to another.
+        body (ProcessInstanceMigrationInstruction): The migration instructions describe how to
+            migrate a process instance from one process definition to another.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -101,7 +103,7 @@ def sync(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: MigrateProcessInstanceData,
+    body: ProcessInstanceMigrationInstruction,
     **kwargs: Any,
 ) -> None:
     """Migrate process instance
@@ -117,8 +119,8 @@ def sync(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (MigrateProcessInstanceData): The migration instructions describe how to migrate a
-            process instance from one process definition to another.
+        body (ProcessInstanceMigrationInstruction): The migration instructions describe how to
+            migrate a process instance from one process definition to another.
 
     Raises:
         errors.MigrateProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
@@ -172,7 +174,7 @@ async def asyncio_detailed(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: MigrateProcessInstanceData,
+    body: ProcessInstanceMigrationInstruction,
 ) -> Response[Any | ProblemDetail]:
     """Migrate process instance
 
@@ -187,8 +189,8 @@ async def asyncio_detailed(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (MigrateProcessInstanceData): The migration instructions describe how to migrate a
-            process instance from one process definition to another.
+        body (ProcessInstanceMigrationInstruction): The migration instructions describe how to
+            migrate a process instance from one process definition to another.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -206,7 +208,7 @@ async def asyncio(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: MigrateProcessInstanceData,
+    body: ProcessInstanceMigrationInstruction,
     **kwargs: Any,
 ) -> None:
     """Migrate process instance
@@ -222,8 +224,8 @@ async def asyncio(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (MigrateProcessInstanceData): The migration instructions describe how to migrate a
-            process instance from one process definition to another.
+        body (ProcessInstanceMigrationInstruction): The migration instructions describe how to
+            migrate a process instance from one process definition to another.
 
     Raises:
         errors.MigrateProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.

@@ -4,13 +4,13 @@ import attrs
 from typing import Callable, Literal, Protocol, Any, runtime_checkable, Awaitable, Coroutine, Union, Tuple
 from dataclasses import dataclass
 from .logging import SdkLogger, NullLogger
-from camunda_orchestration_sdk.models.activate_jobs_jobs_item import ActivateJobsJobsItem
-from camunda_orchestration_sdk.models.complete_job_data import CompleteJobData
+from camunda_orchestration_sdk.models.activated_job_result import ActivatedJobResult
+from camunda_orchestration_sdk.models.job_completion_request import JobCompletionRequest
 from camunda_orchestration_sdk import CamundaAsyncClient
 _EFFECTIVE_EXECUTION_STRATEGY = Literal["thread", "process", "async"]
 EXECUTION_STRATEGY = _EFFECTIVE_EXECUTION_STRATEGY | Literal["auto"]
 ActionComplete = Tuple[
-    Literal["complete"], Union[dict[str, Any], CompleteJobData, None]
+    Literal["complete"], Union[dict[str, Any], JobCompletionRequest, None]
 ]
 ActionFail = Tuple[Literal["fail"], Tuple[str, int | None, int]]
 ActionError = Tuple[Literal["error"], Tuple[str, str]]
@@ -21,12 +21,12 @@ class HintedCallable(Protocol):
     _execution_hint: _EFFECTIVE_EXECUTION_STRATEGY
     def __call__(self, job: Any) -> dict[str, Any] | None | Awaitable[dict[str, Any] | None]: ...
 @attrs.define
-class JobContext(ActivateJobsJobsItem):
+class JobContext(ActivatedJobResult):
     log: SdkLogger = attrs.field(factory=lambda: SdkLogger(NullLogger()))
     @classmethod
-    def from_job(cls, job: ActivateJobsJobsItem, logger: SdkLogger | None = None) -> "JobContext": ...
+    def from_job(cls, job: ActivatedJobResult, logger: SdkLogger | None = None) -> "JobContext": ...
 AsyncJobHandler = Callable[
-    [JobContext], Coroutine[Any, Any, dict[str, Any] | CompleteJobData | None]
+    [JobContext], Coroutine[Any, Any, dict[str, Any] | JobCompletionRequest | None]
 ]
 SyncJobHandler = Callable[[JobContext], dict[str, Any] | None]
 JobHandler = AsyncJobHandler | SyncJobHandler | HintedCallable
@@ -60,4 +60,4 @@ class JobWorker:
     def stop(self) -> None: ...
     async def poll_loop(self) -> None: ...
     async def _poll_for_jobs(self) -> None: ...
-    async def _execute_job(self, job_item: ActivateJobsJobsItem) -> None: ...
+    async def _execute_job(self, job_item: ActivatedJobResult) -> None: ...

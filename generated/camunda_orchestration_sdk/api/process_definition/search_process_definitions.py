@@ -4,15 +4,15 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
+from ...models.process_definition_search_query import ProcessDefinitionSearchQuery
 from ...models.process_definition_search_query_result import (
     ProcessDefinitionSearchQueryResult,
 )
-from ...models.search_process_definitions_data import SearchProcessDefinitionsData
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    *, body: SearchProcessDefinitionsData | Unset = UNSET
+    *, body: ProcessDefinitionSearchQuery | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/process-definitions/search"}
@@ -61,14 +61,14 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchProcessDefinitionsData | Unset = UNSET,
+    body: ProcessDefinitionSearchQuery | Unset = UNSET,
 ) -> Response[ProblemDetail | ProcessDefinitionSearchQueryResult]:
     """Search process definitions
 
      Search for process definitions based on given criteria.
 
     Args:
-        body (SearchProcessDefinitionsData | Unset):
+        body (ProcessDefinitionSearchQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -85,7 +85,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchProcessDefinitionsData | Unset = UNSET,
+    body: ProcessDefinitionSearchQuery | Unset = UNSET,
     **kwargs: Any,
 ) -> ProcessDefinitionSearchQueryResult:
     """Search process definitions
@@ -93,7 +93,7 @@ def sync(
      Search for process definitions based on given criteria.
 
     Args:
-        body (SearchProcessDefinitionsData | Unset):
+        body (ProcessDefinitionSearchQuery | Unset):
 
     Raises:
         errors.SearchProcessDefinitionsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -138,14 +138,14 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchProcessDefinitionsData | Unset = UNSET,
+    body: ProcessDefinitionSearchQuery | Unset = UNSET,
 ) -> Response[ProblemDetail | ProcessDefinitionSearchQueryResult]:
     """Search process definitions
 
      Search for process definitions based on given criteria.
 
     Args:
-        body (SearchProcessDefinitionsData | Unset):
+        body (ProcessDefinitionSearchQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -162,7 +162,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchProcessDefinitionsData | Unset = UNSET,
+    body: ProcessDefinitionSearchQuery | Unset = UNSET,
     **kwargs: Any,
 ) -> ProcessDefinitionSearchQueryResult:
     """Search process definitions
@@ -170,7 +170,7 @@ async def asyncio(
      Search for process definitions based on given criteria.
 
     Args:
-        body (SearchProcessDefinitionsData | Unset):
+        body (ProcessDefinitionSearchQuery | Unset):
 
     Raises:
         errors.SearchProcessDefinitionsBadRequest: If the response status code is 400. The provided data is not valid.

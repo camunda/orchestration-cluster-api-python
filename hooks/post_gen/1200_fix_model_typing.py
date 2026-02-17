@@ -116,6 +116,19 @@ _TODICT_LIST_VALUE_RE = re.compile(
     re.MULTILINE,
 )
 
+# Matches multi-line for loop variant (generator wraps long variable names):
+#   var = []
+#   for (
+#       long_variable_name
+#   ) in self.var:
+_TODICT_LIST_MULTILINE_FOR_RE = re.compile(
+    r"^([ \t]+)(\w+) = \[\]\n"
+    r"\1for \(\n"
+    r"\1    \w+\n"
+    r"\1\) in self\.\2:",
+    re.MULTILINE,
+)
+
 
 def _fix_todict_list_accumulators(content: str) -> str:
     """Add type annotations to empty list accumulators in to_dict methods."""
@@ -161,6 +174,16 @@ def _fix_todict_list_accumulators(content: str) -> str:
         )
 
     content = _TODICT_LIST_VALUE_RE.sub(_annotate_value, content)
+
+    # Handle multi-line for loop pattern (long variable names wrapped in parens)
+    def _annotate_multiline(match: re.Match[str]) -> str:
+        var = match.group(2)
+        after_todict = content[todict_pos : match.start()]
+        if re.search(rf"\b{re.escape(var)}: list\[", after_todict):
+            return match.group(0)
+        return match.group(0).replace(f"{var} = []", f"{var}: list[Any] = []", 1)
+
+    content = _TODICT_LIST_MULTILINE_FOR_RE.sub(_annotate_multiline, content)
 
     return content
 

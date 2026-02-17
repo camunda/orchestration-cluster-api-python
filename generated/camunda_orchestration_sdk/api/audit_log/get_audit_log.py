@@ -4,7 +4,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_audit_log_response_200 import GetAuditLogResponse200
+from ...models.audit_log_result import AuditLogResult
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
@@ -21,9 +21,9 @@ def _get_kwargs(audit_log_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> GetAuditLogResponse200 | ProblemDetail | None:
+) -> AuditLogResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = GetAuditLogResponse200.from_dict(response.json())
+        response_200 = AuditLogResult.from_dict(response.json())
         return response_200
     if response.status_code == 401:
         response_401 = ProblemDetail.from_dict(response.json())
@@ -45,7 +45,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[GetAuditLogResponse200 | ProblemDetail]:
+) -> Response[AuditLogResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -56,7 +56,7 @@ def _build_response(
 
 def sync_detailed(
     audit_log_key: str, *, client: AuthenticatedClient | Client
-) -> Response[GetAuditLogResponse200 | ProblemDetail]:
+) -> Response[AuditLogResult | ProblemDetail]:
     """Get audit log
 
      Get an audit log entry by auditLogKey.
@@ -70,7 +70,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetAuditLogResponse200 | ProblemDetail]
+        Response[AuditLogResult | ProblemDetail]
     """
     kwargs = _get_kwargs(audit_log_key=audit_log_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -79,7 +79,7 @@ def sync_detailed(
 
 def sync(
     audit_log_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetAuditLogResponse200:
+) -> AuditLogResult:
     """Get audit log
 
      Get an audit log entry by auditLogKey.
@@ -96,7 +96,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetAuditLogResponse200"""
+        AuditLogResult"""
     response = sync_detailed(audit_log_key=audit_log_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
@@ -125,12 +125,12 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetAuditLogResponse200, response.parsed)
+    return cast(AuditLogResult, response.parsed)
 
 
 async def asyncio_detailed(
     audit_log_key: str, *, client: AuthenticatedClient | Client
-) -> Response[GetAuditLogResponse200 | ProblemDetail]:
+) -> Response[AuditLogResult | ProblemDetail]:
     """Get audit log
 
      Get an audit log entry by auditLogKey.
@@ -144,7 +144,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetAuditLogResponse200 | ProblemDetail]
+        Response[AuditLogResult | ProblemDetail]
     """
     kwargs = _get_kwargs(audit_log_key=audit_log_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -153,7 +153,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     audit_log_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetAuditLogResponse200:
+) -> AuditLogResult:
     """Get audit log
 
      Get an audit log entry by auditLogKey.
@@ -170,7 +170,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetAuditLogResponse200"""
+        AuditLogResult"""
     response = await asyncio_detailed(audit_log_key=audit_log_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
@@ -199,4 +199,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetAuditLogResponse200, response.parsed)
+    return cast(AuditLogResult, response.parsed)

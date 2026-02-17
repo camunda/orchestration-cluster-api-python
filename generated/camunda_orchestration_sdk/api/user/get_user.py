@@ -4,8 +4,8 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.get_user_response_200 import GetUserResponse200
 from ...models.problem_detail import ProblemDetail
-from ...models.user_result import UserResult
 from ...types import Response
 
 
@@ -19,9 +19,9 @@ def _get_kwargs(username: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | UserResult | None:
+) -> GetUserResponse200 | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = UserResult.from_dict(response.json())
+        response_200 = GetUserResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 401:
         response_401 = ProblemDetail.from_dict(response.json())
@@ -43,7 +43,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | UserResult]:
+) -> Response[GetUserResponse200 | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -54,7 +54,7 @@ def _build_response(
 
 def sync_detailed(
     username: str, *, client: AuthenticatedClient | Client
-) -> Response[ProblemDetail | UserResult]:
+) -> Response[GetUserResponse200 | ProblemDetail]:
     """Get user
 
      Get a user by its username.
@@ -67,7 +67,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | UserResult]
+        Response[GetUserResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(username=username)
     response = client.get_httpx_client().request(**kwargs)
@@ -76,7 +76,7 @@ def sync_detailed(
 
 def sync(
     username: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> UserResult:
+) -> GetUserResponse200:
     """Get user
 
      Get a user by its username.
@@ -92,7 +92,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UserResult"""
+        GetUserResponse200"""
     response = sync_detailed(username=username, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
@@ -121,12 +121,12 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UserResult, response.parsed)
+    return cast(GetUserResponse200, response.parsed)
 
 
 async def asyncio_detailed(
     username: str, *, client: AuthenticatedClient | Client
-) -> Response[ProblemDetail | UserResult]:
+) -> Response[GetUserResponse200 | ProblemDetail]:
     """Get user
 
      Get a user by its username.
@@ -139,7 +139,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | UserResult]
+        Response[GetUserResponse200 | ProblemDetail]
     """
     kwargs = _get_kwargs(username=username)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -148,7 +148,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     username: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> UserResult:
+) -> GetUserResponse200:
     """Get user
 
      Get a user by its username.
@@ -164,7 +164,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UserResult"""
+        GetUserResponse200"""
     response = await asyncio_detailed(username=username, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
@@ -193,4 +193,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UserResult, response.parsed)
+    return cast(GetUserResponse200, response.parsed)

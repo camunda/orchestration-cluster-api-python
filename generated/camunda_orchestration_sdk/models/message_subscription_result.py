@@ -42,6 +42,11 @@ class MessageSubscriptionResult:
             Example: 2251799813686749.
         process_instance_key (str | Unset): The process instance key associated with this message subscription. Example:
             2251799813690746.
+        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
+            top-level
+            ancestor in the process instance hierarchy. This field is only present for data
+            belonging to process instance hierarchies created in version 8.9 or later.
+             Example: 2251799813690746.
         element_id (str | Unset): The element ID associated with this message subscription. Example: Activity_106kosb.
         element_instance_key (str | Unset): The element instance key associated with this message subscription. Example:
             2251799813686789.
@@ -56,6 +61,7 @@ class MessageSubscriptionResult:
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
+    root_process_instance_key: str | Unset = UNSET
     element_id: ElementId | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     message_subscription_state: MessageSubscriptionStateEnum | Unset = UNSET
@@ -75,6 +81,8 @@ class MessageSubscriptionResult:
         process_definition_key = self.process_definition_key
 
         process_instance_key = self.process_instance_key
+
+        root_process_instance_key = self.root_process_instance_key
 
         element_id = self.element_id
 
@@ -105,6 +113,8 @@ class MessageSubscriptionResult:
             field_dict["processDefinitionKey"] = process_definition_key
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
+        if root_process_instance_key is not UNSET:
+            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if element_id is not UNSET:
             field_dict["elementId"] = element_id
         if element_instance_key is not UNSET:
@@ -149,6 +159,8 @@ class MessageSubscriptionResult:
             else UNSET
         )
 
+        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
+
         element_id = (
             lift_element_id(_val)
             if (_val := d.pop("elementId", UNSET)) is not UNSET
@@ -192,6 +204,7 @@ class MessageSubscriptionResult:
             process_definition_id=process_definition_id,
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,
+            root_process_instance_key=root_process_instance_key,
             element_id=element_id,
             element_instance_key=element_instance_key,
             message_subscription_state=message_subscription_state,

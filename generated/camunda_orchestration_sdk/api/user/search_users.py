@@ -4,12 +4,12 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.search_users_data import SearchUsersData
-from ...models.user_search_result import UserSearchResult
+from ...models.search_users_response_200 import SearchUsersResponse200
+from ...models.user_search_query_request import UserSearchQueryRequest
 from ...types import UNSET, Response, Unset
 
 
-def _get_kwargs(*, body: SearchUsersData | Unset = UNSET) -> dict[str, Any]:
+def _get_kwargs(*, body: UserSearchQueryRequest | Unset = UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/users/search"}
     if not isinstance(body, Unset):
@@ -21,9 +21,9 @@ def _get_kwargs(*, body: SearchUsersData | Unset = UNSET) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | UserSearchResult | None:
+) -> ProblemDetail | SearchUsersResponse200 | None:
     if response.status_code == 200:
-        response_200 = UserSearchResult.from_dict(response.json())
+        response_200 = SearchUsersResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -45,7 +45,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | UserSearchResult]:
+) -> Response[ProblemDetail | SearchUsersResponse200]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -55,21 +55,23 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: SearchUsersData | Unset = UNSET
-) -> Response[ProblemDetail | UserSearchResult]:
+    *,
+    client: AuthenticatedClient | Client,
+    body: UserSearchQueryRequest | Unset = UNSET,
+) -> Response[ProblemDetail | SearchUsersResponse200]:
     """Search users
 
      Search for users based on given criteria.
 
     Args:
-        body (SearchUsersData | Unset):
+        body (UserSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | UserSearchResult]
+        Response[ProblemDetail | SearchUsersResponse200]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -79,15 +81,15 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUsersData | Unset = UNSET,
+    body: UserSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> UserSearchResult:
+) -> SearchUsersResponse200:
     """Search users
 
      Search for users based on given criteria.
 
     Args:
-        body (SearchUsersData | Unset):
+        body (UserSearchQueryRequest | Unset):
 
     Raises:
         errors.SearchUsersBadRequest: If the response status code is 400. The provided data is not valid.
@@ -97,7 +99,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UserSearchResult"""
+        SearchUsersResponse200"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -126,25 +128,27 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UserSearchResult, response.parsed)
+    return cast(SearchUsersResponse200, response.parsed)
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: SearchUsersData | Unset = UNSET
-) -> Response[ProblemDetail | UserSearchResult]:
+    *,
+    client: AuthenticatedClient | Client,
+    body: UserSearchQueryRequest | Unset = UNSET,
+) -> Response[ProblemDetail | SearchUsersResponse200]:
     """Search users
 
      Search for users based on given criteria.
 
     Args:
-        body (SearchUsersData | Unset):
+        body (UserSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | UserSearchResult]
+        Response[ProblemDetail | SearchUsersResponse200]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -154,15 +158,15 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUsersData | Unset = UNSET,
+    body: UserSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> UserSearchResult:
+) -> SearchUsersResponse200:
     """Search users
 
      Search for users based on given criteria.
 
     Args:
-        body (SearchUsersData | Unset):
+        body (UserSearchQueryRequest | Unset):
 
     Raises:
         errors.SearchUsersBadRequest: If the response status code is 400. The provided data is not valid.
@@ -172,7 +176,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UserSearchResult"""
+        SearchUsersResponse200"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -201,4 +205,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UserSearchResult, response.parsed)
+    return cast(SearchUsersResponse200, response.parsed)

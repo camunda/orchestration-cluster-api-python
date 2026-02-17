@@ -4,20 +4,20 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_process_definition_statistics_data import (
-    GetProcessDefinitionStatisticsData,
-)
-from ...models.get_process_definition_statistics_response_200 import (
-    GetProcessDefinitionStatisticsResponse200,
-)
 from ...models.problem_detail import ProblemDetail
+from ...models.process_definition_element_statistics_query import (
+    ProcessDefinitionElementStatisticsQuery,
+)
+from ...models.process_definition_element_statistics_query_result import (
+    ProcessDefinitionElementStatisticsQueryResult,
+)
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     process_definition_key: str,
     *,
-    body: GetProcessDefinitionStatisticsData | Unset = UNSET,
+    body: ProcessDefinitionElementStatisticsQuery | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -35,9 +35,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> GetProcessDefinitionStatisticsResponse200 | ProblemDetail | None:
+) -> ProblemDetail | ProcessDefinitionElementStatisticsQueryResult | None:
     if response.status_code == 200:
-        response_200 = GetProcessDefinitionStatisticsResponse200.from_dict(
+        response_200 = ProcessDefinitionElementStatisticsQueryResult.from_dict(
             response.json()
         )
         return response_200
@@ -61,7 +61,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[GetProcessDefinitionStatisticsResponse200 | ProblemDetail]:
+) -> Response[ProblemDetail | ProcessDefinitionElementStatisticsQueryResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -74,8 +74,8 @@ def sync_detailed(
     process_definition_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: GetProcessDefinitionStatisticsData | Unset = UNSET,
-) -> Response[GetProcessDefinitionStatisticsResponse200 | ProblemDetail]:
+    body: ProcessDefinitionElementStatisticsQuery | Unset = UNSET,
+) -> Response[ProblemDetail | ProcessDefinitionElementStatisticsQueryResult]:
     """Get process definition statistics
 
      Get statistics about elements in currently running process instances by process definition key and
@@ -84,15 +84,15 @@ def sync_detailed(
     Args:
         process_definition_key (str): System-generated key for a deployed process definition.
             Example: 2251799813686749.
-        body (GetProcessDefinitionStatisticsData | Unset): Process definition element statistics
-            request.
+        body (ProcessDefinitionElementStatisticsQuery | Unset): Process definition element
+            statistics request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetProcessDefinitionStatisticsResponse200 | ProblemDetail]
+        Response[ProblemDetail | ProcessDefinitionElementStatisticsQueryResult]
     """
     kwargs = _get_kwargs(process_definition_key=process_definition_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -103,9 +103,9 @@ def sync(
     process_definition_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: GetProcessDefinitionStatisticsData | Unset = UNSET,
+    body: ProcessDefinitionElementStatisticsQuery | Unset = UNSET,
     **kwargs: Any,
-) -> GetProcessDefinitionStatisticsResponse200:
+) -> ProcessDefinitionElementStatisticsQueryResult:
     """Get process definition statistics
 
      Get statistics about elements in currently running process instances by process definition key and
@@ -114,8 +114,8 @@ def sync(
     Args:
         process_definition_key (str): System-generated key for a deployed process definition.
             Example: 2251799813686749.
-        body (GetProcessDefinitionStatisticsData | Unset): Process definition element statistics
-            request.
+        body (ProcessDefinitionElementStatisticsQuery | Unset): Process definition element
+            statistics request.
 
     Raises:
         errors.GetProcessDefinitionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -125,7 +125,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetProcessDefinitionStatisticsResponse200"""
+        ProcessDefinitionElementStatisticsQueryResult"""
     response = sync_detailed(
         process_definition_key=process_definition_key, client=client, body=body
     )
@@ -156,15 +156,15 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetProcessDefinitionStatisticsResponse200, response.parsed)
+    return cast(ProcessDefinitionElementStatisticsQueryResult, response.parsed)
 
 
 async def asyncio_detailed(
     process_definition_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: GetProcessDefinitionStatisticsData | Unset = UNSET,
-) -> Response[GetProcessDefinitionStatisticsResponse200 | ProblemDetail]:
+    body: ProcessDefinitionElementStatisticsQuery | Unset = UNSET,
+) -> Response[ProblemDetail | ProcessDefinitionElementStatisticsQueryResult]:
     """Get process definition statistics
 
      Get statistics about elements in currently running process instances by process definition key and
@@ -173,15 +173,15 @@ async def asyncio_detailed(
     Args:
         process_definition_key (str): System-generated key for a deployed process definition.
             Example: 2251799813686749.
-        body (GetProcessDefinitionStatisticsData | Unset): Process definition element statistics
-            request.
+        body (ProcessDefinitionElementStatisticsQuery | Unset): Process definition element
+            statistics request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetProcessDefinitionStatisticsResponse200 | ProblemDetail]
+        Response[ProblemDetail | ProcessDefinitionElementStatisticsQueryResult]
     """
     kwargs = _get_kwargs(process_definition_key=process_definition_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -192,9 +192,9 @@ async def asyncio(
     process_definition_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: GetProcessDefinitionStatisticsData | Unset = UNSET,
+    body: ProcessDefinitionElementStatisticsQuery | Unset = UNSET,
     **kwargs: Any,
-) -> GetProcessDefinitionStatisticsResponse200:
+) -> ProcessDefinitionElementStatisticsQueryResult:
     """Get process definition statistics
 
      Get statistics about elements in currently running process instances by process definition key and
@@ -203,8 +203,8 @@ async def asyncio(
     Args:
         process_definition_key (str): System-generated key for a deployed process definition.
             Example: 2251799813686749.
-        body (GetProcessDefinitionStatisticsData | Unset): Process definition element statistics
-            request.
+        body (ProcessDefinitionElementStatisticsQuery | Unset): Process definition element
+            statistics request.
 
     Raises:
         errors.GetProcessDefinitionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -214,7 +214,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetProcessDefinitionStatisticsResponse200"""
+        ProcessDefinitionElementStatisticsQueryResult"""
     response = await asyncio_detailed(
         process_definition_key=process_definition_key, client=client, body=body
     )
@@ -245,4 +245,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetProcessDefinitionStatisticsResponse200, response.parsed)
+    return cast(ProcessDefinitionElementStatisticsQueryResult, response.parsed)

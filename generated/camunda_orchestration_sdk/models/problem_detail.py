@@ -17,7 +17,8 @@ class ProblemDetail:
     properties specific to the problem type.
 
         Attributes:
-            type_ (str | Unset): A URI identifying the problem type. Default: 'about:blank'. Example: about:blank.
+            type_ (str | Unset): A URI identifying the problem type. Default: 'about:blank'. Example:
+                https://docs.camunda.io/api/v2.0/problem-types/bad-request.
             title (str | Unset): A summary of the problem type. Example: Bad Request.
             status (int | Unset): The HTTP status code for this problem. Example: 400.
             detail (str | Unset): An explanation of the problem in more detail. Example: Request property

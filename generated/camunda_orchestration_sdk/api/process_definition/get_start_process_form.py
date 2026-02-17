@@ -4,7 +4,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_start_process_form_response_200 import GetStartProcessFormResponse200
+from ...models.form_result import FormResult
 from ...models.problem_detail import ProblemDetail
 from ...types import Response
 
@@ -21,9 +21,9 @@ def _get_kwargs(process_definition_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | GetStartProcessFormResponse200 | ProblemDetail | None:
+) -> Any | FormResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = GetStartProcessFormResponse200.from_dict(response.json())
+        response_200 = FormResult.from_dict(response.json())
         return response_200
     if response.status_code == 204:
         response_204 = cast(Any, None)
@@ -51,7 +51,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | GetStartProcessFormResponse200 | ProblemDetail]:
+) -> Response[Any | FormResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -62,7 +62,7 @@ def _build_response(
 
 def sync_detailed(
     process_definition_key: str, *, client: AuthenticatedClient | Client
-) -> Response[Any | GetStartProcessFormResponse200 | ProblemDetail]:
+) -> Response[Any | FormResult | ProblemDetail]:
     """Get process start form
 
      Get the start form of a process.
@@ -78,7 +78,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | GetStartProcessFormResponse200 | ProblemDetail]
+        Response[Any | FormResult | ProblemDetail]
     """
     kwargs = _get_kwargs(process_definition_key=process_definition_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -87,7 +87,7 @@ def sync_detailed(
 
 def sync(
     process_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetStartProcessFormResponse200:
+) -> FormResult:
     """Get process start form
 
      Get the start form of a process.
@@ -107,7 +107,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetStartProcessFormResponse200"""
+        FormResult"""
     response = sync_detailed(
         process_definition_key=process_definition_key, client=client
     )
@@ -144,12 +144,12 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetStartProcessFormResponse200, response.parsed)
+    return cast(FormResult, response.parsed)
 
 
 async def asyncio_detailed(
     process_definition_key: str, *, client: AuthenticatedClient | Client
-) -> Response[Any | GetStartProcessFormResponse200 | ProblemDetail]:
+) -> Response[Any | FormResult | ProblemDetail]:
     """Get process start form
 
      Get the start form of a process.
@@ -165,7 +165,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | GetStartProcessFormResponse200 | ProblemDetail]
+        Response[Any | FormResult | ProblemDetail]
     """
     kwargs = _get_kwargs(process_definition_key=process_definition_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -174,7 +174,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     process_definition_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetStartProcessFormResponse200:
+) -> FormResult:
     """Get process start form
 
      Get the start form of a process.
@@ -194,7 +194,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetStartProcessFormResponse200"""
+        FormResult"""
     response = await asyncio_detailed(
         process_definition_key=process_definition_key, client=client
     )
@@ -231,4 +231,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetStartProcessFormResponse200, response.parsed)
+    return cast(FormResult, response.parsed)

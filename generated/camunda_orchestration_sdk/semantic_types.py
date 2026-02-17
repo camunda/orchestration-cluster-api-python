@@ -470,6 +470,26 @@ def try_lift_form_key(value: Any) -> Tuple[bool, FormKey | Exception]:
         return False, e
 
 
+GlobalListenerId = NewType("GlobalListenerId", str)
+
+
+def lift_global_listener_id(value: Any) -> GlobalListenerId:
+    if not isinstance(value, str):
+        raise TypeError(
+            f"GlobalListenerId must be str, got {type(value).__name__}: {value!r}"
+        )
+    return GlobalListenerId(value)
+
+
+def try_lift_global_listener_id(
+    value: Any,
+) -> Tuple[bool, GlobalListenerId | Exception]:
+    try:
+        return True, lift_global_listener_id(value)
+    except Exception as e:
+        return False, e
+
+
 IncidentKey = NewType("IncidentKey", str)
 
 
@@ -658,6 +678,38 @@ def try_lift_process_instance_key(
 ) -> Tuple[bool, ProcessInstanceKey | Exception]:
     try:
         return True, lift_process_instance_key(value)
+    except Exception as e:
+        return False, e
+
+
+RootProcessInstanceKey = NewType("RootProcessInstanceKey", str)
+
+
+def lift_root_process_instance_key(value: Any) -> RootProcessInstanceKey:
+    if not isinstance(value, str):
+        raise TypeError(
+            f"RootProcessInstanceKey must be str, got {type(value).__name__}: {value!r}"
+        )
+    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+        raise ValueError(
+            f"RootProcessInstanceKey does not match pattern '^-?[0-9]+$', got {value!r}"
+        )
+    if len(value) < 1:
+        raise ValueError(
+            f"RootProcessInstanceKey shorter than minLength 1, got {value!r}"
+        )
+    if len(value) > 25:
+        raise ValueError(
+            f"RootProcessInstanceKey longer than maxLength 25, got {value!r}"
+        )
+    return RootProcessInstanceKey(value)
+
+
+def try_lift_root_process_instance_key(
+    value: Any,
+) -> Tuple[bool, RootProcessInstanceKey | Exception]:
+    try:
+        return True, lift_root_process_instance_key(value)
     except Exception as e:
         return False, e
 
@@ -883,6 +935,7 @@ __all__ = [
     "EndCursor",
     "FormId",
     "FormKey",
+    "GlobalListenerId",
     "IncidentKey",
     "JobKey",
     "MessageKey",
@@ -890,6 +943,7 @@ __all__ = [
     "ProcessDefinitionId",
     "ProcessDefinitionKey",
     "ProcessInstanceKey",
+    "RootProcessInstanceKey",
     "ScopeKey",
     "SignalKey",
     "StartCursor",
@@ -916,6 +970,7 @@ __all__ = [
     "lift_end_cursor",
     "lift_form_id",
     "lift_form_key",
+    "lift_global_listener_id",
     "lift_incident_key",
     "lift_job_key",
     "lift_message_key",
@@ -923,6 +978,7 @@ __all__ = [
     "lift_process_definition_id",
     "lift_process_definition_key",
     "lift_process_instance_key",
+    "lift_root_process_instance_key",
     "lift_scope_key",
     "lift_signal_key",
     "lift_start_cursor",
@@ -949,6 +1005,7 @@ __all__ = [
     "try_lift_end_cursor",
     "try_lift_form_id",
     "try_lift_form_key",
+    "try_lift_global_listener_id",
     "try_lift_incident_key",
     "try_lift_job_key",
     "try_lift_message_key",
@@ -956,6 +1013,7 @@ __all__ = [
     "try_lift_process_definition_id",
     "try_lift_process_definition_key",
     "try_lift_process_instance_key",
+    "try_lift_root_process_instance_key",
     "try_lift_scope_key",
     "try_lift_signal_key",
     "try_lift_start_cursor",

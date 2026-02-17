@@ -7,8 +7,8 @@ import datetime
 from camunda_orchestration_sdk import CamundaClient
 from camunda_orchestration_sdk.models.changeset_type_0 import ChangesetType0
 from camunda_orchestration_sdk.semantic_types import UserTaskKey
-from camunda_orchestration_sdk.models.search_user_tasks_data import (
-    SearchUserTasksData,
+from camunda_orchestration_sdk.models.user_task_search_query import (
+    UserTaskSearchQuery,
 )
 from camunda_orchestration_sdk.models.user_task_assignment_request import (
     UserTaskAssignmentRequest,
@@ -30,7 +30,7 @@ def search_user_tasks_example() -> None:
     client = CamundaClient()
 
     result = client.search_user_tasks(
-        data=SearchUserTasksData()
+        data=UserTaskSearchQuery()
     )
 
     if not isinstance(result.items, Unset):

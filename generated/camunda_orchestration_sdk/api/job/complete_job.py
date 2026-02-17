@@ -4,13 +4,13 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.complete_job_data import CompleteJobData
+from ...models.job_completion_request import JobCompletionRequest
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    job_key: str, *, body: CompleteJobData | Unset = UNSET
+    job_key: str, *, body: JobCompletionRequest | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -68,7 +68,7 @@ def sync_detailed(
     job_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CompleteJobData | Unset = UNSET,
+    body: JobCompletionRequest | Unset = UNSET,
 ) -> Response[Any | ProblemDetail]:
     """Complete job
 
@@ -76,7 +76,7 @@ def sync_detailed(
 
     Args:
         job_key (str): System-generated key for a job. Example: 2251799813653498.
-        body (CompleteJobData | Unset):
+        body (JobCompletionRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -94,7 +94,7 @@ def sync(
     job_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CompleteJobData | Unset = UNSET,
+    body: JobCompletionRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Complete job
@@ -103,7 +103,7 @@ def sync(
 
     Args:
         job_key (str): System-generated key for a job. Example: 2251799813653498.
-        body (CompleteJobData | Unset):
+        body (JobCompletionRequest | Unset):
 
     Raises:
         errors.CompleteJobBadRequest: If the response status code is 400. The provided data is not valid.
@@ -155,7 +155,7 @@ async def asyncio_detailed(
     job_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CompleteJobData | Unset = UNSET,
+    body: JobCompletionRequest | Unset = UNSET,
 ) -> Response[Any | ProblemDetail]:
     """Complete job
 
@@ -163,7 +163,7 @@ async def asyncio_detailed(
 
     Args:
         job_key (str): System-generated key for a job. Example: 2251799813653498.
-        body (CompleteJobData | Unset):
+        body (JobCompletionRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -181,7 +181,7 @@ async def asyncio(
     job_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CompleteJobData | Unset = UNSET,
+    body: JobCompletionRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Complete job
@@ -190,7 +190,7 @@ async def asyncio(
 
     Args:
         job_key (str): System-generated key for a job. Example: 2251799813653498.
-        body (CompleteJobData | Unset):
+        body (JobCompletionRequest | Unset):
 
     Raises:
         errors.CompleteJobBadRequest: If the response status code is 400. The provided data is not valid.

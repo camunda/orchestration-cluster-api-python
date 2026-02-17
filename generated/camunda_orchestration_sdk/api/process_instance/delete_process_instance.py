@@ -4,7 +4,6 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.batch_operation_created_result import BatchOperationCreatedResult
 from ...models.delete_process_instance_data_type_0 import DeleteProcessInstanceDataType0
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
@@ -33,10 +32,10 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> BatchOperationCreatedResult | ProblemDetail | None:
-    if response.status_code == 200:
-        response_200 = BatchOperationCreatedResult.from_dict(response.json())
-        return response_200
+) -> Any | ProblemDetail | None:
+    if response.status_code == 204:
+        response_204 = cast(Any, None)
+        return response_204
     if response.status_code == 401:
         response_401 = ProblemDetail.from_dict(response.json())
         return response_401
@@ -63,7 +62,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[BatchOperationCreatedResult | ProblemDetail]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -77,7 +76,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
-) -> Response[BatchOperationCreatedResult | ProblemDetail]:
+) -> Response[Any | ProblemDetail]:
     """Delete process instance
 
      Deletes a process instance. Only instances that are completed or terminated can be deleted.
@@ -92,7 +91,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[BatchOperationCreatedResult | ProblemDetail]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(process_instance_key=process_instance_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -105,7 +104,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
     **kwargs: Any,
-) -> BatchOperationCreatedResult:
+) -> None:
     """Delete process instance
 
      Deletes a process instance. Only instances that are completed or terminated can be deleted.
@@ -125,7 +124,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        BatchOperationCreatedResult"""
+        None"""
     response = sync_detailed(
         process_instance_key=process_instance_key, client=client, body=body
     )
@@ -167,8 +166,7 @@ def sync(
                 parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    assert response.parsed is not None
-    return cast(BatchOperationCreatedResult, response.parsed)
+    return None
 
 
 async def asyncio_detailed(
@@ -176,7 +174,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
-) -> Response[BatchOperationCreatedResult | ProblemDetail]:
+) -> Response[Any | ProblemDetail]:
     """Delete process instance
 
      Deletes a process instance. Only instances that are completed or terminated can be deleted.
@@ -191,7 +189,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[BatchOperationCreatedResult | ProblemDetail]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(process_instance_key=process_instance_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -204,7 +202,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
     **kwargs: Any,
-) -> BatchOperationCreatedResult:
+) -> None:
     """Delete process instance
 
      Deletes a process instance. Only instances that are completed or terminated can be deleted.
@@ -224,7 +222,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        BatchOperationCreatedResult"""
+        None"""
     response = await asyncio_detailed(
         process_instance_key=process_instance_key, client=client, body=body
     )
@@ -266,5 +264,4 @@ async def asyncio(
                 parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    assert response.parsed is not None
-    return cast(BatchOperationCreatedResult, response.parsed)
+    return None

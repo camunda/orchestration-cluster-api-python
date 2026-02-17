@@ -370,7 +370,7 @@ def generate_flat_client(package_path: Path) -> None:
     imports_content += "\nfrom .runtime.auth import AuthProvider, BasicAuthProvider, NullAuthProvider, OAuthClientCredentialsAuthProvider, AsyncOAuthClientCredentialsAuthProvider, inject_auth_event_hooks"
     imports_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger, SdkLogger, create_logger"
     imports_content += "\nfrom pathlib import Path"
-    imports_content += "\nfrom .models.create_deployment_response_200 import CreateDeploymentResponse200"
+    imports_content += "\nfrom .models.deployment_result import DeploymentResult"
     imports_content += (
         "\nfrom .models.deployment_process_result import DeploymentProcessResult"
     )
@@ -432,13 +432,13 @@ def generate_flat_client(package_path: Path) -> None:
     new_async_methods = "\n".join(async_methods)
 
     extended_result_code = """
-class ExtendedDeploymentResult(CreateDeploymentResponse200):
+class ExtendedDeploymentResult(DeploymentResult):
     processes: list[DeploymentProcessResult]
     decisions: list[DeploymentDecisionResult]
     decision_requirements: list[DeploymentDecisionRequirementsResult]
     forms: list[DeploymentFormResult]
     
-    def __init__(self, response: CreateDeploymentResponse200):
+    def __init__(self, response: DeploymentResult):
         self.deployment_key = response.deployment_key
         self.tenant_id = response.tenant_id
         self.deployments = response.deployments

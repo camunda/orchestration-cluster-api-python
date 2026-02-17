@@ -9,12 +9,10 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
+    from ..models.cursor_based_backward_pagination import CursorBasedBackwardPagination
     from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
     from ..models.limit_based_pagination import LimitBasedPagination
     from ..models.offset_based_pagination import OffsetBasedPagination
-    from ..models.page_cursor_based_backward_pagination import (
-        PageCursorBasedBackwardPagination,
-    )
     from ..models.tenant_user_search_query_sort_request import (
         TenantUserSearchQuerySortRequest,
     )
@@ -28,16 +26,16 @@ class SearchUsersForRoleData:
     """
     Attributes:
         sort (list[TenantUserSearchQuerySortRequest] | Unset): Sort field criteria.
-        page (CursorBasedForwardPagination | LimitBasedPagination | OffsetBasedPagination |
-            PageCursorBasedBackwardPagination | Unset): Pagination criteria.
+        page (CursorBasedBackwardPagination | CursorBasedForwardPagination | LimitBasedPagination |
+            OffsetBasedPagination | Unset): Pagination criteria.
     """
 
     sort: list[TenantUserSearchQuerySortRequest] | Unset = UNSET
     page: (
-        CursorBasedForwardPagination
+        CursorBasedBackwardPagination
+        | CursorBasedForwardPagination
         | LimitBasedPagination
         | OffsetBasedPagination
-        | PageCursorBasedBackwardPagination
         | Unset
     ) = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
@@ -82,14 +80,14 @@ class SearchUsersForRoleData:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.cursor_based_backward_pagination import (
+            CursorBasedBackwardPagination,
+        )
         from ..models.cursor_based_forward_pagination import (
             CursorBasedForwardPagination,
         )
         from ..models.limit_based_pagination import LimitBasedPagination
         from ..models.offset_based_pagination import OffsetBasedPagination
-        from ..models.page_cursor_based_backward_pagination import (
-            PageCursorBasedBackwardPagination,
-        )
         from ..models.tenant_user_search_query_sort_request import (
             TenantUserSearchQuerySortRequest,
         )
@@ -107,10 +105,10 @@ class SearchUsersForRoleData:
         def _parse_page(
             data: object,
         ) -> (
-            CursorBasedForwardPagination
+            CursorBasedBackwardPagination
+            | CursorBasedForwardPagination
             | LimitBasedPagination
             | OffsetBasedPagination
-            | PageCursorBasedBackwardPagination
             | Unset
         ):
             if isinstance(data, Unset):
@@ -149,7 +147,7 @@ class SearchUsersForRoleData:
                 raise TypeError()
 
             data = cast(dict[str, Any], data)
-            page_type_3 = PageCursorBasedBackwardPagination.from_dict(data)
+            page_type_3 = CursorBasedBackwardPagination.from_dict(data)
 
             return page_type_3
 

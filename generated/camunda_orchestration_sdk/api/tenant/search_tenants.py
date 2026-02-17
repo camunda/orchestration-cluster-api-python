@@ -4,12 +4,12 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.search_tenants_data import SearchTenantsData
+from ...models.tenant_search_query_request import TenantSearchQueryRequest
 from ...models.tenant_search_query_result import TenantSearchQueryResult
 from ...types import UNSET, Response, Unset
 
 
-def _get_kwargs(*, body: SearchTenantsData | Unset = UNSET) -> dict[str, Any]:
+def _get_kwargs(*, body: TenantSearchQueryRequest | Unset = UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/tenants/search"}
     if not isinstance(body, Unset):
@@ -21,7 +21,7 @@ def _get_kwargs(*, body: SearchTenantsData | Unset = UNSET) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | ProblemDetail | TenantSearchQueryResult | None:
+) -> ProblemDetail | TenantSearchQueryResult | None:
     if response.status_code == 200:
         response_200 = TenantSearchQueryResult.from_dict(response.json())
         return response_200
@@ -35,7 +35,7 @@ def _parse_response(
         response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = cast(Any, None)
+        response_404 = ProblemDetail.from_dict(response.json())
         return response_404
     if response.status_code == 500:
         response_500 = ProblemDetail.from_dict(response.json())
@@ -48,7 +48,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | ProblemDetail | TenantSearchQueryResult]:
+) -> Response[ProblemDetail | TenantSearchQueryResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -58,21 +58,23 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: SearchTenantsData | Unset = UNSET
-) -> Response[Any | ProblemDetail | TenantSearchQueryResult]:
+    *,
+    client: AuthenticatedClient | Client,
+    body: TenantSearchQueryRequest | Unset = UNSET,
+) -> Response[ProblemDetail | TenantSearchQueryResult]:
     """Search tenants
 
      Retrieves a filtered and sorted list of tenants.
 
     Args:
-        body (SearchTenantsData | Unset): Tenant search request
+        body (TenantSearchQueryRequest | Unset): Tenant search request
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ProblemDetail | TenantSearchQueryResult]
+        Response[ProblemDetail | TenantSearchQueryResult]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -82,7 +84,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchTenantsData | Unset = UNSET,
+    body: TenantSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> TenantSearchQueryResult:
     """Search tenants
@@ -90,7 +92,7 @@ def sync(
      Retrieves a filtered and sorted list of tenants.
 
     Args:
-        body (SearchTenantsData | Unset): Tenant search request
+        body (TenantSearchQueryRequest | Unset): Tenant search request
 
     Raises:
         errors.SearchTenantsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -126,7 +128,7 @@ def sync(
             raise errors.SearchTenantsNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=response.parsed,
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchTenantsInternalServerError(
@@ -140,21 +142,23 @@ def sync(
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: SearchTenantsData | Unset = UNSET
-) -> Response[Any | ProblemDetail | TenantSearchQueryResult]:
+    *,
+    client: AuthenticatedClient | Client,
+    body: TenantSearchQueryRequest | Unset = UNSET,
+) -> Response[ProblemDetail | TenantSearchQueryResult]:
     """Search tenants
 
      Retrieves a filtered and sorted list of tenants.
 
     Args:
-        body (SearchTenantsData | Unset): Tenant search request
+        body (TenantSearchQueryRequest | Unset): Tenant search request
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ProblemDetail | TenantSearchQueryResult]
+        Response[ProblemDetail | TenantSearchQueryResult]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -164,7 +168,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchTenantsData | Unset = UNSET,
+    body: TenantSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> TenantSearchQueryResult:
     """Search tenants
@@ -172,7 +176,7 @@ async def asyncio(
      Retrieves a filtered and sorted list of tenants.
 
     Args:
-        body (SearchTenantsData | Unset): Tenant search request
+        body (TenantSearchQueryRequest | Unset): Tenant search request
 
     Raises:
         errors.SearchTenantsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -208,7 +212,7 @@ async def asyncio(
             raise errors.SearchTenantsNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=response.parsed,
+                parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
             raise errors.SearchTenantsInternalServerError(

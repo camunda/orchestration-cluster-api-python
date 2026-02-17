@@ -4,13 +4,15 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.modify_process_instance_data import ModifyProcessInstanceData
 from ...models.problem_detail import ProblemDetail
+from ...models.process_instance_modification_instruction import (
+    ProcessInstanceModificationInstruction,
+)
 from ...types import Response
 
 
 def _get_kwargs(
-    process_instance_key: str, *, body: ModifyProcessInstanceData
+    process_instance_key: str, *, body: ProcessInstanceModificationInstruction
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -64,7 +66,7 @@ def sync_detailed(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ModifyProcessInstanceData,
+    body: ProcessInstanceModificationInstruction,
 ) -> Response[Any | ProblemDetail]:
     """Modify process instance
 
@@ -78,7 +80,7 @@ def sync_detailed(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (ModifyProcessInstanceData):
+        body (ProcessInstanceModificationInstruction):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -96,7 +98,7 @@ def sync(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ModifyProcessInstanceData,
+    body: ProcessInstanceModificationInstruction,
     **kwargs: Any,
 ) -> None:
     """Modify process instance
@@ -111,7 +113,7 @@ def sync(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (ModifyProcessInstanceData):
+        body (ProcessInstanceModificationInstruction):
 
     Raises:
         errors.ModifyProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
@@ -158,7 +160,7 @@ async def asyncio_detailed(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ModifyProcessInstanceData,
+    body: ProcessInstanceModificationInstruction,
 ) -> Response[Any | ProblemDetail]:
     """Modify process instance
 
@@ -172,7 +174,7 @@ async def asyncio_detailed(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (ModifyProcessInstanceData):
+        body (ProcessInstanceModificationInstruction):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -190,7 +192,7 @@ async def asyncio(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ModifyProcessInstanceData,
+    body: ProcessInstanceModificationInstruction,
     **kwargs: Any,
 ) -> None:
     """Modify process instance
@@ -205,7 +207,7 @@ async def asyncio(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (ModifyProcessInstanceData):
+        body (ProcessInstanceModificationInstruction):
 
     Raises:
         errors.ModifyProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.

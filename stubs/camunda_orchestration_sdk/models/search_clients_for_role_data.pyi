@@ -5,20 +5,20 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
+from ..models.cursor_based_backward_pagination import CursorBasedBackwardPagination
 from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
 from ..models.limit_based_pagination import LimitBasedPagination
 from ..models.offset_based_pagination import OffsetBasedPagination
-from ..models.page_cursor_based_backward_pagination import PageCursorBasedBackwardPagination
 from ..models.tenant_client_search_query_sort_request import TenantClientSearchQuerySortRequest
 T = TypeVar("T", bound="SearchClientsForRoleData")
 @_attrs_define
 class SearchClientsForRoleData:
     sort: list[TenantClientSearchQuerySortRequest] | Unset = UNSET
     page: (
-            CursorBasedForwardPagination
+            CursorBasedBackwardPagination
+            | CursorBasedForwardPagination
             | LimitBasedPagination
             | OffsetBasedPagination
-            | PageCursorBasedBackwardPagination
             | Unset
         ) = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)

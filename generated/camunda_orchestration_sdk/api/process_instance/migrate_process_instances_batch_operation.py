@@ -4,14 +4,16 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.batch_operation_created_result import BatchOperationCreatedResult
-from ...models.migrate_process_instances_batch_operation_data import (
-    MigrateProcessInstancesBatchOperationData,
-)
 from ...models.problem_detail import ProblemDetail
+from ...models.process_instance_migration_batch_operation_request import (
+    ProcessInstanceMigrationBatchOperationRequest,
+)
 from ...types import Response
 
 
-def _get_kwargs(*, body: MigrateProcessInstancesBatchOperationData) -> dict[str, Any]:
+def _get_kwargs(
+    *, body: ProcessInstanceMigrationBatchOperationRequest
+) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/process-instances/migration"}
     _kwargs["json"] = body.to_dict()
@@ -58,7 +60,7 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: MigrateProcessInstancesBatchOperationData,
+    body: ProcessInstanceMigrationBatchOperationRequest,
 ) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Migrate process instances (batch)
 
@@ -69,7 +71,7 @@ def sync_detailed(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (MigrateProcessInstancesBatchOperationData):
+        body (ProcessInstanceMigrationBatchOperationRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -86,7 +88,7 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: MigrateProcessInstancesBatchOperationData,
+    body: ProcessInstanceMigrationBatchOperationRequest,
     **kwargs: Any,
 ) -> BatchOperationCreatedResult:
     """Migrate process instances (batch)
@@ -98,7 +100,7 @@ def sync(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (MigrateProcessInstancesBatchOperationData):
+        body (ProcessInstanceMigrationBatchOperationRequest):
 
     Raises:
         errors.MigrateProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
@@ -143,7 +145,7 @@ def sync(
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: MigrateProcessInstancesBatchOperationData,
+    body: ProcessInstanceMigrationBatchOperationRequest,
 ) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Migrate process instances (batch)
 
@@ -154,7 +156,7 @@ async def asyncio_detailed(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (MigrateProcessInstancesBatchOperationData):
+        body (ProcessInstanceMigrationBatchOperationRequest):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -171,7 +173,7 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: MigrateProcessInstancesBatchOperationData,
+    body: ProcessInstanceMigrationBatchOperationRequest,
     **kwargs: Any,
 ) -> BatchOperationCreatedResult:
     """Migrate process instances (batch)
@@ -183,7 +185,7 @@ async def asyncio(
     response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
 
     Args:
-        body (MigrateProcessInstancesBatchOperationData):
+        body (ProcessInstanceMigrationBatchOperationRequest):
 
     Raises:
         errors.MigrateProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.

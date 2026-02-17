@@ -6,7 +6,7 @@ from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
 from ...models.search_users_for_role_data import SearchUsersForRoleData
-from ...models.tenant_user_search_result import TenantUserSearchResult
+from ...models.search_users_for_role_response_200 import SearchUsersForRoleResponse200
 from ...types import UNSET, Response, Unset
 
 
@@ -29,9 +29,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | TenantUserSearchResult | None:
+) -> ProblemDetail | SearchUsersForRoleResponse200 | None:
     if response.status_code == 200:
-        response_200 = TenantUserSearchResult.from_dict(response.json())
+        response_200 = SearchUsersForRoleResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -56,7 +56,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | TenantUserSearchResult]:
+) -> Response[ProblemDetail | SearchUsersForRoleResponse200]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -70,7 +70,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: SearchUsersForRoleData | Unset = UNSET,
-) -> Response[ProblemDetail | TenantUserSearchResult]:
+) -> Response[ProblemDetail | SearchUsersForRoleResponse200]:
     """Search role users
 
      Search users with assigned role.
@@ -84,7 +84,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | TenantUserSearchResult]
+        Response[ProblemDetail | SearchUsersForRoleResponse200]
     """
     kwargs = _get_kwargs(role_id=role_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -97,7 +97,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: SearchUsersForRoleData | Unset = UNSET,
     **kwargs: Any,
-) -> TenantUserSearchResult:
+) -> SearchUsersForRoleResponse200:
     """Search role users
 
      Search users with assigned role.
@@ -115,7 +115,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        TenantUserSearchResult"""
+        SearchUsersForRoleResponse200"""
     response = sync_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -150,7 +150,7 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(TenantUserSearchResult, response.parsed)
+    return cast(SearchUsersForRoleResponse200, response.parsed)
 
 
 async def asyncio_detailed(
@@ -158,7 +158,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: SearchUsersForRoleData | Unset = UNSET,
-) -> Response[ProblemDetail | TenantUserSearchResult]:
+) -> Response[ProblemDetail | SearchUsersForRoleResponse200]:
     """Search role users
 
      Search users with assigned role.
@@ -172,7 +172,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | TenantUserSearchResult]
+        Response[ProblemDetail | SearchUsersForRoleResponse200]
     """
     kwargs = _get_kwargs(role_id=role_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -185,7 +185,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: SearchUsersForRoleData | Unset = UNSET,
     **kwargs: Any,
-) -> TenantUserSearchResult:
+) -> SearchUsersForRoleResponse200:
     """Search role users
 
      Search users with assigned role.
@@ -203,7 +203,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        TenantUserSearchResult"""
+        SearchUsersForRoleResponse200"""
     response = await asyncio_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -238,4 +238,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(TenantUserSearchResult, response.parsed)
+    return cast(SearchUsersForRoleResponse200, response.parsed)

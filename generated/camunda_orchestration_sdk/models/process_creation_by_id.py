@@ -14,14 +14,14 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.process_creation_by_id_runtime_instructions_item_type_0 import (
-        ProcessCreationByIdRuntimeInstructionsItemType0,
-    )
     from ..models.process_instance_creation_instruction_by_id_variables import (
         ProcessInstanceCreationInstructionByIdVariables,
     )
     from ..models.process_instance_creation_start_instruction import (
         ProcessInstanceCreationStartInstruction,
+    )
+    from ..models.process_instance_creation_terminate_instruction import (
+        ProcessInstanceCreationTerminateInstruction,
     )
 
 
@@ -48,8 +48,8 @@ class ProcessCreationById:
             default, the process instance will start at
             the start event. If provided, the process instance will apply start instructions
             after it has been created.
-        runtime_instructions (list[ProcessCreationByIdRuntimeInstructionsItemType0] | Unset): Runtime instructions
-            (alpha). List of instructions that affect the runtime behavior of
+        runtime_instructions (list[ProcessInstanceCreationTerminateInstruction] | Unset): Runtime instructions (alpha).
+            List of instructions that affect the runtime behavior of
             the process instance. Refer to specific instruction types for more details.
 
             This parameter is an alpha feature and may be subject to change
@@ -75,9 +75,9 @@ class ProcessCreationById:
     tenant_id: TenantId | Unset = UNSET
     operation_reference: int | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET
-    runtime_instructions: (
-        list[ProcessCreationByIdRuntimeInstructionsItemType0] | Unset
-    ) = UNSET
+    runtime_instructions: list[ProcessInstanceCreationTerminateInstruction] | Unset = (
+        UNSET
+    )
     await_completion: bool | Unset = False
     fetch_variables: list[str] | Unset = UNSET
     request_timeout: int | Unset = 0
@@ -108,7 +108,6 @@ class ProcessCreationById:
             runtime_instructions = []
             for runtime_instructions_item_data in self.runtime_instructions:
                 runtime_instructions_item = runtime_instructions_item_data.to_dict()
-
                 runtime_instructions.append(runtime_instructions_item)
 
         await_completion = self.await_completion
@@ -155,14 +154,14 @@ class ProcessCreationById:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.process_creation_by_id_runtime_instructions_item_type_0 import (
-            ProcessCreationByIdRuntimeInstructionsItemType0,
-        )
         from ..models.process_instance_creation_instruction_by_id_variables import (
             ProcessInstanceCreationInstructionByIdVariables,
         )
         from ..models.process_instance_creation_start_instruction import (
             ProcessInstanceCreationStartInstruction,
+        )
+        from ..models.process_instance_creation_terminate_instruction import (
+            ProcessInstanceCreationTerminateInstruction,
         )
 
         d = dict(src_dict)
@@ -204,27 +203,15 @@ class ProcessCreationById:
 
         _runtime_instructions = d.pop("runtimeInstructions", UNSET)
         runtime_instructions: (
-            list[ProcessCreationByIdRuntimeInstructionsItemType0] | Unset
+            list[ProcessInstanceCreationTerminateInstruction] | Unset
         ) = UNSET
         if _runtime_instructions is not UNSET:
             runtime_instructions = []
             for runtime_instructions_item_data in _runtime_instructions:
-
-                def _parse_runtime_instructions_item(
-                    data: object,
-                ) -> ProcessCreationByIdRuntimeInstructionsItemType0:
-                    if not isinstance(data, dict):
-                        raise TypeError()
-
-                    data = cast(dict[str, Any], data)
-                    runtime_instructions_item_type_0 = (
-                        ProcessCreationByIdRuntimeInstructionsItemType0.from_dict(data)
+                runtime_instructions_item = (
+                    ProcessInstanceCreationTerminateInstruction.from_dict(
+                        runtime_instructions_item_data
                     )
-
-                    return runtime_instructions_item_type_0
-
-                runtime_instructions_item = _parse_runtime_instructions_item(
-                    runtime_instructions_item_data
                 )
 
                 runtime_instructions.append(runtime_instructions_item)

@@ -4,12 +4,12 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.search_user_tasks_data import SearchUserTasksData
-from ...models.search_user_tasks_response_200 import SearchUserTasksResponse200
+from ...models.user_task_search_query import UserTaskSearchQuery
+from ...models.user_task_search_query_result import UserTaskSearchQueryResult
 from ...types import UNSET, Response, Unset
 
 
-def _get_kwargs(*, body: SearchUserTasksData | Unset = UNSET) -> dict[str, Any]:
+def _get_kwargs(*, body: UserTaskSearchQuery | Unset = UNSET) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/user-tasks/search"}
     if not isinstance(body, Unset):
@@ -21,9 +21,9 @@ def _get_kwargs(*, body: SearchUserTasksData | Unset = UNSET) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | SearchUserTasksResponse200 | None:
+) -> ProblemDetail | UserTaskSearchQueryResult | None:
     if response.status_code == 200:
-        response_200 = SearchUserTasksResponse200.from_dict(response.json())
+        response_200 = UserTaskSearchQueryResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -45,7 +45,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | SearchUserTasksResponse200]:
+) -> Response[ProblemDetail | UserTaskSearchQueryResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -55,21 +55,21 @@ def _build_response(
 
 
 def sync_detailed(
-    *, client: AuthenticatedClient | Client, body: SearchUserTasksData | Unset = UNSET
-) -> Response[ProblemDetail | SearchUserTasksResponse200]:
+    *, client: AuthenticatedClient | Client, body: UserTaskSearchQuery | Unset = UNSET
+) -> Response[ProblemDetail | UserTaskSearchQueryResult]:
     """Search user tasks
 
      Search for user tasks based on given criteria.
 
     Args:
-        body (SearchUserTasksData | Unset): User task search query request.
+        body (UserTaskSearchQuery | Unset): User task search query request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchUserTasksResponse200]
+        Response[ProblemDetail | UserTaskSearchQueryResult]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -79,15 +79,15 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUserTasksData | Unset = UNSET,
+    body: UserTaskSearchQuery | Unset = UNSET,
     **kwargs: Any,
-) -> SearchUserTasksResponse200:
+) -> UserTaskSearchQueryResult:
     """Search user tasks
 
      Search for user tasks based on given criteria.
 
     Args:
-        body (SearchUserTasksData | Unset): User task search query request.
+        body (UserTaskSearchQuery | Unset): User task search query request.
 
     Raises:
         errors.SearchUserTasksBadRequest: If the response status code is 400. The provided data is not valid.
@@ -97,7 +97,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchUserTasksResponse200"""
+        UserTaskSearchQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -126,25 +126,25 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchUserTasksResponse200, response.parsed)
+    return cast(UserTaskSearchQueryResult, response.parsed)
 
 
 async def asyncio_detailed(
-    *, client: AuthenticatedClient | Client, body: SearchUserTasksData | Unset = UNSET
-) -> Response[ProblemDetail | SearchUserTasksResponse200]:
+    *, client: AuthenticatedClient | Client, body: UserTaskSearchQuery | Unset = UNSET
+) -> Response[ProblemDetail | UserTaskSearchQueryResult]:
     """Search user tasks
 
      Search for user tasks based on given criteria.
 
     Args:
-        body (SearchUserTasksData | Unset): User task search query request.
+        body (UserTaskSearchQuery | Unset): User task search query request.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchUserTasksResponse200]
+        Response[ProblemDetail | UserTaskSearchQueryResult]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -154,15 +154,15 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUserTasksData | Unset = UNSET,
+    body: UserTaskSearchQuery | Unset = UNSET,
     **kwargs: Any,
-) -> SearchUserTasksResponse200:
+) -> UserTaskSearchQueryResult:
     """Search user tasks
 
      Search for user tasks based on given criteria.
 
     Args:
-        body (SearchUserTasksData | Unset): User task search query request.
+        body (UserTaskSearchQuery | Unset): User task search query request.
 
     Raises:
         errors.SearchUserTasksBadRequest: If the response status code is 400. The provided data is not valid.
@@ -172,7 +172,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchUserTasksResponse200"""
+        UserTaskSearchQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -201,4 +201,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchUserTasksResponse200, response.parsed)
+    return cast(UserTaskSearchQueryResult, response.parsed)

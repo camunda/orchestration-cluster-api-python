@@ -3,16 +3,16 @@ from typing import Any, cast
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.problem_detail import ProblemDetail
-from ...models.search_message_subscriptions_data import SearchMessageSubscriptionsData
-from ...models.search_message_subscriptions_response_200 import (
-    SearchMessageSubscriptionsResponse200,
+from ...models.message_subscription_search_query import MessageSubscriptionSearchQuery
+from ...models.message_subscription_search_query_result import (
+    MessageSubscriptionSearchQueryResult,
 )
+from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    *, body: SearchMessageSubscriptionsData | Unset = UNSET
+    *, body: MessageSubscriptionSearchQuery | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/message-subscriptions/search"}
@@ -25,9 +25,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | SearchMessageSubscriptionsResponse200 | None:
+) -> MessageSubscriptionSearchQueryResult | ProblemDetail | None:
     if response.status_code == 200:
-        response_200 = SearchMessageSubscriptionsResponse200.from_dict(response.json())
+        response_200 = MessageSubscriptionSearchQueryResult.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -49,7 +49,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | SearchMessageSubscriptionsResponse200]:
+) -> Response[MessageSubscriptionSearchQueryResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -61,21 +61,21 @@ def _build_response(
 def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchMessageSubscriptionsData | Unset = UNSET,
-) -> Response[ProblemDetail | SearchMessageSubscriptionsResponse200]:
+    body: MessageSubscriptionSearchQuery | Unset = UNSET,
+) -> Response[MessageSubscriptionSearchQueryResult | ProblemDetail]:
     """Search message subscriptions
 
      Search for message subscriptions based on given criteria.
 
     Args:
-        body (SearchMessageSubscriptionsData | Unset):
+        body (MessageSubscriptionSearchQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchMessageSubscriptionsResponse200]
+        Response[MessageSubscriptionSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -85,15 +85,15 @@ def sync_detailed(
 def sync(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchMessageSubscriptionsData | Unset = UNSET,
+    body: MessageSubscriptionSearchQuery | Unset = UNSET,
     **kwargs: Any,
-) -> SearchMessageSubscriptionsResponse200:
+) -> MessageSubscriptionSearchQueryResult:
     """Search message subscriptions
 
      Search for message subscriptions based on given criteria.
 
     Args:
-        body (SearchMessageSubscriptionsData | Unset):
+        body (MessageSubscriptionSearchQuery | Unset):
 
     Raises:
         errors.SearchMessageSubscriptionsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -103,7 +103,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchMessageSubscriptionsResponse200"""
+        MessageSubscriptionSearchQueryResult"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -132,27 +132,27 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchMessageSubscriptionsResponse200, response.parsed)
+    return cast(MessageSubscriptionSearchQueryResult, response.parsed)
 
 
 async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchMessageSubscriptionsData | Unset = UNSET,
-) -> Response[ProblemDetail | SearchMessageSubscriptionsResponse200]:
+    body: MessageSubscriptionSearchQuery | Unset = UNSET,
+) -> Response[MessageSubscriptionSearchQueryResult | ProblemDetail]:
     """Search message subscriptions
 
      Search for message subscriptions based on given criteria.
 
     Args:
-        body (SearchMessageSubscriptionsData | Unset):
+        body (MessageSubscriptionSearchQuery | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchMessageSubscriptionsResponse200]
+        Response[MessageSubscriptionSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -162,15 +162,15 @@ async def asyncio_detailed(
 async def asyncio(
     *,
     client: AuthenticatedClient | Client,
-    body: SearchMessageSubscriptionsData | Unset = UNSET,
+    body: MessageSubscriptionSearchQuery | Unset = UNSET,
     **kwargs: Any,
-) -> SearchMessageSubscriptionsResponse200:
+) -> MessageSubscriptionSearchQueryResult:
     """Search message subscriptions
 
      Search for message subscriptions based on given criteria.
 
     Args:
-        body (SearchMessageSubscriptionsData | Unset):
+        body (MessageSubscriptionSearchQuery | Unset):
 
     Raises:
         errors.SearchMessageSubscriptionsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -180,7 +180,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchMessageSubscriptionsResponse200"""
+        MessageSubscriptionSearchQueryResult"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -209,4 +209,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchMessageSubscriptionsResponse200, response.parsed)
+    return cast(MessageSubscriptionSearchQueryResult, response.parsed)

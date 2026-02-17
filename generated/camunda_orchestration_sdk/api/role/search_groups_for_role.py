@@ -5,13 +5,13 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
+from ...models.role_group_search_query_request import RoleGroupSearchQueryRequest
 from ...models.role_group_search_result import RoleGroupSearchResult
-from ...models.search_groups_for_role_data import SearchGroupsForRoleData
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    role_id: str, *, body: SearchGroupsForRoleData | Unset = UNSET
+    role_id: str, *, body: RoleGroupSearchQueryRequest | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -69,7 +69,7 @@ def sync_detailed(
     role_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchGroupsForRoleData | Unset = UNSET,
+    body: RoleGroupSearchQueryRequest | Unset = UNSET,
 ) -> Response[ProblemDetail | RoleGroupSearchResult]:
     """Search role groups
 
@@ -77,7 +77,7 @@ def sync_detailed(
 
     Args:
         role_id (str):
-        body (SearchGroupsForRoleData | Unset):
+        body (RoleGroupSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -95,7 +95,7 @@ def sync(
     role_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchGroupsForRoleData | Unset = UNSET,
+    body: RoleGroupSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> RoleGroupSearchResult:
     """Search role groups
@@ -104,7 +104,7 @@ def sync(
 
     Args:
         role_id (str):
-        body (SearchGroupsForRoleData | Unset):
+        body (RoleGroupSearchQueryRequest | Unset):
 
     Raises:
         errors.SearchGroupsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
@@ -157,7 +157,7 @@ async def asyncio_detailed(
     role_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchGroupsForRoleData | Unset = UNSET,
+    body: RoleGroupSearchQueryRequest | Unset = UNSET,
 ) -> Response[ProblemDetail | RoleGroupSearchResult]:
     """Search role groups
 
@@ -165,7 +165,7 @@ async def asyncio_detailed(
 
     Args:
         role_id (str):
-        body (SearchGroupsForRoleData | Unset):
+        body (RoleGroupSearchQueryRequest | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -183,7 +183,7 @@ async def asyncio(
     role_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchGroupsForRoleData | Unset = UNSET,
+    body: RoleGroupSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
 ) -> RoleGroupSearchResult:
     """Search role groups
@@ -192,7 +192,7 @@ async def asyncio(
 
     Args:
         role_id (str):
-        body (SearchGroupsForRoleData | Unset):
+        body (RoleGroupSearchQueryRequest | Unset):
 
     Raises:
         errors.SearchGroupsForRoleBadRequest: If the response status code is 400. The provided data is not valid.

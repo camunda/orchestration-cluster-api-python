@@ -5,7 +5,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.user_result import UserResult
+from ...models.update_user_response_200 import UpdateUserResponse200
 from ...models.user_update_request import UserUpdateRequest
 from ...types import Response
 
@@ -24,9 +24,9 @@ def _get_kwargs(username: str, *, body: UserUpdateRequest) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | UserResult | None:
+) -> ProblemDetail | UpdateUserResponse200 | None:
     if response.status_code == 200:
-        response_200 = UserResult.from_dict(response.json())
+        response_200 = UpdateUserResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -51,7 +51,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | UserResult]:
+) -> Response[ProblemDetail | UpdateUserResponse200]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -62,7 +62,7 @@ def _build_response(
 
 def sync_detailed(
     username: str, *, client: AuthenticatedClient | Client, body: UserUpdateRequest
-) -> Response[ProblemDetail | UserResult]:
+) -> Response[ProblemDetail | UpdateUserResponse200]:
     """Update user
 
      Updates a user.
@@ -76,7 +76,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | UserResult]
+        Response[ProblemDetail | UpdateUserResponse200]
     """
     kwargs = _get_kwargs(username=username, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -89,7 +89,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: UserUpdateRequest,
     **kwargs: Any,
-) -> UserResult:
+) -> UpdateUserResponse200:
     """Update user
 
      Updates a user.
@@ -107,7 +107,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UserResult"""
+        UpdateUserResponse200"""
     response = sync_detailed(username=username, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -142,12 +142,12 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UserResult, response.parsed)
+    return cast(UpdateUserResponse200, response.parsed)
 
 
 async def asyncio_detailed(
     username: str, *, client: AuthenticatedClient | Client, body: UserUpdateRequest
-) -> Response[ProblemDetail | UserResult]:
+) -> Response[ProblemDetail | UpdateUserResponse200]:
     """Update user
 
      Updates a user.
@@ -161,7 +161,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | UserResult]
+        Response[ProblemDetail | UpdateUserResponse200]
     """
     kwargs = _get_kwargs(username=username, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -174,7 +174,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: UserUpdateRequest,
     **kwargs: Any,
-) -> UserResult:
+) -> UpdateUserResponse200:
     """Update user
 
      Updates a user.
@@ -192,7 +192,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UserResult"""
+        UpdateUserResponse200"""
     response = await asyncio_detailed(username=username, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -227,4 +227,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(UserResult, response.parsed)
+    return cast(UpdateUserResponse200, response.parsed)

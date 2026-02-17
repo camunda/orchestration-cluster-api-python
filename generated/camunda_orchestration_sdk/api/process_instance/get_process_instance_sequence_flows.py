@@ -4,10 +4,10 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.get_process_instance_sequence_flows_response_200 import (
-    GetProcessInstanceSequenceFlowsResponse200,
-)
 from ...models.problem_detail import ProblemDetail
+from ...models.process_instance_sequence_flows_query_result import (
+    ProcessInstanceSequenceFlowsQueryResult,
+)
 from ...types import Response
 
 
@@ -23,9 +23,9 @@ def _get_kwargs(process_instance_key: str) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> GetProcessInstanceSequenceFlowsResponse200 | ProblemDetail | None:
+) -> ProblemDetail | ProcessInstanceSequenceFlowsQueryResult | None:
     if response.status_code == 200:
-        response_200 = GetProcessInstanceSequenceFlowsResponse200.from_dict(
+        response_200 = ProcessInstanceSequenceFlowsQueryResult.from_dict(
             response.json()
         )
         return response_200
@@ -49,7 +49,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[GetProcessInstanceSequenceFlowsResponse200 | ProblemDetail]:
+) -> Response[ProblemDetail | ProcessInstanceSequenceFlowsQueryResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -60,7 +60,7 @@ def _build_response(
 
 def sync_detailed(
     process_instance_key: str, *, client: AuthenticatedClient | Client
-) -> Response[GetProcessInstanceSequenceFlowsResponse200 | ProblemDetail]:
+) -> Response[ProblemDetail | ProcessInstanceSequenceFlowsQueryResult]:
     """Get sequence flows
 
      Get sequence flows taken by the process instance.
@@ -74,7 +74,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetProcessInstanceSequenceFlowsResponse200 | ProblemDetail]
+        Response[ProblemDetail | ProcessInstanceSequenceFlowsQueryResult]
     """
     kwargs = _get_kwargs(process_instance_key=process_instance_key)
     response = client.get_httpx_client().request(**kwargs)
@@ -83,7 +83,7 @@ def sync_detailed(
 
 def sync(
     process_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetProcessInstanceSequenceFlowsResponse200:
+) -> ProcessInstanceSequenceFlowsQueryResult:
     """Get sequence flows
 
      Get sequence flows taken by the process instance.
@@ -100,7 +100,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetProcessInstanceSequenceFlowsResponse200"""
+        ProcessInstanceSequenceFlowsQueryResult"""
     response = sync_detailed(process_instance_key=process_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -129,12 +129,12 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetProcessInstanceSequenceFlowsResponse200, response.parsed)
+    return cast(ProcessInstanceSequenceFlowsQueryResult, response.parsed)
 
 
 async def asyncio_detailed(
     process_instance_key: str, *, client: AuthenticatedClient | Client
-) -> Response[GetProcessInstanceSequenceFlowsResponse200 | ProblemDetail]:
+) -> Response[ProblemDetail | ProcessInstanceSequenceFlowsQueryResult]:
     """Get sequence flows
 
      Get sequence flows taken by the process instance.
@@ -148,7 +148,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[GetProcessInstanceSequenceFlowsResponse200 | ProblemDetail]
+        Response[ProblemDetail | ProcessInstanceSequenceFlowsQueryResult]
     """
     kwargs = _get_kwargs(process_instance_key=process_instance_key)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -157,7 +157,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     process_instance_key: str, *, client: AuthenticatedClient | Client, **kwargs: Any
-) -> GetProcessInstanceSequenceFlowsResponse200:
+) -> ProcessInstanceSequenceFlowsQueryResult:
     """Get sequence flows
 
      Get sequence flows taken by the process instance.
@@ -174,7 +174,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        GetProcessInstanceSequenceFlowsResponse200"""
+        ProcessInstanceSequenceFlowsQueryResult"""
     response = await asyncio_detailed(
         process_instance_key=process_instance_key, client=client
     )
@@ -205,4 +205,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(GetProcessInstanceSequenceFlowsResponse200, response.parsed)
+    return cast(ProcessInstanceSequenceFlowsQueryResult, response.parsed)

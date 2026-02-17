@@ -61,6 +61,8 @@ def sync_detailed(
 ) -> Response[Any | ProblemDetail]:
     """Delete a global-scoped cluster variable
 
+     Delete a global-scoped cluster variable.
+
     Args:
         name (str):
 
@@ -78,6 +80,8 @@ def sync_detailed(
 
 def sync(name: str, *, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
     """Delete a global-scoped cluster variable
+
+     Delete a global-scoped cluster variable.
 
     Args:
         name (str):
@@ -133,6 +137,8 @@ async def asyncio_detailed(
 ) -> Response[Any | ProblemDetail]:
     """Delete a global-scoped cluster variable
 
+     Delete a global-scoped cluster variable.
+
     Args:
         name (str):
 
@@ -152,6 +158,8 @@ async def asyncio(
     name: str, *, client: AuthenticatedClient | Client, **kwargs: Any
 ) -> None:
     """Delete a global-scoped cluster variable
+
+     Delete a global-scoped cluster variable.
 
     Args:
         name (str):
