@@ -4,7 +4,6 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.user_create_result import UserCreateResult
 from ...models.user_request import UserRequest
 from ...types import Response
 
@@ -20,9 +19,9 @@ def _get_kwargs(*, body: UserRequest) -> dict[str, Any]:
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | UserCreateResult | None:
+) -> Any | ProblemDetail | None:
     if response.status_code == 201:
-        response_201 = UserCreateResult.from_dict(response.json())
+        response_201 = cast(Any, None)
         return response_201
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -44,7 +43,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | UserCreateResult]:
+) -> Response[Any | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -55,7 +54,7 @@ def _build_response(
 
 def sync_detailed(
     *, client: AuthenticatedClient | Client, body: UserRequest
-) -> Response[ProblemDetail | UserCreateResult]:
+) -> Response[Any | ProblemDetail]:
     """Create admin user
 
      Creates a new user and assigns the admin role to it. This endpoint is only usable when users are
@@ -69,7 +68,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | UserCreateResult]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -78,7 +77,7 @@ def sync_detailed(
 
 def sync(
     *, client: AuthenticatedClient | Client, body: UserRequest, **kwargs: Any
-) -> UserCreateResult:
+) -> None:
     """Create admin user
 
      Creates a new user and assigns the admin role to it. This endpoint is only usable when users are
@@ -95,7 +94,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UserCreateResult"""
+        None"""
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -123,13 +122,12 @@ def sync(
                 parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    assert response.parsed is not None
-    return cast(UserCreateResult, response.parsed)
+    return None
 
 
 async def asyncio_detailed(
     *, client: AuthenticatedClient | Client, body: UserRequest
-) -> Response[ProblemDetail | UserCreateResult]:
+) -> Response[Any | ProblemDetail]:
     """Create admin user
 
      Creates a new user and assigns the admin role to it. This endpoint is only usable when users are
@@ -143,7 +141,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | UserCreateResult]
+        Response[Any | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -152,7 +150,7 @@ async def asyncio_detailed(
 
 async def asyncio(
     *, client: AuthenticatedClient | Client, body: UserRequest, **kwargs: Any
-) -> UserCreateResult:
+) -> None:
     """Create admin user
 
      Creates a new user and assigns the admin role to it. This endpoint is only usable when users are
@@ -169,7 +167,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        UserCreateResult"""
+        None"""
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -197,5 +195,4 @@ async def asyncio(
                 parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    assert response.parsed is not None
-    return cast(UserCreateResult, response.parsed)
+    return None

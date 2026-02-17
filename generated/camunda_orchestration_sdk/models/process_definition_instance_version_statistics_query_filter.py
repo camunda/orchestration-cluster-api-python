@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ProcessDefinitionId,
-    TenantId,
-    lift_process_definition_id,
-    lift_tenant_id,
-)
+from camunda_orchestration_sdk.semantic_types import TenantId, lift_tenant_id
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -22,29 +17,20 @@ class ProcessDefinitionInstanceVersionStatisticsQueryFilter:
     """The process definition instance version statistics search filters.
 
     Attributes:
-        process_definition_id (str): The ID of the process definition to retrieve version statistics for. Example: new-
-            account-onboarding-workflow.
         tenant_id (str | Unset): Tenant ID of this process definition. Example: customer-service.
     """
 
-    process_definition_id: ProcessDefinitionId
     tenant_id: TenantId | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        process_definition_id = self.process_definition_id
-
         tenant_id = self.tenant_id
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update(
-            {
-                "processDefinitionId": process_definition_id,
-            }
-        )
+        field_dict.update({})
         if tenant_id is not UNSET:
             field_dict["tenantId"] = tenant_id
 
@@ -53,8 +39,6 @@ class ProcessDefinitionInstanceVersionStatisticsQueryFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
-
         tenant_id = (
             lift_tenant_id(_val)
             if (_val := d.pop("tenantId", UNSET)) is not UNSET
@@ -62,7 +46,6 @@ class ProcessDefinitionInstanceVersionStatisticsQueryFilter:
         )
 
         process_definition_instance_version_statistics_query_filter = cls(
-            process_definition_id=process_definition_id,
             tenant_id=tenant_id,
         )
 

@@ -1,6 +1,5 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
-    AuditLogEntityKey,
     AuditLogKey,
     BatchOperationKey,
     DecisionDefinitionId,
@@ -16,7 +15,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessInstanceKey,
     TenantId,
     UserTaskKey,
-    lift_audit_log_entity_key,
     lift_audit_log_key,
     lift_batch_operation_key,
     lift_decision_definition_id,
@@ -50,9 +48,6 @@ from ..models.audit_log_result_batch_operation_type import (
     AuditLogResultBatchOperationType,
 )
 from ..models.audit_log_result_enum import AuditLogResultEnum
-from ..models.audit_log_result_related_entity_type import (
-    AuditLogResultRelatedEntityType,
-)
 from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="AuditLogResult")
@@ -73,8 +68,6 @@ class AuditLogResult:
         timestamp (datetime.datetime | Unset): The timestamp when the operation occurred.
         actor_id (str | Unset): The ID of the actor who performed the operation.
         actor_type (AuditLogActorTypeEnum | Unset): The type of actor who performed the operation.
-        agent_element_id (str | Unset): The element ID of the agent that performed the operation (e.g. ad-hoc subprocess
-            element ID).
         tenant_id (str | Unset): The tenant ID of the audit log. Example: customer-service.
         result (AuditLogResultEnum | Unset): The result status of the operation.
         annotation (str | Unset): Additional notes about the operation.
@@ -82,11 +75,6 @@ class AuditLogResult:
         process_definition_id (str | Unset): The process definition ID. Example: new-account-onboarding-workflow.
         process_definition_key (str | Unset): The key of the process definition. Example: 2251799813686749.
         process_instance_key (str | Unset): The key of the process instance. Example: 2251799813690746.
-        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
-            top-level
-            ancestor in the process instance hierarchy. This field is only present for data
-            belonging to process instance hierarchies created in version 8.9 or later.
-             Example: 2251799813690746.
         element_instance_key (str | Unset): The key of the element instance. Example: 2251799813686789.
         job_key (str | Unset): The key of the job. Example: 2251799813653498.
         user_task_key (str | Unset): The key of the user task.
@@ -99,17 +87,6 @@ class AuditLogResult:
         deployment_key (str | Unset): The key of the deployment.
         form_key (str | Unset): The key of the form. Example: 2251799813684365.
         resource_key (str | Unset): The system-assigned key for this resource.
-        related_entity_key (str | Unset): The key of the related entity. The content depends on the operation type and
-            entity type.
-            For example, for authorization operations, this will contain the ID of the owner (e.g., user or group) the
-            authorization belongs to.
-             Example: 22517998136843567.
-        related_entity_type (AuditLogResultRelatedEntityType | Unset): The type of the related entity. The content
-            depends on the operation type and entity type.
-            For example, for authorization operations, this will contain the type of the owner (e.g., USER or GROUP) the
-            authorization belongs to.
-        entity_description (str | Unset): Additional description of the entity affected by the operation.
-            For example, for variable operations, this will contain the variable name.
     """
 
     audit_log_key: AuditLogKey | Unset = UNSET
@@ -121,7 +98,6 @@ class AuditLogResult:
     timestamp: datetime.datetime | Unset = UNSET
     actor_id: str | Unset = UNSET
     actor_type: AuditLogActorTypeEnum | Unset = UNSET
-    agent_element_id: str | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     result: AuditLogResultEnum | Unset = UNSET
     annotation: str | Unset = UNSET
@@ -129,7 +105,6 @@ class AuditLogResult:
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     job_key: JobKey | Unset = UNSET
     user_task_key: UserTaskKey | Unset = UNSET
@@ -141,9 +116,6 @@ class AuditLogResult:
     deployment_key: DeploymentKey | Unset = UNSET
     form_key: FormKey | Unset = UNSET
     resource_key: str | Unset = UNSET
-    related_entity_key: AuditLogEntityKey | Unset = UNSET
-    related_entity_type: AuditLogResultRelatedEntityType | Unset = UNSET
-    entity_description: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -177,8 +149,6 @@ class AuditLogResult:
         if not isinstance(self.actor_type, Unset):
             actor_type = self.actor_type.value
 
-        agent_element_id = self.agent_element_id
-
         tenant_id = self.tenant_id
 
         result: str | Unset = UNSET
@@ -196,8 +166,6 @@ class AuditLogResult:
         process_definition_key = self.process_definition_key
 
         process_instance_key = self.process_instance_key
-
-        root_process_instance_key = self.root_process_instance_key
 
         element_instance_key = self.element_instance_key
 
@@ -225,14 +193,6 @@ class AuditLogResult:
         else:
             resource_key = self.resource_key
 
-        related_entity_key = self.related_entity_key
-
-        related_entity_type: str | Unset = UNSET
-        if not isinstance(self.related_entity_type, Unset):
-            related_entity_type = self.related_entity_type.value
-
-        entity_description = self.entity_description
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -254,8 +214,6 @@ class AuditLogResult:
             field_dict["actorId"] = actor_id
         if actor_type is not UNSET:
             field_dict["actorType"] = actor_type
-        if agent_element_id is not UNSET:
-            field_dict["agentElementId"] = agent_element_id
         if tenant_id is not UNSET:
             field_dict["tenantId"] = tenant_id
         if result is not UNSET:
@@ -270,8 +228,6 @@ class AuditLogResult:
             field_dict["processDefinitionKey"] = process_definition_key
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
-        if root_process_instance_key is not UNSET:
-            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if element_instance_key is not UNSET:
             field_dict["elementInstanceKey"] = element_instance_key
         if job_key is not UNSET:
@@ -294,12 +250,6 @@ class AuditLogResult:
             field_dict["formKey"] = form_key
         if resource_key is not UNSET:
             field_dict["resourceKey"] = resource_key
-        if related_entity_key is not UNSET:
-            field_dict["relatedEntityKey"] = related_entity_key
-        if related_entity_type is not UNSET:
-            field_dict["relatedEntityType"] = related_entity_type
-        if entity_description is not UNSET:
-            field_dict["entityDescription"] = entity_description
 
         return field_dict
 
@@ -359,8 +309,6 @@ class AuditLogResult:
         else:
             actor_type = AuditLogActorTypeEnum(_actor_type)
 
-        agent_element_id = d.pop("agentElementId", UNSET)
-
         tenant_id = (
             lift_tenant_id(_val)
             if (_val := d.pop("tenantId", UNSET)) is not UNSET
@@ -400,8 +348,6 @@ class AuditLogResult:
             if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
             else UNSET
         )
-
-        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
 
         element_instance_key = (
             lift_element_instance_key(_val)
@@ -466,21 +412,6 @@ class AuditLogResult:
 
         resource_key = _parse_resource_key(d.pop("resourceKey", UNSET))
 
-        related_entity_key = (
-            lift_audit_log_entity_key(_val)
-            if (_val := d.pop("relatedEntityKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        _related_entity_type = d.pop("relatedEntityType", UNSET)
-        related_entity_type: AuditLogResultRelatedEntityType | Unset
-        if isinstance(_related_entity_type, Unset):
-            related_entity_type = UNSET
-        else:
-            related_entity_type = AuditLogResultRelatedEntityType(_related_entity_type)
-
-        entity_description = d.pop("entityDescription", UNSET)
-
         audit_log_result = cls(
             audit_log_key=audit_log_key,
             entity_key=entity_key,
@@ -491,7 +422,6 @@ class AuditLogResult:
             timestamp=timestamp,
             actor_id=actor_id,
             actor_type=actor_type,
-            agent_element_id=agent_element_id,
             tenant_id=tenant_id,
             result=result,
             annotation=annotation,
@@ -499,7 +429,6 @@ class AuditLogResult:
             process_definition_id=process_definition_id,
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,
-            root_process_instance_key=root_process_instance_key,
             element_instance_key=element_instance_key,
             job_key=job_key,
             user_task_key=user_task_key,
@@ -511,9 +440,6 @@ class AuditLogResult:
             deployment_key=deployment_key,
             form_key=form_key,
             resource_key=resource_key,
-            related_entity_key=related_entity_key,
-            related_entity_type=related_entity_type,
-            entity_description=entity_description,
         )
 
         audit_log_result.additional_properties = d

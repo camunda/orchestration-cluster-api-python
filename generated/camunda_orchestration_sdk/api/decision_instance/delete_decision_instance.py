@@ -4,6 +4,7 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
+from ...models.batch_operation_created_result import BatchOperationCreatedResult
 from ...models.delete_decision_instance_data_type_0 import (
     DeleteDecisionInstanceDataType0,
 )
@@ -34,10 +35,10 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | ProblemDetail | None:
-    if response.status_code == 204:
-        response_204 = cast(Any, None)
-        return response_204
+) -> BatchOperationCreatedResult | ProblemDetail | None:
+    if response.status_code == 200:
+        response_200 = BatchOperationCreatedResult.from_dict(response.json())
+        return response_200
     if response.status_code == 401:
         response_401 = ProblemDetail.from_dict(response.json())
         return response_401
@@ -61,7 +62,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | ProblemDetail]:
+) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -75,7 +76,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: DeleteDecisionInstanceDataType0 | None | Unset = UNSET,
-) -> Response[Any | ProblemDetail]:
+) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Delete decision instance
 
      Delete all associated decision evaluations based on provided key.
@@ -90,7 +91,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ProblemDetail]
+        Response[BatchOperationCreatedResult | ProblemDetail]
     """
     kwargs = _get_kwargs(decision_instance_key=decision_instance_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -103,7 +104,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: DeleteDecisionInstanceDataType0 | None | Unset = UNSET,
     **kwargs: Any,
-) -> None:
+) -> BatchOperationCreatedResult:
     """Delete decision instance
 
      Delete all associated decision evaluations based on provided key.
@@ -122,7 +123,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        None"""
+        BatchOperationCreatedResult"""
     response = sync_detailed(
         decision_instance_key=decision_instance_key, client=client, body=body
     )
@@ -158,7 +159,8 @@ def sync(
                 parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return None
+    assert response.parsed is not None
+    return cast(BatchOperationCreatedResult, response.parsed)
 
 
 async def asyncio_detailed(
@@ -166,7 +168,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: DeleteDecisionInstanceDataType0 | None | Unset = UNSET,
-) -> Response[Any | ProblemDetail]:
+) -> Response[BatchOperationCreatedResult | ProblemDetail]:
     """Delete decision instance
 
      Delete all associated decision evaluations based on provided key.
@@ -181,7 +183,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | ProblemDetail]
+        Response[BatchOperationCreatedResult | ProblemDetail]
     """
     kwargs = _get_kwargs(decision_instance_key=decision_instance_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -194,7 +196,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: DeleteDecisionInstanceDataType0 | None | Unset = UNSET,
     **kwargs: Any,
-) -> None:
+) -> BatchOperationCreatedResult:
     """Delete decision instance
 
      Delete all associated decision evaluations based on provided key.
@@ -213,7 +215,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        None"""
+        BatchOperationCreatedResult"""
     response = await asyncio_detailed(
         decision_instance_key=decision_instance_key, client=client, body=body
     )
@@ -249,4 +251,5 @@ async def asyncio(
                 parsed=cast(ProblemDetail, response.parsed),
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
-    return None
+    assert response.parsed is not None
+    return cast(BatchOperationCreatedResult, response.parsed)

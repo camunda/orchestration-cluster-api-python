@@ -4,7 +4,6 @@ from enum import Enum
 class AdvancedEntityTypeFilterNeq(str, Enum):
     AUTHORIZATION = "AUTHORIZATION"
     BATCH = "BATCH"
-    CLIENT = "CLIENT"
     DECISION = "DECISION"
     GROUP = "GROUP"
     INCIDENT = "INCIDENT"

@@ -27,24 +27,22 @@ T = TypeVar("T", bound="ProcessDefinitionInstanceVersionStatisticsQuery")
 class ProcessDefinitionInstanceVersionStatisticsQuery:
     """
     Attributes:
-        filter_ (ProcessDefinitionInstanceVersionStatisticsQueryFilter): The process definition instance version
-            statistics search filters.
         page (ProcessDefinitionInstanceVersionStatisticsQueryPage | Unset): Pagination criteria.
         sort (list[ProcessDefinitionInstanceVersionStatisticsQuerySortRequest] | Unset): Sort field criteria.
+        filter_ (ProcessDefinitionInstanceVersionStatisticsQueryFilter | Unset): The process definition instance version
+            statistics search filters.
     """
 
-    filter_: ProcessDefinitionInstanceVersionStatisticsQueryFilter
     page: ProcessDefinitionInstanceVersionStatisticsQueryPage | Unset = UNSET
     sort: list[ProcessDefinitionInstanceVersionStatisticsQuerySortRequest] | Unset = (
         UNSET
     )
+    filter_: ProcessDefinitionInstanceVersionStatisticsQueryFilter | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        filter_ = self.filter_.to_dict()
-
         page: dict[str, Any] | Unset = UNSET
         if not isinstance(self.page, Unset):
             page = self.page.to_dict()
@@ -56,17 +54,19 @@ class ProcessDefinitionInstanceVersionStatisticsQuery:
                 sort_item = sort_item_data.to_dict()
                 sort.append(sort_item)
 
+        filter_: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.filter_, Unset):
+            filter_ = self.filter_.to_dict()
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update(
-            {
-                "filter": filter_,
-            }
-        )
+        field_dict.update({})
         if page is not UNSET:
             field_dict["page"] = page
         if sort is not UNSET:
             field_dict["sort"] = sort
+        if filter_ is not UNSET:
+            field_dict["filter"] = filter_
 
         return field_dict
 
@@ -83,10 +83,6 @@ class ProcessDefinitionInstanceVersionStatisticsQuery:
         )
 
         d = dict(src_dict)
-        filter_ = ProcessDefinitionInstanceVersionStatisticsQueryFilter.from_dict(
-            d.pop("filter")
-        )
-
         _page = d.pop("page", UNSET)
         page: ProcessDefinitionInstanceVersionStatisticsQueryPage | Unset
         if isinstance(_page, Unset):
@@ -107,10 +103,19 @@ class ProcessDefinitionInstanceVersionStatisticsQuery:
 
                 sort.append(sort_item)
 
+        _filter_ = d.pop("filter", UNSET)
+        filter_: ProcessDefinitionInstanceVersionStatisticsQueryFilter | Unset
+        if isinstance(_filter_, Unset):
+            filter_ = UNSET
+        else:
+            filter_ = ProcessDefinitionInstanceVersionStatisticsQueryFilter.from_dict(
+                _filter_
+            )
+
         process_definition_instance_version_statistics_query = cls(
-            filter_=filter_,
             page=page,
             sort=sort,
+            filter_=filter_,
         )
 
         process_definition_instance_version_statistics_query.additional_properties = d

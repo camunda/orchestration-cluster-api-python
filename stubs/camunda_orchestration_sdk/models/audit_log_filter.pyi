@@ -47,7 +47,6 @@ class AuditLogFilter:
     timestamp: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     actor_id: AdvancedStringFilter | str | Unset = UNSET
     actor_type: AdvancedActorTypeFilter | AuditLogActorTypeExactMatch | Unset = UNSET
-    agent_element_id: AdvancedStringFilter | str | Unset = UNSET
     entity_key: AdvancedAuditLogEntityKeyFilter | str | Unset = UNSET
     entity_type: AdvancedEntityTypeFilter | EntityTypeExactMatch | Unset = UNSET
     tenant_id: AdvancedStringFilter | str | Unset = UNSET
@@ -68,9 +67,6 @@ class AuditLogFilter:
     decision_definition_id: AdvancedStringFilter | str | Unset = UNSET
     decision_definition_key: AdvancedDecisionDefinitionKeyFilter | str | Unset = UNSET
     decision_evaluation_key: AdvancedDecisionEvaluationKeyFilter | str | Unset = UNSET
-    related_entity_key: AdvancedAuditLogEntityKeyFilter | str | Unset = UNSET
-    related_entity_type: AdvancedEntityTypeFilter | EntityTypeExactMatch | Unset = UNSET
-    entity_description: AdvancedStringFilter | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

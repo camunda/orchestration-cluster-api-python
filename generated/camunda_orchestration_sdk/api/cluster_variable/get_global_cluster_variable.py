@@ -62,8 +62,6 @@ def sync_detailed(
 ) -> Response[ClusterVariableResult | ProblemDetail]:
     """Get a global-scoped cluster variable
 
-     Get a global-scoped cluster variable.
-
     Args:
         name (str):
 
@@ -83,8 +81,6 @@ def sync(
     name: str, *, client: AuthenticatedClient | Client, **kwargs: Any
 ) -> ClusterVariableResult:
     """Get a global-scoped cluster variable
-
-     Get a global-scoped cluster variable.
 
     Args:
         name (str):
@@ -141,8 +137,6 @@ async def asyncio_detailed(
 ) -> Response[ClusterVariableResult | ProblemDetail]:
     """Get a global-scoped cluster variable
 
-     Get a global-scoped cluster variable.
-
     Args:
         name (str):
 
@@ -162,8 +156,6 @@ async def asyncio(
     name: str, *, client: AuthenticatedClient | Client, **kwargs: Any
 ) -> ClusterVariableResult:
     """Get a global-scoped cluster variable
-
-     Get a global-scoped cluster variable.
 
     Args:
         name (str):

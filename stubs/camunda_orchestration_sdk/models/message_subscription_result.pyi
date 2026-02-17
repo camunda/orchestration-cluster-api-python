@@ -15,7 +15,6 @@ class MessageSubscriptionResult:
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     element_id: ElementId | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     message_subscription_state: MessageSubscriptionStateEnum | Unset = UNSET

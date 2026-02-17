@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "specHash": "sha256:e5c28cd917d38e51aa2290bacffab37f63d08724be28bfd6901e20b5a932569d",
+  "specHash": "sha256:aac31df63908e4d4bd9c914730f7dca5858c71372d539a966e17ef5e56081b09",
   "semanticKeys": [
     {
       "name": "AuditLogEntityKey",
@@ -515,32 +515,6 @@
       "stableId": "form-key"
     },
     {
-      "name": "GlobalListenerId",
-      "semanticType": "GlobalListenerId",
-      "category": "model-id",
-      "description": "The user-defined id for the global listener",
-      "composition": {
-        "schemaKind": "inline",
-        "refs": [],
-        "inlineFragments": 0
-      },
-      "constraints": {
-        "format": "GlobalListenerId"
-      },
-      "examples": [
-        "GlobalListener_1"
-      ],
-      "extensions": {
-        "x-semantic-type": "GlobalListenerId"
-      },
-      "flags": {
-        "semanticKey": true,
-        "includesLongKeyRef": false,
-        "deprecated": false
-      },
-      "stableId": "global-listener-id"
-    },
-    {
       "name": "IncidentKey",
       "semanticType": "IncidentKey",
       "category": "system-key",
@@ -747,36 +721,6 @@
         "deprecated": false
       },
       "stableId": "process-instance-key"
-    },
-    {
-      "name": "RootProcessInstanceKey",
-      "semanticType": "ProcessInstanceKey",
-      "category": "system-key",
-      "description": "The key of the root process instance. The root process instance is the top-level\nancestor in the process instance hierarchy. This field is only present for data\nbelonging to process instance hierarchies created in version 8.9 or later.\n",
-      "composition": {
-        "schemaKind": "allOf",
-        "refs": [
-          "LongKey"
-        ],
-        "inlineFragments": 0
-      },
-      "constraints": {
-        "pattern": "^-?[0-9]+$",
-        "minLength": 1,
-        "maxLength": 25
-      },
-      "examples": [
-        "2251799813690746"
-      ],
-      "extensions": {
-        "x-semantic-type": "ProcessInstanceKey"
-      },
-      "flags": {
-        "semanticKey": true,
-        "includesLongKeyRef": true,
-        "deprecated": false
-      },
-      "stableId": "root-process-instance-key"
     },
     {
       "name": "ScopeKey",
@@ -1810,11 +1754,6 @@
   ],
   "arrays": [
     {
-      "name": "GlobalTaskListenerEventTypes",
-      "itemRef": "GlobalTaskListenerEventTypeEnum",
-      "uniqueItems": false
-    },
-    {
       "name": "TagSet",
       "itemRef": "Tag",
       "maxItems": 10,
@@ -2039,30 +1978,6 @@
       ]
     },
     {
-      "operationId": "createGlobalTaskListener",
-      "path": "/global-listeners/user-task",
-      "method": "post",
-      "tags": [
-        "Global listener"
-      ]
-    },
-    {
-      "operationId": "updateGlobalTaskListener",
-      "path": "/global-listeners/user-task/{id}",
-      "method": "put",
-      "tags": [
-        "Global listener"
-      ]
-    },
-    {
-      "operationId": "deleteGlobalTaskListener",
-      "path": "/global-listeners/user-task/{id}",
-      "method": "delete",
-      "tags": [
-        "Global listener"
-      ]
-    },
-    {
       "operationId": "searchGroups",
       "path": "/groups/search",
       "method": "post",
@@ -2240,7 +2155,7 @@
     },
     {
       "operationId": "getProcessDefinitionInstanceVersionStatistics",
-      "path": "/process-definitions/statistics/process-instances-by-version",
+      "path": "/process-definitions/{processDefinitionId}/statistics/process-instances",
       "method": "post",
       "tags": [
         "Process definition"
@@ -2886,7 +2801,6 @@
         "Cluster Variable"
       ],
       "summary": "Create a global-scoped cluster variable",
-      "description": "Create a global-scoped cluster variable.",
       "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
@@ -2904,7 +2818,6 @@
         "Cluster Variable"
       ],
       "summary": "Get a global-scoped cluster variable",
-      "description": "Get a global-scoped cluster variable.",
       "eventuallyConsistent": true,
       "hasRequestBody": false,
       "requestBodyUnion": false,
@@ -2944,7 +2857,6 @@
         "Cluster Variable"
       ],
       "summary": "Delete a global-scoped cluster variable",
-      "description": "Delete a global-scoped cluster variable.",
       "eventuallyConsistent": false,
       "hasRequestBody": false,
       "requestBodyUnion": false,
@@ -2986,7 +2898,6 @@
         "Cluster Variable"
       ],
       "summary": "Create a tenant-scoped cluster variable",
-      "description": "Create a new cluster variable for the given tenant.",
       "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
@@ -3006,7 +2917,6 @@
         "Cluster Variable"
       ],
       "summary": "Get a tenant-scoped cluster variable",
-      "description": "Get a tenant-scoped cluster variable.",
       "eventuallyConsistent": true,
       "hasRequestBody": false,
       "requestBodyUnion": false,
@@ -3048,7 +2958,6 @@
         "Cluster Variable"
       ],
       "summary": "Delete a tenant-scoped cluster variable",
-      "description": "Delete a tenant-scoped cluster variable.",
       "eventuallyConsistent": false,
       "hasRequestBody": false,
       "requestBodyUnion": false,
@@ -3576,64 +3485,6 @@
       "queryParams": [],
       "requestBodyUnionRefs": [],
       "optionalTenantIdInBody": true
-    },
-    {
-      "operationId": "createGlobalTaskListener",
-      "path": "/global-listeners/user-task",
-      "method": "post",
-      "tags": [
-        "Global listener"
-      ],
-      "summary": "Create global user task listener",
-      "description": "Create a new global user task listener.",
-      "eventuallyConsistent": true,
-      "hasRequestBody": true,
-      "requestBodyUnion": false,
-      "bodyOnly": true,
-      "pathParams": [],
-      "queryParams": [],
-      "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
-    },
-    {
-      "operationId": "updateGlobalTaskListener",
-      "path": "/global-listeners/user-task/{id}",
-      "method": "put",
-      "tags": [
-        "Global listener"
-      ],
-      "summary": "Update global user task listener",
-      "description": "Updates a global user task listener.",
-      "eventuallyConsistent": true,
-      "hasRequestBody": true,
-      "requestBodyUnion": false,
-      "bodyOnly": false,
-      "pathParams": [
-        "id"
-      ],
-      "queryParams": [],
-      "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
-    },
-    {
-      "operationId": "deleteGlobalTaskListener",
-      "path": "/global-listeners/user-task/{id}",
-      "method": "delete",
-      "tags": [
-        "Global listener"
-      ],
-      "summary": "Delete global user task listener",
-      "description": "Deletes a global user task listener.",
-      "eventuallyConsistent": true,
-      "hasRequestBody": false,
-      "requestBodyUnion": false,
-      "bodyOnly": false,
-      "pathParams": [
-        "id"
-      ],
-      "queryParams": [],
-      "requestBodyUnionRefs": [],
-      "optionalTenantIdInBody": false
     },
     {
       "operationId": "createGroup",
@@ -4482,18 +4333,20 @@
     },
     {
       "operationId": "getProcessDefinitionInstanceVersionStatistics",
-      "path": "/process-definitions/statistics/process-instances-by-version",
+      "path": "/process-definitions/{processDefinitionId}/statistics/process-instances",
       "method": "post",
       "tags": [
         "Process definition"
       ],
       "summary": "Get process instance statistics by version",
-      "description": "Get statistics about process instances, grouped by version for a given process definition.\nThe process definition ID must be provided as a required field in the request body filter.\n",
+      "description": "Get statistics about process instances, grouped by version for a given process definition.\n",
       "eventuallyConsistent": true,
       "hasRequestBody": true,
       "requestBodyUnion": false,
-      "bodyOnly": true,
-      "pathParams": [],
+      "bodyOnly": false,
+      "pathParams": [
+        "processDefinitionId"
+      ],
       "queryParams": [],
       "requestBodyUnionRefs": [],
       "optionalTenantIdInBody": false
@@ -6068,9 +5921,9 @@
     }
   ],
   "integrity": {
-    "totalSemanticKeys": 35,
+    "totalSemanticKeys": 33,
     "totalUnions": 49,
-    "totalOperations": 175,
-    "totalEventuallyConsistent": 93
+    "totalOperations": 172,
+    "totalEventuallyConsistent": 90
   }
 }

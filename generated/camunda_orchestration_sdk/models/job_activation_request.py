@@ -5,9 +5,6 @@ from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 
-from ..models.job_activation_request_tenant_filter import (
-    JobActivationRequestTenantFilter,
-)
 from ..types import UNSET, Unset
 
 T = TypeVar("T", bound="JobActivationRequest")
@@ -33,9 +30,6 @@ class JobActivationRequest:
             polling is disabled and the request is completed immediately, even when no job is activated.
              Example: 60000.
         tenant_ids (list[str] | Unset): A list of IDs of tenants for which to activate jobs.
-        tenant_filter (JobActivationRequestTenantFilter | Unset): The tenant filtering strategy - determines whether to
-            use provided tenant IDs or assigned tenant IDs from the authenticated principal's authorized tenants.
-             Default: JobActivationRequestTenantFilter.PROVIDED.
     """
 
     type_: str
@@ -45,9 +39,6 @@ class JobActivationRequest:
     fetch_variable: list[str] | Unset = UNSET
     request_timeout: int | Unset = UNSET
     tenant_ids: list[str] | Unset = UNSET
-    tenant_filter: JobActivationRequestTenantFilter | Unset = (
-        JobActivationRequestTenantFilter.PROVIDED
-    )
 
     def to_dict(self) -> dict[str, Any]:
         type_ = self.type_
@@ -68,10 +59,6 @@ class JobActivationRequest:
         if not isinstance(self.tenant_ids, Unset):
             tenant_ids = self.tenant_ids
 
-        tenant_filter: str | Unset = UNSET
-        if not isinstance(self.tenant_filter, Unset):
-            tenant_filter = self.tenant_filter.value
-
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -89,8 +76,6 @@ class JobActivationRequest:
             field_dict["requestTimeout"] = request_timeout
         if tenant_ids is not UNSET:
             field_dict["tenantIds"] = tenant_ids
-        if tenant_filter is not UNSET:
-            field_dict["tenantFilter"] = tenant_filter
 
         return field_dict
 
@@ -111,13 +96,6 @@ class JobActivationRequest:
 
         tenant_ids = cast(list[str], d.pop("tenantIds", UNSET))
 
-        _tenant_filter = d.pop("tenantFilter", UNSET)
-        tenant_filter: JobActivationRequestTenantFilter | Unset
-        if isinstance(_tenant_filter, Unset):
-            tenant_filter = UNSET
-        else:
-            tenant_filter = JobActivationRequestTenantFilter(_tenant_filter)
-
         job_activation_request = cls(
             type_=type_,
             timeout=timeout,
@@ -126,7 +104,6 @@ class JobActivationRequest:
             fetch_variable=fetch_variable,
             request_timeout=request_timeout,
             tenant_ids=tenant_ids,
-            tenant_filter=tenant_filter,
         )
 
         return job_activation_request

@@ -69,8 +69,6 @@ def sync_detailed(
 ) -> Response[ClusterVariableResult | ProblemDetail]:
     """Create a tenant-scoped cluster variable
 
-     Create a new cluster variable for the given tenant.
-
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
         body (CreateClusterVariableRequest):
@@ -95,8 +93,6 @@ def sync(
     **kwargs: Any,
 ) -> ClusterVariableResult:
     """Create a tenant-scoped cluster variable
-
-     Create a new cluster variable for the given tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
@@ -150,8 +146,6 @@ async def asyncio_detailed(
 ) -> Response[ClusterVariableResult | ProblemDetail]:
     """Create a tenant-scoped cluster variable
 
-     Create a new cluster variable for the given tenant.
-
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
         body (CreateClusterVariableRequest):
@@ -176,8 +170,6 @@ async def asyncio(
     **kwargs: Any,
 ) -> ClusterVariableResult:
     """Create a tenant-scoped cluster variable
-
-     Create a new cluster variable for the given tenant.
 
     Args:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.

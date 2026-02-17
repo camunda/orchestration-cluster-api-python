@@ -27,7 +27,6 @@ class DecisionInstanceGetQueryResult:
     decision_evaluation_key: DecisionEvaluationKey | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     decision_definition_key: DecisionDefinitionKey | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     root_decision_definition_key: DecisionDefinitionKey | Unset = UNSET

@@ -57,11 +57,6 @@ class DecisionInstanceGetQueryResult:
             Example: 2251792362345323.
         process_definition_key (str | Unset): The key of the process definition. Example: 2251799813686749.
         process_instance_key (str | Unset): The key of the process instance. Example: 2251799813690746.
-        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
-            top-level
-            ancestor in the process instance hierarchy. This field is only present for data
-            belonging to process instance hierarchies created in version 8.9 or later.
-             Example: 2251799813690746.
         decision_definition_key (str | Unset): The key of the decision. Example: 2251799813326547.
         element_instance_key (str | Unset): The key of the element instance this decision instance is linked to.
             Example: 2251799813686789.
@@ -83,7 +78,6 @@ class DecisionInstanceGetQueryResult:
     decision_evaluation_key: DecisionEvaluationKey | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     decision_definition_key: DecisionDefinitionKey | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     root_decision_definition_key: DecisionDefinitionKey | Unset = UNSET
@@ -125,8 +119,6 @@ class DecisionInstanceGetQueryResult:
         process_definition_key = self.process_definition_key
 
         process_instance_key = self.process_instance_key
-
-        root_process_instance_key = self.root_process_instance_key
 
         decision_definition_key = self.decision_definition_key
 
@@ -179,8 +171,6 @@ class DecisionInstanceGetQueryResult:
             field_dict["processDefinitionKey"] = process_definition_key
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
-        if root_process_instance_key is not UNSET:
-            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if decision_definition_key is not UNSET:
             field_dict["decisionDefinitionKey"] = decision_definition_key
         if element_instance_key is not UNSET:
@@ -267,8 +257,6 @@ class DecisionInstanceGetQueryResult:
             else UNSET
         )
 
-        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
-
         decision_definition_key = (
             lift_decision_definition_key(_val)
             if (_val := d.pop("decisionDefinitionKey", UNSET)) is not UNSET
@@ -319,7 +307,6 @@ class DecisionInstanceGetQueryResult:
             decision_evaluation_key=decision_evaluation_key,
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,
-            root_process_instance_key=root_process_instance_key,
             decision_definition_key=decision_definition_key,
             element_instance_key=element_instance_key,
             root_decision_definition_key=root_decision_definition_key,

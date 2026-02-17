@@ -29,7 +29,7 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> EvaluateDecisionResult | ProblemDetail | None:
+) -> Any | EvaluateDecisionResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = EvaluateDecisionResult.from_dict(response.json())
         return response_200
@@ -37,7 +37,7 @@ def _parse_response(
         response_400 = ProblemDetail.from_dict(response.json())
         return response_400
     if response.status_code == 404:
-        response_404 = ProblemDetail.from_dict(response.json())
+        response_404 = cast(Any, None)
         return response_404
     if response.status_code == 500:
         response_500 = ProblemDetail.from_dict(response.json())
@@ -53,7 +53,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[EvaluateDecisionResult | ProblemDetail]:
+) -> Response[Any | EvaluateDecisionResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -66,7 +66,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: DecisionEvaluationByID | DecisionEvaluationByKey,
-) -> Response[EvaluateDecisionResult | ProblemDetail]:
+) -> Response[Any | EvaluateDecisionResult | ProblemDetail]:
     """Evaluate decision
 
      Evaluates a decision.
@@ -82,7 +82,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[EvaluateDecisionResult | ProblemDetail]
+        Response[Any | EvaluateDecisionResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -126,7 +126,7 @@ def sync(
             raise errors.EvaluateDecisionNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
+                parsed=response.parsed,
             )
         if response.status_code == 500:
             raise errors.EvaluateDecisionInternalServerError(
@@ -149,7 +149,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: DecisionEvaluationByID | DecisionEvaluationByKey,
-) -> Response[EvaluateDecisionResult | ProblemDetail]:
+) -> Response[Any | EvaluateDecisionResult | ProblemDetail]:
     """Evaluate decision
 
      Evaluates a decision.
@@ -165,7 +165,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[EvaluateDecisionResult | ProblemDetail]
+        Response[Any | EvaluateDecisionResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -209,7 +209,7 @@ async def asyncio(
             raise errors.EvaluateDecisionNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
+                parsed=response.parsed,
             )
         if response.status_code == 500:
             raise errors.EvaluateDecisionInternalServerError(

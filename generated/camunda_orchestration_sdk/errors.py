@@ -1269,60 +1269,6 @@ class CreateGlobalClusterVariableUnauthorized(ApiError):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
-class CreateGlobalTaskListenerBadRequest(ApiError):
-    """Raised when the server returns HTTP 400. The provided data is not valid."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class CreateGlobalTaskListenerConflict(ApiError):
-    """Raised when the server returns HTTP 409. A global listener with this id already exists."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class CreateGlobalTaskListenerForbidden(ApiError):
-    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class CreateGlobalTaskListenerInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class CreateGlobalTaskListenerServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class CreateGlobalTaskListenerUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
 class CreateGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
@@ -1809,60 +1755,6 @@ class DeleteGlobalClusterVariableUnauthorized(ApiError):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
-class DeleteGlobalTaskListenerBadRequest(ApiError):
-    """Raised when the server returns HTTP 400. The provided data is not valid."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class DeleteGlobalTaskListenerForbidden(ApiError):
-    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class DeleteGlobalTaskListenerInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class DeleteGlobalTaskListenerNotFound(ApiError):
-    """Raised when the server returns HTTP 404. The global user task listener was not found."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class DeleteGlobalTaskListenerServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class DeleteGlobalTaskListenerUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
 class DeleteGroupInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
@@ -2289,9 +2181,9 @@ class EvaluateDecisionInternalServerError(ApiError):
 class EvaluateDecisionNotFound(ApiError):
     """Raised when the server returns HTTP 404. The decision is not found."""
 
-    parsed: ProblemDetail
+    parsed: Any
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+    def __init__(self, *, status_code: int, content: bytes, parsed: Any):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
@@ -5250,9 +5142,9 @@ class SearchRolesForbidden(ApiError):
 class SearchRolesInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
-    parsed: ProblemDetail
+    parsed: Any
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+    def __init__(self, *, status_code: int, content: bytes, parsed: Any):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
@@ -5295,9 +5187,9 @@ class SearchTenantsInternalServerError(ApiError):
 class SearchTenantsNotFound(ApiError):
     """Raised when the server returns HTTP 404. Not found"""
 
-    parsed: ProblemDetail
+    parsed: Any
 
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+    def __init__(self, *, status_code: int, content: bytes, parsed: Any):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
@@ -6300,60 +6192,6 @@ class UpdateGlobalClusterVariableUnauthorized(ApiError):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
-class UpdateGlobalTaskListenerBadRequest(ApiError):
-    """Raised when the server returns HTTP 400. The provided data is not valid."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class UpdateGlobalTaskListenerForbidden(ApiError):
-    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class UpdateGlobalTaskListenerInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class UpdateGlobalTaskListenerNotFound(ApiError):
-    """Raised when the server returns HTTP 404. The global user task listener was not found."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class UpdateGlobalTaskListenerServiceUnavailable(ApiError):
-    """Raised when the server returns HTTP 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure ."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class UpdateGlobalTaskListenerUnauthorized(ApiError):
-    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
-
-    parsed: ProblemDetail
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
 class UpdateGroupBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
@@ -6853,12 +6691,6 @@ __all__ = [
     "CreateGlobalClusterVariableForbidden",
     "CreateGlobalClusterVariableInternalServerError",
     "CreateGlobalClusterVariableUnauthorized",
-    "CreateGlobalTaskListenerBadRequest",
-    "CreateGlobalTaskListenerConflict",
-    "CreateGlobalTaskListenerForbidden",
-    "CreateGlobalTaskListenerInternalServerError",
-    "CreateGlobalTaskListenerServiceUnavailable",
-    "CreateGlobalTaskListenerUnauthorized",
     "CreateGroupBadRequest",
     "CreateGroupForbidden",
     "CreateGroupInternalServerError",
@@ -6913,12 +6745,6 @@ __all__ = [
     "DeleteGlobalClusterVariableInternalServerError",
     "DeleteGlobalClusterVariableNotFound",
     "DeleteGlobalClusterVariableUnauthorized",
-    "DeleteGlobalTaskListenerBadRequest",
-    "DeleteGlobalTaskListenerForbidden",
-    "DeleteGlobalTaskListenerInternalServerError",
-    "DeleteGlobalTaskListenerNotFound",
-    "DeleteGlobalTaskListenerServiceUnavailable",
-    "DeleteGlobalTaskListenerUnauthorized",
     "DeleteGroupInternalServerError",
     "DeleteGroupNotFound",
     "DeleteGroupServiceUnavailable",
@@ -7413,12 +7239,6 @@ __all__ = [
     "UpdateGlobalClusterVariableInternalServerError",
     "UpdateGlobalClusterVariableNotFound",
     "UpdateGlobalClusterVariableUnauthorized",
-    "UpdateGlobalTaskListenerBadRequest",
-    "UpdateGlobalTaskListenerForbidden",
-    "UpdateGlobalTaskListenerInternalServerError",
-    "UpdateGlobalTaskListenerNotFound",
-    "UpdateGlobalTaskListenerServiceUnavailable",
-    "UpdateGlobalTaskListenerUnauthorized",
     "UpdateGroupBadRequest",
     "UpdateGroupInternalServerError",
     "UpdateGroupNotFound",

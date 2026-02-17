@@ -83,9 +83,6 @@
       "name": "Expression"
     },
     {
-      "name": "Global listener"
-    },
-    {
       "name": "Group"
     },
     {
@@ -1289,7 +1286,6 @@
           "Cluster Variable"
         ],
         "summary": "Create a global-scoped cluster variable",
-        "description": "Create a global-scoped cluster variable.",
         "requestBody": {
           "required": true,
           "content": {
@@ -1369,7 +1365,6 @@
           "Cluster Variable"
         ],
         "summary": "Get a global-scoped cluster variable",
-        "description": "Get a global-scoped cluster variable.",
         "parameters": [
           {
             "name": "name",
@@ -1557,7 +1552,6 @@
           "Cluster Variable"
         ],
         "summary": "Delete a global-scoped cluster variable",
-        "description": "Delete a global-scoped cluster variable.",
         "parameters": [
           {
             "name": "name",
@@ -1731,7 +1725,6 @@
           "Cluster Variable"
         ],
         "summary": "Create a tenant-scoped cluster variable",
-        "description": "Create a new cluster variable for the given tenant.",
         "parameters": [
           {
             "name": "tenantId",
@@ -1822,7 +1815,6 @@
           "Cluster Variable"
         ],
         "summary": "Get a tenant-scoped cluster variable",
-        "description": "Get a tenant-scoped cluster variable.",
         "parameters": [
           {
             "name": "tenantId",
@@ -2028,7 +2020,6 @@
           "Cluster Variable"
         ],
         "summary": "Delete a tenant-scoped cluster variable",
-        "description": "Delete a tenant-scoped cluster variable.",
         "parameters": [
           {
             "name": "tenantId",
@@ -2362,14 +2353,7 @@
             }
           },
           "404": {
-            "description": "The decision is not found.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
+            "description": "The decision is not found."
           },
           "500": {
             "description": "An internal error occurred while processing the request.",
@@ -2865,8 +2849,15 @@
           }
         },
         "responses": {
-          "204": {
-            "description": "The decision instance is marked for deletion."
+          "200": {
+            "description": "The operation to delete the decision instance was created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchOperationCreatedResult"
+                }
+              }
+            }
           },
           "401": {
             "description": "The request lacks valid authentication credentials.",
@@ -4250,309 +4241,6 @@
           },
           "500": {
             "description": "An internal error occurred while processing the request.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/global-listeners/user-task": {
-      "post": {
-        "x-eventually-consistent": true,
-        "tags": [
-          "Global listener"
-        ],
-        "operationId": "createGlobalTaskListener",
-        "summary": "Create global user task listener",
-        "description": "Create a new global user task listener.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateGlobalTaskListenerRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "The global user task listener was created successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GlobalTaskListenerResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The provided data is not valid.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "The request lacks valid authentication credentials.",
-            "headers": {
-              "WWW-Authenticate": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden. The request is not allowed.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "A global listener with this id already exists.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "An internal error occurred while processing the request.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .\n",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/global-listeners/user-task/{id}": {
-      "put": {
-        "x-eventually-consistent": true,
-        "tags": [
-          "Global listener"
-        ],
-        "operationId": "updateGlobalTaskListener",
-        "summary": "Update global user task listener",
-        "description": "Updates a global user task listener.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "The id of the global user task listener to update.",
-            "schema": {
-              "$ref": "#/components/schemas/GlobalListenerId"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateGlobalTaskListenerRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "The global listener was updated successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GlobalTaskListenerResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "The provided data is not valid.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "The request lacks valid authentication credentials.",
-            "headers": {
-              "WWW-Authenticate": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden. The request is not allowed.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The global user task listener was not found.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "An internal error occurred while processing the request.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .\n",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "x-eventually-consistent": true,
-        "tags": [
-          "Global listener"
-        ],
-        "operationId": "deleteGlobalTaskListener",
-        "summary": "Delete global user task listener",
-        "description": "Deletes a global user task listener.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "The id of the global user task listener to delete.",
-            "schema": {
-              "$ref": "#/components/schemas/GlobalListenerId"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "The global listener was deleted successfully."
-          },
-          "400": {
-            "description": "The provided data is not valid.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "The request lacks valid authentication credentials.",
-            "headers": {
-              "WWW-Authenticate": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden. The request is not allowed.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "The global user task listener was not found.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "An internal error occurred while processing the request.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .\n",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -8310,7 +7998,7 @@
         }
       }
     },
-    "/process-definitions/statistics/process-instances-by-version": {
+    "/process-definitions/{processDefinitionId}/statistics/process-instances": {
       "post": {
         "x-eventually-consistent": true,
         "tags": [
@@ -8318,9 +8006,20 @@
         ],
         "operationId": "getProcessDefinitionInstanceVersionStatistics",
         "summary": "Get process instance statistics by version",
-        "description": "Get statistics about process instances, grouped by version for a given process definition.\nThe process definition ID must be provided as a required field in the request body filter.\n",
+        "description": "Get statistics about process instances, grouped by version for a given process definition.\n",
+        "parameters": [
+          {
+            "name": "processDefinitionId",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the process definition.",
+            "schema": {
+              "$ref": "#/components/schemas/ProcessDefinitionId"
+            }
+          }
+        ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
             "application/json": {
               "schema": {
@@ -9267,8 +8966,15 @@
           }
         },
         "responses": {
-          "204": {
-            "description": "The process instance is marked for deletion."
+          "200": {
+            "description": "The operation to delete the process instance was created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchOperationCreatedResult"
+                }
+              }
+            }
           },
           "401": {
             "description": "The request lacks valid authentication credentials.",
@@ -10208,14 +9914,7 @@
             }
           },
           "500": {
-            "description": "An internal error occurred while processing the request.",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
+            "description": "An internal error occurred while processing the request."
           }
         }
       }
@@ -11714,14 +11413,7 @@
         },
         "responses": {
           "201": {
-            "description": "The admin user was created successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserCreateResult"
-                }
-              }
-            }
+            "description": "The admin user was created successfully."
           },
           "400": {
             "description": "The provided data is not valid.",
@@ -12156,14 +11848,7 @@
             }
           },
           "404": {
-            "description": "Not found",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetail"
-                }
-              }
-            }
+            "description": "Not found"
           },
           "500": {
             "description": "An internal error occurred while processing the request.",
@@ -15199,10 +14884,6 @@
           "actorType": {
             "$ref": "#/components/schemas/AuditLogActorTypeEnum"
           },
-          "agentElementId": {
-            "type": "string",
-            "description": "The element ID of the agent that performed the operation (e.g. ad-hoc subprocess element ID)."
-          },
           "tenantId": {
             "allOf": [
               {
@@ -15244,9 +14925,6 @@
               }
             ],
             "description": "The key of the process instance."
-          },
-          "rootProcessInstanceKey": {
-            "$ref": "#/components/schemas/RootProcessInstanceKey"
           },
           "elementInstanceKey": {
             "allOf": [
@@ -15331,26 +15009,6 @@
               }
             ],
             "description": "The system-assigned key for this resource."
-          },
-          "relatedEntityKey": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AuditLogEntityKey"
-              }
-            ],
-            "description": "The key of the related entity. The content depends on the operation type and entity type.\nFor example, for authorization operations, this will contain the ID of the owner (e.g., user or group) the authorization belongs to.\n"
-          },
-          "relatedEntityType": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AuditLogEntityTypeEnum"
-              }
-            ],
-            "description": "The type of the related entity. The content depends on the operation type and entity type.\nFor example, for authorization operations, this will contain the type of the owner (e.g., USER or GROUP) the authorization belongs to.\n"
-          },
-          "entityDescription": {
-            "type": "string",
-            "description": "Additional description of the entity affected by the operation.\nFor example, for variable operations, this will contain the variable name.\n"
           }
         }
       },
@@ -15499,14 +15157,6 @@
               }
             ]
           },
-          "agentElementId": {
-            "description": "The agent element ID search filter.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/StringFilterProperty"
-              }
-            ]
-          },
           "entityKey": {
             "description": "The entity key search filter.",
             "allOf": [
@@ -15634,30 +15284,6 @@
                 "$ref": "#/components/schemas/DecisionEvaluationKeyFilterProperty"
               }
             ]
-          },
-          "relatedEntityKey": {
-            "description": "The related entity key search filter.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/AuditLogEntityKeyFilterProperty"
-              }
-            ]
-          },
-          "relatedEntityType": {
-            "description": "The related entity type search filter.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/EntityTypeFilterProperty"
-              }
-            ]
-          },
-          "entityDescription": {
-            "description": "The entity description filter.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/StringFilterProperty"
-              }
-            ]
           }
         }
       },
@@ -15702,8 +15328,7 @@
           "TENANT",
           "USER",
           "USER_TASK",
-          "VARIABLE",
-          "CLIENT"
+          "VARIABLE"
         ]
       },
       "AuditLogOperationTypeEnum": {
@@ -16843,9 +16468,6 @@
               }
             ],
             "description": "the process instance key of the processed item."
-          },
-          "rootProcessInstanceKey": {
-            "$ref": "#/components/schemas/RootProcessInstanceKey"
           },
           "state": {
             "description": "State of the item.",
@@ -18366,14 +17988,6 @@
                 "$ref": "#/components/schemas/DecisionDefinitionKeyFilterProperty"
               }
             ]
-          },
-          "decisionRequirementsKey": {
-            "description": "The key of the decision requirements definition.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/DecisionRequirementsKeyFilterProperty"
-              }
-            ]
           }
         }
       },
@@ -18477,9 +18091,6 @@
               }
             ],
             "description": "The key of the process instance."
-          },
-          "rootProcessInstanceKey": {
-            "$ref": "#/components/schemas/RootProcessInstanceKey"
           },
           "decisionDefinitionKey": {
             "allOf": [
@@ -19801,9 +19412,6 @@
             ],
             "description": "The process instance key associated to this element instance."
           },
-          "rootProcessInstanceKey": {
-            "$ref": "#/components/schemas/RootProcessInstanceKey"
-          },
           "processDefinitionKey": {
             "allOf": [
               {
@@ -19905,6 +19513,7 @@
           },
           "result": {
             "description": "The result value. Its type can vary.",
+            "type": "object",
             "example": 30
           },
           "warnings": {
@@ -20166,114 +19775,6 @@
               }
             ],
             "description": "The assigned key, which acts as a unique identifier for this form."
-          }
-        }
-      },
-      "GlobalListenerSourceEnum": {
-        "type": "string",
-        "enum": [
-          "CONFIGURATION",
-          "API"
-        ],
-        "description": "How the global listener was defined."
-      },
-      "GlobalTaskListenerEventTypeEnum": {
-        "type": "string",
-        "enum": [
-          "all",
-          "creating",
-          "assigning",
-          "updating",
-          "completing",
-          "canceling"
-        ],
-        "description": "The event type that triggers the user task listener."
-      },
-      "GlobalListenerBase": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "description": "The name of the job type, used as a reference to specify which job workers request the respective listener job.",
-            "type": "string",
-            "example": "order-items"
-          },
-          "retries": {
-            "description": "Number of retries for the listener job.",
-            "type": "integer"
-          },
-          "afterNonGlobal": {
-            "description": "Whether the listener should run after model-level listeners.",
-            "type": "boolean"
-          },
-          "priority": {
-            "description": "The priority of the listener. Higher priority listeners are executed before lower priority ones.",
-            "type": "integer"
-          }
-        }
-      },
-      "GlobalTaskListenerBase": {
-        "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/GlobalListenerBase"
-          }
-        ],
-        "properties": {
-          "eventTypes": {
-            "$ref": "#/components/schemas/GlobalTaskListenerEventTypes"
-          }
-        }
-      },
-      "GlobalTaskListenerEventTypes": {
-        "description": "List of user task event types that trigger the listener.",
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/GlobalTaskListenerEventTypeEnum"
-        }
-      },
-      "CreateGlobalTaskListenerRequest": {
-        "type": "object",
-        "required": [
-          "id",
-          "type",
-          "eventTypes"
-        ],
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/GlobalTaskListenerBase"
-          }
-        ],
-        "properties": {
-          "id": {
-            "$ref": "#/components/schemas/GlobalListenerId"
-          }
-        }
-      },
-      "UpdateGlobalTaskListenerRequest": {
-        "type": "object",
-        "required": [
-          "type",
-          "eventTypes"
-        ],
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/GlobalTaskListenerBase"
-          }
-        ]
-      },
-      "GlobalTaskListenerResult": {
-        "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/GlobalTaskListenerBase"
-          }
-        ],
-        "properties": {
-          "id": {
-            "$ref": "#/components/schemas/GlobalListenerId"
-          },
-          "source": {
-            "$ref": "#/components/schemas/GlobalListenerSourceEnum"
           }
         }
       },
@@ -20603,13 +20104,6 @@
         "maxLength": 256,
         "pattern": "^[A-Za-z0-9_@.+-]+$",
         "example": "new-hire-onboarding-workflow"
-      },
-      "GlobalListenerId": {
-        "description": "The user-defined id for the global listener",
-        "type": "string",
-        "format": "GlobalListenerId",
-        "x-semantic-type": "GlobalListenerId",
-        "example": "GlobalListener_1"
       },
       "TenantId": {
         "example": "customer-service",
@@ -21044,9 +20538,6 @@
             ],
             "description": "The process instance key associated to this incident."
           },
-          "rootProcessInstanceKey": {
-            "$ref": "#/components/schemas/RootProcessInstanceKey"
-          },
           "elementInstanceKey": {
             "allOf": [
               {
@@ -21357,15 +20848,6 @@
             "items": {
               "$ref": "#/components/schemas/TenantId"
             }
-          },
-          "tenantFilter": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/TenantFilterEnum"
-              }
-            ],
-            "description": "The tenant filtering strategy - determines whether to use provided tenant IDs or assigned tenant IDs from the authenticated principal's authorized tenants.\n",
-            "default": "PROVIDED"
           }
         },
         "required": [
@@ -21969,9 +21451,6 @@
             ],
             "description": "The process instance key associated with the job."
           },
-          "rootProcessInstanceKey": {
-            "$ref": "#/components/schemas/RootProcessInstanceKey"
-          },
           "retries": {
             "description": "The amount of retries left to this job.",
             "type": "integer",
@@ -22243,15 +21722,6 @@
           }
         }
       },
-      "TenantFilterEnum": {
-        "description": "The tenant filtering strategy for job activation. Determines whether to use tenant IDs provided in the request or tenant IDs assigned to the authenticated principal.\n",
-        "type": "string",
-        "enum": [
-          "PROVIDED",
-          "ASSIGNED"
-        ],
-        "default": "PROVIDED"
-      },
       "JobStateEnum": {
         "description": "The state of the job.",
         "type": "string",
@@ -22448,18 +21918,6 @@
       },
       "ProcessInstanceKey": {
         "description": "System-generated key for a process instance.",
-        "format": "ProcessInstanceKey",
-        "x-semantic-type": "ProcessInstanceKey",
-        "example": "2251799813690746",
-        "type": "string",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/LongKey"
-          }
-        ]
-      },
-      "RootProcessInstanceKey": {
-        "description": "The key of the root process instance. The root process instance is the top-level\nancestor in the process instance hierarchy. This field is only present for data\nbelonging to process instance hierarchies created in version 8.9 or later.\n",
         "format": "ProcessInstanceKey",
         "x-semantic-type": "ProcessInstanceKey",
         "example": "2251799813690746",
@@ -23687,9 +23145,6 @@
             ],
             "description": "The process instance key associated with this message subscription."
           },
-          "rootProcessInstanceKey": {
-            "$ref": "#/components/schemas/RootProcessInstanceKey"
-          },
           "elementId": {
             "allOf": [
               {
@@ -23955,9 +23410,6 @@
               }
             ],
             "description": "The process instance key associated with this correlated message subscription."
-          },
-          "rootProcessInstanceKey": {
-            "$ref": "#/components/schemas/RootProcessInstanceKey"
           },
           "subscriptionKey": {
             "allOf": [
@@ -24291,7 +23743,7 @@
             "format": "uri",
             "description": "A URI identifying the problem type.",
             "default": "about:blank",
-            "example": "https://docs.camunda.io/api/v2.0/problem-types/bad-request"
+            "example": "about:blank"
           },
           "title": {
             "type": "string",
@@ -24313,7 +23765,7 @@
           },
           "instance": {
             "type": "string",
-            "format": "uri-reference",
+            "format": "uri",
             "description": "A URI path identifying the origin of the problem.",
             "example": "/v2/jobs/activation"
           }
@@ -24745,23 +24197,12 @@
               }
             ]
           }
-        },
-        "required": [
-          "filter"
-        ]
+        }
       },
       "ProcessDefinitionInstanceVersionStatisticsFilter": {
         "description": "Process definition instance version statistics search filter.",
         "type": "object",
         "properties": {
-          "processDefinitionId": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ProcessDefinitionId"
-              }
-            ],
-            "description": "The ID of the process definition to retrieve version statistics for."
-          },
           "tenantId": {
             "allOf": [
               {
@@ -24770,10 +24211,7 @@
             ],
             "description": "Tenant ID of this process definition."
           }
-        },
-        "required": [
-          "processDefinitionId"
-        ]
+        }
       },
       "ProcessDefinitionInstanceVersionStatisticsQueryResult": {
         "type": "object",
@@ -24976,12 +24414,6 @@
               }
             ],
             "description": "The unique key identifying the process definition, for example, returned for a process in the\ndeploy resources endpoint.\n"
-          },
-          "processDefinitionVersion": {
-            "description": "As the version is already identified by the `processDefinitionKey`, the value of this field is ignored.\nIt's here for backwards-compatibility only as previous releases accepted it in request bodies.\n",
-            "type": "integer",
-            "format": "int32",
-            "default": -1
           },
           "variables": {
             "description": "JSON object that will instantiate the variables for the root variable scope\nof the process instance.\n",
@@ -25527,9 +24959,6 @@
             ],
             "description": "The parent element instance key."
           },
-          "rootProcessInstanceKey": {
-            "$ref": "#/components/schemas/RootProcessInstanceKey"
-          },
           "tags": {
             "$ref": "#/components/schemas/TagSet"
           }
@@ -25613,9 +25042,6 @@
               }
             ],
             "description": "The key of this process instance."
-          },
-          "rootProcessInstanceKey": {
-            "$ref": "#/components/schemas/RootProcessInstanceKey"
           },
           "processDefinitionKey": {
             "allOf": [
@@ -27431,9 +26857,6 @@
             ],
             "description": "The key of the process instance."
           },
-          "rootProcessInstanceKey": {
-            "$ref": "#/components/schemas/RootProcessInstanceKey"
-          },
           "formKey": {
             "allOf": [
               {
@@ -28129,9 +27552,6 @@
               }
             ],
             "description": "The key of the process instance of this variable."
-          },
-          "rootProcessInstanceKey": {
-            "$ref": "#/components/schemas/RootProcessInstanceKey"
           }
         }
       },

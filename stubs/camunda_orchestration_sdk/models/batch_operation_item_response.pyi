@@ -16,7 +16,6 @@ class BatchOperationItemResponse:
     batch_operation_key: BatchOperationKey | Unset = UNSET
     item_key: str | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     state: BatchOperationItemResponseState | Unset = UNSET
     processed_date: datetime.datetime | Unset = UNSET
     error_message: str | Unset = UNSET

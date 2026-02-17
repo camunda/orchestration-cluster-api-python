@@ -4,7 +4,6 @@ from enum import Enum
 class EntityTypeExactMatch(str, Enum):
     AUTHORIZATION = "AUTHORIZATION"
     BATCH = "BATCH"
-    CLIENT = "CLIENT"
     DECISION = "DECISION"
     GROUP = "GROUP"
     INCIDENT = "INCIDENT"

@@ -51,11 +51,6 @@ class CorrelatedMessageSubscriptionResult:
             2251799813686789.
         process_definition_key (str | Unset): The process definition key associated with this correlated message
             subscription. Example: 2251799813686749.
-        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
-            top-level
-            ancestor in the process instance hierarchy. This field is only present for data
-            belonging to process instance hierarchies created in version 8.9 or later.
-             Example: 2251799813690746.
     """
 
     correlation_key: str
@@ -70,7 +65,6 @@ class CorrelatedMessageSubscriptionResult:
     tenant_id: TenantId
     element_instance_key: ElementInstanceKey | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -100,8 +94,6 @@ class CorrelatedMessageSubscriptionResult:
 
         process_definition_key = self.process_definition_key
 
-        root_process_instance_key = self.root_process_instance_key
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -122,8 +114,6 @@ class CorrelatedMessageSubscriptionResult:
             field_dict["elementInstanceKey"] = element_instance_key
         if process_definition_key is not UNSET:
             field_dict["processDefinitionKey"] = process_definition_key
-        if root_process_instance_key is not UNSET:
-            field_dict["rootProcessInstanceKey"] = root_process_instance_key
 
         return field_dict
 
@@ -162,8 +152,6 @@ class CorrelatedMessageSubscriptionResult:
             else UNSET
         )
 
-        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
-
         correlated_message_subscription_result = cls(
             correlation_key=correlation_key,
             correlation_time=correlation_time,
@@ -177,7 +165,6 @@ class CorrelatedMessageSubscriptionResult:
             tenant_id=tenant_id,
             element_instance_key=element_instance_key,
             process_definition_key=process_definition_key,
-            root_process_instance_key=root_process_instance_key,
         )
 
         correlated_message_subscription_result.additional_properties = d

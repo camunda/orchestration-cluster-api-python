@@ -21,7 +21,7 @@ def _get_kwargs(*, body: RoleSearchQueryRequest | Unset = UNSET) -> dict[str, An
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | RoleSearchQueryResult | None:
+) -> Any | ProblemDetail | RoleSearchQueryResult | None:
     if response.status_code == 200:
         response_200 = RoleSearchQueryResult.from_dict(response.json())
         return response_200
@@ -35,7 +35,7 @@ def _parse_response(
         response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 500:
-        response_500 = ProblemDetail.from_dict(response.json())
+        response_500 = cast(Any, None)
         return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
@@ -45,7 +45,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | RoleSearchQueryResult]:
+) -> Response[Any | ProblemDetail | RoleSearchQueryResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -58,7 +58,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: RoleSearchQueryRequest | Unset = UNSET,
-) -> Response[ProblemDetail | RoleSearchQueryResult]:
+) -> Response[Any | ProblemDetail | RoleSearchQueryResult]:
     """Search roles
 
      Search for roles based on given criteria.
@@ -71,7 +71,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | RoleSearchQueryResult]
+        Response[Any | ProblemDetail | RoleSearchQueryResult]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -124,7 +124,7 @@ def sync(
             raise errors.SearchRolesInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
+                parsed=response.parsed,
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
@@ -135,7 +135,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: RoleSearchQueryRequest | Unset = UNSET,
-) -> Response[ProblemDetail | RoleSearchQueryResult]:
+) -> Response[Any | ProblemDetail | RoleSearchQueryResult]:
     """Search roles
 
      Search for roles based on given criteria.
@@ -148,7 +148,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | RoleSearchQueryResult]
+        Response[Any | ProblemDetail | RoleSearchQueryResult]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -201,7 +201,7 @@ async def asyncio(
             raise errors.SearchRolesInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
+                parsed=response.parsed,
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

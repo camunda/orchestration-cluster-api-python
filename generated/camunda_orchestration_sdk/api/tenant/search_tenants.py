@@ -21,7 +21,7 @@ def _get_kwargs(*, body: TenantSearchQueryRequest | Unset = UNSET) -> dict[str, 
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | TenantSearchQueryResult | None:
+) -> Any | ProblemDetail | TenantSearchQueryResult | None:
     if response.status_code == 200:
         response_200 = TenantSearchQueryResult.from_dict(response.json())
         return response_200
@@ -35,7 +35,7 @@ def _parse_response(
         response_403 = ProblemDetail.from_dict(response.json())
         return response_403
     if response.status_code == 404:
-        response_404 = ProblemDetail.from_dict(response.json())
+        response_404 = cast(Any, None)
         return response_404
     if response.status_code == 500:
         response_500 = ProblemDetail.from_dict(response.json())
@@ -48,7 +48,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | TenantSearchQueryResult]:
+) -> Response[Any | ProblemDetail | TenantSearchQueryResult]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -61,7 +61,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: TenantSearchQueryRequest | Unset = UNSET,
-) -> Response[ProblemDetail | TenantSearchQueryResult]:
+) -> Response[Any | ProblemDetail | TenantSearchQueryResult]:
     """Search tenants
 
      Retrieves a filtered and sorted list of tenants.
@@ -74,7 +74,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | TenantSearchQueryResult]
+        Response[Any | ProblemDetail | TenantSearchQueryResult]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -128,7 +128,7 @@ def sync(
             raise errors.SearchTenantsNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
+                parsed=response.parsed,
             )
         if response.status_code == 500:
             raise errors.SearchTenantsInternalServerError(
@@ -145,7 +145,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: TenantSearchQueryRequest | Unset = UNSET,
-) -> Response[ProblemDetail | TenantSearchQueryResult]:
+) -> Response[Any | ProblemDetail | TenantSearchQueryResult]:
     """Search tenants
 
      Retrieves a filtered and sorted list of tenants.
@@ -158,7 +158,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | TenantSearchQueryResult]
+        Response[Any | ProblemDetail | TenantSearchQueryResult]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -212,7 +212,7 @@ async def asyncio(
             raise errors.SearchTenantsNotFound(
                 status_code=response.status_code,
                 content=response.content,
-                parsed=cast(ProblemDetail, response.parsed),
+                parsed=response.parsed,
             )
         if response.status_code == 500:
             raise errors.SearchTenantsInternalServerError(

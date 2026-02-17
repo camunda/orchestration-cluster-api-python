@@ -35,7 +35,6 @@ class JobSearchResult:
     error_code: None | str | Unset = UNSET
     error_message: None | str | Unset = UNSET
     is_denied: bool | None | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     creation_time: datetime.datetime | Unset = UNSET
     last_update_time: datetime.datetime | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)

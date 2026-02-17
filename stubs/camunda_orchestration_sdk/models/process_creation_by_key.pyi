@@ -12,7 +12,6 @@ T = TypeVar("T", bound="ProcessCreationByKey")
 @_attrs_define
 class ProcessCreationByKey:
     process_definition_key: ProcessDefinitionKey
-    process_definition_version: int | Unset = -1
     variables: ProcessInstanceCreationInstructionByIdVariables | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET
     runtime_instructions: list[ProcessInstanceCreationTerminateInstruction] | Unset = (

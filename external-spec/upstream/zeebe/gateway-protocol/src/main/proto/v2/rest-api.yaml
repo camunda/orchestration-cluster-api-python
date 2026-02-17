@@ -40,7 +40,6 @@ tags:
   - name: Document
   - name: Element instance
   - name: Expression
-  - name: Global listener
   - name: Group
   - name: Incident
   - name: Job
@@ -178,12 +177,6 @@ paths:
   /expression/evaluation:
     $ref: 'expression.yaml#/paths/~1expression~1evaluation'
 
-  # Global listeners endpoints
-  /global-listeners/user-task:
-    $ref: 'global-listeners.yaml#/paths/~1global-listeners~1user-task'
-  /global-listeners/user-task/{id}:
-    $ref: 'global-listeners.yaml#/paths/~1global-listeners~1user-task~1{id}'
-
   # Group endpoints
   /groups:
     $ref: 'groups.yaml#/paths/~1groups'
@@ -271,8 +264,8 @@ paths:
     $ref: 'process-definitions.yaml#/paths/~1process-definitions~1{processDefinitionKey}~1statistics~1element-instances'
   /process-definitions/{processDefinitionKey}/xml:
     $ref: 'process-definitions.yaml#/paths/~1process-definitions~1{processDefinitionKey}~1xml'
-  /process-definitions/statistics/process-instances-by-version:
-    $ref: 'process-definitions.yaml#/paths/~1process-definitions~1statistics~1process-instances-by-version'
+  /process-definitions/{processDefinitionId}/statistics/process-instances:
+    $ref: 'process-definitions.yaml#/paths/~1process-definitions~1{processDefinitionId}~1statistics~1process-instances'
 
   # Process instance endpoints
   /process-instances:

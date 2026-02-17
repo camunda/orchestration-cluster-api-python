@@ -3,17 +3,11 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..models.global_task_listener_event_type_enum import GlobalTaskListenerEventTypeEnum
-from ..types import UNSET, Unset, str_any_dict_factory
-T = TypeVar("T", bound="UpdateGlobalTaskListenerRequest")
+T = TypeVar("T", bound="ExpressionEvaluationResultResult")
 @_attrs_define
-class UpdateGlobalTaskListenerRequest:
-    event_types: list[GlobalTaskListenerEventTypeEnum]
-    type_: str
-    retries: int | Unset = UNSET
-    after_non_global: bool | Unset = UNSET
-    priority: int | Unset = UNSET
+class ExpressionEvaluationResultResult:
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

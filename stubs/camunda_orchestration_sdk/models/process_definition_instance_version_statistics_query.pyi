@@ -11,11 +11,11 @@ from ..models.process_definition_instance_version_statistics_query_sort_request 
 T = TypeVar("T", bound="ProcessDefinitionInstanceVersionStatisticsQuery")
 @_attrs_define
 class ProcessDefinitionInstanceVersionStatisticsQuery:
-    filter_: ProcessDefinitionInstanceVersionStatisticsQueryFilter
     page: ProcessDefinitionInstanceVersionStatisticsQueryPage | Unset = UNSET
     sort: list[ProcessDefinitionInstanceVersionStatisticsQuerySortRequest] | Unset = (
             UNSET
         )
+    filter_: ProcessDefinitionInstanceVersionStatisticsQueryFilter | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

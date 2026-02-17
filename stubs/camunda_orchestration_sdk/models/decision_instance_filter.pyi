@@ -13,7 +13,6 @@ from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
 from ..models.advanced_decision_definition_key_filter import AdvancedDecisionDefinitionKeyFilter
 from ..models.advanced_decision_evaluation_instance_key_filter import AdvancedDecisionEvaluationInstanceKeyFilter
 from ..models.advanced_decision_instance_state_filter import AdvancedDecisionInstanceStateFilter
-from ..models.advanced_decision_requirements_key_filter import AdvancedDecisionRequirementsKeyFilter
 from ..models.advanced_element_instance_key_filter import AdvancedElementInstanceKeyFilter
 T = TypeVar("T", bound="DecisionInstanceFilter")
 @_attrs_define
@@ -37,9 +36,6 @@ class DecisionInstanceFilter:
     decision_definition_key: AdvancedDecisionDefinitionKeyFilter | str | Unset = UNSET
     element_instance_key: AdvancedElementInstanceKeyFilter | str | Unset = UNSET
     root_decision_definition_key: AdvancedDecisionDefinitionKeyFilter | str | Unset = (
-            UNSET
-        )
-    decision_requirements_key: AdvancedDecisionRequirementsKeyFilter | str | Unset = (
             UNSET
         )
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)

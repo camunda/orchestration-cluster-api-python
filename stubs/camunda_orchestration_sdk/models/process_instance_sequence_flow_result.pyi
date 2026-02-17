@@ -11,7 +11,6 @@ T = TypeVar("T", bound="ProcessInstanceSequenceFlowResult")
 class ProcessInstanceSequenceFlowResult:
     sequence_flow_id: str | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     element_id: ElementId | Unset = UNSET
