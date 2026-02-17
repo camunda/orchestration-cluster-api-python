@@ -65,7 +65,7 @@ When this happens, we signal it in the [CHANGELOG](https://github.com/camunda/or
   camunda-orchestration-sdk==8.9.3
   ```
 
-### Using the SDK
+## Using the SDK
 
 The SDK provides two clients with identical API surfaces:
 
@@ -96,7 +96,67 @@ asyncio.run(main())
 
 > **Which one should I use?** If your application already uses `asyncio` (FastAPI, aiohttp, etc.) or you need job workers, use `CamundaAsyncClient`. Otherwise, `CamundaClient` is simpler and works everywhere.
 
-#### Quick start (Zero-config – recommended)
+
+## Semantic Types
+
+The SDK uses Python `NewType` wrappers for identifiers like `ProcessDefinitionKey`, `ProcessInstanceKey`, `JobKey`, `TenantId`, etc. These are defined in `camunda_orchestration_sdk.semantic_types` and re-exported from the top-level package.
+
+### Why they exist
+
+Camunda's API has many operations that accept string keys — process definition keys, process instance keys, incident keys, job keys, and so on. Without semantic types, it is easy to accidentally pass a process instance key where a process definition key is expected, or mix up a job key with an incident key. The type checker cannot help you if everything is `str`.
+
+Semantic types make these identifiers **distinct at the type level**. Pyright (and other type checkers) will flag an error if you pass a `ProcessInstanceKey` where a `ProcessDefinitionKey` is expected, catching bugs before runtime.
+
+### How to use them
+
+Treat semantic types as **opaque identifiers** — receive them from API responses and pass them to subsequent API calls without inspecting or transforming the underlying value:
+
+```python
+from camunda_orchestration_sdk import CamundaClient
+from camunda_orchestration_sdk.models.process_creation_by_key import ProcessCreationByKey
+
+client = CamundaClient()
+
+# Deploy → the response already carries typed keys
+deployment = client.deploy_resources_from_files(["process.bpmn"])
+process_key = deployment.processes[0].process_definition_key  # ProcessDefinitionKey
+
+# Pass it directly to another call — no conversion needed
+result = client.create_process_instance(
+    data=ProcessCreationByKey(process_definition_key=process_key)
+)
+
+# The result also carries typed keys
+instance_key = result.process_instance_key  # ProcessInstanceKey
+client.cancel_process_instance(process_instance_key=instance_key)
+```
+
+### Serialising in and out of the type system
+
+Semantic types are `NewType` wrappers over `str`, so they serialise transparently:
+
+```python
+from camunda_orchestration_sdk import ProcessDefinitionKey, ProcessInstanceKey
+
+# --- Serialising out (to storage / JSON / message queue) ---
+# A semantic type IS a str at runtime, so str()/json.dumps()/ORM columns just work:
+process_key: ProcessDefinitionKey = deployment.processes[0].process_definition_key
+db.save("process_key", process_key)   # stores the raw string
+json.dumps({"key": process_key})      # "2251799813685249"
+
+# --- Deserialising in (from storage / external input) ---
+# Wrap the raw string with the type constructor:
+raw = db.load("process_key")           # returns a plain str
+typed_key = ProcessDefinitionKey(raw)  # re-enters the type system
+
+result = client.create_process_instance(
+    data=ProcessCreationByKey(process_definition_key=typed_key)
+)
+```
+
+The available semantic types include: `ProcessDefinitionKey`, `ProcessDefinitionId`, `ProcessInstanceKey`, `JobKey`, `IncidentKey`, `DecisionDefinitionKey`, `DecisionDefinitionId`, `DeploymentKey`, `UserTaskKey`, `MessageKey`, `SignalKey`, `TenantId`, `ElementId`, `FormKey`, and others. All are importable from `camunda_orchestration_sdk` or `camunda_orchestration_sdk.semantic_types`.
+
+## Quick start (Zero-config – recommended)
 
 Keep configuration out of application code. Let the client read `CAMUNDA_*` variables from the environment (12-factor style). This makes secret rotation, environment promotion (dev → staging → prod), and operational tooling (vaults / secret managers) safer and simpler.
 
@@ -229,32 +289,6 @@ client = CamundaClient(
 )
 ```
 
-## Configuration reference
-
-All `CAMUNDA_*` environment variables recognised by the SDK. These can also be passed as keys in the `configuration={...}` dict.
-
-<!-- BEGIN_CONFIG_REFERENCE -->
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `ZEEBE_REST_ADDRESS` | `http://localhost:8080/v2` | REST API base URL (alias for CAMUNDA_REST_ADDRESS). |
-| `CAMUNDA_REST_ADDRESS` | `http://localhost:8080/v2` | REST API base URL. `/v2` is appended automatically if missing. |
-| `CAMUNDA_TOKEN_AUDIENCE` | `zeebe.camunda.io` | OAuth token audience. |
-| `CAMUNDA_OAUTH_URL` | `https://login.cloud.camunda.io/oauth/token` | OAuth token endpoint URL. |
-| `CAMUNDA_CLIENT_ID` | — | OAuth client ID. |
-| `CAMUNDA_CLIENT_SECRET` | — | OAuth client secret. |
-| `CAMUNDA_CLIENT_AUTH_CLIENTID` | — | Alias for CAMUNDA_CLIENT_ID. |
-| `CAMUNDA_CLIENT_AUTH_CLIENTSECRET` | — | Alias for CAMUNDA_CLIENT_SECRET. |
-| `CAMUNDA_AUTH_STRATEGY` | `NONE` | Authentication strategy: NONE, OAUTH, or BASIC. Auto-inferred from credentials if omitted. |
-| `CAMUNDA_BASIC_AUTH_USERNAME` | — | Basic auth username. Required when CAMUNDA_AUTH_STRATEGY=BASIC. |
-| `CAMUNDA_BASIC_AUTH_PASSWORD` | — | Basic auth password. Required when CAMUNDA_AUTH_STRATEGY=BASIC. |
-| `CAMUNDA_SDK_LOG_LEVEL` | `error` | SDK log level: silent, error, warn, info, debug, trace, or silly. |
-| `CAMUNDA_TOKEN_CACHE_DIR` | — | Directory for OAuth token disk cache. Disabled if unset. |
-| `CAMUNDA_TOKEN_DISK_CACHE_DISABLE` | `false` | Disable OAuth token disk caching. |
-| `CAMUNDA_LOAD_ENVFILE` | — | Load configuration from a `.env` file. Set to `true` (or a file path). |
-
-<!-- END_CONFIG_REFERENCE -->
-
 ## Deploying Resources
 
 Deploy BPMN, DMN, or Form files from disk:
@@ -303,65 +337,6 @@ with CamundaClient() as client:
     )
     print(f"Process instance key: {result.process_instance_key}")
 ```
-
-## Semantic Types
-
-The SDK uses Python `NewType` wrappers for identifiers like `ProcessDefinitionKey`, `ProcessInstanceKey`, `JobKey`, `TenantId`, etc. These are defined in `camunda_orchestration_sdk.semantic_types` and re-exported from the top-level package.
-
-### Why they exist
-
-Camunda's API has many operations that accept string keys — process definition keys, process instance keys, incident keys, job keys, and so on. Without semantic types, it is easy to accidentally pass a process instance key where a process definition key is expected, or mix up a job key with an incident key. The type checker cannot help you if everything is `str`.
-
-Semantic types make these identifiers **distinct at the type level**. Pyright (and other type checkers) will flag an error if you pass a `ProcessInstanceKey` where a `ProcessDefinitionKey` is expected, catching bugs before runtime.
-
-### How to use them
-
-Treat semantic types as **opaque identifiers** — receive them from API responses and pass them to subsequent API calls without inspecting or transforming the underlying value:
-
-```python
-from camunda_orchestration_sdk import CamundaClient
-from camunda_orchestration_sdk.models.process_creation_by_key import ProcessCreationByKey
-
-client = CamundaClient()
-
-# Deploy → the response already carries typed keys
-deployment = client.deploy_resources_from_files(["process.bpmn"])
-process_key = deployment.processes[0].process_definition_key  # ProcessDefinitionKey
-
-# Pass it directly to another call — no conversion needed
-result = client.create_process_instance(
-    data=ProcessCreationByKey(process_definition_key=process_key)
-)
-
-# The result also carries typed keys
-instance_key = result.process_instance_key  # ProcessInstanceKey
-client.cancel_process_instance(process_instance_key=instance_key)
-```
-
-### Serialising in and out of the type system
-
-Semantic types are `NewType` wrappers over `str`, so they serialise transparently:
-
-```python
-from camunda_orchestration_sdk import ProcessDefinitionKey, ProcessInstanceKey
-
-# --- Serialising out (to storage / JSON / message queue) ---
-# A semantic type IS a str at runtime, so str()/json.dumps()/ORM columns just work:
-process_key: ProcessDefinitionKey = deployment.processes[0].process_definition_key
-db.save("process_key", process_key)   # stores the raw string
-json.dumps({"key": process_key})      # "2251799813685249"
-
-# --- Deserialising in (from storage / external input) ---
-# Wrap the raw string with the type constructor:
-raw = db.load("process_key")           # returns a plain str
-typed_key = ProcessDefinitionKey(raw)  # re-enters the type system
-
-result = client.create_process_instance(
-    data=ProcessCreationByKey(process_definition_key=typed_key)
-)
-```
-
-The available semantic types include: `ProcessDefinitionKey`, `ProcessDefinitionId`, `ProcessInstanceKey`, `JobKey`, `IncidentKey`, `DecisionDefinitionKey`, `DecisionDefinitionId`, `DeploymentKey`, `UserTaskKey`, `MessageKey`, `SignalKey`, `TenantId`, `ElementId`, `FormKey`, and others. All are importable from `camunda_orchestration_sdk` or `camunda_orchestration_sdk.semantic_types`.
 
 ## Job Workers
 
@@ -530,6 +505,33 @@ from camunda_orchestration_sdk import CamundaClient, NullLogger
 
 client = CamundaClient(logger=NullLogger())
 ```
+
+## Configuration reference
+
+All `CAMUNDA_*` environment variables recognised by the SDK. These can also be passed as keys in the `configuration={...}` dict.
+
+<!-- BEGIN_CONFIG_REFERENCE -->
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ZEEBE_REST_ADDRESS` | `http://localhost:8080/v2` | REST API base URL (alias for CAMUNDA_REST_ADDRESS). |
+| `CAMUNDA_REST_ADDRESS` | `http://localhost:8080/v2` | REST API base URL. `/v2` is appended automatically if missing. |
+| `CAMUNDA_TOKEN_AUDIENCE` | `zeebe.camunda.io` | OAuth token audience. |
+| `CAMUNDA_OAUTH_URL` | `https://login.cloud.camunda.io/oauth/token` | OAuth token endpoint URL. |
+| `CAMUNDA_CLIENT_ID` | — | OAuth client ID. |
+| `CAMUNDA_CLIENT_SECRET` | — | OAuth client secret. |
+| `CAMUNDA_CLIENT_AUTH_CLIENTID` | — | Alias for CAMUNDA_CLIENT_ID. |
+| `CAMUNDA_CLIENT_AUTH_CLIENTSECRET` | — | Alias for CAMUNDA_CLIENT_SECRET. |
+| `CAMUNDA_AUTH_STRATEGY` | `NONE` | Authentication strategy: NONE, OAUTH, or BASIC. Auto-inferred from credentials if omitted. |
+| `CAMUNDA_BASIC_AUTH_USERNAME` | — | Basic auth username. Required when CAMUNDA_AUTH_STRATEGY=BASIC. |
+| `CAMUNDA_BASIC_AUTH_PASSWORD` | — | Basic auth password. Required when CAMUNDA_AUTH_STRATEGY=BASIC. |
+| `CAMUNDA_SDK_LOG_LEVEL` | `error` | SDK log level: silent, error, warn, info, debug, trace, or silly. |
+| `CAMUNDA_TOKEN_CACHE_DIR` | — | Directory for OAuth token disk cache. Disabled if unset. |
+| `CAMUNDA_TOKEN_DISK_CACHE_DISABLE` | `false` | Disable OAuth token disk caching. |
+| `CAMUNDA_LOAD_ENVFILE` | — | Load configuration from a `.env` file. Set to `true` (or a file path). |
+
+<!-- END_CONFIG_REFERENCE -->
+
 
 <!-- docs:cut:start -->
 ## Contributing
