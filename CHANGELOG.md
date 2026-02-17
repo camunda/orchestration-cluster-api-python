@@ -2,6 +2,83 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.7 (2026-02-17)
+
+### Bug Fixes
+
+- Use camunda-schema-bundler 1.3.3. **breaking type changes**
+  ([`bc8d777`](https://github.com/camunda/orchestration-cluster-api-python/commit/bc8d7774cb2eba13653371a001cba478d64aceb7))
+
+### Chores
+
+- Add linting and typecheck precommit hook
+  ([`e3bcc05`](https://github.com/camunda/orchestration-cluster-api-python/commit/e3bcc05d16e02061db7b43aeedb9e927ea4fdda8))
+
+- Update MAINTAINER doc with Docusarus integration
+  ([`f7ccdcc`](https://github.com/camunda/orchestration-cluster-api-python/commit/f7ccdccc22b8fd2e1f19674f3482de32d2aa44cc))
+
+- Use same code formatter in generation and precommit
+  ([`d60f52b`](https://github.com/camunda/orchestration-cluster-api-python/commit/d60f52bf56ec0af32e1d263f4cb84841918e6e35))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`9f3a43e`](https://github.com/camunda/orchestration-cluster-api-python/commit/9f3a43ec1a8df527ed3f6f81c61a23980bb4c088))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`5de8f5b`](https://github.com/camunda/orchestration-cluster-api-python/commit/5de8f5ba9875523546cd3205755dfe762000e3b4))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`ff730f0`](https://github.com/camunda/orchestration-cluster-api-python/commit/ff730f05b1c4480be132bfcde75525ce2af916ec))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`d792035`](https://github.com/camunda/orchestration-cluster-api-python/commit/d79203543e18edc7c02e8abd38f764b87d37f5e2))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`48c793e`](https://github.com/camunda/orchestration-cluster-api-python/commit/48c793ecb421b84f4bbef71b5cbdf8bfcc3b473d))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`5186476`](https://github.com/camunda/orchestration-cluster-api-python/commit/518647611e7de4b0b7f204ef99fc04447e958c14))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`3101d25`](https://github.com/camunda/orchestration-cluster-api-python/commit/3101d25913e3e32c0a2ca6ea9f90623198fecc54))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`a6ac683`](https://github.com/camunda/orchestration-cluster-api-python/commit/a6ac683e43a5204f798bda3e1989e04925d66a48))
+
+### Code Style
+
+- Lint all code
+  ([`db876bb`](https://github.com/camunda/orchestration-cluster-api-python/commit/db876bb4c197d5f0a3bece6193dcd882a790289e))
+
+- Reformat with normalised format
+  ([`6d659f2`](https://github.com/camunda/orchestration-cluster-api-python/commit/6d659f2d75efdf68d18bdf97a38f874b66e2e44a))
+
+### Documentation
+
+- Add admonition to README for maintainer awareness
+  ([`038ec29`](https://github.com/camunda/orchestration-cluster-api-python/commit/038ec29cca07ee37e379702036b125b98d0169c6))
+
+- Add md-doc support for Docusaurus
+  ([`394bda0`](https://github.com/camunda/orchestration-cluster-api-python/commit/394bda025ddcfae45b30b7a1675cda8eb74c012f))
+
+- Reorder README sections for Docusaurus integration
+  ([`11a2f56`](https://github.com/camunda/orchestration-cluster-api-python/commit/11a2f56c7472129a5f8087dcc2f19b83a43245a0))
+
+- Reorganise for Docusaurus
+  ([`c8bb4af`](https://github.com/camunda/orchestration-cluster-api-python/commit/c8bb4af84d3793b26aa9d1f6f9ab91a7773d9cca))
+
+- Support Docusaurus integration
+  ([`b6b74cf`](https://github.com/camunda/orchestration-cluster-api-python/commit/b6b74cf8c4996ac6ce0d0e9f1cf70deed83211b2))
+
+- Support Docusaurus link requirements
+  ([`83077b3`](https://github.com/camunda/orchestration-cluster-api-python/commit/83077b35d08b5fb9a29d06aa370bee2df3c4280f))
+
+- Update Docusaurus integration
+  ([`a90ae7f`](https://github.com/camunda/orchestration-cluster-api-python/commit/a90ae7fbca3711d3a4e654f37f51956e95cc6448))
+
+- Use modified README as landing page in Docusaurus
+  ([`8eacc97`](https://github.com/camunda/orchestration-cluster-api-python/commit/8eacc97e2ad086451bc1be59b7b6577a73be2d66))
+
+
 ## v8.9.0-dev.6 (2026-02-15)
 
 ### Bug Fixes
