@@ -19,3 +19,6 @@ demo/.DS_Store
 public/
 website/docs/api/
 .DS_Store
+
+# Temporary sparse-clone directories left by camunda-schema-bundler
+.tmp-clone-*
