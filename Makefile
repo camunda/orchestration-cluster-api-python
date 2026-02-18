@@ -62,10 +62,10 @@ docs-api:
 	PYTHONPATH=./generated uv run sphinx-build -M markdown docs-sphinx public
 	# Post-process all markdown files for Docusaurus compatibility
 	uv run python scripts/postprocess_markdown.py ./public/markdown/
-	# Move API reference files into subdirectory
-	mkdir -p public/markdown/api-reference
-	mv public/markdown/*.md public/markdown/api-reference/
-	# Generate pages from README + API Reference category metadata
+	# Move API reference files into python-sdk/api-reference subdirectory
+	mkdir -p public/markdown/python-sdk/api-reference
+	mv public/markdown/*.md public/markdown/python-sdk/api-reference/
+	# Generate landing page (sibling of python-sdk/) + section pages (inside python-sdk/)
 	uv run python scripts/generate_landing_page.py
 	# Copy markdown into HTML folder for GitHub Pages access at /markdown/
 	cp -R ./public/markdown ./public/html/markdown
@@ -77,8 +77,8 @@ docs-md:
 	rm -rf public/markdown
 	PYTHONPATH=./generated uv run sphinx-build -M markdown docs-sphinx public
 	uv run python scripts/postprocess_markdown.py ./public/markdown/
-	mkdir -p public/markdown/api-reference
-	mv public/markdown/*.md public/markdown/api-reference/
+	mkdir -p public/markdown/python-sdk/api-reference
+	mv public/markdown/*.md public/markdown/python-sdk/api-reference/
 	uv run python scripts/generate_landing_page.py
 	@echo "Markdown docs: ./public/markdown/"
 
