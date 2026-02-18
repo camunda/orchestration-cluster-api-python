@@ -24,6 +24,7 @@ class ElementInstanceResult:
     process_instance_key: ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
     end_date: datetime.datetime | Unset = UNSET
+    root_process_instance_key: str | Unset = UNSET
     incident_key: IncidentKey | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...

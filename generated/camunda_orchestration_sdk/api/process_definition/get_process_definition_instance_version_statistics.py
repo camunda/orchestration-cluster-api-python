@@ -1,6 +1,5 @@
 from http import HTTPStatus
 from typing import Any, cast
-from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
@@ -11,23 +10,18 @@ from ...models.process_definition_instance_version_statistics_query import (
 from ...models.process_definition_instance_version_statistics_query_result import (
     ProcessDefinitionInstanceVersionStatisticsQueryResult,
 )
-from ...types import UNSET, Response, Unset
+from ...types import Response
 
 
 def _get_kwargs(
-    process_definition_id: str,
-    *,
-    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
+    *, body: ProcessDefinitionInstanceVersionStatisticsQuery
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
         "method": "post",
-        "url": "/process-definitions/{process_definition_id}/statistics/process-instances".format(
-            process_definition_id=quote(str(process_definition_id), safe="")
-        ),
+        "url": "/process-definitions/statistics/process-instances-by-version",
     }
-    if not isinstance(body, Unset):
-        _kwargs["json"] = body.to_dict()
+    _kwargs["json"] = body.to_dict()
     headers["Content-Type"] = "application/json"
     _kwargs["headers"] = headers
     return _kwargs
@@ -71,20 +65,17 @@ def _build_response(
 
 
 def sync_detailed(
-    process_definition_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery,
 ) -> Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]:
     """Get process instance statistics by version
 
      Get statistics about process instances, grouped by version for a given process definition.
+    The process definition ID must be provided as a required field in the request body filter.
 
     Args:
-        process_definition_id (str): Id of a process definition, from the model. Only ids of
-            process definitions that are deployed are useful. Example: new-account-onboarding-
-            workflow.
-        body (ProcessDefinitionInstanceVersionStatisticsQuery | Unset):
+        body (ProcessDefinitionInstanceVersionStatisticsQuery):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -93,27 +84,24 @@ def sync_detailed(
     Returns:
         Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]
     """
-    kwargs = _get_kwargs(process_definition_id=process_definition_id, body=body)
+    kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
 
 def sync(
-    process_definition_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery,
     **kwargs: Any,
 ) -> ProcessDefinitionInstanceVersionStatisticsQueryResult:
     """Get process instance statistics by version
 
      Get statistics about process instances, grouped by version for a given process definition.
+    The process definition ID must be provided as a required field in the request body filter.
 
     Args:
-        process_definition_id (str): Id of a process definition, from the model. Only ids of
-            process definitions that are deployed are useful. Example: new-account-onboarding-
-            workflow.
-        body (ProcessDefinitionInstanceVersionStatisticsQuery | Unset):
+        body (ProcessDefinitionInstanceVersionStatisticsQuery):
 
     Raises:
         errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -124,9 +112,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
         ProcessDefinitionInstanceVersionStatisticsQueryResult"""
-    response = sync_detailed(
-        process_definition_id=process_definition_id, client=client, body=body
-    )
+    response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest(
@@ -158,20 +144,17 @@ def sync(
 
 
 async def asyncio_detailed(
-    process_definition_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery,
 ) -> Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]:
     """Get process instance statistics by version
 
      Get statistics about process instances, grouped by version for a given process definition.
+    The process definition ID must be provided as a required field in the request body filter.
 
     Args:
-        process_definition_id (str): Id of a process definition, from the model. Only ids of
-            process definitions that are deployed are useful. Example: new-account-onboarding-
-            workflow.
-        body (ProcessDefinitionInstanceVersionStatisticsQuery | Unset):
+        body (ProcessDefinitionInstanceVersionStatisticsQuery):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -180,27 +163,24 @@ async def asyncio_detailed(
     Returns:
         Response[ProblemDetail | ProcessDefinitionInstanceVersionStatisticsQueryResult]
     """
-    kwargs = _get_kwargs(process_definition_id=process_definition_id, body=body)
+    kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
 
 async def asyncio(
-    process_definition_id: str,
     *,
     client: AuthenticatedClient | Client,
-    body: ProcessDefinitionInstanceVersionStatisticsQuery | Unset = UNSET,
+    body: ProcessDefinitionInstanceVersionStatisticsQuery,
     **kwargs: Any,
 ) -> ProcessDefinitionInstanceVersionStatisticsQueryResult:
     """Get process instance statistics by version
 
      Get statistics about process instances, grouped by version for a given process definition.
+    The process definition ID must be provided as a required field in the request body filter.
 
     Args:
-        process_definition_id (str): Id of a process definition, from the model. Only ids of
-            process definitions that are deployed are useful. Example: new-account-onboarding-
-            workflow.
-        body (ProcessDefinitionInstanceVersionStatisticsQuery | Unset):
+        body (ProcessDefinitionInstanceVersionStatisticsQuery):
 
     Raises:
         errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -211,9 +191,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
         ProcessDefinitionInstanceVersionStatisticsQueryResult"""
-    response = await asyncio_detailed(
-        process_definition_id=process_definition_id, client=client, body=body
-    )
+    response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.GetProcessDefinitionInstanceVersionStatisticsBadRequest(

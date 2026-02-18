@@ -14,6 +14,7 @@ class VariableResultBase:
     variable_key: VariableKey | Unset = UNSET
     scope_key: ScopeKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
+    root_process_instance_key: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

@@ -1,18 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-
-if TYPE_CHECKING:
-    from ..models.expression_evaluation_result_result import (
-        ExpressionEvaluationResultResult,
-    )
-
 
 T = TypeVar("T", bound="ExpressionEvaluationResult")
 
@@ -22,12 +16,12 @@ class ExpressionEvaluationResult:
     """
     Attributes:
         expression (str): The evaluated expression Example: =x + y.
-        result (ExpressionEvaluationResultResult): The result value. Its type can vary. Example: 30.
+        result (Any): The result value. Its type can vary. Example: 30.
         warnings (list[str]): List of warnings generated during expression evaluation
     """
 
     expression: str
-    result: ExpressionEvaluationResultResult
+    result: Any
     warnings: list[str]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -36,7 +30,7 @@ class ExpressionEvaluationResult:
     def to_dict(self) -> dict[str, Any]:
         expression = self.expression
 
-        result = self.result.to_dict()
+        result = self.result
 
         warnings = self.warnings
 
@@ -54,14 +48,10 @@ class ExpressionEvaluationResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.expression_evaluation_result_result import (
-            ExpressionEvaluationResultResult,
-        )
-
         d = dict(src_dict)
         expression = d.pop("expression")
 
-        result = ExpressionEvaluationResultResult.from_dict(d.pop("result"))
+        result = d.pop("result")
 
         warnings = cast(list[str], d.pop("warnings"))
 

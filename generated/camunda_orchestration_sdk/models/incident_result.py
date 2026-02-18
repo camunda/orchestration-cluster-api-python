@@ -54,6 +54,11 @@ class IncidentResult:
             2251799813686749.
         process_instance_key (str | Unset): The process instance key associated to this incident. Example:
             2251799813690746.
+        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
+            top-level
+            ancestor in the process instance hierarchy. This field is only present for data
+            belonging to process instance hierarchies created in version 8.9 or later.
+             Example: 2251799813690746.
         element_instance_key (str | Unset): The element instance key associated to this incident. Example:
             2251799813686789.
         job_key (str | Unset): The job key, if exists, associated with this incident. Example: 2251799813653498.
@@ -69,6 +74,7 @@ class IncidentResult:
     incident_key: IncidentKey | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
+    root_process_instance_key: str | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     job_key: JobKey | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
@@ -102,6 +108,8 @@ class IncidentResult:
 
         process_instance_key = self.process_instance_key
 
+        root_process_instance_key = self.root_process_instance_key
+
         element_instance_key = self.element_instance_key
 
         job_key = self.job_key
@@ -129,6 +137,8 @@ class IncidentResult:
             field_dict["processDefinitionKey"] = process_definition_key
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
+        if root_process_instance_key is not UNSET:
+            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if element_instance_key is not UNSET:
             field_dict["elementInstanceKey"] = element_instance_key
         if job_key is not UNSET:
@@ -201,6 +211,8 @@ class IncidentResult:
             else UNSET
         )
 
+        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
+
         element_instance_key = (
             lift_element_instance_key(_val)
             if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET
@@ -224,6 +236,7 @@ class IncidentResult:
             incident_key=incident_key,
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,
+            root_process_instance_key=root_process_instance_key,
             element_instance_key=element_instance_key,
             job_key=job_key,
         )

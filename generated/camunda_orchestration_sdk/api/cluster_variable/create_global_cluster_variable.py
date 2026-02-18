@@ -58,6 +58,8 @@ def sync_detailed(
 ) -> Response[ClusterVariableResult | ProblemDetail]:
     """Create a global-scoped cluster variable
 
+     Create a global-scoped cluster variable.
+
     Args:
         body (CreateClusterVariableRequest):
 
@@ -80,6 +82,8 @@ def sync(
     **kwargs: Any,
 ) -> ClusterVariableResult:
     """Create a global-scoped cluster variable
+
+     Create a global-scoped cluster variable.
 
     Args:
         body (CreateClusterVariableRequest):
@@ -129,6 +133,8 @@ async def asyncio_detailed(
 ) -> Response[ClusterVariableResult | ProblemDetail]:
     """Create a global-scoped cluster variable
 
+     Create a global-scoped cluster variable.
+
     Args:
         body (CreateClusterVariableRequest):
 
@@ -151,6 +157,8 @@ async def asyncio(
     **kwargs: Any,
 ) -> ClusterVariableResult:
     """Create a global-scoped cluster variable
+
+     Create a global-scoped cluster variable.
 
     Args:
         body (CreateClusterVariableRequest):

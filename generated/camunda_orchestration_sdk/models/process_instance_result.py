@@ -45,6 +45,11 @@ class ProcessInstanceResult:
         end_date (datetime.datetime | Unset):
         parent_process_instance_key (str | Unset): The parent process instance key. Example: 2251799813690746.
         parent_element_instance_key (str | Unset): The parent element instance key. Example: 2251799813686789.
+        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
+            top-level
+            ancestor in the process instance hierarchy. This field is only present for data
+            belonging to process instance hierarchies created in version 8.9 or later.
+             Example: 2251799813690746.
         tags (list[str] | Unset): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or
             `.`; length ≤ 100. Example: ['high-touch', 'remediation'].
     """
@@ -62,6 +67,7 @@ class ProcessInstanceResult:
     end_date: datetime.datetime | Unset = UNSET
     parent_process_instance_key: ProcessInstanceKey | Unset = UNSET
     parent_element_instance_key: ElementInstanceKey | Unset = UNSET
+    root_process_instance_key: str | Unset = UNSET
     tags: list[str] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -96,6 +102,8 @@ class ProcessInstanceResult:
 
         parent_element_instance_key = self.parent_element_instance_key
 
+        root_process_instance_key = self.root_process_instance_key
+
         tags: list[str] | Unset = UNSET
         if not isinstance(self.tags, Unset):
             tags = self.tags
@@ -123,6 +131,8 @@ class ProcessInstanceResult:
             field_dict["parentProcessInstanceKey"] = parent_process_instance_key
         if parent_element_instance_key is not UNSET:
             field_dict["parentElementInstanceKey"] = parent_element_instance_key
+        if root_process_instance_key is not UNSET:
+            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if tags is not UNSET:
             field_dict["tags"] = tags
 
@@ -168,6 +178,8 @@ class ProcessInstanceResult:
             else UNSET
         )
 
+        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
+
         tags = cast(list[str], d.pop("tags", UNSET))
 
         process_instance_result = cls(
@@ -184,6 +196,7 @@ class ProcessInstanceResult:
             end_date=end_date,
             parent_process_instance_key=parent_process_instance_key,
             parent_element_instance_key=parent_element_instance_key,
+            root_process_instance_key=root_process_instance_key,
             tags=tags,
         )
 

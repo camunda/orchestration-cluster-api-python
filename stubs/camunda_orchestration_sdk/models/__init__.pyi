@@ -90,6 +90,7 @@ from .audit_log_result import AuditLogResult
 from .audit_log_result_batch_operation_type import AuditLogResultBatchOperationType
 from .audit_log_result_enum import AuditLogResultEnum
 from .audit_log_result_exact_match import AuditLogResultExactMatch
+from .audit_log_result_related_entity_type import AuditLogResultRelatedEntityType
 from .audit_log_search_query_request import AuditLogSearchQueryRequest
 from .audit_log_search_query_request_filter import AuditLogSearchQueryRequestFilter
 from .audit_log_search_query_result import AuditLogSearchQueryResult
@@ -173,6 +174,7 @@ from .create_cluster_variable_request_value import CreateClusterVariableRequestV
 from .create_deployment_data import CreateDeploymentData
 from .create_document_data import CreateDocumentData
 from .create_documents_data import CreateDocumentsData
+from .create_global_task_listener_request import CreateGlobalTaskListenerRequest
 from .create_mapping_rule_response_201 import CreateMappingRuleResponse201
 from .create_process_instance_result import CreateProcessInstanceResult
 from .create_process_instance_result_variables import CreateProcessInstanceResultVariables
@@ -252,11 +254,15 @@ from .evaluated_decision_output_item import EvaluatedDecisionOutputItem
 from .evaluated_decision_result import EvaluatedDecisionResult
 from .expression_evaluation_request import ExpressionEvaluationRequest
 from .expression_evaluation_result import ExpressionEvaluationResult
-from .expression_evaluation_result_result import ExpressionEvaluationResultResult
 from .form_result import FormResult
 from .form_result_schema import FormResultSchema
 from .get_user_response_200 import GetUserResponse200
 from .global_job_statistics_query_result import GlobalJobStatisticsQueryResult
+from .global_listener_base import GlobalListenerBase
+from .global_listener_source_enum import GlobalListenerSourceEnum
+from .global_task_listener_base import GlobalTaskListenerBase
+from .global_task_listener_event_type_enum import GlobalTaskListenerEventTypeEnum
+from .global_task_listener_result import GlobalTaskListenerResult
 from .group_client_result import GroupClientResult
 from .group_client_search_query_request import GroupClientSearchQueryRequest
 from .group_client_search_query_sort_request import GroupClientSearchQuerySortRequest
@@ -308,6 +314,7 @@ from .incident_state_enum import IncidentStateEnum
 from .incident_state_exact_match import IncidentStateExactMatch
 from .inferred_ancestor_key_instruction import InferredAncestorKeyInstruction
 from .job_activation_request import JobActivationRequest
+from .job_activation_request_tenant_filter import JobActivationRequestTenantFilter
 from .job_activation_result import JobActivationResult
 from .job_changeset import JobChangeset
 from .job_completion_request import JobCompletionRequest
@@ -504,6 +511,7 @@ from .tenant_client_search_result import TenantClientSearchResult
 from .tenant_create_request import TenantCreateRequest
 from .tenant_create_result import TenantCreateResult
 from .tenant_filter import TenantFilter
+from .tenant_filter_enum import TenantFilterEnum
 from .tenant_group_result import TenantGroupResult
 from .tenant_group_search_query_request import TenantGroupSearchQueryRequest
 from .tenant_group_search_query_sort_request import TenantGroupSearchQuerySortRequest
@@ -525,6 +533,7 @@ from .tenant_user_search_result import TenantUserSearchResult
 from .topology_response import TopologyResponse
 from .update_cluster_variable_request import UpdateClusterVariableRequest
 from .update_cluster_variable_request_value import UpdateClusterVariableRequestValue
+from .update_global_task_listener_request import UpdateGlobalTaskListenerRequest
 from .update_mapping_rule_response_200 import UpdateMappingRuleResponse200
 from .update_user_response_200 import UpdateUserResponse200
 from .usage_metrics_response import UsageMetricsResponse
@@ -667,6 +676,7 @@ __all__: list[str] = [
     "AuditLogResultBatchOperationType",
     "AuditLogResultEnum",
     "AuditLogResultExactMatch",
+    "AuditLogResultRelatedEntityType",
     "AuditLogSearchQueryRequest",
     "AuditLogSearchQueryRequestFilter",
     "AuditLogSearchQueryResult",
@@ -750,6 +760,7 @@ __all__: list[str] = [
     "CreateDeploymentData",
     "CreateDocumentData",
     "CreateDocumentsData",
+    "CreateGlobalTaskListenerRequest",
     "CreateMappingRuleResponse201",
     "CreateProcessInstanceResult",
     "CreateProcessInstanceResultVariables",
@@ -829,11 +840,15 @@ __all__: list[str] = [
     "EvaluateDecisionResult",
     "ExpressionEvaluationRequest",
     "ExpressionEvaluationResult",
-    "ExpressionEvaluationResultResult",
     "FormResult",
     "FormResultSchema",
     "GetUserResponse200",
     "GlobalJobStatisticsQueryResult",
+    "GlobalListenerBase",
+    "GlobalListenerSourceEnum",
+    "GlobalTaskListenerBase",
+    "GlobalTaskListenerEventTypeEnum",
+    "GlobalTaskListenerResult",
     "GroupClientResult",
     "GroupClientSearchQueryRequest",
     "GroupClientSearchQuerySortRequest",
@@ -885,6 +900,7 @@ __all__: list[str] = [
     "IncidentStateExactMatch",
     "InferredAncestorKeyInstruction",
     "JobActivationRequest",
+    "JobActivationRequestTenantFilter",
     "JobActivationResult",
     "JobChangeset",
     "JobCompletionRequest",
@@ -1081,6 +1097,7 @@ __all__: list[str] = [
     "TenantCreateRequest",
     "TenantCreateResult",
     "TenantFilter",
+    "TenantFilterEnum",
     "TenantGroupResult",
     "TenantGroupSearchQueryRequest",
     "TenantGroupSearchQuerySortRequest",
@@ -1102,6 +1119,7 @@ __all__: list[str] = [
     "TopologyResponse",
     "UpdateClusterVariableRequest",
     "UpdateClusterVariableRequestValue",
+    "UpdateGlobalTaskListenerRequest",
     "UpdateMappingRuleResponse200",
     "UpdateUserResponse200",
     "UsageMetricsResponse",

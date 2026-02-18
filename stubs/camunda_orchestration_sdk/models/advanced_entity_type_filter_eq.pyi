@@ -2,6 +2,7 @@ from enum import Enum
 class AdvancedEntityTypeFilterEq(str, Enum):
     AUTHORIZATION = "AUTHORIZATION"
     BATCH = "BATCH"
+    CLIENT = "CLIENT"
     DECISION = "DECISION"
     GROUP = "GROUP"
     INCIDENT = "INCIDENT"

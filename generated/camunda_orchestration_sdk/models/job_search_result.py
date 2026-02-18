@@ -63,6 +63,11 @@ class JobSearchResult:
         error_code (None | str | Unset): The error code provided for a failed job.
         error_message (None | str | Unset): The error message that provides additional context for a failed job.
         is_denied (bool | None | Unset): Indicates whether the user task listener denies the work.
+        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
+            top-level
+            ancestor in the process instance hierarchy. This field is only present for data
+            belonging to process instance hierarchies created in version 8.9 or later.
+             Example: 2251799813690746.
         creation_time (datetime.datetime | Unset): When the job was created. Field is present for jobs created after
             8.9.
         last_update_time (datetime.datetime | Unset): When the job was last updated. Field is present for jobs created
@@ -90,6 +95,7 @@ class JobSearchResult:
     error_code: None | str | Unset = UNSET
     error_message: None | str | Unset = UNSET
     is_denied: bool | None | Unset = UNSET
+    root_process_instance_key: str | Unset = UNSET
     creation_time: datetime.datetime | Unset = UNSET
     last_update_time: datetime.datetime | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
@@ -163,6 +169,8 @@ class JobSearchResult:
         else:
             is_denied = self.is_denied
 
+        root_process_instance_key = self.root_process_instance_key
+
         creation_time: str | Unset = UNSET
         if not isinstance(self.creation_time, Unset):
             creation_time = self.creation_time.isoformat()
@@ -204,6 +212,8 @@ class JobSearchResult:
             field_dict["errorMessage"] = error_message
         if is_denied is not UNSET:
             field_dict["isDenied"] = is_denied
+        if root_process_instance_key is not UNSET:
+            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if creation_time is not UNSET:
             field_dict["creationTime"] = creation_time
         if last_update_time is not UNSET:
@@ -310,6 +320,8 @@ class JobSearchResult:
 
         is_denied = _parse_is_denied(d.pop("isDenied", UNSET))
 
+        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
+
         _creation_time = d.pop("creationTime", UNSET)
         creation_time: datetime.datetime | Unset
         if isinstance(_creation_time, Unset):
@@ -346,6 +358,7 @@ class JobSearchResult:
             error_code=error_code,
             error_message=error_message,
             is_denied=is_denied,
+            root_process_instance_key=root_process_instance_key,
             creation_time=creation_time,
             last_update_time=last_update_time,
         )

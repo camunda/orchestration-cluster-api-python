@@ -30,6 +30,11 @@ class BatchOperationItemResponse:
             2251799813684321.
         item_key (str | Unset): Key of the item, e.g. a process instance key.
         process_instance_key (str | Unset): the process instance key of the processed item. Example: 2251799813690746.
+        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
+            top-level
+            ancestor in the process instance hierarchy. This field is only present for data
+            belonging to process instance hierarchies created in version 8.9 or later.
+             Example: 2251799813690746.
         state (BatchOperationItemResponseState | Unset): State of the item.
         processed_date (datetime.datetime | Unset): the date this item was processed.
         error_message (str | Unset): the error message from the engine in case of a failed operation.
@@ -39,6 +44,7 @@ class BatchOperationItemResponse:
     batch_operation_key: BatchOperationKey | Unset = UNSET
     item_key: str | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
+    root_process_instance_key: str | Unset = UNSET
     state: BatchOperationItemResponseState | Unset = UNSET
     processed_date: datetime.datetime | Unset = UNSET
     error_message: str | Unset = UNSET
@@ -56,6 +62,8 @@ class BatchOperationItemResponse:
         item_key = self.item_key
 
         process_instance_key = self.process_instance_key
+
+        root_process_instance_key = self.root_process_instance_key
 
         state: str | Unset = UNSET
         if not isinstance(self.state, Unset):
@@ -78,6 +86,8 @@ class BatchOperationItemResponse:
             field_dict["itemKey"] = item_key
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
+        if root_process_instance_key is not UNSET:
+            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if state is not UNSET:
             field_dict["state"] = state
         if processed_date is not UNSET:
@@ -111,6 +121,8 @@ class BatchOperationItemResponse:
             else UNSET
         )
 
+        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
+
         _state = d.pop("state", UNSET)
         state: BatchOperationItemResponseState | Unset
         if isinstance(_state, Unset):
@@ -132,6 +144,7 @@ class BatchOperationItemResponse:
             batch_operation_key=batch_operation_key,
             item_key=item_key,
             process_instance_key=process_instance_key,
+            root_process_instance_key=root_process_instance_key,
             state=state,
             processed_date=processed_date,
             error_message=error_message,

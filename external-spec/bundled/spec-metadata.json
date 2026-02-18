@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "specHash": "sha256:aac31df63908e4d4bd9c914730f7dca5858c71372d539a966e17ef5e56081b09",
+  "specHash": "sha256:493d019664300c05919ec8ff78d2b49ea46877bdde915d89666ccb9180e875a8",
   "semanticKeys": [
     {
       "name": "AuditLogEntityKey",
@@ -515,6 +515,32 @@
       "stableId": "form-key"
     },
     {
+      "name": "GlobalListenerId",
+      "semanticType": "GlobalListenerId",
+      "category": "model-id",
+      "description": "The user-defined id for the global listener",
+      "composition": {
+        "schemaKind": "inline",
+        "refs": [],
+        "inlineFragments": 0
+      },
+      "constraints": {
+        "format": "GlobalListenerId"
+      },
+      "examples": [
+        "GlobalListener_1"
+      ],
+      "extensions": {
+        "x-semantic-type": "GlobalListenerId"
+      },
+      "flags": {
+        "semanticKey": true,
+        "includesLongKeyRef": false,
+        "deprecated": false
+      },
+      "stableId": "global-listener-id"
+    },
+    {
       "name": "IncidentKey",
       "semanticType": "IncidentKey",
       "category": "system-key",
@@ -721,6 +747,36 @@
         "deprecated": false
       },
       "stableId": "process-instance-key"
+    },
+    {
+      "name": "RootProcessInstanceKey",
+      "semanticType": "ProcessInstanceKey",
+      "category": "system-key",
+      "description": "The key of the root process instance. The root process instance is the top-level\nancestor in the process instance hierarchy. This field is only present for data\nbelonging to process instance hierarchies created in version 8.9 or later.\n",
+      "composition": {
+        "schemaKind": "allOf",
+        "refs": [
+          "LongKey"
+        ],
+        "inlineFragments": 0
+      },
+      "constraints": {
+        "pattern": "^-?[0-9]+$",
+        "minLength": 1,
+        "maxLength": 25
+      },
+      "examples": [
+        "2251799813690746"
+      ],
+      "extensions": {
+        "x-semantic-type": "ProcessInstanceKey"
+      },
+      "flags": {
+        "semanticKey": true,
+        "includesLongKeyRef": true,
+        "deprecated": false
+      },
+      "stableId": "root-process-instance-key"
     },
     {
       "name": "ScopeKey",
@@ -1754,6 +1810,11 @@
   ],
   "arrays": [
     {
+      "name": "GlobalTaskListenerEventTypes",
+      "itemRef": "GlobalTaskListenerEventTypeEnum",
+      "uniqueItems": false
+    },
+    {
       "name": "TagSet",
       "itemRef": "Tag",
       "maxItems": 10,
@@ -1813,30 +1874,6 @@
       "operationId": "getBatchOperation",
       "path": "/batch-operations/{batchOperationKey}",
       "method": "get",
-      "tags": [
-        "Batch operation"
-      ]
-    },
-    {
-      "operationId": "cancelBatchOperation",
-      "path": "/batch-operations/{batchOperationKey}/cancellation",
-      "method": "post",
-      "tags": [
-        "Batch operation"
-      ]
-    },
-    {
-      "operationId": "resumeBatchOperation",
-      "path": "/batch-operations/{batchOperationKey}/resumption",
-      "method": "post",
-      "tags": [
-        "Batch operation"
-      ]
-    },
-    {
-      "operationId": "suspendBatchOperation",
-      "path": "/batch-operations/{batchOperationKey}/suspension",
-      "method": "post",
       "tags": [
         "Batch operation"
       ]
@@ -1909,22 +1946,6 @@
       "operationId": "getDecisionInstance",
       "path": "/decision-instances/{decisionEvaluationInstanceKey}",
       "method": "get",
-      "tags": [
-        "Decision instance"
-      ]
-    },
-    {
-      "operationId": "deleteDecisionInstance",
-      "path": "/decision-instances/{decisionInstanceKey}/deletion",
-      "method": "post",
-      "tags": [
-        "Decision instance"
-      ]
-    },
-    {
-      "operationId": "deleteDecisionInstancesBatchOperation",
-      "path": "/decision-instances/deletion",
-      "method": "post",
       "tags": [
         "Decision instance"
       ]
@@ -2155,50 +2176,10 @@
     },
     {
       "operationId": "getProcessDefinitionInstanceVersionStatistics",
-      "path": "/process-definitions/{processDefinitionId}/statistics/process-instances",
+      "path": "/process-definitions/statistics/process-instances-by-version",
       "method": "post",
       "tags": [
         "Process definition"
-      ]
-    },
-    {
-      "operationId": "cancelProcessInstancesBatchOperation",
-      "path": "/process-instances/cancellation",
-      "method": "post",
-      "tags": [
-        "Process instance"
-      ]
-    },
-    {
-      "operationId": "deleteProcessInstancesBatchOperation",
-      "path": "/process-instances/deletion",
-      "method": "post",
-      "tags": [
-        "Process instance"
-      ]
-    },
-    {
-      "operationId": "resolveIncidentsBatchOperation",
-      "path": "/process-instances/incident-resolution",
-      "method": "post",
-      "tags": [
-        "Process instance"
-      ]
-    },
-    {
-      "operationId": "migrateProcessInstancesBatchOperation",
-      "path": "/process-instances/migration",
-      "method": "post",
-      "tags": [
-        "Process instance"
-      ]
-    },
-    {
-      "operationId": "modifyProcessInstancesBatchOperation",
-      "path": "/process-instances/modification",
-      "method": "post",
-      "tags": [
-        "Process instance"
       ]
     },
     {
@@ -2221,22 +2202,6 @@
       "operationId": "getProcessInstanceCallHierarchy",
       "path": "/process-instances/{processInstanceKey}/call-hierarchy",
       "method": "get",
-      "tags": [
-        "Process instance"
-      ]
-    },
-    {
-      "operationId": "deleteProcessInstance",
-      "path": "/process-instances/{processInstanceKey}/deletion",
-      "method": "post",
-      "tags": [
-        "Process instance"
-      ]
-    },
-    {
-      "operationId": "resolveProcessInstanceIncidents",
-      "path": "/process-instances/{processInstanceKey}/incident-resolution",
-      "method": "post",
       "tags": [
         "Process instance"
       ]
@@ -2314,14 +2279,6 @@
       ]
     },
     {
-      "operationId": "createAdminUser",
-      "path": "/setup/user",
-      "method": "post",
-      "tags": [
-        "Setup"
-      ]
-    },
-    {
       "operationId": "getUsageMetrics",
       "path": "/system/usage-metrics",
       "method": "get",
@@ -2386,14 +2343,6 @@
       ]
     },
     {
-      "operationId": "createUser",
-      "path": "/users",
-      "method": "post",
-      "tags": [
-        "User"
-      ]
-    },
-    {
       "operationId": "searchUsers",
       "path": "/users/search",
       "method": "post",
@@ -2405,22 +2354,6 @@
       "operationId": "getUser",
       "path": "/users/{username}",
       "method": "get",
-      "tags": [
-        "User"
-      ]
-    },
-    {
-      "operationId": "updateUser",
-      "path": "/users/{username}",
-      "method": "put",
-      "tags": [
-        "User"
-      ]
-    },
-    {
-      "operationId": "deleteUser",
-      "path": "/users/{username}",
-      "method": "delete",
       "tags": [
         "User"
       ]
@@ -2706,7 +2639,7 @@
       ],
       "summary": "Cancel Batch operation",
       "description": "Cancels a running batch operation.\nThis is done asynchronously, the progress can be tracked using the batch operation status endpoint (/batch-operations/{batchOperationKey}).\n",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
       "bodyOnly": false,
@@ -2726,7 +2659,7 @@
       ],
       "summary": "Resume Batch operation",
       "description": "Resumes a suspended batch operation.\nThis is done asynchronously, the progress can be tracked using the batch operation status endpoint (/batch-operations/{batchOperationKey}).\n",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
       "bodyOnly": false,
@@ -2746,7 +2679,7 @@
       ],
       "summary": "Suspend Batch operation",
       "description": "Suspends a running batch operation.\nThis is done asynchronously, the progress can be tracked using the batch operation status endpoint (/batch-operations/{batchOperationKey}).\n",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
       "bodyOnly": false,
@@ -2801,6 +2734,7 @@
         "Cluster Variable"
       ],
       "summary": "Create a global-scoped cluster variable",
+      "description": "Create a global-scoped cluster variable.",
       "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
@@ -2818,6 +2752,7 @@
         "Cluster Variable"
       ],
       "summary": "Get a global-scoped cluster variable",
+      "description": "Get a global-scoped cluster variable.",
       "eventuallyConsistent": true,
       "hasRequestBody": false,
       "requestBodyUnion": false,
@@ -2857,6 +2792,7 @@
         "Cluster Variable"
       ],
       "summary": "Delete a global-scoped cluster variable",
+      "description": "Delete a global-scoped cluster variable.",
       "eventuallyConsistent": false,
       "hasRequestBody": false,
       "requestBodyUnion": false,
@@ -2898,6 +2834,7 @@
         "Cluster Variable"
       ],
       "summary": "Create a tenant-scoped cluster variable",
+      "description": "Create a new cluster variable for the given tenant.",
       "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
@@ -2917,6 +2854,7 @@
         "Cluster Variable"
       ],
       "summary": "Get a tenant-scoped cluster variable",
+      "description": "Get a tenant-scoped cluster variable.",
       "eventuallyConsistent": true,
       "hasRequestBody": false,
       "requestBodyUnion": false,
@@ -2958,6 +2896,7 @@
         "Cluster Variable"
       ],
       "summary": "Delete a tenant-scoped cluster variable",
+      "description": "Delete a tenant-scoped cluster variable.",
       "eventuallyConsistent": false,
       "hasRequestBody": false,
       "requestBodyUnion": false,
@@ -3132,7 +3071,7 @@
       ],
       "summary": "Delete decision instance",
       "description": "Delete all associated decision evaluations based on provided key.",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
       "bodyOnly": false,
@@ -3152,7 +3091,7 @@
       ],
       "summary": "Delete decision instances (batch)",
       "description": "Delete multiple decision instances. This will delete the historic data from secondary storage.\nThis is done asynchronously, the progress can be tracked using the batchOperationKey from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).\n",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
       "bodyOnly": true,
@@ -3485,6 +3424,64 @@
       "queryParams": [],
       "requestBodyUnionRefs": [],
       "optionalTenantIdInBody": true
+    },
+    {
+      "operationId": "createGlobalTaskListener",
+      "path": "/global-listeners/user-task",
+      "method": "post",
+      "tags": [
+        "Global listener"
+      ],
+      "summary": "Create global user task listener",
+      "description": "Create a new global user task listener.",
+      "eventuallyConsistent": false,
+      "hasRequestBody": true,
+      "requestBodyUnion": false,
+      "bodyOnly": true,
+      "pathParams": [],
+      "queryParams": [],
+      "requestBodyUnionRefs": [],
+      "optionalTenantIdInBody": false
+    },
+    {
+      "operationId": "updateGlobalTaskListener",
+      "path": "/global-listeners/user-task/{id}",
+      "method": "put",
+      "tags": [
+        "Global listener"
+      ],
+      "summary": "Update global user task listener",
+      "description": "Updates a global user task listener.",
+      "eventuallyConsistent": false,
+      "hasRequestBody": true,
+      "requestBodyUnion": false,
+      "bodyOnly": false,
+      "pathParams": [
+        "id"
+      ],
+      "queryParams": [],
+      "requestBodyUnionRefs": [],
+      "optionalTenantIdInBody": false
+    },
+    {
+      "operationId": "deleteGlobalTaskListener",
+      "path": "/global-listeners/user-task/{id}",
+      "method": "delete",
+      "tags": [
+        "Global listener"
+      ],
+      "summary": "Delete global user task listener",
+      "description": "Deletes a global user task listener.",
+      "eventuallyConsistent": false,
+      "hasRequestBody": false,
+      "requestBodyUnion": false,
+      "bodyOnly": false,
+      "pathParams": [
+        "id"
+      ],
+      "queryParams": [],
+      "requestBodyUnionRefs": [],
+      "optionalTenantIdInBody": false
     },
     {
       "operationId": "createGroup",
@@ -4333,20 +4330,18 @@
     },
     {
       "operationId": "getProcessDefinitionInstanceVersionStatistics",
-      "path": "/process-definitions/{processDefinitionId}/statistics/process-instances",
+      "path": "/process-definitions/statistics/process-instances-by-version",
       "method": "post",
       "tags": [
         "Process definition"
       ],
       "summary": "Get process instance statistics by version",
-      "description": "Get statistics about process instances, grouped by version for a given process definition.\n",
+      "description": "Get statistics about process instances, grouped by version for a given process definition.\nThe process definition ID must be provided as a required field in the request body filter.\n",
       "eventuallyConsistent": true,
       "hasRequestBody": true,
       "requestBodyUnion": false,
-      "bodyOnly": false,
-      "pathParams": [
-        "processDefinitionId"
-      ],
+      "bodyOnly": true,
+      "pathParams": [],
       "queryParams": [],
       "requestBodyUnionRefs": [],
       "optionalTenantIdInBody": false
@@ -4381,7 +4376,7 @@
       ],
       "summary": "Cancel process instances (batch)",
       "description": "Cancels multiple running process instances.\nSince only ACTIVE root instances can be cancelled, any given filters for state and\nparentProcessInstanceKey are ignored and overridden during this batch operation.\nThis is done asynchronously, the progress can be tracked using the batchOperationKey from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).\n",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
       "bodyOnly": true,
@@ -4399,7 +4394,7 @@
       ],
       "summary": "Delete process instances (batch)",
       "description": "Delete multiple process instances. This will delete the historic data from secondary storage.\nOnly process instances in a final state (COMPLETED or TERMINATED) can be deleted.\nThis is done asynchronously, the progress can be tracked using the batchOperationKey from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).\n",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
       "bodyOnly": true,
@@ -4417,7 +4412,7 @@
       ],
       "summary": "Resolve related incidents (batch)",
       "description": "Resolves multiple instances of process instances.\nSince only process instances with ACTIVE state can have unresolved incidents, any given\nfilters for state are ignored and overridden during this batch operation.\nThis is done asynchronously, the progress can be tracked using the batchOperationKey from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).\n",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
       "bodyOnly": true,
@@ -4435,7 +4430,7 @@
       ],
       "summary": "Migrate process instances (batch)",
       "description": "Migrate multiple process instances.\nSince only process instances with ACTIVE state can be migrated, any given\nfilters for state are ignored and overridden during this batch operation.\nThis is done asynchronously, the progress can be tracked using the batchOperationKey from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).\n",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
       "bodyOnly": true,
@@ -4453,7 +4448,7 @@
       ],
       "summary": "Modify process instances (batch)",
       "description": "Modify multiple process instances.\nSince only process instances with ACTIVE state can be modified, any given\nfilters for state are ignored and overridden during this batch operation.\nIn contrast to single modification operation, it is not possible to add variable instructions or modify by element key.\nIt is only possible to use the element id of the source and target.\nThis is done asynchronously, the progress can be tracked using the batchOperationKey from the response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).\n",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
       "bodyOnly": true,
@@ -4549,7 +4544,7 @@
       ],
       "summary": "Delete process instance",
       "description": "Deletes a process instance. Only instances that are completed or terminated can be deleted.",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
       "bodyOnly": false,
@@ -4569,7 +4564,7 @@
       ],
       "summary": "Resolve related incidents",
       "description": "Creates a batch operation to resolve multiple incidents of a process instance.",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": false,
       "requestBodyUnion": false,
       "bodyOnly": false,
@@ -5093,7 +5088,7 @@
       ],
       "summary": "Create admin user",
       "description": "Creates a new user and assigns the admin role to it. This endpoint is only usable when users are managed in the Orchestration Cluster and while no user is assigned to the admin role.",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
       "bodyOnly": true,
@@ -5606,7 +5601,7 @@
       ],
       "summary": "Create user",
       "description": "Create a new user.",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
       "bodyOnly": true,
@@ -5662,7 +5657,7 @@
       ],
       "summary": "Update user",
       "description": "Updates a user.",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": true,
       "requestBodyUnion": false,
       "bodyOnly": false,
@@ -5682,7 +5677,7 @@
       ],
       "summary": "Delete user",
       "description": "Deletes a user.",
-      "eventuallyConsistent": true,
+      "eventuallyConsistent": false,
       "hasRequestBody": false,
       "requestBodyUnion": false,
       "bodyOnly": false,
@@ -5921,9 +5916,9 @@
     }
   ],
   "integrity": {
-    "totalSemanticKeys": 33,
+    "totalSemanticKeys": 35,
     "totalUnions": 49,
-    "totalOperations": 172,
-    "totalEventuallyConsistent": 90
+    "totalOperations": 175,
+    "totalEventuallyConsistent": 74
   }
 }

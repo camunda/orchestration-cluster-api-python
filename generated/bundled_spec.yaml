@@ -40,6 +40,7 @@ tags:
 - name: Document
 - name: Element instance
 - name: Expression
+- name: Global listener
 - name: Group
 - name: Incident
 - name: Job
@@ -581,7 +582,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
   /batch-operations/{batchOperationKey}/cancellation:
     post:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - Batch operation
       operationId: cancelBatchOperation
@@ -634,7 +635,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
   /batch-operations/{batchOperationKey}/resumption:
     post:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - Batch operation
       operationId: resumeBatchOperation
@@ -701,7 +702,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
   /batch-operations/{batchOperationKey}/suspension:
     post:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - Batch operation
       operationId: suspendBatchOperation
@@ -870,6 +871,7 @@ paths:
       tags:
       - Cluster Variable
       summary: Create a global-scoped cluster variable
+      description: Create a global-scoped cluster variable.
       requestBody:
         required: true
         content:
@@ -918,6 +920,7 @@ paths:
       tags:
       - Cluster Variable
       summary: Get a global-scoped cluster variable
+      description: Get a global-scoped cluster variable.
       parameters:
       - name: name
         in: path
@@ -1037,6 +1040,7 @@ paths:
       tags:
       - Cluster Variable
       summary: Delete a global-scoped cluster variable
+      description: Delete a global-scoped cluster variable.
       parameters:
       - name: name
         in: path
@@ -1145,6 +1149,7 @@ paths:
       tags:
       - Cluster Variable
       summary: Create a tenant-scoped cluster variable
+      description: Create a new cluster variable for the given tenant.
       parameters:
       - name: tenantId
         in: path
@@ -1200,6 +1205,7 @@ paths:
       tags:
       - Cluster Variable
       summary: Get a tenant-scoped cluster variable
+      description: Get a tenant-scoped cluster variable.
       parameters:
       - name: tenantId
         in: path
@@ -1331,6 +1337,7 @@ paths:
       tags:
       - Cluster Variable
       summary: Delete a tenant-scoped cluster variable
+      description: Delete a tenant-scoped cluster variable.
       parameters:
       - name: tenantId
         in: path
@@ -1577,6 +1584,10 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '404':
           description: The decision is not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: An internal error occurred while processing the request.
           content:
@@ -1877,7 +1888,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
   /decision-instances/{decisionInstanceKey}/deletion:
     post:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - Decision instance
       operationId: deleteDecisionInstance
@@ -1897,12 +1908,8 @@ paths:
             schema:
               $ref: '#/components/schemas/DeleteDecisionInstanceData'
       responses:
-        '200':
-          description: The operation to delete the decision instance was created.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BatchOperationCreatedResult'
+        '204':
+          description: The decision instance is marked for deletion.
         '401':
           description: The request lacks valid authentication credentials.
           headers:
@@ -1947,7 +1954,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
   /decision-instances/deletion:
     post:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - Decision instance
       operationId: deleteDecisionInstancesBatchOperation
@@ -2918,6 +2925,216 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  /global-listeners/user-task:
+    post:
+      x-eventually-consistent: false
+      tags:
+      - Global listener
+      operationId: createGlobalTaskListener
+      summary: Create global user task listener
+      description: Create a new global user task listener.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGlobalTaskListenerRequest'
+        required: true
+      responses:
+        '201':
+          description: The global user task listener was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlobalTaskListenerResult'
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '409':
+          description: A global listener with this id already exists.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  /global-listeners/user-task/{id}:
+    put:
+      x-eventually-consistent: false
+      tags:
+      - Global listener
+      operationId: updateGlobalTaskListener
+      summary: Update global user task listener
+      description: Updates a global user task listener.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the global user task listener to update.
+        schema:
+          $ref: '#/components/schemas/GlobalListenerId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGlobalTaskListenerRequest'
+        required: true
+      responses:
+        '200':
+          description: The global listener was updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlobalTaskListenerResult'
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: The global user task listener was not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+    delete:
+      x-eventually-consistent: false
+      tags:
+      - Global listener
+      operationId: deleteGlobalTaskListener
+      summary: Delete global user task listener
+      description: Deletes a global user task listener.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The id of the global user task listener to delete.
+        schema:
+          $ref: '#/components/schemas/GlobalListenerId'
+      responses:
+        '204':
+          description: The global listener was deleted successfully.
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: The global user task listener was not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '503':
+          description: 'The service is currently unavailable. This may happen only
+            on some requests where the system creates backpressure to prevent the
+            server''s compute resources from being exhausted, avoiding more severe
+            failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`.
+            Clients are recommended to eventually retry those requests after a backoff
+            period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure
+            .
+
+            '
           content:
             application/problem+json:
               schema:
@@ -5526,7 +5743,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
-  /process-definitions/{processDefinitionId}/statistics/process-instances:
+  /process-definitions/statistics/process-instances-by-version:
     post:
       x-eventually-consistent: true
       tags:
@@ -5536,16 +5753,12 @@ paths:
       description: 'Get statistics about process instances, grouped by version for
         a given process definition.
 
+        The process definition ID must be provided as a required field in the request
+        body filter.
+
         '
-      parameters:
-      - name: processDefinitionId
-        in: path
-        required: true
-        description: The ID of the process definition.
-        schema:
-          $ref: '#/components/schemas/ProcessDefinitionId'
       requestBody:
-        required: false
+        required: true
         content:
           application/json:
             schema:
@@ -5674,7 +5887,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
   /process-instances/cancellation:
     post:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - Process instance
       operationId: cancelProcessInstancesBatchOperation
@@ -5736,7 +5949,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
   /process-instances/deletion:
     post:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - Process instance
       operationId: deleteProcessInstancesBatchOperation
@@ -5796,7 +6009,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
   /process-instances/incident-resolution:
     post:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - Process instance
       operationId: resolveIncidentsBatchOperation
@@ -5858,7 +6071,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
   /process-instances/migration:
     post:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - Process instance
       operationId: migrateProcessInstancesBatchOperation
@@ -5919,7 +6132,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
   /process-instances/modification:
     post:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - Process instance
       operationId: modifyProcessInstancesBatchOperation
@@ -6207,7 +6420,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
   /process-instances/{processInstanceKey}/deletion:
     post:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - Process instance
       operationId: deleteProcessInstance
@@ -6228,12 +6441,8 @@ paths:
             schema:
               $ref: '#/components/schemas/DeleteProcessInstanceData'
       responses:
-        '200':
-          description: The operation to delete the process instance was created.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BatchOperationCreatedResult'
+        '204':
+          description: The process instance is marked for deletion.
         '401':
           description: The request lacks valid authentication credentials.
           headers:
@@ -6285,7 +6494,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
   /process-instances/{processInstanceKey}/incident-resolution:
     post:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - Process instance
       operationId: resolveProcessInstanceIncidents
@@ -6967,6 +7176,10 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
   /roles/{roleId}:
     get:
       x-eventually-consistent: true
@@ -7934,7 +8147,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
   /setup/user:
     post:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - Setup
       operationId: createAdminUser
@@ -7951,6 +8164,10 @@ paths:
       responses:
         '201':
           description: The admin user was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreateResult'
         '400':
           description: The provided data is not valid.
           content:
@@ -8258,6 +8475,10 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '404':
           description: Not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: An internal error occurred while processing the request.
           content:
@@ -9290,7 +9511,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
   /users:
     post:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - User
       operationId: createUser
@@ -9378,8 +9599,8 @@ paths:
               schema:
                 type: object
                 required:
-                - page
                 - items
+                - page
                 properties:
                   items:
                     description: The matching users.
@@ -9476,7 +9697,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
     put:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - User
       operationId: updateUser
@@ -9550,7 +9771,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
     delete:
-      x-eventually-consistent: true
+      x-eventually-consistent: false
       tags:
       - User
       operationId: deleteUser
@@ -10280,6 +10501,10 @@ components:
           description: The ID of the actor who performed the operation.
         actorType:
           $ref: '#/components/schemas/AuditLogActorTypeEnum'
+        agentElementId:
+          type: string
+          description: The element ID of the agent that performed the operation (e.g.
+            ad-hoc subprocess element ID).
         tenantId:
           description: The tenant ID of the audit log.
           example: customer-service
@@ -10322,6 +10547,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
         elementInstanceKey:
           description: The key of the element instance.
           format: ElementInstanceKey
@@ -10413,6 +10640,49 @@ components:
           - $ref: '#/components/schemas/FormKey'
           - $ref: '#/components/schemas/DecisionDefinitionKey'
           format: ResourceKey
+        relatedEntityKey:
+          description: 'The key of the related entity. The content depends on the
+            operation type and entity type.
+
+            For example, for authorization operations, this will contain the ID of
+            the owner (e.g., user or group) the authorization belongs to.
+
+            '
+          format: AuditLogEntityKey
+          x-semantic-type: AuditLogEntityKey
+          example: '22517998136843567'
+          type: string
+        relatedEntityType:
+          description: 'The type of the related entity. The content depends on the
+            operation type and entity type.
+
+            For example, for authorization operations, this will contain the type
+            of the owner (e.g., USER or GROUP) the authorization belongs to.
+
+            '
+          type: string
+          enum:
+          - AUTHORIZATION
+          - BATCH
+          - DECISION
+          - GROUP
+          - INCIDENT
+          - MAPPING_RULE
+          - PROCESS_INSTANCE
+          - RESOURCE
+          - ROLE
+          - TENANT
+          - USER
+          - USER_TASK
+          - VARIABLE
+          - CLIENT
+        entityDescription:
+          type: string
+          description: 'Additional description of the entity affected by the operation.
+
+            For example, for variable operations, this will contain the variable name.
+
+            '
     AuditLogSearchQuerySortRequest:
       type: object
       additionalProperties: false
@@ -10509,6 +10779,10 @@ components:
           oneOf:
           - $ref: '#/components/schemas/AuditLogActorTypeExactMatch'
           - $ref: '#/components/schemas/AdvancedActorTypeFilter'
+        agentElementId:
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
         entityKey:
           oneOf:
           - $ref: '#/components/schemas/AuditLogEntityKeyExactMatch'
@@ -10573,6 +10847,18 @@ components:
           oneOf:
           - $ref: '#/components/schemas/DecisionEvaluationKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedDecisionEvaluationKeyFilter'
+        relatedEntityKey:
+          oneOf:
+          - $ref: '#/components/schemas/AuditLogEntityKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedAuditLogEntityKeyFilter'
+        relatedEntityType:
+          oneOf:
+          - $ref: '#/components/schemas/EntityTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedEntityTypeFilter'
+        entityDescription:
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
     AuditLogSearchQueryResult:
       description: Audit log search response.
       type: object
@@ -10609,6 +10895,7 @@ components:
       - USER
       - USER_TASK
       - VARIABLE
+      - CLIENT
     AuditLogOperationTypeEnum:
       type: string
       description: The type of operation performed.
@@ -10708,6 +10995,7 @@ components:
           - USER
           - USER_TASK
           - VARIABLE
+          - CLIENT
         $neq:
           description: Checks for inequality with the provided value.
           type: string
@@ -10725,6 +11013,7 @@ components:
           - USER
           - USER_TASK
           - VARIABLE
+          - CLIENT
         $exists:
           description: Checks if the current property exists.
           type: boolean
@@ -11628,6 +11917,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
         state:
           description: State of the item.
           type: string
@@ -11993,9 +12284,9 @@ components:
           type: string
           description: Only provided if the cluster variable scope is TENANT.
       required:
+      - scope
       - value
       - name
-      - scope
     ClusterVariableSearchResult:
       description: Cluster variable search response item.
       type: object
@@ -12016,9 +12307,9 @@ components:
           type: string
           description: Only provided if the cluster variable scope is TENANT.
       required:
+      - scope
       - value
       - name
-      - scope
     ClusterVariableResultBase:
       description: Cluster variable response item.
       type: object
@@ -12917,6 +13208,10 @@ components:
           oneOf:
           - $ref: '#/components/schemas/DecisionDefinitionKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedDecisionDefinitionKeyFilter'
+        decisionRequirementsKey:
+          oneOf:
+          - $ref: '#/components/schemas/DecisionRequirementsKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedDecisionRequirementsKeyFilter'
     DeleteDecisionInstanceRequest:
       type: object
       nullable: true
@@ -13008,6 +13303,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
         decisionDefinitionKey:
           description: The key of the decision.
           format: DecisionDefinitionKey
@@ -13108,6 +13405,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
         decisionDefinitionKey:
           description: The key of the decision.
           format: DecisionDefinitionKey
@@ -14216,6 +14515,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
         processDefinitionKey:
           description: The process definition key associated to this element instance.
           format: ProcessDefinitionKey
@@ -14295,7 +14596,6 @@ components:
           example: =x + y
         result:
           description: The result value. Its type can vary.
-          type: object
           example: 30
         warnings:
           type: array
@@ -14499,6 +14799,138 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+    GlobalListenerSourceEnum:
+      type: string
+      enum:
+      - CONFIGURATION
+      - API
+      description: How the global listener was defined.
+    GlobalTaskListenerEventTypeEnum:
+      type: string
+      enum:
+      - all
+      - creating
+      - assigning
+      - updating
+      - completing
+      - canceling
+      description: The event type that triggers the user task listener.
+    GlobalListenerBase:
+      type: object
+      properties:
+        type:
+          description: The name of the job type, used as a reference to specify which
+            job workers request the respective listener job.
+          type: string
+          example: order-items
+        retries:
+          description: Number of retries for the listener job.
+          type: integer
+        afterNonGlobal:
+          description: Whether the listener should run after model-level listeners.
+          type: boolean
+        priority:
+          description: The priority of the listener. Higher priority listeners are
+            executed before lower priority ones.
+          type: integer
+    GlobalTaskListenerBase:
+      type: object
+      properties:
+        eventTypes:
+          $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
+        type:
+          description: The name of the job type, used as a reference to specify which
+            job workers request the respective listener job.
+          type: string
+          example: order-items
+        retries:
+          description: Number of retries for the listener job.
+          type: integer
+        afterNonGlobal:
+          description: Whether the listener should run after model-level listeners.
+          type: boolean
+        priority:
+          description: The priority of the listener. Higher priority listeners are
+            executed before lower priority ones.
+          type: integer
+    GlobalTaskListenerEventTypes:
+      description: List of user task event types that trigger the listener.
+      type: array
+      items:
+        $ref: '#/components/schemas/GlobalTaskListenerEventTypeEnum'
+    CreateGlobalTaskListenerRequest:
+      type: object
+      required:
+      - eventTypes
+      - id
+      - type
+      properties:
+        id:
+          $ref: '#/components/schemas/GlobalListenerId'
+        eventTypes:
+          $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
+        type:
+          description: The name of the job type, used as a reference to specify which
+            job workers request the respective listener job.
+          type: string
+          example: order-items
+        retries:
+          description: Number of retries for the listener job.
+          type: integer
+        afterNonGlobal:
+          description: Whether the listener should run after model-level listeners.
+          type: boolean
+        priority:
+          description: The priority of the listener. Higher priority listeners are
+            executed before lower priority ones.
+          type: integer
+    UpdateGlobalTaskListenerRequest:
+      type: object
+      required:
+      - eventTypes
+      - type
+      properties:
+        eventTypes:
+          $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
+        type:
+          description: The name of the job type, used as a reference to specify which
+            job workers request the respective listener job.
+          type: string
+          example: order-items
+        retries:
+          description: Number of retries for the listener job.
+          type: integer
+        afterNonGlobal:
+          description: Whether the listener should run after model-level listeners.
+          type: boolean
+        priority:
+          description: The priority of the listener. Higher priority listeners are
+            executed before lower priority ones.
+          type: integer
+    GlobalTaskListenerResult:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/GlobalListenerId'
+        source:
+          $ref: '#/components/schemas/GlobalListenerSourceEnum'
+        eventTypes:
+          $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
+        type:
+          description: The name of the job type, used as a reference to specify which
+            job workers request the respective listener job.
+          type: string
+          example: order-items
+        retries:
+          description: Number of retries for the listener job.
+          type: integer
+        afterNonGlobal:
+          description: Whether the listener should run after model-level listeners.
+          type: boolean
+        priority:
+          description: The priority of the listener. Higher priority listeners are
+            executed before lower priority ones.
+          type: integer
     GroupCreateRequest:
       type: object
       additionalProperties: false
@@ -14743,6 +15175,12 @@ components:
       maxLength: 256
       pattern: ^[A-Za-z0-9_@.+-]+$
       example: new-hire-onboarding-workflow
+    GlobalListenerId:
+      description: The user-defined id for the global listener
+      type: string
+      format: GlobalListenerId
+      x-semantic-type: GlobalListenerId
+      example: GlobalListener_1
     TenantId:
       example: customer-service
       description: The unique identifier of the tenant.
@@ -15111,6 +15549,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
         elementInstanceKey:
           description: The element instance key associated to this incident.
           format: ElementInstanceKey
@@ -15367,6 +15807,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TenantId'
+        tenantFilter:
+          description: 'The tenant filtering strategy - determines whether to use
+            provided tenant IDs or assigned tenant IDs from the authenticated principal''s
+            authorized tenants.
+
+            '
+          default: PROVIDED
+          type: string
+          enum:
+          - PROVIDED
+          - ASSIGNED
       required:
       - type
       - timeout
@@ -15821,6 +16272,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
         retries:
           description: The amount of retries left to this job.
           type: integer
@@ -16064,6 +16517,17 @@ components:
           format: int64
           description: The new timeout for the job in milliseconds.
           nullable: true
+    TenantFilterEnum:
+      description: 'The tenant filtering strategy for job activation. Determines whether
+        to use tenant IDs provided in the request or tenant IDs assigned to the authenticated
+        principal.
+
+        '
+      type: string
+      enum:
+      - PROVIDED
+      - ASSIGNED
+      default: PROVIDED
     JobStateEnum:
       description: The state of the job.
       type: string
@@ -16231,6 +16695,23 @@ components:
       maxLength: 25
     ProcessInstanceKey:
       description: System-generated key for a process instance.
+      format: ProcessInstanceKey
+      x-semantic-type: ProcessInstanceKey
+      example: '2251799813690746'
+      type: string
+      pattern: ^-?[0-9]+$
+      minLength: 1
+      maxLength: 25
+    RootProcessInstanceKey:
+      description: 'The key of the root process instance. The root process instance
+        is the top-level
+
+        ancestor in the process instance hierarchy. This field is only present for
+        data
+
+        belonging to process instance hierarchies created in version 8.9 or later.
+
+        '
       format: ProcessInstanceKey
       x-semantic-type: ProcessInstanceKey
       example: '2251799813690746'
@@ -16917,10 +17398,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimValue
-      - claimName
-      - mappingRuleId
       - name
+      - mappingRuleId
+      - claimName
+      - claimValue
     MappingRuleUpdateRequest:
       type: object
       properties:
@@ -16934,9 +17415,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimValue
       - claimName
       - name
+      - claimValue
     MappingRuleCreateUpdateResult:
       type: object
       properties:
@@ -17234,6 +17715,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
         elementId:
           description: The element ID associated with this message subscription.
           format: ElementId
@@ -17430,6 +17913,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
         subscriptionKey:
           description: The subscription key that received the message.
           format: MessageSubscriptionKey
@@ -17666,7 +18151,7 @@ components:
           format: uri
           description: A URI identifying the problem type.
           default: about:blank
-          example: about:blank
+          example: https://docs.camunda.io/api/v2.0/problem-types/bad-request
         title:
           type: string
           description: A summary of the problem type.
@@ -17684,7 +18169,7 @@ components:
           example: Request property [maxJobsToActivates] cannot be parsed
         instance:
           type: string
-          format: uri
+          format: uri-reference
           description: A URI path identifying the origin of the problem.
           example: /v2/jobs/activation
     ProcessDefinitionSearchQuerySortRequest:
@@ -18010,10 +18495,21 @@ components:
             $ref: '#/components/schemas/ProcessDefinitionInstanceVersionStatisticsQuerySortRequest'
         filter:
           $ref: '#/components/schemas/ProcessDefinitionInstanceVersionStatisticsQueryFilter'
+      required:
+      - filter
     ProcessDefinitionInstanceVersionStatisticsFilter:
       description: Process definition instance version statistics search filter.
       type: object
       properties:
+        processDefinitionId:
+          description: The ID of the process definition to retrieve version statistics
+            for.
+          format: ProcessDefinitionId
+          type: string
+          x-semantic-type: ProcessDefinitionId
+          minLength: 1
+          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          example: new-account-onboarding-workflow
         tenantId:
           description: Tenant ID of this process definition.
           example: customer-service
@@ -18023,6 +18519,8 @@ components:
           minLength: 1
           maxLength: 256
           pattern: ^(<default>|[A-Za-z0-9_@.+-]+)$
+      required:
+      - processDefinitionId
     ProcessDefinitionInstanceVersionStatisticsQueryResult:
       type: object
       properties:
@@ -18241,6 +18739,17 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        processDefinitionVersion:
+          description: 'As the version is already identified by the `processDefinitionKey`,
+            the value of this field is ignored.
+
+            It''s here for backwards-compatibility only as previous releases accepted
+            it in request bodies.
+
+            '
+          type: integer
+          format: int32
+          default: -1
         variables:
           $ref: '#/components/schemas/ProcessInstanceCreationInstructionByIdVariables'
         startInstructions:
@@ -18837,8 +19346,8 @@ components:
       description: Process instance search response.
       type: object
       required:
-      - page
       - items
+      - page
       properties:
         items:
           description: The matching process instances.
@@ -18921,6 +19430,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
         tags:
           $ref: '#/components/schemas/TagSet'
     CancelProcessInstanceRequest:
@@ -18991,6 +19502,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
         processDefinitionKey:
           description: The process definition key.
           format: ProcessDefinitionKey
@@ -20443,6 +20956,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
         formKey:
           description: The key of the form.
           format: FormKey
@@ -20840,8 +21355,8 @@ components:
     UserSearchResult:
       type: object
       required:
-      - page
       - items
+      - page
       properties:
         items:
           description: The matching users.
@@ -20985,6 +21500,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
     VariableResult:
       description: Variable search response item.
       type: object
@@ -21031,6 +21548,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
     VariableResultBase:
       description: Variable response item.
       type: object
@@ -21074,6 +21593,8 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
     VariableValueFilterProperty:
       type: object
       properties:
@@ -21136,6 +21657,7 @@ components:
       - USER
       - USER_TASK
       - VARIABLE
+      - CLIENT
     OperationTypeExactMatch:
       type: string
       title: OperationTypeExactMatch
@@ -21537,6 +22059,10 @@ components:
           oneOf:
           - $ref: '#/components/schemas/AuditLogActorTypeExactMatch'
           - $ref: '#/components/schemas/AdvancedActorTypeFilter'
+        agentElementId:
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
         entityKey:
           oneOf:
           - $ref: '#/components/schemas/AuditLogEntityKeyExactMatch'
@@ -21601,6 +22127,18 @@ components:
           oneOf:
           - $ref: '#/components/schemas/DecisionEvaluationKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedDecisionEvaluationKeyFilter'
+        relatedEntityKey:
+          oneOf:
+          - $ref: '#/components/schemas/AuditLogEntityKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedAuditLogEntityKeyFilter'
+        relatedEntityType:
+          oneOf:
+          - $ref: '#/components/schemas/EntityTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedEntityTypeFilter'
+        entityDescription:
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
       title: AuditLogSearchQueryRequestFilter
     CamundaUserResultC8Links:
       description: The links to the components in the C8 stack.
@@ -21799,6 +22337,10 @@ components:
           oneOf:
           - $ref: '#/components/schemas/DecisionDefinitionKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedDecisionDefinitionKeyFilter'
+        decisionRequirementsKey:
+          oneOf:
+          - $ref: '#/components/schemas/DecisionRequirementsKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedDecisionRequirementsKeyFilter'
       title: DecisionInstanceDeletionBatchOperationRequestFilter
     ProcessInstanceCancellationBatchOperationRequestFilter:
       description: The process instance filter.
@@ -22141,6 +22683,10 @@ components:
           oneOf:
           - $ref: '#/components/schemas/DecisionDefinitionKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedDecisionDefinitionKeyFilter'
+        decisionRequirementsKey:
+          oneOf:
+          - $ref: '#/components/schemas/DecisionRequirementsKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedDecisionRequirementsKeyFilter'
       title: DecisionInstanceSearchQueryFilter
     DecisionRequirementsSearchQueryFilter:
       description: The decision definition search filters.
@@ -22926,6 +23472,15 @@ components:
       description: The process definition instance version statistics search filters.
       type: object
       properties:
+        processDefinitionId:
+          description: The ID of the process definition to retrieve version statistics
+            for.
+          format: ProcessDefinitionId
+          type: string
+          x-semantic-type: ProcessDefinitionId
+          minLength: 1
+          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          example: new-account-onboarding-workflow
         tenantId:
           description: Tenant ID of this process definition.
           example: customer-service
@@ -22935,6 +23490,8 @@ components:
           minLength: 1
           maxLength: 256
           pattern: ^(<default>|[A-Za-z0-9_@.+-]+)$
+      required:
+      - processDefinitionId
       title: ProcessDefinitionInstanceVersionStatisticsQueryFilter
     ProcessInstanceCreationInstructionByIdVariables:
       description: 'JSON object that will instantiate the variables for the root variable

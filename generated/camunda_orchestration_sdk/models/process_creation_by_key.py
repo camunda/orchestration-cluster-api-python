@@ -36,6 +36,10 @@ class ProcessCreationByKey:
             process in the
             deploy resources endpoint.
              Example: 2251799813686749.
+        process_definition_version (int | Unset): As the version is already identified by the `processDefinitionKey`,
+            the value of this field is ignored.
+            It's here for backwards-compatibility only as previous releases accepted it in request bodies.
+             Default: -1.
         variables (ProcessInstanceCreationInstructionByIdVariables | Unset): JSON object that will instantiate the
             variables for the root variable scope
             of the process instance.
@@ -69,6 +73,7 @@ class ProcessCreationByKey:
     """
 
     process_definition_key: ProcessDefinitionKey
+    process_definition_version: int | Unset = -1
     variables: ProcessInstanceCreationInstructionByIdVariables | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET
     runtime_instructions: list[ProcessInstanceCreationTerminateInstruction] | Unset = (
@@ -83,6 +88,8 @@ class ProcessCreationByKey:
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_key = self.process_definition_key
+
+        process_definition_version = self.process_definition_version
 
         variables: dict[str, Any] | Unset = UNSET
         if not isinstance(self.variables, Unset):
@@ -125,6 +132,8 @@ class ProcessCreationByKey:
                 "processDefinitionKey": process_definition_key,
             }
         )
+        if process_definition_version is not UNSET:
+            field_dict["processDefinitionVersion"] = process_definition_version
         if variables is not UNSET:
             field_dict["variables"] = variables
         if start_instructions is not UNSET:
@@ -162,6 +171,8 @@ class ProcessCreationByKey:
         process_definition_key = lift_process_definition_key(
             d.pop("processDefinitionKey")
         )
+
+        process_definition_version = d.pop("processDefinitionVersion", UNSET)
 
         _variables = d.pop("variables", UNSET)
         variables: ProcessInstanceCreationInstructionByIdVariables | Unset
@@ -220,6 +231,7 @@ class ProcessCreationByKey:
 
         process_creation_by_key = cls(
             process_definition_key=process_definition_key,
+            process_definition_version=process_definition_version,
             variables=variables,
             start_instructions=start_instructions,
             runtime_instructions=runtime_instructions,
