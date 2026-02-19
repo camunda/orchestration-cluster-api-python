@@ -1,4 +1,5 @@
 from __future__ import annotations
+from camunda_orchestration_sdk.semantic_types import Username, lift_username
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -38,7 +39,7 @@ class CamundaUserResult:
     sales_plan_type: str
     c_8_links: CamundaUserResultC8Links
     can_logout: bool
-    username: None | str | Unset = UNSET
+    username: None | Username | Unset = UNSET
     display_name: None | str | Unset = UNSET
     email: None | str | Unset = UNSET
     authorized_components: list[str] | Unset = UNSET
@@ -62,7 +63,7 @@ class CamundaUserResult:
 
         can_logout = self.can_logout
 
-        username: None | str | Unset
+        username: None | Username | Unset
         if isinstance(self.username, Unset):
             username = UNSET
         else:
@@ -137,7 +138,13 @@ class CamundaUserResult:
                 return data
             return cast(None | str | Unset, data)
 
-        username = _parse_username(d.pop("username", UNSET))
+        _raw_username = _parse_username(d.pop("username", UNSET))
+
+        username = (
+            lift_username(_raw_username)
+            if isinstance(_raw_username, str)
+            else _raw_username
+        )
 
         def _parse_display_name(data: object) -> None | str | Unset:
             if data is None:

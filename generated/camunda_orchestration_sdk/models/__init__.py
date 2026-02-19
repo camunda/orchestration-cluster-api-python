@@ -510,6 +510,10 @@ from .job_search_result import JobSearchResult
 from .job_search_result_custom_headers import JobSearchResultCustomHeaders
 from .job_state_enum import JobStateEnum
 from .job_state_exact_match import JobStateExactMatch
+from .job_type_statistics_filter import JobTypeStatisticsFilter
+from .job_type_statistics_item import JobTypeStatisticsItem
+from .job_type_statistics_query import JobTypeStatisticsQuery
+from .job_type_statistics_query_result import JobTypeStatisticsQueryResult
 from .job_update_request import JobUpdateRequest
 from .license_response import LicenseResponse
 from .limit_based_pagination import LimitBasedPagination
@@ -1223,6 +1227,10 @@ __all__: list[str] = [
     "JobSearchResultCustomHeaders",
     "JobStateEnum",
     "JobStateExactMatch",
+    "JobTypeStatisticsFilter",
+    "JobTypeStatisticsItem",
+    "JobTypeStatisticsQuery",
+    "JobTypeStatisticsQueryResult",
     "JobUpdateRequest",
     "LicenseResponse",
     "LimitBasedPagination",

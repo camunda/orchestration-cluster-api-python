@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from camunda_orchestration_sdk.semantic_types import Username
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -16,7 +17,7 @@ class CamundaUserResult:
     sales_plan_type: str
     c_8_links: CamundaUserResultC8Links
     can_logout: bool
-    username: None | str | Unset = UNSET
+    username: None | Username | Unset = UNSET
     display_name: None | str | Unset = UNSET
     email: None | str | Unset = UNSET
     authorized_components: list[str] | Unset = UNSET

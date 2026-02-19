@@ -1,5 +1,10 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import FormKey, lift_form_key
+from camunda_orchestration_sdk.semantic_types import (
+    FormKey,
+    UserTaskKey,
+    lift_form_key,
+    lift_user_task_key,
+)
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -38,7 +43,7 @@ class UserTaskProperties:
     follow_up_date: None | str | Unset = UNSET
     form_key: FormKey | Unset = UNSET
     priority: int | None | Unset = UNSET
-    user_task_key: None | str | Unset = UNSET
+    user_task_key: None | UserTaskKey | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -84,7 +89,7 @@ class UserTaskProperties:
         else:
             priority = self.priority
 
-        user_task_key: None | str | Unset
+        user_task_key: None | UserTaskKey | Unset
         if isinstance(self.user_task_key, Unset):
             user_task_key = UNSET
         else:
@@ -176,7 +181,13 @@ class UserTaskProperties:
                 return data
             return cast(None | str | Unset, data)
 
-        user_task_key = _parse_user_task_key(d.pop("userTaskKey", UNSET))
+        _raw_user_task_key = _parse_user_task_key(d.pop("userTaskKey", UNSET))
+
+        user_task_key = (
+            lift_user_task_key(_raw_user_task_key)
+            if isinstance(_raw_user_task_key, str)
+            else _raw_user_task_key
+        )
 
         user_task_properties = cls(
             action=action,

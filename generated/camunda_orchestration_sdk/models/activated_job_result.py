@@ -62,6 +62,11 @@ class ActivatedJobResult:
         user_task (UserTaskProperties | Unset): Contains properties of a user task.
         tags (list[str] | Unset): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or
             `.`; length ≤ 100. Example: ['high-touch', 'remediation'].
+        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
+            top-level
+            ancestor in the process instance hierarchy. This field is only present for data
+            belonging to process instance hierarchies created in version 8.9 or later.
+             Example: 2251799813690746.
     """
 
     type_: str
@@ -82,6 +87,7 @@ class ActivatedJobResult:
     listener_event_type: JobListenerEventTypeEnum
     user_task: UserTaskProperties | Unset = UNSET
     tags: list[str] | Unset = UNSET
+    root_process_instance_key: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -127,6 +133,8 @@ class ActivatedJobResult:
         if not isinstance(self.tags, Unset):
             tags = self.tags
 
+        root_process_instance_key = self.root_process_instance_key
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -153,6 +161,8 @@ class ActivatedJobResult:
             field_dict["userTask"] = user_task
         if tags is not UNSET:
             field_dict["tags"] = tags
+        if root_process_instance_key is not UNSET:
+            field_dict["rootProcessInstanceKey"] = root_process_instance_key
 
         return field_dict
 
@@ -210,6 +220,8 @@ class ActivatedJobResult:
 
         tags = cast(list[str], d.pop("tags", UNSET))
 
+        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
+
         activated_job_result = cls(
             type_=type_,
             process_definition_id=process_definition_id,
@@ -229,6 +241,7 @@ class ActivatedJobResult:
             listener_event_type=listener_event_type,
             user_task=user_task,
             tags=tags,
+            root_process_instance_key=root_process_instance_key,
         )
 
         activated_job_result.additional_properties = d

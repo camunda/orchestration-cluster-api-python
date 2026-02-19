@@ -7039,6 +7039,86 @@
         }
       }
     },
+    "/jobs/statistics/by-types": {
+      "post": {
+        "x-eventually-consistent": true,
+        "tags": [
+          "Job"
+        ],
+        "operationId": "getJobTypeStatistics",
+        "summary": "Get job statistics by type",
+        "description": "Get statistics about jobs, grouped by job type.\n",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobTypeStatisticsQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The job type statistics result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobTypeStatisticsQueryResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The provided data is not valid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request lacks valid authentication credentials.",
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. The request is not allowed.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An internal error occurred while processing the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/license": {
       "get": {
         "x-eventually-consistent": false,
@@ -14801,7 +14881,7 @@
         ],
         "operationId": "searchUserTaskVariables",
         "summary": "Search user task variables",
-        "description": "Search for user task variables based on given criteria. By default, long variable values in the response are truncated.",
+        "description": "Search for user task variables based on given criteria. This endpoint returns all variables\nvisible from the user task's scope, including variables from parent scopes in the scope\nhierarchy. By default, long variable values in the response are truncated.\n",
         "parameters": [
           {
             "name": "userTaskKey",
@@ -14918,7 +14998,7 @@
         ],
         "operationId": "searchVariables",
         "summary": "Search variables",
-        "description": "Search for process and local variables based on given criteria. By default, long variable values in the response are truncated.",
+        "description": "Search for variables based on given criteria.\n\nThis endpoint returns variables that exist directly at the specified scopes - it does not\ninclude variables from parent scopes that would be visible through the scope hierarchy.\n\nVariables can be process-level (scoped to the process instance) or local (scoped to specific\nBPMN elements like tasks, subprocesses, etc.).\n\nBy default, long variable values in the response are truncated.",
         "parameters": [
           {
             "name": "truncateValues",
@@ -15053,7 +15133,7 @@
         ],
         "operationId": "getVariable",
         "summary": "Get variable",
-        "description": "Get the variable by the variable key.",
+        "description": "Get a variable by its key.\n\nThis endpoint returns both process-level and local (element-scoped) variables.\nThe variable's scopeKey indicates whether it's a process-level variable or scoped to a\nspecific element instance.",
         "parameters": [
           {
             "name": "variableKey",
@@ -21307,6 +21387,107 @@
           }
         }
       },
+      "JobTypeStatisticsQuery": {
+        "description": "Job type statistics query.",
+        "type": "object",
+        "properties": {
+          "filter": {
+            "$ref": "#/components/schemas/JobTypeStatisticsFilter"
+          },
+          "page": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CursorForwardPagination"
+              }
+            ]
+          }
+        }
+      },
+      "JobTypeStatisticsFilter": {
+        "description": "Job type statistics search filter.",
+        "type": "object",
+        "required": [
+          "from",
+          "to"
+        ],
+        "properties": {
+          "from": {
+            "description": "Start of the time window to filter metrics. ISO 8601 date-time format.\n",
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-07-28T15:51:28.071Z"
+          },
+          "to": {
+            "description": "End of the time window to filter metrics. ISO 8601 date-time format.\n",
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-07-29T15:51:28.071Z"
+          },
+          "jobType": {
+            "description": "Optional job type filter with advanced search capabilities.\nSupports exact match, pattern matching, and other operators.\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StringFilterProperty"
+              }
+            ]
+          }
+        }
+      },
+      "JobTypeStatisticsQueryResult": {
+        "description": "Job type statistics query result.",
+        "type": "object",
+        "required": [
+          "items",
+          "page"
+        ],
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SearchQueryResponse"
+          }
+        ],
+        "properties": {
+          "items": {
+            "description": "The list of job type statistics items.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JobTypeStatisticsItem"
+            }
+          }
+        }
+      },
+      "JobTypeStatisticsItem": {
+        "description": "Statistics for a single job type.",
+        "type": "object",
+        "required": [
+          "jobType",
+          "created",
+          "completed",
+          "failed",
+          "workers"
+        ],
+        "properties": {
+          "jobType": {
+            "description": "The job type identifier.",
+            "type": "string",
+            "example": "fetch-customer-data"
+          },
+          "created": {
+            "$ref": "#/components/schemas/StatusMetric"
+          },
+          "completed": {
+            "$ref": "#/components/schemas/StatusMetric"
+          },
+          "failed": {
+            "$ref": "#/components/schemas/StatusMetric"
+          },
+          "workers": {
+            "description": "Number of distinct workers observed for this job type.",
+            "type": "integer",
+            "format": "int32",
+            "example": 5
+          }
+        }
+      },
       "JobActivationRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -21521,6 +21702,9 @@
           },
           "tags": {
             "$ref": "#/components/schemas/TagSet"
+          },
+          "rootProcessInstanceKey": {
+            "$ref": "#/components/schemas/RootProcessInstanceKey"
           }
         }
       },
@@ -22530,7 +22714,7 @@
         ]
       },
       "ScopeKey": {
-        "description": "System-generated key for a scope.",
+        "description": "System-generated key for a scope. A scope can hold variables and represents either an\nelement instance in a BPMN process or the process instance itself.\n",
         "format": "ScopeKey",
         "x-semantic-type": "ScopeKey",
         "example": "2251799813683890",
@@ -22916,7 +23100,7 @@
         }
       },
       "ScopeKeyFilterProperty": {
-        "description": "ScopeKey property with full advanced search capabilities.",
+        "description": "ScopeKey property with full advanced search capabilities. Filter by the key of the\nelement instance or process instance that defines the scope of a variable.\n",
         "type": "object",
         "oneOf": [
           {
@@ -28021,7 +28205,7 @@
             ]
           },
           "scopeKey": {
-            "description": "The key of the scope of this variable.",
+            "description": "The key of the scope that defines where this variable is directly defined. This can be a\nprocess instance key (for process-level variables) or an element instance key (for local\nvariables scoped to tasks, subprocesses, gateways, events, etc.). Use this filter to\nfind variables directly defined in specific scopes. Note that this does not include\nvariables from parent scopes that would be visible through the scope hierarchy.\n",
             "allOf": [
               {
                 "$ref": "#/components/schemas/ScopeKeyFilterProperty"
@@ -28120,7 +28304,7 @@
                 "$ref": "#/components/schemas/ScopeKey"
               }
             ],
-            "description": "The key of the scope of this variable."
+            "description": "The key of the scope where this variable is directly defined. For process-level\nvariables, this is the process instance key. For local variables, this is the key of the\nspecific element instance (task, subprocess, gateway, event, etc.) where the variable is\ndirectly defined.\n"
           },
           "processInstanceKey": {
             "allOf": [
@@ -28166,7 +28350,7 @@
             "type": "object"
           },
           "local": {
-            "description": "If set to true, the variables are merged strictly into the local scope (as specified by the `elementInstanceKey`).\nOtherwise, the variables are propagated to upper scopes and set at the outermost one.\nLet’s consider the following example:\nThere are two scopes '1' and '2'.\nScope '1' is the parent scope of '2'. The effective variables of the scopes are:\n1 => { \"foo\" : 2 }\n2 => { \"bar\" : 1 }\nAn update request with elementInstanceKey as '2', variables { \"foo\" : 5 }, and local set\nto true leaves scope '1' unchanged and adjusts scope '2' to { \"bar\" : 1, \"foo\" 5 }.\nBy default, with local set to false, scope '1' will be { \"foo\": 5 }\nand scope '2' will be { \"bar\" : 1 }.\n",
+            "description": "If set to `true`, the variables are merged strictly into the local scope (as specified\nby the `elementInstanceKey`). Otherwise, the variables are propagated to upper scopes\nand set at the outermost one.\n\nLet's consider the following example:\nThere are two scopes '1' and '2'. Scope '1' is the parent scope of '2'. The effective\nvariables of the scopes are:\n1 => { \"foo\" : 2 }\n2 => { \"bar\" : 1 }\n\nAn update request with elementInstanceKey as '2', variables { \"foo\": 5 }, and local set\nto `true` leaves scope '1' unchanged and adjusts scope '2' to { \"bar\": 1, \"foo\": 5 }. By\ndefault, with local set to `false`, scope '1' will be { \"foo\": 5 } and scope '2' will be\n{ \"bar\": 1 }.",
             "type": "boolean",
             "default": false
           },

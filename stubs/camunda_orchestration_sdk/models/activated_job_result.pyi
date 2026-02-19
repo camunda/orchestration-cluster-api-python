@@ -32,6 +32,7 @@ class ActivatedJobResult:
     listener_event_type: JobListenerEventTypeEnum
     user_task: UserTaskProperties | Unset = UNSET
     tags: list[str] | Unset = UNSET
+    root_process_instance_key: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

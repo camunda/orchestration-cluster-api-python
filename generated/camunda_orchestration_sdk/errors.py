@@ -2961,6 +2961,42 @@ class GetIncidentUnauthorized(ApiError):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
+class GetJobTypeStatisticsBadRequest(ApiError):
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetJobTypeStatisticsForbidden(ApiError):
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetJobTypeStatisticsInternalServerError(ApiError):
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetJobTypeStatisticsUnauthorized(ApiError):
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
 class GetLicenseInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
@@ -7041,6 +7077,10 @@ __all__ = [
     "GetIncidentInternalServerError",
     "GetIncidentNotFound",
     "GetIncidentUnauthorized",
+    "GetJobTypeStatisticsBadRequest",
+    "GetJobTypeStatisticsForbidden",
+    "GetJobTypeStatisticsInternalServerError",
+    "GetJobTypeStatisticsUnauthorized",
     "GetLicenseInternalServerError",
     "GetMappingRuleInternalServerError",
     "GetMappingRuleNotFound",

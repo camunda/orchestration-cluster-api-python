@@ -171,6 +171,8 @@ if TYPE_CHECKING:
     from .models.job_fail_request import JobFailRequest
     from .models.job_search_query import JobSearchQuery
     from .models.job_search_query_result import JobSearchQueryResult
+    from .models.job_type_statistics_query import JobTypeStatisticsQuery
+    from .models.job_type_statistics_query_result import JobTypeStatisticsQueryResult
     from .models.job_update_request import JobUpdateRequest
     from .models.license_response import LicenseResponse
     from .models.mapping_rule_create_request import MappingRuleCreateRequest
@@ -2400,7 +2402,11 @@ class CamundaClient:
     def get_variable(self, variable_key: VariableKey, **kwargs: Any) -> VariableResult:
         """Get variable
 
-         Get the variable by the variable key.
+         Get a variable by its key.
+
+        This endpoint returns both process-level and local (element-scoped) variables.
+        The variable's scopeKey indicates whether it's a process-level variable or scoped to a
+        specific element instance.
 
         Args:
             variable_key (str): System-generated key for a variable. Example: 2251799813683287.
@@ -2433,8 +2439,15 @@ class CamundaClient:
     ) -> VariableSearchQueryResult:
         """Search variables
 
-         Search for process and local variables based on given criteria. By default, long variable values in
-        the response are truncated.
+         Search for variables based on given criteria.
+
+        This endpoint returns variables that exist directly at the specified scopes - it does not
+        include variables from parent scopes that would be visible through the scope hierarchy.
+
+        Variables can be process-level (scoped to the process instance) or local (scoped to specific
+        BPMN elements like tasks, subprocesses, etc.).
+
+        By default, long variable values in the response are truncated.
 
         Args:
             truncate_values (bool | Unset):
@@ -4286,6 +4299,36 @@ class CamundaClient:
             _kwargs["body"] = _kwargs.pop("data")
         return get_global_job_statistics_sync(**_kwargs)
 
+    def get_job_type_statistics(
+        self, *, data: JobTypeStatisticsQuery, **kwargs: Any
+    ) -> JobTypeStatisticsQueryResult:
+        """Get job statistics by type
+
+         Get statistics about jobs, grouped by job type.
+
+        Args:
+            body (JobTypeStatisticsQuery): Job type statistics query.
+
+        Raises:
+            errors.GetJobTypeStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+            errors.GetJobTypeStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.GetJobTypeStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.GetJobTypeStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            JobTypeStatisticsQueryResult"""
+        from .api.job.get_job_type_statistics import (
+            sync as get_job_type_statistics_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_job_type_statistics_sync(**_kwargs)
+
     def throw_job_error(
         self, job_key: JobKey, *, data: JobErrorRequest, **kwargs: Any
     ) -> None:
@@ -4862,8 +4905,9 @@ class CamundaClient:
     ) -> VariableSearchQueryResult:
         """Search user task variables
 
-         Search for user task variables based on given criteria. By default, long variable values in the
-        response are truncated.
+         Search for user task variables based on given criteria. This endpoint returns all variables
+        visible from the user task's scope, including variables from parent scopes in the scope
+        hierarchy. By default, long variable values in the response are truncated.
 
         Args:
             user_task_key (str): System-generated key for a user task.
@@ -8671,7 +8715,11 @@ class CamundaAsyncClient:
     ) -> VariableResult:
         """Get variable
 
-         Get the variable by the variable key.
+         Get a variable by its key.
+
+        This endpoint returns both process-level and local (element-scoped) variables.
+        The variable's scopeKey indicates whether it's a process-level variable or scoped to a
+        specific element instance.
 
         Args:
             variable_key (str): System-generated key for a variable. Example: 2251799813683287.
@@ -8704,8 +8752,15 @@ class CamundaAsyncClient:
     ) -> VariableSearchQueryResult:
         """Search variables
 
-         Search for process and local variables based on given criteria. By default, long variable values in
-        the response are truncated.
+         Search for variables based on given criteria.
+
+        This endpoint returns variables that exist directly at the specified scopes - it does not
+        include variables from parent scopes that would be visible through the scope hierarchy.
+
+        Variables can be process-level (scoped to the process instance) or local (scoped to specific
+        BPMN elements like tasks, subprocesses, etc.).
+
+        By default, long variable values in the response are truncated.
 
         Args:
             truncate_values (bool | Unset):
@@ -10565,6 +10620,36 @@ class CamundaAsyncClient:
             _kwargs["body"] = _kwargs.pop("data")
         return await get_global_job_statistics_asyncio(**_kwargs)
 
+    async def get_job_type_statistics(
+        self, *, data: JobTypeStatisticsQuery, **kwargs: Any
+    ) -> JobTypeStatisticsQueryResult:
+        """Get job statistics by type
+
+         Get statistics about jobs, grouped by job type.
+
+        Args:
+            body (JobTypeStatisticsQuery): Job type statistics query.
+
+        Raises:
+            errors.GetJobTypeStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
+            errors.GetJobTypeStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.GetJobTypeStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.GetJobTypeStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            JobTypeStatisticsQueryResult"""
+        from .api.job.get_job_type_statistics import (
+            asyncio as get_job_type_statistics_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_job_type_statistics_asyncio(**_kwargs)
+
     async def throw_job_error(
         self, job_key: JobKey, *, data: JobErrorRequest, **kwargs: Any
     ) -> None:
@@ -11149,8 +11234,9 @@ class CamundaAsyncClient:
     ) -> VariableSearchQueryResult:
         """Search user task variables
 
-         Search for user task variables based on given criteria. By default, long variable values in the
-        response are truncated.
+         Search for user task variables based on given criteria. This endpoint returns all variables
+        visible from the user task's scope, including variables from parent scopes in the scope
+        hierarchy. By default, long variable values in the response are truncated.
 
         Args:
             user_task_key (str): System-generated key for a user task.

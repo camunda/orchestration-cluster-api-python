@@ -62,7 +62,11 @@ def sync_detailed(
 ) -> Response[ProblemDetail | VariableResult]:
     """Get variable
 
-     Get the variable by the variable key.
+     Get a variable by its key.
+
+    This endpoint returns both process-level and local (element-scoped) variables.
+    The variable's scopeKey indicates whether it's a process-level variable or scoped to a
+    specific element instance.
 
     Args:
         variable_key (str): System-generated key for a variable. Example: 2251799813683287.
@@ -84,7 +88,11 @@ def sync(
 ) -> VariableResult:
     """Get variable
 
-     Get the variable by the variable key.
+     Get a variable by its key.
+
+    This endpoint returns both process-level and local (element-scoped) variables.
+    The variable's scopeKey indicates whether it's a process-level variable or scoped to a
+    specific element instance.
 
     Args:
         variable_key (str): System-generated key for a variable. Example: 2251799813683287.
@@ -141,7 +149,11 @@ async def asyncio_detailed(
 ) -> Response[ProblemDetail | VariableResult]:
     """Get variable
 
-     Get the variable by the variable key.
+     Get a variable by its key.
+
+    This endpoint returns both process-level and local (element-scoped) variables.
+    The variable's scopeKey indicates whether it's a process-level variable or scoped to a
+    specific element instance.
 
     Args:
         variable_key (str): System-generated key for a variable. Example: 2251799813683287.
@@ -163,7 +175,11 @@ async def asyncio(
 ) -> VariableResult:
     """Get variable
 
-     Get the variable by the variable key.
+     Get a variable by its key.
+
+    This endpoint returns both process-level and local (element-scoped) variables.
+    The variable's scopeKey indicates whether it's a process-level variable or scoped to a
+    specific element instance.
 
     Args:
         variable_key (str): System-generated key for a variable. Example: 2251799813683287.

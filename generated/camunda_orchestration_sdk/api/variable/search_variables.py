@@ -71,8 +71,15 @@ def sync_detailed(
 ) -> Response[ProblemDetail | VariableSearchQueryResult]:
     """Search variables
 
-     Search for process and local variables based on given criteria. By default, long variable values in
-    the response are truncated.
+     Search for variables based on given criteria.
+
+    This endpoint returns variables that exist directly at the specified scopes - it does not
+    include variables from parent scopes that would be visible through the scope hierarchy.
+
+    Variables can be process-level (scoped to the process instance) or local (scoped to specific
+    BPMN elements like tasks, subprocesses, etc.).
+
+    By default, long variable values in the response are truncated.
 
     Args:
         truncate_values (bool | Unset):
@@ -99,8 +106,15 @@ def sync(
 ) -> VariableSearchQueryResult:
     """Search variables
 
-     Search for process and local variables based on given criteria. By default, long variable values in
-    the response are truncated.
+     Search for variables based on given criteria.
+
+    This endpoint returns variables that exist directly at the specified scopes - it does not
+    include variables from parent scopes that would be visible through the scope hierarchy.
+
+    Variables can be process-level (scoped to the process instance) or local (scoped to specific
+    BPMN elements like tasks, subprocesses, etc.).
+
+    By default, long variable values in the response are truncated.
 
     Args:
         truncate_values (bool | Unset):
@@ -154,8 +168,15 @@ async def asyncio_detailed(
 ) -> Response[ProblemDetail | VariableSearchQueryResult]:
     """Search variables
 
-     Search for process and local variables based on given criteria. By default, long variable values in
-    the response are truncated.
+     Search for variables based on given criteria.
+
+    This endpoint returns variables that exist directly at the specified scopes - it does not
+    include variables from parent scopes that would be visible through the scope hierarchy.
+
+    Variables can be process-level (scoped to the process instance) or local (scoped to specific
+    BPMN elements like tasks, subprocesses, etc.).
+
+    By default, long variable values in the response are truncated.
 
     Args:
         truncate_values (bool | Unset):
@@ -182,8 +203,15 @@ async def asyncio(
 ) -> VariableSearchQueryResult:
     """Search variables
 
-     Search for process and local variables based on given criteria. By default, long variable values in
-    the response are truncated.
+     Search for variables based on given criteria.
+
+    This endpoint returns variables that exist directly at the specified scopes - it does not
+    include variables from parent scopes that would be visible through the scope hierarchy.
+
+    Variables can be process-level (scoped to the process instance) or local (scoped to specific
+    BPMN elements like tasks, subprocesses, etc.).
+
+    By default, long variable values in the response are truncated.
 
     Args:
         truncate_values (bool | Unset):

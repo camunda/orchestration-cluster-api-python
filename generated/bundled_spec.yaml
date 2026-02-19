@@ -4846,6 +4846,57 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+  /jobs/statistics/by-types:
+    post:
+      x-eventually-consistent: true
+      tags:
+      - Job
+      operationId: getJobTypeStatistics
+      summary: Get job statistics by type
+      description: 'Get statistics about jobs, grouped by job type.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobTypeStatisticsQuery'
+      responses:
+        '200':
+          description: The job type statistics result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobTypeStatisticsQueryResult'
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
   /license:
     get:
       x-eventually-consistent: false
@@ -9599,8 +9650,8 @@ paths:
               schema:
                 type: object
                 required:
-                - items
                 - page
+                - items
                 properties:
                   items:
                     description: The matching users.
@@ -10287,8 +10338,15 @@ paths:
       - User task
       operationId: searchUserTaskVariables
       summary: Search user task variables
-      description: Search for user task variables based on given criteria. By default,
-        long variable values in the response are truncated.
+      description: 'Search for user task variables based on given criteria. This endpoint
+        returns all variables
+
+        visible from the user task''s scope, including variables from parent scopes
+        in the scope
+
+        hierarchy. By default, long variable values in the response are truncated.
+
+        '
       parameters:
       - name: userTaskKey
         in: path
@@ -10335,8 +10393,23 @@ paths:
       - Variable
       operationId: searchVariables
       summary: Search variables
-      description: Search for process and local variables based on given criteria.
-        By default, long variable values in the response are truncated.
+      description: 'Search for variables based on given criteria.
+
+
+        This endpoint returns variables that exist directly at the specified scopes
+        - it does not
+
+        include variables from parent scopes that would be visible through the scope
+        hierarchy.
+
+
+        Variables can be process-level (scoped to the process instance) or local (scoped
+        to specific
+
+        BPMN elements like tasks, subprocesses, etc.).
+
+
+        By default, long variable values in the response are truncated.'
       parameters:
       - name: truncateValues
         in: query
@@ -10393,7 +10466,15 @@ paths:
       - Variable
       operationId: getVariable
       summary: Get variable
-      description: Get the variable by the variable key.
+      description: 'Get a variable by its key.
+
+
+        This endpoint returns both process-level and local (element-scoped) variables.
+
+        The variable''s scopeKey indicates whether it''s a process-level variable
+        or scoped to a
+
+        specific element instance.'
       parameters:
       - name: variableKey
         in: path
@@ -12284,9 +12365,9 @@ components:
           type: string
           description: Only provided if the cluster variable scope is TENANT.
       required:
-      - scope
       - value
       - name
+      - scope
     ClusterVariableSearchResult:
       description: Cluster variable search response item.
       type: object
@@ -12307,9 +12388,9 @@ components:
           type: string
           description: Only provided if the cluster variable scope is TENANT.
       required:
-      - scope
       - value
       - name
+      - scope
     ClusterVariableResultBase:
       description: Cluster variable response item.
       type: object
@@ -15754,6 +15835,80 @@ components:
           type: string
           format: date-time
           example: '2024-07-29T15:51:28.071Z'
+    JobTypeStatisticsQuery:
+      description: Job type statistics query.
+      type: object
+      properties:
+        filter:
+          $ref: '#/components/schemas/JobTypeStatisticsFilter'
+        page:
+          $ref: '#/components/schemas/CursorForwardPagination'
+    JobTypeStatisticsFilter:
+      description: Job type statistics search filter.
+      type: object
+      required:
+      - from
+      - to
+      properties:
+        from:
+          description: 'Start of the time window to filter metrics. ISO 8601 date-time
+            format.
+
+            '
+          type: string
+          format: date-time
+          example: '2024-07-28T15:51:28.071Z'
+        to:
+          description: 'End of the time window to filter metrics. ISO 8601 date-time
+            format.
+
+            '
+          type: string
+          format: date-time
+          example: '2024-07-29T15:51:28.071Z'
+        jobType:
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+    JobTypeStatisticsQueryResult:
+      description: Job type statistics query result.
+      type: object
+      required:
+      - page
+      - items
+      properties:
+        items:
+          description: The list of job type statistics items.
+          type: array
+          items:
+            $ref: '#/components/schemas/JobTypeStatisticsItem'
+        page:
+          $ref: '#/components/schemas/SearchQueryPageResponse'
+    JobTypeStatisticsItem:
+      description: Statistics for a single job type.
+      type: object
+      required:
+      - jobType
+      - created
+      - completed
+      - failed
+      - workers
+      properties:
+        jobType:
+          description: The job type identifier.
+          type: string
+          example: fetch-customer-data
+        created:
+          $ref: '#/components/schemas/StatusMetric'
+        completed:
+          $ref: '#/components/schemas/StatusMetric'
+        failed:
+          $ref: '#/components/schemas/StatusMetric'
+        workers:
+          description: Number of distinct workers observed for this job type.
+          type: integer
+          format: int32
+          example: 5
     JobActivationRequest:
       type: object
       additionalProperties: false
@@ -15951,6 +16106,8 @@ components:
           $ref: '#/components/schemas/UserTaskProperties'
         tags:
           $ref: '#/components/schemas/TagSet'
+        rootProcessInstanceKey:
+          $ref: '#/components/schemas/RootProcessInstanceKey'
     UserTaskProperties:
       type: object
       description: Contains properties of a user task.
@@ -16764,7 +16921,12 @@ components:
       minLength: 1
       maxLength: 25
     ScopeKey:
-      description: System-generated key for a scope.
+      description: 'System-generated key for a scope. A scope can hold variables and
+        represents either an
+
+        element instance in a BPMN process or the process instance itself.
+
+        '
       format: ScopeKey
       x-semantic-type: ScopeKey
       example: '2251799813683890'
@@ -17398,10 +17560,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - name
       - mappingRuleId
-      - claimName
+      - name
       - claimValue
+      - claimName
     MappingRuleUpdateRequest:
       type: object
       properties:
@@ -17415,9 +17577,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimName
       - name
       - claimValue
+      - claimName
     MappingRuleCreateUpdateResult:
       type: object
       properties:
@@ -19346,8 +19508,8 @@ components:
       description: Process instance search response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching process instances.
@@ -21355,8 +21517,8 @@ components:
     UserSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching users.
@@ -21483,7 +21645,18 @@ components:
           minLength: 1
           maxLength: 25
         scopeKey:
-          description: The key of the scope of this variable.
+          description: 'The key of the scope where this variable is directly defined.
+            For process-level
+
+            variables, this is the process instance key. For local variables, this
+            is the key of the
+
+            specific element instance (task, subprocess, gateway, event, etc.) where
+            the variable is
+
+            directly defined.
+
+            '
           format: ScopeKey
           x-semantic-type: ScopeKey
           example: '2251799813683890'
@@ -21531,7 +21704,18 @@ components:
           minLength: 1
           maxLength: 25
         scopeKey:
-          description: The key of the scope of this variable.
+          description: 'The key of the scope where this variable is directly defined.
+            For process-level
+
+            variables, this is the process instance key. For local variables, this
+            is the key of the
+
+            specific element instance (task, subprocess, gateway, event, etc.) where
+            the variable is
+
+            directly defined.
+
+            '
           format: ScopeKey
           x-semantic-type: ScopeKey
           example: '2251799813683890'
@@ -21576,7 +21760,18 @@ components:
           minLength: 1
           maxLength: 25
         scopeKey:
-          description: The key of the scope of this variable.
+          description: 'The key of the scope where this variable is directly defined.
+            For process-level
+
+            variables, this is the process instance key. For local variables, this
+            is the key of the
+
+            specific element instance (task, subprocess, gateway, event, etc.) where
+            the variable is
+
+            directly defined.
+
+            '
           format: ScopeKey
           x-semantic-type: ScopeKey
           example: '2251799813683890'
@@ -21615,17 +21810,37 @@ components:
         variables:
           $ref: '#/components/schemas/SetVariableRequestVariables'
         local:
-          description: "If set to true, the variables are merged strictly into the\
-            \ local scope (as specified by the `elementInstanceKey`).\nOtherwise,\
-            \ the variables are propagated to upper scopes and set at the outermost\
-            \ one.\nLet\u2019s consider the following example:\nThere are two scopes\
-            \ '1' and '2'.\nScope '1' is the parent scope of '2'. The effective variables\
-            \ of the scopes are:\n1 => { \"foo\" : 2 }\n2 => { \"bar\" : 1 }\nAn update\
-            \ request with elementInstanceKey as '2', variables { \"foo\" : 5 }, and\
-            \ local set\nto true leaves scope '1' unchanged and adjusts scope '2'\
-            \ to { \"bar\" : 1, \"foo\" 5 }.\nBy default, with local set to false,\
-            \ scope '1' will be { \"foo\": 5 }\nand scope '2' will be { \"bar\" :\
-            \ 1 }.\n"
+          description: 'If set to `true`, the variables are merged strictly into the
+            local scope (as specified
+
+            by the `elementInstanceKey`). Otherwise, the variables are propagated
+            to upper scopes
+
+            and set at the outermost one.
+
+
+            Let''s consider the following example:
+
+            There are two scopes ''1'' and ''2''. Scope ''1'' is the parent scope
+            of ''2''. The effective
+
+            variables of the scopes are:
+
+            1 => { "foo" : 2 }
+
+            2 => { "bar" : 1 }
+
+
+            An update request with elementInstanceKey as ''2'', variables { "foo":
+            5 }, and local set
+
+            to `true` leaves scope ''1'' unchanged and adjusts scope ''2'' to { "bar":
+            1, "foo": 5 }. By
+
+            default, with local set to `false`, scope ''1'' will be { "foo": 5 } and
+            scope ''2'' will be
+
+            { "bar": 1 }.'
           type: boolean
           default: false
         operationReference:

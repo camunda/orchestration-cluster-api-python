@@ -72,8 +72,9 @@ def sync_detailed(
 ) -> Response[ProblemDetail | VariableSearchQueryResult]:
     """Search user task variables
 
-     Search for user task variables based on given criteria. By default, long variable values in the
-    response are truncated.
+     Search for user task variables based on given criteria. This endpoint returns all variables
+    visible from the user task's scope, including variables from parent scopes in the scope
+    hierarchy. By default, long variable values in the response are truncated.
 
     Args:
         user_task_key (str): System-generated key for a user task.
@@ -104,8 +105,9 @@ def sync(
 ) -> VariableSearchQueryResult:
     """Search user task variables
 
-     Search for user task variables based on given criteria. By default, long variable values in the
-    response are truncated.
+     Search for user task variables based on given criteria. This endpoint returns all variables
+    visible from the user task's scope, including variables from parent scopes in the scope
+    hierarchy. By default, long variable values in the response are truncated.
 
     Args:
         user_task_key (str): System-generated key for a user task.
@@ -152,8 +154,9 @@ async def asyncio_detailed(
 ) -> Response[ProblemDetail | VariableSearchQueryResult]:
     """Search user task variables
 
-     Search for user task variables based on given criteria. By default, long variable values in the
-    response are truncated.
+     Search for user task variables based on given criteria. This endpoint returns all variables
+    visible from the user task's scope, including variables from parent scopes in the scope
+    hierarchy. By default, long variable values in the response are truncated.
 
     Args:
         user_task_key (str): System-generated key for a user task.
@@ -184,8 +187,9 @@ async def asyncio(
 ) -> VariableSearchQueryResult:
     """Search user task variables
 
-     Search for user task variables based on given criteria. By default, long variable values in the
-    response are truncated.
+     Search for user task variables based on given criteria. This endpoint returns all variables
+    visible from the user task's scope, including variables from parent scopes in the scope
+    hierarchy. By default, long variable values in the response are truncated.
 
     Args:
         user_task_key (str): System-generated key for a user task.

@@ -29,7 +29,11 @@ class VariableResultBase:
         name (str | Unset): Name of this variable.
         tenant_id (str | Unset): Tenant ID of this variable. Example: customer-service.
         variable_key (str | Unset): The key for this variable. Example: 2251799813683287.
-        scope_key (str | Unset): The key of the scope of this variable. Example: 2251799813683890.
+        scope_key (str | Unset): The key of the scope where this variable is directly defined. For process-level
+            variables, this is the process instance key. For local variables, this is the key of the
+            specific element instance (task, subprocess, gateway, event, etc.) where the variable is
+            directly defined.
+             Example: 2251799813683890.
         process_instance_key (str | Unset): The key of the process instance of this variable. Example: 2251799813690746.
         root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
             top-level

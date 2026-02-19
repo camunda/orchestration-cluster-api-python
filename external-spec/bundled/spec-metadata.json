@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "specHash": "sha256:493d019664300c05919ec8ff78d2b49ea46877bdde915d89666ccb9180e875a8",
+  "specHash": "sha256:bd7b965a4e9c988256335fc7cdc806e5a5dfcc3aaca28a610ba0819219f8bbf6",
   "semanticKeys": [
     {
       "name": "AuditLogEntityKey",
@@ -782,7 +782,7 @@
       "name": "ScopeKey",
       "semanticType": "ScopeKey",
       "category": "system-key",
-      "description": "System-generated key for a scope.",
+      "description": "System-generated key for a scope. A scope can hold variables and represents either an\nelement instance in a BPMN process or the process instance itself.\n",
       "composition": {
         "schemaKind": "allOf",
         "refs": [
@@ -1707,7 +1707,7 @@
     {
       "name": "ScopeKeyFilterProperty",
       "kind": "union-wrapper",
-      "description": "ScopeKey property with full advanced search capabilities.",
+      "description": "ScopeKey property with full advanced search capabilities. Filter by the key of the\nelement instance or process instance that defines the scope of a variable.\n",
       "branches": [
         {
           "branchType": "ref",
@@ -2090,6 +2090,14 @@
       "operationId": "getGlobalJobStatistics",
       "path": "/jobs/statistics/global",
       "method": "get",
+      "tags": [
+        "Job"
+      ]
+    },
+    {
+      "operationId": "getJobTypeStatistics",
+      "path": "/jobs/statistics/by-types",
+      "method": "post",
       "tags": [
         "Job"
       ]
@@ -4027,6 +4035,24 @@
       "optionalTenantIdInBody": false
     },
     {
+      "operationId": "getJobTypeStatistics",
+      "path": "/jobs/statistics/by-types",
+      "method": "post",
+      "tags": [
+        "Job"
+      ],
+      "summary": "Get job statistics by type",
+      "description": "Get statistics about jobs, grouped by job type.\n",
+      "eventuallyConsistent": true,
+      "hasRequestBody": true,
+      "requestBodyUnion": false,
+      "bodyOnly": true,
+      "pathParams": [],
+      "queryParams": [],
+      "requestBodyUnionRefs": [],
+      "optionalTenantIdInBody": false
+    },
+    {
       "operationId": "getLicense",
       "path": "/license",
       "method": "get",
@@ -5854,7 +5880,7 @@
         "User task"
       ],
       "summary": "Search user task variables",
-      "description": "Search for user task variables based on given criteria. By default, long variable values in the response are truncated.",
+      "description": "Search for user task variables based on given criteria. This endpoint returns all variables\nvisible from the user task's scope, including variables from parent scopes in the scope\nhierarchy. By default, long variable values in the response are truncated.\n",
       "eventuallyConsistent": true,
       "hasRequestBody": true,
       "requestBodyUnion": false,
@@ -5879,7 +5905,7 @@
         "Variable"
       ],
       "summary": "Search variables",
-      "description": "Search for process and local variables based on given criteria. By default, long variable values in the response are truncated.",
+      "description": "Search for variables based on given criteria.\n\nThis endpoint returns variables that exist directly at the specified scopes - it does not\ninclude variables from parent scopes that would be visible through the scope hierarchy.\n\nVariables can be process-level (scoped to the process instance) or local (scoped to specific\nBPMN elements like tasks, subprocesses, etc.).\n\nBy default, long variable values in the response are truncated.",
       "eventuallyConsistent": true,
       "hasRequestBody": true,
       "requestBodyUnion": false,
@@ -5902,7 +5928,7 @@
         "Variable"
       ],
       "summary": "Get variable",
-      "description": "Get the variable by the variable key.",
+      "description": "Get a variable by its key.\n\nThis endpoint returns both process-level and local (element-scoped) variables.\nThe variable's scopeKey indicates whether it's a process-level variable or scoped to a\nspecific element instance.",
       "eventuallyConsistent": true,
       "hasRequestBody": false,
       "requestBodyUnion": false,
@@ -5918,7 +5944,7 @@
   "integrity": {
     "totalSemanticKeys": 35,
     "totalUnions": 49,
-    "totalOperations": 175,
-    "totalEventuallyConsistent": 74
+    "totalOperations": 176,
+    "totalEventuallyConsistent": 75
   }
 }
