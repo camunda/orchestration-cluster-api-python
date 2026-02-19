@@ -67,7 +67,7 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
 
         # We'll use a regex that we'll use for replacement anyway.
         pattern = re.compile(
-            rf"^(\s+){py_prop}: (str|int|float|bool)(.*)$", re.MULTILINE
+            rf"^(\s+){py_prop}: ((?:None \| )?(?:str|int|float|bool))(.*)$", re.MULTILINE
         )
         if pattern.search(content):
             fields_to_patch.append((json_prop, py_prop, semantic_type))
@@ -106,13 +106,15 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
 
         # Patch type hint
         type_hint_pattern = re.compile(
-            rf"^(\s+){py_prop}: (str|int|float|bool)(.*)$", re.MULTILINE
+            rf"^(\s+){py_prop}: ((?:None \| )?(?:str|int|float|bool))(.*)$", re.MULTILINE
         )
 
         def type_hint_replacer(match: re.Match[str]) -> str:
             indent = match.group(1)
-            # old_type = match.group(2)
+            old_type = match.group(2)
             rest = match.group(3)
+            if old_type.startswith("None | "):
+                return f"{indent}{py_prop}: None | {semantic_type}{rest}"
             return f"{indent}{py_prop}: {semantic_type}{rest}"
 
         content = type_hint_pattern.sub(type_hint_replacer, content)
