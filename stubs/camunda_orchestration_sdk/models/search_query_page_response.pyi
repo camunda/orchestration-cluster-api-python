@@ -4,15 +4,15 @@ from camunda_orchestration_sdk.semantic_types import EndCursor, StartCursor
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="SearchQueryPageResponse")
 @_attrs_define
 class SearchQueryPageResponse:
     total_items: int
-    has_more_total_items: bool | Unset = UNSET
-    start_cursor: None | StartCursor | Unset = UNSET
-    end_cursor: None | EndCursor | Unset = UNSET
+    has_more_total_items: bool
+    start_cursor: None | StartCursor
+    end_cursor: None | EndCursor
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

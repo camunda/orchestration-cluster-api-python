@@ -4,9 +4,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="ProblemDetail")
 
@@ -17,20 +17,20 @@ class ProblemDetail:
     properties specific to the problem type.
 
         Attributes:
-            type_ (str | Unset): A URI identifying the problem type. Default: 'about:blank'. Example:
+            type_ (str): A URI identifying the problem type. Default: 'about:blank'. Example:
                 https://docs.camunda.io/api/v2.0/problem-types/bad-request.
-            title (str | Unset): A summary of the problem type. Example: Bad Request.
-            status (int | Unset): The HTTP status code for this problem. Example: 400.
-            detail (str | Unset): An explanation of the problem in more detail. Example: Request property
-                [maxJobsToActivates] cannot be parsed.
-            instance (str | Unset): A URI path identifying the origin of the problem. Example: /v2/jobs/activation.
+            title (str): A summary of the problem type. Example: Bad Request.
+            status (int): The HTTP status code for this problem. Example: 400.
+            detail (str): An explanation of the problem in more detail. Example: Request property [maxJobsToActivates]
+                cannot be parsed.
+            instance (str): A URI path identifying the origin of the problem. Example: /v2/jobs/activation.
     """
 
-    type_: str | Unset = "about:blank"
-    title: str | Unset = UNSET
-    status: int | Unset = UNSET
-    detail: str | Unset = UNSET
-    instance: str | Unset = UNSET
+    title: str
+    status: int
+    detail: str
+    instance: str
+    type_: str = "about:blank"
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -48,32 +48,30 @@ class ProblemDetail:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if type_ is not UNSET:
-            field_dict["type"] = type_
-        if title is not UNSET:
-            field_dict["title"] = title
-        if status is not UNSET:
-            field_dict["status"] = status
-        if detail is not UNSET:
-            field_dict["detail"] = detail
-        if instance is not UNSET:
-            field_dict["instance"] = instance
+        field_dict.update(
+            {
+                "type": type_,
+                "title": title,
+                "status": status,
+                "detail": detail,
+                "instance": instance,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        type_ = d.pop("type", UNSET)
+        type_ = d.pop("type")
 
-        title = d.pop("title", UNSET)
+        title = d.pop("title")
 
-        status = d.pop("status", UNSET)
+        status = d.pop("status")
 
-        detail = d.pop("detail", UNSET)
+        detail = d.pop("detail")
 
-        instance = d.pop("instance", UNSET)
+        instance = d.pop("instance")
 
         problem_detail = cls(
             type_=type_,

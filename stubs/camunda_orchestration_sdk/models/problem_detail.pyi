@@ -3,16 +3,16 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="ProblemDetail")
 @_attrs_define
 class ProblemDetail:
-    type_: str | Unset = "about:blank"
-    title: str | Unset = UNSET
-    status: int | Unset = UNSET
-    detail: str | Unset = UNSET
-    instance: str | Unset = UNSET
+    title: str
+    status: int
+    detail: str
+    instance: str
+    type_: str = "about:blank"
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

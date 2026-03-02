@@ -19312,6 +19312,13 @@
       },
       "DeploymentMetadataResult": {
         "type": "object",
+        "required": [
+          "processDefinition",
+          "decisionDefinition",
+          "decisionRequirements",
+          "form",
+          "resource"
+        ],
         "properties": {
           "processDefinition": {
             "nullable": true,
@@ -25295,6 +25302,13 @@
       "ProblemDetail": {
         "description": "A Problem detail object as described in [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457). There may be additional properties specific to the problem type.\n",
         "type": "object",
+        "required": [
+          "type",
+          "title",
+          "status",
+          "detail",
+          "instance"
+        ],
         "properties": {
           "type": {
             "type": "string",
@@ -27681,7 +27695,10 @@
         "description": "Pagination information about the search results.",
         "type": "object",
         "required": [
-          "totalItems"
+          "totalItems",
+          "hasMoreTotalItems",
+          "startCursor",
+          "endCursor"
         ],
         "x-semantic-provider": [
           "startCursor",

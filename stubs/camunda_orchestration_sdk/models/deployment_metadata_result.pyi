@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.deployment_metadata_result_decision_definition import DeploymentMetadataResultDecisionDefinition
 from ..models.deployment_metadata_result_decision_requirements import DeploymentMetadataResultDecisionRequirements
 from ..models.deployment_metadata_result_form import DeploymentMetadataResultForm
@@ -13,15 +13,11 @@ from ..models.deployment_metadata_result_resource import DeploymentMetadataResul
 T = TypeVar("T", bound="DeploymentMetadataResult")
 @_attrs_define
 class DeploymentMetadataResult:
-    process_definition: DeploymentMetadataResultProcessDefinition | None | Unset = UNSET
-    decision_definition: DeploymentMetadataResultDecisionDefinition | None | Unset = (
-            UNSET
-        )
-    decision_requirements: (
-            DeploymentMetadataResultDecisionRequirements | None | Unset
-        ) = UNSET
-    form: DeploymentMetadataResultForm | None | Unset = UNSET
-    resource: DeploymentMetadataResultResource | None | Unset = UNSET
+    process_definition: DeploymentMetadataResultProcessDefinition | None
+    decision_definition: DeploymentMetadataResultDecisionDefinition | None
+    decision_requirements: DeploymentMetadataResultDecisionRequirements | None
+    form: DeploymentMetadataResultForm | None
+    resource: DeploymentMetadataResultResource | None
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

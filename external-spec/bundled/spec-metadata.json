@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "specHash": "sha256:4ab741f3f5a60c3f80787bbd6958cb9ae66410c07926aa72ebbd7f56e81ecc84",
+  "specHash": "sha256:bcd1dfa7fea17f24242387d509d88c0a93fc78aa2bcb51d1e82fbeb132c982f0",
   "semanticKeys": [
     {
       "name": "AuditLogEntityKey",
@@ -6021,10 +6021,49 @@
       "optionalTenantIdInBody": false
     }
   ],
+  "deprecatedEnumMembers": [
+    {
+      "schemaName": "DecisionDefinitionTypeEnum",
+      "enumValues": [
+        "DECISION_TABLE",
+        "LITERAL_EXPRESSION",
+        "UNSPECIFIED",
+        "UNKNOWN"
+      ],
+      "deprecatedMembers": [
+        {
+          "name": "UNSPECIFIED",
+          "deprecatedInVersion": "8.9.0"
+        }
+      ],
+      "stableId": "decision-definition-type-enum"
+    },
+    {
+      "schemaName": "DecisionInstanceStateEnum",
+      "enumValues": [
+        "EVALUATED",
+        "FAILED",
+        "UNSPECIFIED",
+        "UNKNOWN"
+      ],
+      "deprecatedMembers": [
+        {
+          "name": "UNSPECIFIED",
+          "deprecatedInVersion": "8.9.0"
+        },
+        {
+          "name": "UNKNOWN",
+          "deprecatedInVersion": "8.9.0"
+        }
+      ],
+      "stableId": "decision-instance-state-enum"
+    }
+  ],
   "integrity": {
     "totalSemanticKeys": 35,
     "totalUnions": 51,
     "totalOperations": 178,
-    "totalEventuallyConsistent": 77
+    "totalEventuallyConsistent": 77,
+    "totalDeprecatedEnumSchemas": 2
   }
 }

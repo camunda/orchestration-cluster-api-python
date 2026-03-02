@@ -4,9 +4,9 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
     from ..models.deployment_metadata_result_decision_definition import (
@@ -31,23 +31,19 @@ T = TypeVar("T", bound="DeploymentMetadataResult")
 class DeploymentMetadataResult:
     """
     Attributes:
-        process_definition (DeploymentMetadataResultProcessDefinition | None | Unset): Deployed process.
-        decision_definition (DeploymentMetadataResultDecisionDefinition | None | Unset): Deployed decision.
-        decision_requirements (DeploymentMetadataResultDecisionRequirements | None | Unset): Deployed decision
-            requirement definition.
-        form (DeploymentMetadataResultForm | None | Unset): Deployed form.
-        resource (DeploymentMetadataResultResource | None | Unset): Deployed resource.
+        process_definition (DeploymentMetadataResultProcessDefinition | None): Deployed process.
+        decision_definition (DeploymentMetadataResultDecisionDefinition | None): Deployed decision.
+        decision_requirements (DeploymentMetadataResultDecisionRequirements | None): Deployed decision requirement
+            definition.
+        form (DeploymentMetadataResultForm | None): Deployed form.
+        resource (DeploymentMetadataResultResource | None): Deployed resource.
     """
 
-    process_definition: DeploymentMetadataResultProcessDefinition | None | Unset = UNSET
-    decision_definition: DeploymentMetadataResultDecisionDefinition | None | Unset = (
-        UNSET
-    )
-    decision_requirements: (
-        DeploymentMetadataResultDecisionRequirements | None | Unset
-    ) = UNSET
-    form: DeploymentMetadataResultForm | None | Unset = UNSET
-    resource: DeploymentMetadataResultResource | None | Unset = UNSET
+    process_definition: DeploymentMetadataResultProcessDefinition | None
+    decision_definition: DeploymentMetadataResultDecisionDefinition | None
+    decision_requirements: DeploymentMetadataResultDecisionRequirements | None
+    form: DeploymentMetadataResultForm | None
+    resource: DeploymentMetadataResultResource | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -69,65 +65,53 @@ class DeploymentMetadataResult:
             DeploymentMetadataResultResource,
         )
 
-        process_definition: dict[str, Any] | None | Unset
-        if isinstance(self.process_definition, Unset):
-            process_definition = UNSET
-        elif isinstance(
+        process_definition: dict[str, Any] | None
+        if isinstance(
             self.process_definition, DeploymentMetadataResultProcessDefinition
         ):
             process_definition = self.process_definition.to_dict()
         else:
             process_definition = self.process_definition
 
-        decision_definition: dict[str, Any] | None | Unset
-        if isinstance(self.decision_definition, Unset):
-            decision_definition = UNSET
-        elif isinstance(
+        decision_definition: dict[str, Any] | None
+        if isinstance(
             self.decision_definition, DeploymentMetadataResultDecisionDefinition
         ):
             decision_definition = self.decision_definition.to_dict()
         else:
             decision_definition = self.decision_definition
 
-        decision_requirements: dict[str, Any] | None | Unset
-        if isinstance(self.decision_requirements, Unset):
-            decision_requirements = UNSET
-        elif isinstance(
+        decision_requirements: dict[str, Any] | None
+        if isinstance(
             self.decision_requirements, DeploymentMetadataResultDecisionRequirements
         ):
             decision_requirements = self.decision_requirements.to_dict()
         else:
             decision_requirements = self.decision_requirements
 
-        form: dict[str, Any] | None | Unset
-        if isinstance(self.form, Unset):
-            form = UNSET
-        elif isinstance(self.form, DeploymentMetadataResultForm):
+        form: dict[str, Any] | None
+        if isinstance(self.form, DeploymentMetadataResultForm):
             form = self.form.to_dict()
         else:
             form = self.form
 
-        resource: dict[str, Any] | None | Unset
-        if isinstance(self.resource, Unset):
-            resource = UNSET
-        elif isinstance(self.resource, DeploymentMetadataResultResource):
+        resource: dict[str, Any] | None
+        if isinstance(self.resource, DeploymentMetadataResultResource):
             resource = self.resource.to_dict()
         else:
             resource = self.resource
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if process_definition is not UNSET:
-            field_dict["processDefinition"] = process_definition
-        if decision_definition is not UNSET:
-            field_dict["decisionDefinition"] = decision_definition
-        if decision_requirements is not UNSET:
-            field_dict["decisionRequirements"] = decision_requirements
-        if form is not UNSET:
-            field_dict["form"] = form
-        if resource is not UNSET:
-            field_dict["resource"] = resource
+        field_dict.update(
+            {
+                "processDefinition": process_definition,
+                "decisionDefinition": decision_definition,
+                "decisionRequirements": decision_requirements,
+                "form": form,
+                "resource": resource,
+            }
+        )
 
         return field_dict
 
@@ -153,10 +137,8 @@ class DeploymentMetadataResult:
 
         def _parse_process_definition(
             data: object,
-        ) -> DeploymentMetadataResultProcessDefinition | None | Unset:
+        ) -> DeploymentMetadataResultProcessDefinition | None:
             if data is None:
-                return data
-            if isinstance(data, Unset):
                 return data
             try:
                 if not isinstance(data, dict):
@@ -170,18 +152,14 @@ class DeploymentMetadataResult:
                 return componentsschemas_deployment_metadata_result_process_definition_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(DeploymentMetadataResultProcessDefinition | None | Unset, data)
+            return cast(DeploymentMetadataResultProcessDefinition | None, data)
 
-        process_definition = _parse_process_definition(
-            d.pop("processDefinition", UNSET)
-        )
+        process_definition = _parse_process_definition(d.pop("processDefinition"))
 
         def _parse_decision_definition(
             data: object,
-        ) -> DeploymentMetadataResultDecisionDefinition | None | Unset:
+        ) -> DeploymentMetadataResultDecisionDefinition | None:
             if data is None:
-                return data
-            if isinstance(data, Unset):
                 return data
             try:
                 if not isinstance(data, dict):
@@ -195,18 +173,14 @@ class DeploymentMetadataResult:
                 return componentsschemas_deployment_metadata_result_decision_definition_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(DeploymentMetadataResultDecisionDefinition | None | Unset, data)
+            return cast(DeploymentMetadataResultDecisionDefinition | None, data)
 
-        decision_definition = _parse_decision_definition(
-            d.pop("decisionDefinition", UNSET)
-        )
+        decision_definition = _parse_decision_definition(d.pop("decisionDefinition"))
 
         def _parse_decision_requirements(
             data: object,
-        ) -> DeploymentMetadataResultDecisionRequirements | None | Unset:
+        ) -> DeploymentMetadataResultDecisionRequirements | None:
             if data is None:
-                return data
-            if isinstance(data, Unset):
                 return data
             try:
                 if not isinstance(data, dict):
@@ -220,18 +194,14 @@ class DeploymentMetadataResult:
                 return componentsschemas_deployment_metadata_result_decision_requirements_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(
-                DeploymentMetadataResultDecisionRequirements | None | Unset, data
-            )
+            return cast(DeploymentMetadataResultDecisionRequirements | None, data)
 
         decision_requirements = _parse_decision_requirements(
-            d.pop("decisionRequirements", UNSET)
+            d.pop("decisionRequirements")
         )
 
-        def _parse_form(data: object) -> DeploymentMetadataResultForm | None | Unset:
+        def _parse_form(data: object) -> DeploymentMetadataResultForm | None:
             if data is None:
-                return data
-            if isinstance(data, Unset):
                 return data
             try:
                 if not isinstance(data, dict):
@@ -245,16 +215,12 @@ class DeploymentMetadataResult:
                 return componentsschemas_deployment_metadata_result_form_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(DeploymentMetadataResultForm | None | Unset, data)
+            return cast(DeploymentMetadataResultForm | None, data)
 
-        form = _parse_form(d.pop("form", UNSET))
+        form = _parse_form(d.pop("form"))
 
-        def _parse_resource(
-            data: object,
-        ) -> DeploymentMetadataResultResource | None | Unset:
+        def _parse_resource(data: object) -> DeploymentMetadataResultResource | None:
             if data is None:
-                return data
-            if isinstance(data, Unset):
                 return data
             try:
                 if not isinstance(data, dict):
@@ -268,9 +234,9 @@ class DeploymentMetadataResult:
                 return componentsschemas_deployment_metadata_result_resource_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(DeploymentMetadataResultResource | None | Unset, data)
+            return cast(DeploymentMetadataResultResource | None, data)
 
-        resource = _parse_resource(d.pop("resource", UNSET))
+        resource = _parse_resource(d.pop("resource"))
 
         deployment_metadata_result = cls(
             process_definition=process_definition,
