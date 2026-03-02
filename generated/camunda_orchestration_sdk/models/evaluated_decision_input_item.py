@@ -16,9 +16,9 @@ class EvaluatedDecisionInputItem:
     """A decision input that was evaluated within this decision evaluation.
 
     Attributes:
-        input_id (str | Unset):
-        input_name (str | Unset):
-        input_value (str | Unset):
+        input_id (str | Unset): The identifier of the decision input.
+        input_name (str | Unset): The name of the decision input.
+        input_value (str | Unset): The description of the decision input.
     """
 
     input_id: str | Unset = UNSET

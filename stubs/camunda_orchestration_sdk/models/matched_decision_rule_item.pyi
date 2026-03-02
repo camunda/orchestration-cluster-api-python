@@ -9,9 +9,9 @@ from ..models.evaluated_decision_output_item import EvaluatedDecisionOutputItem
 T = TypeVar("T", bound="MatchedDecisionRuleItem")
 @_attrs_define
 class MatchedDecisionRuleItem:
+    evaluated_outputs: list[EvaluatedDecisionOutputItem]
     rule_id: str | Unset = UNSET
     rule_index: int | Unset = UNSET
-    evaluated_outputs: list[EvaluatedDecisionOutputItem] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

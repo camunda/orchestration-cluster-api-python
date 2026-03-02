@@ -5,7 +5,7 @@ from camunda_orchestration_sdk.semantic_types import (
 )
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -22,29 +22,37 @@ T = TypeVar("T", bound="AuthorizationResult")
 class AuthorizationResult:
     """
     Attributes:
+        resource_property_name (None | str): The name of the resource property the permission relates to (mutually
+            exclusive with `resourceId`).
+        permission_types (list[PermissionTypeEnum]): Specifies the types of the permissions.
         owner_id (str | Unset): The ID of the owner of permissions.
         owner_type (OwnerTypeEnum | Unset): The type of the owner of permissions.
         resource_type (AuthorizationResultResourceType | Unset): The type of resource that the permissions relate to.
-        resource_id (str | Unset): ID of the resource the permission relates to (mutually exclusive with
+        resource_id (None | str | Unset): ID of the resource the permission relates to (mutually exclusive with
             `resourcePropertyName`).
-        resource_property_name (str | Unset): The name of the resource property the permission relates to (mutually
-            exclusive with `resourceId`).
-        permission_types (list[PermissionTypeEnum] | Unset): Specifies the types of the permissions.
         authorization_key (str | Unset): The key of the authorization. Example: 2251799813684332.
     """
 
+    resource_property_name: None | str
+    permission_types: list[PermissionTypeEnum]
     owner_id: str | Unset = UNSET
     owner_type: OwnerTypeEnum | Unset = UNSET
     resource_type: AuthorizationResultResourceType | Unset = UNSET
-    resource_id: str | Unset = UNSET
-    resource_property_name: str | Unset = UNSET
-    permission_types: list[PermissionTypeEnum] | Unset = UNSET
+    resource_id: None | str | Unset = UNSET
     authorization_key: AuthorizationKey | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        resource_property_name: None | str
+        resource_property_name = self.resource_property_name
+
+        permission_types: list[Any] = []
+        for permission_types_item_data in self.permission_types:
+            permission_types_item = permission_types_item_data.value
+            permission_types.append(permission_types_item)
+
         owner_id = self.owner_id
 
         owner_type: str | Unset = UNSET
@@ -55,22 +63,22 @@ class AuthorizationResult:
         if not isinstance(self.resource_type, Unset):
             resource_type = self.resource_type.value
 
-        resource_id = self.resource_id
-
-        resource_property_name = self.resource_property_name
-
-        permission_types: list[str] | Unset = UNSET
-        if not isinstance(self.permission_types, Unset):
-            permission_types = []
-            for permission_types_item_data in self.permission_types:
-                permission_types_item = permission_types_item_data.value
-                permission_types.append(permission_types_item)
+        resource_id: None | str | Unset
+        if isinstance(self.resource_id, Unset):
+            resource_id = UNSET
+        else:
+            resource_id = self.resource_id
 
         authorization_key = self.authorization_key
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
+        field_dict.update(
+            {
+                "resourcePropertyName": resource_property_name,
+                "permissionTypes": permission_types,
+            }
+        )
         if owner_id is not UNSET:
             field_dict["ownerId"] = owner_id
         if owner_type is not UNSET:
@@ -79,10 +87,6 @@ class AuthorizationResult:
             field_dict["resourceType"] = resource_type
         if resource_id is not UNSET:
             field_dict["resourceId"] = resource_id
-        if resource_property_name is not UNSET:
-            field_dict["resourcePropertyName"] = resource_property_name
-        if permission_types is not UNSET:
-            field_dict["permissionTypes"] = permission_types
         if authorization_key is not UNSET:
             field_dict["authorizationKey"] = authorization_key
 
@@ -91,6 +95,23 @@ class AuthorizationResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+
+        def _parse_resource_property_name(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        resource_property_name = _parse_resource_property_name(
+            d.pop("resourcePropertyName")
+        )
+
+        permission_types: list[PermissionTypeEnum] = []
+        _permission_types = d.pop("permissionTypes")
+        for permission_types_item_data in _permission_types:
+            permission_types_item = PermissionTypeEnum(permission_types_item_data)
+
+            permission_types.append(permission_types_item)
+
         owner_id = d.pop("ownerId", UNSET)
 
         _owner_type = d.pop("ownerType", UNSET)
@@ -107,18 +128,14 @@ class AuthorizationResult:
         else:
             resource_type = AuthorizationResultResourceType(_resource_type)
 
-        resource_id = d.pop("resourceId", UNSET)
+        def _parse_resource_id(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
 
-        resource_property_name = d.pop("resourcePropertyName", UNSET)
-
-        _permission_types = d.pop("permissionTypes", UNSET)
-        permission_types: list[PermissionTypeEnum] | Unset = UNSET
-        if _permission_types is not UNSET:
-            permission_types = []
-            for permission_types_item_data in _permission_types:
-                permission_types_item = PermissionTypeEnum(permission_types_item_data)
-
-                permission_types.append(permission_types_item)
+        resource_id = _parse_resource_id(d.pop("resourceId", UNSET))
 
         authorization_key = (
             lift_authorization_key(_val)
@@ -127,12 +144,12 @@ class AuthorizationResult:
         )
 
         authorization_result = cls(
+            resource_property_name=resource_property_name,
+            permission_types=permission_types,
             owner_id=owner_id,
             owner_type=owner_type,
             resource_type=resource_type,
             resource_id=resource_id,
-            resource_property_name=resource_property_name,
-            permission_types=permission_types,
             authorization_key=authorization_key,
         )
 

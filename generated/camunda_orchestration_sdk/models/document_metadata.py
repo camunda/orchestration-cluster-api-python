@@ -30,6 +30,7 @@ class DocumentMetadata:
     """Information about the document.
 
     Attributes:
+        custom_properties (DocumentMetadataCustomProperties): Custom properties of the document.
         content_type (str | Unset): The content type of the document.
         file_name (str | Unset): The name of the file.
         expires_at (datetime.datetime | Unset): The date and time when the document expires.
@@ -38,21 +39,22 @@ class DocumentMetadata:
             account-onboarding-workflow.
         process_instance_key (str | Unset): The key of the process instance that created the document. Example:
             2251799813690746.
-        custom_properties (DocumentMetadataCustomProperties | Unset): Custom properties of the document.
     """
 
+    custom_properties: DocumentMetadataCustomProperties
     content_type: str | Unset = UNSET
     file_name: str | Unset = UNSET
     expires_at: datetime.datetime | Unset = UNSET
     size: int | Unset = UNSET
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    custom_properties: DocumentMetadataCustomProperties | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        custom_properties = self.custom_properties.to_dict()
+
         content_type = self.content_type
 
         file_name = self.file_name
@@ -67,13 +69,13 @@ class DocumentMetadata:
 
         process_instance_key = self.process_instance_key
 
-        custom_properties: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.custom_properties, Unset):
-            custom_properties = self.custom_properties.to_dict()
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
+        field_dict.update(
+            {
+                "customProperties": custom_properties,
+            }
+        )
         if content_type is not UNSET:
             field_dict["contentType"] = content_type
         if file_name is not UNSET:
@@ -86,8 +88,6 @@ class DocumentMetadata:
             field_dict["processDefinitionId"] = process_definition_id
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
-        if custom_properties is not UNSET:
-            field_dict["customProperties"] = custom_properties
 
         return field_dict
 
@@ -98,6 +98,10 @@ class DocumentMetadata:
         )
 
         d = dict(src_dict)
+        custom_properties = DocumentMetadataCustomProperties.from_dict(
+            d.pop("customProperties")
+        )
+
         content_type = d.pop("contentType", UNSET)
 
         file_name = d.pop("fileName", UNSET)
@@ -123,23 +127,14 @@ class DocumentMetadata:
             else UNSET
         )
 
-        _custom_properties = d.pop("customProperties", UNSET)
-        custom_properties: DocumentMetadataCustomProperties | Unset
-        if isinstance(_custom_properties, Unset):
-            custom_properties = UNSET
-        else:
-            custom_properties = DocumentMetadataCustomProperties.from_dict(
-                _custom_properties
-            )
-
         document_metadata = cls(
+            custom_properties=custom_properties,
             content_type=content_type,
             file_name=file_name,
             expires_at=expires_at,
             size=size,
             process_definition_id=process_definition_id,
             process_instance_key=process_instance_key,
-            custom_properties=custom_properties,
         )
 
         document_metadata.additional_properties = d

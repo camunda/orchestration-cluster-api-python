@@ -1,20 +1,19 @@
-from __future__ import annotations
-
-from collections.abc import Mapping
-from typing import Any, TypeVar
-from attrs import define as _attrs_define
-from ..types import str_any_dict_factory
-from attrs import field as _attrs_field
-T = TypeVar("T", bound="AdvancedIncidentErrorTypeFilterEq")
-@_attrs_define
-class AdvancedIncidentErrorTypeFilterEq:
-    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
-    def to_dict(self) -> dict[str, Any]: ...
-    @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...
-    @property
-    def additional_keys(self) -> list[str]: ...
-    def __getitem__(self, key: str) -> Any: ...
-    def __setitem__(self, key: str, value: Any) -> None: ...
-    def __delitem__(self, key: str) -> None: ...
-    def __contains__(self, key: str) -> bool: ...
+from enum import Enum
+class AdvancedIncidentErrorTypeFilterEq(str, Enum):
+    AD_HOC_SUB_PROCESS_NO_RETRIES = "AD_HOC_SUB_PROCESS_NO_RETRIES"
+    CALLED_DECISION_ERROR = "CALLED_DECISION_ERROR"
+    CALLED_ELEMENT_ERROR = "CALLED_ELEMENT_ERROR"
+    CONDITION_ERROR = "CONDITION_ERROR"
+    DECISION_EVALUATION_ERROR = "DECISION_EVALUATION_ERROR"
+    EXECUTION_LISTENER_NO_RETRIES = "EXECUTION_LISTENER_NO_RETRIES"
+    EXTRACT_VALUE_ERROR = "EXTRACT_VALUE_ERROR"
+    FORM_NOT_FOUND = "FORM_NOT_FOUND"
+    IO_MAPPING_ERROR = "IO_MAPPING_ERROR"
+    JOB_NO_RETRIES = "JOB_NO_RETRIES"
+    MESSAGE_SIZE_EXCEEDED = "MESSAGE_SIZE_EXCEEDED"
+    RESOURCE_NOT_FOUND = "RESOURCE_NOT_FOUND"
+    TASK_LISTENER_NO_RETRIES = "TASK_LISTENER_NO_RETRIES"
+    UNHANDLED_ERROR_EVENT = "UNHANDLED_ERROR_EVENT"
+    UNKNOWN = "UNKNOWN"
+    UNSPECIFIED = "UNSPECIFIED"
+    def __str__(self) -> str: ...

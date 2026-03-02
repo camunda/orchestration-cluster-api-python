@@ -1,7 +1,9 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     ProcessDefinitionKey,
     TenantId,
+    lift_business_id,
     lift_process_definition_key,
     lift_tenant_id,
 )
@@ -14,8 +16,8 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.process_instance_creation_instruction_by_id_variables import (
-        ProcessInstanceCreationInstructionByIdVariables,
+    from ..models.process_instance_creation_instruction_by_key_variables import (
+        ProcessInstanceCreationInstructionByKeyVariables,
     )
     from ..models.process_instance_creation_start_instruction import (
         ProcessInstanceCreationStartInstruction,
@@ -40,9 +42,9 @@ class ProcessCreationByKey:
             the value of this field is ignored.
             It's here for backwards-compatibility only as previous releases accepted it in request bodies.
              Default: -1.
-        variables (ProcessInstanceCreationInstructionByIdVariables | Unset): JSON object that will instantiate the
-            variables for the root variable scope
-            of the process instance.
+        variables (ProcessInstanceCreationInstructionByKeyVariables | Unset): Set of variables as JSON object to
+            instantiate in the root variable scope of the process
+            instance. Can include nested complex objects.
         start_instructions (list[ProcessInstanceCreationStartInstruction] | Unset): List of start instructions. By
             default, the process instance will start at
             the start event. If provided, the process instance will apply start instructions
@@ -53,14 +55,18 @@ class ProcessCreationByKey:
 
             This parameter is an alpha feature and may be subject to change
             in future releases.
-        tenant_id (str | Unset): The tenant id of the process definition. Example: customer-service.
+        tenant_id (str | Unset): The tenant id of the process definition.
+            If multi-tenancy is enabled, provide the tenant id of the process definition to start a
+            process instance of. If multi-tenancy is disabled, don't provide this parameter.
+             Example: customer-service.
         operation_reference (int | Unset): A reference key chosen by the user that will be part of all records resulting
             from this operation.
             Must be > 0 if provided.
-        await_completion (bool | Unset): Wait for the process instance to complete. If the process instance completion
-            does
-            not occur within the requestTimeout, the request will be closed. This can lead to a 504
-            response status. Disabled by default.
+        await_completion (bool | Unset): Wait for the process instance to complete. If the process instance does not
+            complete
+            within the request timeout limit, a 504 response status will be returned. The process
+            instance will continue to run in the background regardless of the timeout. Disabled by
+            default.
              Default: False.
         request_timeout (int | Unset): Timeout (in ms) the request waits for the process to complete. By default or
             when set to 0, the generic request timeout configured in the cluster is applied.
@@ -70,11 +76,17 @@ class ProcessCreationByKey:
             If empty, all visible variables in the root scope will be returned.
         tags (list[str] | Unset): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or
             `.`; length ≤ 100. Example: ['high-touch', 'remediation'].
+        business_id (str | Unset): An optional, user-defined string identifier that identifies the process instance
+            within the scope of a process definition (scoped by tenant). If provided and uniqueness
+            enforcement is enabled, the engine will reject creation if another root process instance
+            with the same business id is already active for the same process definition.
+            Note that any active child process instances with the same business id are not taken into account.
+             Example: order-12345.
     """
 
     process_definition_key: ProcessDefinitionKey
     process_definition_version: int | Unset = -1
-    variables: ProcessInstanceCreationInstructionByIdVariables | Unset = UNSET
+    variables: ProcessInstanceCreationInstructionByKeyVariables | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET
     runtime_instructions: list[ProcessInstanceCreationTerminateInstruction] | Unset = (
         UNSET
@@ -85,6 +97,7 @@ class ProcessCreationByKey:
     request_timeout: int | Unset = 0
     fetch_variables: list[str] | Unset = UNSET
     tags: list[str] | Unset = UNSET
+    business_id: BusinessId | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_key = self.process_definition_key
@@ -125,6 +138,8 @@ class ProcessCreationByKey:
         if not isinstance(self.tags, Unset):
             tags = self.tags
 
+        business_id = self.business_id
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -152,13 +167,15 @@ class ProcessCreationByKey:
             field_dict["fetchVariables"] = fetch_variables
         if tags is not UNSET:
             field_dict["tags"] = tags
+        if business_id is not UNSET:
+            field_dict["businessId"] = business_id
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.process_instance_creation_instruction_by_id_variables import (
-            ProcessInstanceCreationInstructionByIdVariables,
+        from ..models.process_instance_creation_instruction_by_key_variables import (
+            ProcessInstanceCreationInstructionByKeyVariables,
         )
         from ..models.process_instance_creation_start_instruction import (
             ProcessInstanceCreationStartInstruction,
@@ -175,11 +192,11 @@ class ProcessCreationByKey:
         process_definition_version = d.pop("processDefinitionVersion", UNSET)
 
         _variables = d.pop("variables", UNSET)
-        variables: ProcessInstanceCreationInstructionByIdVariables | Unset
+        variables: ProcessInstanceCreationInstructionByKeyVariables | Unset
         if isinstance(_variables, Unset):
             variables = UNSET
         else:
-            variables = ProcessInstanceCreationInstructionByIdVariables.from_dict(
+            variables = ProcessInstanceCreationInstructionByKeyVariables.from_dict(
                 _variables
             )
 
@@ -229,6 +246,12 @@ class ProcessCreationByKey:
 
         tags = cast(list[str], d.pop("tags", UNSET))
 
+        business_id = (
+            lift_business_id(_val)
+            if (_val := d.pop("businessId", UNSET)) is not UNSET
+            else UNSET
+        )
+
         process_creation_by_key = cls(
             process_definition_key=process_definition_key,
             process_definition_version=process_definition_version,
@@ -241,6 +264,7 @@ class ProcessCreationByKey:
             request_timeout=request_timeout,
             fetch_variables=fetch_variables,
             tags=tags,
+            business_id=business_id,
         )
 
         return process_creation_by_key

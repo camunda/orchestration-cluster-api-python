@@ -19,16 +19,16 @@ T = TypeVar("T", bound="UsageMetricsResponse")
 class UsageMetricsResponse:
     """
     Attributes:
+        tenants (UsageMetricsResponseTenants): The usage metrics by tenants. Only available if request `withTenants`
+            query parameter was `true`.
         active_tenants (int | Unset): The amount of active tenants.
-        tenants (UsageMetricsResponseTenants | Unset): The usage metrics by tenants. Only available if request
-            `withTenants` query parameter was `true`.
         process_instances (int | Unset): The amount of created root process instances.
         decision_instances (int | Unset): The amount of executed decision instances.
         assignees (int | Unset): The amount of unique active task users.
     """
 
+    tenants: UsageMetricsResponseTenants
     active_tenants: int | Unset = UNSET
-    tenants: UsageMetricsResponseTenants | Unset = UNSET
     process_instances: int | Unset = UNSET
     decision_instances: int | Unset = UNSET
     assignees: int | Unset = UNSET
@@ -37,11 +37,9 @@ class UsageMetricsResponse:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        active_tenants = self.active_tenants
+        tenants = self.tenants.to_dict()
 
-        tenants: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.tenants, Unset):
-            tenants = self.tenants.to_dict()
+        active_tenants = self.active_tenants
 
         process_instances = self.process_instances
 
@@ -51,11 +49,13 @@ class UsageMetricsResponse:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
+        field_dict.update(
+            {
+                "tenants": tenants,
+            }
+        )
         if active_tenants is not UNSET:
             field_dict["activeTenants"] = active_tenants
-        if tenants is not UNSET:
-            field_dict["tenants"] = tenants
         if process_instances is not UNSET:
             field_dict["processInstances"] = process_instances
         if decision_instances is not UNSET:
@@ -70,14 +70,9 @@ class UsageMetricsResponse:
         from ..models.usage_metrics_response_tenants import UsageMetricsResponseTenants
 
         d = dict(src_dict)
-        active_tenants = d.pop("activeTenants", UNSET)
+        tenants = UsageMetricsResponseTenants.from_dict(d.pop("tenants"))
 
-        _tenants = d.pop("tenants", UNSET)
-        tenants: UsageMetricsResponseTenants | Unset
-        if isinstance(_tenants, Unset):
-            tenants = UNSET
-        else:
-            tenants = UsageMetricsResponseTenants.from_dict(_tenants)
+        active_tenants = d.pop("activeTenants", UNSET)
 
         process_instances = d.pop("processInstances", UNSET)
 
@@ -86,8 +81,8 @@ class UsageMetricsResponse:
         assignees = d.pop("assignees", UNSET)
 
         usage_metrics_response = cls(
-            active_tenants=active_tenants,
             tenants=tenants,
+            active_tenants=active_tenants,
             process_instances=process_instances,
             decision_instances=decision_instances,
             assignees=assignees,

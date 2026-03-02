@@ -22,10 +22,10 @@ class DeploymentDecisionRequirementsResult:
     """Deployed decision requirements.
 
     Attributes:
-        decision_requirements_id (str | Unset):
-        decision_requirements_name (str | Unset):
-        version (int | Unset):
-        resource_name (str | Unset):
+        decision_requirements_id (str | Unset): The id of the deployed decision requirements.
+        decision_requirements_name (str | Unset): The name of the deployed decision requirements.
+        version (int | Unset): The version of the deployed decision requirements.
+        resource_name (str | Unset): The name of the resource.
         tenant_id (str | Unset): The tenant ID of the deployed decision requirements. Example: customer-service.
         decision_requirements_key (str | Unset): The assigned decision requirements key, which acts as a unique
             identifier for this decision requirements.

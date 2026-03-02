@@ -11,7 +11,7 @@ from camunda_orchestration_sdk.semantic_types import (
 )
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -26,6 +26,11 @@ class VariableResult:
     """Variable search response item.
 
     Attributes:
+        root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
+            top-level
+            ancestor in the process instance hierarchy. This field is only present for data
+            belonging to process instance hierarchies created in version 8.9 or later.
+             Example: 2251799813690746.
         value (str | Unset): Full value of this variable.
         name (str | Unset): Name of this variable.
         tenant_id (str | Unset): Tenant ID of this variable. Example: customer-service.
@@ -36,25 +41,23 @@ class VariableResult:
             directly defined.
              Example: 2251799813683890.
         process_instance_key (str | Unset): The key of the process instance of this variable. Example: 2251799813690746.
-        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
-            top-level
-            ancestor in the process instance hierarchy. This field is only present for data
-            belonging to process instance hierarchies created in version 8.9 or later.
-             Example: 2251799813690746.
     """
 
+    root_process_instance_key: None | ProcessInstanceKey
     value: str | Unset = UNSET
     name: str | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     variable_key: VariableKey | Unset = UNSET
     scope_key: ScopeKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        root_process_instance_key: None | ProcessInstanceKey
+        root_process_instance_key = self.root_process_instance_key
+
         value = self.value
 
         name = self.name
@@ -67,11 +70,13 @@ class VariableResult:
 
         process_instance_key = self.process_instance_key
 
-        root_process_instance_key = self.root_process_instance_key
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
+        field_dict.update(
+            {
+                "rootProcessInstanceKey": root_process_instance_key,
+            }
+        )
         if value is not UNSET:
             field_dict["value"] = value
         if name is not UNSET:
@@ -84,14 +89,28 @@ class VariableResult:
             field_dict["scopeKey"] = scope_key
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
-        if root_process_instance_key is not UNSET:
-            field_dict["rootProcessInstanceKey"] = root_process_instance_key
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+
+        def _parse_root_process_instance_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_root_process_instance_key = _parse_root_process_instance_key(
+            d.pop("rootProcessInstanceKey")
+        )
+
+        root_process_instance_key = (
+            lift_process_instance_key(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
+
         value = d.pop("value", UNSET)
 
         name = d.pop("name", UNSET)
@@ -120,16 +139,14 @@ class VariableResult:
             else UNSET
         )
 
-        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
-
         variable_result = cls(
+            root_process_instance_key=root_process_instance_key,
             value=value,
             name=name,
             tenant_id=tenant_id,
             variable_key=variable_key,
             scope_key=scope_key,
             process_instance_key=process_instance_key,
-            root_process_instance_key=root_process_instance_key,
         )
 
         variable_result.additional_properties = d

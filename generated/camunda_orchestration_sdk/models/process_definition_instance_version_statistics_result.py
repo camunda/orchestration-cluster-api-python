@@ -9,7 +9,7 @@ from camunda_orchestration_sdk.semantic_types import (
 )
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 
@@ -27,7 +27,7 @@ class ProcessDefinitionInstanceVersionStatisticsResult:
         process_definition_id (str): The ID associated with the process definition. Example: new-account-onboarding-
             workflow.
         process_definition_key (str): The unique key of the process definition. Example: 2251799813686749.
-        process_definition_name (str): The name of the process definition.
+        process_definition_name (None | str): The name of the process definition.
         tenant_id (str): The tenant ID associated with the process definition. Example: customer-service.
         process_definition_version (int): The version number of the process definition.
         active_instances_with_incident_count (int): The number of active process instances for this version that
@@ -38,7 +38,7 @@ class ProcessDefinitionInstanceVersionStatisticsResult:
 
     process_definition_id: ProcessDefinitionId
     process_definition_key: ProcessDefinitionKey
-    process_definition_name: str
+    process_definition_name: None | str
     tenant_id: TenantId
     process_definition_version: int
     active_instances_with_incident_count: int
@@ -52,6 +52,7 @@ class ProcessDefinitionInstanceVersionStatisticsResult:
 
         process_definition_key = self.process_definition_key
 
+        process_definition_name: None | str
         process_definition_name = self.process_definition_name
 
         tenant_id = self.tenant_id
@@ -89,7 +90,14 @@ class ProcessDefinitionInstanceVersionStatisticsResult:
             d.pop("processDefinitionKey")
         )
 
-        process_definition_name = d.pop("processDefinitionName")
+        def _parse_process_definition_name(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        process_definition_name = _parse_process_definition_name(
+            d.pop("processDefinitionName")
+        )
 
         tenant_id = lift_tenant_id(d.pop("tenantId"))
 

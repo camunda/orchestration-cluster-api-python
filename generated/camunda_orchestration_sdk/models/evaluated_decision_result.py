@@ -31,31 +31,30 @@ class EvaluatedDecisionResult:
     """A decision that was evaluated.
 
     Attributes:
+        decision_definition_type (str): The type of the decision which was evaluated.
+        matched_rules (list[MatchedDecisionRuleItem]): The decision rules that matched within this decision evaluation.
+        evaluated_inputs (list[EvaluatedDecisionInputItem]): The decision inputs that were evaluated within this
+            decision evaluation.
         decision_definition_id (str | Unset): The ID of the decision which was evaluated. Example: new-hire-onboarding-
             workflow.
         decision_definition_name (str | Unset): The name of the decision which was evaluated.
         decision_definition_version (int | Unset): The version of the decision which was evaluated.
-        decision_definition_type (str | Unset): The type of the decision which was evaluated.
         output (str | Unset): JSON document that will instantiate the result of the decision which was evaluated.
         tenant_id (str | Unset): The tenant ID of the evaluated decision. Example: customer-service.
-        matched_rules (list[MatchedDecisionRuleItem] | Unset): The decision rules that matched within this decision
-            evaluation.
-        evaluated_inputs (list[EvaluatedDecisionInputItem] | Unset): The decision inputs that were evaluated within this
-            decision evaluation.
         decision_definition_key (str | Unset): The unique key identifying the decision which was evaluate. Example:
             2251799813326547.
         decision_evaluation_instance_key (str | Unset): The unique key identifying this decision evaluation instance.
             Example: 2251799813684367.
     """
 
+    decision_definition_type: str
+    matched_rules: list[MatchedDecisionRuleItem]
+    evaluated_inputs: list[EvaluatedDecisionInputItem]
     decision_definition_id: DecisionDefinitionId | Unset = UNSET
     decision_definition_name: str | Unset = UNSET
     decision_definition_version: int | Unset = UNSET
-    decision_definition_type: str | Unset = UNSET
     output: str | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
-    matched_rules: list[MatchedDecisionRuleItem] | Unset = UNSET
-    evaluated_inputs: list[EvaluatedDecisionInputItem] | Unset = UNSET
     decision_definition_key: DecisionDefinitionKey | Unset = UNSET
     decision_evaluation_instance_key: DecisionEvaluationInstanceKey | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
@@ -63,31 +62,27 @@ class EvaluatedDecisionResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
+        decision_definition_type = self.decision_definition_type
+
+        matched_rules: list[dict[str, Any]] = []
+        for matched_rules_item_data in self.matched_rules:
+            matched_rules_item = matched_rules_item_data.to_dict()
+            matched_rules.append(matched_rules_item)
+
+        evaluated_inputs: list[dict[str, Any]] = []
+        for evaluated_inputs_item_data in self.evaluated_inputs:
+            evaluated_inputs_item = evaluated_inputs_item_data.to_dict()
+            evaluated_inputs.append(evaluated_inputs_item)
+
         decision_definition_id = self.decision_definition_id
 
         decision_definition_name = self.decision_definition_name
 
         decision_definition_version = self.decision_definition_version
 
-        decision_definition_type = self.decision_definition_type
-
         output = self.output
 
         tenant_id = self.tenant_id
-
-        matched_rules: list[dict[str, Any]] | Unset = UNSET
-        if not isinstance(self.matched_rules, Unset):
-            matched_rules = []
-            for matched_rules_item_data in self.matched_rules:
-                matched_rules_item = matched_rules_item_data.to_dict()
-                matched_rules.append(matched_rules_item)
-
-        evaluated_inputs: list[dict[str, Any]] | Unset = UNSET
-        if not isinstance(self.evaluated_inputs, Unset):
-            evaluated_inputs = []
-            for evaluated_inputs_item_data in self.evaluated_inputs:
-                evaluated_inputs_item = evaluated_inputs_item_data.to_dict()
-                evaluated_inputs.append(evaluated_inputs_item)
 
         decision_definition_key = self.decision_definition_key
 
@@ -95,23 +90,23 @@ class EvaluatedDecisionResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
+        field_dict.update(
+            {
+                "decisionDefinitionType": decision_definition_type,
+                "matchedRules": matched_rules,
+                "evaluatedInputs": evaluated_inputs,
+            }
+        )
         if decision_definition_id is not UNSET:
             field_dict["decisionDefinitionId"] = decision_definition_id
         if decision_definition_name is not UNSET:
             field_dict["decisionDefinitionName"] = decision_definition_name
         if decision_definition_version is not UNSET:
             field_dict["decisionDefinitionVersion"] = decision_definition_version
-        if decision_definition_type is not UNSET:
-            field_dict["decisionDefinitionType"] = decision_definition_type
         if output is not UNSET:
             field_dict["output"] = output
         if tenant_id is not UNSET:
             field_dict["tenantId"] = tenant_id
-        if matched_rules is not UNSET:
-            field_dict["matchedRules"] = matched_rules
-        if evaluated_inputs is not UNSET:
-            field_dict["evaluatedInputs"] = evaluated_inputs
         if decision_definition_key is not UNSET:
             field_dict["decisionDefinitionKey"] = decision_definition_key
         if decision_evaluation_instance_key is not UNSET:
@@ -127,6 +122,26 @@ class EvaluatedDecisionResult:
         from ..models.matched_decision_rule_item import MatchedDecisionRuleItem
 
         d = dict(src_dict)
+        decision_definition_type = d.pop("decisionDefinitionType")
+
+        matched_rules: list[MatchedDecisionRuleItem] = []
+        _matched_rules = d.pop("matchedRules")
+        for matched_rules_item_data in _matched_rules:
+            matched_rules_item = MatchedDecisionRuleItem.from_dict(
+                matched_rules_item_data
+            )
+
+            matched_rules.append(matched_rules_item)
+
+        evaluated_inputs: list[EvaluatedDecisionInputItem] = []
+        _evaluated_inputs = d.pop("evaluatedInputs")
+        for evaluated_inputs_item_data in _evaluated_inputs:
+            evaluated_inputs_item = EvaluatedDecisionInputItem.from_dict(
+                evaluated_inputs_item_data
+            )
+
+            evaluated_inputs.append(evaluated_inputs_item)
+
         decision_definition_id = (
             lift_decision_definition_id(_val)
             if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET
@@ -137,8 +152,6 @@ class EvaluatedDecisionResult:
 
         decision_definition_version = d.pop("decisionDefinitionVersion", UNSET)
 
-        decision_definition_type = d.pop("decisionDefinitionType", UNSET)
-
         output = d.pop("output", UNSET)
 
         tenant_id = (
@@ -146,28 +159,6 @@ class EvaluatedDecisionResult:
             if (_val := d.pop("tenantId", UNSET)) is not UNSET
             else UNSET
         )
-
-        _matched_rules = d.pop("matchedRules", UNSET)
-        matched_rules: list[MatchedDecisionRuleItem] | Unset = UNSET
-        if _matched_rules is not UNSET:
-            matched_rules = []
-            for matched_rules_item_data in _matched_rules:
-                matched_rules_item = MatchedDecisionRuleItem.from_dict(
-                    matched_rules_item_data
-                )
-
-                matched_rules.append(matched_rules_item)
-
-        _evaluated_inputs = d.pop("evaluatedInputs", UNSET)
-        evaluated_inputs: list[EvaluatedDecisionInputItem] | Unset = UNSET
-        if _evaluated_inputs is not UNSET:
-            evaluated_inputs = []
-            for evaluated_inputs_item_data in _evaluated_inputs:
-                evaluated_inputs_item = EvaluatedDecisionInputItem.from_dict(
-                    evaluated_inputs_item_data
-                )
-
-                evaluated_inputs.append(evaluated_inputs_item)
 
         decision_definition_key = (
             lift_decision_definition_key(_val)
@@ -182,14 +173,14 @@ class EvaluatedDecisionResult:
         )
 
         evaluated_decision_result = cls(
+            decision_definition_type=decision_definition_type,
+            matched_rules=matched_rules,
+            evaluated_inputs=evaluated_inputs,
             decision_definition_id=decision_definition_id,
             decision_definition_name=decision_definition_name,
             decision_definition_version=decision_definition_version,
-            decision_definition_type=decision_definition_type,
             output=output,
             tenant_id=tenant_id,
-            matched_rules=matched_rules,
-            evaluated_inputs=evaluated_inputs,
             decision_definition_key=decision_definition_key,
             decision_evaluation_instance_key=decision_evaluation_instance_key,
         )

@@ -15,7 +15,7 @@ from camunda_orchestration_sdk.semantic_types import (
 )
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -39,9 +39,9 @@ class EvaluateDecisionResult:
         decision_requirements_id (str): The ID of the decision requirements graph that the decision which was evaluated
             is part of.
         output (str): JSON document that will instantiate the result of the decision which was evaluated.
-        failed_decision_definition_id (str): The ID of the decision which failed during evaluation. Example: new-hire-
-            onboarding-workflow.
-        failure_message (str): Message describing why the decision which was evaluated failed.
+        failed_decision_definition_id (None | str): The ID of the decision which failed during evaluation. Example: new-
+            hire-onboarding-workflow.
+        failure_message (None | str): Message describing why the decision which was evaluated failed.
         tenant_id (str): The tenant ID of the evaluated decision. Example: customer-service.
         decision_definition_key (str): The unique key identifying the decision which was evaluated. Example:
             2251799813326547.
@@ -59,8 +59,8 @@ class EvaluateDecisionResult:
     decision_definition_version: int
     decision_requirements_id: str
     output: str
-    failed_decision_definition_id: DecisionDefinitionId
-    failure_message: str
+    failed_decision_definition_id: None | DecisionDefinitionId
+    failure_message: None | str
     tenant_id: TenantId
     decision_definition_key: DecisionDefinitionKey
     decision_requirements_key: DecisionRequirementsKey
@@ -82,8 +82,10 @@ class EvaluateDecisionResult:
 
         output = self.output
 
+        failed_decision_definition_id: None | DecisionDefinitionId
         failed_decision_definition_id = self.failed_decision_definition_id
 
+        failure_message: None | str
         failure_message = self.failure_message
 
         tenant_id = self.tenant_id
@@ -141,9 +143,27 @@ class EvaluateDecisionResult:
 
         output = d.pop("output")
 
-        failed_decision_definition_id = d.pop("failedDecisionDefinitionId")
+        def _parse_failed_decision_definition_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
 
-        failure_message = d.pop("failureMessage")
+        _raw_failed_decision_definition_id = _parse_failed_decision_definition_id(
+            d.pop("failedDecisionDefinitionId")
+        )
+
+        failed_decision_definition_id = (
+            lift_decision_definition_id(_raw_failed_decision_definition_id)
+            if isinstance(_raw_failed_decision_definition_id, str)
+            else _raw_failed_decision_definition_id
+        )
+
+        def _parse_failure_message(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        failure_message = _parse_failure_message(d.pop("failureMessage"))
 
         tenant_id = lift_tenant_id(d.pop("tenantId"))
 

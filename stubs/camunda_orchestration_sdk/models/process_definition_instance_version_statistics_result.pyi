@@ -11,7 +11,7 @@ T = TypeVar("T", bound="ProcessDefinitionInstanceVersionStatisticsResult")
 class ProcessDefinitionInstanceVersionStatisticsResult:
     process_definition_id: ProcessDefinitionId
     process_definition_key: ProcessDefinitionKey
-    process_definition_name: str
+    process_definition_name: None | str
     tenant_id: TenantId
     process_definition_version: int
     active_instances_with_incident_count: int

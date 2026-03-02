@@ -20,7 +20,7 @@ from camunda_orchestration_sdk.semantic_types import (
 
 import datetime
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -45,17 +45,17 @@ class CorrelatedMessageSubscriptionResult:
             Example: new-account-onboarding-workflow.
         process_instance_key (str): The process instance key associated with this correlated message subscription.
             Example: 2251799813690746.
+        root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
+            top-level
+            ancestor in the process instance hierarchy. This field is only present for data
+            belonging to process instance hierarchies created in version 8.9 or later.
+             Example: 2251799813690746.
         subscription_key (str): The subscription key that received the message. Example: 2251799813632456.
         tenant_id (str): The tenant ID associated with this correlated message subscription. Example: customer-service.
         element_instance_key (str | Unset): The element instance key that received the message. Example:
             2251799813686789.
         process_definition_key (str | Unset): The process definition key associated with this correlated message
             subscription. Example: 2251799813686749.
-        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
-            top-level
-            ancestor in the process instance hierarchy. This field is only present for data
-            belonging to process instance hierarchies created in version 8.9 or later.
-             Example: 2251799813690746.
     """
 
     correlation_key: str
@@ -66,11 +66,11 @@ class CorrelatedMessageSubscriptionResult:
     partition_id: int
     process_definition_id: ProcessDefinitionId
     process_instance_key: ProcessInstanceKey
+    root_process_instance_key: None | ProcessInstanceKey
     subscription_key: MessageSubscriptionKey
     tenant_id: TenantId
     element_instance_key: ElementInstanceKey | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -92,6 +92,9 @@ class CorrelatedMessageSubscriptionResult:
 
         process_instance_key = self.process_instance_key
 
+        root_process_instance_key: None | ProcessInstanceKey
+        root_process_instance_key = self.root_process_instance_key
+
         subscription_key = self.subscription_key
 
         tenant_id = self.tenant_id
@@ -99,8 +102,6 @@ class CorrelatedMessageSubscriptionResult:
         element_instance_key = self.element_instance_key
 
         process_definition_key = self.process_definition_key
-
-        root_process_instance_key = self.root_process_instance_key
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -114,6 +115,7 @@ class CorrelatedMessageSubscriptionResult:
                 "partitionId": partition_id,
                 "processDefinitionId": process_definition_id,
                 "processInstanceKey": process_instance_key,
+                "rootProcessInstanceKey": root_process_instance_key,
                 "subscriptionKey": subscription_key,
                 "tenantId": tenant_id,
             }
@@ -122,8 +124,6 @@ class CorrelatedMessageSubscriptionResult:
             field_dict["elementInstanceKey"] = element_instance_key
         if process_definition_key is not UNSET:
             field_dict["processDefinitionKey"] = process_definition_key
-        if root_process_instance_key is not UNSET:
-            field_dict["rootProcessInstanceKey"] = root_process_instance_key
 
         return field_dict
 
@@ -146,6 +146,21 @@ class CorrelatedMessageSubscriptionResult:
 
         process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
 
+        def _parse_root_process_instance_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_root_process_instance_key = _parse_root_process_instance_key(
+            d.pop("rootProcessInstanceKey")
+        )
+
+        root_process_instance_key = (
+            lift_process_instance_key(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
+
         subscription_key = lift_message_subscription_key(d.pop("subscriptionKey"))
 
         tenant_id = lift_tenant_id(d.pop("tenantId"))
@@ -162,8 +177,6 @@ class CorrelatedMessageSubscriptionResult:
             else UNSET
         )
 
-        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
-
         correlated_message_subscription_result = cls(
             correlation_key=correlation_key,
             correlation_time=correlation_time,
@@ -173,11 +186,11 @@ class CorrelatedMessageSubscriptionResult:
             partition_id=partition_id,
             process_definition_id=process_definition_id,
             process_instance_key=process_instance_key,
+            root_process_instance_key=root_process_instance_key,
             subscription_key=subscription_key,
             tenant_id=tenant_id,
             element_instance_key=element_instance_key,
             process_definition_key=process_definition_key,
-            root_process_instance_key=root_process_instance_key,
         )
 
         correlated_message_subscription_result.additional_properties = d

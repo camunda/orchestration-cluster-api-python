@@ -6,11 +6,13 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
+from ..models.expression_evaluation_request_context import ExpressionEvaluationRequestContext
 T = TypeVar("T", bound="ExpressionEvaluationRequest")
 @_attrs_define
 class ExpressionEvaluationRequest:
     expression: str
     tenant_id: TenantId | Unset = UNSET
+    context: ExpressionEvaluationRequestContext | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

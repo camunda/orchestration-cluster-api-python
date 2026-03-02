@@ -9,7 +9,9 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.offset_based_pagination import OffsetBasedPagination
+    from ..models.process_definition_instance_statistics_query_page import (
+        ProcessDefinitionInstanceStatisticsQueryPage,
+    )
     from ..models.process_definition_instance_statistics_query_sort_request import (
         ProcessDefinitionInstanceStatisticsQuerySortRequest,
     )
@@ -22,11 +24,11 @@ T = TypeVar("T", bound="ProcessDefinitionInstanceStatisticsQuery")
 class ProcessDefinitionInstanceStatisticsQuery:
     """
     Attributes:
-        page (OffsetBasedPagination | Unset):
+        page (ProcessDefinitionInstanceStatisticsQueryPage | Unset): Search cursor pagination.
         sort (list[ProcessDefinitionInstanceStatisticsQuerySortRequest] | Unset): Sort field criteria.
     """
 
-    page: OffsetBasedPagination | Unset = UNSET
+    page: ProcessDefinitionInstanceStatisticsQueryPage | Unset = UNSET
     sort: list[ProcessDefinitionInstanceStatisticsQuerySortRequest] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -56,18 +58,20 @@ class ProcessDefinitionInstanceStatisticsQuery:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.offset_based_pagination import OffsetBasedPagination
+        from ..models.process_definition_instance_statistics_query_page import (
+            ProcessDefinitionInstanceStatisticsQueryPage,
+        )
         from ..models.process_definition_instance_statistics_query_sort_request import (
             ProcessDefinitionInstanceStatisticsQuerySortRequest,
         )
 
         d = dict(src_dict)
         _page = d.pop("page", UNSET)
-        page: OffsetBasedPagination | Unset
+        page: ProcessDefinitionInstanceStatisticsQueryPage | Unset
         if isinstance(_page, Unset):
             page = UNSET
         else:
-            page = OffsetBasedPagination.from_dict(_page)
+            page = ProcessDefinitionInstanceStatisticsQueryPage.from_dict(_page)
 
         _sort = d.pop("sort", UNSET)
         sort: list[ProcessDefinitionInstanceStatisticsQuerySortRequest] | Unset = UNSET

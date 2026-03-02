@@ -12,14 +12,14 @@ from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="BatchOperationItemResponse")
 @_attrs_define
 class BatchOperationItemResponse:
+    root_process_instance_key: None | ProcessInstanceKey
     operation_type: BatchOperationTypeEnum | Unset = UNSET
     batch_operation_key: BatchOperationKey | Unset = UNSET
     item_key: str | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     state: BatchOperationItemResponseState | Unset = UNSET
     processed_date: datetime.datetime | Unset = UNSET
-    error_message: str | Unset = UNSET
+    error_message: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

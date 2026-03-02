@@ -333,6 +333,12 @@ class ConfigurationResolver:
             elif has_basic_creds:
                 merged["CAMUNDA_AUTH_STRATEGY"] = "BASIC"
 
+        # Strip keys not recognised by the configuration model so that
+        # unrelated env vars (from .env files or explicit dicts) don't
+        # trigger Pydantic's extra="forbid" validation error.
+        allowed = CamundaSdkConfiguration.model_fields
+        merged = {k: v for k, v in merged.items() if k in allowed}
+
         try:
             effective = CamundaSdkConfiguration.model_validate(merged)
         except ValidationError as e:

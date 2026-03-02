@@ -11,7 +11,7 @@ T = TypeVar("T", bound="ProcessDefinitionInstanceStatisticsResult")
 class ProcessDefinitionInstanceStatisticsResult:
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
-    latest_process_definition_name: str | Unset = UNSET
+    latest_process_definition_name: None | str | Unset = UNSET
     has_multiple_versions: bool | Unset = UNSET
     active_instances_without_incident_count: int | Unset = UNSET
     active_instances_with_incident_count: int | Unset = UNSET

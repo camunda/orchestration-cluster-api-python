@@ -9,8 +9,8 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
     from ..models.job_type_statistics_filter import JobTypeStatisticsFilter
+    from ..models.job_type_statistics_query_page import JobTypeStatisticsQueryPage
 
 
 T = TypeVar("T", bound="JobTypeStatisticsQuery")
@@ -22,11 +22,11 @@ class JobTypeStatisticsQuery:
 
     Attributes:
         filter_ (JobTypeStatisticsFilter | Unset): Job type statistics search filter.
-        page (CursorBasedForwardPagination | Unset):
+        page (JobTypeStatisticsQueryPage | Unset): Search cursor pagination.
     """
 
     filter_: JobTypeStatisticsFilter | Unset = UNSET
-    page: CursorBasedForwardPagination | Unset = UNSET
+    page: JobTypeStatisticsQueryPage | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -52,10 +52,8 @@ class JobTypeStatisticsQuery:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.cursor_based_forward_pagination import (
-            CursorBasedForwardPagination,
-        )
         from ..models.job_type_statistics_filter import JobTypeStatisticsFilter
+        from ..models.job_type_statistics_query_page import JobTypeStatisticsQueryPage
 
         d = dict(src_dict)
         _filter_ = d.pop("filter", UNSET)
@@ -66,11 +64,11 @@ class JobTypeStatisticsQuery:
             filter_ = JobTypeStatisticsFilter.from_dict(_filter_)
 
         _page = d.pop("page", UNSET)
-        page: CursorBasedForwardPagination | Unset
+        page: JobTypeStatisticsQueryPage | Unset
         if isinstance(_page, Unset):
             page = UNSET
         else:
-            page = CursorBasedForwardPagination.from_dict(_page)
+            page = JobTypeStatisticsQueryPage.from_dict(_page)
 
         job_type_statistics_query = cls(
             filter_=filter_,

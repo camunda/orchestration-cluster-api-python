@@ -5,13 +5,13 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
-from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
 from ..models.job_type_statistics_filter import JobTypeStatisticsFilter
+from ..models.job_type_statistics_query_page import JobTypeStatisticsQueryPage
 T = TypeVar("T", bound="JobTypeStatisticsQuery")
 @_attrs_define
 class JobTypeStatisticsQuery:
     filter_: JobTypeStatisticsFilter | Unset = UNSET
-    page: CursorBasedForwardPagination | Unset = UNSET
+    page: JobTypeStatisticsQueryPage | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

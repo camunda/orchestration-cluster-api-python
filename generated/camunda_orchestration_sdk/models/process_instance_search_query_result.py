@@ -22,8 +22,7 @@ class ProcessInstanceSearchQueryResult:
 
     Attributes:
         items (list[ProcessInstanceResult]): The matching process instances.
-        page (SearchQueryPageResponse): Pagination information about the search results. Example: {'totalItems': 1,
-            'hasMoreTotalItems': False}.
+        page (SearchQueryPageResponse): Pagination information about the search results.
     """
 
     items: list[ProcessInstanceResult]

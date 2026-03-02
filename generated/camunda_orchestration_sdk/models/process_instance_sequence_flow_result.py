@@ -13,7 +13,7 @@ from camunda_orchestration_sdk.semantic_types import (
 )
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -28,13 +28,13 @@ class ProcessInstanceSequenceFlowResult:
     """Process instance sequence flow result.
 
     Attributes:
-        sequence_flow_id (str | Unset): The sequence flow id.
-        process_instance_key (str | Unset): The key of this process instance. Example: 2251799813690746.
-        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
+        root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
             top-level
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
+        sequence_flow_id (str | Unset): The sequence flow id.
+        process_instance_key (str | Unset): The key of this process instance. Example: 2251799813690746.
         process_definition_key (str | Unset): The process definition key. Example: 2251799813686749.
         process_definition_id (str | Unset): The process definition id. Example: new-account-onboarding-workflow.
         element_id (str | Unset): The element id for this sequence flow, as provided in the BPMN process. Example:
@@ -42,9 +42,9 @@ class ProcessInstanceSequenceFlowResult:
         tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
     """
 
+    root_process_instance_key: None | ProcessInstanceKey
     sequence_flow_id: str | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     element_id: ElementId | Unset = UNSET
@@ -54,11 +54,12 @@ class ProcessInstanceSequenceFlowResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
+        root_process_instance_key: None | ProcessInstanceKey
+        root_process_instance_key = self.root_process_instance_key
+
         sequence_flow_id = self.sequence_flow_id
 
         process_instance_key = self.process_instance_key
-
-        root_process_instance_key = self.root_process_instance_key
 
         process_definition_key = self.process_definition_key
 
@@ -70,13 +71,15 @@ class ProcessInstanceSequenceFlowResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
+        field_dict.update(
+            {
+                "rootProcessInstanceKey": root_process_instance_key,
+            }
+        )
         if sequence_flow_id is not UNSET:
             field_dict["sequenceFlowId"] = sequence_flow_id
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
-        if root_process_instance_key is not UNSET:
-            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if process_definition_key is not UNSET:
             field_dict["processDefinitionKey"] = process_definition_key
         if process_definition_id is not UNSET:
@@ -91,6 +94,22 @@ class ProcessInstanceSequenceFlowResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+
+        def _parse_root_process_instance_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_root_process_instance_key = _parse_root_process_instance_key(
+            d.pop("rootProcessInstanceKey")
+        )
+
+        root_process_instance_key = (
+            lift_process_instance_key(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
+
         sequence_flow_id = d.pop("sequenceFlowId", UNSET)
 
         process_instance_key = (
@@ -98,8 +117,6 @@ class ProcessInstanceSequenceFlowResult:
             if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
             else UNSET
         )
-
-        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
 
         process_definition_key = (
             lift_process_definition_key(_val)
@@ -126,9 +143,9 @@ class ProcessInstanceSequenceFlowResult:
         )
 
         process_instance_sequence_flow_result = cls(
+            root_process_instance_key=root_process_instance_key,
             sequence_flow_id=sequence_flow_id,
             process_instance_key=process_instance_key,
-            root_process_instance_key=root_process_instance_key,
             process_definition_key=process_definition_key,
             process_definition_id=process_definition_id,
             element_id=element_id,

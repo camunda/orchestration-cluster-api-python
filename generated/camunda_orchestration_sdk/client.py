@@ -27,12 +27,16 @@ from .runtime.auth import (
 from .runtime.logging import CamundaLogger, SdkLogger, create_logger
 from pathlib import Path
 from .models.deployment_result import DeploymentResult
-from .models.deployment_process_result import DeploymentProcessResult
-from .models.deployment_decision_result import DeploymentDecisionResult
-from .models.deployment_decision_requirements_result import (
-    DeploymentDecisionRequirementsResult,
+from .models.deployment_metadata_result_process_definition import (
+    DeploymentMetadataResultProcessDefinition,
 )
-from .models.deployment_form_result import DeploymentFormResult
+from .models.deployment_metadata_result_decision_definition import (
+    DeploymentMetadataResultDecisionDefinition,
+)
+from .models.deployment_metadata_result_decision_requirements import (
+    DeploymentMetadataResultDecisionRequirements,
+)
+from .models.deployment_metadata_result_form import DeploymentMetadataResultForm
 
 if TYPE_CHECKING:
     from .models.ad_hoc_sub_process_activate_activities_instruction import (
@@ -141,6 +145,12 @@ if TYPE_CHECKING:
         GlobalJobStatisticsQueryResult,
     )
     from .models.global_task_listener_result import GlobalTaskListenerResult
+    from .models.global_task_listener_search_query_request import (
+        GlobalTaskListenerSearchQueryRequest,
+    )
+    from .models.global_task_listener_search_query_result import (
+        GlobalTaskListenerSearchQueryResult,
+    )
     from .models.group_create_request import GroupCreateRequest
     from .models.group_create_result import GroupCreateResult
     from .models.group_result import GroupResult
@@ -178,7 +188,6 @@ if TYPE_CHECKING:
     from .models.mapping_rule_create_request import MappingRuleCreateRequest
     from .models.mapping_rule_result import MappingRuleResult
     from .models.mapping_rule_search_query_request import MappingRuleSearchQueryRequest
-    from .models.mapping_rule_search_query_result import MappingRuleSearchQueryResult
     from .models.mapping_rule_update_request import MappingRuleUpdateRequest
     from .models.message_correlation_request import MessageCorrelationRequest
     from .models.message_correlation_result import MessageCorrelationResult
@@ -273,7 +282,22 @@ if TYPE_CHECKING:
     from .models.search_clients_for_tenant_response_200 import (
         SearchClientsForTenantResponse200,
     )
-    from .models.search_query_response import SearchQueryResponse
+    from .models.search_mapping_rule_response_200 import SearchMappingRuleResponse200
+    from .models.search_mapping_rules_for_group_response_200 import (
+        SearchMappingRulesForGroupResponse200,
+    )
+    from .models.search_mapping_rules_for_role_response_200 import (
+        SearchMappingRulesForRoleResponse200,
+    )
+    from .models.search_mapping_rules_for_tenant_response_200 import (
+        SearchMappingRulesForTenantResponse200,
+    )
+    from .models.search_roles_for_group_response_200 import (
+        SearchRolesForGroupResponse200,
+    )
+    from .models.search_roles_for_tenant_response_200 import (
+        SearchRolesForTenantResponse200,
+    )
     from .models.search_user_task_variables_data import SearchUserTaskVariablesData
     from .models.search_users_for_group_data import SearchUsersForGroupData
     from .models.search_users_for_group_response_200 import (
@@ -635,10 +659,10 @@ class AuthenticatedClient:
 
 
 class ExtendedDeploymentResult(DeploymentResult):
-    processes: list[DeploymentProcessResult]
-    decisions: list[DeploymentDecisionResult]
-    decision_requirements: list[DeploymentDecisionRequirementsResult]
-    forms: list[DeploymentFormResult]
+    processes: list[DeploymentMetadataResultProcessDefinition]
+    decisions: list[DeploymentMetadataResultDecisionDefinition]
+    decision_requirements: list[DeploymentMetadataResultDecisionRequirements]
+    forms: list[DeploymentMetadataResultForm]
 
     def __init__(self, response: DeploymentResult):
         self.deployment_key = response.deployment_key
@@ -650,18 +674,25 @@ class ExtendedDeploymentResult(DeploymentResult):
             d.process_definition
             for d in self.deployments
             if not isinstance(d.process_definition, Unset)
+            and d.process_definition is not None
         ]
         self.decisions = [
             d.decision_definition
             for d in self.deployments
             if not isinstance(d.decision_definition, Unset)
+            and d.decision_definition is not None
         ]
         self.decision_requirements = [
             d.decision_requirements
             for d in self.deployments
             if not isinstance(d.decision_requirements, Unset)
+            and d.decision_requirements is not None
         ]
-        self.forms = [d.form for d in self.deployments if not isinstance(d.form, Unset)]
+        self.forms = [
+            d.form
+            for d in self.deployments
+            if not isinstance(d.form, Unset) and d.form is not None
+        ]
 
 
 class CamundaClient:
@@ -1037,7 +1068,7 @@ class CamundaClient:
         *,
         data: RoleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchQueryResponse:
+    ) -> SearchRolesForTenantResponse200:
         """Search roles for tenant
 
          Retrieves a filtered and sorted list of roles for a specified tenant.
@@ -1050,7 +1081,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchQueryResponse"""
+            SearchRolesForTenantResponse200"""
         from .api.tenant.search_roles_for_tenant import (
             sync as search_roles_for_tenant_sync,
         )
@@ -1225,7 +1256,7 @@ class CamundaClient:
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchQueryResponse:
+    ) -> SearchMappingRulesForTenantResponse200:
         """Search mapping rules for tenant
 
          Retrieves a filtered and sorted list of MappingRules for a specified tenant.
@@ -1238,7 +1269,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchQueryResponse"""
+            SearchMappingRulesForTenantResponse200"""
         from .api.tenant.search_mapping_rules_for_tenant import (
             sync as search_mapping_rules_for_tenant_sync,
         )
@@ -2063,7 +2094,7 @@ class CamundaClient:
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchQueryResponse:
+    ) -> SearchMappingRulesForRoleResponse200:
         """Search role mapping rules
 
          Search mapping rules with assigned role.
@@ -2081,7 +2112,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchQueryResponse"""
+            SearchMappingRulesForRoleResponse200"""
         from .api.role.search_mapping_rules_for_role import (
             sync as search_mapping_rules_for_role_sync,
         )
@@ -2800,7 +2831,7 @@ class CamundaClient:
         *,
         data: RoleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchQueryResponse:
+    ) -> SearchRolesForGroupResponse200:
         """Search group roles
 
          Search roles assigned to a group.
@@ -2818,7 +2849,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchQueryResponse"""
+            SearchRolesForGroupResponse200"""
         from .api.group.search_roles_for_group import (
             sync as search_roles_for_group_sync,
         )
@@ -3091,7 +3122,7 @@ class CamundaClient:
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchQueryResponse:
+    ) -> SearchMappingRulesForGroupResponse200:
         """Search group mapping rules
 
          Search mapping rules assigned to a group.
@@ -3109,7 +3140,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchQueryResponse"""
+            SearchMappingRulesForGroupResponse200"""
         from .api.group.search_mapping_rules_for_group import (
             sync as search_mapping_rules_for_group_sync,
         )
@@ -3274,6 +3305,36 @@ class CamundaClient:
             _kwargs["body"] = _kwargs.pop("data")
         return delete_global_task_listener_sync(**_kwargs)
 
+    def get_global_task_listener(
+        self, id: str, **kwargs: Any
+    ) -> GlobalTaskListenerResult:
+        """Get global user task listener
+
+         Get a global user task listener by its id.
+
+        Args:
+            id (str): The user-defined id for the global listener Example: GlobalListener_1.
+
+        Raises:
+            errors.GetGlobalTaskListenerUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.GetGlobalTaskListenerForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.GetGlobalTaskListenerNotFound: If the response status code is 404. The global user task listener with the given id was not found.
+            errors.GetGlobalTaskListenerInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            GlobalTaskListenerResult"""
+        from .api.global_listener.get_global_task_listener import (
+            sync as get_global_task_listener_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return get_global_task_listener_sync(**_kwargs)
+
     def update_global_task_listener(
         self, id: str, *, data: UpdateGlobalTaskListenerRequest, **kwargs: Any
     ) -> GlobalTaskListenerResult:
@@ -3306,6 +3367,39 @@ class CamundaClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return update_global_task_listener_sync(**_kwargs)
+
+    def search_global_task_listeners(
+        self,
+        *,
+        data: GlobalTaskListenerSearchQueryRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> GlobalTaskListenerSearchQueryResult:
+        """Search global user task listeners
+
+         Search for global user task listeners based on given criteria.
+
+        Args:
+            body (GlobalTaskListenerSearchQueryRequest | Unset): Global listener search query request.
+
+        Raises:
+            errors.SearchGlobalTaskListenersBadRequest: If the response status code is 400. The provided data is not valid.
+            errors.SearchGlobalTaskListenersUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.SearchGlobalTaskListenersForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.SearchGlobalTaskListenersInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            GlobalTaskListenerSearchQueryResult"""
+        from .api.global_listener.search_global_task_listeners import (
+            sync as search_global_task_listeners_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return search_global_task_listeners_sync(**_kwargs)
 
     def create_global_task_listener(
         self, *, data: CreateGlobalTaskListenerRequest, **kwargs: Any
@@ -5832,7 +5926,7 @@ class CamundaClient:
 
     def search_mapping_rule(
         self, *, data: MappingRuleSearchQueryRequest | Unset = UNSET, **kwargs: Any
-    ) -> MappingRuleSearchQueryResult:
+    ) -> SearchMappingRuleResponse200:
         """Search mapping rules
 
          Search for mapping rules based on given criteria.
@@ -5848,7 +5942,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            MappingRuleSearchQueryResult"""
+            SearchMappingRuleResponse200"""
         from .api.mapping_rule.search_mapping_rule import (
             sync as search_mapping_rule_sync,
         )
@@ -7334,7 +7428,7 @@ class CamundaAsyncClient:
         *,
         data: RoleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchQueryResponse:
+    ) -> SearchRolesForTenantResponse200:
         """Search roles for tenant
 
          Retrieves a filtered and sorted list of roles for a specified tenant.
@@ -7347,7 +7441,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchQueryResponse"""
+            SearchRolesForTenantResponse200"""
         from .api.tenant.search_roles_for_tenant import (
             asyncio as search_roles_for_tenant_asyncio,
         )
@@ -7526,7 +7620,7 @@ class CamundaAsyncClient:
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchQueryResponse:
+    ) -> SearchMappingRulesForTenantResponse200:
         """Search mapping rules for tenant
 
          Retrieves a filtered and sorted list of MappingRules for a specified tenant.
@@ -7539,7 +7633,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchQueryResponse"""
+            SearchMappingRulesForTenantResponse200"""
         from .api.tenant.search_mapping_rules_for_tenant import (
             asyncio as search_mapping_rules_for_tenant_asyncio,
         )
@@ -8372,7 +8466,7 @@ class CamundaAsyncClient:
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchQueryResponse:
+    ) -> SearchMappingRulesForRoleResponse200:
         """Search role mapping rules
 
          Search mapping rules with assigned role.
@@ -8390,7 +8484,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchQueryResponse"""
+            SearchMappingRulesForRoleResponse200"""
         from .api.role.search_mapping_rules_for_role import (
             asyncio as search_mapping_rules_for_role_asyncio,
         )
@@ -9113,7 +9207,7 @@ class CamundaAsyncClient:
         *,
         data: RoleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchQueryResponse:
+    ) -> SearchRolesForGroupResponse200:
         """Search group roles
 
          Search roles assigned to a group.
@@ -9131,7 +9225,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchQueryResponse"""
+            SearchRolesForGroupResponse200"""
         from .api.group.search_roles_for_group import (
             asyncio as search_roles_for_group_asyncio,
         )
@@ -9404,7 +9498,7 @@ class CamundaAsyncClient:
         *,
         data: MappingRuleSearchQueryRequest | Unset = UNSET,
         **kwargs: Any,
-    ) -> SearchQueryResponse:
+    ) -> SearchMappingRulesForGroupResponse200:
         """Search group mapping rules
 
          Search mapping rules assigned to a group.
@@ -9422,7 +9516,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            SearchQueryResponse"""
+            SearchMappingRulesForGroupResponse200"""
         from .api.group.search_mapping_rules_for_group import (
             asyncio as search_mapping_rules_for_group_asyncio,
         )
@@ -9589,6 +9683,36 @@ class CamundaAsyncClient:
             _kwargs["body"] = _kwargs.pop("data")
         return await delete_global_task_listener_asyncio(**_kwargs)
 
+    async def get_global_task_listener(
+        self, id: str, **kwargs: Any
+    ) -> GlobalTaskListenerResult:
+        """Get global user task listener
+
+         Get a global user task listener by its id.
+
+        Args:
+            id (str): The user-defined id for the global listener Example: GlobalListener_1.
+
+        Raises:
+            errors.GetGlobalTaskListenerUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.GetGlobalTaskListenerForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.GetGlobalTaskListenerNotFound: If the response status code is 404. The global user task listener with the given id was not found.
+            errors.GetGlobalTaskListenerInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            GlobalTaskListenerResult"""
+        from .api.global_listener.get_global_task_listener import (
+            asyncio as get_global_task_listener_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await get_global_task_listener_asyncio(**_kwargs)
+
     async def update_global_task_listener(
         self, id: str, *, data: UpdateGlobalTaskListenerRequest, **kwargs: Any
     ) -> GlobalTaskListenerResult:
@@ -9621,6 +9745,39 @@ class CamundaAsyncClient:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return await update_global_task_listener_asyncio(**_kwargs)
+
+    async def search_global_task_listeners(
+        self,
+        *,
+        data: GlobalTaskListenerSearchQueryRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> GlobalTaskListenerSearchQueryResult:
+        """Search global user task listeners
+
+         Search for global user task listeners based on given criteria.
+
+        Args:
+            body (GlobalTaskListenerSearchQueryRequest | Unset): Global listener search query request.
+
+        Raises:
+            errors.SearchGlobalTaskListenersBadRequest: If the response status code is 400. The provided data is not valid.
+            errors.SearchGlobalTaskListenersUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.SearchGlobalTaskListenersForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.SearchGlobalTaskListenersInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            GlobalTaskListenerSearchQueryResult"""
+        from .api.global_listener.search_global_task_listeners import (
+            asyncio as search_global_task_listeners_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await search_global_task_listeners_asyncio(**_kwargs)
 
     async def create_global_task_listener(
         self, *, data: CreateGlobalTaskListenerRequest, **kwargs: Any
@@ -12171,7 +12328,7 @@ class CamundaAsyncClient:
 
     async def search_mapping_rule(
         self, *, data: MappingRuleSearchQueryRequest | Unset = UNSET, **kwargs: Any
-    ) -> MappingRuleSearchQueryResult:
+    ) -> SearchMappingRuleResponse200:
         """Search mapping rules
 
          Search for mapping rules based on given criteria.
@@ -12187,7 +12344,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            MappingRuleSearchQueryResult"""
+            SearchMappingRuleResponse200"""
         from .api.mapping_rule.search_mapping_rule import (
             asyncio as search_mapping_rule_asyncio,
         )

@@ -22,7 +22,7 @@ class DeleteResourceResponseBatchOperation:
 
     This field is only populated when the request `deleteHistory` is set to `true` and the resource
     is a process definition. For other resource types (decisions, forms, generic resources),
-    this field will not be present in the response.
+    this field will be `null`.
 
         Attributes:
             batch_operation_key (str | Unset): Key of the batch operation. Example: 2251799813684321.

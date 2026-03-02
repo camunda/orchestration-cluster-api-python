@@ -4,9 +4,9 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
     from ..models.process_instance_sequence_flow_result import (
@@ -22,27 +22,27 @@ class ProcessInstanceSequenceFlowsQueryResult:
     """Process instance sequence flows query response.
 
     Attributes:
-        items (list[ProcessInstanceSequenceFlowResult] | Unset): The sequence flows.
+        items (list[ProcessInstanceSequenceFlowResult]): The sequence flows.
     """
 
-    items: list[ProcessInstanceSequenceFlowResult] | Unset = UNSET
+    items: list[ProcessInstanceSequenceFlowResult]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        items: list[dict[str, Any]] | Unset = UNSET
-        if not isinstance(self.items, Unset):
-            items = []
-            for items_item_data in self.items:
-                items_item = items_item_data.to_dict()
-                items.append(items_item)
+        items: list[dict[str, Any]] = []
+        for items_item_data in self.items:
+            items_item = items_item_data.to_dict()
+            items.append(items_item)
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if items is not UNSET:
-            field_dict["items"] = items
+        field_dict.update(
+            {
+                "items": items,
+            }
+        )
 
         return field_dict
 
@@ -53,16 +53,12 @@ class ProcessInstanceSequenceFlowsQueryResult:
         )
 
         d = dict(src_dict)
-        _items = d.pop("items", UNSET)
-        items: list[ProcessInstanceSequenceFlowResult] | Unset = UNSET
-        if _items is not UNSET:
-            items = []
-            for items_item_data in _items:
-                items_item = ProcessInstanceSequenceFlowResult.from_dict(
-                    items_item_data
-                )
+        items: list[ProcessInstanceSequenceFlowResult] = []
+        _items = d.pop("items")
+        for items_item_data in _items:
+            items_item = ProcessInstanceSequenceFlowResult.from_dict(items_item_data)
 
-                items.append(items_item)
+            items.append(items_item)
 
         process_instance_sequence_flows_query_result = cls(
             items=items,

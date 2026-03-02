@@ -7,7 +7,7 @@ from camunda_orchestration_sdk.semantic_types import (
 )
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -21,24 +21,21 @@ T = TypeVar("T", bound="SearchQueryPageResponse")
 class SearchQueryPageResponse:
     """Pagination information about the search results.
 
-    Example:
-        {'totalItems': 1, 'hasMoreTotalItems': False}
-
     Attributes:
         total_items (int): Total items matching the criteria.
         has_more_total_items (bool | Unset): Indicates whether there are more items matching the criteria beyond the
             returned items.
             This is useful for determining if additional requests are needed to retrieve all results.
-        start_cursor (str | Unset): The cursor value for getting the previous page of results. Use this in the `before`
+        start_cursor (None | str | Unset): The cursor value for getting the previous page of results. Use this in the
+            `before` field of an ensuing request. Example: WzIyNTE3OTk4MTM2ODcxMDJd.
+        end_cursor (None | str | Unset): The cursor value for getting the next page of results. Use this in the `after`
             field of an ensuing request. Example: WzIyNTE3OTk4MTM2ODcxMDJd.
-        end_cursor (str | Unset): The cursor value for getting the next page of results. Use this in the `after` field
-            of an ensuing request. Example: WzIyNTE3OTk4MTM2ODcxMDJd.
     """
 
     total_items: int
     has_more_total_items: bool | Unset = UNSET
-    start_cursor: StartCursor | Unset = UNSET
-    end_cursor: EndCursor | Unset = UNSET
+    start_cursor: None | StartCursor | Unset = UNSET
+    end_cursor: None | EndCursor | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -48,9 +45,17 @@ class SearchQueryPageResponse:
 
         has_more_total_items = self.has_more_total_items
 
-        start_cursor = self.start_cursor
+        start_cursor: None | StartCursor | Unset
+        if isinstance(self.start_cursor, Unset):
+            start_cursor = UNSET
+        else:
+            start_cursor = self.start_cursor
 
-        end_cursor = self.end_cursor
+        end_cursor: None | EndCursor | Unset
+        if isinstance(self.end_cursor, Unset):
+            end_cursor = UNSET
+        else:
+            end_cursor = self.end_cursor
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -75,16 +80,34 @@ class SearchQueryPageResponse:
 
         has_more_total_items = d.pop("hasMoreTotalItems", UNSET)
 
+        def _parse_start_cursor(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        _raw_start_cursor = _parse_start_cursor(d.pop("startCursor", UNSET))
+
         start_cursor = (
-            lift_start_cursor(_val)
-            if (_val := d.pop("startCursor", UNSET)) is not UNSET
-            else UNSET
+            lift_start_cursor(_raw_start_cursor)
+            if isinstance(_raw_start_cursor, str)
+            else _raw_start_cursor
         )
 
+        def _parse_end_cursor(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        _raw_end_cursor = _parse_end_cursor(d.pop("endCursor", UNSET))
+
         end_cursor = (
-            lift_end_cursor(_val)
-            if (_val := d.pop("endCursor", UNSET)) is not UNSET
-            else UNSET
+            lift_end_cursor(_raw_end_cursor)
+            if isinstance(_raw_end_cursor, str)
+            else _raw_end_cursor
         )
 
         search_query_page_response = cls(

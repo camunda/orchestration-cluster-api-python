@@ -7,7 +7,7 @@ from camunda_orchestration_sdk.semantic_types import (
 )
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -25,7 +25,8 @@ class ProcessDefinitionInstanceStatisticsResult:
         process_definition_id (str | Unset): Id of a process definition, from the model. Only ids of process definitions
             that are deployed are useful. Example: new-account-onboarding-workflow.
         tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
-        latest_process_definition_name (str | Unset): Name of the latest deployed process definition instance version.
+        latest_process_definition_name (None | str | Unset): Name of the latest deployed process definition instance
+            version.
         has_multiple_versions (bool | Unset): Indicates whether multiple versions of this process definition instance
             are deployed.
         active_instances_without_incident_count (int | Unset): Total number of currently active process instances of
@@ -36,7 +37,7 @@ class ProcessDefinitionInstanceStatisticsResult:
 
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
-    latest_process_definition_name: str | Unset = UNSET
+    latest_process_definition_name: None | str | Unset = UNSET
     has_multiple_versions: bool | Unset = UNSET
     active_instances_without_incident_count: int | Unset = UNSET
     active_instances_with_incident_count: int | Unset = UNSET
@@ -49,7 +50,11 @@ class ProcessDefinitionInstanceStatisticsResult:
 
         tenant_id = self.tenant_id
 
-        latest_process_definition_name = self.latest_process_definition_name
+        latest_process_definition_name: None | str | Unset
+        if isinstance(self.latest_process_definition_name, Unset):
+            latest_process_definition_name = UNSET
+        else:
+            latest_process_definition_name = self.latest_process_definition_name
 
         has_multiple_versions = self.has_multiple_versions
 
@@ -96,7 +101,16 @@ class ProcessDefinitionInstanceStatisticsResult:
             else UNSET
         )
 
-        latest_process_definition_name = d.pop("latestProcessDefinitionName", UNSET)
+        def _parse_latest_process_definition_name(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        latest_process_definition_name = _parse_latest_process_definition_name(
+            d.pop("latestProcessDefinitionName", UNSET)
+        )
 
         has_multiple_versions = d.pop("hasMultipleVersions", UNSET)
 

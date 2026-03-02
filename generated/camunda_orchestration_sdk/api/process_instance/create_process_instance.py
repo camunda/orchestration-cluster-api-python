@@ -13,7 +13,7 @@ from ...types import Response
 def _get_kwargs(*, body: ProcessCreationById | ProcessCreationByKey) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {"method": "post", "url": "/process-instances"}
-    if isinstance(body, ProcessCreationById):
+    if isinstance(body, ProcessCreationByKey):
         _kwargs["json"] = body.to_dict()
     else:
         _kwargs["json"] = body.to_dict()

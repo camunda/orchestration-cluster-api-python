@@ -19,10 +19,9 @@ T = TypeVar("T", bound="GlobalTaskListenerResult")
 class GlobalTaskListenerResult:
     """
     Attributes:
+        event_types (list[GlobalTaskListenerEventTypeEnum]): List of user task event types that trigger the listener.
         id (str | Unset): The user-defined id for the global listener Example: GlobalListener_1.
         source (GlobalListenerSourceEnum | Unset): How the global listener was defined.
-        event_types (list[GlobalTaskListenerEventTypeEnum] | Unset): List of user task event types that trigger the
-            listener.
         type_ (str | Unset): The name of the job type, used as a reference to specify which job workers request the
             respective listener job. Example: order-items.
         retries (int | Unset): Number of retries for the listener job.
@@ -31,9 +30,9 @@ class GlobalTaskListenerResult:
             priority ones.
     """
 
+    event_types: list[GlobalTaskListenerEventTypeEnum]
     id: str | Unset = UNSET
     source: GlobalListenerSourceEnum | Unset = UNSET
-    event_types: list[GlobalTaskListenerEventTypeEnum] | Unset = UNSET
     type_: str | Unset = UNSET
     retries: int | Unset = UNSET
     after_non_global: bool | Unset = UNSET
@@ -43,24 +42,20 @@ class GlobalTaskListenerResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
+        event_types: list[Any] = []
+        for (
+            componentsschemas_global_task_listener_event_types_item_data
+        ) in self.event_types:
+            componentsschemas_global_task_listener_event_types_item = (
+                componentsschemas_global_task_listener_event_types_item_data.value
+            )
+            event_types.append(componentsschemas_global_task_listener_event_types_item)
+
         id = self.id
 
         source: str | Unset = UNSET
         if not isinstance(self.source, Unset):
             source = self.source.value
-
-        event_types: list[str] | Unset = UNSET
-        if not isinstance(self.event_types, Unset):
-            event_types = []
-            for (
-                componentsschemas_global_task_listener_event_types_item_data
-            ) in self.event_types:
-                componentsschemas_global_task_listener_event_types_item = (
-                    componentsschemas_global_task_listener_event_types_item_data.value
-                )
-                event_types.append(
-                    componentsschemas_global_task_listener_event_types_item
-                )
 
         type_ = self.type_
 
@@ -72,13 +67,15 @@ class GlobalTaskListenerResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
+        field_dict.update(
+            {
+                "eventTypes": event_types,
+            }
+        )
         if id is not UNSET:
             field_dict["id"] = id
         if source is not UNSET:
             field_dict["source"] = source
-        if event_types is not UNSET:
-            field_dict["eventTypes"] = event_types
         if type_ is not UNSET:
             field_dict["type"] = type_
         if retries is not UNSET:
@@ -93,6 +90,19 @@ class GlobalTaskListenerResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        event_types: list[GlobalTaskListenerEventTypeEnum] = []
+        _event_types = d.pop("eventTypes")
+        for (
+            componentsschemas_global_task_listener_event_types_item_data
+        ) in _event_types:
+            componentsschemas_global_task_listener_event_types_item = (
+                GlobalTaskListenerEventTypeEnum(
+                    componentsschemas_global_task_listener_event_types_item_data
+                )
+            )
+
+            event_types.append(componentsschemas_global_task_listener_event_types_item)
+
         id = d.pop("id", UNSET)
 
         _source = d.pop("source", UNSET)
@@ -101,23 +111,6 @@ class GlobalTaskListenerResult:
             source = UNSET
         else:
             source = GlobalListenerSourceEnum(_source)
-
-        _event_types = d.pop("eventTypes", UNSET)
-        event_types: list[GlobalTaskListenerEventTypeEnum] | Unset = UNSET
-        if _event_types is not UNSET:
-            event_types = []
-            for (
-                componentsschemas_global_task_listener_event_types_item_data
-            ) in _event_types:
-                componentsschemas_global_task_listener_event_types_item = (
-                    GlobalTaskListenerEventTypeEnum(
-                        componentsschemas_global_task_listener_event_types_item_data
-                    )
-                )
-
-                event_types.append(
-                    componentsschemas_global_task_listener_event_types_item
-                )
 
         type_ = d.pop("type", UNSET)
 
@@ -128,9 +121,9 @@ class GlobalTaskListenerResult:
         priority = d.pop("priority", UNSET)
 
         global_task_listener_result = cls(
+            event_types=event_types,
             id=id,
             source=source,
-            event_types=event_types,
             type_=type_,
             retries=retries,
             after_non_global=after_non_global,

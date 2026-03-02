@@ -2880,6 +2880,42 @@ class GetGlobalJobStatisticsUnauthorized(ApiError):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
+class GetGlobalTaskListenerForbidden(ApiError):
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetGlobalTaskListenerInternalServerError(ApiError):
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetGlobalTaskListenerNotFound(ApiError):
+    """Raised when the server returns HTTP 404. The global user task listener with the given id was not found."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetGlobalTaskListenerUnauthorized(ApiError):
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
 class GetGroupForbidden(ApiError):
     """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
 
@@ -4780,6 +4816,42 @@ class SearchElementInstancesInternalServerError(ApiError):
 
 
 class SearchElementInstancesUnauthorized(ApiError):
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class SearchGlobalTaskListenersBadRequest(ApiError):
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class SearchGlobalTaskListenersForbidden(ApiError):
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class SearchGlobalTaskListenersInternalServerError(ApiError):
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class SearchGlobalTaskListenersUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
     parsed: ProblemDetail
@@ -7068,6 +7140,10 @@ __all__ = [
     "GetGlobalJobStatisticsForbidden",
     "GetGlobalJobStatisticsInternalServerError",
     "GetGlobalJobStatisticsUnauthorized",
+    "GetGlobalTaskListenerForbidden",
+    "GetGlobalTaskListenerInternalServerError",
+    "GetGlobalTaskListenerNotFound",
+    "GetGlobalTaskListenerUnauthorized",
     "GetGroupForbidden",
     "GetGroupInternalServerError",
     "GetGroupNotFound",
@@ -7280,6 +7356,10 @@ __all__ = [
     "SearchElementInstancesForbidden",
     "SearchElementInstancesInternalServerError",
     "SearchElementInstancesUnauthorized",
+    "SearchGlobalTaskListenersBadRequest",
+    "SearchGlobalTaskListenersForbidden",
+    "SearchGlobalTaskListenersInternalServerError",
+    "SearchGlobalTaskListenersUnauthorized",
     "SearchGroupsBadRequest",
     "SearchGroupsForRoleBadRequest",
     "SearchGroupsForRoleForbidden",

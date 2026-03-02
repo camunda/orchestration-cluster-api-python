@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import BusinessId, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -16,7 +16,8 @@ class CreateProcessInstanceResult:
     variables: CreateProcessInstanceResultVariables
     process_definition_key: ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
-    tags: list[str] | Unset = UNSET
+    tags: list[str]
+    business_id: None | BusinessId | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

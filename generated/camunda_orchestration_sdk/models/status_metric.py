@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 
@@ -19,12 +19,12 @@ class StatusMetric:
 
     Attributes:
         count (int): Number of jobs in this status. Example: 145.
-        last_updated_at (datetime.datetime): ISO 8601 timestamp of the last update for this status. Example:
+        last_updated_at (datetime.datetime | None): ISO 8601 timestamp of the last update for this status. Example:
             2024-07-29T15:51:28.071Z.
     """
 
     count: int
-    last_updated_at: datetime.datetime
+    last_updated_at: datetime.datetime | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -32,7 +32,11 @@ class StatusMetric:
     def to_dict(self) -> dict[str, Any]:
         count = self.count
 
-        last_updated_at = self.last_updated_at.isoformat()
+        last_updated_at: None | str
+        if isinstance(self.last_updated_at, datetime.datetime):
+            last_updated_at = self.last_updated_at.isoformat()
+        else:
+            last_updated_at = self.last_updated_at
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -50,7 +54,20 @@ class StatusMetric:
         d = dict(src_dict)
         count = d.pop("count")
 
-        last_updated_at = isoparse(d.pop("lastUpdatedAt"))
+        def _parse_last_updated_at(data: object) -> datetime.datetime | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                last_updated_at_type_0 = isoparse(data)
+
+                return last_updated_at_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(datetime.datetime | None, data)
+
+        last_updated_at = _parse_last_updated_at(d.pop("lastUpdatedAt"))
 
         status_metric = cls(
             count=count,

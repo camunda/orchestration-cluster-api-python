@@ -13,7 +13,7 @@ from ...types import Response
 
 def _get_kwargs(*, body: CreateGlobalTaskListenerRequest) -> dict[str, Any]:
     headers: dict[str, Any] = {}
-    _kwargs: dict[str, Any] = {"method": "post", "url": "/global-listeners/user-task"}
+    _kwargs: dict[str, Any] = {"method": "post", "url": "/global-task-listeners"}
     _kwargs["json"] = body.to_dict()
     headers["Content-Type"] = "application/json"
     _kwargs["headers"] = headers

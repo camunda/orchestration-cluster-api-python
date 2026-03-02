@@ -94,6 +94,28 @@ def try_lift_batch_operation_key(
         return False, e
 
 
+BusinessId = NewType("BusinessId", str)
+
+
+def lift_business_id(value: Any) -> BusinessId:
+    if not isinstance(value, str):
+        raise TypeError(
+            f"BusinessId must be str, got {type(value).__name__}: {value!r}"
+        )
+    if len(value) < 1:
+        raise ValueError(f"BusinessId shorter than minLength 1, got {value!r}")
+    if len(value) > 256:
+        raise ValueError(f"BusinessId longer than maxLength 256, got {value!r}")
+    return BusinessId(value)
+
+
+def try_lift_business_id(value: Any) -> Tuple[bool, BusinessId | Exception]:
+    try:
+        return True, lift_business_id(value)
+    except Exception as e:
+        return False, e
+
+
 ConditionalEvaluationKey = NewType("ConditionalEvaluationKey", str)
 
 
@@ -418,10 +440,6 @@ def lift_end_cursor(value: Any) -> EndCursor:
         raise ValueError(
             f"EndCursor does not match pattern '^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}(?:==)?|[A-Za-z0-9+/]{3}=)?$', got {value!r}"
         )
-    if len(value) < 2:
-        raise ValueError(f"EndCursor shorter than minLength 2, got {value!r}")
-    if len(value) > 300:
-        raise ValueError(f"EndCursor longer than maxLength 300, got {value!r}")
     return EndCursor(value)
 
 
@@ -682,38 +700,6 @@ def try_lift_process_instance_key(
         return False, e
 
 
-RootProcessInstanceKey = NewType("RootProcessInstanceKey", str)
-
-
-def lift_root_process_instance_key(value: Any) -> RootProcessInstanceKey:
-    if not isinstance(value, str):
-        raise TypeError(
-            f"RootProcessInstanceKey must be str, got {type(value).__name__}: {value!r}"
-        )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
-        raise ValueError(
-            f"RootProcessInstanceKey does not match pattern '^-?[0-9]+$', got {value!r}"
-        )
-    if len(value) < 1:
-        raise ValueError(
-            f"RootProcessInstanceKey shorter than minLength 1, got {value!r}"
-        )
-    if len(value) > 25:
-        raise ValueError(
-            f"RootProcessInstanceKey longer than maxLength 25, got {value!r}"
-        )
-    return RootProcessInstanceKey(value)
-
-
-def try_lift_root_process_instance_key(
-    value: Any,
-) -> Tuple[bool, RootProcessInstanceKey | Exception]:
-    try:
-        return True, lift_root_process_instance_key(value)
-    except Exception as e:
-        return False, e
-
-
 ScopeKey = NewType("ScopeKey", str)
 
 
@@ -778,10 +764,6 @@ def lift_start_cursor(value: Any) -> StartCursor:
         raise ValueError(
             f"StartCursor does not match pattern '^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}(?:==)?|[A-Za-z0-9+/]{3}=)?$', got {value!r}"
         )
-    if len(value) < 2:
-        raise ValueError(f"StartCursor shorter than minLength 2, got {value!r}")
-    if len(value) > 300:
-        raise ValueError(f"StartCursor longer than maxLength 300, got {value!r}")
     return StartCursor(value)
 
 
@@ -921,6 +903,7 @@ __all__ = [
     "AuditLogKey",
     "AuthorizationKey",
     "BatchOperationKey",
+    "BusinessId",
     "ConditionalEvaluationKey",
     "DecisionDefinitionId",
     "DecisionDefinitionKey",
@@ -943,7 +926,6 @@ __all__ = [
     "ProcessDefinitionId",
     "ProcessDefinitionKey",
     "ProcessInstanceKey",
-    "RootProcessInstanceKey",
     "ScopeKey",
     "SignalKey",
     "StartCursor",
@@ -956,6 +938,7 @@ __all__ = [
     "lift_audit_log_key",
     "lift_authorization_key",
     "lift_batch_operation_key",
+    "lift_business_id",
     "lift_conditional_evaluation_key",
     "lift_decision_definition_id",
     "lift_decision_definition_key",
@@ -978,7 +961,6 @@ __all__ = [
     "lift_process_definition_id",
     "lift_process_definition_key",
     "lift_process_instance_key",
-    "lift_root_process_instance_key",
     "lift_scope_key",
     "lift_signal_key",
     "lift_start_cursor",
@@ -991,6 +973,7 @@ __all__ = [
     "try_lift_audit_log_key",
     "try_lift_authorization_key",
     "try_lift_batch_operation_key",
+    "try_lift_business_id",
     "try_lift_conditional_evaluation_key",
     "try_lift_decision_definition_id",
     "try_lift_decision_definition_key",
@@ -1013,7 +996,6 @@ __all__ = [
     "try_lift_process_definition_id",
     "try_lift_process_definition_key",
     "try_lift_process_instance_key",
-    "try_lift_root_process_instance_key",
     "try_lift_scope_key",
     "try_lift_signal_key",
     "try_lift_start_cursor",

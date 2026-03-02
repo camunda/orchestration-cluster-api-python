@@ -163,7 +163,7 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
             re.DOTALL,
         )
         parse_match = parse_call_pattern.search(content)
-        if parse_match and f"{lifter_name}(_raw_" not in content:
+        if parse_match and f"{lifter_name}(_raw_{py_prop}" not in content:
             indent = parse_match.group(1)
             parse_call = parse_match.group(2)
             raw_var = f"_raw_{py_prop}"

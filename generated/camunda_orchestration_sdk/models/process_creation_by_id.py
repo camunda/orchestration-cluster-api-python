@@ -1,7 +1,9 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     ProcessDefinitionId,
     TenantId,
+    lift_business_id,
     lift_process_definition_id,
     lift_tenant_id,
 )
@@ -40,7 +42,10 @@ class ProcessCreationById:
         variables (ProcessInstanceCreationInstructionByIdVariables | Unset): JSON object that will instantiate the
             variables for the root variable scope
             of the process instance.
-        tenant_id (str | Unset): The tenant id of the process definition. Example: customer-service.
+        tenant_id (str | Unset): The tenant id of the process definition.
+            If multi-tenancy is enabled, provide the tenant id of the process definition to start a
+            process instance of. If multi-tenancy is disabled, don't provide this parameter.
+             Example: customer-service.
         operation_reference (int | Unset): A reference key chosen by the user that will be part of all records resulting
             from this operation.
             Must be > 0 if provided.
@@ -54,10 +59,11 @@ class ProcessCreationById:
 
             This parameter is an alpha feature and may be subject to change
             in future releases.
-        await_completion (bool | Unset): Wait for the process instance to complete. If the process instance completion
-            does
-            not occur within the requestTimeout, the request will be closed. This can lead to a 504
-            response status. Disabled by default.
+        await_completion (bool | Unset): Wait for the process instance to complete. If the process instance does not
+            complete
+            within the request timeout limit, a 504 response status will be returned. The process
+            instance will continue to run in the background regardless of the timeout. Disabled by
+            default.
              Default: False.
         fetch_variables (list[str] | Unset): List of variables by name to be included in the response when
             awaitCompletion is set to true.
@@ -67,6 +73,12 @@ class ProcessCreationById:
              Default: 0.
         tags (list[str] | Unset): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or
             `.`; length ≤ 100. Example: ['high-touch', 'remediation'].
+        business_id (str | Unset): An optional, user-defined string identifier that identifies the process instance
+            within the scope of a process definition (scoped by tenant). If provided and uniqueness
+            enforcement is enabled, the engine will reject creation if another root process instance
+            with the same business id is already active for the same process definition.
+            Note that any active child process instances with the same business id are not taken into account.
+             Example: order-12345.
     """
 
     process_definition_id: ProcessDefinitionId
@@ -82,6 +94,7 @@ class ProcessCreationById:
     fetch_variables: list[str] | Unset = UNSET
     request_timeout: int | Unset = 0
     tags: list[str] | Unset = UNSET
+    business_id: BusinessId | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         process_definition_id = self.process_definition_id
@@ -122,6 +135,8 @@ class ProcessCreationById:
         if not isinstance(self.tags, Unset):
             tags = self.tags
 
+        business_id = self.business_id
+
         field_dict: dict[str, Any] = {}
 
         field_dict.update(
@@ -149,6 +164,8 @@ class ProcessCreationById:
             field_dict["requestTimeout"] = request_timeout
         if tags is not UNSET:
             field_dict["tags"] = tags
+        if business_id is not UNSET:
+            field_dict["businessId"] = business_id
 
         return field_dict
 
@@ -224,6 +241,12 @@ class ProcessCreationById:
 
         tags = cast(list[str], d.pop("tags", UNSET))
 
+        business_id = (
+            lift_business_id(_val)
+            if (_val := d.pop("businessId", UNSET)) is not UNSET
+            else UNSET
+        )
+
         process_creation_by_id = cls(
             process_definition_id=process_definition_id,
             process_definition_version=process_definition_version,
@@ -236,6 +259,7 @@ class ProcessCreationById:
             fetch_variables=fetch_variables,
             request_timeout=request_timeout,
             tags=tags,
+            business_id=business_id,
         )
 
         return process_creation_by_id

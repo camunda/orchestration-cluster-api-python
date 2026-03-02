@@ -15,8 +15,8 @@ class EvaluateDecisionResult:
     decision_definition_version: int
     decision_requirements_id: str
     output: str
-    failed_decision_definition_id: DecisionDefinitionId
-    failure_message: str
+    failed_decision_definition_id: None | DecisionDefinitionId
+    failure_message: None | str
     tenant_id: TenantId
     decision_definition_key: DecisionDefinitionKey
     decision_requirements_key: DecisionRequirementsKey

@@ -9,7 +9,7 @@ from camunda_orchestration_sdk.semantic_types import (
 )
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -23,10 +23,10 @@ T = TypeVar("T", bound="ProcessDefinitionResult")
 class ProcessDefinitionResult:
     """
     Attributes:
-        name (str | Unset): Name of this process definition.
+        name (None | str | Unset): Name of this process definition.
         resource_name (str | Unset): Resource name for this process definition.
         version (int | Unset): Version of this process definition.
-        version_tag (str | Unset): Version tag of this process definition.
+        version_tag (None | str | Unset): Version tag of this process definition.
         process_definition_id (str | Unset): Process definition ID of this process definition. Example: new-account-
             onboarding-workflow.
         tenant_id (str | Unset): Tenant ID of this process definition. Example: customer-service.
@@ -34,10 +34,10 @@ class ProcessDefinitionResult:
         has_start_form (bool | Unset): Indicates whether the start event of the process has an associated Form Key.
     """
 
-    name: str | Unset = UNSET
+    name: None | str | Unset = UNSET
     resource_name: str | Unset = UNSET
     version: int | Unset = UNSET
-    version_tag: str | Unset = UNSET
+    version_tag: None | str | Unset = UNSET
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
@@ -47,13 +47,21 @@ class ProcessDefinitionResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        name = self.name
+        name: None | str | Unset
+        if isinstance(self.name, Unset):
+            name = UNSET
+        else:
+            name = self.name
 
         resource_name = self.resource_name
 
         version = self.version
 
-        version_tag = self.version_tag
+        version_tag: None | str | Unset
+        if isinstance(self.version_tag, Unset):
+            version_tag = UNSET
+        else:
+            version_tag = self.version_tag
 
         process_definition_id = self.process_definition_id
 
@@ -88,13 +96,28 @@ class ProcessDefinitionResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        name = d.pop("name", UNSET)
+
+        def _parse_name(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        name = _parse_name(d.pop("name", UNSET))
 
         resource_name = d.pop("resourceName", UNSET)
 
         version = d.pop("version", UNSET)
 
-        version_tag = d.pop("versionTag", UNSET)
+        def _parse_version_tag(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        version_tag = _parse_version_tag(d.pop("versionTag", UNSET))
 
         process_definition_id = (
             lift_process_definition_id(_val)

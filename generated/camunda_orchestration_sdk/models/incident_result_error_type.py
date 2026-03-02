@@ -1,50 +1,23 @@
-from __future__ import annotations
-
-from collections.abc import Mapping
-from typing import Any, TypeVar
-
-from attrs import define as _attrs_define
-
-from ..types import str_any_dict_factory
-from attrs import field as _attrs_field
-
-T = TypeVar("T", bound="IncidentResultErrorType")
+from enum import Enum
 
 
-@_attrs_define
-class IncidentResultErrorType:
-    """ """
+class IncidentResultErrorType(str, Enum):
+    AD_HOC_SUB_PROCESS_NO_RETRIES = "AD_HOC_SUB_PROCESS_NO_RETRIES"
+    CALLED_DECISION_ERROR = "CALLED_DECISION_ERROR"
+    CALLED_ELEMENT_ERROR = "CALLED_ELEMENT_ERROR"
+    CONDITION_ERROR = "CONDITION_ERROR"
+    DECISION_EVALUATION_ERROR = "DECISION_EVALUATION_ERROR"
+    EXECUTION_LISTENER_NO_RETRIES = "EXECUTION_LISTENER_NO_RETRIES"
+    EXTRACT_VALUE_ERROR = "EXTRACT_VALUE_ERROR"
+    FORM_NOT_FOUND = "FORM_NOT_FOUND"
+    IO_MAPPING_ERROR = "IO_MAPPING_ERROR"
+    JOB_NO_RETRIES = "JOB_NO_RETRIES"
+    MESSAGE_SIZE_EXCEEDED = "MESSAGE_SIZE_EXCEEDED"
+    RESOURCE_NOT_FOUND = "RESOURCE_NOT_FOUND"
+    TASK_LISTENER_NO_RETRIES = "TASK_LISTENER_NO_RETRIES"
+    UNHANDLED_ERROR_EVENT = "UNHANDLED_ERROR_EVENT"
+    UNKNOWN = "UNKNOWN"
+    UNSPECIFIED = "UNSPECIFIED"
 
-    additional_properties: dict[str, Any] = _attrs_field(
-        init=False, factory=str_any_dict_factory
-    )
-
-    def to_dict(self) -> dict[str, Any]:
-        field_dict: dict[str, Any] = {}
-        field_dict.update(self.additional_properties)
-
-        return field_dict
-
-    @classmethod
-    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        d = dict(src_dict)
-        incident_result_error_type = cls()
-
-        incident_result_error_type.additional_properties = d
-        return incident_result_error_type
-
-    @property
-    def additional_keys(self) -> list[str]:
-        return list(self.additional_properties.keys())
-
-    def __getitem__(self, key: str) -> Any:
-        return self.additional_properties[key]
-
-    def __setitem__(self, key: str, value: Any) -> None:
-        self.additional_properties[key] = value
-
-    def __delitem__(self, key: str) -> None:
-        del self.additional_properties[key]
-
-    def __contains__(self, key: str) -> bool:
-        return key in self.additional_properties
+    def __str__(self) -> str:
+        return str(self.value)

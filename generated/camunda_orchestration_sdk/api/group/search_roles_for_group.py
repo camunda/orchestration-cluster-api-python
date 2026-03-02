@@ -6,7 +6,7 @@ from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
 from ...models.role_search_query_request import RoleSearchQueryRequest
-from ...models.search_query_response import SearchQueryResponse
+from ...models.search_roles_for_group_response_200 import SearchRolesForGroupResponse200
 from ...types import UNSET, Response, Unset
 
 
@@ -29,9 +29,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> ProblemDetail | SearchQueryResponse | None:
+) -> ProblemDetail | SearchRolesForGroupResponse200 | None:
     if response.status_code == 200:
-        response_200 = SearchQueryResponse.from_dict(response.json())
+        response_200 = SearchRolesForGroupResponse200.from_dict(response.json())
         return response_200
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
@@ -56,7 +56,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[ProblemDetail | SearchQueryResponse]:
+) -> Response[ProblemDetail | SearchRolesForGroupResponse200]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -70,7 +70,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: RoleSearchQueryRequest | Unset = UNSET,
-) -> Response[ProblemDetail | SearchQueryResponse]:
+) -> Response[ProblemDetail | SearchRolesForGroupResponse200]:
     """Search group roles
 
      Search roles assigned to a group.
@@ -84,7 +84,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchQueryResponse]
+        Response[ProblemDetail | SearchRolesForGroupResponse200]
     """
     kwargs = _get_kwargs(group_id=group_id, body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -97,7 +97,7 @@ def sync(
     client: AuthenticatedClient | Client,
     body: RoleSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchQueryResponse:
+) -> SearchRolesForGroupResponse200:
     """Search group roles
 
      Search roles assigned to a group.
@@ -115,7 +115,7 @@ def sync(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchQueryResponse"""
+        SearchRolesForGroupResponse200"""
     response = sync_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -150,7 +150,7 @@ def sync(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchQueryResponse, response.parsed)
+    return cast(SearchRolesForGroupResponse200, response.parsed)
 
 
 async def asyncio_detailed(
@@ -158,7 +158,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: RoleSearchQueryRequest | Unset = UNSET,
-) -> Response[ProblemDetail | SearchQueryResponse]:
+) -> Response[ProblemDetail | SearchRolesForGroupResponse200]:
     """Search group roles
 
      Search roles assigned to a group.
@@ -172,7 +172,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[ProblemDetail | SearchQueryResponse]
+        Response[ProblemDetail | SearchRolesForGroupResponse200]
     """
     kwargs = _get_kwargs(group_id=group_id, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -185,7 +185,7 @@ async def asyncio(
     client: AuthenticatedClient | Client,
     body: RoleSearchQueryRequest | Unset = UNSET,
     **kwargs: Any,
-) -> SearchQueryResponse:
+) -> SearchRolesForGroupResponse200:
     """Search group roles
 
      Search roles assigned to a group.
@@ -203,7 +203,7 @@ async def asyncio(
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
-        SearchQueryResponse"""
+        SearchRolesForGroupResponse200"""
     response = await asyncio_detailed(group_id=group_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
@@ -238,4 +238,4 @@ async def asyncio(
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
-    return cast(SearchQueryResponse, response.parsed)
+    return cast(SearchRolesForGroupResponse200, response.parsed)

@@ -4,9 +4,9 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
     from ..models.incident_process_instance_statistics_by_error_result import (
@@ -22,37 +22,33 @@ T = TypeVar("T", bound="IncidentProcessInstanceStatisticsByErrorQueryResult")
 class IncidentProcessInstanceStatisticsByErrorQueryResult:
     """
     Attributes:
-        page (SearchQueryPageResponse): Pagination information about the search results. Example: {'totalItems': 1,
-            'hasMoreTotalItems': False}.
-        items (list[IncidentProcessInstanceStatisticsByErrorResult] | Unset): Statistics of active process instances
-            grouped by incident error.
+        items (list[IncidentProcessInstanceStatisticsByErrorResult]): Statistics of active process instances grouped by
+            incident error.
+        page (SearchQueryPageResponse): Pagination information about the search results.
     """
 
+    items: list[IncidentProcessInstanceStatisticsByErrorResult]
     page: SearchQueryPageResponse
-    items: list[IncidentProcessInstanceStatisticsByErrorResult] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        page = self.page.to_dict()
+        items: list[dict[str, Any]] = []
+        for items_item_data in self.items:
+            items_item = items_item_data.to_dict()
+            items.append(items_item)
 
-        items: list[dict[str, Any]] | Unset = UNSET
-        if not isinstance(self.items, Unset):
-            items = []
-            for items_item_data in self.items:
-                items_item = items_item_data.to_dict()
-                items.append(items_item)
+        page = self.page.to_dict()
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "items": items,
                 "page": page,
             }
         )
-        if items is not UNSET:
-            field_dict["items"] = items
 
         return field_dict
 
@@ -64,22 +60,20 @@ class IncidentProcessInstanceStatisticsByErrorQueryResult:
         from ..models.search_query_page_response import SearchQueryPageResponse
 
         d = dict(src_dict)
+        items: list[IncidentProcessInstanceStatisticsByErrorResult] = []
+        _items = d.pop("items")
+        for items_item_data in _items:
+            items_item = IncidentProcessInstanceStatisticsByErrorResult.from_dict(
+                items_item_data
+            )
+
+            items.append(items_item)
+
         page = SearchQueryPageResponse.from_dict(d.pop("page"))
 
-        _items = d.pop("items", UNSET)
-        items: list[IncidentProcessInstanceStatisticsByErrorResult] | Unset = UNSET
-        if _items is not UNSET:
-            items = []
-            for items_item_data in _items:
-                items_item = IncidentProcessInstanceStatisticsByErrorResult.from_dict(
-                    items_item_data
-                )
-
-                items.append(items_item)
-
         incident_process_instance_statistics_by_error_query_result = cls(
-            page=page,
             items=items,
+            page=page,
         )
 
         incident_process_instance_statistics_by_error_query_result.additional_properties = d

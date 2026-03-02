@@ -16,7 +16,7 @@ def _get_kwargs(id: str, *, body: UpdateGlobalTaskListenerRequest) -> dict[str, 
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
         "method": "put",
-        "url": "/global-listeners/user-task/{id}".format(id=quote(str(id), safe="")),
+        "url": "/global-task-listeners/{id}".format(id=quote(str(id), safe="")),
     }
     _kwargs["json"] = body.to_dict()
     headers["Content-Type"] = "application/json"

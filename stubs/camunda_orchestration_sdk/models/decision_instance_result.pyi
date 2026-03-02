@@ -12,20 +12,20 @@ from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="DecisionInstanceResult")
 @_attrs_define
 class DecisionInstanceResult:
+    evaluation_failure: None | str
+    tenant_id: TenantId
+    root_process_instance_key: None | ProcessInstanceKey
     decision_evaluation_instance_key: DecisionEvaluationInstanceKey | Unset = UNSET
     state: DecisionInstanceStateEnum | Unset = UNSET
     evaluation_date: datetime.datetime | Unset = UNSET
-    evaluation_failure: str | Unset = UNSET
     decision_definition_id: DecisionDefinitionId | Unset = UNSET
     decision_definition_name: str | Unset = UNSET
     decision_definition_version: int | Unset = UNSET
     decision_definition_type: DecisionDefinitionTypeEnum | Unset = UNSET
     result: str | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
     decision_evaluation_key: DecisionEvaluationKey | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     decision_definition_key: DecisionDefinitionKey | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     root_decision_definition_key: DecisionDefinitionKey | Unset = UNSET

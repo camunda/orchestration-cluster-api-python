@@ -4,9 +4,9 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
     from ..models.document_creation_failure_detail import DocumentCreationFailureDetail
@@ -20,38 +20,35 @@ T = TypeVar("T", bound="DocumentCreationBatchResponse")
 class DocumentCreationBatchResponse:
     """
     Attributes:
-        failed_documents (list[DocumentCreationFailureDetail] | Unset): Documents that were successfully created.
-        created_documents (list[DocumentReference] | Unset): Documents that failed creation.
+        failed_documents (list[DocumentCreationFailureDetail]): Documents that were successfully created.
+        created_documents (list[DocumentReference]): Documents that failed creation.
     """
 
-    failed_documents: list[DocumentCreationFailureDetail] | Unset = UNSET
-    created_documents: list[DocumentReference] | Unset = UNSET
+    failed_documents: list[DocumentCreationFailureDetail]
+    created_documents: list[DocumentReference]
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        failed_documents: list[dict[str, Any]] | Unset = UNSET
-        if not isinstance(self.failed_documents, Unset):
-            failed_documents = []
-            for failed_documents_item_data in self.failed_documents:
-                failed_documents_item = failed_documents_item_data.to_dict()
-                failed_documents.append(failed_documents_item)
+        failed_documents: list[dict[str, Any]] = []
+        for failed_documents_item_data in self.failed_documents:
+            failed_documents_item = failed_documents_item_data.to_dict()
+            failed_documents.append(failed_documents_item)
 
-        created_documents: list[dict[str, Any]] | Unset = UNSET
-        if not isinstance(self.created_documents, Unset):
-            created_documents = []
-            for created_documents_item_data in self.created_documents:
-                created_documents_item = created_documents_item_data.to_dict()
-                created_documents.append(created_documents_item)
+        created_documents: list[dict[str, Any]] = []
+        for created_documents_item_data in self.created_documents:
+            created_documents_item = created_documents_item_data.to_dict()
+            created_documents.append(created_documents_item)
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if failed_documents is not UNSET:
-            field_dict["failedDocuments"] = failed_documents
-        if created_documents is not UNSET:
-            field_dict["createdDocuments"] = created_documents
+        field_dict.update(
+            {
+                "failedDocuments": failed_documents,
+                "createdDocuments": created_documents,
+            }
+        )
 
         return field_dict
 
@@ -63,27 +60,23 @@ class DocumentCreationBatchResponse:
         from ..models.document_reference import DocumentReference
 
         d = dict(src_dict)
-        _failed_documents = d.pop("failedDocuments", UNSET)
-        failed_documents: list[DocumentCreationFailureDetail] | Unset = UNSET
-        if _failed_documents is not UNSET:
-            failed_documents = []
-            for failed_documents_item_data in _failed_documents:
-                failed_documents_item = DocumentCreationFailureDetail.from_dict(
-                    failed_documents_item_data
-                )
+        failed_documents: list[DocumentCreationFailureDetail] = []
+        _failed_documents = d.pop("failedDocuments")
+        for failed_documents_item_data in _failed_documents:
+            failed_documents_item = DocumentCreationFailureDetail.from_dict(
+                failed_documents_item_data
+            )
 
-                failed_documents.append(failed_documents_item)
+            failed_documents.append(failed_documents_item)
 
-        _created_documents = d.pop("createdDocuments", UNSET)
-        created_documents: list[DocumentReference] | Unset = UNSET
-        if _created_documents is not UNSET:
-            created_documents = []
-            for created_documents_item_data in _created_documents:
-                created_documents_item = DocumentReference.from_dict(
-                    created_documents_item_data
-                )
+        created_documents: list[DocumentReference] = []
+        _created_documents = d.pop("createdDocuments")
+        for created_documents_item_data in _created_documents:
+            created_documents_item = DocumentReference.from_dict(
+                created_documents_item_data
+            )
 
-                created_documents.append(created_documents_item)
+            created_documents.append(created_documents_item)
 
         document_creation_batch_response = cls(
             failed_documents=failed_documents,

@@ -1,8 +1,13 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementId, lift_element_id
+from camunda_orchestration_sdk.semantic_types import (
+    ElementId,
+    ElementInstanceKey,
+    lift_element_id,
+    lift_element_instance_key,
+)
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -31,13 +36,14 @@ class ProcessInstanceModificationActivateInstruction:
             Set to -1 to create the new element instance within an existing element instance of the
             flow scope. If multiple instances of the target element's flow scope exist, choose one
             specifically with this property by providing its key.
+             Example: 2251799813686789.
     """
 
     element_id: ElementId
     variable_instructions: list[ModifyProcessInstanceVariableInstruction] | Unset = (
         UNSET
     )
-    ancestor_element_instance_key: str | Unset = UNSET
+    ancestor_element_instance_key: ElementInstanceKey | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -52,11 +58,7 @@ class ProcessInstanceModificationActivateInstruction:
                 variable_instructions_item = variable_instructions_item_data.to_dict()
                 variable_instructions.append(variable_instructions_item)
 
-        ancestor_element_instance_key: str | Unset
-        if isinstance(self.ancestor_element_instance_key, Unset):
-            ancestor_element_instance_key = UNSET
-        else:
-            ancestor_element_instance_key = self.ancestor_element_instance_key
+        ancestor_element_instance_key = self.ancestor_element_instance_key
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -96,13 +98,10 @@ class ProcessInstanceModificationActivateInstruction:
 
                 variable_instructions.append(variable_instructions_item)
 
-        def _parse_ancestor_element_instance_key(data: object) -> str | Unset:
-            if isinstance(data, Unset):
-                return data
-            return cast(str | Unset, data)
-
-        ancestor_element_instance_key = _parse_ancestor_element_instance_key(
-            d.pop("ancestorElementInstanceKey", UNSET)
+        ancestor_element_instance_key = (
+            lift_element_instance_key(_val)
+            if (_val := d.pop("ancestorElementInstanceKey", UNSET)) is not UNSET
+            else UNSET
         )
 
         process_instance_modification_activate_instruction = cls(

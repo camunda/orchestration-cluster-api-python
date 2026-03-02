@@ -10,9 +10,9 @@ from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="GlobalTaskListenerResult")
 @_attrs_define
 class GlobalTaskListenerResult:
+    event_types: list[GlobalTaskListenerEventTypeEnum]
     id: str | Unset = UNSET
     source: GlobalListenerSourceEnum | Unset = UNSET
-    event_types: list[GlobalTaskListenerEventTypeEnum] | Unset = UNSET
     type_: str | Unset = UNSET
     retries: int | Unset = UNSET
     after_non_global: bool | Unset = UNSET

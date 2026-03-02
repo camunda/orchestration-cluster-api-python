@@ -63,6 +63,11 @@ class AuditLogResult:
     """Audit log item.
 
     Attributes:
+        root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
+            top-level
+            ancestor in the process instance hierarchy. This field is only present for data
+            belonging to process instance hierarchies created in version 8.9 or later.
+             Example: 2251799813690746.
         audit_log_key (str | Unset): The unique key of the audit log entry. Example: 22517998136843567.
         entity_key (str | Unset): System-generated entity key for an audit log entry. Example: 22517998136843567.
         entity_type (AuditLogEntityTypeEnum | Unset): The type of entity affected by the operation.
@@ -82,11 +87,6 @@ class AuditLogResult:
         process_definition_id (str | Unset): The process definition ID. Example: new-account-onboarding-workflow.
         process_definition_key (str | Unset): The key of the process definition. Example: 2251799813686749.
         process_instance_key (str | Unset): The key of the process instance. Example: 2251799813690746.
-        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
-            top-level
-            ancestor in the process instance hierarchy. This field is only present for data
-            belonging to process instance hierarchies created in version 8.9 or later.
-             Example: 2251799813690746.
         element_instance_key (str | Unset): The key of the element instance. Example: 2251799813686789.
         job_key (str | Unset): The key of the job. Example: 2251799813653498.
         user_task_key (str | Unset): The key of the user task.
@@ -112,6 +112,7 @@ class AuditLogResult:
             For example, for variable operations, this will contain the variable name.
     """
 
+    root_process_instance_key: None | ProcessInstanceKey
     audit_log_key: AuditLogKey | Unset = UNSET
     entity_key: str | Unset = UNSET
     entity_type: AuditLogEntityTypeEnum | Unset = UNSET
@@ -129,7 +130,6 @@ class AuditLogResult:
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     job_key: JobKey | Unset = UNSET
     user_task_key: UserTaskKey | Unset = UNSET
@@ -149,6 +149,9 @@ class AuditLogResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
+        root_process_instance_key: None | ProcessInstanceKey
+        root_process_instance_key = self.root_process_instance_key
+
         audit_log_key = self.audit_log_key
 
         entity_key = self.entity_key
@@ -197,8 +200,6 @@ class AuditLogResult:
 
         process_instance_key = self.process_instance_key
 
-        root_process_instance_key = self.root_process_instance_key
-
         element_instance_key = self.element_instance_key
 
         job_key = self.job_key
@@ -235,7 +236,11 @@ class AuditLogResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
+        field_dict.update(
+            {
+                "rootProcessInstanceKey": root_process_instance_key,
+            }
+        )
         if audit_log_key is not UNSET:
             field_dict["auditLogKey"] = audit_log_key
         if entity_key is not UNSET:
@@ -270,8 +275,6 @@ class AuditLogResult:
             field_dict["processDefinitionKey"] = process_definition_key
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
-        if root_process_instance_key is not UNSET:
-            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if element_instance_key is not UNSET:
             field_dict["elementInstanceKey"] = element_instance_key
         if job_key is not UNSET:
@@ -306,6 +309,22 @@ class AuditLogResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+
+        def _parse_root_process_instance_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_root_process_instance_key = _parse_root_process_instance_key(
+            d.pop("rootProcessInstanceKey")
+        )
+
+        root_process_instance_key = (
+            lift_process_instance_key(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
+
         audit_log_key = (
             lift_audit_log_key(_val)
             if (_val := d.pop("auditLogKey", UNSET)) is not UNSET
@@ -401,8 +420,6 @@ class AuditLogResult:
             else UNSET
         )
 
-        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
-
         element_instance_key = (
             lift_element_instance_key(_val)
             if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET
@@ -482,6 +499,7 @@ class AuditLogResult:
         entity_description = d.pop("entityDescription", UNSET)
 
         audit_log_result = cls(
+            root_process_instance_key=root_process_instance_key,
             audit_log_key=audit_log_key,
             entity_key=entity_key,
             entity_type=entity_type,
@@ -499,7 +517,6 @@ class AuditLogResult:
             process_definition_id=process_definition_id,
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,
-            root_process_instance_key=root_process_instance_key,
             element_instance_key=element_instance_key,
             job_key=job_key,
             user_task_key=user_task_key,

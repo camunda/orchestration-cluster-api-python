@@ -5,12 +5,12 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
-from ..models.offset_based_pagination import OffsetBasedPagination
+from ..models.process_definition_instance_statistics_query_page import ProcessDefinitionInstanceStatisticsQueryPage
 from ..models.process_definition_instance_statistics_query_sort_request import ProcessDefinitionInstanceStatisticsQuerySortRequest
 T = TypeVar("T", bound="ProcessDefinitionInstanceStatisticsQuery")
 @_attrs_define
 class ProcessDefinitionInstanceStatisticsQuery:
-    page: OffsetBasedPagination | Unset = UNSET
+    page: ProcessDefinitionInstanceStatisticsQueryPage | Unset = UNSET
     sort: list[ProcessDefinitionInstanceStatisticsQuerySortRequest] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...

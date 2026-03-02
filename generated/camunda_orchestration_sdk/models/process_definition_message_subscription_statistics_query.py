@@ -9,7 +9,7 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.cursor_based_forward_pagination import CursorBasedForwardPagination
+    from ..models.job_type_statistics_query_page import JobTypeStatisticsQueryPage
     from ..models.process_definition_message_subscription_statistics_query_filter import (
         ProcessDefinitionMessageSubscriptionStatisticsQueryFilter,
     )
@@ -22,11 +22,11 @@ T = TypeVar("T", bound="ProcessDefinitionMessageSubscriptionStatisticsQuery")
 class ProcessDefinitionMessageSubscriptionStatisticsQuery:
     """
     Attributes:
-        page (CursorBasedForwardPagination | Unset):
+        page (JobTypeStatisticsQueryPage | Unset): Search cursor pagination.
         filter_ (ProcessDefinitionMessageSubscriptionStatisticsQueryFilter | Unset): The message subscription filters.
     """
 
-    page: CursorBasedForwardPagination | Unset = UNSET
+    page: JobTypeStatisticsQueryPage | Unset = UNSET
     filter_: ProcessDefinitionMessageSubscriptionStatisticsQueryFilter | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -53,20 +53,18 @@ class ProcessDefinitionMessageSubscriptionStatisticsQuery:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.cursor_based_forward_pagination import (
-            CursorBasedForwardPagination,
-        )
+        from ..models.job_type_statistics_query_page import JobTypeStatisticsQueryPage
         from ..models.process_definition_message_subscription_statistics_query_filter import (
             ProcessDefinitionMessageSubscriptionStatisticsQueryFilter,
         )
 
         d = dict(src_dict)
         _page = d.pop("page", UNSET)
-        page: CursorBasedForwardPagination | Unset
+        page: JobTypeStatisticsQueryPage | Unset
         if isinstance(_page, Unset):
             page = UNSET
         else:
-            page = CursorBasedForwardPagination.from_dict(_page)
+            page = JobTypeStatisticsQueryPage.from_dict(_page)
 
         _filter_ = d.pop("filter", UNSET)
         filter_: ProcessDefinitionMessageSubscriptionStatisticsQueryFilter | Unset

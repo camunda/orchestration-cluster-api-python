@@ -6,6 +6,7 @@ class AdvancedEntityTypeFilterNeq(str, Enum):
     DECISION = "DECISION"
     GROUP = "GROUP"
     INCIDENT = "INCIDENT"
+    JOB = "JOB"
     MAPPING_RULE = "MAPPING_RULE"
     PROCESS_INSTANCE = "PROCESS_INSTANCE"
     RESOURCE = "RESOURCE"

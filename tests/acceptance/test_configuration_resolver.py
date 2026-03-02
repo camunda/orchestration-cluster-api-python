@@ -213,3 +213,31 @@ def test_basic_strategy_requires_password():
                 "CAMUNDA_BASIC_AUTH_USERNAME": "u",
             }
         )
+
+
+def test_unrecognized_env_vars_are_ignored(monkeypatch: pytest.MonkeyPatch):
+    """Extra env vars (e.g. a service API key) must not break configuration."""
+    monkeypatch.setenv("MY_SERVICE_API_KEY", "secret-key-123")
+    monkeypatch.setenv("ANOTHER_RANDOM_VAR", "whatever")
+
+    from camunda_orchestration_sdk import CamundaClient
+
+    client = CamundaClient()
+    assert client.configuration.CAMUNDA_AUTH_STRATEGY == "NONE"
+
+
+def test_unrecognized_explicit_config_keys_are_ignored():
+    """Extra keys in explicit configuration must not break resolution."""
+    from camunda_orchestration_sdk.runtime.configuration_resolver import (
+        ConfigurationResolver,
+    )
+
+    resolved = ConfigurationResolver(
+        environment={},
+        explicit_configuration={
+            "CAMUNDA_REST_ADDRESS": "http://localhost:8080/v2",
+            "MY_SERVICE_API_KEY": "secret-key-123",
+        },
+    ).resolve()
+
+    assert resolved.effective.CAMUNDA_REST_ADDRESS == "http://localhost:8080/v2"

@@ -22,11 +22,11 @@ class UserTaskProperties:
     """Contains properties of a user task.
 
     Attributes:
+        candidate_groups (list[str]): The groups eligible to claim the task.
+        candidate_users (list[str]): The users eligible to claim the task.
+        changed_attributes (list[str]): The attributes that were changed in the task.
         action (str | Unset): The action performed on the user task.
         assignee (None | str | Unset): The user assigned to the task.
-        candidate_groups (list[str] | Unset): The groups eligible to claim the task.
-        candidate_users (list[str] | Unset): The users eligible to claim the task.
-        changed_attributes (list[str] | Unset): The attributes that were changed in the task.
         due_date (None | str | Unset): The due date of the user task in ISO 8601 format.
         follow_up_date (None | str | Unset): The follow-up date of the user task in ISO 8601 format.
         form_key (str | Unset): The key of the form associated with the user task. Example: 2251799813684365.
@@ -34,11 +34,11 @@ class UserTaskProperties:
         user_task_key (None | str | Unset): The unique key identifying the user task.
     """
 
+    candidate_groups: list[str]
+    candidate_users: list[str]
+    changed_attributes: list[str]
     action: str | Unset = UNSET
     assignee: None | str | Unset = UNSET
-    candidate_groups: list[str] | Unset = UNSET
-    candidate_users: list[str] | Unset = UNSET
-    changed_attributes: list[str] | Unset = UNSET
     due_date: None | str | Unset = UNSET
     follow_up_date: None | str | Unset = UNSET
     form_key: FormKey | Unset = UNSET
@@ -49,6 +49,12 @@ class UserTaskProperties:
     )
 
     def to_dict(self) -> dict[str, Any]:
+        candidate_groups = self.candidate_groups
+
+        candidate_users = self.candidate_users
+
+        changed_attributes = self.changed_attributes
+
         action = self.action
 
         assignee: None | str | Unset
@@ -56,18 +62,6 @@ class UserTaskProperties:
             assignee = UNSET
         else:
             assignee = self.assignee
-
-        candidate_groups: list[str] | Unset = UNSET
-        if not isinstance(self.candidate_groups, Unset):
-            candidate_groups = self.candidate_groups
-
-        candidate_users: list[str] | Unset = UNSET
-        if not isinstance(self.candidate_users, Unset):
-            candidate_users = self.candidate_users
-
-        changed_attributes: list[str] | Unset = UNSET
-        if not isinstance(self.changed_attributes, Unset):
-            changed_attributes = self.changed_attributes
 
         due_date: None | str | Unset
         if isinstance(self.due_date, Unset):
@@ -97,17 +91,17 @@ class UserTaskProperties:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
+        field_dict.update(
+            {
+                "candidateGroups": candidate_groups,
+                "candidateUsers": candidate_users,
+                "changedAttributes": changed_attributes,
+            }
+        )
         if action is not UNSET:
             field_dict["action"] = action
         if assignee is not UNSET:
             field_dict["assignee"] = assignee
-        if candidate_groups is not UNSET:
-            field_dict["candidateGroups"] = candidate_groups
-        if candidate_users is not UNSET:
-            field_dict["candidateUsers"] = candidate_users
-        if changed_attributes is not UNSET:
-            field_dict["changedAttributes"] = changed_attributes
         if due_date is not UNSET:
             field_dict["dueDate"] = due_date
         if follow_up_date is not UNSET:
@@ -124,6 +118,12 @@ class UserTaskProperties:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        candidate_groups = cast(list[str], d.pop("candidateGroups"))
+
+        candidate_users = cast(list[str], d.pop("candidateUsers"))
+
+        changed_attributes = cast(list[str], d.pop("changedAttributes"))
+
         action = d.pop("action", UNSET)
 
         def _parse_assignee(data: object) -> None | str | Unset:
@@ -134,12 +134,6 @@ class UserTaskProperties:
             return cast(None | str | Unset, data)
 
         assignee = _parse_assignee(d.pop("assignee", UNSET))
-
-        candidate_groups = cast(list[str], d.pop("candidateGroups", UNSET))
-
-        candidate_users = cast(list[str], d.pop("candidateUsers", UNSET))
-
-        changed_attributes = cast(list[str], d.pop("changedAttributes", UNSET))
 
         def _parse_due_date(data: object) -> None | str | Unset:
             if data is None:
@@ -190,11 +184,11 @@ class UserTaskProperties:
         )
 
         user_task_properties = cls(
-            action=action,
-            assignee=assignee,
             candidate_groups=candidate_groups,
             candidate_users=candidate_users,
             changed_attributes=changed_attributes,
+            action=action,
+            assignee=assignee,
             due_date=due_date,
             follow_up_date=follow_up_date,
             form_key=form_key,

@@ -19,8 +19,7 @@ T = TypeVar("T", bound="SearchQueryResponse")
 class SearchQueryResponse:
     """
     Attributes:
-        page (SearchQueryPageResponse): Pagination information about the search results. Example: {'totalItems': 1,
-            'hasMoreTotalItems': False}.
+        page (SearchQueryPageResponse): Pagination information about the search results.
     """
 
     page: SearchQueryPageResponse

@@ -9,8 +9,8 @@ from ..models.usage_metrics_response_tenants import UsageMetricsResponseTenants
 T = TypeVar("T", bound="UsageMetricsResponse")
 @_attrs_define
 class UsageMetricsResponse:
+    tenants: UsageMetricsResponseTenants
     active_tenants: int | Unset = UNSET
-    tenants: UsageMetricsResponseTenants | Unset = UNSET
     process_instances: int | Unset = UNSET
     decision_instances: int | Unset = UNSET
     assignees: int | Unset = UNSET

@@ -18,11 +18,11 @@ class CorrelatedMessageSubscriptionResult:
     partition_id: int
     process_definition_id: ProcessDefinitionId
     process_instance_key: ProcessInstanceKey
+    root_process_instance_key: None | ProcessInstanceKey
     subscription_key: MessageSubscriptionKey
     tenant_id: TenantId
     element_instance_key: ElementInstanceKey | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

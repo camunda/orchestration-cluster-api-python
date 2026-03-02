@@ -9,11 +9,11 @@ from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="UserTaskProperties")
 @_attrs_define
 class UserTaskProperties:
+    candidate_groups: list[str]
+    candidate_users: list[str]
+    changed_attributes: list[str]
     action: str | Unset = UNSET
     assignee: None | str | Unset = UNSET
-    candidate_groups: list[str] | Unset = UNSET
-    candidate_users: list[str] | Unset = UNSET
-    changed_attributes: list[str] | Unset = UNSET
     due_date: None | str | Unset = UNSET
     follow_up_date: None | str | Unset = UNSET
     form_key: FormKey | Unset = UNSET

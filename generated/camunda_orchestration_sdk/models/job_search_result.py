@@ -41,7 +41,8 @@ class JobSearchResult:
     """
     Attributes:
         custom_headers (JobSearchResultCustomHeaders): A set of custom headers defined during modelling.
-        element_id (str): The element ID associated with the job. Example: Activity_106kosb.
+        element_id (None | str): The element ID associated with the job. May be missing on job failure. Example:
+            Activity_106kosb.
         element_instance_key (str): The element instance key associated with the job. Example: 2251799813686789.
         has_failed_with_retries_left (bool): Indicates whether the job has failed with retries left.
         job_key (str): The key, a unique identifier for the job. Example: 2251799813653498.
@@ -51,6 +52,11 @@ class JobSearchResult:
             workflow.
         process_definition_key (str): The process definition key associated with the job. Example: 2251799813686749.
         process_instance_key (str): The process instance key associated with the job. Example: 2251799813690746.
+        root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
+            top-level
+            ancestor in the process instance hierarchy. This field is only present for data
+            belonging to process instance hierarchies created in version 8.9 or later.
+             Example: 2251799813690746.
         retries (int): The amount of retries left to this job.
         state (JobStateEnum): The state of the job.
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
@@ -59,15 +65,11 @@ class JobSearchResult:
         deadline (datetime.datetime | None | Unset): If the job has been activated, when it will next be available to be
             activated.
         denied_reason (None | str | Unset): The reason provided by the user task listener for denying the work.
-        end_time (datetime.datetime | Unset): When the job ended.
+        end_time (datetime.datetime | None | Unset): End date of the job.
+            This is `null` if the job is not in an end state yet.
         error_code (None | str | Unset): The error code provided for a failed job.
         error_message (None | str | Unset): The error message that provides additional context for a failed job.
         is_denied (bool | None | Unset): Indicates whether the user task listener denies the work.
-        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
-            top-level
-            ancestor in the process instance hierarchy. This field is only present for data
-            belonging to process instance hierarchies created in version 8.9 or later.
-             Example: 2251799813690746.
         creation_time (datetime.datetime | Unset): When the job was created. Field is present for jobs created after
             8.9.
         last_update_time (datetime.datetime | Unset): When the job was last updated. Field is present for jobs created
@@ -75,7 +77,7 @@ class JobSearchResult:
     """
 
     custom_headers: JobSearchResultCustomHeaders
-    element_id: ElementId
+    element_id: None | ElementId
     element_instance_key: ElementInstanceKey
     has_failed_with_retries_left: bool
     job_key: JobKey
@@ -84,6 +86,7 @@ class JobSearchResult:
     process_definition_id: ProcessDefinitionId
     process_definition_key: ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
+    root_process_instance_key: None | ProcessInstanceKey
     retries: int
     state: JobStateEnum
     tenant_id: TenantId
@@ -91,11 +94,10 @@ class JobSearchResult:
     worker: str
     deadline: datetime.datetime | None | Unset = UNSET
     denied_reason: None | str | Unset = UNSET
-    end_time: datetime.datetime | Unset = UNSET
+    end_time: datetime.datetime | None | Unset = UNSET
     error_code: None | str | Unset = UNSET
     error_message: None | str | Unset = UNSET
     is_denied: bool | None | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     creation_time: datetime.datetime | Unset = UNSET
     last_update_time: datetime.datetime | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
@@ -105,6 +107,7 @@ class JobSearchResult:
     def to_dict(self) -> dict[str, Any]:
         custom_headers = self.custom_headers.to_dict()
 
+        element_id: None | ElementId
         element_id = self.element_id
 
         element_instance_key = self.element_instance_key
@@ -122,6 +125,9 @@ class JobSearchResult:
         process_definition_key = self.process_definition_key
 
         process_instance_key = self.process_instance_key
+
+        root_process_instance_key: None | ProcessInstanceKey
+        root_process_instance_key = self.root_process_instance_key
 
         retries = self.retries
 
@@ -147,9 +153,13 @@ class JobSearchResult:
         else:
             denied_reason = self.denied_reason
 
-        end_time: str | Unset = UNSET
-        if not isinstance(self.end_time, Unset):
+        end_time: None | str | Unset
+        if isinstance(self.end_time, Unset):
+            end_time = UNSET
+        elif isinstance(self.end_time, datetime.datetime):
             end_time = self.end_time.isoformat()
+        else:
+            end_time = self.end_time
 
         error_code: None | str | Unset
         if isinstance(self.error_code, Unset):
@@ -168,8 +178,6 @@ class JobSearchResult:
             is_denied = UNSET
         else:
             is_denied = self.is_denied
-
-        root_process_instance_key = self.root_process_instance_key
 
         creation_time: str | Unset = UNSET
         if not isinstance(self.creation_time, Unset):
@@ -193,6 +201,7 @@ class JobSearchResult:
                 "processDefinitionId": process_definition_id,
                 "processDefinitionKey": process_definition_key,
                 "processInstanceKey": process_instance_key,
+                "rootProcessInstanceKey": root_process_instance_key,
                 "retries": retries,
                 "state": state,
                 "tenantId": tenant_id,
@@ -212,8 +221,6 @@ class JobSearchResult:
             field_dict["errorMessage"] = error_message
         if is_denied is not UNSET:
             field_dict["isDenied"] = is_denied
-        if root_process_instance_key is not UNSET:
-            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if creation_time is not UNSET:
             field_dict["creationTime"] = creation_time
         if last_update_time is not UNSET:
@@ -230,7 +237,18 @@ class JobSearchResult:
         d = dict(src_dict)
         custom_headers = JobSearchResultCustomHeaders.from_dict(d.pop("customHeaders"))
 
-        element_id = lift_element_id(d.pop("elementId"))
+        def _parse_element_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_element_id = _parse_element_id(d.pop("elementId"))
+
+        element_id = (
+            lift_element_id(_raw_element_id)
+            if isinstance(_raw_element_id, str)
+            else _raw_element_id
+        )
 
         element_instance_key = lift_element_instance_key(d.pop("elementInstanceKey"))
 
@@ -249,6 +267,21 @@ class JobSearchResult:
         )
 
         process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
+
+        def _parse_root_process_instance_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_root_process_instance_key = _parse_root_process_instance_key(
+            d.pop("rootProcessInstanceKey")
+        )
+
+        root_process_instance_key = (
+            lift_process_instance_key(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
 
         retries = d.pop("retries")
 
@@ -286,12 +319,22 @@ class JobSearchResult:
 
         denied_reason = _parse_denied_reason(d.pop("deniedReason", UNSET))
 
-        _end_time = d.pop("endTime", UNSET)
-        end_time: datetime.datetime | Unset
-        if isinstance(_end_time, Unset):
-            end_time = UNSET
-        else:
-            end_time = isoparse(_end_time)
+        def _parse_end_time(data: object) -> datetime.datetime | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                end_time_type_0 = isoparse(data)
+
+                return end_time_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(datetime.datetime | None | Unset, data)
+
+        end_time = _parse_end_time(d.pop("endTime", UNSET))
 
         def _parse_error_code(data: object) -> None | str | Unset:
             if data is None:
@@ -320,8 +363,6 @@ class JobSearchResult:
 
         is_denied = _parse_is_denied(d.pop("isDenied", UNSET))
 
-        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
-
         _creation_time = d.pop("creationTime", UNSET)
         creation_time: datetime.datetime | Unset
         if isinstance(_creation_time, Unset):
@@ -347,6 +388,7 @@ class JobSearchResult:
             process_definition_id=process_definition_id,
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,
+            root_process_instance_key=root_process_instance_key,
             retries=retries,
             state=state,
             tenant_id=tenant_id,
@@ -358,7 +400,6 @@ class JobSearchResult:
             error_code=error_code,
             error_message=error_message,
             is_denied=is_denied,
-            root_process_instance_key=root_process_instance_key,
             creation_time=creation_time,
             last_update_time=last_update_time,
         )

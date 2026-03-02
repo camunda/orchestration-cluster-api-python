@@ -14,25 +14,25 @@ from ..models.matched_decision_rule_item import MatchedDecisionRuleItem
 T = TypeVar("T", bound="DecisionInstanceGetQueryResult")
 @_attrs_define
 class DecisionInstanceGetQueryResult:
+    evaluation_failure: None | str
+    tenant_id: TenantId
+    root_process_instance_key: None | ProcessInstanceKey
+    evaluated_inputs: list[EvaluatedDecisionInputItem]
+    matched_rules: list[MatchedDecisionRuleItem]
     decision_evaluation_instance_key: DecisionEvaluationInstanceKey | Unset = UNSET
     state: DecisionInstanceStateEnum | Unset = UNSET
     evaluation_date: datetime.datetime | Unset = UNSET
-    evaluation_failure: str | Unset = UNSET
     decision_definition_id: DecisionDefinitionId | Unset = UNSET
     decision_definition_name: str | Unset = UNSET
     decision_definition_version: int | Unset = UNSET
     decision_definition_type: DecisionDefinitionTypeEnum | Unset = UNSET
     result: str | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
     decision_evaluation_key: DecisionEvaluationKey | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     decision_definition_key: DecisionDefinitionKey | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     root_decision_definition_key: DecisionDefinitionKey | Unset = UNSET
-    evaluated_inputs: list[EvaluatedDecisionInputItem] | Unset = UNSET
-    matched_rules: list[MatchedDecisionRuleItem] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

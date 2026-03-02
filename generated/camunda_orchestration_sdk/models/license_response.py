@@ -5,10 +5,10 @@ from collections.abc import Mapping
 from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
-
-from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="LicenseResponse")
 
@@ -21,13 +21,13 @@ class LicenseResponse:
         valid_license (bool): True if the Camunda license is valid, false if otherwise Example: True.
         license_type (str): Will return the license type property of the Camunda license Example: saas.
         is_commercial (bool): Will be false when a license contains a non-commerical=true property
-        expires_at (datetime.datetime | None | Unset): The date when the Camunda license expires
+        expires_at (datetime.datetime | None): The date when the Camunda license expires
     """
 
     valid_license: bool
     license_type: str
     is_commercial: bool
-    expires_at: datetime.datetime | None | Unset = UNSET
+    expires_at: datetime.datetime | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -39,10 +39,8 @@ class LicenseResponse:
 
         is_commercial = self.is_commercial
 
-        expires_at: None | str | Unset
-        if isinstance(self.expires_at, Unset):
-            expires_at = UNSET
-        elif isinstance(self.expires_at, datetime.datetime):
+        expires_at: None | str
+        if isinstance(self.expires_at, datetime.datetime):
             expires_at = self.expires_at.isoformat()
         else:
             expires_at = self.expires_at
@@ -54,10 +52,9 @@ class LicenseResponse:
                 "validLicense": valid_license,
                 "licenseType": license_type,
                 "isCommercial": is_commercial,
+                "expiresAt": expires_at,
             }
         )
-        if expires_at is not UNSET:
-            field_dict["expiresAt"] = expires_at
 
         return field_dict
 
@@ -70,10 +67,8 @@ class LicenseResponse:
 
         is_commercial = d.pop("isCommercial")
 
-        def _parse_expires_at(data: object) -> datetime.datetime | None | Unset:
+        def _parse_expires_at(data: object) -> datetime.datetime | None:
             if data is None:
-                return data
-            if isinstance(data, Unset):
                 return data
             try:
                 if not isinstance(data, str):
@@ -83,9 +78,9 @@ class LicenseResponse:
                 return expires_at_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(datetime.datetime | None | Unset, data)
+            return cast(datetime.datetime | None, data)
 
-        expires_at = _parse_expires_at(d.pop("expiresAt", UNSET))
+        expires_at = _parse_expires_at(d.pop("expiresAt"))
 
         license_response = cls(
             valid_license=valid_license,

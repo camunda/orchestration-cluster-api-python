@@ -9,10 +9,10 @@ from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="ProcessDefinitionResult")
 @_attrs_define
 class ProcessDefinitionResult:
-    name: str | Unset = UNSET
+    name: None | str | Unset = UNSET
     resource_name: str | Unset = UNSET
     version: int | Unset = UNSET
-    version_tag: str | Unset = UNSET
+    version_tag: None | str | Unset = UNSET
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET

@@ -20,7 +20,7 @@ from camunda_orchestration_sdk.semantic_types import (
 
 import datetime
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -42,58 +42,78 @@ T = TypeVar("T", bound="DecisionInstanceGetQueryResult")
 class DecisionInstanceGetQueryResult:
     """
     Attributes:
-        decision_evaluation_instance_key (str | Unset): System-generated key for a decision evaluation instance.
-            Example: 2251799813684367.
-        state (DecisionInstanceStateEnum | Unset): The state of the decision instance.
-        evaluation_date (datetime.datetime | Unset): The evaluation date of the decision instance.
-        evaluation_failure (str | Unset): The evaluation failure of the decision instance.
-        decision_definition_id (str | Unset): The ID of the DMN decision. Example: new-hire-onboarding-workflow.
-        decision_definition_name (str | Unset): The name of the DMN decision.
-        decision_definition_version (int | Unset): The version of the decision.
-        decision_definition_type (DecisionDefinitionTypeEnum | Unset): The type of the decision.
-        result (str | Unset): The result of the decision instance.
-        tenant_id (str | Unset): The tenant ID of the decision instance. Example: customer-service.
-        decision_evaluation_key (str | Unset): The key of the decision evaluation where this instance was created.
-            Example: 2251792362345323.
-        process_definition_key (str | Unset): The key of the process definition. Example: 2251799813686749.
-        process_instance_key (str | Unset): The key of the process instance. Example: 2251799813690746.
-        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
+        evaluation_failure (None | str): The evaluation failure of the decision instance.
+        tenant_id (str): The tenant ID of the decision instance. Example: customer-service.
+        root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
             top-level
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
+        evaluated_inputs (list[EvaluatedDecisionInputItem]): The evaluated inputs of the decision instance.
+        matched_rules (list[MatchedDecisionRuleItem]): The matched rules of the decision instance.
+        decision_evaluation_instance_key (str | Unset): System-generated key for a decision evaluation instance.
+            Example: 2251799813684367.
+        state (DecisionInstanceStateEnum | Unset): The state of the decision instance. UNSPECIFIED and UNKNOWN are
+            deprecated and should not be used anymore, for removal in 8.10
+        evaluation_date (datetime.datetime | Unset): The evaluation date of the decision instance.
+        decision_definition_id (str | Unset): The ID of the DMN decision. Example: new-hire-onboarding-workflow.
+        decision_definition_name (str | Unset): The name of the DMN decision.
+        decision_definition_version (int | Unset): The version of the decision.
+        decision_definition_type (DecisionDefinitionTypeEnum | Unset): The type of the decision. UNSPECIFIED is
+            deprecated and should not be used anymore, for removal in 8.10
+        result (str | Unset): The result of the decision instance.
+        decision_evaluation_key (str | Unset): The key of the decision evaluation where this instance was created.
+            Example: 2251792362345323.
+        process_definition_key (str | Unset): The key of the process definition. Example: 2251799813686749.
+        process_instance_key (str | Unset): The key of the process instance. Example: 2251799813690746.
         decision_definition_key (str | Unset): The key of the decision. Example: 2251799813326547.
         element_instance_key (str | Unset): The key of the element instance this decision instance is linked to.
             Example: 2251799813686789.
         root_decision_definition_key (str | Unset): The key of the root decision definition. Example: 2251799813326547.
-        evaluated_inputs (list[EvaluatedDecisionInputItem] | Unset): The evaluated inputs of the decision instance.
-        matched_rules (list[MatchedDecisionRuleItem] | Unset): The matched rules of the decision instance.
     """
 
+    evaluation_failure: None | str
+    tenant_id: TenantId
+    root_process_instance_key: None | ProcessInstanceKey
+    evaluated_inputs: list[EvaluatedDecisionInputItem]
+    matched_rules: list[MatchedDecisionRuleItem]
     decision_evaluation_instance_key: DecisionEvaluationInstanceKey | Unset = UNSET
     state: DecisionInstanceStateEnum | Unset = UNSET
     evaluation_date: datetime.datetime | Unset = UNSET
-    evaluation_failure: str | Unset = UNSET
     decision_definition_id: DecisionDefinitionId | Unset = UNSET
     decision_definition_name: str | Unset = UNSET
     decision_definition_version: int | Unset = UNSET
     decision_definition_type: DecisionDefinitionTypeEnum | Unset = UNSET
     result: str | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
     decision_evaluation_key: DecisionEvaluationKey | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     decision_definition_key: DecisionDefinitionKey | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     root_decision_definition_key: DecisionDefinitionKey | Unset = UNSET
-    evaluated_inputs: list[EvaluatedDecisionInputItem] | Unset = UNSET
-    matched_rules: list[MatchedDecisionRuleItem] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        evaluation_failure: None | str
+        evaluation_failure = self.evaluation_failure
+
+        tenant_id = self.tenant_id
+
+        root_process_instance_key: None | ProcessInstanceKey
+        root_process_instance_key = self.root_process_instance_key
+
+        evaluated_inputs: list[dict[str, Any]] = []
+        for evaluated_inputs_item_data in self.evaluated_inputs:
+            evaluated_inputs_item = evaluated_inputs_item_data.to_dict()
+            evaluated_inputs.append(evaluated_inputs_item)
+
+        matched_rules: list[dict[str, Any]] = []
+        for matched_rules_item_data in self.matched_rules:
+            matched_rules_item = matched_rules_item_data.to_dict()
+            matched_rules.append(matched_rules_item)
+
         decision_evaluation_instance_key = self.decision_evaluation_instance_key
 
         state: str | Unset = UNSET
@@ -103,8 +123,6 @@ class DecisionInstanceGetQueryResult:
         evaluation_date: str | Unset = UNSET
         if not isinstance(self.evaluation_date, Unset):
             evaluation_date = self.evaluation_date.isoformat()
-
-        evaluation_failure = self.evaluation_failure
 
         decision_definition_id = self.decision_definition_id
 
@@ -118,15 +136,11 @@ class DecisionInstanceGetQueryResult:
 
         result = self.result
 
-        tenant_id = self.tenant_id
-
         decision_evaluation_key = self.decision_evaluation_key
 
         process_definition_key = self.process_definition_key
 
         process_instance_key = self.process_instance_key
-
-        root_process_instance_key = self.root_process_instance_key
 
         decision_definition_key = self.decision_definition_key
 
@@ -134,23 +148,17 @@ class DecisionInstanceGetQueryResult:
 
         root_decision_definition_key = self.root_decision_definition_key
 
-        evaluated_inputs: list[dict[str, Any]] | Unset = UNSET
-        if not isinstance(self.evaluated_inputs, Unset):
-            evaluated_inputs = []
-            for evaluated_inputs_item_data in self.evaluated_inputs:
-                evaluated_inputs_item = evaluated_inputs_item_data.to_dict()
-                evaluated_inputs.append(evaluated_inputs_item)
-
-        matched_rules: list[dict[str, Any]] | Unset = UNSET
-        if not isinstance(self.matched_rules, Unset):
-            matched_rules = []
-            for matched_rules_item_data in self.matched_rules:
-                matched_rules_item = matched_rules_item_data.to_dict()
-                matched_rules.append(matched_rules_item)
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
+        field_dict.update(
+            {
+                "evaluationFailure": evaluation_failure,
+                "tenantId": tenant_id,
+                "rootProcessInstanceKey": root_process_instance_key,
+                "evaluatedInputs": evaluated_inputs,
+                "matchedRules": matched_rules,
+            }
+        )
         if decision_evaluation_instance_key is not UNSET:
             field_dict["decisionEvaluationInstanceKey"] = (
                 decision_evaluation_instance_key
@@ -159,8 +167,6 @@ class DecisionInstanceGetQueryResult:
             field_dict["state"] = state
         if evaluation_date is not UNSET:
             field_dict["evaluationDate"] = evaluation_date
-        if evaluation_failure is not UNSET:
-            field_dict["evaluationFailure"] = evaluation_failure
         if decision_definition_id is not UNSET:
             field_dict["decisionDefinitionId"] = decision_definition_id
         if decision_definition_name is not UNSET:
@@ -171,26 +177,18 @@ class DecisionInstanceGetQueryResult:
             field_dict["decisionDefinitionType"] = decision_definition_type
         if result is not UNSET:
             field_dict["result"] = result
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
         if decision_evaluation_key is not UNSET:
             field_dict["decisionEvaluationKey"] = decision_evaluation_key
         if process_definition_key is not UNSET:
             field_dict["processDefinitionKey"] = process_definition_key
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
-        if root_process_instance_key is not UNSET:
-            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if decision_definition_key is not UNSET:
             field_dict["decisionDefinitionKey"] = decision_definition_key
         if element_instance_key is not UNSET:
             field_dict["elementInstanceKey"] = element_instance_key
         if root_decision_definition_key is not UNSET:
             field_dict["rootDecisionDefinitionKey"] = root_decision_definition_key
-        if evaluated_inputs is not UNSET:
-            field_dict["evaluatedInputs"] = evaluated_inputs
-        if matched_rules is not UNSET:
-            field_dict["matchedRules"] = matched_rules
 
         return field_dict
 
@@ -200,6 +198,49 @@ class DecisionInstanceGetQueryResult:
         from ..models.matched_decision_rule_item import MatchedDecisionRuleItem
 
         d = dict(src_dict)
+
+        def _parse_evaluation_failure(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        evaluation_failure = _parse_evaluation_failure(d.pop("evaluationFailure"))
+
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
+
+        def _parse_root_process_instance_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_root_process_instance_key = _parse_root_process_instance_key(
+            d.pop("rootProcessInstanceKey")
+        )
+
+        root_process_instance_key = (
+            lift_process_instance_key(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
+
+        evaluated_inputs: list[EvaluatedDecisionInputItem] = []
+        _evaluated_inputs = d.pop("evaluatedInputs")
+        for evaluated_inputs_item_data in _evaluated_inputs:
+            evaluated_inputs_item = EvaluatedDecisionInputItem.from_dict(
+                evaluated_inputs_item_data
+            )
+
+            evaluated_inputs.append(evaluated_inputs_item)
+
+        matched_rules: list[MatchedDecisionRuleItem] = []
+        _matched_rules = d.pop("matchedRules")
+        for matched_rules_item_data in _matched_rules:
+            matched_rules_item = MatchedDecisionRuleItem.from_dict(
+                matched_rules_item_data
+            )
+
+            matched_rules.append(matched_rules_item)
+
         decision_evaluation_instance_key = (
             lift_decision_evaluation_instance_key(_val)
             if (_val := d.pop("decisionEvaluationInstanceKey", UNSET)) is not UNSET
@@ -219,8 +260,6 @@ class DecisionInstanceGetQueryResult:
             evaluation_date = UNSET
         else:
             evaluation_date = isoparse(_evaluation_date)
-
-        evaluation_failure = d.pop("evaluationFailure", UNSET)
 
         decision_definition_id = (
             lift_decision_definition_id(_val)
@@ -243,12 +282,6 @@ class DecisionInstanceGetQueryResult:
 
         result = d.pop("result", UNSET)
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
-
         decision_evaluation_key = (
             lift_decision_evaluation_key(_val)
             if (_val := d.pop("decisionEvaluationKey", UNSET)) is not UNSET
@@ -267,8 +300,6 @@ class DecisionInstanceGetQueryResult:
             else UNSET
         )
 
-        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
-
         decision_definition_key = (
             lift_decision_definition_key(_val)
             if (_val := d.pop("decisionDefinitionKey", UNSET)) is not UNSET
@@ -283,48 +314,26 @@ class DecisionInstanceGetQueryResult:
 
         root_decision_definition_key = d.pop("rootDecisionDefinitionKey", UNSET)
 
-        _evaluated_inputs = d.pop("evaluatedInputs", UNSET)
-        evaluated_inputs: list[EvaluatedDecisionInputItem] | Unset = UNSET
-        if _evaluated_inputs is not UNSET:
-            evaluated_inputs = []
-            for evaluated_inputs_item_data in _evaluated_inputs:
-                evaluated_inputs_item = EvaluatedDecisionInputItem.from_dict(
-                    evaluated_inputs_item_data
-                )
-
-                evaluated_inputs.append(evaluated_inputs_item)
-
-        _matched_rules = d.pop("matchedRules", UNSET)
-        matched_rules: list[MatchedDecisionRuleItem] | Unset = UNSET
-        if _matched_rules is not UNSET:
-            matched_rules = []
-            for matched_rules_item_data in _matched_rules:
-                matched_rules_item = MatchedDecisionRuleItem.from_dict(
-                    matched_rules_item_data
-                )
-
-                matched_rules.append(matched_rules_item)
-
         decision_instance_get_query_result = cls(
+            evaluation_failure=evaluation_failure,
+            tenant_id=tenant_id,
+            root_process_instance_key=root_process_instance_key,
+            evaluated_inputs=evaluated_inputs,
+            matched_rules=matched_rules,
             decision_evaluation_instance_key=decision_evaluation_instance_key,
             state=state,
             evaluation_date=evaluation_date,
-            evaluation_failure=evaluation_failure,
             decision_definition_id=decision_definition_id,
             decision_definition_name=decision_definition_name,
             decision_definition_version=decision_definition_version,
             decision_definition_type=decision_definition_type,
             result=result,
-            tenant_id=tenant_id,
             decision_evaluation_key=decision_evaluation_key,
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,
-            root_process_instance_key=root_process_instance_key,
             decision_definition_key=decision_definition_key,
             element_instance_key=element_instance_key,
             root_decision_definition_key=root_decision_definition_key,
-            evaluated_inputs=evaluated_inputs,
-            matched_rules=matched_rules,
         )
 
         decision_instance_get_query_result.additional_properties = d

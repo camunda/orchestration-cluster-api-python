@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from camunda_orchestration_sdk.semantic_types import ElementInstanceKey
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
@@ -9,7 +10,7 @@ T = TypeVar("T", bound="DirectAncestorKeyInstruction")
 @_attrs_define
 class DirectAncestorKeyInstruction:
     ancestor_scope_type: str
-    ancestor_element_instance_key: str
+    ancestor_element_instance_key: ElementInstanceKey
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

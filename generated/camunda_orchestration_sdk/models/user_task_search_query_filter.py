@@ -54,8 +54,8 @@ class UserTaskSearchQueryFilter:
         completion_date (AdvancedDateTimeFilter | datetime.datetime | Unset):
         follow_up_date (AdvancedDateTimeFilter | datetime.datetime | Unset):
         due_date (AdvancedDateTimeFilter | datetime.datetime | Unset):
-        process_instance_variables (list[VariableValueFilterProperty] | Unset):
-        local_variables (list[VariableValueFilterProperty] | Unset):
+        process_instance_variables (list[VariableValueFilterProperty] | Unset): The variables of the process instance.
+        local_variables (list[VariableValueFilterProperty] | Unset): The local variables of the user task.
         user_task_key (str | Unset): The key for this user task.
         process_definition_key (str | Unset): The key of the process definition. Example: 2251799813686749.
         process_instance_key (str | Unset): The key of the process instance. Example: 2251799813690746.

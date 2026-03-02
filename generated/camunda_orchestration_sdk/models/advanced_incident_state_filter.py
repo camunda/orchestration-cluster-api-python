@@ -1,20 +1,15 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.advanced_incident_state_filter_eq import AdvancedIncidentStateFilterEq
+from ..models.advanced_incident_state_filter_neq import AdvancedIncidentStateFilterNeq
 from ..models.incident_state_enum import IncidentStateEnum
 from ..types import UNSET, Unset, str_any_dict_factory
-
-if TYPE_CHECKING:
-    from ..models.advanced_incident_state_filter_eq import AdvancedIncidentStateFilterEq
-    from ..models.advanced_incident_state_filter_neq import (
-        AdvancedIncidentStateFilterNeq,
-    )
-
 
 T = TypeVar("T", bound="AdvancedIncidentStateFilter")
 
@@ -50,13 +45,13 @@ class AdvancedIncidentStateFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        eq: dict[str, Any] | Unset = UNSET
+        eq: str | Unset = UNSET
         if not isinstance(self.eq, Unset):
-            eq = self.eq.to_dict()
+            eq = self.eq.value
 
-        neq: dict[str, Any] | Unset = UNSET
+        neq: str | Unset = UNSET
         if not isinstance(self.neq, Unset):
-            neq = self.neq.to_dict()
+            neq = self.neq.value
 
         exists = self.exists
 
@@ -96,27 +91,20 @@ class AdvancedIncidentStateFilter:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.advanced_incident_state_filter_eq import (
-            AdvancedIncidentStateFilterEq,
-        )
-        from ..models.advanced_incident_state_filter_neq import (
-            AdvancedIncidentStateFilterNeq,
-        )
-
         d = dict(src_dict)
         _eq = d.pop("$eq", UNSET)
         eq: AdvancedIncidentStateFilterEq | Unset
         if isinstance(_eq, Unset):
             eq = UNSET
         else:
-            eq = AdvancedIncidentStateFilterEq.from_dict(_eq)
+            eq = AdvancedIncidentStateFilterEq(_eq)
 
         _neq = d.pop("$neq", UNSET)
         neq: AdvancedIncidentStateFilterNeq | Unset
         if isinstance(_neq, Unset):
             neq = UNSET
         else:
-            neq = AdvancedIncidentStateFilterNeq.from_dict(_neq)
+            neq = AdvancedIncidentStateFilterNeq(_neq)
 
         exists = d.pop("$exists", UNSET)
 

@@ -11,14 +11,14 @@ from ..models.matched_decision_rule_item import MatchedDecisionRuleItem
 T = TypeVar("T", bound="EvaluatedDecisionResult")
 @_attrs_define
 class EvaluatedDecisionResult:
+    decision_definition_type: str
+    matched_rules: list[MatchedDecisionRuleItem]
+    evaluated_inputs: list[EvaluatedDecisionInputItem]
     decision_definition_id: DecisionDefinitionId | Unset = UNSET
     decision_definition_name: str | Unset = UNSET
     decision_definition_version: int | Unset = UNSET
-    decision_definition_type: str | Unset = UNSET
     output: str | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
-    matched_rules: list[MatchedDecisionRuleItem] | Unset = UNSET
-    evaluated_inputs: list[EvaluatedDecisionInputItem] | Unset = UNSET
     decision_definition_key: DecisionDefinitionKey | Unset = UNSET
     decision_evaluation_instance_key: DecisionEvaluationInstanceKey | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)

@@ -1,5 +1,6 @@
 from .activated_job_result import ActivatedJobResult
 from .activated_job_result_custom_headers import ActivatedJobResultCustomHeaders
+from .activated_job_result_user_task import ActivatedJobResultUserTask
 from .activated_job_result_variables import ActivatedJobResultVariables
 from .ad_hoc_sub_process_activate_activities_instruction import AdHocSubProcessActivateActivitiesInstruction
 from .ad_hoc_sub_process_activate_activity_reference import AdHocSubProcessActivateActivityReference
@@ -41,6 +42,12 @@ from .advanced_entity_type_filter import AdvancedEntityTypeFilter
 from .advanced_entity_type_filter_eq import AdvancedEntityTypeFilterEq
 from .advanced_entity_type_filter_neq import AdvancedEntityTypeFilterNeq
 from .advanced_form_key_filter import AdvancedFormKeyFilter
+from .advanced_global_listener_source_filter import AdvancedGlobalListenerSourceFilter
+from .advanced_global_listener_source_filter_eq import AdvancedGlobalListenerSourceFilterEq
+from .advanced_global_listener_source_filter_neq import AdvancedGlobalListenerSourceFilterNeq
+from .advanced_global_task_listener_event_type_filter import AdvancedGlobalTaskListenerEventTypeFilter
+from .advanced_global_task_listener_event_type_filter_eq import AdvancedGlobalTaskListenerEventTypeFilterEq
+from .advanced_global_task_listener_event_type_filter_neq import AdvancedGlobalTaskListenerEventTypeFilterNeq
 from .advanced_incident_error_type_filter import AdvancedIncidentErrorTypeFilter
 from .advanced_incident_error_type_filter_eq import AdvancedIncidentErrorTypeFilterEq
 from .advanced_incident_error_type_filter_neq import AdvancedIncidentErrorTypeFilterNeq
@@ -221,6 +228,11 @@ from .deployment_decision_requirements_result import DeploymentDecisionRequireme
 from .deployment_decision_result import DeploymentDecisionResult
 from .deployment_form_result import DeploymentFormResult
 from .deployment_metadata_result import DeploymentMetadataResult
+from .deployment_metadata_result_decision_definition import DeploymentMetadataResultDecisionDefinition
+from .deployment_metadata_result_decision_requirements import DeploymentMetadataResultDecisionRequirements
+from .deployment_metadata_result_form import DeploymentMetadataResultForm
+from .deployment_metadata_result_process_definition import DeploymentMetadataResultProcessDefinition
+from .deployment_metadata_result_resource import DeploymentMetadataResultResource
 from .deployment_process_result import DeploymentProcessResult
 from .deployment_resource_result import DeploymentResourceResult
 from .deployment_result import DeploymentResult
@@ -253,6 +265,7 @@ from .evaluated_decision_input_item import EvaluatedDecisionInputItem
 from .evaluated_decision_output_item import EvaluatedDecisionOutputItem
 from .evaluated_decision_result import EvaluatedDecisionResult
 from .expression_evaluation_request import ExpressionEvaluationRequest
+from .expression_evaluation_request_context import ExpressionEvaluationRequestContext
 from .expression_evaluation_result import ExpressionEvaluationResult
 from .form_result import FormResult
 from .form_result_schema import FormResultSchema
@@ -260,9 +273,17 @@ from .get_user_response_200 import GetUserResponse200
 from .global_job_statistics_query_result import GlobalJobStatisticsQueryResult
 from .global_listener_base import GlobalListenerBase
 from .global_listener_source_enum import GlobalListenerSourceEnum
+from .global_listener_source_exact_match import GlobalListenerSourceExactMatch
 from .global_task_listener_base import GlobalTaskListenerBase
 from .global_task_listener_event_type_enum import GlobalTaskListenerEventTypeEnum
+from .global_task_listener_event_type_exact_match import GlobalTaskListenerEventTypeExactMatch
 from .global_task_listener_result import GlobalTaskListenerResult
+from .global_task_listener_search_query_filter_request import GlobalTaskListenerSearchQueryFilterRequest
+from .global_task_listener_search_query_request import GlobalTaskListenerSearchQueryRequest
+from .global_task_listener_search_query_request_filter import GlobalTaskListenerSearchQueryRequestFilter
+from .global_task_listener_search_query_result import GlobalTaskListenerSearchQueryResult
+from .global_task_listener_search_query_sort_request import GlobalTaskListenerSearchQuerySortRequest
+from .global_task_listener_search_query_sort_request_field import GlobalTaskListenerSearchQuerySortRequestField
 from .group_client_result import GroupClientResult
 from .group_client_search_query_request import GroupClientSearchQueryRequest
 from .group_client_search_query_sort_request import GroupClientSearchQuerySortRequest
@@ -271,7 +292,9 @@ from .group_client_search_result import GroupClientSearchResult
 from .group_create_request import GroupCreateRequest
 from .group_create_result import GroupCreateResult
 from .group_filter import GroupFilter
+from .group_mapping_rule_search_result import GroupMappingRuleSearchResult
 from .group_result import GroupResult
+from .group_role_search_result import GroupRoleSearchResult
 from .group_search_query_request import GroupSearchQueryRequest
 from .group_search_query_request_filter import GroupSearchQueryRequestFilter
 from .group_search_query_result import GroupSearchQueryResult
@@ -345,6 +368,7 @@ from .job_state_exact_match import JobStateExactMatch
 from .job_type_statistics_filter import JobTypeStatisticsFilter
 from .job_type_statistics_item import JobTypeStatisticsItem
 from .job_type_statistics_query import JobTypeStatisticsQuery
+from .job_type_statistics_query_page import JobTypeStatisticsQueryPage
 from .job_type_statistics_query_result import JobTypeStatisticsQueryResult
 from .job_update_request import JobUpdateRequest
 from .license_response import LicenseResponse
@@ -395,6 +419,7 @@ from .process_definition_element_statistics_query_filter import ProcessDefinitio
 from .process_definition_element_statistics_query_result import ProcessDefinitionElementStatisticsQueryResult
 from .process_definition_filter import ProcessDefinitionFilter
 from .process_definition_instance_statistics_query import ProcessDefinitionInstanceStatisticsQuery
+from .process_definition_instance_statistics_query_page import ProcessDefinitionInstanceStatisticsQueryPage
 from .process_definition_instance_statistics_query_result import ProcessDefinitionInstanceStatisticsQueryResult
 from .process_definition_instance_statistics_query_sort_request import ProcessDefinitionInstanceStatisticsQuerySortRequest
 from .process_definition_instance_statistics_query_sort_request_field import ProcessDefinitionInstanceStatisticsQuerySortRequestField
@@ -423,6 +448,7 @@ from .process_instance_call_hierarchy_entry import ProcessInstanceCallHierarchyE
 from .process_instance_cancellation_batch_operation_request import ProcessInstanceCancellationBatchOperationRequest
 from .process_instance_cancellation_batch_operation_request_filter import ProcessInstanceCancellationBatchOperationRequestFilter
 from .process_instance_creation_instruction_by_id_variables import ProcessInstanceCreationInstructionByIdVariables
+from .process_instance_creation_instruction_by_key_variables import ProcessInstanceCreationInstructionByKeyVariables
 from .process_instance_creation_start_instruction import ProcessInstanceCreationStartInstruction
 from .process_instance_creation_terminate_instruction import ProcessInstanceCreationTerminateInstruction
 from .process_instance_deletion_batch_operation_request import ProcessInstanceDeletionBatchOperationRequest
@@ -467,6 +493,7 @@ from .role_group_search_query_request import RoleGroupSearchQueryRequest
 from .role_group_search_query_sort_request import RoleGroupSearchQuerySortRequest
 from .role_group_search_query_sort_request_field import RoleGroupSearchQuerySortRequestField
 from .role_group_search_result import RoleGroupSearchResult
+from .role_mapping_rule_search_result import RoleMappingRuleSearchResult
 from .role_result import RoleResult
 from .role_search_query_request import RoleSearchQueryRequest
 from .role_search_query_request_filter import RoleSearchQueryRequestFilter
@@ -486,9 +513,15 @@ from .search_clients_for_role_data import SearchClientsForRoleData
 from .search_clients_for_role_response_200 import SearchClientsForRoleResponse200
 from .search_clients_for_tenant_data import SearchClientsForTenantData
 from .search_clients_for_tenant_response_200 import SearchClientsForTenantResponse200
+from .search_mapping_rule_response_200 import SearchMappingRuleResponse200
+from .search_mapping_rules_for_group_response_200 import SearchMappingRulesForGroupResponse200
+from .search_mapping_rules_for_role_response_200 import SearchMappingRulesForRoleResponse200
+from .search_mapping_rules_for_tenant_response_200 import SearchMappingRulesForTenantResponse200
 from .search_query_page_response import SearchQueryPageResponse
 from .search_query_request import SearchQueryRequest
 from .search_query_response import SearchQueryResponse
+from .search_roles_for_group_response_200 import SearchRolesForGroupResponse200
+from .search_roles_for_tenant_response_200 import SearchRolesForTenantResponse200
 from .search_user_task_variables_data import SearchUserTaskVariablesData
 from .search_users_for_group_data import SearchUsersForGroupData
 from .search_users_for_group_response_200 import SearchUsersForGroupResponse200
@@ -521,7 +554,9 @@ from .tenant_group_search_query_request import TenantGroupSearchQueryRequest
 from .tenant_group_search_query_sort_request import TenantGroupSearchQuerySortRequest
 from .tenant_group_search_query_sort_request_field import TenantGroupSearchQuerySortRequestField
 from .tenant_group_search_result import TenantGroupSearchResult
+from .tenant_mapping_rule_search_result import TenantMappingRuleSearchResult
 from .tenant_result import TenantResult
+from .tenant_role_search_result import TenantRoleSearchResult
 from .tenant_search_query_request import TenantSearchQueryRequest
 from .tenant_search_query_request_filter import TenantSearchQueryRequestFilter
 from .tenant_search_query_result import TenantSearchQueryResult
@@ -590,6 +625,7 @@ from .variable_value_filter_property import VariableValueFilterProperty
 __all__: list[str] = [
     "ActivatedJobResult",
     "ActivatedJobResultCustomHeaders",
+    "ActivatedJobResultUserTask",
     "ActivatedJobResultVariables",
     "AdHocSubProcessActivateActivitiesInstruction",
     "AdHocSubProcessActivateActivityReference",
@@ -631,6 +667,12 @@ __all__: list[str] = [
     "AdvancedEntityTypeFilterEq",
     "AdvancedEntityTypeFilterNeq",
     "AdvancedFormKeyFilter",
+    "AdvancedGlobalListenerSourceFilter",
+    "AdvancedGlobalListenerSourceFilterEq",
+    "AdvancedGlobalListenerSourceFilterNeq",
+    "AdvancedGlobalTaskListenerEventTypeFilter",
+    "AdvancedGlobalTaskListenerEventTypeFilterEq",
+    "AdvancedGlobalTaskListenerEventTypeFilterNeq",
     "AdvancedIncidentErrorTypeFilter",
     "AdvancedIncidentErrorTypeFilterEq",
     "AdvancedIncidentErrorTypeFilterNeq",
@@ -811,6 +853,11 @@ __all__: list[str] = [
     "DeploymentDecisionResult",
     "DeploymentFormResult",
     "DeploymentMetadataResult",
+    "DeploymentMetadataResultDecisionDefinition",
+    "DeploymentMetadataResultDecisionRequirements",
+    "DeploymentMetadataResultForm",
+    "DeploymentMetadataResultProcessDefinition",
+    "DeploymentMetadataResultResource",
     "DeploymentProcessResult",
     "DeploymentResourceResult",
     "DeploymentResult",
@@ -843,6 +890,7 @@ __all__: list[str] = [
     "EvaluatedDecisionResult",
     "EvaluateDecisionResult",
     "ExpressionEvaluationRequest",
+    "ExpressionEvaluationRequestContext",
     "ExpressionEvaluationResult",
     "FormResult",
     "FormResultSchema",
@@ -850,9 +898,17 @@ __all__: list[str] = [
     "GlobalJobStatisticsQueryResult",
     "GlobalListenerBase",
     "GlobalListenerSourceEnum",
+    "GlobalListenerSourceExactMatch",
     "GlobalTaskListenerBase",
     "GlobalTaskListenerEventTypeEnum",
+    "GlobalTaskListenerEventTypeExactMatch",
     "GlobalTaskListenerResult",
+    "GlobalTaskListenerSearchQueryFilterRequest",
+    "GlobalTaskListenerSearchQueryRequest",
+    "GlobalTaskListenerSearchQueryRequestFilter",
+    "GlobalTaskListenerSearchQueryResult",
+    "GlobalTaskListenerSearchQuerySortRequest",
+    "GlobalTaskListenerSearchQuerySortRequestField",
     "GroupClientResult",
     "GroupClientSearchQueryRequest",
     "GroupClientSearchQuerySortRequest",
@@ -861,7 +917,9 @@ __all__: list[str] = [
     "GroupCreateRequest",
     "GroupCreateResult",
     "GroupFilter",
+    "GroupMappingRuleSearchResult",
     "GroupResult",
+    "GroupRoleSearchResult",
     "GroupSearchQueryRequest",
     "GroupSearchQueryRequestFilter",
     "GroupSearchQueryResult",
@@ -935,6 +993,7 @@ __all__: list[str] = [
     "JobTypeStatisticsFilter",
     "JobTypeStatisticsItem",
     "JobTypeStatisticsQuery",
+    "JobTypeStatisticsQueryPage",
     "JobTypeStatisticsQueryResult",
     "JobUpdateRequest",
     "LicenseResponse",
@@ -985,6 +1044,7 @@ __all__: list[str] = [
     "ProcessDefinitionElementStatisticsQueryResult",
     "ProcessDefinitionFilter",
     "ProcessDefinitionInstanceStatisticsQuery",
+    "ProcessDefinitionInstanceStatisticsQueryPage",
     "ProcessDefinitionInstanceStatisticsQueryResult",
     "ProcessDefinitionInstanceStatisticsQuerySortRequest",
     "ProcessDefinitionInstanceStatisticsQuerySortRequestField",
@@ -1013,6 +1073,7 @@ __all__: list[str] = [
     "ProcessInstanceCancellationBatchOperationRequest",
     "ProcessInstanceCancellationBatchOperationRequestFilter",
     "ProcessInstanceCreationInstructionByIdVariables",
+    "ProcessInstanceCreationInstructionByKeyVariables",
     "ProcessInstanceCreationStartInstruction",
     "ProcessInstanceCreationTerminateInstruction",
     "ProcessInstanceDeletionBatchOperationRequest",
@@ -1057,6 +1118,7 @@ __all__: list[str] = [
     "RoleGroupSearchQuerySortRequest",
     "RoleGroupSearchQuerySortRequestField",
     "RoleGroupSearchResult",
+    "RoleMappingRuleSearchResult",
     "RoleResult",
     "RoleSearchQueryRequest",
     "RoleSearchQueryRequestFilter",
@@ -1076,9 +1138,15 @@ __all__: list[str] = [
     "SearchClientsForRoleResponse200",
     "SearchClientsForTenantData",
     "SearchClientsForTenantResponse200",
+    "SearchMappingRuleResponse200",
+    "SearchMappingRulesForGroupResponse200",
+    "SearchMappingRulesForRoleResponse200",
+    "SearchMappingRulesForTenantResponse200",
     "SearchQueryPageResponse",
     "SearchQueryRequest",
     "SearchQueryResponse",
+    "SearchRolesForGroupResponse200",
+    "SearchRolesForTenantResponse200",
     "SearchUsersForGroupData",
     "SearchUsersForGroupResponse200",
     "SearchUsersForRoleData",
@@ -1111,7 +1179,9 @@ __all__: list[str] = [
     "TenantGroupSearchQuerySortRequest",
     "TenantGroupSearchQuerySortRequestField",
     "TenantGroupSearchResult",
+    "TenantMappingRuleSearchResult",
     "TenantResult",
+    "TenantRoleSearchResult",
     "TenantSearchQueryRequest",
     "TenantSearchQueryRequestFilter",
     "TenantSearchQueryResult",

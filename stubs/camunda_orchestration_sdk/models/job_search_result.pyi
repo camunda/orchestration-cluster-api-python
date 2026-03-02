@@ -15,7 +15,7 @@ T = TypeVar("T", bound="JobSearchResult")
 @_attrs_define
 class JobSearchResult:
     custom_headers: JobSearchResultCustomHeaders
-    element_id: ElementId
+    element_id: None | ElementId
     element_instance_key: ElementInstanceKey
     has_failed_with_retries_left: bool
     job_key: JobKey
@@ -24,6 +24,7 @@ class JobSearchResult:
     process_definition_id: ProcessDefinitionId
     process_definition_key: ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
+    root_process_instance_key: None | ProcessInstanceKey
     retries: int
     state: JobStateEnum
     tenant_id: TenantId
@@ -31,11 +32,10 @@ class JobSearchResult:
     worker: str
     deadline: datetime.datetime | None | Unset = UNSET
     denied_reason: None | str | Unset = UNSET
-    end_time: datetime.datetime | Unset = UNSET
+    end_time: datetime.datetime | None | Unset = UNSET
     error_code: None | str | Unset = UNSET
     error_message: None | str | Unset = UNSET
     is_denied: bool | None | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     creation_time: datetime.datetime | Unset = UNSET
     last_update_time: datetime.datetime | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)

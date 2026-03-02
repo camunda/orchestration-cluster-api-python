@@ -12,30 +12,30 @@ from ..models.user_task_result_custom_headers import UserTaskResultCustomHeaders
 T = TypeVar("T", bound="UserTaskResult")
 @_attrs_define
 class UserTaskResult:
+    assignee: None | str
+    candidate_groups: list[str]
+    candidate_users: list[str]
+    completion_date: datetime.datetime | None
+    follow_up_date: datetime.datetime | None
+    due_date: datetime.datetime | None
+    external_form_reference: None | str
+    custom_headers: UserTaskResultCustomHeaders
+    root_process_instance_key: None | ProcessInstanceKey
+    form_key: None | FormKey
+    tags: list[str]
     name: str | Unset = UNSET
     state: UserTaskStateEnum | Unset = UNSET
-    assignee: str | Unset = UNSET
     element_id: ElementId | Unset = UNSET
-    candidate_groups: list[str] | Unset = UNSET
-    candidate_users: list[str] | Unset = UNSET
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     creation_date: datetime.datetime | Unset = UNSET
-    completion_date: datetime.datetime | Unset = UNSET
-    follow_up_date: datetime.datetime | Unset = UNSET
-    due_date: datetime.datetime | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
-    external_form_reference: str | Unset = UNSET
     process_definition_version: int | Unset = UNSET
-    custom_headers: UserTaskResultCustomHeaders | Unset = UNSET
     priority: int | Unset = 50
     user_task_key: UserTaskKey | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
-    process_name: str | Unset = UNSET
+    process_name: None | str | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
-    form_key: FormKey | Unset = UNSET
-    tags: list[str] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

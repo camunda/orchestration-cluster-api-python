@@ -8,11 +8,11 @@ from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="EvaluatedDecisionOutputItem")
 @_attrs_define
 class EvaluatedDecisionOutputItem:
+    rule_id: None | str
+    rule_index: int | None
     output_id: str | Unset = UNSET
     output_name: str | Unset = UNSET
     output_value: str | Unset = UNSET
-    rule_id: str | Unset = UNSET
-    rule_index: int | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

@@ -27,8 +27,8 @@ class DeploymentFormResult:
         form_id (str | Unset): The form ID, as parsed during deployment, together with the version forms a
             unique identifier for a specific form.
              Example: Form_1nx5hav.
-        version (int | Unset):
-        resource_name (str | Unset):
+        version (int | Unset): The version of the deployed form.
+        resource_name (str | Unset): The name of the resource.
         tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
         form_key (str | Unset): The assigned key, which acts as a unique identifier for this form. Example:
             2251799813684365.

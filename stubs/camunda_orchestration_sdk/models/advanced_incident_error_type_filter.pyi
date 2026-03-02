@@ -4,10 +4,10 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from ..models.incident_error_type_enum import IncidentErrorTypeEnum
-from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.advanced_incident_error_type_filter_eq import AdvancedIncidentErrorTypeFilterEq
 from ..models.advanced_incident_error_type_filter_neq import AdvancedIncidentErrorTypeFilterNeq
+from ..models.incident_error_type_enum import IncidentErrorTypeEnum
+from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="AdvancedIncidentErrorTypeFilter")
 @_attrs_define
 class AdvancedIncidentErrorTypeFilter:

@@ -11,13 +11,13 @@ from ..models.document_metadata_custom_properties import DocumentMetadataCustomP
 T = TypeVar("T", bound="DocumentMetadata")
 @_attrs_define
 class DocumentMetadata:
+    custom_properties: DocumentMetadataCustomProperties
     content_type: str | Unset = UNSET
     file_name: str | Unset = UNSET
     expires_at: datetime.datetime | Unset = UNSET
     size: int | Unset = UNSET
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    custom_properties: DocumentMetadataCustomProperties | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

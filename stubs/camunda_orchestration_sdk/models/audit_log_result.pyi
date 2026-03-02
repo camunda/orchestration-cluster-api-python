@@ -17,6 +17,7 @@ from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="AuditLogResult")
 @_attrs_define
 class AuditLogResult:
+    root_process_instance_key: None | ProcessInstanceKey
     audit_log_key: AuditLogKey | Unset = UNSET
     entity_key: str | Unset = UNSET
     entity_type: AuditLogEntityTypeEnum | Unset = UNSET
@@ -34,7 +35,6 @@ class AuditLogResult:
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     job_key: JobKey | Unset = UNSET
     user_task_key: UserTaskKey | Unset = UNSET

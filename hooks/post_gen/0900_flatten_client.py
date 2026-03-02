@@ -371,16 +371,10 @@ def generate_flat_client(package_path: Path) -> None:
     imports_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger, SdkLogger, create_logger"
     imports_content += "\nfrom pathlib import Path"
     imports_content += "\nfrom .models.deployment_result import DeploymentResult"
-    imports_content += (
-        "\nfrom .models.deployment_process_result import DeploymentProcessResult"
-    )
-    imports_content += (
-        "\nfrom .models.deployment_decision_result import DeploymentDecisionResult"
-    )
-    imports_content += "\nfrom .models.deployment_decision_requirements_result import DeploymentDecisionRequirementsResult"
-    imports_content += (
-        "\nfrom .models.deployment_form_result import DeploymentFormResult"
-    )
+    imports_content += "\nfrom .models.deployment_metadata_result_process_definition import DeploymentMetadataResultProcessDefinition"
+    imports_content += "\nfrom .models.deployment_metadata_result_decision_definition import DeploymentMetadataResultDecisionDefinition"
+    imports_content += "\nfrom .models.deployment_metadata_result_decision_requirements import DeploymentMetadataResultDecisionRequirements"
+    imports_content += "\nfrom .models.deployment_metadata_result_form import DeploymentMetadataResultForm"
 
     # Prepare TYPE_CHECKING block — only include imports that provide type names
     # actually used in method signatures (return types and parameter types).
@@ -433,10 +427,10 @@ def generate_flat_client(package_path: Path) -> None:
 
     extended_result_code = """
 class ExtendedDeploymentResult(DeploymentResult):
-    processes: list[DeploymentProcessResult]
-    decisions: list[DeploymentDecisionResult]
-    decision_requirements: list[DeploymentDecisionRequirementsResult]
-    forms: list[DeploymentFormResult]
+    processes: list[DeploymentMetadataResultProcessDefinition]
+    decisions: list[DeploymentMetadataResultDecisionDefinition]
+    decision_requirements: list[DeploymentMetadataResultDecisionRequirements]
+    forms: list[DeploymentMetadataResultForm]
     
     def __init__(self, response: DeploymentResult):
         self.deployment_key = response.deployment_key
@@ -444,10 +438,10 @@ class ExtendedDeploymentResult(DeploymentResult):
         self.deployments = response.deployments
         self.additional_properties = response.additional_properties
         
-        self.processes = [d.process_definition for d in self.deployments if not isinstance(d.process_definition, Unset)]
-        self.decisions = [d.decision_definition for d in self.deployments if not isinstance(d.decision_definition, Unset)]
-        self.decision_requirements = [d.decision_requirements for d in self.deployments if not isinstance(d.decision_requirements, Unset)]
-        self.forms = [d.form for d in self.deployments if not isinstance(d.form, Unset)]
+        self.processes = [d.process_definition for d in self.deployments if not isinstance(d.process_definition, Unset) and d.process_definition is not None]
+        self.decisions = [d.decision_definition for d in self.deployments if not isinstance(d.decision_definition, Unset) and d.decision_definition is not None]
+        self.decision_requirements = [d.decision_requirements for d in self.deployments if not isinstance(d.decision_requirements, Unset) and d.decision_requirements is not None]
+        self.forms = [d.form for d in self.deployments if not isinstance(d.form, Unset) and d.form is not None]
 """
 
     camunda_client_code = f'''

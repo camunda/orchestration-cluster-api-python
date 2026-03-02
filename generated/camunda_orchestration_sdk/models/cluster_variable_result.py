@@ -2,7 +2,7 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import TenantId, lift_tenant_id
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -17,38 +17,44 @@ T = TypeVar("T", bound="ClusterVariableResult")
 class ClusterVariableResult:
     """
     Attributes:
-        value (str): Full value of this cluster variable.
         name (str): The name of the cluster variable. Unique within its scope (global or tenant-specific).
         scope (ClusterVariableScopeEnum): The scope of a cluster variable.
-        tenant_id (str | Unset): Only provided if the cluster variable scope is TENANT.
+        value (str | Unset): Full value of this cluster variable.
+        tenant_id (None | str | Unset): Only provided if the cluster variable scope is TENANT. Null for global scope
+            variables.
     """
 
-    value: str
     name: str
     scope: ClusterVariableScopeEnum
-    tenant_id: TenantId | Unset = UNSET
+    value: str | Unset = UNSET
+    tenant_id: None | TenantId | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        value = self.value
-
         name = self.name
 
         scope = self.scope.value
 
-        tenant_id = self.tenant_id
+        value = self.value
+
+        tenant_id: None | TenantId | Unset
+        if isinstance(self.tenant_id, Unset):
+            tenant_id = UNSET
+        else:
+            tenant_id = self.tenant_id
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "value": value,
                 "name": name,
                 "scope": scope,
             }
         )
+        if value is not UNSET:
+            field_dict["value"] = value
         if tenant_id is not UNSET:
             field_dict["tenantId"] = tenant_id
 
@@ -57,22 +63,31 @@ class ClusterVariableResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        value = d.pop("value")
-
         name = d.pop("name")
 
         scope = ClusterVariableScopeEnum(d.pop("scope"))
 
+        value = d.pop("value", UNSET)
+
+        def _parse_tenant_id(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        _raw_tenant_id = _parse_tenant_id(d.pop("tenantId", UNSET))
+
         tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
+            lift_tenant_id(_raw_tenant_id)
+            if isinstance(_raw_tenant_id, str)
+            else _raw_tenant_id
         )
 
         cluster_variable_result = cls(
-            value=value,
             name=name,
             scope=scope,
+            value=value,
             tenant_id=tenant_id,
         )
 

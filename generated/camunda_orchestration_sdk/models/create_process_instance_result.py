@@ -1,9 +1,11 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
+    BusinessId,
     ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
     TenantId,
+    lift_business_id,
     lift_process_definition_id,
     lift_process_definition_key,
     lift_process_instance_key,
@@ -44,8 +46,9 @@ class CreateProcessInstanceResult:
         process_instance_key (str): The unique identifier of the created process instance; to be used wherever a request
             needs a process instance key (e.g. CancelProcessInstanceRequest).
              Example: 2251799813690746.
-        tags (list[str] | Unset): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or
-            `.`; length ≤ 100. Example: ['high-touch', 'remediation'].
+        tags (list[str]): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or `.`;
+            length ≤ 100. Example: ['high-touch', 'remediation'].
+        business_id (None | str | Unset): Business id as provided on creation. Example: order-12345.
     """
 
     process_definition_id: ProcessDefinitionId
@@ -54,7 +57,8 @@ class CreateProcessInstanceResult:
     variables: CreateProcessInstanceResultVariables
     process_definition_key: ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
-    tags: list[str] | Unset = UNSET
+    tags: list[str]
+    business_id: None | BusinessId | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -72,9 +76,13 @@ class CreateProcessInstanceResult:
 
         process_instance_key = self.process_instance_key
 
-        tags: list[str] | Unset = UNSET
-        if not isinstance(self.tags, Unset):
-            tags = self.tags
+        tags = self.tags
+
+        business_id: None | BusinessId | Unset
+        if isinstance(self.business_id, Unset):
+            business_id = UNSET
+        else:
+            business_id = self.business_id
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -86,10 +94,11 @@ class CreateProcessInstanceResult:
                 "variables": variables,
                 "processDefinitionKey": process_definition_key,
                 "processInstanceKey": process_instance_key,
+                "tags": tags,
             }
         )
-        if tags is not UNSET:
-            field_dict["tags"] = tags
+        if business_id is not UNSET:
+            field_dict["businessId"] = business_id
 
         return field_dict
 
@@ -114,7 +123,22 @@ class CreateProcessInstanceResult:
 
         process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
 
-        tags = cast(list[str], d.pop("tags", UNSET))
+        tags = cast(list[str], d.pop("tags"))
+
+        def _parse_business_id(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        _raw_business_id = _parse_business_id(d.pop("businessId", UNSET))
+
+        business_id = (
+            lift_business_id(_raw_business_id)
+            if isinstance(_raw_business_id, str)
+            else _raw_business_id
+        )
 
         create_process_instance_result = cls(
             process_definition_id=process_definition_id,
@@ -124,6 +148,7 @@ class CreateProcessInstanceResult:
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,
             tags=tags,
+            business_id=business_id,
         )
 
         create_process_instance_result.additional_properties = d

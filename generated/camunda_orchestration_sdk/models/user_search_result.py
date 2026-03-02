@@ -21,8 +21,7 @@ class UserSearchResult:
     """
     Attributes:
         items (list[UserResult]): The matching users.
-        page (SearchQueryPageResponse): Pagination information about the search results. Example: {'totalItems': 1,
-            'hasMoreTotalItems': False}.
+        page (SearchQueryPageResponse): Pagination information about the search results.
     """
 
     items: list[UserResult]

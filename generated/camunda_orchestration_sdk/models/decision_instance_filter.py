@@ -58,7 +58,8 @@ class DecisionInstanceFilter:
         decision_definition_id (str | Unset): The ID of the DMN decision. Example: new-hire-onboarding-workflow.
         decision_definition_name (str | Unset): The name of the DMN decision.
         decision_definition_version (int | Unset): The version of the decision.
-        decision_definition_type (DecisionDefinitionTypeEnum | Unset): The type of the decision.
+        decision_definition_type (DecisionDefinitionTypeEnum | Unset): The type of the decision. UNSPECIFIED is
+            deprecated and should not be used anymore, for removal in 8.10
         tenant_id (str | Unset): The tenant ID of the decision instance. Example: customer-service.
         decision_evaluation_key (str | Unset): The key of the parent decision evaluation. Note that this is not the
             identifier of an individual decision instance; the `decisionEvaluationInstanceKey` is the identifier for a

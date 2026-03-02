@@ -17,9 +17,9 @@ class DeploymentResourceResult:
     """A deployed Resource.
 
     Attributes:
-        resource_id (str | Unset):
-        resource_name (str | Unset):
-        version (int | Unset):
+        resource_id (str | Unset): The resource id of the deployed resource.
+        resource_name (str | Unset): The name of the deployed resource.
+        version (int | Unset): The description of the deployed resource.
         tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
         resource_key (str | Unset): The assigned key, which acts as a unique identifier for this Resource.
     """

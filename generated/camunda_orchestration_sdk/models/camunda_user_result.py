@@ -21,33 +21,35 @@ T = TypeVar("T", bound="CamundaUserResult")
 class CamundaUserResult:
     """
     Attributes:
+        authorized_components (list[str]): The web components the user is authorized to use. Example: ['*'].
         tenants (list[TenantResult]): The tenants the user is a member of.
         groups (list[str]): The groups assigned to the user. Example: ['customer-service'].
         roles (list[str]): The roles assigned to the user. Example: ['frontline-support'].
-        sales_plan_type (str): The plan of the user.
+        sales_plan_type (None | str): The plan of the user.
         c_8_links (CamundaUserResultC8Links): The links to the components in the C8 stack.
         can_logout (bool): Flag for understanding if the user is able to perform logout.
         username (None | str | Unset): The username of the user. Example: swillis.
         display_name (None | str | Unset): The display name of the user. Example: Samantha Willis.
         email (None | str | Unset): The email of the user. Example: swillis@acme.com.
-        authorized_components (list[str] | Unset): The web components the user is authorized to use. Example: ['*'].
     """
 
+    authorized_components: list[str]
     tenants: list[TenantResult]
     groups: list[str]
     roles: list[str]
-    sales_plan_type: str
+    sales_plan_type: None | str
     c_8_links: CamundaUserResultC8Links
     can_logout: bool
     username: None | Username | Unset = UNSET
     display_name: None | str | Unset = UNSET
     email: None | str | Unset = UNSET
-    authorized_components: list[str] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        authorized_components = self.authorized_components
+
         tenants: list[dict[str, Any]] = []
         for tenants_item_data in self.tenants:
             tenants_item = tenants_item_data.to_dict()
@@ -57,6 +59,7 @@ class CamundaUserResult:
 
         roles = self.roles
 
+        sales_plan_type: None | str
         sales_plan_type = self.sales_plan_type
 
         c_8_links = self.c_8_links.to_dict()
@@ -81,14 +84,11 @@ class CamundaUserResult:
         else:
             email = self.email
 
-        authorized_components: list[str] | Unset = UNSET
-        if not isinstance(self.authorized_components, Unset):
-            authorized_components = self.authorized_components
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "authorizedComponents": authorized_components,
                 "tenants": tenants,
                 "groups": groups,
                 "roles": roles,
@@ -103,8 +103,6 @@ class CamundaUserResult:
             field_dict["displayName"] = display_name
         if email is not UNSET:
             field_dict["email"] = email
-        if authorized_components is not UNSET:
-            field_dict["authorizedComponents"] = authorized_components
 
         return field_dict
 
@@ -114,6 +112,8 @@ class CamundaUserResult:
         from ..models.tenant_result import TenantResult
 
         d = dict(src_dict)
+        authorized_components = cast(list[str], d.pop("authorizedComponents"))
+
         tenants: list[TenantResult] = []
         _tenants = d.pop("tenants")
         for tenants_item_data in _tenants:
@@ -125,7 +125,12 @@ class CamundaUserResult:
 
         roles = cast(list[str], d.pop("roles"))
 
-        sales_plan_type = d.pop("salesPlanType")
+        def _parse_sales_plan_type(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        sales_plan_type = _parse_sales_plan_type(d.pop("salesPlanType"))
 
         c_8_links = CamundaUserResultC8Links.from_dict(d.pop("c8Links"))
 
@@ -164,9 +169,8 @@ class CamundaUserResult:
 
         email = _parse_email(d.pop("email", UNSET))
 
-        authorized_components = cast(list[str], d.pop("authorizedComponents", UNSET))
-
         camunda_user_result = cls(
+            authorized_components=authorized_components,
             tenants=tenants,
             groups=groups,
             roles=roles,
@@ -176,7 +180,6 @@ class CamundaUserResult:
             username=username,
             display_name=display_name,
             email=email,
-            authorized_components=authorized_components,
         )
 
         camunda_user_result.additional_properties = d

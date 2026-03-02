@@ -18,7 +18,7 @@ from camunda_orchestration_sdk.semantic_types import (
 
 import datetime
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -34,6 +34,11 @@ T = TypeVar("T", bound="MessageSubscriptionResult")
 class MessageSubscriptionResult:
     """
     Attributes:
+        root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
+            top-level
+            ancestor in the process instance hierarchy. This field is only present for data
+            belonging to process instance hierarchies created in version 8.9 or later.
+             Example: 2251799813690746.
         message_subscription_key (str | Unset): The message subscription key associated with this message subscription.
             Example: 2251799813632456.
         process_definition_id (str | Unset): The process definition ID associated with this message subscription.
@@ -42,11 +47,6 @@ class MessageSubscriptionResult:
             Example: 2251799813686749.
         process_instance_key (str | Unset): The process instance key associated with this message subscription. Example:
             2251799813690746.
-        root_process_instance_key (str | Unset): The key of the root process instance. The root process instance is the
-            top-level
-            ancestor in the process instance hierarchy. This field is only present for data
-            belonging to process instance hierarchies created in version 8.9 or later.
-             Example: 2251799813690746.
         element_id (str | Unset): The element ID associated with this message subscription. Example: Activity_106kosb.
         element_instance_key (str | Unset): The element instance key associated with this message subscription. Example:
             2251799813686789.
@@ -57,11 +57,11 @@ class MessageSubscriptionResult:
         tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
     """
 
+    root_process_instance_key: None | ProcessInstanceKey
     message_subscription_key: MessageSubscriptionKey | Unset = UNSET
     process_definition_id: ProcessDefinitionId | Unset = UNSET
     process_definition_key: ProcessDefinitionKey | Unset = UNSET
     process_instance_key: ProcessInstanceKey | Unset = UNSET
-    root_process_instance_key: str | Unset = UNSET
     element_id: ElementId | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     message_subscription_state: MessageSubscriptionStateEnum | Unset = UNSET
@@ -74,6 +74,9 @@ class MessageSubscriptionResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
+        root_process_instance_key: None | ProcessInstanceKey
+        root_process_instance_key = self.root_process_instance_key
+
         message_subscription_key = self.message_subscription_key
 
         process_definition_id = self.process_definition_id
@@ -81,8 +84,6 @@ class MessageSubscriptionResult:
         process_definition_key = self.process_definition_key
 
         process_instance_key = self.process_instance_key
-
-        root_process_instance_key = self.root_process_instance_key
 
         element_id = self.element_id
 
@@ -104,7 +105,11 @@ class MessageSubscriptionResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
+        field_dict.update(
+            {
+                "rootProcessInstanceKey": root_process_instance_key,
+            }
+        )
         if message_subscription_key is not UNSET:
             field_dict["messageSubscriptionKey"] = message_subscription_key
         if process_definition_id is not UNSET:
@@ -113,8 +118,6 @@ class MessageSubscriptionResult:
             field_dict["processDefinitionKey"] = process_definition_key
         if process_instance_key is not UNSET:
             field_dict["processInstanceKey"] = process_instance_key
-        if root_process_instance_key is not UNSET:
-            field_dict["rootProcessInstanceKey"] = root_process_instance_key
         if element_id is not UNSET:
             field_dict["elementId"] = element_id
         if element_instance_key is not UNSET:
@@ -135,6 +138,22 @@ class MessageSubscriptionResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+
+        def _parse_root_process_instance_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_root_process_instance_key = _parse_root_process_instance_key(
+            d.pop("rootProcessInstanceKey")
+        )
+
+        root_process_instance_key = (
+            lift_process_instance_key(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
+        )
+
         message_subscription_key = (
             lift_message_subscription_key(_val)
             if (_val := d.pop("messageSubscriptionKey", UNSET)) is not UNSET
@@ -158,8 +177,6 @@ class MessageSubscriptionResult:
             if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
             else UNSET
         )
-
-        root_process_instance_key = d.pop("rootProcessInstanceKey", UNSET)
 
         element_id = (
             lift_element_id(_val)
@@ -200,11 +217,11 @@ class MessageSubscriptionResult:
         )
 
         message_subscription_result = cls(
+            root_process_instance_key=root_process_instance_key,
             message_subscription_key=message_subscription_key,
             process_definition_id=process_definition_id,
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,
-            root_process_instance_key=root_process_instance_key,
             element_id=element_id,
             element_instance_key=element_instance_key,
             message_subscription_state=message_subscription_state,
