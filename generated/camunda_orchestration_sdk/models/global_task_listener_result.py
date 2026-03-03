@@ -4,13 +4,14 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 from ..models.global_listener_source_enum import GlobalListenerSourceEnum
 from ..models.global_task_listener_event_type_enum import (
     GlobalTaskListenerEventTypeEnum,
 )
-from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="GlobalTaskListenerResult")
 
@@ -19,29 +20,32 @@ T = TypeVar("T", bound="GlobalTaskListenerResult")
 class GlobalTaskListenerResult:
     """
     Attributes:
+        id (str): The user-defined id for the global listener Example: GlobalListener_1.
+        source (GlobalListenerSourceEnum): How the global listener was defined.
         event_types (list[GlobalTaskListenerEventTypeEnum]): List of user task event types that trigger the listener.
-        id (str | Unset): The user-defined id for the global listener Example: GlobalListener_1.
-        source (GlobalListenerSourceEnum | Unset): How the global listener was defined.
-        type_ (str | Unset): The name of the job type, used as a reference to specify which job workers request the
-            respective listener job. Example: order-items.
-        retries (int | Unset): Number of retries for the listener job.
-        after_non_global (bool | Unset): Whether the listener should run after model-level listeners.
-        priority (int | Unset): The priority of the listener. Higher priority listeners are executed before lower
-            priority ones.
+        type_ (str): The name of the job type, used as a reference to specify which job workers request the respective
+            listener job. Example: order-items.
+        retries (int): Number of retries for the listener job.
+        after_non_global (bool): Whether the listener should run after model-level listeners.
+        priority (int): The priority of the listener. Higher priority listeners are executed before lower priority ones.
     """
 
+    id: str
+    source: GlobalListenerSourceEnum
     event_types: list[GlobalTaskListenerEventTypeEnum]
-    id: str | Unset = UNSET
-    source: GlobalListenerSourceEnum | Unset = UNSET
-    type_: str | Unset = UNSET
-    retries: int | Unset = UNSET
-    after_non_global: bool | Unset = UNSET
-    priority: int | Unset = UNSET
+    type_: str
+    retries: int
+    after_non_global: bool
+    priority: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        id = self.id
+
+        source = self.source.value
+
         event_types: list[Any] = []
         for (
             componentsschemas_global_task_listener_event_types_item_data
@@ -50,12 +54,6 @@ class GlobalTaskListenerResult:
                 componentsschemas_global_task_listener_event_types_item_data.value
             )
             event_types.append(componentsschemas_global_task_listener_event_types_item)
-
-        id = self.id
-
-        source: str | Unset = UNSET
-        if not isinstance(self.source, Unset):
-            source = self.source.value
 
         type_ = self.type_
 
@@ -69,27 +67,25 @@ class GlobalTaskListenerResult:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "id": id,
+                "source": source,
                 "eventTypes": event_types,
+                "type": type_,
+                "retries": retries,
+                "afterNonGlobal": after_non_global,
+                "priority": priority,
             }
         )
-        if id is not UNSET:
-            field_dict["id"] = id
-        if source is not UNSET:
-            field_dict["source"] = source
-        if type_ is not UNSET:
-            field_dict["type"] = type_
-        if retries is not UNSET:
-            field_dict["retries"] = retries
-        if after_non_global is not UNSET:
-            field_dict["afterNonGlobal"] = after_non_global
-        if priority is not UNSET:
-            field_dict["priority"] = priority
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        id = d.pop("id")
+
+        source = GlobalListenerSourceEnum(d.pop("source"))
+
         event_types: list[GlobalTaskListenerEventTypeEnum] = []
         _event_types = d.pop("eventTypes")
         for (
@@ -103,27 +99,18 @@ class GlobalTaskListenerResult:
 
             event_types.append(componentsschemas_global_task_listener_event_types_item)
 
-        id = d.pop("id", UNSET)
+        type_ = d.pop("type")
 
-        _source = d.pop("source", UNSET)
-        source: GlobalListenerSourceEnum | Unset
-        if isinstance(_source, Unset):
-            source = UNSET
-        else:
-            source = GlobalListenerSourceEnum(_source)
+        retries = d.pop("retries")
 
-        type_ = d.pop("type", UNSET)
+        after_non_global = d.pop("afterNonGlobal")
 
-        retries = d.pop("retries", UNSET)
-
-        after_non_global = d.pop("afterNonGlobal", UNSET)
-
-        priority = d.pop("priority", UNSET)
+        priority = d.pop("priority")
 
         global_task_listener_result = cls(
-            event_types=event_types,
             id=id,
             source=source,
+            event_types=event_types,
             type_=type_,
             retries=retries,
             after_non_global=after_non_global,

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "specHash": "sha256:bcd1dfa7fea17f24242387d509d88c0a93fc78aa2bcb51d1e82fbeb132c982f0",
+  "specHash": "sha256:42b9893e91fc6cf5609756c64e36b8ea46b2d40b9297bd4f675b0c957ce930c8",
   "semanticKeys": [
     {
       "name": "AuditLogEntityKey",
@@ -6059,11 +6059,125 @@
       "stableId": "decision-instance-state-enum"
     }
   ],
+  "semanticProviders": [
+    {
+      "schemaName": "ActivatedJobResult",
+      "providers": [
+        "elementId",
+        "jobKey",
+        "elementInstanceKey"
+      ],
+      "stableId": "activated-job-result"
+    },
+    {
+      "schemaName": "CreateProcessInstanceResult",
+      "providers": [
+        "processInstanceKey"
+      ],
+      "stableId": "create-process-instance-result"
+    },
+    {
+      "schemaName": "DeploymentDecisionRequirementsResult",
+      "providers": [
+        "decisionRequirementsKey"
+      ],
+      "stableId": "deployment-decision-requirements-result"
+    },
+    {
+      "schemaName": "DeploymentDecisionResult",
+      "providers": [
+        "decisionDefinitionKey",
+        "decisionRequirementsKey"
+      ],
+      "stableId": "deployment-decision-result"
+    },
+    {
+      "schemaName": "DeploymentFormResult",
+      "providers": [
+        "formKey"
+      ],
+      "stableId": "deployment-form-result"
+    },
+    {
+      "schemaName": "DeploymentProcessResult",
+      "providers": [
+        "processDefinitionKey",
+        "processDefinitionId"
+      ],
+      "stableId": "deployment-process-result"
+    },
+    {
+      "schemaName": "DeploymentResourceResult",
+      "providers": [
+        "resourceKey"
+      ],
+      "stableId": "deployment-resource-result"
+    },
+    {
+      "schemaName": "EvaluateConditionalResult",
+      "providers": [
+        "conditionalEvaluationKey"
+      ],
+      "stableId": "evaluate-conditional-result"
+    },
+    {
+      "schemaName": "EvaluatedDecisionResult",
+      "providers": [
+        "decisionEvaluationInstanceKey"
+      ],
+      "stableId": "evaluated-decision-result"
+    },
+    {
+      "schemaName": "EvaluateDecisionResult",
+      "providers": [
+        "decisionEvaluationKey"
+      ],
+      "stableId": "evaluate-decision-result"
+    },
+    {
+      "schemaName": "FormResult",
+      "providers": [
+        "formId",
+        "formKey"
+      ],
+      "stableId": "form-result"
+    },
+    {
+      "schemaName": "SearchQueryPageResponse",
+      "providers": [
+        "startCursor",
+        "endCursor"
+      ],
+      "stableId": "search-query-page-response"
+    },
+    {
+      "schemaName": "SignalBroadcastResult",
+      "providers": [
+        "signalKey"
+      ],
+      "stableId": "signal-broadcast-result"
+    },
+    {
+      "schemaName": "TenantCreateResult",
+      "providers": [
+        "tenantId"
+      ],
+      "stableId": "tenant-create-result"
+    },
+    {
+      "schemaName": "UserCreateResult",
+      "providers": [
+        "username"
+      ],
+      "stableId": "user-create-result"
+    }
+  ],
   "integrity": {
     "totalSemanticKeys": 35,
     "totalUnions": 51,
     "totalOperations": 178,
     "totalEventuallyConsistent": 77,
-    "totalDeprecatedEnumSchemas": 2
+    "totalDeprecatedEnumSchemas": 2,
+    "totalSemanticProviders": 15
   }
 }

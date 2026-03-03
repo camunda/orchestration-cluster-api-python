@@ -10706,7 +10706,38 @@ components:
       description: Audit log item.
       type: object
       required:
+      - auditLogKey
+      - entityKey
+      - entityType
+      - operationType
+      - batchOperationKey
+      - batchOperationType
+      - timestamp
+      - actorId
+      - actorType
+      - agentElementId
+      - tenantId
+      - result
+      - annotation
+      - category
+      - processDefinitionId
+      - processDefinitionKey
+      - processInstanceKey
       - rootProcessInstanceKey
+      - elementInstanceKey
+      - jobKey
+      - userTaskKey
+      - decisionRequirementsId
+      - decisionRequirementsKey
+      - decisionDefinitionId
+      - decisionDefinitionKey
+      - decisionEvaluationKey
+      - deploymentKey
+      - formKey
+      - resourceKey
+      - relatedEntityKey
+      - relatedEntityType
+      - entityDescription
       properties:
         auditLogKey:
           description: The unique key of the audit log entry.
@@ -10725,6 +10756,7 @@ components:
           $ref: '#/components/schemas/AuditLogOperationTypeEnum'
         batchOperationKey:
           description: Key of the batch operation.
+          nullable: true
           x-semantic-type: BatchOperationKey
           format: BatchOperationKey | uuid
           type: string
@@ -10732,6 +10764,7 @@ components:
         batchOperationType:
           description: The type of batch operation performed, if this is part of a
             batch.
+          nullable: true
           type: string
           enum:
           - ADD_VARIABLE
@@ -10751,14 +10784,24 @@ components:
         actorId:
           type: string
           description: The ID of the actor who performed the operation.
+          nullable: true
         actorType:
-          $ref: '#/components/schemas/AuditLogActorTypeEnum'
+          description: The type of the actor who performed the operation.
+          nullable: true
+          type: string
+          enum:
+          - ANONYMOUS
+          - CLIENT
+          - UNKNOWN
+          - USER
         agentElementId:
           type: string
           description: The element ID of the agent that performed the operation (e.g.
             ad-hoc subprocess element ID).
+          nullable: true
         tenantId:
           description: The tenant ID of the audit log.
+          nullable: true
           example: customer-service
           format: TenantId
           type: string
@@ -10771,10 +10814,12 @@ components:
         annotation:
           type: string
           description: Additional notes about the operation.
+          nullable: true
         category:
           $ref: '#/components/schemas/AuditLogCategoryEnum'
         processDefinitionId:
           description: The process definition ID.
+          nullable: true
           format: ProcessDefinitionId
           type: string
           x-semantic-type: ProcessDefinitionId
@@ -10783,6 +10828,7 @@ components:
           example: new-account-onboarding-workflow
         processDefinitionKey:
           description: The key of the process definition.
+          nullable: true
           format: ProcessDefinitionKey
           x-semantic-type: ProcessDefinitionKey
           example: '2251799813686749'
@@ -10792,6 +10838,7 @@ components:
           maxLength: 25
         processInstanceKey:
           description: The key of the process instance.
+          nullable: true
           format: ProcessInstanceKey
           x-semantic-type: ProcessInstanceKey
           example: '2251799813690746'
@@ -10819,6 +10866,7 @@ components:
           maxLength: 25
         elementInstanceKey:
           description: The key of the element instance.
+          nullable: true
           format: ElementInstanceKey
           x-semantic-type: ElementInstanceKey
           example: '2251799813686789'
@@ -10828,6 +10876,7 @@ components:
           maxLength: 25
         jobKey:
           description: The key of the job.
+          nullable: true
           format: JobKey
           x-semantic-type: JobKey
           example: '2251799813653498'
@@ -10837,6 +10886,7 @@ components:
           maxLength: 25
         userTaskKey:
           description: The key of the user task.
+          nullable: true
           format: UserTaskKey
           type: string
           x-semantic-type: UserTaskKey
@@ -10846,8 +10896,10 @@ components:
         decisionRequirementsId:
           type: string
           description: The decision requirements ID.
+          nullable: true
         decisionRequirementsKey:
           description: The assigned key of the decision requirements.
+          nullable: true
           format: DecisionRequirementsKey
           x-semantic-type: DecisionRequirementsKey
           example: '2251799813683346'
@@ -10857,6 +10909,7 @@ components:
           maxLength: 25
         decisionDefinitionId:
           description: The decision definition ID.
+          nullable: true
           format: DecisionDefinitionId
           x-semantic-type: DecisionDefinitionId
           type: string
@@ -10866,6 +10919,7 @@ components:
           example: new-hire-onboarding-workflow
         decisionDefinitionKey:
           description: The key of the decision definition.
+          nullable: true
           format: DecisionDefinitionKey
           x-semantic-type: DecisionDefinitionKey
           example: '2251799813326547'
@@ -10875,6 +10929,7 @@ components:
           maxLength: 25
         decisionEvaluationKey:
           description: The key of the decision evaluation.
+          nullable: true
           format: DecisionEvaluationKey
           x-semantic-type: DecisionEvaluationKey
           example: '2251792362345323'
@@ -10884,6 +10939,7 @@ components:
           maxLength: 25
         deploymentKey:
           description: The key of the deployment.
+          nullable: true
           format: DeploymentKey
           x-semantic-type: DeploymentKey
           type: string
@@ -10892,6 +10948,7 @@ components:
           maxLength: 25
         formKey:
           description: The key of the form.
+          nullable: true
           format: FormKey
           x-semantic-type: FormKey
           example: '2251799813684365'
@@ -10901,6 +10958,7 @@ components:
           maxLength: 25
         resourceKey:
           description: The system-assigned key for this resource.
+          nullable: true
           type: string
           oneOf:
           - $ref: '#/components/schemas/ProcessDefinitionKey'
@@ -10916,6 +10974,7 @@ components:
             the owner (e.g., user or group) the authorization belongs to.
 
             '
+          nullable: true
           format: AuditLogEntityKey
           x-semantic-type: AuditLogEntityKey
           example: '22517998136843567'
@@ -10928,6 +10987,7 @@ components:
             of the owner (e.g., USER or GROUP) the authorization belongs to.
 
             '
+          nullable: true
           type: string
           enum:
           - AUTHORIZATION
@@ -10952,6 +11012,7 @@ components:
             For example, for variable operations, this will contain the variable name.
 
             '
+          nullable: true
     AuditLogSearchQuerySortRequest:
       type: object
       additionalProperties: false
@@ -12606,8 +12667,8 @@ components:
           description: Only provided if the cluster variable scope is TENANT. Null
             for global scope variables.
       required:
-      - scope
       - name
+      - scope
     ClusterVariableSearchResult:
       description: Cluster variable search response item.
       type: object
@@ -12630,8 +12691,8 @@ components:
           description: Only provided if the cluster variable scope is TENANT. Null
             for global scope variables.
       required:
-      - scope
       - name
+      - scope
     ClusterVariableResultBase:
       description: Cluster variable response item.
       type: object
@@ -13818,11 +13879,11 @@ components:
 
             '
       required:
-      - rootProcessInstanceKey
       - evaluatedInputs
+      - rootProcessInstanceKey
       - tenantId
-      - matchedRules
       - evaluationFailure
+      - matchedRules
     EvaluatedDecisionInputItem:
       type: object
       description: A decision input that was evaluated within this decision evaluation.
@@ -15317,9 +15378,9 @@ components:
     CreateGlobalTaskListenerRequest:
       type: object
       required:
-      - eventTypes
-      - type
       - id
+      - type
+      - eventTypes
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -15343,8 +15404,8 @@ components:
     UpdateGlobalTaskListenerRequest:
       type: object
       required:
-      - eventTypes
       - type
+      - eventTypes
       properties:
         eventTypes:
           $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
@@ -15367,6 +15428,12 @@ components:
       type: object
       required:
       - eventTypes
+      - type
+      - source
+      - priority
+      - id
+      - afterNonGlobal
+      - retries
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -18197,10 +18264,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimValue
-      - name
       - claimName
       - mappingRuleId
+      - name
+      - claimValue
     MappingRuleUpdateRequest:
       type: object
       properties:
@@ -18214,9 +18281,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimValue
-      - name
       - claimName
+      - name
+      - claimValue
     MappingRuleCreateUpdateResult:
       type: object
       properties:
@@ -23941,9 +24008,9 @@ components:
           maxLength: 25
       required:
       - resourceName
-      - tenantId
-      - processDefinitionKey
       - processDefinitionId
+      - processDefinitionKey
+      - tenantId
       - processDefinitionVersion
       title: DeploymentMetadataResultProcessDefinition
     DeploymentMetadataResultDecisionDefinition:
@@ -24544,9 +24611,9 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - candidateUsers
       - changedAttributes
       - candidateGroups
+      - candidateUsers
       title: ActivatedJobResultUserTask
     JobSearchQueryFilter:
       description: The job search filters.

@@ -156,6 +156,7 @@ from .audit_log_entity_type_enum import AuditLogEntityTypeEnum
 from .audit_log_filter import AuditLogFilter
 from .audit_log_operation_type_enum import AuditLogOperationTypeEnum
 from .audit_log_result import AuditLogResult
+from .audit_log_result_actor_type import AuditLogResultActorType
 from .audit_log_result_batch_operation_type import AuditLogResultBatchOperationType
 from .audit_log_result_enum import AuditLogResultEnum
 from .audit_log_result_exact_match import AuditLogResultExactMatch
@@ -1054,6 +1055,7 @@ __all__: list[str] = [
     "AuditLogFilter",
     "AuditLogOperationTypeEnum",
     "AuditLogResult",
+    "AuditLogResultActorType",
     "AuditLogResultBatchOperationType",
     "AuditLogResultEnum",
     "AuditLogResultExactMatch",
