@@ -2,6 +2,44 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.8 (2026-03-03)
+
+### Bug Fixes
+
+- Correctly handle nullable fields
+  ([`a6464ce`](https://github.com/camunda/orchestration-cluster-api-python/commit/a6464ceba75889e53d32c98fd0debeab8e0c88d6))
+
+- Correctly validate .env file
+  ([`a03d5b9`](https://github.com/camunda/orchestration-cluster-api-python/commit/a03d5b933a0da98cb6318ed02f4c3a5a5265c5b8))
+
+- Rebuild with latest spec
+  ([`9212968`](https://github.com/camunda/orchestration-cluster-api-python/commit/9212968c9f996321cb0c3dd555db8c142a4a2e66))
+
+- Regenerate from main
+  ([`ea00363`](https://github.com/camunda/orchestration-cluster-api-python/commit/ea0036359a49c3826fe5fcc20885c2c534ee33b0))
+
+### Chores
+
+- Remove tmp clone files
+  ([`946be52`](https://github.com/camunda/orchestration-cluster-api-python/commit/946be52e31212aed7999e46280a8c43800bca823))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`eff7dba`](https://github.com/camunda/orchestration-cluster-api-python/commit/eff7dbad45e4d8da38e2ef5ede4b490007bd536a))
+
+### Continuous Integration
+
+- Update Camunda Docs integration
+  ([`8f3675a`](https://github.com/camunda/orchestration-cluster-api-python/commit/8f3675aa004ff44053d309e7c2577b2f7b7cd493))
+
+- Use 8.9-SNAPSHOT for integration test
+  ([`89307e3`](https://github.com/camunda/orchestration-cluster-api-python/commit/89307e335cbff359b8b18333c0519ae9544346df))
+
+### Features
+
+- Support deprecated enum members
+  ([`b1448ec`](https://github.com/camunda/orchestration-cluster-api-python/commit/b1448ecb38435467ea1c632214b827ed6771dae8))
+
+
 ## v8.9.0-dev.7 (2026-02-17)
 
 ### Bug Fixes
