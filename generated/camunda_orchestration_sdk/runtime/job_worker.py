@@ -1,6 +1,7 @@
 from __future__ import annotations
 import asyncio
 import inspect
+import random
 import threading
 import functools
 import attrs
@@ -216,11 +217,13 @@ class JobWorker:
         config: WorkerConfig,
         logger: SdkLogger | None = None,
         execution_strategy: EXECUTION_STRATEGY = "auto",
+        startup_jitter_max_seconds: float = 0,
     ):
         self.callback = callback
         self.config = config
         self.client = client
         self._execution_strategy_override = execution_strategy
+        self._startup_jitter_max_seconds = startup_jitter_max_seconds
 
         # Bind logger with context
         base_logger = logger if logger is not None else create_logger()
@@ -293,8 +296,17 @@ class JobWorker:
     def start(self):
         if not self.running:
             self.running = True
-            self.polling_task = asyncio.create_task(self.poll_loop())
+            if self._startup_jitter_max_seconds > 0:
+                jitter = random.uniform(0, self._startup_jitter_max_seconds)
+                self.logger.info(f"Delaying worker start by {jitter:.2f}s (jitter)")
+                self.polling_task = asyncio.create_task(self._start_with_jitter(jitter))
+            else:
+                self.polling_task = asyncio.create_task(self.poll_loop())
             self.logger.info("Worker started")
+
+    async def _start_with_jitter(self, jitter: float):
+        await asyncio.sleep(jitter)
+        await self.poll_loop()
 
     def stop(self):
         if self.running:

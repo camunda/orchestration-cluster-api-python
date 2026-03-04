@@ -12692,8 +12692,8 @@ components:
           description: Only provided if the cluster variable scope is TENANT. Null
             for global scope variables.
       required:
-      - name
       - scope
+      - name
     ClusterVariableSearchResult:
       description: Cluster variable search response item.
       type: object
@@ -12716,8 +12716,8 @@ components:
           description: Only provided if the cluster variable scope is TENANT. Null
             for global scope variables.
       required:
-      - name
       - scope
+      - name
     ClusterVariableResultBase:
       description: Cluster variable response item.
       type: object
@@ -13915,11 +13915,11 @@ components:
 
             '
       required:
-      - evaluatedInputs
       - matchedRules
+      - evaluatedInputs
       - rootProcessInstanceKey
-      - evaluationFailure
       - tenantId
+      - evaluationFailure
     EvaluatedDecisionInputItem:
       type: object
       description: A decision input that was evaluated within this decision evaluation.
@@ -14668,8 +14668,8 @@ components:
           items:
             $ref: '#/components/schemas/DocumentReference'
       required:
-      - createdDocuments
       - failedDocuments
+      - createdDocuments
     DocumentMetadata:
       description: Information about the document.
       type: object
@@ -15470,9 +15470,9 @@ components:
     CreateGlobalTaskListenerRequest:
       type: object
       required:
+      - eventTypes
       - id
       - type
-      - eventTypes
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -15496,8 +15496,8 @@ components:
     UpdateGlobalTaskListenerRequest:
       type: object
       required:
-      - type
       - eventTypes
+      - type
       properties:
         eventTypes:
           $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
@@ -15519,13 +15519,13 @@ components:
     GlobalTaskListenerResult:
       type: object
       required:
-      - id
-      - eventTypes
+      - priority
       - source
+      - retries
+      - id
       - afterNonGlobal
       - type
-      - retries
-      - priority
+      - eventTypes
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -16215,6 +16215,7 @@ components:
           - MIGRATED
           - PENDING
           - RESOLVED
+          - UNKNOWN
         $neq:
           description: Checks for inequality with the provided value.
           type: string
@@ -16223,6 +16224,7 @@ components:
           - MIGRATED
           - PENDING
           - RESOLVED
+          - UNKNOWN
         $exists:
           description: Checks if the current property exists.
           type: boolean
@@ -16246,6 +16248,7 @@ components:
       - MIGRATED
       - PENDING
       - RESOLVED
+      - UNKNOWN
     IncidentSearchQuerySortRequest:
       type: object
       properties:
@@ -16338,6 +16341,7 @@ components:
           - MIGRATED
           - PENDING
           - RESOLVED
+          - UNKNOWN
         tenantId:
           description: The tenant ID of the incident.
           example: customer-service
@@ -18356,9 +18360,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - name
       - claimName
       - mappingRuleId
+      - name
       - claimValue
     MappingRuleUpdateRequest:
       type: object
@@ -18373,8 +18377,8 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - name
       - claimName
+      - name
       - claimValue
     MappingRuleCreateUpdateResult:
       type: object
@@ -23149,6 +23153,7 @@ components:
       - MIGRATED
       - PENDING
       - RESOLVED
+      - UNKNOWN
     JobKindExactMatch:
       type: string
       title: JobKindExactMatch
@@ -23812,8 +23817,8 @@ components:
             $ref: '#/components/schemas/MigrateProcessInstanceMappingInstruction'
           description: The mapping instructions.
       required:
-      - targetProcessDefinitionKey
       - mappingInstructions
+      - targetProcessDefinitionKey
       title: ProcessInstanceMigrationBatchOperationRequestMigrationPlan
     ClusterVariableSearchQueryRequestFilter:
       description: The cluster variable search filters.
@@ -24107,10 +24112,10 @@ components:
           maxLength: 25
       required:
       - processDefinitionId
-      - processDefinitionVersion
       - processDefinitionKey
-      - resourceName
       - tenantId
+      - processDefinitionVersion
+      - resourceName
       title: DeploymentMetadataResultProcessDefinition
     DeploymentMetadataResultDecisionDefinition:
       nullable: true
@@ -24713,9 +24718,9 @@ components:
           minLength: 1
           maxLength: 25
       required:
+      - candidateUsers
       - candidateGroups
       - changedAttributes
-      - candidateUsers
       title: ActivatedJobResultUserTask
     JobSearchQueryFilter:
       description: The job search filters.

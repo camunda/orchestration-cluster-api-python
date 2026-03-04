@@ -689,15 +689,15 @@ class CamundaAsyncClient:
             return
 
     @overload
-    def create_job_worker(self, config: WorkerConfig, callback: ConnectedJobHandler, auto_start: bool = True, *, execution_strategy: Literal["auto", "async", "thread"] = "auto") -> JobWorker:
+    def create_job_worker(self, config: WorkerConfig, callback: ConnectedJobHandler, auto_start: bool = True, *, execution_strategy: Literal["auto", "async", "thread"] = "auto", startup_jitter_max_seconds: float = 0) -> JobWorker:
         ...
 
     @overload
-    def create_job_worker(self, config: WorkerConfig, callback: IsolatedJobHandler, auto_start: bool = True, *, execution_strategy: Literal["process"]) -> JobWorker:
+    def create_job_worker(self, config: WorkerConfig, callback: IsolatedJobHandler, auto_start: bool = True, *, execution_strategy: Literal["process"], startup_jitter_max_seconds: float = 0) -> JobWorker:
         ...
 
-    def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True, *, execution_strategy: Literal["auto", "async", "thread", "process"] = "auto") -> JobWorker:
-        worker = JobWorker(self, callback, config, logger=self._sdk_logger, execution_strategy=execution_strategy)
+    def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True, *, execution_strategy: Literal["auto", "async", "thread", "process"] = "auto", startup_jitter_max_seconds: float = 0) -> JobWorker:
+        worker = JobWorker(self, callback, config, logger=self._sdk_logger, execution_strategy=execution_strategy, startup_jitter_max_seconds=startup_jitter_max_seconds)
         self._workers.append(worker)
         if auto_start:
             worker.start()

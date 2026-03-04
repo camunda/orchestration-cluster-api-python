@@ -444,11 +444,12 @@ client.create_job_worker(
 | `fetch_variables` | `None` | List of variable names to fetch (None = all) |
 | `worker_name` | `"camunda-python-sdk-worker"` | Identifier for this worker in Camunda |
 
-The `execution_strategy` is a keyword-only argument on `create_job_worker`, not part of `WorkerConfig`:
+The following are keyword-only arguments on `create_job_worker`, not part of `WorkerConfig`:
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `execution_strategy` | `"auto"` | `"auto"`, `"async"`, `"thread"`, or `"process"`. Controls how the handler is invoked and which context type it receives. |
+| `startup_jitter_max_seconds` | `0` | Maximum random delay (in seconds) before the worker starts polling. When multiple application instances restart simultaneously, this spreads out initial activation requests to avoid saturating the server. A value of `0` (the default) means no delay. |
 
 ## Error Handling
 

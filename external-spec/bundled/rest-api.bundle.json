@@ -21926,7 +21926,8 @@
           "ACTIVE",
           "MIGRATED",
           "PENDING",
-          "RESOLVED"
+          "RESOLVED",
+          "UNKNOWN"
         ]
       },
       "IncidentSearchQuerySortRequest": {
