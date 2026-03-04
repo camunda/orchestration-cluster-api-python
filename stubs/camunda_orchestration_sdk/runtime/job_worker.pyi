@@ -30,9 +30,7 @@ ConnectedAsyncJobHandler = Callable[
     [ConnectedJobContext],
     Coroutine[Any, Any, dict[str, Any] | JobCompletionRequest | None],
 ]
-ConnectedSyncJobHandler = Callable[
-    [ConnectedJobContext], dict[str, Any] | None
-]
+ConnectedSyncJobHandler = Callable[[ConnectedJobContext], dict[str, Any] | None]
 ConnectedJobHandler = ConnectedAsyncJobHandler | ConnectedSyncJobHandler
 IsolatedAsyncJobHandler = Callable[
     [JobContext], Coroutine[Any, Any, dict[str, Any] | JobCompletionRequest | None]
