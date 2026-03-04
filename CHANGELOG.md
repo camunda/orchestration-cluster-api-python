@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.9 (2026-03-04)
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`cc8c794`](https://github.com/camunda/orchestration-cluster-api-python/commit/cc8c794e39a615a2cc2c4298ec3fce9f28f06e0f))
+
+### Features
+
+- Add client to JobContext for async and thread execution strategy
+  ([`d30e519`](https://github.com/camunda/orchestration-cluster-api-python/commit/d30e51931034cbb13cc30db0a5ded6f8cbe99dfc))
+
+
 ## v8.9.0-dev.8 (2026-03-03)
 
 ### Bug Fixes
