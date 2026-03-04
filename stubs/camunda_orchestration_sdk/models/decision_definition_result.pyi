@@ -4,20 +4,20 @@ from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, Decis
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="DecisionDefinitionResult")
 @_attrs_define
 class DecisionDefinitionResult:
-    decision_definition_id: DecisionDefinitionId | Unset = UNSET
-    name: str | Unset = UNSET
-    version: int | Unset = UNSET
-    decision_requirements_id: str | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    decision_definition_key: DecisionDefinitionKey | Unset = UNSET
-    decision_requirements_key: DecisionRequirementsKey | Unset = UNSET
-    decision_requirements_name: str | Unset = UNSET
-    decision_requirements_version: int | Unset = UNSET
+    decision_definition_id: DecisionDefinitionId
+    decision_definition_key: DecisionDefinitionKey
+    decision_requirements_id: str
+    decision_requirements_key: DecisionRequirementsKey
+    decision_requirements_name: str
+    decision_requirements_version: int
+    name: str
+    tenant_id: TenantId
+    version: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

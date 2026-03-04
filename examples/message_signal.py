@@ -12,8 +12,6 @@ from camunda_orchestration_sdk.models.message_publication_request import (
 from camunda_orchestration_sdk.models.signal_broadcast_request import (
     SignalBroadcastRequest,
 )
-from camunda_orchestration_sdk.types import Unset
-
 
 # region CorrelateMessage
 def correlate_message_example() -> None:
@@ -26,8 +24,7 @@ def correlate_message_example() -> None:
         )
     )
 
-    if not isinstance(result.message_key, Unset):
-        print(f"Message key: {result.message_key}")
+    print(f"Message key: {result.message_key}")
 # endregion CorrelateMessage
 
 
@@ -43,8 +40,7 @@ def publish_message_example() -> None:
         )
     )
 
-    if not isinstance(result.message_key, Unset):
-        print(f"Message key: {result.message_key}")
+    print(f"Message key: {result.message_key}")
 # endregion PublishMessage
 
 

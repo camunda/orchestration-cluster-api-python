@@ -139,6 +139,7 @@ from .batch_operation_item_search_query_sort_request_field import BatchOperation
 from .batch_operation_item_state_enum import BatchOperationItemStateEnum
 from .batch_operation_item_state_exact_match import BatchOperationItemStateExactMatch
 from .batch_operation_response import BatchOperationResponse
+from .batch_operation_response_actor_type import BatchOperationResponseActorType
 from .batch_operation_search_query import BatchOperationSearchQuery
 from .batch_operation_search_query_filter import BatchOperationSearchQueryFilter
 from .batch_operation_search_query_filter_actor_type import BatchOperationSearchQueryFilterActorType
@@ -244,6 +245,7 @@ from .document_link import DocumentLink
 from .document_link_request import DocumentLinkRequest
 from .document_metadata import DocumentMetadata
 from .document_metadata_custom_properties import DocumentMetadataCustomProperties
+from .document_metadata_response import DocumentMetadataResponse
 from .document_reference import DocumentReference
 from .document_reference_camunda_document_type import DocumentReferenceCamundaDocumentType
 from .element_instance_filter import ElementInstanceFilter
@@ -266,7 +268,7 @@ from .evaluated_decision_input_item import EvaluatedDecisionInputItem
 from .evaluated_decision_output_item import EvaluatedDecisionOutputItem
 from .evaluated_decision_result import EvaluatedDecisionResult
 from .expression_evaluation_request import ExpressionEvaluationRequest
-from .expression_evaluation_request_context import ExpressionEvaluationRequestContext
+from .expression_evaluation_request_variables import ExpressionEvaluationRequestVariables
 from .expression_evaluation_result import ExpressionEvaluationResult
 from .form_result import FormResult
 from .form_result_schema import FormResultSchema
@@ -765,6 +767,7 @@ __all__: list[str] = [
     "BatchOperationItemStateEnum",
     "BatchOperationItemStateExactMatch",
     "BatchOperationResponse",
+    "BatchOperationResponseActorType",
     "BatchOperationSearchQuery",
     "BatchOperationSearchQueryFilter",
     "BatchOperationSearchQueryFilterActorType",
@@ -870,6 +873,7 @@ __all__: list[str] = [
     "DocumentLinkRequest",
     "DocumentMetadata",
     "DocumentMetadataCustomProperties",
+    "DocumentMetadataResponse",
     "DocumentReference",
     "DocumentReferenceCamundaDocumentType",
     "ElementInstanceFilter",
@@ -892,7 +896,7 @@ __all__: list[str] = [
     "EvaluatedDecisionResult",
     "EvaluateDecisionResult",
     "ExpressionEvaluationRequest",
-    "ExpressionEvaluationRequestContext",
+    "ExpressionEvaluationRequestVariables",
     "ExpressionEvaluationResult",
     "FormResult",
     "FormResultSchema",

@@ -12,7 +12,7 @@ from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
-from ..models.audit_log_actor_type_enum import AuditLogActorTypeEnum
+from ..models.batch_operation_response_actor_type import BatchOperationResponseActorType
 from ..models.batch_operation_state_enum import BatchOperationStateEnum
 from ..models.batch_operation_type_enum import BatchOperationTypeEnum
 from ..types import UNSET, Unset, str_any_dict_factory
@@ -28,54 +28,62 @@ T = TypeVar("T", bound="BatchOperationResponse")
 class BatchOperationResponse:
     """
     Attributes:
+        batch_operation_key (str): Key or (Operate Legacy ID = UUID) of the batch operation. Example: 2251799813684321.
+        state (BatchOperationStateEnum): The batch operation state.
+        batch_operation_type (BatchOperationTypeEnum): The type of the batch operation.
+        actor_type (BatchOperationResponseActorType): The type of the actor who performed the operation.
+            This is `null` if the batch operation was created before 8.9,
+            or if the actor information is not available.
+        actor_id (None | str): The ID of the actor who performed the operation. Available for batch operations created
+            since 8.9.
+        operations_total_count (int): The total number of items contained in this batch operation.
+        operations_failed_count (int): The number of items which failed during execution of the batch operation. (e.g.
+            because they are rejected by the Zeebe engine).
+        operations_completed_count (int): The number of successfully completed tasks.
         errors (list[BatchOperationError]): The errors that occurred per partition during the batch operation.
-        batch_operation_key (str | Unset): Key or (Operate Legacy ID = UUID) of the batch operation. Example:
-            2251799813684321.
-        state (BatchOperationStateEnum | Unset): The batch operation state.
-        batch_operation_type (BatchOperationTypeEnum | Unset): The type of the batch operation.
         start_date (datetime.datetime | None | Unset): The start date of the batch operation.
             This is `null` if the batch operation has not yet started.
         end_date (datetime.datetime | None | Unset): The end date of the batch operation.
             This is `null` if the batch operation is still running.
-        actor_type (AuditLogActorTypeEnum | Unset): The type of actor who performed the operation.
-        actor_id (str | Unset): The ID of the actor who performed the operation. Available for batch operations created
-            since 8.9.
-        operations_total_count (int | Unset): The total number of items contained in this batch operation.
-        operations_failed_count (int | Unset): The number of items which failed during execution of the batch operation.
-            (e.g. because they are rejected by the Zeebe engine).
-        operations_completed_count (int | Unset): The number of successfully completed tasks.
     """
 
+    batch_operation_key: BatchOperationKey
+    state: BatchOperationStateEnum
+    batch_operation_type: BatchOperationTypeEnum
+    actor_type: BatchOperationResponseActorType
+    actor_id: None | str
+    operations_total_count: int
+    operations_failed_count: int
+    operations_completed_count: int
     errors: list[BatchOperationError]
-    batch_operation_key: BatchOperationKey | Unset = UNSET
-    state: BatchOperationStateEnum | Unset = UNSET
-    batch_operation_type: BatchOperationTypeEnum | Unset = UNSET
     start_date: datetime.datetime | None | Unset = UNSET
     end_date: datetime.datetime | None | Unset = UNSET
-    actor_type: AuditLogActorTypeEnum | Unset = UNSET
-    actor_id: str | Unset = UNSET
-    operations_total_count: int | Unset = UNSET
-    operations_failed_count: int | Unset = UNSET
-    operations_completed_count: int | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        batch_operation_key = self.batch_operation_key
+
+        state = self.state.value
+
+        batch_operation_type = self.batch_operation_type.value
+
+        actor_type = self.actor_type.value
+
+        actor_id: None | str
+        actor_id = self.actor_id
+
+        operations_total_count = self.operations_total_count
+
+        operations_failed_count = self.operations_failed_count
+
+        operations_completed_count = self.operations_completed_count
+
         errors: list[dict[str, Any]] = []
         for errors_item_data in self.errors:
             errors_item = errors_item_data.to_dict()
             errors.append(errors_item)
-
-        batch_operation_key = self.batch_operation_key
-
-        state: str | Unset = UNSET
-        if not isinstance(self.state, Unset):
-            state = self.state.value
-
-        batch_operation_type: str | Unset = UNSET
-        if not isinstance(self.batch_operation_type, Unset):
-            batch_operation_type = self.batch_operation_type.value
 
         start_date: None | str | Unset
         if isinstance(self.start_date, Unset):
@@ -93,45 +101,25 @@ class BatchOperationResponse:
         else:
             end_date = self.end_date
 
-        actor_type: str | Unset = UNSET
-        if not isinstance(self.actor_type, Unset):
-            actor_type = self.actor_type.value
-
-        actor_id = self.actor_id
-
-        operations_total_count = self.operations_total_count
-
-        operations_failed_count = self.operations_failed_count
-
-        operations_completed_count = self.operations_completed_count
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "batchOperationKey": batch_operation_key,
+                "state": state,
+                "batchOperationType": batch_operation_type,
+                "actorType": actor_type,
+                "actorId": actor_id,
+                "operationsTotalCount": operations_total_count,
+                "operationsFailedCount": operations_failed_count,
+                "operationsCompletedCount": operations_completed_count,
                 "errors": errors,
             }
         )
-        if batch_operation_key is not UNSET:
-            field_dict["batchOperationKey"] = batch_operation_key
-        if state is not UNSET:
-            field_dict["state"] = state
-        if batch_operation_type is not UNSET:
-            field_dict["batchOperationType"] = batch_operation_type
         if start_date is not UNSET:
             field_dict["startDate"] = start_date
         if end_date is not UNSET:
             field_dict["endDate"] = end_date
-        if actor_type is not UNSET:
-            field_dict["actorType"] = actor_type
-        if actor_id is not UNSET:
-            field_dict["actorId"] = actor_id
-        if operations_total_count is not UNSET:
-            field_dict["operationsTotalCount"] = operations_total_count
-        if operations_failed_count is not UNSET:
-            field_dict["operationsFailedCount"] = operations_failed_count
-        if operations_completed_count is not UNSET:
-            field_dict["operationsCompletedCount"] = operations_completed_count
 
         return field_dict
 
@@ -140,32 +128,33 @@ class BatchOperationResponse:
         from ..models.batch_operation_error import BatchOperationError
 
         d = dict(src_dict)
+        batch_operation_key = lift_batch_operation_key(d.pop("batchOperationKey"))
+
+        state = BatchOperationStateEnum(d.pop("state"))
+
+        batch_operation_type = BatchOperationTypeEnum(d.pop("batchOperationType"))
+
+        actor_type = BatchOperationResponseActorType(d.pop("actorType"))
+
+        def _parse_actor_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        actor_id = _parse_actor_id(d.pop("actorId"))
+
+        operations_total_count = d.pop("operationsTotalCount")
+
+        operations_failed_count = d.pop("operationsFailedCount")
+
+        operations_completed_count = d.pop("operationsCompletedCount")
+
         errors: list[BatchOperationError] = []
         _errors = d.pop("errors")
         for errors_item_data in _errors:
             errors_item = BatchOperationError.from_dict(errors_item_data)
 
             errors.append(errors_item)
-
-        batch_operation_key = (
-            lift_batch_operation_key(_val)
-            if (_val := d.pop("batchOperationKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        _state = d.pop("state", UNSET)
-        state: BatchOperationStateEnum | Unset
-        if isinstance(_state, Unset):
-            state = UNSET
-        else:
-            state = BatchOperationStateEnum(_state)
-
-        _batch_operation_type = d.pop("batchOperationType", UNSET)
-        batch_operation_type: BatchOperationTypeEnum | Unset
-        if isinstance(_batch_operation_type, Unset):
-            batch_operation_type = UNSET
-        else:
-            batch_operation_type = BatchOperationTypeEnum(_batch_operation_type)
 
         def _parse_start_date(data: object) -> datetime.datetime | None | Unset:
             if data is None:
@@ -201,33 +190,18 @@ class BatchOperationResponse:
 
         end_date = _parse_end_date(d.pop("endDate", UNSET))
 
-        _actor_type = d.pop("actorType", UNSET)
-        actor_type: AuditLogActorTypeEnum | Unset
-        if isinstance(_actor_type, Unset):
-            actor_type = UNSET
-        else:
-            actor_type = AuditLogActorTypeEnum(_actor_type)
-
-        actor_id = d.pop("actorId", UNSET)
-
-        operations_total_count = d.pop("operationsTotalCount", UNSET)
-
-        operations_failed_count = d.pop("operationsFailedCount", UNSET)
-
-        operations_completed_count = d.pop("operationsCompletedCount", UNSET)
-
         batch_operation_response = cls(
-            errors=errors,
             batch_operation_key=batch_operation_key,
             state=state,
             batch_operation_type=batch_operation_type,
-            start_date=start_date,
-            end_date=end_date,
             actor_type=actor_type,
             actor_id=actor_id,
             operations_total_count=operations_total_count,
             operations_failed_count=operations_failed_count,
             operations_completed_count=operations_completed_count,
+            errors=errors,
+            start_date=start_date,
+            end_date=end_date,
         )
 
         batch_operation_response.additional_properties = d

@@ -18,9 +18,9 @@ from typing import Any, TypedDict
 from dotenv import load_dotenv
 from camunda_orchestration_sdk import CamundaAsyncClient
 from camunda_orchestration_sdk.runtime.job_worker import (
-    AsyncJobHandler,
+    ConnectedAsyncJobHandler,
     WorkerConfig,
-    JobContext,
+    ConnectedJobContext,
 )
 
 # Load environment variables from .env file
@@ -29,13 +29,13 @@ load_dotenv(Path(__file__).parent / ".env")
 class WorkerDefinition(TypedDict):
     """Configuration for registering a job worker."""
     job_type: str
-    callback: AsyncJobHandler
+    callback: ConnectedAsyncJobHandler
     description: str
 
 
 
 # Worker 1: Validate Loan Application
-async def validate_application(job_context: JobContext) -> dict[str, Any]:
+async def validate_application(job_context: ConnectedJobContext) -> dict[str, Any]:
     """
     Validates the loan application data.
     Checks that all required fields are present and valid.
@@ -86,7 +86,7 @@ async def validate_application(job_context: JobContext) -> dict[str, Any]:
     }
 
 # Worker 2: Check Credit Score
-async def check_credit_score(job_context: JobContext):
+async def check_credit_score(job_context: ConnectedJobContext):
     """
     Checks or assigns a credit score.
     In a real system, this would call a credit bureau API.
@@ -141,7 +141,7 @@ async def check_credit_score(job_context: JobContext):
             }
 
 # Worker 3: Assess Risk and Make Decision
-async def assess_risk(job_context: JobContext):
+async def assess_risk(job_context: ConnectedJobContext):
     """
     Assesses the risk profile and makes the loan approval decision.
     This is the core decision-making logic.
@@ -249,7 +249,7 @@ async def assess_risk(job_context: JobContext):
 
 
 # Worker 4: Send Approval Notification
-async def send_approval_notification(job_context: JobContext):
+async def send_approval_notification(job_context: ConnectedJobContext):
     """
     Sends approval notification to the applicant.
     In a real system, this would send an email or SMS.
@@ -293,7 +293,7 @@ async def send_approval_notification(job_context: JobContext):
 
 # Worker 5: Send Rejection Notification
 async def send_rejection_notification(
-    job_context: JobContext,
+    job_context: ConnectedJobContext,
 ):
     """
     Sends rejection notification to the applicant.
@@ -381,11 +381,10 @@ async def run_workers(camunda: CamundaAsyncClient):
             job_timeout_milliseconds=30_000,  # 30 seconds
             request_timeout_milliseconds=20_000,  # 20 seconds
             max_concurrent_jobs=10,
-            execution_strategy="async",
         )
 
         # Type ignore: SDK runtime accepts CompleteJobData but type hints only declare dict
-        camunda.create_job_worker(config=config, callback=worker_def["callback"])  # type: ignore[arg-type]
+        camunda.create_job_worker(config=config, callback=worker_def["callback"], execution_strategy="async")  # type: ignore[arg-type]
 
         print(f"✅ Registered worker: {worker_def['job_type']}")
         print(f"   Description: {worker_def['description']}")

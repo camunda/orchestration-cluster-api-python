@@ -4,14 +4,14 @@ from camunda_orchestration_sdk.semantic_types import MessageKey, ProcessInstance
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="MessageCorrelationResult")
 @_attrs_define
 class MessageCorrelationResult:
-    tenant_id: TenantId | Unset = UNSET
-    message_key: MessageKey | Unset = UNSET
-    process_instance_key: ProcessInstanceKey | Unset = UNSET
+    tenant_id: TenantId
+    message_key: MessageKey
+    process_instance_key: ProcessInstanceKey
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

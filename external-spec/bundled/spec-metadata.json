@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "specHash": "sha256:42b9893e91fc6cf5609756c64e36b8ea46b2d40b9297bd4f675b0c957ce930c8",
+  "specHash": "sha256:4bf4414c4186fe6932fa42f3c40913553e939a811201377816b7a0071caea89b",
   "semanticKeys": [
     {
       "name": "AuditLogEntityKey",

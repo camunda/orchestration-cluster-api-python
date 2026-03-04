@@ -8,13 +8,13 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="ExpressionEvaluationRequestContext")
+T = TypeVar("T", bound="ExpressionEvaluationRequestVariables")
 
 
 @_attrs_define
-class ExpressionEvaluationRequestContext:
-    """Optional context variables for expression evaluation. These variables are only used for the current evaluation and
-    do not persist beyond it.
+class ExpressionEvaluationRequestVariables:
+    """Optional variables for expression evaluation. These variables are only used for the current evaluation and do not
+    persist beyond it.
 
         Example:
             {'x': 10, 'y': 20}
@@ -34,10 +34,10 @@ class ExpressionEvaluationRequestContext:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        expression_evaluation_request_context = cls()
+        expression_evaluation_request_variables = cls()
 
-        expression_evaluation_request_context.additional_properties = d
-        return expression_evaluation_request_context
+        expression_evaluation_request_variables.additional_properties = d
+        return expression_evaluation_request_variables
 
     @property
     def additional_keys(self) -> list[str]:

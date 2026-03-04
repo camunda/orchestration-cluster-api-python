@@ -14,9 +14,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="DecisionDefinitionResult")
 
@@ -25,32 +25,31 @@ T = TypeVar("T", bound="DecisionDefinitionResult")
 class DecisionDefinitionResult:
     """
     Attributes:
-        decision_definition_id (str | Unset): The DMN ID of the decision definition. Example: new-hire-onboarding-
-            workflow.
-        name (str | Unset): The DMN name of the decision definition.
-        version (int | Unset): The assigned version of the decision definition.
-        decision_requirements_id (str | Unset): the DMN ID of the decision requirements graph that the decision
-            definition is part of.
-        tenant_id (str | Unset): The tenant ID of the decision definition. Example: customer-service.
-        decision_definition_key (str | Unset): The assigned key, which acts as a unique identifier for this decision
-            definition. Example: 2251799813326547.
-        decision_requirements_key (str | Unset): The assigned key of the decision requirements graph that the decision
+        decision_definition_id (str): The DMN ID of the decision definition. Example: new-hire-onboarding-workflow.
+        decision_definition_key (str): The assigned key, which acts as a unique identifier for this decision definition.
+            Example: 2251799813326547.
+        decision_requirements_id (str): the DMN ID of the decision requirements graph that the decision definition is
+            part of.
+        decision_requirements_key (str): The assigned key of the decision requirements graph that the decision
             definition is part of. Example: 2251799813683346.
-        decision_requirements_name (str | Unset): The DMN name of the decision requirements that the decision definition
-            is part of.
-        decision_requirements_version (int | Unset): The assigned version of the decision requirements that the decision
+        decision_requirements_name (str): The DMN name of the decision requirements that the decision definition is part
+            of.
+        decision_requirements_version (int): The assigned version of the decision requirements that the decision
             definition is part of.
+        name (str): The DMN name of the decision definition.
+        tenant_id (str): The tenant ID of the decision definition. Example: customer-service.
+        version (int): The assigned version of the decision definition.
     """
 
-    decision_definition_id: DecisionDefinitionId | Unset = UNSET
-    name: str | Unset = UNSET
-    version: int | Unset = UNSET
-    decision_requirements_id: str | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    decision_definition_key: DecisionDefinitionKey | Unset = UNSET
-    decision_requirements_key: DecisionRequirementsKey | Unset = UNSET
-    decision_requirements_name: str | Unset = UNSET
-    decision_requirements_version: int | Unset = UNSET
+    decision_definition_id: DecisionDefinitionId
+    decision_definition_key: DecisionDefinitionKey
+    decision_requirements_id: str
+    decision_requirements_key: DecisionRequirementsKey
+    decision_requirements_name: str
+    decision_requirements_version: int
+    name: str
+    tenant_id: TenantId
+    version: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -58,15 +57,9 @@ class DecisionDefinitionResult:
     def to_dict(self) -> dict[str, Any]:
         decision_definition_id = self.decision_definition_id
 
-        name = self.name
-
-        version = self.version
+        decision_definition_key = self.decision_definition_key
 
         decision_requirements_id = self.decision_requirements_id
-
-        tenant_id = self.tenant_id
-
-        decision_definition_key = self.decision_definition_key
 
         decision_requirements_key = self.decision_requirements_key
 
@@ -74,77 +67,67 @@ class DecisionDefinitionResult:
 
         decision_requirements_version = self.decision_requirements_version
 
+        name = self.name
+
+        tenant_id = self.tenant_id
+
+        version = self.version
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if decision_definition_id is not UNSET:
-            field_dict["decisionDefinitionId"] = decision_definition_id
-        if name is not UNSET:
-            field_dict["name"] = name
-        if version is not UNSET:
-            field_dict["version"] = version
-        if decision_requirements_id is not UNSET:
-            field_dict["decisionRequirementsId"] = decision_requirements_id
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
-        if decision_definition_key is not UNSET:
-            field_dict["decisionDefinitionKey"] = decision_definition_key
-        if decision_requirements_key is not UNSET:
-            field_dict["decisionRequirementsKey"] = decision_requirements_key
-        if decision_requirements_name is not UNSET:
-            field_dict["decisionRequirementsName"] = decision_requirements_name
-        if decision_requirements_version is not UNSET:
-            field_dict["decisionRequirementsVersion"] = decision_requirements_version
+        field_dict.update(
+            {
+                "decisionDefinitionId": decision_definition_id,
+                "decisionDefinitionKey": decision_definition_key,
+                "decisionRequirementsId": decision_requirements_id,
+                "decisionRequirementsKey": decision_requirements_key,
+                "decisionRequirementsName": decision_requirements_name,
+                "decisionRequirementsVersion": decision_requirements_version,
+                "name": name,
+                "tenantId": tenant_id,
+                "version": version,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        decision_definition_id = (
-            lift_decision_definition_id(_val)
-            if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET
-            else UNSET
+        decision_definition_id = lift_decision_definition_id(
+            d.pop("decisionDefinitionId")
         )
 
-        name = d.pop("name", UNSET)
-
-        version = d.pop("version", UNSET)
-
-        decision_requirements_id = d.pop("decisionRequirementsId", UNSET)
-
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
+        decision_definition_key = lift_decision_definition_key(
+            d.pop("decisionDefinitionKey")
         )
 
-        decision_definition_key = (
-            lift_decision_definition_key(_val)
-            if (_val := d.pop("decisionDefinitionKey", UNSET)) is not UNSET
-            else UNSET
+        decision_requirements_id = d.pop("decisionRequirementsId")
+
+        decision_requirements_key = lift_decision_requirements_key(
+            d.pop("decisionRequirementsKey")
         )
 
-        decision_requirements_key = (
-            lift_decision_requirements_key(_val)
-            if (_val := d.pop("decisionRequirementsKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        decision_requirements_name = d.pop("decisionRequirementsName")
 
-        decision_requirements_name = d.pop("decisionRequirementsName", UNSET)
+        decision_requirements_version = d.pop("decisionRequirementsVersion")
 
-        decision_requirements_version = d.pop("decisionRequirementsVersion", UNSET)
+        name = d.pop("name")
+
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
+
+        version = d.pop("version")
 
         decision_definition_result = cls(
             decision_definition_id=decision_definition_id,
-            name=name,
-            version=version,
-            decision_requirements_id=decision_requirements_id,
-            tenant_id=tenant_id,
             decision_definition_key=decision_definition_key,
+            decision_requirements_id=decision_requirements_id,
             decision_requirements_key=decision_requirements_key,
             decision_requirements_name=decision_requirements_name,
             decision_requirements_version=decision_requirements_version,
+            name=name,
+            tenant_id=tenant_id,
+            version=version,
         )
 
         decision_definition_result.additional_properties = d

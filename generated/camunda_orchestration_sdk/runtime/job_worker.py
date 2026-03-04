@@ -8,11 +8,8 @@ from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from typing import (
     Callable,
     Literal,
-    Protocol,
     Any,
-    runtime_checkable,
     TYPE_CHECKING,
-    Awaitable,
     cast,
     Coroutine,
     Union,
@@ -49,15 +46,6 @@ ActionSubprocessError = Tuple[Literal["subprocess_error"], str]
 JobAction = Union[ActionComplete, ActionFail, ActionError, ActionSubprocessError]
 
 
-@runtime_checkable
-class HintedCallable(Protocol):
-    _execution_hint: _EFFECTIVE_EXECUTION_STRATEGY
-
-    def __call__(
-        self, job: Any
-    ) -> dict[str, Any] | None | Awaitable[dict[str, Any] | None]: ...
-
-
 @attrs.define
 class JobContext(ActivatedJobResult):
     """Read-only context for a job execution.
@@ -85,11 +73,66 @@ class JobContext(ActivatedJobResult):
         return cls(**init_fields)
 
 
-AsyncJobHandler = Callable[
+@attrs.define
+class ConnectedJobContext(JobContext):
+    """Context for async/thread handlers — includes client reference.
+
+    Extends :class:`JobContext` with a ``client`` attribute that provides
+    access to the Camunda API from within a job handler.  This context is
+    only provided when the execution strategy is ``"async"`` or
+    ``"thread"``; handlers running under the ``"process"`` strategy
+    receive a plain :class:`JobContext` (the client cannot be pickled
+    across process boundaries).
+    """
+
+    client: "CamundaAsyncClient" = attrs.field(kw_only=True, repr=False, eq=False)
+
+    @classmethod
+    def create(
+        cls,
+        job: ActivatedJobResult,
+        client: "CamundaAsyncClient",
+        logger: SdkLogger | None = None,
+    ) -> "ConnectedJobContext":
+        init_fields = {
+            f.name: getattr(job, f.name)
+            for f in attrs.fields(ActivatedJobResult)
+            if f.init
+        }
+        if logger is not None:
+            init_fields["log"] = logger
+        init_fields["client"] = client
+        return cls(**init_fields)
+
+
+# ---------------------------------------------------------------------------
+# Handler type aliases
+# ---------------------------------------------------------------------------
+
+# Handlers that accept ConnectedJobContext (async / thread strategies).
+# Due to callable contravariance, handlers typed with the broader JobContext
+# parameter are also assignable here.
+ConnectedAsyncJobHandler = Callable[
+    [ConnectedJobContext],
+    Coroutine[Any, Any, dict[str, Any] | JobCompletionRequest | None],
+]
+ConnectedSyncJobHandler = Callable[[ConnectedJobContext], dict[str, Any] | None]
+ConnectedJobHandler = ConnectedAsyncJobHandler | ConnectedSyncJobHandler
+
+# Handlers that accept only JobContext (process strategy).
+# A handler typed with ConnectedJobContext will NOT satisfy this type.
+IsolatedAsyncJobHandler = Callable[
     [JobContext], Coroutine[Any, Any, dict[str, Any] | JobCompletionRequest | None]
 ]
-SyncJobHandler = Callable[[JobContext], dict[str, Any] | None]
-JobHandler = AsyncJobHandler | SyncJobHandler | HintedCallable
+IsolatedSyncJobHandler = Callable[[JobContext], dict[str, Any] | None]
+IsolatedJobHandler = IsolatedAsyncJobHandler | IsolatedSyncJobHandler
+
+# Internal union — used by JobWorker internals.
+JobHandler = ConnectedJobHandler | IsolatedJobHandler
+
+# Keep the old names usable for backward compat in user code
+AsyncJobHandler = IsolatedAsyncJobHandler
+SyncJobHandler = IsolatedSyncJobHandler
 
 
 @dataclass
@@ -102,39 +145,8 @@ class WorkerConfig:
     """Long-poll request timeout in milliseconds. Defaults to 0, which allows the server to set the request timeout"""
     request_timeout_milliseconds: int = 0
     max_concurrent_jobs: int = 10  # Max jobs executing at once
-    execution_strategy: EXECUTION_STRATEGY = "auto"
     fetch_variables: list[str] | None = None
     worker_name: str = "camunda-python-sdk-worker"
-
-
-class ExecutionHint:
-    """Decorators for users to hint at their workload execution potential"""
-
-    @staticmethod
-    def prefer(
-        strategy: _EFFECTIVE_EXECUTION_STRATEGY,
-    ) -> Callable[[Callable[..., Any]], HintedCallable]:
-        def decorator(func: Callable[..., Any]) -> HintedCallable:
-            func._execution_preference = strategy  # type: ignore
-            # Implicitly permit the preferred strategy
-            if not hasattr(func, "_execution_permits"):
-                func._execution_permits = set()  # type: ignore
-            func._execution_permits.add(strategy)  # type: ignore
-            return func  # type: ignore
-
-        return decorator
-
-    @staticmethod
-    def permit(
-        strategy: _EFFECTIVE_EXECUTION_STRATEGY,
-    ) -> Callable[[Callable[..., Any]], HintedCallable]:
-        def decorator(func: Callable[..., Any]) -> HintedCallable:
-            if not hasattr(func, "_execution_permits"):
-                func._execution_permits = set()  # type: ignore
-            func._execution_permits.add(strategy)  # type: ignore
-            return func  # type: ignore
-
-        return decorator
 
 
 class JobError(Exception):
@@ -203,10 +215,12 @@ class JobWorker:
         callback: JobHandler,
         config: WorkerConfig,
         logger: SdkLogger | None = None,
+        execution_strategy: EXECUTION_STRATEGY = "auto",
     ):
         self.callback = callback
         self.config = config
         self.client = client
+        self._execution_strategy_override = execution_strategy
 
         # Bind logger with context
         base_logger = logger if logger is not None else create_logger()
@@ -246,21 +260,20 @@ class JobWorker:
         self.worker_loop.run_forever()
 
     def _determine_strategy(self) -> _EFFECTIVE_EXECUTION_STRATEGY:
-        """Smart detection of execution strategy"""
+        """Determine execution strategy from explicit override or callback type."""
         # User explicitly configured?
-        if self.config.execution_strategy != "auto":
-            return self.config.execution_strategy
+        if self._execution_strategy_override != "auto":
+            return cast(
+                _EFFECTIVE_EXECUTION_STRATEGY,
+                self._execution_strategy_override,
+            )
 
         # Unwrap partials to check the actual function
         actual_func = self.callback
         while isinstance(actual_func, functools.partial):
             actual_func = actual_func.func
 
-        # Check for preference
-        if hasattr(actual_func, "_execution_preference"):
-            return getattr(actual_func, "_execution_preference")
-
-        # Auto-detect default preference based on function signature
+        # Auto-detect based on function signature
         if inspect.iscoroutinefunction(actual_func):
             return "async"
 
@@ -356,7 +369,13 @@ class JobWorker:
 
         # Create context with a job-scoped child logger
         job_logger = self.logger.bind(job_key=str(job_item.job_key))
-        job_context = JobContext.from_job(job_item, logger=job_logger)
+        job_context: JobContext
+        if self._strategy != "process":
+            job_context = ConnectedJobContext.create(
+                job_item, client=self.client, logger=job_logger
+            )
+        else:
+            job_context = JobContext.from_job(job_item, logger=job_logger)
 
         # Unwrap partials to check the actual function
         actual_func = self.callback
@@ -381,8 +400,9 @@ class JobWorker:
                             result = await asyncio.wrap_future(future)
                         else:
                             # Warning: Sync callback on Async strategy blocks the loop!
-                            result = self.callback(job_context)
-                        action = cast(ActionComplete, ("complete", result))
+                            sync_callback = cast(SyncJobHandler, self.callback)
+                            result = sync_callback(job_context)
+                        action = ("complete", result)
                     except JobError as e:
                         action = ("error", (e.error_code, e.message))
                     except JobFailure as e:

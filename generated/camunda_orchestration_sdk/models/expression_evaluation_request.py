@@ -10,8 +10,8 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.expression_evaluation_request_context import (
-        ExpressionEvaluationRequestContext,
+    from ..models.expression_evaluation_request_variables import (
+        ExpressionEvaluationRequestVariables,
     )
 
 
@@ -25,34 +25,34 @@ class ExpressionEvaluationRequest:
         expression (str): The expression to evaluate (e.g., "=x + y") Example: =x + y.
         tenant_id (str | Unset): Required when the expression references tenant-scoped cluster variables Example:
             tenant_123.
-        context (ExpressionEvaluationRequestContext | None | Unset): Optional context variables for expression
-            evaluation. These variables are only used for the current evaluation and do not persist beyond it. Example:
-            {'x': 10, 'y': 20}.
+        variables (ExpressionEvaluationRequestVariables | None | Unset): Optional variables for expression evaluation.
+            These variables are only used for the current evaluation and do not persist beyond it. Example: {'x': 10, 'y':
+            20}.
     """
 
     expression: str
     tenant_id: TenantId | Unset = UNSET
-    context: ExpressionEvaluationRequestContext | None | Unset = UNSET
+    variables: ExpressionEvaluationRequestVariables | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.expression_evaluation_request_context import (
-            ExpressionEvaluationRequestContext,
+        from ..models.expression_evaluation_request_variables import (
+            ExpressionEvaluationRequestVariables,
         )
 
         expression = self.expression
 
         tenant_id = self.tenant_id
 
-        context: dict[str, Any] | None | Unset
-        if isinstance(self.context, Unset):
-            context = UNSET
-        elif isinstance(self.context, ExpressionEvaluationRequestContext):
-            context = self.context.to_dict()
+        variables: dict[str, Any] | None | Unset
+        if isinstance(self.variables, Unset):
+            variables = UNSET
+        elif isinstance(self.variables, ExpressionEvaluationRequestVariables):
+            variables = self.variables.to_dict()
         else:
-            context = self.context
+            variables = self.variables
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -63,15 +63,15 @@ class ExpressionEvaluationRequest:
         )
         if tenant_id is not UNSET:
             field_dict["tenantId"] = tenant_id
-        if context is not UNSET:
-            field_dict["context"] = context
+        if variables is not UNSET:
+            field_dict["variables"] = variables
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.expression_evaluation_request_context import (
-            ExpressionEvaluationRequestContext,
+        from ..models.expression_evaluation_request_variables import (
+            ExpressionEvaluationRequestVariables,
         )
 
         d = dict(src_dict)
@@ -83,9 +83,9 @@ class ExpressionEvaluationRequest:
             else UNSET
         )
 
-        def _parse_context(
+        def _parse_variables(
             data: object,
-        ) -> ExpressionEvaluationRequestContext | None | Unset:
+        ) -> ExpressionEvaluationRequestVariables | None | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
@@ -95,21 +95,21 @@ class ExpressionEvaluationRequest:
                     raise TypeError()
 
                 data = cast(dict[str, Any], data)
-                componentsschemas_expression_evaluation_request_context_type_0 = (
-                    ExpressionEvaluationRequestContext.from_dict(data)
+                componentsschemas_expression_evaluation_request_variables_type_0 = (
+                    ExpressionEvaluationRequestVariables.from_dict(data)
                 )
 
-                return componentsschemas_expression_evaluation_request_context_type_0
+                return componentsschemas_expression_evaluation_request_variables_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(ExpressionEvaluationRequestContext | None | Unset, data)
+            return cast(ExpressionEvaluationRequestVariables | None | Unset, data)
 
-        context = _parse_context(d.pop("context", UNSET))
+        variables = _parse_variables(d.pop("variables", UNSET))
 
         expression_evaluation_request = cls(
             expression=expression,
             tenant_id=tenant_id,
-            context=context,
+            variables=variables,
         )
 
         expression_evaluation_request.additional_properties = d

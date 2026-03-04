@@ -363,9 +363,8 @@ def generate_flat_client(package_path: Path) -> None:
         imports_content += "\nfrom typing import TYPE_CHECKING"
 
     imports_content += "\nimport asyncio"
-    imports_content += (
-        "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, JobHandler"
-    )
+    imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, ConnectedJobHandler, IsolatedJobHandler, JobHandler"
+    imports_content += "\nfrom typing import Literal, overload"
     imports_content += "\nfrom .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
     imports_content += "\nfrom .runtime.auth import AuthProvider, BasicAuthProvider, NullAuthProvider, OAuthClientCredentialsAuthProvider, AsyncOAuthClientCredentialsAuthProvider, inject_auth_event_hooks"
     imports_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger, SdkLogger, create_logger"
@@ -689,8 +688,16 @@ class CamundaAsyncClient:
         except Exception:
             return
 
-    def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True) -> JobWorker:
-        worker = JobWorker(self, callback, config, logger=self._sdk_logger)
+    @overload
+    def create_job_worker(self, config: WorkerConfig, callback: ConnectedJobHandler, auto_start: bool = True, *, execution_strategy: Literal["auto", "async", "thread"] = "auto") -> JobWorker:
+        ...
+
+    @overload
+    def create_job_worker(self, config: WorkerConfig, callback: IsolatedJobHandler, auto_start: bool = True, *, execution_strategy: Literal["process"]) -> JobWorker:
+        ...
+
+    def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True, *, execution_strategy: Literal["auto", "async", "thread", "process"] = "auto") -> JobWorker:
+        worker = JobWorker(self, callback, config, logger=self._sdk_logger, execution_strategy=execution_strategy)
         self._workers.append(worker)
         if auto_start:
             worker.start()

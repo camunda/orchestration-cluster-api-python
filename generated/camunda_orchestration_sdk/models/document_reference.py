@@ -2,18 +2,19 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import DocumentId, lift_document_id
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 from ..models.document_reference_camunda_document_type import (
     DocumentReferenceCamundaDocumentType,
 )
-from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.document_metadata import DocumentMetadata
+    from ..models.document_metadata_response import DocumentMetadataResponse
 
 
 T = TypeVar("T", bound="DocumentReference")
@@ -23,84 +24,69 @@ T = TypeVar("T", bound="DocumentReference")
 class DocumentReference:
     """
     Attributes:
-        camunda_document_type (DocumentReferenceCamundaDocumentType | Unset): Document discriminator. Always set to
-            "camunda".
-        store_id (str | Unset): The ID of the document store.
-        document_id (str | Unset): The ID of the document.
-        content_hash (str | Unset): The hash of the document.
-        metadata (DocumentMetadata | Unset): Information about the document.
+        camunda_document_type (DocumentReferenceCamundaDocumentType): Document discriminator. Always set to "camunda".
+        store_id (str): The ID of the document store.
+        document_id (str): The ID of the document.
+        content_hash (None | str): The hash of the document.
+        metadata (DocumentMetadataResponse): Information about the document that is returned in responses.
     """
 
-    camunda_document_type: DocumentReferenceCamundaDocumentType | Unset = UNSET
-    store_id: str | Unset = UNSET
-    document_id: DocumentId | Unset = UNSET
-    content_hash: str | Unset = UNSET
-    metadata: DocumentMetadata | Unset = UNSET
+    camunda_document_type: DocumentReferenceCamundaDocumentType
+    store_id: str
+    document_id: DocumentId
+    content_hash: None | str
+    metadata: DocumentMetadataResponse
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        camunda_document_type: str | Unset = UNSET
-        if not isinstance(self.camunda_document_type, Unset):
-            camunda_document_type = self.camunda_document_type.value
+        camunda_document_type = self.camunda_document_type.value
 
         store_id = self.store_id
 
         document_id = self.document_id
 
+        content_hash: None | str
         content_hash = self.content_hash
 
-        metadata: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.metadata, Unset):
-            metadata = self.metadata.to_dict()
+        metadata = self.metadata.to_dict()
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if camunda_document_type is not UNSET:
-            field_dict["camunda.document.type"] = camunda_document_type
-        if store_id is not UNSET:
-            field_dict["storeId"] = store_id
-        if document_id is not UNSET:
-            field_dict["documentId"] = document_id
-        if content_hash is not UNSET:
-            field_dict["contentHash"] = content_hash
-        if metadata is not UNSET:
-            field_dict["metadata"] = metadata
+        field_dict.update(
+            {
+                "camunda.document.type": camunda_document_type,
+                "storeId": store_id,
+                "documentId": document_id,
+                "contentHash": content_hash,
+                "metadata": metadata,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.document_metadata import DocumentMetadata
+        from ..models.document_metadata_response import DocumentMetadataResponse
 
         d = dict(src_dict)
-        _camunda_document_type = d.pop("camunda.document.type", UNSET)
-        camunda_document_type: DocumentReferenceCamundaDocumentType | Unset
-        if isinstance(_camunda_document_type, Unset):
-            camunda_document_type = UNSET
-        else:
-            camunda_document_type = DocumentReferenceCamundaDocumentType(
-                _camunda_document_type
-            )
-
-        store_id = d.pop("storeId", UNSET)
-
-        document_id = (
-            lift_document_id(_val)
-            if (_val := d.pop("documentId", UNSET)) is not UNSET
-            else UNSET
+        camunda_document_type = DocumentReferenceCamundaDocumentType(
+            d.pop("camunda.document.type")
         )
 
-        content_hash = d.pop("contentHash", UNSET)
+        store_id = d.pop("storeId")
 
-        _metadata = d.pop("metadata", UNSET)
-        metadata: DocumentMetadata | Unset
-        if isinstance(_metadata, Unset):
-            metadata = UNSET
-        else:
-            metadata = DocumentMetadata.from_dict(_metadata)
+        document_id = lift_document_id(d.pop("documentId"))
+
+        def _parse_content_hash(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        content_hash = _parse_content_hash(d.pop("contentHash"))
+
+        metadata = DocumentMetadataResponse.from_dict(d.pop("metadata"))
 
         document_reference = cls(
             camunda_document_type=camunda_document_type,

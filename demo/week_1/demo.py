@@ -41,7 +41,6 @@ async def main():
         job_type="job-worker-load-test-1-task-1",
         job_timeout_milliseconds=30_000,
         max_concurrent_jobs=5,
-        execution_strategy="process",
     )
 
     # Single worker starts and starts working on jobs
@@ -51,6 +50,7 @@ async def main():
             simulate_subprocess_work, 
             duration=WORK_DURATION_SECONDS
         ),
+        execution_strategy="process",
     )
 
     # Start process instances

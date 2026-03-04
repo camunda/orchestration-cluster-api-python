@@ -8,10 +8,11 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 from ..models.batch_operation_type_enum import BatchOperationTypeEnum
-from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="BatchOperationCreatedResult")
 
@@ -21,12 +22,12 @@ class BatchOperationCreatedResult:
     """The created batch operation.
 
     Attributes:
-        batch_operation_key (str | Unset): Key of the batch operation. Example: 2251799813684321.
-        batch_operation_type (BatchOperationTypeEnum | Unset): The type of the batch operation.
+        batch_operation_key (str): Key of the batch operation. Example: 2251799813684321.
+        batch_operation_type (BatchOperationTypeEnum): The type of the batch operation.
     """
 
-    batch_operation_key: BatchOperationKey | Unset = UNSET
-    batch_operation_type: BatchOperationTypeEnum | Unset = UNSET
+    batch_operation_key: BatchOperationKey
+    batch_operation_type: BatchOperationTypeEnum
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -34,35 +35,25 @@ class BatchOperationCreatedResult:
     def to_dict(self) -> dict[str, Any]:
         batch_operation_key = self.batch_operation_key
 
-        batch_operation_type: str | Unset = UNSET
-        if not isinstance(self.batch_operation_type, Unset):
-            batch_operation_type = self.batch_operation_type.value
+        batch_operation_type = self.batch_operation_type.value
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if batch_operation_key is not UNSET:
-            field_dict["batchOperationKey"] = batch_operation_key
-        if batch_operation_type is not UNSET:
-            field_dict["batchOperationType"] = batch_operation_type
+        field_dict.update(
+            {
+                "batchOperationKey": batch_operation_key,
+                "batchOperationType": batch_operation_type,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        batch_operation_key = (
-            lift_batch_operation_key(_val)
-            if (_val := d.pop("batchOperationKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        batch_operation_key = lift_batch_operation_key(d.pop("batchOperationKey"))
 
-        _batch_operation_type = d.pop("batchOperationType", UNSET)
-        batch_operation_type: BatchOperationTypeEnum | Unset
-        if isinstance(_batch_operation_type, Unset):
-            batch_operation_type = UNSET
-        else:
-            batch_operation_type = BatchOperationTypeEnum(_batch_operation_type)
+        batch_operation_type = BatchOperationTypeEnum(d.pop("batchOperationType"))
 
         batch_operation_created_result = cls(
             batch_operation_key=batch_operation_key,

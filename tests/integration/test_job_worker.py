@@ -89,7 +89,6 @@ async def test_job_worker_performance():
 
         config = WorkerConfig(
             job_type="load-test",
-            execution_strategy="auto",
             job_timeout_milliseconds=30_000,
         )
 

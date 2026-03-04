@@ -18,7 +18,7 @@ from camunda_orchestration_sdk.models.search_process_instances_data_filter impor
     SearchProcessInstancesDataFilter,
 )
 from camunda_orchestration_sdk import CamundaClient, WorkerConfig
-from camunda_orchestration_sdk.runtime.job_worker import ExecutionHint, JobContext
+from camunda_orchestration_sdk.runtime.job_worker import JobContext
 
 
 def _make_client():
@@ -35,7 +35,6 @@ camunda = _make_client()
 
 
 # Worker callback function
-@ExecutionHint.async_safe
 async def callback(job: JobContext):
     # Simulate some CPU / IO-bound work
     print(f"**** Job Worker **** \nJob Key: {job.job_key}")
@@ -66,7 +65,7 @@ async def main():
             data=None, process_instance_key=process.process_instance_key
         )
 
-    # config = WorkerConfig(job_type='load-test', execution_strategy="auto", timeout=30_000)
+    # config = WorkerConfig(job_type='load-test', timeout=30_000)
 
     # Single worker starts and starts working on jobs
 
@@ -81,7 +80,6 @@ async def main():
             job_type="job-worker-load-test-1-task-1",
             timeout=5000,
             max_concurrent_jobs=10,
-            execution_strategy="auto",
         ),
         callback=callback,
     )

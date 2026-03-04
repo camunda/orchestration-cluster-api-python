@@ -4,18 +4,18 @@ from camunda_orchestration_sdk.semantic_types import DocumentId
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.document_reference_camunda_document_type import DocumentReferenceCamundaDocumentType
-from ..types import UNSET, Unset, str_any_dict_factory
-from ..models.document_metadata import DocumentMetadata
+from ..models.document_metadata_response import DocumentMetadataResponse
 T = TypeVar("T", bound="DocumentReference")
 @_attrs_define
 class DocumentReference:
-    camunda_document_type: DocumentReferenceCamundaDocumentType | Unset = UNSET
-    store_id: str | Unset = UNSET
-    document_id: DocumentId | Unset = UNSET
-    content_hash: str | Unset = UNSET
-    metadata: DocumentMetadata | Unset = UNSET
+    camunda_document_type: DocumentReferenceCamundaDocumentType
+    store_id: str
+    document_id: DocumentId
+    content_hash: None | str
+    metadata: DocumentMetadataResponse
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

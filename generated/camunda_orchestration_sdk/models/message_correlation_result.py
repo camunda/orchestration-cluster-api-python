@@ -12,9 +12,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="MessageCorrelationResult")
 
@@ -25,15 +25,15 @@ class MessageCorrelationResult:
     correlated with.
 
         Attributes:
-            tenant_id (str | Unset): The tenant ID of the correlated message Example: customer-service.
-            message_key (str | Unset): The key of the correlated message. Example: 2251799813683467.
-            process_instance_key (str | Unset): The key of the first process instance the message correlated with Example:
+            tenant_id (str): The tenant ID of the correlated message Example: customer-service.
+            message_key (str): The key of the correlated message. Example: 2251799813683467.
+            process_instance_key (str): The key of the first process instance the message correlated with Example:
                 2251799813690746.
     """
 
-    tenant_id: TenantId | Unset = UNSET
-    message_key: MessageKey | Unset = UNSET
-    process_instance_key: ProcessInstanceKey | Unset = UNSET
+    tenant_id: TenantId
+    message_key: MessageKey
+    process_instance_key: ProcessInstanceKey
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -47,36 +47,24 @@ class MessageCorrelationResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
-        if message_key is not UNSET:
-            field_dict["messageKey"] = message_key
-        if process_instance_key is not UNSET:
-            field_dict["processInstanceKey"] = process_instance_key
+        field_dict.update(
+            {
+                "tenantId": tenant_id,
+                "messageKey": message_key,
+                "processInstanceKey": process_instance_key,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
 
-        message_key = (
-            lift_message_key(_val)
-            if (_val := d.pop("messageKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        message_key = lift_message_key(d.pop("messageKey"))
 
-        process_instance_key = (
-            lift_process_instance_key(_val)
-            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
 
         message_correlation_result = cls(
             tenant_id=tenant_id,

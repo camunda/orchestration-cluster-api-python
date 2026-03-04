@@ -355,6 +355,9 @@ def _render_args(args: ast.arguments, source_lines: list[str]) -> str:
             if ann_src:
                 ann = f": {ann_src}"
         parts.append(f"*{args.vararg.arg}{ann}")
+    elif args.kwonlyargs:
+        # Bare * separator for keyword-only args without *args
+        parts.append("*")
 
     # keyword-only args
     for i, arg in enumerate(args.kwonlyargs):

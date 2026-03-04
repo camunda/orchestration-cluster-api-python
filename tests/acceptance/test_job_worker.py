@@ -149,16 +149,6 @@ def test_strategy_detection_sync():
     assert worker._strategy == "thread"  # pyright: ignore[reportPrivateUsage]
 
 
-# def test_strategy_detection_hint():
-#     @ExecutionHint.cpu_bound
-#     def cpu_callback(job): pass
-
-#     config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
-#     worker = JobWorker(MagicMock(), cpu_callback, config)
-
-#     assert worker._strategy == "process" # pyright: ignore[reportPrivateUsage]
-
-
 @pytest.mark.asyncio
 async def test_worker_concurrency_limit(mock_client: MagicMock):
     # Setup

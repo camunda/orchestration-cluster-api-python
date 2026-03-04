@@ -540,6 +540,7 @@ async def run_worker_scenario(
     workload_type: Literal["cpu", "io", "subprocess", "subprocess_threaded"] = "cpu",
     work_duration: float = 3.0,
     jitter_pct: float = 0.25,
+    execution_strategy: EXECUTION_STRATEGY = "auto",
 ) -> dict[str, float]:
     """Run a worker scenario with configurable settings.
 
@@ -553,6 +554,7 @@ async def run_worker_scenario(
         workload_type: Type of workload simulation - "cpu", "io", or "subprocess".
         work_duration: Duration of simulated work in seconds.
         jitter_pct: Percentage of jitter to apply to work duration (0.0 to 1.0).
+        execution_strategy: Execution strategy for the worker.
 
     Returns:
         dict with timing stats: {'total_time', 'jobs_completed', 'jobs_per_second', 'expected_jobs',
@@ -575,7 +577,7 @@ async def run_worker_scenario(
     # For process strategy, use a multiprocessing.Manager dict (picklable and process-safe)
     # For other strategies, use a regular dict
     lock = None
-    if worker_config.execution_strategy == "process":
+    if execution_strategy == "process":
         manager = multiprocessing.Manager()
         job_counter = manager.dict()
         job_counter["completed"] = 0
@@ -584,7 +586,7 @@ async def run_worker_scenario(
         job_counter["durations"] = manager.list(durations)
         job_counter["duration_idx"] = 0
         lock = manager.Lock()
-    elif worker_config.execution_strategy == "thread":
+    elif execution_strategy == "thread":
         job_counter = {
             "completed": 0, 
             "start_time": None,
@@ -605,7 +607,7 @@ async def run_worker_scenario(
     tracked_callback = create_default_callback(
         client,
         job_counter,
-        worker_config.execution_strategy,
+        execution_strategy,
         workload_type,
         work_duration,
         lock,
@@ -628,7 +630,7 @@ async def run_worker_scenario(
     )
 
     # Create worker
-    client.create_job_worker(config=worker_config, callback=tracked_callback)
+    client.create_job_worker(config=worker_config, callback=tracked_callback, execution_strategy=execution_strategy)
 
     # Monitor for completion
     # Track peak memory during execution
@@ -789,13 +791,13 @@ async def run_test(
                 job_type="job-worker-load-test-1-task-1",
                 job_timeout_milliseconds=job_timeout_ms,
                 max_concurrent_jobs=max_concurrent_jobs,
-                execution_strategy=strategy,
             ),
             num_instances=num_instances,
             scenario_timeout_seconds=timeout,
             workload_type=workload_type,
             work_duration=work_duration,
             jitter_pct=jitter_pct,
+            execution_strategy=strategy,
         )
         all_stats.append(stats)
 
@@ -905,7 +907,6 @@ async def simple_scenario():
             job_type="job-worker-load-test-1-task-1",
             job_timeout_milliseconds=JOB_TIMEOUT_MILLISECONDS,
             max_concurrent_jobs=10,
-            execution_strategy="auto",
         ),
         num_instances=1,
     )
@@ -930,7 +931,6 @@ async def load_test_scenario():
             job_type="job-worker-load-test-1-task-1",
             job_timeout_milliseconds=JOB_TIMEOUT_MILLISECONDS,
             max_concurrent_jobs=50,  # Higher concurrency
-            execution_strategy="auto",
         ),
         num_instances=100,  # More instances
         scenario_timeout_seconds=120,  # 2 minute timeout for load test
@@ -958,10 +958,10 @@ async def multi_strategy_scenario():
                 job_type="job-worker-load-test-1-task-1",
                 job_timeout_milliseconds=JOB_TIMEOUT_MILLISECONDS,
                 max_concurrent_jobs=10,
-                execution_strategy=strategy,
             ),
             num_instances=10,
             scenario_timeout_seconds=60,
+            execution_strategy=strategy,
         )
         results[strategy] = stats
 

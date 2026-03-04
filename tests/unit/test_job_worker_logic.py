@@ -40,14 +40,18 @@ async def test_worker_decrements_active_jobs_on_success():
         job_type="test-job",
         job_timeout_milliseconds=1000,
         max_concurrent_jobs=5,
-        execution_strategy="async",
     )
 
     # Callback
     async def success_callback(job: JobContext) -> dict[str, str]:
         return {}
 
-    worker = JobWorker(client=mock_client, callback=success_callback, config=config)
+    worker = JobWorker(
+        client=mock_client,
+        callback=success_callback,
+        config=config,
+        execution_strategy="async",
+    )
 
     # Manually simulate job execution logic to test the internal state
     # We bypass the poll loop to control the execution flow
@@ -96,14 +100,18 @@ async def test_worker_handles_exception_and_decrements_counter():
         job_type="test-job",
         job_timeout_milliseconds=1000,
         max_concurrent_jobs=5,
-        execution_strategy="async",
     )
 
     # Callback that raises exception
     async def failing_callback(job: JobContext):
         raise ValueError("Something went wrong!")
 
-    worker = JobWorker(client=mock_client, callback=failing_callback, config=config)
+    worker = JobWorker(
+        client=mock_client,
+        callback=failing_callback,
+        config=config,
+        execution_strategy="async",
+    )
 
     # 1. Simulate receiving a job
     with worker.lock:
@@ -152,7 +160,6 @@ async def test_worker_thread_strategy_exception_handling():
         job_type="test-job",
         job_timeout_milliseconds=1000,
         max_concurrent_jobs=5,
-        execution_strategy="thread",
     )
 
     # Sync Callback that raises exception
@@ -160,7 +167,10 @@ async def test_worker_thread_strategy_exception_handling():
         raise RuntimeError("Thread failure!")
 
     worker = JobWorker(
-        client=mock_client, callback=failing_sync_callback, config=config
+        client=mock_client,
+        callback=failing_sync_callback,
+        config=config,
+        execution_strategy="thread",
     )
 
     # 1. Simulate receiving a job

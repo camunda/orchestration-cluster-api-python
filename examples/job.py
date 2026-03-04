@@ -13,7 +13,7 @@ from camunda_orchestration_sdk.models.job_completion_request_variables import (
 )
 from camunda_orchestration_sdk.models.job_fail_request import JobFailRequest
 from camunda_orchestration_sdk.runtime.job_worker import (
-    JobContext,
+    ConnectedJobContext,
     JobError,
     JobFailure,
 )
@@ -74,7 +74,7 @@ async def create_job_worker_example() -> None:
             max_concurrent_jobs=5,
         )
 
-        async def handler(job: JobContext) -> dict[str, object]:
+        async def handler(job: ConnectedJobContext) -> dict[str, object]:
             job.log.info(f"Processing job {job.job_key}")
             return {"processed": True}
 
@@ -94,7 +94,7 @@ async def job_worker_with_error_handling_example() -> None:
             max_concurrent_jobs=10,
         )
 
-        async def handler(job: JobContext) -> dict[str, object]:
+        async def handler(job: ConnectedJobContext) -> dict[str, object]:
             # Raise JobError to throw a BPMN error
             if not job.variables:
                 raise JobError("MISSING_DATA", "No variables provided")
@@ -122,11 +122,10 @@ async def sync_job_worker_callback_example() -> None:
         config = WorkerConfig(
             job_type="cpu-intensive-task",
             job_timeout_milliseconds=120_000,
-            execution_strategy="thread",
         )
 
         # Sync callbacks run in a thread pool by default
-        def handler(job: JobContext) -> dict[str, object]:
+        def handler(job: ConnectedJobContext) -> dict[str, object]:
             # CPU-bound or blocking I/O work
             return {"result": "computed"}
 
