@@ -12692,8 +12692,8 @@ components:
           description: Only provided if the cluster variable scope is TENANT. Null
             for global scope variables.
       required:
-      - scope
       - name
+      - scope
     ClusterVariableSearchResult:
       description: Cluster variable search response item.
       type: object
@@ -12716,8 +12716,8 @@ components:
           description: Only provided if the cluster variable scope is TENANT. Null
             for global scope variables.
       required:
-      - scope
       - name
+      - scope
     ClusterVariableResultBase:
       description: Cluster variable response item.
       type: object
@@ -13915,11 +13915,11 @@ components:
 
             '
       required:
+      - evaluationFailure
+      - tenantId
       - matchedRules
       - evaluatedInputs
       - rootProcessInstanceKey
-      - tenantId
-      - evaluationFailure
     EvaluatedDecisionInputItem:
       type: object
       description: A decision input that was evaluated within this decision evaluation.
@@ -14668,8 +14668,8 @@ components:
           items:
             $ref: '#/components/schemas/DocumentReference'
       required:
-      - failedDocuments
       - createdDocuments
+      - failedDocuments
     DocumentMetadata:
       description: Information about the document.
       type: object
@@ -15470,9 +15470,9 @@ components:
     CreateGlobalTaskListenerRequest:
       type: object
       required:
-      - eventTypes
-      - id
       - type
+      - id
+      - eventTypes
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -15496,8 +15496,8 @@ components:
     UpdateGlobalTaskListenerRequest:
       type: object
       required:
-      - eventTypes
       - type
+      - eventTypes
       properties:
         eventTypes:
           $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
@@ -15520,12 +15520,12 @@ components:
       type: object
       required:
       - priority
-      - source
       - retries
       - id
-      - afterNonGlobal
-      - type
+      - source
       - eventTypes
+      - type
+      - afterNonGlobal
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -18360,10 +18360,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimName
       - mappingRuleId
       - name
       - claimValue
+      - claimName
     MappingRuleUpdateRequest:
       type: object
       properties:
@@ -18377,9 +18377,9 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - claimName
       - name
       - claimValue
+      - claimName
     MappingRuleCreateUpdateResult:
       type: object
       properties:
@@ -24111,11 +24111,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - processDefinitionId
-      - processDefinitionKey
-      - tenantId
       - processDefinitionVersion
+      - tenantId
+      - processDefinitionId
       - resourceName
+      - processDefinitionKey
       title: DeploymentMetadataResultProcessDefinition
     DeploymentMetadataResultDecisionDefinition:
       nullable: true
@@ -24719,8 +24719,8 @@ components:
           maxLength: 25
       required:
       - candidateUsers
-      - candidateGroups
       - changedAttributes
+      - candidateGroups
       title: ActivatedJobResultUserTask
     JobSearchQueryFilter:
       description: The job search filters.
