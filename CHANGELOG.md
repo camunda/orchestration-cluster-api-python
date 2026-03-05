@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.10 (2026-03-05)
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`2ca59bf`](https://github.com/camunda/orchestration-cluster-api-python/commit/2ca59bf32e9a1350550afde2bb043d75e1b19dd7))
+
+### Features
+
+- Add startup jitter to job worker
+  ([`e4dbe99`](https://github.com/camunda/orchestration-cluster-api-python/commit/e4dbe99f2e4f5e193e40cc0a31fbef4ed4b8efb6))
+
+
 ## v8.9.0-dev.9 (2026-03-04)
 
 ### Chores
