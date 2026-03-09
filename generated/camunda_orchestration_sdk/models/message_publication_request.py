@@ -22,8 +22,8 @@ class MessagePublicationRequest:
     """
     Attributes:
         name (str): The name of the message.
-        correlation_key (str | Unset): The correlation key of the message. Default: ''. Example: customer-43421.
-        time_to_live (int | Unset): Timespan (in ms) to buffer the message on the broker. Default: 0.
+        correlation_key (str | Unset): The correlation key of the message. Server default: . Example: customer-43421.
+        time_to_live (int | Unset): Timespan (in ms) to buffer the message on the broker. Server default: 0.
         message_id (str | Unset): The unique ID of the message. This is used to ensure only one message with the given
             ID
             will be published during the lifetime of the message (if `timeToLive` is set).
@@ -32,8 +32,8 @@ class MessagePublicationRequest:
     """
 
     name: str
-    correlation_key: str | Unset = ""
-    time_to_live: int | Unset = 0
+    correlation_key: str | Unset = UNSET
+    time_to_live: int | Unset = UNSET
     message_id: str | Unset = UNSET
     variables: DecisionEvaluationByIdVariables | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET

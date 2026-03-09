@@ -18,19 +18,19 @@ T = TypeVar("T", bound="JobFailRequest")
 class JobFailRequest:
     """
     Attributes:
-        retries (int | Unset): The amount of retries the job should have left Default: 0.
+        retries (int | Unset): The amount of retries the job should have left Server default: 0.
         error_message (str | Unset): An optional error message describing why the job failed; if not provided, an empty
             string is used.
         retry_back_off (int | Unset): An optional retry back off for the failed job. The job will not be retryable
             before the current time plus the back off time. The default is 0 which means the job is retryable immediately.
-            Default: 0.
+            Server default: 0.
         variables (JobFailRequestVariables | Unset): JSON object that will instantiate the variables at the local scope
             of the job's associated task.
     """
 
-    retries: int | Unset = 0
+    retries: int | Unset = UNSET
     error_message: str | Unset = UNSET
-    retry_back_off: int | Unset = 0
+    retry_back_off: int | Unset = UNSET
     variables: JobFailRequestVariables | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:

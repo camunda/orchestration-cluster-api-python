@@ -45,7 +45,8 @@ class ElementInstanceFilter:
     Attributes:
         process_definition_id (str | Unset): The process definition ID associated to this element instance. Example:
             new-account-onboarding-workflow.
-        state (AdvancedElementInstanceStateFilter | ElementInstanceStateExactMatch | Unset):
+        state (AdvancedElementInstanceStateFilter | ElementInstanceStateExactMatch | Unset): State of element instance
+            as defined set of values.
         type_ (ElementInstanceFilterType | Unset): Type of element as defined set of values.
         element_id (str | Unset): The element ID for this element instance. Example: Activity_106kosb.
         element_name (str | Unset): The element name. This only works for data created with 8.8 and onwards. Instances
@@ -59,8 +60,8 @@ class ElementInstanceFilter:
         process_definition_key (str | Unset): The process definition key associated to this element instance. Example:
             2251799813686749.
         incident_key (str | Unset): The key of incident if field incident is true. Example: 2251799813689432.
-        start_date (AdvancedDateTimeFilter | datetime.datetime | Unset):
-        end_date (AdvancedDateTimeFilter | datetime.datetime | Unset):
+        start_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The start date of this element instance.
+        end_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The end date of this element instance.
         element_instance_scope_key (str | Unset): The scope key of this element instance. If provided with a process
             instance key it will return element instances that are immediate children of the process instance. If provided
             with an element instance key it will return element instances that are immediate children of the element

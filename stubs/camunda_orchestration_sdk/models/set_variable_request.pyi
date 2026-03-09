@@ -9,7 +9,7 @@ T = TypeVar("T", bound="SetVariableRequest")
 @_attrs_define
 class SetVariableRequest:
     variables: SetVariableRequestVariables
-    local: bool | Unset = False
+    local: bool | Unset = UNSET
     operation_reference: int | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

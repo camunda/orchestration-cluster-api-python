@@ -37,18 +37,25 @@ class CorrelatedMessageSubscriptionFilter:
     """Correlated message subscriptions search filter.
 
     Attributes:
-        correlation_key (AdvancedStringFilter | str | Unset):
-        correlation_time (AdvancedDateTimeFilter | datetime.datetime | Unset):
-        element_id (AdvancedStringFilter | str | Unset):
-        element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset):
-        message_key (BasicStringFilter | str | Unset):
-        message_name (AdvancedStringFilter | str | Unset):
-        partition_id (AdvancedIntegerFilter | int | Unset):
-        process_definition_id (AdvancedStringFilter | str | Unset):
-        process_definition_key (AdvancedProcessDefinitionKeyFilter | str | Unset):
-        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset):
-        subscription_key (AdvancedMessageSubscriptionKeyFilter | str | Unset):
-        tenant_id (AdvancedStringFilter | str | Unset):
+        correlation_key (AdvancedStringFilter | str | Unset): The correlation key of the message.
+        correlation_time (AdvancedDateTimeFilter | datetime.datetime | Unset): The time when the message was correlated.
+        element_id (AdvancedStringFilter | str | Unset): The element ID that received the message.
+        element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset): The element instance key that received
+            the message.
+        message_key (BasicStringFilter | str | Unset): The message key.
+        message_name (AdvancedStringFilter | str | Unset): The name of the message.
+        partition_id (AdvancedIntegerFilter | int | Unset): The partition ID that correlated the message.
+        process_definition_id (AdvancedStringFilter | str | Unset): The process definition ID associated with this
+            correlated message subscription.
+        process_definition_key (AdvancedProcessDefinitionKeyFilter | str | Unset): The process definition key associated
+            with this correlated message subscription. For intermediate message events, this only works for data created
+            with 8.9 and later.
+        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The process instance key associated with
+            this correlated message subscription.
+        subscription_key (AdvancedMessageSubscriptionKeyFilter | str | Unset): The subscription key that received the
+            message.
+        tenant_id (AdvancedStringFilter | str | Unset): The tenant ID associated with this correlated message
+            subscription.
     """
 
     correlation_key: AdvancedStringFilter | str | Unset = UNSET

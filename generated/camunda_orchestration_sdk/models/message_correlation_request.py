@@ -22,13 +22,13 @@ class MessageCorrelationRequest:
     """
     Attributes:
         name (str): The message name as defined in the BPMN process
-        correlation_key (str | Unset): The correlation key of the message. Default: ''. Example: customer-43421.
+        correlation_key (str | Unset): The correlation key of the message. Server default: . Example: customer-43421.
         variables (MessageCorrelationRequestVariables | Unset): The message variables as JSON document
         tenant_id (str | Unset): the tenant for which the message is published Example: customer-service.
     """
 
     name: str
-    correlation_key: str | Unset = ""
+    correlation_key: str | Unset = UNSET
     variables: MessageCorrelationRequestVariables | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
 

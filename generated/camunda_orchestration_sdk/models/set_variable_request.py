@@ -32,14 +32,14 @@ class SetVariableRequest:
             An update request with elementInstanceKey as '2', variables { "foo": 5 }, and local set
             to `true` leaves scope '1' unchanged and adjusts scope '2' to { "bar": 1, "foo": 5 }. By
             default, with local set to `false`, scope '1' will be { "foo": 5 } and scope '2' will be
-            { "bar": 1 }. Default: False.
+            { "bar": 1 }. Server default: False.
         operation_reference (int | Unset): A reference key chosen by the user that will be part of all records resulting
             from this operation.
             Must be > 0 if provided.
     """
 
     variables: SetVariableRequestVariables
-    local: bool | Unset = False
+    local: bool | Unset = UNSET
     operation_reference: int | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:

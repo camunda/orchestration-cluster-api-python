@@ -41,7 +41,7 @@ class ProcessCreationByKey:
         process_definition_version (int | Unset): As the version is already identified by the `processDefinitionKey`,
             the value of this field is ignored.
             It's here for backwards-compatibility only as previous releases accepted it in request bodies.
-             Default: -1.
+             Server default: -1.
         variables (ProcessInstanceCreationInstructionByKeyVariables | Unset): Set of variables as JSON object to
             instantiate in the root variable scope of the process
             instance. Can include nested complex objects.
@@ -67,10 +67,10 @@ class ProcessCreationByKey:
             within the request timeout limit, a 504 response status will be returned. The process
             instance will continue to run in the background regardless of the timeout. Disabled by
             default.
-             Default: False.
+             Server default: False.
         request_timeout (int | Unset): Timeout (in ms) the request waits for the process to complete. By default or
             when set to 0, the generic request timeout configured in the cluster is applied.
-             Default: 0.
+             Server default: 0.
         fetch_variables (list[str] | Unset): List of variables by name to be included in the response when
             awaitCompletion is set to true.
             If empty, all visible variables in the root scope will be returned.
@@ -85,7 +85,7 @@ class ProcessCreationByKey:
     """
 
     process_definition_key: ProcessDefinitionKey
-    process_definition_version: int | Unset = -1
+    process_definition_version: int | Unset = UNSET
     variables: ProcessInstanceCreationInstructionByKeyVariables | Unset = UNSET
     start_instructions: list[ProcessInstanceCreationStartInstruction] | Unset = UNSET
     runtime_instructions: list[ProcessInstanceCreationTerminateInstruction] | Unset = (
@@ -93,8 +93,8 @@ class ProcessCreationByKey:
     )
     tenant_id: TenantId | Unset = UNSET
     operation_reference: int | Unset = UNSET
-    await_completion: bool | Unset = False
-    request_timeout: int | Unset = 0
+    await_completion: bool | Unset = UNSET
+    request_timeout: int | Unset = UNSET
     fetch_variables: list[str] | Unset = UNSET
     tags: list[str] | Unset = UNSET
     business_id: BusinessId | Unset = UNSET

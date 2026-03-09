@@ -19,11 +19,11 @@ class JobTypeStatisticsQueryPage:
     Attributes:
         after (str): Use the `endCursor` value from the previous response to fetch the next page of results. Example:
             WzIyNTE3OTk4MTM2ODcxMDJd.
-        limit (int | Unset): The maximum number of items to return in one request. Default: 100.
+        limit (int | Unset): The maximum number of items to return in one request. Server default: 100.
     """
 
     after: EndCursor
-    limit: int | Unset = 100
+    limit: int | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

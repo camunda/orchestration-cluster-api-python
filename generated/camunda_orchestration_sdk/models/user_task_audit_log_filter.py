@@ -29,11 +29,12 @@ class UserTaskAuditLogFilter:
     """The user task audit log search filters.
 
     Attributes:
-        operation_type (AdvancedOperationTypeFilter | OperationTypeExactMatch | Unset):
-        result (AdvancedResultFilter | AuditLogResultExactMatch | Unset):
-        timestamp (AdvancedDateTimeFilter | datetime.datetime | Unset):
-        actor_type (AdvancedActorTypeFilter | AuditLogActorTypeExactMatch | Unset):
-        actor_id (AdvancedStringFilter | str | Unset):
+        operation_type (AdvancedOperationTypeFilter | OperationTypeExactMatch | Unset): The audit log operation type
+            search filter.
+        result (AdvancedResultFilter | AuditLogResultExactMatch | Unset): The audit log result search filter.
+        timestamp (AdvancedDateTimeFilter | datetime.datetime | Unset): The audit log timestamp filter.
+        actor_type (AdvancedActorTypeFilter | AuditLogActorTypeExactMatch | Unset): The actor type search filter.
+        actor_id (AdvancedStringFilter | str | Unset): The actor ID search filter.
     """
 
     operation_type: AdvancedOperationTypeFilter | OperationTypeExactMatch | Unset = (

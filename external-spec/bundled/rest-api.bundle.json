@@ -7483,6 +7483,86 @@
         }
       }
     },
+    "/jobs/statistics/errors": {
+      "post": {
+        "x-eventually-consistent": true,
+        "tags": [
+          "Job"
+        ],
+        "operationId": "getJobErrorStatistics",
+        "summary": "Get error metrics for a job type",
+        "description": "Returns aggregated metrics per error for the given jobType.\n",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobErrorStatisticsQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The job error statistics result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobErrorStatisticsQueryResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The provided data is not valid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request lacks valid authentication credentials.",
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. The request is not allowed.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An internal error occurred while processing the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/license": {
       "get": {
         "x-eventually-consistent": false,
@@ -12491,6 +12571,70 @@
         }
       }
     },
+    "/system/configuration": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "operationId": "getSystemConfiguration",
+        "x-eventually-consistent": false,
+        "summary": "System configuration (alpha)",
+        "description": "Returns the current system configuration. The response is an envelope\nthat groups settings by feature area.\n\nThis endpoint is an alpha feature and may be subject to change\nin future releases.\n",
+        "responses": {
+          "200": {
+            "description": "Current system configuration grouped by feature area.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemConfigurationResponse"
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "jobMetrics": {
+                        "enabled": true,
+                        "exportInterval": "PT5M",
+                        "maxWorkerNameLength": 100,
+                        "maxJobTypeLength": 100,
+                        "maxTenantIdLength": 30,
+                        "maxUniqueKeys": 9500
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The request lacks valid authentication credentials.",
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An internal error occurred while processing the request.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/tenants": {
       "post": {
         "x-eventually-consistent": false,
@@ -16384,7 +16528,6 @@
       },
       "AuditLogEntityKeyFilterProperty": {
         "description": "EntityKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/AuditLogEntityKeyExactMatch"
@@ -16437,7 +16580,6 @@
       },
       "EntityTypeFilterProperty": {
         "description": "AuditLogEntityTypeEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/EntityTypeExactMatch"
@@ -16486,7 +16628,6 @@
       },
       "OperationTypeFilterProperty": {
         "description": "AuditLogOperationTypeEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/OperationTypeExactMatch"
@@ -16535,7 +16676,6 @@
       },
       "CategoryFilterProperty": {
         "description": "AuditLogCategoryEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/CategoryExactMatch"
@@ -16584,7 +16724,6 @@
       },
       "AuditLogResultFilterProperty": {
         "description": "AuditLogResultEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/AuditLogResultExactMatch"
@@ -16633,7 +16772,6 @@
       },
       "AuditLogActorTypeFilterProperty": {
         "description": "AuditLogActorTypeEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/AuditLogActorTypeExactMatch"
@@ -17793,7 +17931,6 @@
       },
       "BatchOperationTypeFilterProperty": {
         "description": "BatchOperationTypeEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/BatchOperationTypeExactMatch"
@@ -17842,7 +17979,6 @@
       },
       "BatchOperationStateFilterProperty": {
         "description": "BatchOperationStateEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/BatchOperationStateExactMatch"
@@ -17891,7 +18027,6 @@
       },
       "BatchOperationItemStateFilterProperty": {
         "description": "BatchOperationItemStateEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/BatchOperationItemStateExactMatch"
@@ -18144,7 +18279,6 @@
       },
       "ClusterVariableScopeFilterProperty": {
         "description": "ClusterVariableScopeEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ClusterVariableScopeExactMatch"
@@ -19448,7 +19582,6 @@
       },
       "DecisionInstanceStateFilterProperty": {
         "description": "DecisionInstanceStateEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/DecisionInstanceStateExactMatch"
@@ -20033,7 +20166,6 @@
       },
       "DeploymentKeyFilterProperty": {
         "description": "DeploymentKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/DeploymentKeyExactMatch"
@@ -20086,7 +20218,6 @@
       },
       "ResourceKeyFilterProperty": {
         "description": "ResourceKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ResourceKeyExactMatch"
@@ -20554,7 +20685,6 @@
       },
       "ElementInstanceStateFilterProperty": {
         "description": "ElementInstanceStateEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ElementInstanceStateExactMatch"
@@ -20927,7 +21057,6 @@
       },
       "BasicStringFilterProperty": {
         "description": "String property with basic advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "type": "string",
@@ -20941,7 +21070,6 @@
       },
       "StringFilterProperty": {
         "description": "String property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "type": "string",
@@ -21004,7 +21132,6 @@
       },
       "IntegerFilterProperty": {
         "description": "Integer property with advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "type": "integer",
@@ -21068,7 +21195,6 @@
       },
       "DateTimeFilterProperty": {
         "description": "Date-time property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "type": "string",
@@ -21359,7 +21485,6 @@
       },
       "GlobalListenerSourceFilterProperty": {
         "description": "Global listener source property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/GlobalListenerSourceExactMatch"
@@ -21408,7 +21533,6 @@
       },
       "GlobalTaskListenerEventTypeFilterProperty": {
         "description": "Global listener event type property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/GlobalTaskListenerEventTypeExactMatch"
@@ -22066,7 +22190,6 @@
       },
       "IncidentErrorTypeFilterProperty": {
         "description": "IncidentErrorTypeEnum with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/IncidentErrorTypeExactMatch"
@@ -22144,7 +22267,6 @@
       },
       "IncidentStateFilterProperty": {
         "description": "IncidentStateEnum with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/IncidentStateExactMatch"
@@ -22923,6 +23045,119 @@
           },
           "failed": {
             "$ref": "#/components/schemas/StatusMetric"
+          }
+        }
+      },
+      "JobErrorStatisticsQuery": {
+        "description": "Job error statistics query.",
+        "type": "object",
+        "required": [
+          "filter"
+        ],
+        "properties": {
+          "filter": {
+            "$ref": "#/components/schemas/JobErrorStatisticsFilter"
+          },
+          "page": {
+            "description": "Search cursor pagination.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CursorForwardPagination"
+              }
+            ]
+          }
+        }
+      },
+      "JobErrorStatisticsFilter": {
+        "description": "Job error statistics search filter.",
+        "type": "object",
+        "required": [
+          "from",
+          "to",
+          "jobType"
+        ],
+        "properties": {
+          "from": {
+            "description": "Start of the time window to filter metrics. ISO 8601 date-time format.\n",
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-07-28T15:51:28.071Z"
+          },
+          "to": {
+            "description": "End of the time window to filter metrics. ISO 8601 date-time format.\n",
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-07-29T15:51:28.071Z"
+          },
+          "jobType": {
+            "description": "Job type to return error metrics for.",
+            "type": "string",
+            "example": "fetch-customer-data"
+          },
+          "errorCode": {
+            "description": "Optional error code filter with advanced search capabilities.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StringFilterProperty"
+              }
+            ]
+          },
+          "errorMessage": {
+            "description": "Optional error message filter with advanced search capabilities.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StringFilterProperty"
+              }
+            ]
+          }
+        }
+      },
+      "JobErrorStatisticsQueryResult": {
+        "description": "Job error statistics query result.",
+        "type": "object",
+        "required": [
+          "items",
+          "page"
+        ],
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SearchQueryResponse"
+          }
+        ],
+        "properties": {
+          "items": {
+            "description": "The list of per-error statistics items.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JobErrorStatisticsItem"
+            }
+          }
+        }
+      },
+      "JobErrorStatisticsItem": {
+        "description": "Aggregated error metrics for a single error type and message combination.",
+        "type": "object",
+        "required": [
+          "errorCode",
+          "errorMessage",
+          "workers"
+        ],
+        "properties": {
+          "errorCode": {
+            "description": "The error code identifier.",
+            "type": "string",
+            "example": "UNHANDLED_ERROR_EVENT"
+          },
+          "errorMessage": {
+            "description": "The error message.",
+            "type": "string",
+            "example": "An unexpected error occurred."
+          },
+          "workers": {
+            "description": "Number of distinct workers that encountered this error.",
+            "type": "integer",
+            "format": "int32",
+            "example": 15
           }
         }
       },
@@ -23949,7 +24184,6 @@
       },
       "JobKindFilterProperty": {
         "description": "JobKindEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/JobKindExactMatch"
@@ -23998,7 +24232,6 @@
       },
       "JobListenerEventTypeFilterProperty": {
         "description": "JobListenerEventTypeEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/JobListenerEventTypeExactMatch"
@@ -24047,7 +24280,6 @@
       },
       "JobStateFilterProperty": {
         "description": "JobStateEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/JobStateExactMatch"
@@ -24295,7 +24527,6 @@
       },
       "ProcessDefinitionKeyFilterProperty": {
         "description": "ProcessDefinitionKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ProcessDefinitionKeyExactMatch"
@@ -24348,7 +24579,6 @@
       },
       "ProcessInstanceKeyFilterProperty": {
         "description": "ProcessInstanceKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ProcessInstanceKeyExactMatch"
@@ -24401,7 +24631,6 @@
       },
       "ElementInstanceKeyFilterProperty": {
         "description": "ElementInstanceKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ElementInstanceKeyExactMatch"
@@ -24454,7 +24683,6 @@
       },
       "JobKeyFilterProperty": {
         "description": "JobKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/JobKeyExactMatch"
@@ -24507,7 +24735,6 @@
       },
       "DecisionDefinitionKeyFilterProperty": {
         "description": "DecisionDefinitionKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/DecisionDefinitionKeyExactMatch"
@@ -24560,7 +24787,6 @@
       },
       "ScopeKeyFilterProperty": {
         "description": "ScopeKey property with full advanced search capabilities. Filter by the key of the\nelement instance or process instance that defines the scope of a variable.\n",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ScopeKeyExactMatch"
@@ -24613,7 +24839,6 @@
       },
       "VariableKeyFilterProperty": {
         "description": "VariableKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/VariableKeyExactMatch"
@@ -24666,7 +24891,6 @@
       },
       "DecisionEvaluationInstanceKeyFilterProperty": {
         "description": "DecisionEvaluationInstanceKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/DecisionEvaluationInstanceKeyExactMatch"
@@ -24719,7 +24943,6 @@
       },
       "AuditLogKeyFilterProperty": {
         "description": "AuditLogKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/AuditLogKeyExactMatch"
@@ -24772,7 +24995,6 @@
       },
       "FormKeyFilterProperty": {
         "description": "FormKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/FormKeyExactMatch"
@@ -24825,7 +25047,6 @@
       },
       "DecisionEvaluationKeyFilterProperty": {
         "description": "DecisionEvaluationKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/DecisionEvaluationKeyExactMatch"
@@ -24878,7 +25099,6 @@
       },
       "DecisionRequirementsKeyFilterProperty": {
         "description": "DecisionRequirementsKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/DecisionRequirementsKeyExactMatch"
@@ -25848,7 +26068,6 @@
       },
       "MessageSubscriptionStateFilterProperty": {
         "description": "MessageSubscriptionStateEnum with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/MessageSubscriptionStateExactMatch"
@@ -25938,7 +26157,6 @@
       },
       "MessageSubscriptionKeyFilterProperty": {
         "description": "MessageSubscriptionKey property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/MessageSubscriptionKeyExactMatch"
@@ -27857,7 +28075,6 @@
       },
       "ProcessInstanceStateFilterProperty": {
         "description": "ProcessInstanceStateEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ProcessInstanceStateExactMatch"
@@ -28574,6 +28791,66 @@
             "description": "The amount of unique active task users.",
             "type": "integer",
             "format": "int64"
+          }
+        }
+      },
+      "SystemConfigurationResponse": {
+        "description": "Envelope for all system configuration sections. Each property\nrepresents a feature area.\n",
+        "type": "object",
+        "required": [
+          "jobMetrics"
+        ],
+        "properties": {
+          "jobMetrics": {
+            "$ref": "#/components/schemas/JobMetricsConfigurationResponse"
+          }
+        }
+      },
+      "JobMetricsConfigurationResponse": {
+        "description": "Configuration for job metrics collection and export.",
+        "type": "object",
+        "required": [
+          "enabled",
+          "exportInterval",
+          "maxWorkerNameLength",
+          "maxJobTypeLength",
+          "maxTenantIdLength",
+          "maxUniqueKeys"
+        ],
+        "properties": {
+          "enabled": {
+            "description": "Whether job metrics export is enabled.",
+            "type": "boolean",
+            "example": true
+          },
+          "exportInterval": {
+            "description": "The interval at which job metrics are exported, as an ISO 8601 duration.",
+            "type": "string",
+            "example": "PT5M"
+          },
+          "maxWorkerNameLength": {
+            "description": "The maximum length of the worker name used in job metrics labels.",
+            "type": "integer",
+            "format": "int32",
+            "example": 100
+          },
+          "maxJobTypeLength": {
+            "description": "The maximum length of the job type used in job metrics labels.",
+            "type": "integer",
+            "format": "int32",
+            "example": 100
+          },
+          "maxTenantIdLength": {
+            "description": "The maximum length of the tenant ID used in job metrics labels.",
+            "type": "integer",
+            "format": "int32",
+            "example": 30
+          },
+          "maxUniqueKeys": {
+            "description": "The maximum number of unique metric keys tracked for job metrics.",
+            "type": "integer",
+            "format": "int32",
+            "example": 9500
           }
         }
       },
@@ -29630,7 +29907,6 @@
       },
       "UserTaskStateFilterProperty": {
         "description": "UserTaskStateEnum property with full advanced search capabilities.",
-        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/UserTaskStateExactMatch"

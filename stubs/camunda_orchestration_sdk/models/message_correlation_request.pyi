@@ -10,7 +10,7 @@ T = TypeVar("T", bound="MessageCorrelationRequest")
 @_attrs_define
 class MessageCorrelationRequest:
     name: str
-    correlation_key: str | Unset = ""
+    correlation_key: str | Unset = UNSET
     variables: MessageCorrelationRequestVariables | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...

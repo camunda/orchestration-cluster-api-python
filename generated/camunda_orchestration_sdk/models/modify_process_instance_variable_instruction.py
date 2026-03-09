@@ -27,11 +27,11 @@ class ModifyProcessInstanceVariableInstruction:
             It must be a JSON object, as variables will be mapped in a key-value fashion.
         scope_id (str | Unset): The id of the element in which scope the variables should be created.
             Leave empty to create the variables in the global scope of the process instance.
-             Default: ''.
+             Server default: .
     """
 
     variables: ModifyProcessInstanceVariableInstructionVariables
-    scope_id: str | Unset = ""
+    scope_id: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

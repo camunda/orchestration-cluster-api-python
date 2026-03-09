@@ -17,11 +17,11 @@ class ProcessDefinitionInstanceVersionStatisticsQueryPage:
 
     Attributes:
         from_ (int | Unset): The index of items to start searching from.
-        limit (int | Unset): The maximum number of items to return in one request. Default: 100.
+        limit (int | Unset): The maximum number of items to return in one request. Server default: 100.
     """
 
     from_: int | Unset = UNSET
-    limit: int | Unset = 100
+    limit: int | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

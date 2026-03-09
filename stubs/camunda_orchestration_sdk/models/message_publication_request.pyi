@@ -10,8 +10,8 @@ T = TypeVar("T", bound="MessagePublicationRequest")
 @_attrs_define
 class MessagePublicationRequest:
     name: str
-    correlation_key: str | Unset = ""
-    time_to_live: int | Unset = 0
+    correlation_key: str | Unset = UNSET
+    time_to_live: int | Unset = UNSET
     message_id: str | Unset = UNSET
     variables: DecisionEvaluationByIdVariables | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET

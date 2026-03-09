@@ -42,28 +42,36 @@ class JobFilter:
     """Job search filter.
 
     Attributes:
-        deadline (AdvancedDateTimeFilter | datetime.datetime | None | Unset):
-        denied_reason (AdvancedStringFilter | str | Unset):
-        element_id (AdvancedStringFilter | str | Unset):
-        element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset):
-        end_time (AdvancedDateTimeFilter | datetime.datetime | Unset):
-        error_code (AdvancedStringFilter | str | Unset):
-        error_message (AdvancedStringFilter | str | Unset):
+        deadline (AdvancedDateTimeFilter | datetime.datetime | None | Unset): When the job can next be activated.
+        denied_reason (AdvancedStringFilter | str | Unset): The reason provided by the user task listener for denying
+            the work.
+        element_id (AdvancedStringFilter | str | Unset): The element ID associated with the job.
+        element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset): The element instance key associated with
+            the job.
+        end_time (AdvancedDateTimeFilter | datetime.datetime | Unset): When the job ended.
+        error_code (AdvancedStringFilter | str | Unset): The error code provided for the failed job.
+        error_message (AdvancedStringFilter | str | Unset): The error message that provides additional context for a
+            failed job.
         has_failed_with_retries_left (bool | Unset): Indicates whether the job has failed with retries left.
         is_denied (bool | None | Unset): Indicates whether the user task listener denies the work.
-        job_key (AdvancedJobKeyFilter | str | Unset):
-        kind (AdvancedJobKindFilter | JobKindExactMatch | Unset):
-        listener_event_type (AdvancedJobListenerEventTypeFilter | JobListenerEventTypeExactMatch | Unset):
-        process_definition_id (AdvancedStringFilter | str | Unset):
-        process_definition_key (AdvancedProcessDefinitionKeyFilter | str | Unset):
-        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset):
-        retries (AdvancedIntegerFilter | int | Unset):
-        state (AdvancedJobStateFilter | JobStateExactMatch | Unset):
-        tenant_id (AdvancedStringFilter | str | Unset):
-        type_ (AdvancedStringFilter | str | Unset):
-        worker (AdvancedStringFilter | str | Unset):
-        creation_time (AdvancedDateTimeFilter | datetime.datetime | Unset):
-        last_update_time (AdvancedDateTimeFilter | datetime.datetime | Unset):
+        job_key (AdvancedJobKeyFilter | str | Unset): The key, a unique identifier for the job.
+        kind (AdvancedJobKindFilter | JobKindExactMatch | Unset): The kind of the job.
+        listener_event_type (AdvancedJobListenerEventTypeFilter | JobListenerEventTypeExactMatch | Unset): The listener
+            event type of the job.
+        process_definition_id (AdvancedStringFilter | str | Unset): The process definition ID associated with the job.
+        process_definition_key (AdvancedProcessDefinitionKeyFilter | str | Unset): The process definition key associated
+            with the job.
+        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The process instance key associated with
+            the job.
+        retries (AdvancedIntegerFilter | int | Unset): The number of retries left.
+        state (AdvancedJobStateFilter | JobStateExactMatch | Unset): The state of the job.
+        tenant_id (AdvancedStringFilter | str | Unset): The tenant ID.
+        type_ (AdvancedStringFilter | str | Unset): The type of the job.
+        worker (AdvancedStringFilter | str | Unset): The name of the worker for this job.
+        creation_time (AdvancedDateTimeFilter | datetime.datetime | Unset): When the job was created. Field is present
+            for jobs created after 8.9.
+        last_update_time (AdvancedDateTimeFilter | datetime.datetime | Unset): When the job was last updated. Field is
+            present for jobs created after 8.9.
     """
 
     deadline: AdvancedDateTimeFilter | datetime.datetime | None | Unset = UNSET

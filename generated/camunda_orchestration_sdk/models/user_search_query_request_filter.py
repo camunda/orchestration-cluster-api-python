@@ -20,9 +20,9 @@ class UserSearchQueryRequestFilter:
     """The user search filters.
 
     Attributes:
-        username (AdvancedStringFilter | str | Unset):
-        name (AdvancedStringFilter | str | Unset):
-        email (AdvancedStringFilter | str | Unset):
+        username (AdvancedStringFilter | str | Unset): The username of the user.
+        name (AdvancedStringFilter | str | Unset): The name of the user.
+        email (AdvancedStringFilter | str | Unset): The email of the user.
     """
 
     username: AdvancedStringFilter | str | Unset = UNSET

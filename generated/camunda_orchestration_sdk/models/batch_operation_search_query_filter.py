@@ -32,12 +32,14 @@ class BatchOperationSearchQueryFilter:
     """The batch operation search filters.
 
     Attributes:
-        batch_operation_key (BasicStringFilter | str | Unset):
-        operation_type (AdvancedBatchOperationTypeFilter | BatchOperationTypeExactMatch | Unset):
-        state (AdvancedBatchOperationStateFilter | BatchOperationStateExactMatch | Unset):
+        batch_operation_key (BasicStringFilter | str | Unset): The key (or operate legacy ID) of the batch operation.
+        operation_type (AdvancedBatchOperationTypeFilter | BatchOperationTypeExactMatch | Unset): The type of the batch
+            operation.
+        state (AdvancedBatchOperationStateFilter | BatchOperationStateExactMatch | Unset): The state of the batch
+            operation.
         actor_type (BatchOperationSearchQueryFilterActorType | Unset): The type of the actor who performed the
             operation.
-        actor_id (AdvancedStringFilter | str | Unset):
+        actor_id (AdvancedStringFilter | str | Unset): The ID of the actor who performed the operation.
     """
 
     batch_operation_key: BasicStringFilter | str | Unset = UNSET

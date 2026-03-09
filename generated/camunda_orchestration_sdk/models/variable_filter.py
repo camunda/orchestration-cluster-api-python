@@ -26,13 +26,22 @@ class VariableFilter:
     """Variable filter request.
 
     Attributes:
-        name (AdvancedStringFilter | str | Unset):
-        value (AdvancedStringFilter | str | Unset):
+        name (AdvancedStringFilter | str | Unset): Name of the variable.
+        value (AdvancedStringFilter | str | Unset): The value of the variable.
+            Variable values in filters need to be in serialized JSON format. For example, a variable
+            with string value `myValue` can be found with the filter value `"myValue"`. Consider
+            appropriate escaping for special characters in JSON strings when constructing filter values.
         tenant_id (str | Unset): Tenant ID of this variable. Example: customer-service.
         is_truncated (bool | Unset): Whether the value is truncated or not.
-        variable_key (AdvancedVariableKeyFilter | str | Unset):
-        scope_key (AdvancedScopeKeyFilter | str | Unset):
-        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset):
+        variable_key (AdvancedVariableKeyFilter | str | Unset): The key for this variable.
+        scope_key (AdvancedScopeKeyFilter | str | Unset): The key of the scope that defines where this variable is
+            directly defined. This can be a
+            process instance key (for process-level variables) or an element instance key (for local
+            variables scoped to tasks, subprocesses, gateways, events, etc.). Use this filter to
+            find variables directly defined in specific scopes. Note that this does not include
+            variables from parent scopes that would be visible through the scope hierarchy.
+        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The key of the process instance of this
+            variable.
     """
 
     name: AdvancedStringFilter | str | Unset = UNSET

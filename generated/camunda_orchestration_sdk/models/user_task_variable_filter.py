@@ -20,7 +20,7 @@ class UserTaskVariableFilter:
     """The user task variable search filters.
 
     Attributes:
-        name (AdvancedStringFilter | str | Unset):
+        name (AdvancedStringFilter | str | Unset): Name of the variable.
     """
 
     name: AdvancedStringFilter | str | Unset = UNSET

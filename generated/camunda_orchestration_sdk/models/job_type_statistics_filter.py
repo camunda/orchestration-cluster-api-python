@@ -26,7 +26,8 @@ class JobTypeStatisticsFilter:
              Example: 2024-07-28T15:51:28.071Z.
         to (datetime.datetime): End of the time window to filter metrics. ISO 8601 date-time format.
              Example: 2024-07-29T15:51:28.071Z.
-        job_type (AdvancedStringFilter | str | Unset):
+        job_type (AdvancedStringFilter | str | Unset): Optional job type filter with advanced search capabilities.
+            Supports exact match, pattern matching, and other operators.
     """
 
     from_: datetime.datetime

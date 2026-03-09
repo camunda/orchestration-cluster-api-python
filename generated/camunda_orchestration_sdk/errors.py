@@ -2997,6 +2997,42 @@ class GetIncidentUnauthorized(ApiError):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
+class GetJobErrorStatisticsBadRequest(ApiError):
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetJobErrorStatisticsForbidden(ApiError):
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetJobErrorStatisticsInternalServerError(ApiError):
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetJobErrorStatisticsUnauthorized(ApiError):
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
 class GetJobTimeSeriesStatisticsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
@@ -3732,6 +3768,24 @@ class GetStatusServiceUnavailable(ApiError):
     parsed: None
 
     def __init__(self, *, status_code: int, content: bytes, parsed: None):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetSystemConfigurationInternalServerError(ApiError):
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetSystemConfigurationUnauthorized(ApiError):
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
@@ -7216,6 +7270,10 @@ __all__ = [
     "GetIncidentInternalServerError",
     "GetIncidentNotFound",
     "GetIncidentUnauthorized",
+    "GetJobErrorStatisticsBadRequest",
+    "GetJobErrorStatisticsForbidden",
+    "GetJobErrorStatisticsInternalServerError",
+    "GetJobErrorStatisticsUnauthorized",
     "GetJobTimeSeriesStatisticsBadRequest",
     "GetJobTimeSeriesStatisticsForbidden",
     "GetJobTimeSeriesStatisticsInternalServerError",
@@ -7298,6 +7356,8 @@ __all__ = [
     "GetStartProcessFormNotFound",
     "GetStartProcessFormUnauthorized",
     "GetStatusServiceUnavailable",
+    "GetSystemConfigurationInternalServerError",
+    "GetSystemConfigurationUnauthorized",
     "GetTenantBadRequest",
     "GetTenantClusterVariableBadRequest",
     "GetTenantClusterVariableForbidden",

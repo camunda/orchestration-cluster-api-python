@@ -40,14 +40,14 @@ class ChangesetType0:
                 list.
             candidate_groups (list[str] | None | Unset): The list of candidate groups of the task. Reset by providing an
                 empty list.
-            priority (int | None | Unset): The priority of the task. Default: 50.
+            priority (int | None | Unset): The priority of the task. Server default: 50.
     """
 
     due_date: datetime.datetime | None | Unset = UNSET
     follow_up_date: datetime.datetime | None | Unset = UNSET
     candidate_users: list[str] | None | Unset = UNSET
     candidate_groups: list[str] | None | Unset = UNSET
-    priority: int | None | Unset = 50
+    priority: int | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

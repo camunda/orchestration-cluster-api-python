@@ -24,15 +24,15 @@ class JobResultAdHocSubProcessType0:
             activate_elements (list[JobResultActivateElement] | Unset): Indicates which elements need to be activated in the
                 ad-hoc subprocess.
             is_completion_condition_fulfilled (bool | Unset): Indicates whether the completion condition of the ad-hoc
-                subprocess is fulfilled. Default: False.
+                subprocess is fulfilled. Server default: False.
             is_cancel_remaining_instances (bool | Unset): Indicates whether the remaining instances of the ad-hoc subprocess
-                should be canceled. Default: False.
+                should be canceled. Server default: False.
             type_ (str | Unset): Used to distinguish between different types of job results. Example: adHocSubProcess.
     """
 
     activate_elements: list[JobResultActivateElement] | Unset = UNSET
-    is_completion_condition_fulfilled: bool | Unset = False
-    is_cancel_remaining_instances: bool | Unset = False
+    is_completion_condition_fulfilled: bool | Unset = UNSET
+    is_cancel_remaining_instances: bool | Unset = UNSET
     type_: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory

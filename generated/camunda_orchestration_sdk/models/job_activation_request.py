@@ -35,7 +35,7 @@ class JobActivationRequest:
         tenant_ids (list[str] | Unset): A list of IDs of tenants for which to activate jobs.
         tenant_filter (JobActivationRequestTenantFilter | Unset): The tenant filtering strategy - determines whether to
             use provided tenant IDs or assigned tenant IDs from the authenticated principal's authorized tenants.
-             Default: JobActivationRequestTenantFilter.PROVIDED.
+             Server default: PROVIDED.
     """
 
     type_: str
@@ -45,9 +45,7 @@ class JobActivationRequest:
     fetch_variable: list[str] | Unset = UNSET
     request_timeout: int | Unset = UNSET
     tenant_ids: list[str] | Unset = UNSET
-    tenant_filter: JobActivationRequestTenantFilter | Unset = (
-        JobActivationRequestTenantFilter.PROVIDED
-    )
+    tenant_filter: JobActivationRequestTenantFilter | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         type_ = self.type_

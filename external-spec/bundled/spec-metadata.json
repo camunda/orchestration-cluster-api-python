@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "specHash": "sha256:d8cde0287ea420262805c9e0a17ebd236f813a0586d927d4b08736b6b4ebe0f1",
+  "specHash": "sha256:c78ae3910d8a1bb4ba1e5da636426ba32aca20778acffbe499460dd9d572f365",
   "semanticKeys": [
     {
       "name": "AuditLogEntityKey",
@@ -2161,6 +2161,14 @@
       ]
     },
     {
+      "operationId": "getJobErrorStatistics",
+      "path": "/jobs/statistics/errors",
+      "method": "post",
+      "tags": [
+        "Job"
+      ]
+    },
+    {
       "operationId": "searchMappingRule",
       "path": "/mapping-rules/search",
       "method": "post",
@@ -4185,6 +4193,24 @@
       "optionalTenantIdInBody": false
     },
     {
+      "operationId": "getJobErrorStatistics",
+      "path": "/jobs/statistics/errors",
+      "method": "post",
+      "tags": [
+        "Job"
+      ],
+      "summary": "Get error metrics for a job type",
+      "description": "Returns aggregated metrics per error for the given jobType.\n",
+      "eventuallyConsistent": true,
+      "hasRequestBody": true,
+      "requestBodyUnion": false,
+      "bodyOnly": true,
+      "pathParams": [],
+      "queryParams": [],
+      "requestBodyUnionRefs": [],
+      "optionalTenantIdInBody": false
+    },
+    {
       "operationId": "getLicense",
       "path": "/license",
       "method": "get",
@@ -5327,6 +5353,24 @@
       "optionalTenantIdInBody": false
     },
     {
+      "operationId": "getSystemConfiguration",
+      "path": "/system/configuration",
+      "method": "get",
+      "tags": [
+        "System"
+      ],
+      "summary": "System configuration (alpha)",
+      "description": "Returns the current system configuration. The response is an envelope\nthat groups settings by feature area.\n\nThis endpoint is an alpha feature and may be subject to change\nin future releases.\n",
+      "eventuallyConsistent": false,
+      "hasRequestBody": false,
+      "requestBodyUnion": false,
+      "bodyOnly": false,
+      "pathParams": [],
+      "queryParams": [],
+      "requestBodyUnionRefs": [],
+      "optionalTenantIdInBody": false
+    },
+    {
       "operationId": "createTenant",
       "path": "/tenants",
       "method": "post",
@@ -6227,8 +6271,8 @@
   "integrity": {
     "totalSemanticKeys": 35,
     "totalUnions": 51,
-    "totalOperations": 180,
-    "totalEventuallyConsistent": 79,
+    "totalOperations": 182,
+    "totalEventuallyConsistent": 80,
     "totalDeprecatedEnumSchemas": 2,
     "totalSemanticProviders": 15
   }

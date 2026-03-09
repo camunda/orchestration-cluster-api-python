@@ -12,7 +12,7 @@ T = TypeVar("T", bound="ProcessCreationById")
 @_attrs_define
 class ProcessCreationById:
     process_definition_id: ProcessDefinitionId
-    process_definition_version: int | Unset = -1
+    process_definition_version: int | Unset = UNSET
     variables: ProcessInstanceCreationInstructionByIdVariables | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     operation_reference: int | Unset = UNSET
@@ -20,9 +20,9 @@ class ProcessCreationById:
     runtime_instructions: list[ProcessInstanceCreationTerminateInstruction] | Unset = (
             UNSET
         )
-    await_completion: bool | Unset = False
+    await_completion: bool | Unset = UNSET
     fetch_variables: list[str] | Unset = UNSET
-    request_timeout: int | Unset = 0
+    request_timeout: int | Unset = UNSET
     tags: list[str] | Unset = UNSET
     business_id: BusinessId | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...

@@ -41,19 +41,20 @@ class UserTaskFilter:
     """User task filter request.
 
     Attributes:
-        state (AdvancedUserTaskStateFilter | Unset | UserTaskStateExactMatch):
-        assignee (AdvancedStringFilter | str | Unset):
-        priority (AdvancedIntegerFilter | int | Unset):
+        state (AdvancedUserTaskStateFilter | Unset | UserTaskStateExactMatch): The user task state.
+        assignee (AdvancedStringFilter | str | Unset): The assignee of the user task.
+        priority (AdvancedIntegerFilter | int | Unset): The priority of the user task.
         element_id (str | Unset): The element ID of the user task. Example: Activity_106kosb.
-        name (AdvancedStringFilter | str | Unset):
-        candidate_group (AdvancedStringFilter | str | Unset):
-        candidate_user (AdvancedStringFilter | str | Unset):
-        tenant_id (AdvancedStringFilter | str | Unset):
+        name (AdvancedStringFilter | str | Unset): The task name. This only works for data created with 8.8 and onwards.
+            Instances from prior versions don't contain this data and cannot be found.
+        candidate_group (AdvancedStringFilter | str | Unset): The candidate group for this user task.
+        candidate_user (AdvancedStringFilter | str | Unset): The candidate user for this user task.
+        tenant_id (AdvancedStringFilter | str | Unset): Tenant ID of this user task.
         process_definition_id (str | Unset): The ID of the process definition. Example: new-account-onboarding-workflow.
-        creation_date (AdvancedDateTimeFilter | datetime.datetime | Unset):
-        completion_date (AdvancedDateTimeFilter | datetime.datetime | Unset):
-        follow_up_date (AdvancedDateTimeFilter | datetime.datetime | Unset):
-        due_date (AdvancedDateTimeFilter | datetime.datetime | Unset):
+        creation_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The user task creation date.
+        completion_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The user task completion date.
+        follow_up_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The user task follow-up date.
+        due_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The user task due date.
         process_instance_variables (list[VariableValueFilterProperty] | Unset): The variables of the process instance.
         local_variables (list[VariableValueFilterProperty] | Unset): The local variables of the user task.
         user_task_key (str | Unset): The key for this user task.

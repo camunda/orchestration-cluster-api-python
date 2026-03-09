@@ -42,25 +42,27 @@ class ProcessDefinitionElementStatisticsQueryFilter:
     """The process definition statistics search filters.
 
     Attributes:
-        start_date (AdvancedDateTimeFilter | datetime.datetime | Unset):
-        end_date (AdvancedDateTimeFilter | datetime.datetime | Unset):
-        state (AdvancedProcessInstanceStateFilter | ProcessInstanceStateExactMatch | Unset):
+        start_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The start date.
+        end_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The end date.
+        state (AdvancedProcessInstanceStateFilter | ProcessInstanceStateExactMatch | Unset): The process instance state.
         has_incident (bool | Unset): Whether this process instance has a related incident or not.
-        tenant_id (AdvancedStringFilter | str | Unset):
+        tenant_id (AdvancedStringFilter | str | Unset): The tenant id.
         variables (list[VariableValueFilterProperty] | Unset): The process instance variables.
-        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset):
-        parent_process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset):
-        parent_element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset):
-        batch_operation_id (AdvancedStringFilter | str | Unset):
-        error_message (AdvancedStringFilter | str | Unset):
+        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The key of this process instance.
+        parent_process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The parent process instance key.
+        parent_element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset): The parent element instance key.
+        batch_operation_id (AdvancedStringFilter | str | Unset): The batch operation id.
+        error_message (AdvancedStringFilter | str | Unset): The error message related to the process.
         has_retries_left (bool | Unset): Whether the process has failed jobs with retries left.
-        element_instance_state (AdvancedElementInstanceStateFilter | ElementInstanceStateExactMatch | Unset):
-        element_id (AdvancedStringFilter | str | Unset):
+        element_instance_state (AdvancedElementInstanceStateFilter | ElementInstanceStateExactMatch | Unset): The state
+            of the element instances associated with the process instance.
+        element_id (AdvancedStringFilter | str | Unset): The element id associated with the process instance.
         has_element_instance_incident (bool | Unset): Whether the element instance has an incident or not.
-        incident_error_hash_code (AdvancedIntegerFilter | int | Unset):
+        incident_error_hash_code (AdvancedIntegerFilter | int | Unset): The incident error hash code, associated with
+            this process.
         tags (list[str] | Unset): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or
             `.`; length ≤ 100. Example: ['high-touch', 'remediation'].
-        business_id (AdvancedStringFilter | str | Unset):
+        business_id (AdvancedStringFilter | str | Unset): The business id associated with the process instance.
         or_ (list[BaseProcessInstanceFilterFields] | Unset): Defines a list of alternative filter groups combined using
             OR logic. Each object in the array is evaluated independently, and the filter matches if any one of them is
             satisfied.

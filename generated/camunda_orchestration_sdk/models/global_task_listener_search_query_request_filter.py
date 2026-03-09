@@ -31,14 +31,15 @@ class GlobalTaskListenerSearchQueryRequestFilter:
     """The global listener search filters.
 
     Attributes:
-        id (AdvancedStringFilter | str | Unset):
-        type_ (AdvancedStringFilter | str | Unset):
-        retries (AdvancedIntegerFilter | int | Unset):
+        id (AdvancedStringFilter | str | Unset): Id of the global listener.
+        type_ (AdvancedStringFilter | str | Unset): Job type of the global listener.
+        retries (AdvancedIntegerFilter | int | Unset): Number of retries of the global listener.
         event_types (list[AdvancedGlobalTaskListenerEventTypeFilter | GlobalTaskListenerEventTypeExactMatch] | Unset):
             Event types of the global listener.
         after_non_global (bool | Unset): Whether the listener runs after model-level listeners.
-        priority (AdvancedIntegerFilter | int | Unset):
-        source (AdvancedGlobalListenerSourceFilter | GlobalListenerSourceExactMatch | Unset):
+        priority (AdvancedIntegerFilter | int | Unset): Priority of the global listener.
+        source (AdvancedGlobalListenerSourceFilter | GlobalListenerSourceExactMatch | Unset): How the global listener
+            was defined.
     """
 
     id: AdvancedStringFilter | str | Unset = UNSET

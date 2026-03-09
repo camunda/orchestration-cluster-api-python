@@ -23,11 +23,11 @@ class AdHocSubProcessActivateActivitiesInstruction:
     Attributes:
         elements (list[AdHocSubProcessActivateActivityReference]): Activities to activate.
         cancel_remaining_instances (bool | Unset): Whether to cancel remaining instances of the ad-hoc sub-process.
-            Default: False.
+            Server default: False.
     """
 
     elements: list[AdHocSubProcessActivateActivityReference]
-    cancel_remaining_instances: bool | Unset = False
+    cancel_remaining_instances: bool | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

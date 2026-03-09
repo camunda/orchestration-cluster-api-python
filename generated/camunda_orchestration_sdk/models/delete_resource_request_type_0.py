@@ -24,11 +24,11 @@ class DeleteResourceRequestType0:
             (decisions, forms, generic resources), this flag is ignored and no history
             will be deleted. In those cases, the `batchOperation` field in the response
             will not be populated.
-             Default: False.
+             Server default: False.
     """
 
     operation_reference: int | Unset = UNSET
-    delete_history: bool | Unset = False
+    delete_history: bool | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         operation_reference = self.operation_reference

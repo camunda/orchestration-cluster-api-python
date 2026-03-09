@@ -15,9 +15,7 @@ class JobActivationRequest:
     fetch_variable: list[str] | Unset = UNSET
     request_timeout: int | Unset = UNSET
     tenant_ids: list[str] | Unset = UNSET
-    tenant_filter: JobActivationRequestTenantFilter | Unset = (
-            JobActivationRequestTenantFilter.PROVIDED
-        )
+    tenant_filter: JobActivationRequestTenantFilter | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...

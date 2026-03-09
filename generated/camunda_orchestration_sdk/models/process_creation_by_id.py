@@ -38,7 +38,7 @@ class ProcessCreationById:
              Example: new-account-onboarding-workflow.
         process_definition_version (int | Unset): The version of the process. By default, the latest version of the
             process is used.
-             Default: -1.
+             Server default: -1.
         variables (ProcessInstanceCreationInstructionByIdVariables | Unset): JSON object that will instantiate the
             variables for the root variable scope
             of the process instance.
@@ -64,13 +64,13 @@ class ProcessCreationById:
             within the request timeout limit, a 504 response status will be returned. The process
             instance will continue to run in the background regardless of the timeout. Disabled by
             default.
-             Default: False.
+             Server default: False.
         fetch_variables (list[str] | Unset): List of variables by name to be included in the response when
             awaitCompletion is set to true.
             If empty, all visible variables in the root scope will be returned.
         request_timeout (int | Unset): Timeout (in ms) the request waits for the process to complete. By default or
             when set to 0, the generic request timeout configured in the cluster is applied.
-             Default: 0.
+             Server default: 0.
         tags (list[str] | Unset): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or
             `.`; length ≤ 100. Example: ['high-touch', 'remediation'].
         business_id (str | Unset): An optional, user-defined string identifier that identifies the process instance
@@ -82,7 +82,7 @@ class ProcessCreationById:
     """
 
     process_definition_id: ProcessDefinitionId
-    process_definition_version: int | Unset = -1
+    process_definition_version: int | Unset = UNSET
     variables: ProcessInstanceCreationInstructionByIdVariables | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     operation_reference: int | Unset = UNSET
@@ -90,9 +90,9 @@ class ProcessCreationById:
     runtime_instructions: list[ProcessInstanceCreationTerminateInstruction] | Unset = (
         UNSET
     )
-    await_completion: bool | Unset = False
+    await_completion: bool | Unset = UNSET
     fetch_variables: list[str] | Unset = UNSET
-    request_timeout: int | Unset = 0
+    request_timeout: int | Unset = UNSET
     tags: list[str] | Unset = UNSET
     business_id: BusinessId | Unset = UNSET
 

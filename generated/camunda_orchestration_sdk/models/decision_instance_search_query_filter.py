@@ -51,10 +51,13 @@ class DecisionInstanceSearchQueryFilter:
     """The decision instance search filters.
 
     Attributes:
-        decision_evaluation_instance_key (AdvancedDecisionEvaluationInstanceKeyFilter | str | Unset):
-        state (AdvancedDecisionInstanceStateFilter | DecisionInstanceStateExactMatch | Unset):
+        decision_evaluation_instance_key (AdvancedDecisionEvaluationInstanceKeyFilter | str | Unset): The key of the
+            decision evaluation instance.
+        state (AdvancedDecisionInstanceStateFilter | DecisionInstanceStateExactMatch | Unset): The state of the decision
+            instance.
         evaluation_failure (str | Unset): The evaluation failure of the decision instance.
-        evaluation_date (AdvancedDateTimeFilter | datetime.datetime | Unset):
+        evaluation_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The evaluation date of the decision
+            instance.
         decision_definition_id (str | Unset): The ID of the DMN decision. Example: new-hire-onboarding-workflow.
         decision_definition_name (str | Unset): The name of the DMN decision.
         decision_definition_version (int | Unset): The version of the decision.
@@ -67,10 +70,13 @@ class DecisionInstanceSearchQueryFilter:
              Example: 2251792362345323.
         process_definition_key (str | Unset): The key of the process definition. Example: 2251799813686749.
         process_instance_key (str | Unset): The key of the process instance. Example: 2251799813690746.
-        decision_definition_key (AdvancedDecisionDefinitionKeyFilter | str | Unset):
-        element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset):
-        root_decision_definition_key (AdvancedDecisionDefinitionKeyFilter | str | Unset):
-        decision_requirements_key (AdvancedDecisionRequirementsKeyFilter | str | Unset):
+        decision_definition_key (AdvancedDecisionDefinitionKeyFilter | str | Unset): The key of the decision.
+        element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset): The key of the element instance this
+            decision instance is linked to.
+        root_decision_definition_key (AdvancedDecisionDefinitionKeyFilter | str | Unset): The key of the root decision
+            definition.
+        decision_requirements_key (AdvancedDecisionRequirementsKeyFilter | str | Unset): The key of the decision
+            requirements definition.
     """
 
     decision_evaluation_instance_key: (

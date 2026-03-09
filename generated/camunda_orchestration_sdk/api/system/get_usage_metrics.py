@@ -14,7 +14,7 @@ def _get_kwargs(
     start_time: datetime.datetime,
     end_time: datetime.datetime,
     tenant_id: str | Unset = UNSET,
-    with_tenants: bool | Unset = False,
+    with_tenants: bool | Unset = UNSET,
 ) -> dict[str, Any]:
     params: dict[str, Any] = {}
     json_start_time = start_time.isoformat()
@@ -73,7 +73,7 @@ def sync_detailed(
     start_time: datetime.datetime,
     end_time: datetime.datetime,
     tenant_id: str | Unset = UNSET,
-    with_tenants: bool | Unset = False,
+    with_tenants: bool | Unset = UNSET,
 ) -> Response[ProblemDetail | UsageMetricsResponse]:
     """Get usage metrics
 
@@ -83,7 +83,7 @@ def sync_detailed(
         start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
         end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
         tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
-        with_tenants (bool | Unset):  Default: False.
+        with_tenants (bool | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -108,7 +108,7 @@ def sync(
     start_time: datetime.datetime,
     end_time: datetime.datetime,
     tenant_id: str | Unset = UNSET,
-    with_tenants: bool | Unset = False,
+    with_tenants: bool | Unset = UNSET,
     **kwargs: Any,
 ) -> UsageMetricsResponse:
     """Get usage metrics
@@ -119,7 +119,7 @@ def sync(
         start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
         end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
         tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
-        with_tenants (bool | Unset):  Default: False.
+        with_tenants (bool | Unset):
 
     Raises:
         errors.GetUsageMetricsBadRequest: If the response status code is 400. The provided data is not valid.
@@ -173,7 +173,7 @@ async def asyncio_detailed(
     start_time: datetime.datetime,
     end_time: datetime.datetime,
     tenant_id: str | Unset = UNSET,
-    with_tenants: bool | Unset = False,
+    with_tenants: bool | Unset = UNSET,
 ) -> Response[ProblemDetail | UsageMetricsResponse]:
     """Get usage metrics
 
@@ -183,7 +183,7 @@ async def asyncio_detailed(
         start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
         end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
         tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
-        with_tenants (bool | Unset):  Default: False.
+        with_tenants (bool | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -208,7 +208,7 @@ async def asyncio(
     start_time: datetime.datetime,
     end_time: datetime.datetime,
     tenant_id: str | Unset = UNSET,
-    with_tenants: bool | Unset = False,
+    with_tenants: bool | Unset = UNSET,
     **kwargs: Any,
 ) -> UsageMetricsResponse:
     """Get usage metrics
@@ -219,7 +219,7 @@ async def asyncio(
         start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
         end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
         tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
-        with_tenants (bool | Unset):  Default: False.
+        with_tenants (bool | Unset):
 
     Raises:
         errors.GetUsageMetricsBadRequest: If the response status code is 400. The provided data is not valid.

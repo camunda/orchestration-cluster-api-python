@@ -64,35 +64,42 @@ class AuditLogFilter:
     """Audit log filter request
 
     Attributes:
-        audit_log_key (AdvancedAuditLogKeyFilter | str | Unset):
-        process_definition_key (AdvancedProcessDefinitionKeyFilter | str | Unset):
-        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset):
-        element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset):
-        operation_type (AdvancedOperationTypeFilter | OperationTypeExactMatch | Unset):
-        result (AdvancedResultFilter | AuditLogResultExactMatch | Unset):
-        timestamp (AdvancedDateTimeFilter | datetime.datetime | Unset):
-        actor_id (AdvancedStringFilter | str | Unset):
-        actor_type (AdvancedActorTypeFilter | AuditLogActorTypeExactMatch | Unset):
-        agent_element_id (AdvancedStringFilter | str | Unset):
-        entity_key (AdvancedAuditLogEntityKeyFilter | str | Unset):
-        entity_type (AdvancedEntityTypeFilter | EntityTypeExactMatch | Unset):
-        tenant_id (AdvancedStringFilter | str | Unset):
-        category (AdvancedCategoryFilter | CategoryExactMatch | Unset):
-        deployment_key (AdvancedDeploymentKeyFilter | str | Unset):
-        form_key (AdvancedFormKeyFilter | str | Unset):
-        resource_key (AdvancedResourceKeyFilter | str | Unset):
-        batch_operation_type (AdvancedBatchOperationTypeFilter | BatchOperationTypeExactMatch | Unset):
-        process_definition_id (AdvancedStringFilter | str | Unset):
-        job_key (AdvancedJobKeyFilter | str | Unset):
-        user_task_key (BasicStringFilter | str | Unset):
-        decision_requirements_id (AdvancedStringFilter | str | Unset):
-        decision_requirements_key (AdvancedDecisionRequirementsKeyFilter | str | Unset):
-        decision_definition_id (AdvancedStringFilter | str | Unset):
-        decision_definition_key (AdvancedDecisionDefinitionKeyFilter | str | Unset):
-        decision_evaluation_key (AdvancedDecisionEvaluationKeyFilter | str | Unset):
-        related_entity_key (AdvancedAuditLogEntityKeyFilter | str | Unset):
-        related_entity_type (AdvancedEntityTypeFilter | EntityTypeExactMatch | Unset):
-        entity_description (AdvancedStringFilter | str | Unset):
+        audit_log_key (AdvancedAuditLogKeyFilter | str | Unset): The audit log key search filter.
+        process_definition_key (AdvancedProcessDefinitionKeyFilter | str | Unset): The process definition key search
+            filter.
+        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The process instance key search filter.
+        element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset): The element instance key search filter.
+        operation_type (AdvancedOperationTypeFilter | OperationTypeExactMatch | Unset): The operation type search
+            filter.
+        result (AdvancedResultFilter | AuditLogResultExactMatch | Unset): The result search filter.
+        timestamp (AdvancedDateTimeFilter | datetime.datetime | Unset): The timestamp search filter.
+        actor_id (AdvancedStringFilter | str | Unset): The actor ID search filter.
+        actor_type (AdvancedActorTypeFilter | AuditLogActorTypeExactMatch | Unset): The actor type search filter.
+        agent_element_id (AdvancedStringFilter | str | Unset): The agent element ID search filter.
+        entity_key (AdvancedAuditLogEntityKeyFilter | str | Unset): The entity key search filter.
+        entity_type (AdvancedEntityTypeFilter | EntityTypeExactMatch | Unset): The entity type search filter.
+        tenant_id (AdvancedStringFilter | str | Unset): The tenant ID search filter.
+        category (AdvancedCategoryFilter | CategoryExactMatch | Unset): The category search filter.
+        deployment_key (AdvancedDeploymentKeyFilter | str | Unset): The deployment key search filter.
+        form_key (AdvancedFormKeyFilter | str | Unset): The form key search filter.
+        resource_key (AdvancedResourceKeyFilter | str | Unset): The resource key search filter.
+        batch_operation_type (AdvancedBatchOperationTypeFilter | BatchOperationTypeExactMatch | Unset): The batch
+            operation type search filter.
+        process_definition_id (AdvancedStringFilter | str | Unset): The process definition ID search filter.
+        job_key (AdvancedJobKeyFilter | str | Unset): The job key search filter.
+        user_task_key (BasicStringFilter | str | Unset): The user task key search filter.
+        decision_requirements_id (AdvancedStringFilter | str | Unset): The decision requirements ID search filter.
+        decision_requirements_key (AdvancedDecisionRequirementsKeyFilter | str | Unset): The decision requirements key
+            search filter.
+        decision_definition_id (AdvancedStringFilter | str | Unset): The decision definition ID search filter.
+        decision_definition_key (AdvancedDecisionDefinitionKeyFilter | str | Unset): The decision definition key search
+            filter.
+        decision_evaluation_key (AdvancedDecisionEvaluationKeyFilter | str | Unset): The decision evaluation key search
+            filter.
+        related_entity_key (AdvancedAuditLogEntityKeyFilter | str | Unset): The related entity key search filter.
+        related_entity_type (AdvancedEntityTypeFilter | EntityTypeExactMatch | Unset): The related entity type search
+            filter.
+        entity_description (AdvancedStringFilter | str | Unset): The entity description filter.
     """
 
     audit_log_key: AdvancedAuditLogKeyFilter | str | Unset = UNSET

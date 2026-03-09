@@ -26,7 +26,7 @@ class ProcessDefinitionFilter:
     """Process definition search filter.
 
     Attributes:
-        name (AdvancedStringFilter | str | Unset):
+        name (AdvancedStringFilter | str | Unset): Name of this process definition.
         is_latest_version (bool | Unset): Whether to only return the latest version of each process definition.
             When using this filter, pagination functionality is limited, you can only paginate forward using `after` and
             `limit`.
@@ -35,7 +35,7 @@ class ProcessDefinitionFilter:
         resource_name (str | Unset): Resource name of this process definition.
         version (int | Unset): Version of this process definition.
         version_tag (str | Unset): Version tag of this process definition.
-        process_definition_id (AdvancedStringFilter | str | Unset):
+        process_definition_id (AdvancedStringFilter | str | Unset): Process definition ID of this process definition.
         tenant_id (str | Unset): Tenant ID of this process definition. Example: customer-service.
         process_definition_key (str | Unset): The key for this process definition. Example: 2251799813686749.
         has_start_form (bool | Unset): Indicates whether the start event of the process has an associated Form Key.

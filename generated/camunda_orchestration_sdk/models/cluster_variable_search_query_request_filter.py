@@ -24,10 +24,11 @@ class ClusterVariableSearchQueryRequestFilter:
     """The cluster variable search filters.
 
     Attributes:
-        name (AdvancedStringFilter | str | Unset):
-        value (AdvancedStringFilter | str | Unset):
-        scope (AdvancedClusterVariableScopeFilter | ClusterVariableScopeExactMatch | Unset):
-        tenant_id (AdvancedStringFilter | str | Unset):
+        name (AdvancedStringFilter | str | Unset): Name of the cluster variable.
+        value (AdvancedStringFilter | str | Unset): The value of the cluster variable.
+        scope (AdvancedClusterVariableScopeFilter | ClusterVariableScopeExactMatch | Unset): The scope filter for
+            cluster variables.
+        tenant_id (AdvancedStringFilter | str | Unset): Tenant ID of this variable.
         is_truncated (bool | Unset): Filter cluster variables by truncation status of their stored values. When true,
             returns only variables whose stored values are truncated (i.e., the value exceeds the storage size limit and is
             truncated in storage). When false, returns only variables with non-truncated stored values. This filter is based

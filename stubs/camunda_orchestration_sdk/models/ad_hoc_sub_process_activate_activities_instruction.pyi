@@ -4,13 +4,13 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
-from ..types import Unset, str_any_dict_factory
+from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.ad_hoc_sub_process_activate_activity_reference import AdHocSubProcessActivateActivityReference
 T = TypeVar("T", bound="AdHocSubProcessActivateActivitiesInstruction")
 @_attrs_define
 class AdHocSubProcessActivateActivitiesInstruction:
     elements: list[AdHocSubProcessActivateActivityReference]
-    cancel_remaining_instances: bool | Unset = False
+    cancel_remaining_instances: bool | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

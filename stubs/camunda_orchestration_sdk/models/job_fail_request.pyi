@@ -8,9 +8,9 @@ from ..models.job_fail_request_variables import JobFailRequestVariables
 T = TypeVar("T", bound="JobFailRequest")
 @_attrs_define
 class JobFailRequest:
-    retries: int | Unset = 0
+    retries: int | Unset = UNSET
     error_message: str | Unset = UNSET
-    retry_back_off: int | Unset = 0
+    retry_back_off: int | Unset = UNSET
     variables: JobFailRequestVariables | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

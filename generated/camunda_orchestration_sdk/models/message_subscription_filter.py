@@ -41,18 +41,25 @@ class MessageSubscriptionFilter:
     """Message subscription search filter.
 
     Attributes:
-        message_subscription_key (AdvancedMessageSubscriptionKeyFilter | str | Unset):
-        process_definition_key (AdvancedProcessDefinitionKeyFilter | str | Unset):
-        process_definition_id (AdvancedStringFilter | str | Unset):
-        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset):
-        element_id (AdvancedStringFilter | str | Unset):
-        element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset):
+        message_subscription_key (AdvancedMessageSubscriptionKeyFilter | str | Unset): The message subscription key
+            associated with this message subscription.
+        process_definition_key (AdvancedProcessDefinitionKeyFilter | str | Unset): The process definition key associated
+            with this correlated message subscription. This only works for data created with 8.9 and later.
+        process_definition_id (AdvancedStringFilter | str | Unset): The process definition ID associated with this
+            message subscription.
+        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The process instance key associated with
+            this message subscription.
+        element_id (AdvancedStringFilter | str | Unset): The element ID associated with this message subscription.
+        element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset): The element instance key associated with
+            this message subscription.
         message_subscription_state (AdvancedMessageSubscriptionStateFilter | MessageSubscriptionStateExactMatch |
-            Unset):
-        last_updated_date (AdvancedDateTimeFilter | datetime.datetime | Unset):
-        message_name (AdvancedStringFilter | str | Unset):
-        correlation_key (AdvancedStringFilter | str | Unset):
-        tenant_id (AdvancedStringFilter | str | Unset):
+            Unset): The message subscription state.
+        last_updated_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The last updated date of the message
+            subscription.
+        message_name (AdvancedStringFilter | str | Unset): The name of the message associated with the message
+            subscription.
+        correlation_key (AdvancedStringFilter | str | Unset): The correlation key of the message subscription.
+        tenant_id (AdvancedStringFilter | str | Unset): The unique external tenant ID.
     """
 
     message_subscription_key: AdvancedMessageSubscriptionKeyFilter | str | Unset = UNSET

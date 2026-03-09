@@ -40,18 +40,25 @@ class IncidentSearchQueryFilter:
     """The incident search filters.
 
     Attributes:
-        process_definition_id (AdvancedStringFilter | str | Unset):
-        error_type (AdvancedIncidentErrorTypeFilter | IncidentErrorTypeExactMatch | Unset):
-        error_message (AdvancedStringFilter | str | Unset):
-        element_id (AdvancedStringFilter | str | Unset):
-        creation_time (AdvancedDateTimeFilter | datetime.datetime | Unset):
-        state (AdvancedIncidentStateFilter | IncidentStateExactMatch | Unset):
-        tenant_id (AdvancedStringFilter | str | Unset):
-        incident_key (BasicStringFilter | str | Unset):
-        process_definition_key (AdvancedProcessDefinitionKeyFilter | str | Unset):
-        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset):
-        element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset):
-        job_key (AdvancedJobKeyFilter | str | Unset):
+        process_definition_id (AdvancedStringFilter | str | Unset): The process definition ID associated to this
+            incident.
+        error_type (AdvancedIncidentErrorTypeFilter | IncidentErrorTypeExactMatch | Unset): Incident error type with a
+            defined set of values.
+        error_message (AdvancedStringFilter | str | Unset): The error message of this incident.
+        element_id (AdvancedStringFilter | str | Unset): The element ID associated to this incident.
+        creation_time (AdvancedDateTimeFilter | datetime.datetime | Unset): Date of incident creation.
+        state (AdvancedIncidentStateFilter | IncidentStateExactMatch | Unset): State of this incident with a defined set
+            of values.
+        tenant_id (AdvancedStringFilter | str | Unset): The tenant ID of the incident.
+        incident_key (BasicStringFilter | str | Unset): The assigned key, which acts as a unique identifier for this
+            incident.
+        process_definition_key (AdvancedProcessDefinitionKeyFilter | str | Unset): The process definition key associated
+            to this incident.
+        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The process instance key associated to
+            this incident.
+        element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset): The element instance key associated to
+            this incident.
+        job_key (AdvancedJobKeyFilter | str | Unset): The job key, if exists, associated with this incident.
     """
 
     process_definition_id: AdvancedStringFilter | str | Unset = UNSET

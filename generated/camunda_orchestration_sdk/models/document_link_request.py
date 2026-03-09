@@ -15,10 +15,10 @@ T = TypeVar("T", bound="DocumentLinkRequest")
 class DocumentLinkRequest:
     """
     Attributes:
-        time_to_live (int | Unset): The time-to-live of the document link in ms. Default: 3600000.
+        time_to_live (int | Unset): The time-to-live of the document link in ms. Server default: 3600000.
     """
 
-    time_to_live: int | Unset = 3600000
+    time_to_live: int | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )

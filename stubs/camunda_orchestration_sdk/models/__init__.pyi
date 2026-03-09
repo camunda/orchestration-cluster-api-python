@@ -346,6 +346,10 @@ from .job_completion_request import JobCompletionRequest
 from .job_completion_request_variables import JobCompletionRequestVariables
 from .job_error_request import JobErrorRequest
 from .job_error_request_variables import JobErrorRequestVariables
+from .job_error_statistics_filter import JobErrorStatisticsFilter
+from .job_error_statistics_item import JobErrorStatisticsItem
+from .job_error_statistics_query import JobErrorStatisticsQuery
+from .job_error_statistics_query_result import JobErrorStatisticsQueryResult
 from .job_fail_request import JobFailRequest
 from .job_fail_request_variables import JobFailRequestVariables
 from .job_filter import JobFilter
@@ -353,6 +357,7 @@ from .job_kind_enum import JobKindEnum
 from .job_kind_exact_match import JobKindExactMatch
 from .job_listener_event_type_enum import JobListenerEventTypeEnum
 from .job_listener_event_type_exact_match import JobListenerEventTypeExactMatch
+from .job_metrics_configuration_response import JobMetricsConfigurationResponse
 from .job_result_activate_element import JobResultActivateElement
 from .job_result_activate_element_variables import JobResultActivateElementVariables
 from .job_result_ad_hoc_sub_process_type_0 import JobResultAdHocSubProcessType0
@@ -550,6 +555,7 @@ from .sort_order_enum import SortOrderEnum
 from .source_element_id_instruction import SourceElementIdInstruction
 from .source_element_instance_key_instruction import SourceElementInstanceKeyInstruction
 from .status_metric import StatusMetric
+from .system_configuration_response import SystemConfigurationResponse
 from .tenant_client_result import TenantClientResult
 from .tenant_client_search_query_request import TenantClientSearchQueryRequest
 from .tenant_client_search_query_sort_request import TenantClientSearchQuerySortRequest
@@ -981,6 +987,10 @@ __all__: list[str] = [
     "JobCompletionRequestVariables",
     "JobErrorRequest",
     "JobErrorRequestVariables",
+    "JobErrorStatisticsFilter",
+    "JobErrorStatisticsItem",
+    "JobErrorStatisticsQuery",
+    "JobErrorStatisticsQueryResult",
     "JobFailRequest",
     "JobFailRequestVariables",
     "JobFilter",
@@ -988,6 +998,7 @@ __all__: list[str] = [
     "JobKindExactMatch",
     "JobListenerEventTypeEnum",
     "JobListenerEventTypeExactMatch",
+    "JobMetricsConfigurationResponse",
     "JobResultActivateElement",
     "JobResultActivateElementVariables",
     "JobResultAdHocSubProcessType0",
@@ -1185,6 +1196,7 @@ __all__: list[str] = [
     "SourceElementIdInstruction",
     "SourceElementInstanceKeyInstruction",
     "StatusMetric",
+    "SystemConfigurationResponse",
     "TenantClientResult",
     "TenantClientSearchQueryRequest",
     "TenantClientSearchQuerySortRequest",

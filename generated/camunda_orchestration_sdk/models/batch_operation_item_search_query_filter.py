@@ -33,12 +33,14 @@ class BatchOperationItemSearchQueryFilter:
     """The batch operation item search filters.
 
     Attributes:
-        batch_operation_key (BasicStringFilter | str | Unset):
-        item_key (BasicStringFilter | str | Unset):
-        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset):
+        batch_operation_key (BasicStringFilter | str | Unset): The key (or operate legacy ID) of the batch operation.
+        item_key (BasicStringFilter | str | Unset): The key of the item, e.g. a process instance key.
+        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The process instance key of the processed
+            item.
         state (AdvancedBatchOperationItemStateFilter | BatchOperationItemStateExactMatch | Unset): The state of the
             batch operation.
-        operation_type (AdvancedBatchOperationTypeFilter | BatchOperationTypeExactMatch | Unset):
+        operation_type (AdvancedBatchOperationTypeFilter | BatchOperationTypeExactMatch | Unset): The type of the batch
+            operation.
     """
 
     batch_operation_key: BasicStringFilter | str | Unset = UNSET

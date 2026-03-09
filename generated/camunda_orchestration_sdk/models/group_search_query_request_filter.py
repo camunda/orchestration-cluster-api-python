@@ -20,7 +20,7 @@ class GroupSearchQueryRequestFilter:
     """The group search filters.
 
     Attributes:
-        group_id (AdvancedStringFilter | str | Unset):
+        group_id (AdvancedStringFilter | str | Unset): The group ID search filters.
         name (str | Unset): The group name search filters.
     """
 

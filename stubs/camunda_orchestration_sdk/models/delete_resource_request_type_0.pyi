@@ -8,7 +8,7 @@ T = TypeVar("T", bound="DeleteResourceRequestType0")
 @_attrs_define
 class DeleteResourceRequestType0:
     operation_reference: int | Unset = UNSET
-    delete_history: bool | Unset = False
+    delete_history: bool | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T: ...
