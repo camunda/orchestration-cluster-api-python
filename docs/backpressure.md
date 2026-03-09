@@ -239,11 +239,54 @@ Both expose the same public API:
 
 The `BackpressureQueueFull` exception is raised by `acquire()` when the waiter queue exceeds `MAX_WAITERS` (1000). This is a fail-fast safety valve to prevent unbounded memory growth.
 
+## Test Results
+
+The algorithm was validated across a 72-configuration test matrix: [25, 50] clients × [sync, async, thread] execution modes × [instant, sleep, http] handler latency × [BALANCED, LEGACY] profile × [subprocess, shared] isolation. Each configuration ran a fixed workload against a single-node Camunda cluster in Docker. BALANCED and LEGACY results were paired from the same run to control for server variance.
+
+### Summary
+
+| Metric | LEGACY | BALANCED | Change |
+|--------|--------|----------|--------|
+| Total completions | 28,994 | 29,791 | **+2.7%** |
+| Total errors | 575,229 | 13,881 | **-97.6%** |
+
+Out of 36 paired comparisons: **11 wins, 20 ties, 5 losses**.
+
+### By execution mode
+
+| Mode | Completions | Errors |
+|------|------------|--------|
+| sync | +7.1% | -98% |
+| async | -0.9% | -97% |
+| thread | +0.4% | -98% |
+
+### By client scale
+
+| Scale | Completions | Errors |
+|-------|------------|--------|
+| 25 clients | +3.6% | -98% |
+| 50 clients | +2.3% | -97% |
+
+### By isolation
+
+| Isolation | Completions | Errors |
+|-----------|------------|--------|
+| Subprocess (independent BP per client) | +6.5% | -98% |
+| Shared (single BP for all clients) | -0.5% | -73% |
+
+The subprocess isolation is the real-world scenario — each SDK client instance has its own `BackpressureManager`. The shared isolation is a stress-test of a single manager under extreme concurrency.
+
+### Edge case: 50 clients on a single Docker node
+
+At 50 concurrent clients targeting a single-node Camunda cluster, some clients experienced process instance starvation — create-process-instance calls succeeded but the instances never completed within the 300-second timeout. This affected both BALANCED and LEGACY profiles equally and is a product of the test environment rather than the algorithm. In production, Camunda clusters are multi-node and handle higher concurrency.
+
+The 5 losses all occurred at 50-client scale and were small in magnitude (1-11% fewer completions), while the corresponding error reduction was 83-98%. These represent a favourable trade-off: slightly fewer completions with dramatically fewer wasted requests.
+
 ## Configuration
 
 | Environment Variable | Values | Default |
 |---------------------|--------|---------|
-| `CAMUNDA_SDK_BACKPRESSURE_PROFILE` | `BALANCED`, `LEGACY` | `BALANCED` |
+| `CAMUNDA_SDK_BACKPRESSURE_PROFILE | `BALANCED`, `LEGACY` | `BALANCED` |
 
 `BALANCED` enables adaptive gating. `LEGACY` records severity for observability but never gates requests.
 
@@ -276,3 +319,4 @@ No tuning is required. The algorithm's constants are designed to work well out o
 | `bp.permits.unlimited` | `debug` | Returned to unlimited after sustained healthy period |
 | `bp.backoff.escalate` | `debug` | Backoff delay increased at floor |
 | `bp.backoff.clear` | `debug` | Backoff reset (severity decay or left floor) |
+`

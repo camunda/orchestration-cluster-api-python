@@ -562,8 +562,8 @@ All `CAMUNDA_*` environment variables recognised by the SDK. These can also be p
 | `CAMUNDA_SDK_LOG_LEVEL` | `error` | SDK log level: silent, error, warn, info, debug, trace, or silly. |
 | `CAMUNDA_TOKEN_CACHE_DIR` | — | Directory for OAuth token disk cache. Disabled if unset. |
 | `CAMUNDA_TOKEN_DISK_CACHE_DISABLE` | `false` | Disable OAuth token disk caching. |
+| `CAMUNDA_SDK_BACKPRESSURE_PROFILE` | `BALANCED` | Backpressure profile: BALANCED (adaptive gating, default) or LEGACY (observe-only, no gating). |
 | `CAMUNDA_LOAD_ENVFILE` | — | Load configuration from a `.env` file. Set to `true` (or a file path). |
-| `CAMUNDA_SDK_BACKPRESSURE_PROFILE` | `BALANCED` | Backpressure profile: `BALANCED` (adaptive gating) or `LEGACY` (observe-only). |
 
 <!-- END_CONFIG_REFERENCE -->
 
