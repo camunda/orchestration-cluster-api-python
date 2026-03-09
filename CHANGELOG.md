@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.11 (2026-03-09)
+
+### Bug Fixes
+
+- Update configuration reference, add note to backpressure docs with stats
+  ([`42b4087`](https://github.com/camunda/orchestration-cluster-api-python/commit/42b4087f184b36e3cf950b0492799180fe8abf34))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`4ebe6ff`](https://github.com/camunda/orchestration-cluster-api-python/commit/4ebe6ffec4eb2b7da0d901517bab5fd9aa39b0fd))
+
+### Features
+
+- Add backpressure implementation and scenario test matrix
+  ([`528df22`](https://github.com/camunda/orchestration-cluster-api-python/commit/528df223bf94dcf7721affc755f18cd40da14848))
+
+
 ## v8.9.0-dev.10 (2026-03-05)
 
 ### Chores
