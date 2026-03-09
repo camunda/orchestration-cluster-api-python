@@ -122,7 +122,7 @@ def _generate_stub(py_file: Path) -> str | None:
 
 
 def _filter_unused_imports(lines: list[str]) -> list[str]:
-    """Remove imported names that aren't referenced in the stub body."""
+    """Remove imported names that aren't referenced in the stub body, and deduplicate."""
     import_lines: list[str] = []
     other_lines: list[str] = []
 
@@ -139,17 +139,20 @@ def _filter_unused_imports(lines: list[str]) -> list[str]:
         return bool(re.search(r"\b" + re.escape(name) + r"\b", body_text))
 
     result: list[str] = []
+    seen: set[str] = set()
     for line in import_lines:
         stripped = line.strip()
         if stripped.startswith("from "):
             # Filter individual names in "from X import a, b, c"
             filtered = _filter_from_import(stripped, _name_used)
-            if filtered:
+            if filtered and filtered not in seen:
+                seen.add(filtered)
                 result.append(filtered)
         else:
             # "import X" — keep if X is used
             names = _extract_plain_import_names(stripped)
-            if any(_name_used(name) for name in names):
+            if any(_name_used(name) for name in names) and stripped not in seen:
+                seen.add(stripped)
                 result.append(line)
 
     result.extend(other_lines)

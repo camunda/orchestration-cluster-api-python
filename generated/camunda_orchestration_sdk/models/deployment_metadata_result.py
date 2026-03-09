@@ -154,7 +154,7 @@ class DeploymentMetadataResult:
                 pass
             return cast(DeploymentMetadataResultProcessDefinition | None, data)
 
-        process_definition = _parse_process_definition(d.pop("processDefinition"))
+        process_definition = _parse_process_definition(d.pop("processDefinition", None))
 
         def _parse_decision_definition(
             data: object,
@@ -175,7 +175,9 @@ class DeploymentMetadataResult:
                 pass
             return cast(DeploymentMetadataResultDecisionDefinition | None, data)
 
-        decision_definition = _parse_decision_definition(d.pop("decisionDefinition"))
+        decision_definition = _parse_decision_definition(
+            d.pop("decisionDefinition", None)
+        )
 
         def _parse_decision_requirements(
             data: object,
@@ -197,7 +199,7 @@ class DeploymentMetadataResult:
             return cast(DeploymentMetadataResultDecisionRequirements | None, data)
 
         decision_requirements = _parse_decision_requirements(
-            d.pop("decisionRequirements")
+            d.pop("decisionRequirements", None)
         )
 
         def _parse_form(data: object) -> DeploymentMetadataResultForm | None:
@@ -217,7 +219,7 @@ class DeploymentMetadataResult:
                 pass
             return cast(DeploymentMetadataResultForm | None, data)
 
-        form = _parse_form(d.pop("form"))
+        form = _parse_form(d.pop("form", None))
 
         def _parse_resource(data: object) -> DeploymentMetadataResultResource | None:
             if data is None:
@@ -236,7 +238,7 @@ class DeploymentMetadataResult:
                 pass
             return cast(DeploymentMetadataResultResource | None, data)
 
-        resource = _parse_resource(d.pop("resource"))
+        resource = _parse_resource(d.pop("resource", None))
 
         deployment_metadata_result = cls(
             process_definition=process_definition,
