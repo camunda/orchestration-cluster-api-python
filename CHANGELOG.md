@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.12 (2026-03-09)
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`289d4b6`](https://github.com/camunda/orchestration-cluster-api-python/commit/289d4b6b259d143421a4ddd881cfe43a987b59a0))
+
+### Features
+
+- Tolerate missing in nullable field (supports 8.8 behaviour) for deploy_resources_from_files
+  ([`ae5147a`](https://github.com/camunda/orchestration-cluster-api-python/commit/ae5147ac2fd97fa123b9b4b7af1ffe8d83169496))
+
+
 ## v8.9.0-dev.11 (2026-03-09)
 
 ### Bug Fixes
