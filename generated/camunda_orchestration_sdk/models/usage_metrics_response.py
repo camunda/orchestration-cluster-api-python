@@ -4,9 +4,9 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
     from ..models.usage_metrics_response_tenants import UsageMetricsResponseTenants
@@ -19,27 +19,27 @@ T = TypeVar("T", bound="UsageMetricsResponse")
 class UsageMetricsResponse:
     """
     Attributes:
+        active_tenants (int): The amount of active tenants.
         tenants (UsageMetricsResponseTenants): The usage metrics by tenants. Only available if request `withTenants`
             query parameter was `true`.
-        active_tenants (int | Unset): The amount of active tenants.
-        process_instances (int | Unset): The amount of created root process instances.
-        decision_instances (int | Unset): The amount of executed decision instances.
-        assignees (int | Unset): The amount of unique active task users.
+        process_instances (int): The amount of created root process instances.
+        decision_instances (int): The amount of executed decision instances.
+        assignees (int): The amount of unique active task users.
     """
 
+    active_tenants: int
     tenants: UsageMetricsResponseTenants
-    active_tenants: int | Unset = UNSET
-    process_instances: int | Unset = UNSET
-    decision_instances: int | Unset = UNSET
-    assignees: int | Unset = UNSET
+    process_instances: int
+    decision_instances: int
+    assignees: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        tenants = self.tenants.to_dict()
-
         active_tenants = self.active_tenants
+
+        tenants = self.tenants.to_dict()
 
         process_instances = self.process_instances
 
@@ -51,17 +51,13 @@ class UsageMetricsResponse:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "activeTenants": active_tenants,
                 "tenants": tenants,
+                "processInstances": process_instances,
+                "decisionInstances": decision_instances,
+                "assignees": assignees,
             }
         )
-        if active_tenants is not UNSET:
-            field_dict["activeTenants"] = active_tenants
-        if process_instances is not UNSET:
-            field_dict["processInstances"] = process_instances
-        if decision_instances is not UNSET:
-            field_dict["decisionInstances"] = decision_instances
-        if assignees is not UNSET:
-            field_dict["assignees"] = assignees
 
         return field_dict
 
@@ -70,19 +66,19 @@ class UsageMetricsResponse:
         from ..models.usage_metrics_response_tenants import UsageMetricsResponseTenants
 
         d = dict(src_dict)
+        active_tenants = d.pop("activeTenants")
+
         tenants = UsageMetricsResponseTenants.from_dict(d.pop("tenants"))
 
-        active_tenants = d.pop("activeTenants", UNSET)
+        process_instances = d.pop("processInstances")
 
-        process_instances = d.pop("processInstances", UNSET)
+        decision_instances = d.pop("decisionInstances")
 
-        decision_instances = d.pop("decisionInstances", UNSET)
-
-        assignees = d.pop("assignees", UNSET)
+        assignees = d.pop("assignees")
 
         usage_metrics_response = cls(
-            tenants=tenants,
             active_tenants=active_tenants,
+            tenants=tenants,
             process_instances=process_instances,
             decision_instances=decision_instances,
             assignees=assignees,

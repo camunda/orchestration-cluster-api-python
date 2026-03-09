@@ -97,8 +97,11 @@ def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -
         )
         pattern = constraints.get("pattern")
         if pattern and isinstance(pattern, str):
-            # Use fullmatch to validate the whole value
-            func.append(f"\tif re.fullmatch(r{pattern!r}, value) is None:\n")
+            # Use fullmatch to validate the whole value.
+            # pattern!r produces a repr'd string literal with proper escaping;
+            # do NOT combine with the r"" raw-string prefix or backslashes
+            # get doubled (e.g. \- becomes \\- and hyphens stop matching).
+            func.append(f"\tif re.fullmatch({pattern!r}, value) is None:\n")
             func.append(
                 f'\t\traise ValueError(f"{alias_name} does not match pattern {pattern!r}, got {{value!r}}")\n'
             )

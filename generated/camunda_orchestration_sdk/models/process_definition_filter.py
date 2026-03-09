@@ -31,6 +31,7 @@ class ProcessDefinitionFilter:
             When using this filter, pagination functionality is limited, you can only paginate forward using `after` and
             `limit`.
             The response contains no `startCursor` in the `page`, and requests ignore the `from` and `before` in the `page`.
+            When using this filter, sorting is limited to `processDefinitionId` and `tenantId` fields only.
         resource_name (str | Unset): Resource name of this process definition.
         version (int | Unset): Version of this process definition.
         version_tag (str | Unset): Version tag of this process definition.

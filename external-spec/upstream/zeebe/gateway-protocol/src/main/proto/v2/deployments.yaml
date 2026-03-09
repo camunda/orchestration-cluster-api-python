@@ -100,10 +100,9 @@ paths:
         "200":
           description: The resource content is successfully returned.
           content:
-            application/octet-stream:
+            application/json:
               schema:
                 type: string
-                format: binary
         "404":
           description: A resource with the given key was not found.
           content:
@@ -423,6 +422,13 @@ components:
 
     ResourceResult:
       type: object
+      required:
+        - resourceName
+        - version
+        - versionTag
+        - resourceId
+        - tenantId
+        - resourceKey
       properties:
         resourceName:
           description: The resource name from which this resource was parsed.
@@ -432,6 +438,7 @@ components:
           type: integer
           format: int32
         versionTag:
+          nullable: true
           description: The version tag of this resource.
           type: string
         resourceId:

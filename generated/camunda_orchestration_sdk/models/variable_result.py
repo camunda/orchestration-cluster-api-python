@@ -14,9 +14,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="VariableResult")
 
@@ -26,38 +26,35 @@ class VariableResult:
     """Variable search response item.
 
     Attributes:
+        value (str): Full value of this variable.
+        name (str): Name of this variable.
+        tenant_id (str): Tenant ID of this variable. Example: customer-service.
+        variable_key (str): The key for this variable. Example: 2251799813683287.
+        scope_key (str): The key of the scope where this variable is directly defined. For process-level
+            variables, this is the process instance key. For local variables, this is the key of the
+            specific element instance (task, subprocess, gateway, event, etc.) where the variable is
+            directly defined.
+             Example: 2251799813683890.
+        process_instance_key (str): The key of the process instance of this variable. Example: 2251799813690746.
         root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
             top-level
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
-        value (str | Unset): Full value of this variable.
-        name (str | Unset): Name of this variable.
-        tenant_id (str | Unset): Tenant ID of this variable. Example: customer-service.
-        variable_key (str | Unset): The key for this variable. Example: 2251799813683287.
-        scope_key (str | Unset): The key of the scope where this variable is directly defined. For process-level
-            variables, this is the process instance key. For local variables, this is the key of the
-            specific element instance (task, subprocess, gateway, event, etc.) where the variable is
-            directly defined.
-             Example: 2251799813683890.
-        process_instance_key (str | Unset): The key of the process instance of this variable. Example: 2251799813690746.
     """
 
+    value: str
+    name: str
+    tenant_id: TenantId
+    variable_key: VariableKey
+    scope_key: ScopeKey
+    process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
-    value: str | Unset = UNSET
-    name: str | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    variable_key: VariableKey | Unset = UNSET
-    scope_key: ScopeKey | Unset = UNSET
-    process_instance_key: ProcessInstanceKey | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        root_process_instance_key: None | ProcessInstanceKey
-        root_process_instance_key = self.root_process_instance_key
-
         value = self.value
 
         name = self.name
@@ -70,31 +67,39 @@ class VariableResult:
 
         process_instance_key = self.process_instance_key
 
+        root_process_instance_key: None | ProcessInstanceKey
+        root_process_instance_key = self.root_process_instance_key
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "value": value,
+                "name": name,
+                "tenantId": tenant_id,
+                "variableKey": variable_key,
+                "scopeKey": scope_key,
+                "processInstanceKey": process_instance_key,
                 "rootProcessInstanceKey": root_process_instance_key,
             }
         )
-        if value is not UNSET:
-            field_dict["value"] = value
-        if name is not UNSET:
-            field_dict["name"] = name
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
-        if variable_key is not UNSET:
-            field_dict["variableKey"] = variable_key
-        if scope_key is not UNSET:
-            field_dict["scopeKey"] = scope_key
-        if process_instance_key is not UNSET:
-            field_dict["processInstanceKey"] = process_instance_key
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        value = d.pop("value")
+
+        name = d.pop("name")
+
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
+
+        variable_key = lift_variable_key(d.pop("variableKey"))
+
+        scope_key = lift_scope_key(d.pop("scopeKey"))
+
+        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -111,42 +116,14 @@ class VariableResult:
             else _raw_root_process_instance_key
         )
 
-        value = d.pop("value", UNSET)
-
-        name = d.pop("name", UNSET)
-
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        variable_key = (
-            lift_variable_key(_val)
-            if (_val := d.pop("variableKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        scope_key = (
-            lift_scope_key(_val)
-            if (_val := d.pop("scopeKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        process_instance_key = (
-            lift_process_instance_key(_val)
-            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
         variable_result = cls(
-            root_process_instance_key=root_process_instance_key,
             value=value,
             name=name,
             tenant_id=tenant_id,
             variable_key=variable_key,
             scope_key=scope_key,
             process_instance_key=process_instance_key,
+            root_process_instance_key=root_process_instance_key,
         )
 
         variable_result.additional_properties = d

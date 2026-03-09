@@ -2997,6 +2997,42 @@ class GetIncidentUnauthorized(ApiError):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
+class GetJobTimeSeriesStatisticsBadRequest(ApiError):
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetJobTimeSeriesStatisticsForbidden(ApiError):
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetJobTimeSeriesStatisticsInternalServerError(ApiError):
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetJobTimeSeriesStatisticsUnauthorized(ApiError):
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
 class GetJobTypeStatisticsBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
 
@@ -3025,6 +3061,42 @@ class GetJobTypeStatisticsInternalServerError(ApiError):
 
 
 class GetJobTypeStatisticsUnauthorized(ApiError):
+    """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetJobWorkerStatisticsBadRequest(ApiError):
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetJobWorkerStatisticsForbidden(ApiError):
+    """Raised when the server returns HTTP 403. Forbidden. The request is not allowed."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetJobWorkerStatisticsInternalServerError(ApiError):
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class GetJobWorkerStatisticsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
     parsed: ProblemDetail
@@ -4920,15 +4992,6 @@ class SearchGroupsForbidden(ApiError):
     parsed: ProblemDetail
 
     def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
-        super().__init__(status_code=status_code, content=content, parsed=parsed)
-
-
-class SearchGroupsInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
-
-    parsed: Any
-
-    def __init__(self, *, status_code: int, content: bytes, parsed: Any):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
@@ -7153,10 +7216,18 @@ __all__ = [
     "GetIncidentInternalServerError",
     "GetIncidentNotFound",
     "GetIncidentUnauthorized",
+    "GetJobTimeSeriesStatisticsBadRequest",
+    "GetJobTimeSeriesStatisticsForbidden",
+    "GetJobTimeSeriesStatisticsInternalServerError",
+    "GetJobTimeSeriesStatisticsUnauthorized",
     "GetJobTypeStatisticsBadRequest",
     "GetJobTypeStatisticsForbidden",
     "GetJobTypeStatisticsInternalServerError",
     "GetJobTypeStatisticsUnauthorized",
+    "GetJobWorkerStatisticsBadRequest",
+    "GetJobWorkerStatisticsForbidden",
+    "GetJobWorkerStatisticsInternalServerError",
+    "GetJobWorkerStatisticsUnauthorized",
     "GetLicenseInternalServerError",
     "GetMappingRuleInternalServerError",
     "GetMappingRuleNotFound",
@@ -7367,7 +7438,6 @@ __all__ = [
     "SearchGroupsForRoleNotFound",
     "SearchGroupsForRoleUnauthorized",
     "SearchGroupsForbidden",
-    "SearchGroupsInternalServerError",
     "SearchGroupsUnauthorized",
     "SearchIncidentsBadRequest",
     "SearchIncidentsForbidden",

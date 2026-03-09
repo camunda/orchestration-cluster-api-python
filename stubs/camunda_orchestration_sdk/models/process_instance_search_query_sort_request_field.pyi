@@ -1,5 +1,6 @@
 from enum import Enum
 class ProcessInstanceSearchQuerySortRequestField(str, Enum):
+    BUSINESSID = "businessId"
     ENDDATE = "endDate"
     HASINCIDENT = "hasIncident"
     PARENTELEMENTINSTANCEKEY = "parentElementInstanceKey"

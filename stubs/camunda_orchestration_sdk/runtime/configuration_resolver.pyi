@@ -13,6 +13,7 @@ CamundaSdkLogLevel = Literal[
     "trace",
     "silly",
 ]
+CamundaBackpressureProfile = Literal["BALANCED", "LEGACY"]
 class CamundaSdkConfigPartial(TypedDict):
     ZEEBE_REST_ADDRESS: str
     CAMUNDA_REST_ADDRESS: str
@@ -28,6 +29,7 @@ class CamundaSdkConfigPartial(TypedDict):
     CAMUNDA_SDK_LOG_LEVEL: CamundaSdkLogLevel
     CAMUNDA_TOKEN_CACHE_DIR: str
     CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool
+    CAMUNDA_SDK_BACKPRESSURE_PROFILE: str
     CAMUNDA_LOAD_ENVFILE: str
 CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "ZEEBE_REST_ADDRESS",
@@ -45,6 +47,8 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     # Optional OAuth disk cache / tarpit persistence
     "CAMUNDA_TOKEN_CACHE_DIR",
     "CAMUNDA_TOKEN_DISK_CACHE_DISABLE",
+    # Backpressure
+    "CAMUNDA_SDK_BACKPRESSURE_PROFILE",
 )
 def _dotenv_values_for(load_envfile: Any) -> dict[str, str]: ...
 def read_environment(environ: Mapping[str, str] | None = None) -> CamundaSdkConfigPartial: ...
@@ -105,6 +109,10 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool = Field(
             default=False,
             description="Disable OAuth token disk caching.",
+        )
+    CAMUNDA_SDK_BACKPRESSURE_PROFILE: CamundaBackpressureProfile = Field(
+            default="BALANCED",
+            description="Backpressure profile: BALANCED (adaptive gating, default) or LEGACY (observe-only, no gating).",
         )
     @staticmethod
     def _normalize_rest_address(value: str) -> str: ...

@@ -21,7 +21,7 @@ def _get_kwargs(*, body: GroupSearchQueryRequest | Unset = UNSET) -> dict[str, A
 
 def _parse_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Any | GroupSearchQueryResult | ProblemDetail | None:
+) -> GroupSearchQueryResult | ProblemDetail | None:
     if response.status_code == 200:
         response_200 = GroupSearchQueryResult.from_dict(response.json())
         return response_200
@@ -34,9 +34,6 @@ def _parse_response(
     if response.status_code == 403:
         response_403 = ProblemDetail.from_dict(response.json())
         return response_403
-    if response.status_code == 500:
-        response_500 = cast(Any, None)
-        return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     else:
@@ -45,7 +42,7 @@ def _parse_response(
 
 def _build_response(
     *, client: AuthenticatedClient | Client, response: httpx.Response
-) -> Response[Any | GroupSearchQueryResult | ProblemDetail]:
+) -> Response[GroupSearchQueryResult | ProblemDetail]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -58,7 +55,7 @@ def sync_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: GroupSearchQueryRequest | Unset = UNSET,
-) -> Response[Any | GroupSearchQueryResult | ProblemDetail]:
+) -> Response[GroupSearchQueryResult | ProblemDetail]:
     """Search groups
 
      Search for groups based on given criteria.
@@ -71,7 +68,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | GroupSearchQueryResult | ProblemDetail]
+        Response[GroupSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = client.get_httpx_client().request(**kwargs)
@@ -95,7 +92,6 @@ def sync(
         errors.SearchGroupsBadRequest: If the response status code is 400. The provided data is not valid.
         errors.SearchGroupsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
         errors.SearchGroupsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchGroupsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -120,12 +116,6 @@ def sync(
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
             )
-        if response.status_code == 500:
-            raise errors.SearchGroupsInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=response.parsed,
-            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None
     return cast(GroupSearchQueryResult, response.parsed)
@@ -135,7 +125,7 @@ async def asyncio_detailed(
     *,
     client: AuthenticatedClient | Client,
     body: GroupSearchQueryRequest | Unset = UNSET,
-) -> Response[Any | GroupSearchQueryResult | ProblemDetail]:
+) -> Response[GroupSearchQueryResult | ProblemDetail]:
     """Search groups
 
      Search for groups based on given criteria.
@@ -148,7 +138,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[Any | GroupSearchQueryResult | ProblemDetail]
+        Response[GroupSearchQueryResult | ProblemDetail]
     """
     kwargs = _get_kwargs(body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -172,7 +162,6 @@ async def asyncio(
         errors.SearchGroupsBadRequest: If the response status code is 400. The provided data is not valid.
         errors.SearchGroupsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
         errors.SearchGroupsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchGroupsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -196,12 +185,6 @@ async def asyncio(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
-            )
-        if response.status_code == 500:
-            raise errors.SearchGroupsInternalServerError(
-                status_code=response.status_code,
-                content=response.content,
-                parsed=response.parsed,
             )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     assert response.parsed is not None

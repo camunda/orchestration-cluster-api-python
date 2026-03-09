@@ -271,7 +271,6 @@ from .expression_evaluation_request import ExpressionEvaluationRequest
 from .expression_evaluation_request_variables import ExpressionEvaluationRequestVariables
 from .expression_evaluation_result import ExpressionEvaluationResult
 from .form_result import FormResult
-from .form_result_schema import FormResultSchema
 from .get_user_response_200 import GetUserResponse200
 from .global_job_statistics_query_result import GlobalJobStatisticsQueryResult
 from .global_listener_base import GlobalListenerBase
@@ -368,12 +367,20 @@ from .job_search_result import JobSearchResult
 from .job_search_result_custom_headers import JobSearchResultCustomHeaders
 from .job_state_enum import JobStateEnum
 from .job_state_exact_match import JobStateExactMatch
+from .job_time_series_statistics_filter import JobTimeSeriesStatisticsFilter
+from .job_time_series_statistics_item import JobTimeSeriesStatisticsItem
+from .job_time_series_statistics_query import JobTimeSeriesStatisticsQuery
+from .job_time_series_statistics_query_result import JobTimeSeriesStatisticsQueryResult
 from .job_type_statistics_filter import JobTypeStatisticsFilter
 from .job_type_statistics_item import JobTypeStatisticsItem
 from .job_type_statistics_query import JobTypeStatisticsQuery
 from .job_type_statistics_query_page import JobTypeStatisticsQueryPage
 from .job_type_statistics_query_result import JobTypeStatisticsQueryResult
 from .job_update_request import JobUpdateRequest
+from .job_worker_statistics_filter import JobWorkerStatisticsFilter
+from .job_worker_statistics_item import JobWorkerStatisticsItem
+from .job_worker_statistics_query import JobWorkerStatisticsQuery
+from .job_worker_statistics_query_result import JobWorkerStatisticsQueryResult
 from .license_response import LicenseResponse
 from .limit_based_pagination import LimitBasedPagination
 from .mapping_rule_create_request import MappingRuleCreateRequest
@@ -899,7 +906,6 @@ __all__: list[str] = [
     "ExpressionEvaluationRequestVariables",
     "ExpressionEvaluationResult",
     "FormResult",
-    "FormResultSchema",
     "GetUserResponse200",
     "GlobalJobStatisticsQueryResult",
     "GlobalListenerBase",
@@ -996,12 +1002,20 @@ __all__: list[str] = [
     "JobSearchResultCustomHeaders",
     "JobStateEnum",
     "JobStateExactMatch",
+    "JobTimeSeriesStatisticsFilter",
+    "JobTimeSeriesStatisticsItem",
+    "JobTimeSeriesStatisticsQuery",
+    "JobTimeSeriesStatisticsQueryResult",
     "JobTypeStatisticsFilter",
     "JobTypeStatisticsItem",
     "JobTypeStatisticsQuery",
     "JobTypeStatisticsQueryPage",
     "JobTypeStatisticsQueryResult",
     "JobUpdateRequest",
+    "JobWorkerStatisticsFilter",
+    "JobWorkerStatisticsItem",
+    "JobWorkerStatisticsQuery",
+    "JobWorkerStatisticsQueryResult",
     "LicenseResponse",
     "LimitBasedPagination",
     "MappingRuleCreateRequest",

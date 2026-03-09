@@ -5,9 +5,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="ResourceResult")
 
@@ -16,20 +16,20 @@ T = TypeVar("T", bound="ResourceResult")
 class ResourceResult:
     """
     Attributes:
-        resource_name (str | Unset): The resource name from which this resource was parsed.
-        version (int | Unset): The assigned resource version.
-        version_tag (str | Unset): The version tag of this resource.
-        resource_id (str | Unset): The resource ID of this resource.
-        tenant_id (str | Unset): The tenant ID of this resource. Example: customer-service.
-        resource_key (str | Unset): The unique key of this resource.
+        resource_name (str): The resource name from which this resource was parsed.
+        version (int): The assigned resource version.
+        version_tag (None | str): The version tag of this resource.
+        resource_id (str): The resource ID of this resource.
+        tenant_id (str): The tenant ID of this resource. Example: customer-service.
+        resource_key (str): The unique key of this resource.
     """
 
-    resource_name: str | Unset = UNSET
-    version: int | Unset = UNSET
-    version_tag: str | Unset = UNSET
-    resource_id: str | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    resource_key: str | Unset = UNSET
+    resource_name: str
+    version: int
+    version_tag: None | str
+    resource_id: str
+    tenant_id: TenantId
+    resource_key: str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -39,59 +39,53 @@ class ResourceResult:
 
         version = self.version
 
+        version_tag: None | str
         version_tag = self.version_tag
 
         resource_id = self.resource_id
 
         tenant_id = self.tenant_id
 
-        resource_key: str | Unset
-        if isinstance(self.resource_key, Unset):
-            resource_key = UNSET
-        else:
-            resource_key = self.resource_key
+        resource_key: str
+        resource_key = self.resource_key
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if resource_name is not UNSET:
-            field_dict["resourceName"] = resource_name
-        if version is not UNSET:
-            field_dict["version"] = version
-        if version_tag is not UNSET:
-            field_dict["versionTag"] = version_tag
-        if resource_id is not UNSET:
-            field_dict["resourceId"] = resource_id
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
-        if resource_key is not UNSET:
-            field_dict["resourceKey"] = resource_key
+        field_dict.update(
+            {
+                "resourceName": resource_name,
+                "version": version,
+                "versionTag": version_tag,
+                "resourceId": resource_id,
+                "tenantId": tenant_id,
+                "resourceKey": resource_key,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        resource_name = d.pop("resourceName", UNSET)
+        resource_name = d.pop("resourceName")
 
-        version = d.pop("version", UNSET)
+        version = d.pop("version")
 
-        version_tag = d.pop("versionTag", UNSET)
-
-        resource_id = d.pop("resourceId", UNSET)
-
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        def _parse_resource_key(data: object) -> str | Unset:
-            if isinstance(data, Unset):
+        def _parse_version_tag(data: object) -> None | str:
+            if data is None:
                 return data
-            return cast(str | Unset, data)
+            return cast(None | str, data)
 
-        resource_key = _parse_resource_key(d.pop("resourceKey", UNSET))
+        version_tag = _parse_version_tag(d.pop("versionTag"))
+
+        resource_id = d.pop("resourceId")
+
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
+
+        def _parse_resource_key(data: object) -> str:
+            return cast(str, data)
+
+        resource_key = _parse_resource_key(d.pop("resourceKey"))
 
         resource_result = cls(
             resource_name=resource_name,

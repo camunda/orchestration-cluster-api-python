@@ -47,6 +47,7 @@ class ProcessInstanceFilter:
     has_element_instance_incident: bool | Unset = UNSET
     incident_error_hash_code: AdvancedIntegerFilter | int | Unset = UNSET
     tags: list[str] | Unset = UNSET
+    business_id: AdvancedStringFilter | str | Unset = UNSET
     or_: list[ProcessInstanceFilterFields] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...

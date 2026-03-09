@@ -2,7 +2,7 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import ElementId, lift_element_id
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -25,21 +25,29 @@ class JobResultActivateElement:
 
         Attributes:
             element_id (str | Unset): The element ID to activate. Example: Activity_106kosb.
-            variables (JobResultActivateElementVariables | Unset): Variables for the element.
+            variables (JobResultActivateElementVariables | None | Unset): Variables for the element.
     """
 
     element_id: ElementId | Unset = UNSET
-    variables: JobResultActivateElementVariables | Unset = UNSET
+    variables: JobResultActivateElementVariables | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.job_result_activate_element_variables import (
+            JobResultActivateElementVariables,
+        )
+
         element_id = self.element_id
 
-        variables: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.variables, Unset):
+        variables: dict[str, Any] | None | Unset
+        if isinstance(self.variables, Unset):
+            variables = UNSET
+        elif isinstance(self.variables, JobResultActivateElementVariables):
             variables = self.variables.to_dict()
+        else:
+            variables = self.variables
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -64,12 +72,28 @@ class JobResultActivateElement:
             else UNSET
         )
 
-        _variables = d.pop("variables", UNSET)
-        variables: JobResultActivateElementVariables | Unset
-        if isinstance(_variables, Unset):
-            variables = UNSET
-        else:
-            variables = JobResultActivateElementVariables.from_dict(_variables)
+        def _parse_variables(
+            data: object,
+        ) -> JobResultActivateElementVariables | None | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                componentsschemas_job_result_activate_element_variables_type_0 = (
+                    JobResultActivateElementVariables.from_dict(data)
+                )
+
+                return componentsschemas_job_result_activate_element_variables_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(JobResultActivateElementVariables | None | Unset, data)
+
+        variables = _parse_variables(d.pop("variables", UNSET))
 
         job_result_activate_element = cls(
             element_id=element_id,

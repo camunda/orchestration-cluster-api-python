@@ -5,37 +5,37 @@ import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.user_task_state_enum import UserTaskStateEnum
-from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.user_task_result_custom_headers import UserTaskResultCustomHeaders
 T = TypeVar("T", bound="UserTaskResult")
 @_attrs_define
 class UserTaskResult:
+    name: None | str
+    state: UserTaskStateEnum
     assignee: None | str
+    element_id: ElementId
     candidate_groups: list[str]
     candidate_users: list[str]
+    process_definition_id: ProcessDefinitionId
+    creation_date: datetime.datetime
     completion_date: datetime.datetime | None
     follow_up_date: datetime.datetime | None
     due_date: datetime.datetime | None
+    tenant_id: TenantId
     external_form_reference: None | str
+    process_definition_version: int
     custom_headers: UserTaskResultCustomHeaders
+    user_task_key: UserTaskKey
+    element_instance_key: ElementInstanceKey
+    process_name: None | str
+    process_definition_key: ProcessDefinitionKey
+    process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
     form_key: None | FormKey
     tags: list[str]
-    name: str | Unset = UNSET
-    state: UserTaskStateEnum | Unset = UNSET
-    element_id: ElementId | Unset = UNSET
-    process_definition_id: ProcessDefinitionId | Unset = UNSET
-    creation_date: datetime.datetime | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    process_definition_version: int | Unset = UNSET
-    priority: int | Unset = 50
-    user_task_key: UserTaskKey | Unset = UNSET
-    element_instance_key: ElementInstanceKey | Unset = UNSET
-    process_name: None | str | Unset = UNSET
-    process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    process_instance_key: ProcessInstanceKey | Unset = UNSET
+    priority: int = 50
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

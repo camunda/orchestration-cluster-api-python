@@ -24,5 +24,6 @@ def _clear_sdk_env(monkeypatch: pytest.MonkeyPatch) -> None:  # pyright: ignore[
         "CAMUNDA_SDK_LOG_LEVEL",
         "CAMUNDA_TOKEN_CACHE_DIR",
         "CAMUNDA_TOKEN_DISK_CACHE_DISABLE",
+        "CAMUNDA_SDK_BACKPRESSURE_PROFILE",
     ):
         monkeypatch.delenv(key, raising=False)

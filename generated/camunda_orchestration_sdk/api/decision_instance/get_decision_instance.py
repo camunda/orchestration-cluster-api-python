@@ -67,8 +67,8 @@ def sync_detailed(
      Returns a decision instance.
 
     Args:
-        decision_evaluation_instance_key (str): System-generated key for a deployed decision
-            instance. Example: 22517998136843567.
+        decision_evaluation_instance_key (str): System-generated key for a decision evaluation
+            instance. Example: 2251799813684367.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -95,8 +95,8 @@ def sync(
      Returns a decision instance.
 
     Args:
-        decision_evaluation_instance_key (str): System-generated key for a deployed decision
-            instance. Example: 22517998136843567.
+        decision_evaluation_instance_key (str): System-generated key for a decision evaluation
+            instance. Example: 2251799813684367.
 
     Raises:
         errors.GetDecisionInstanceBadRequest: If the response status code is 400. The provided data is not valid.
@@ -155,8 +155,8 @@ async def asyncio_detailed(
      Returns a decision instance.
 
     Args:
-        decision_evaluation_instance_key (str): System-generated key for a deployed decision
-            instance. Example: 22517998136843567.
+        decision_evaluation_instance_key (str): System-generated key for a decision evaluation
+            instance. Example: 2251799813684367.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -183,8 +183,8 @@ async def asyncio(
      Returns a decision instance.
 
     Args:
-        decision_evaluation_instance_key (str): System-generated key for a deployed decision
-            instance. Example: 22517998136843567.
+        decision_evaluation_instance_key (str): System-generated key for a decision evaluation
+            instance. Example: 2251799813684367.
 
     Raises:
         errors.GetDecisionInstanceBadRequest: If the response status code is 400. The provided data is not valid.

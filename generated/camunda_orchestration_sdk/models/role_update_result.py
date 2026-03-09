@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="RoleUpdateResult")
 
@@ -15,14 +15,14 @@ T = TypeVar("T", bound="RoleUpdateResult")
 class RoleUpdateResult:
     """
     Attributes:
-        name (str | Unset): The display name of the updated role.
-        description (str | Unset): The description of the updated role.
-        role_id (str | Unset): The ID of the updated role.
+        name (str): The display name of the updated role.
+        description (None | str): The description of the updated role.
+        role_id (str): The ID of the updated role.
     """
 
-    name: str | Unset = UNSET
-    description: str | Unset = UNSET
-    role_id: str | Unset = UNSET
+    name: str
+    description: None | str
+    role_id: str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -30,30 +30,36 @@ class RoleUpdateResult:
     def to_dict(self) -> dict[str, Any]:
         name = self.name
 
+        description: None | str
         description = self.description
 
         role_id = self.role_id
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if name is not UNSET:
-            field_dict["name"] = name
-        if description is not UNSET:
-            field_dict["description"] = description
-        if role_id is not UNSET:
-            field_dict["roleId"] = role_id
+        field_dict.update(
+            {
+                "name": name,
+                "description": description,
+                "roleId": role_id,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        name = d.pop("name", UNSET)
+        name = d.pop("name")
 
-        description = d.pop("description", UNSET)
+        def _parse_description(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
 
-        role_id = d.pop("roleId", UNSET)
+        description = _parse_description(d.pop("description"))
+
+        role_id = d.pop("roleId")
 
         role_update_result = cls(
             name=name,

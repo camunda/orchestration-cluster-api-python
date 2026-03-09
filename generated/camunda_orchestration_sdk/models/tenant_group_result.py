@@ -4,9 +4,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="TenantGroupResult")
 
@@ -15,10 +15,10 @@ T = TypeVar("T", bound="TenantGroupResult")
 class TenantGroupResult:
     """
     Attributes:
-        group_id (str | Unset): The groupId of the group.
+        group_id (str): The groupId of the group.
     """
 
-    group_id: str | Unset = UNSET
+    group_id: str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -28,16 +28,18 @@ class TenantGroupResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if group_id is not UNSET:
-            field_dict["groupId"] = group_id
+        field_dict.update(
+            {
+                "groupId": group_id,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        group_id = d.pop("groupId", UNSET)
+        group_id = d.pop("groupId")
 
         tenant_group_result = cls(
             group_id=group_id,

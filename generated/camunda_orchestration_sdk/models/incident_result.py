@@ -23,12 +23,13 @@ from collections.abc import Mapping
 from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
 from ..models.incident_result_error_type import IncidentResultErrorType
 from ..models.incident_result_state import IncidentResultState
-from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="IncidentResult")
 
@@ -37,73 +38,58 @@ T = TypeVar("T", bound="IncidentResult")
 class IncidentResult:
     """
     Attributes:
+        process_definition_id (str): The process definition ID associated to this incident. Example: new-account-
+            onboarding-workflow.
+        error_type (IncidentResultErrorType): The type of the incident error.
+        error_message (str): Error message which describes the error in more detail.
+        element_id (str): The element ID associated to this incident. Example: Activity_106kosb.
+        creation_time (datetime.datetime): The creation time of the incident.
+        state (IncidentResultState): The incident state.
         tenant_id (str): The tenant ID of the incident. Example: customer-service.
+        incident_key (str): The assigned key, which acts as a unique identifier for this incident. Example:
+            2251799813689432.
+        process_definition_key (str): The process definition key associated to this incident. Example: 2251799813686749.
+        process_instance_key (str): The process instance key associated to this incident. Example: 2251799813690746.
         root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
             top-level
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
+        element_instance_key (str): The element instance key associated to this incident. Example: 2251799813686789.
         job_key (None | str): The job key, if exists, associated with this incident. Example: 2251799813653498.
-        process_definition_id (str | Unset): The process definition ID associated to this incident. Example: new-
-            account-onboarding-workflow.
-        error_type (IncidentResultErrorType | Unset): The type of the incident error.
-        error_message (str | Unset): Error message which describes the error in more detail.
-        element_id (str | Unset): The element ID associated to this incident. Example: Activity_106kosb.
-        creation_time (datetime.datetime | Unset): The creation time of the incident.
-        state (IncidentResultState | Unset): The incident state.
-        incident_key (str | Unset): The assigned key, which acts as a unique identifier for this incident. Example:
-            2251799813689432.
-        process_definition_key (str | Unset): The process definition key associated to this incident. Example:
-            2251799813686749.
-        process_instance_key (str | Unset): The process instance key associated to this incident. Example:
-            2251799813690746.
-        element_instance_key (str | Unset): The element instance key associated to this incident. Example:
-            2251799813686789.
     """
 
+    process_definition_id: ProcessDefinitionId
+    error_type: IncidentResultErrorType
+    error_message: str
+    element_id: ElementId
+    creation_time: datetime.datetime
+    state: IncidentResultState
     tenant_id: TenantId
+    incident_key: IncidentKey
+    process_definition_key: ProcessDefinitionKey
+    process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
+    element_instance_key: ElementInstanceKey
     job_key: None | JobKey
-    process_definition_id: ProcessDefinitionId | Unset = UNSET
-    error_type: IncidentResultErrorType | Unset = UNSET
-    error_message: str | Unset = UNSET
-    element_id: ElementId | Unset = UNSET
-    creation_time: datetime.datetime | Unset = UNSET
-    state: IncidentResultState | Unset = UNSET
-    incident_key: IncidentKey | Unset = UNSET
-    process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    process_instance_key: ProcessInstanceKey | Unset = UNSET
-    element_instance_key: ElementInstanceKey | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        tenant_id = self.tenant_id
-
-        root_process_instance_key: None | ProcessInstanceKey
-        root_process_instance_key = self.root_process_instance_key
-
-        job_key: None | JobKey
-        job_key = self.job_key
-
         process_definition_id = self.process_definition_id
 
-        error_type: str | Unset = UNSET
-        if not isinstance(self.error_type, Unset):
-            error_type = self.error_type.value
+        error_type = self.error_type.value
 
         error_message = self.error_message
 
         element_id = self.element_id
 
-        creation_time: str | Unset = UNSET
-        if not isinstance(self.creation_time, Unset):
-            creation_time = self.creation_time.isoformat()
+        creation_time = self.creation_time.isoformat()
 
-        state: str | Unset = UNSET
-        if not isinstance(self.state, Unset):
-            state = self.state.value
+        state = self.state.value
+
+        tenant_id = self.tenant_id
 
         incident_key = self.incident_key
 
@@ -111,44 +97,60 @@ class IncidentResult:
 
         process_instance_key = self.process_instance_key
 
+        root_process_instance_key: None | ProcessInstanceKey
+        root_process_instance_key = self.root_process_instance_key
+
         element_instance_key = self.element_instance_key
+
+        job_key: None | JobKey
+        job_key = self.job_key
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "processDefinitionId": process_definition_id,
+                "errorType": error_type,
+                "errorMessage": error_message,
+                "elementId": element_id,
+                "creationTime": creation_time,
+                "state": state,
                 "tenantId": tenant_id,
+                "incidentKey": incident_key,
+                "processDefinitionKey": process_definition_key,
+                "processInstanceKey": process_instance_key,
                 "rootProcessInstanceKey": root_process_instance_key,
+                "elementInstanceKey": element_instance_key,
                 "jobKey": job_key,
             }
         )
-        if process_definition_id is not UNSET:
-            field_dict["processDefinitionId"] = process_definition_id
-        if error_type is not UNSET:
-            field_dict["errorType"] = error_type
-        if error_message is not UNSET:
-            field_dict["errorMessage"] = error_message
-        if element_id is not UNSET:
-            field_dict["elementId"] = element_id
-        if creation_time is not UNSET:
-            field_dict["creationTime"] = creation_time
-        if state is not UNSET:
-            field_dict["state"] = state
-        if incident_key is not UNSET:
-            field_dict["incidentKey"] = incident_key
-        if process_definition_key is not UNSET:
-            field_dict["processDefinitionKey"] = process_definition_key
-        if process_instance_key is not UNSET:
-            field_dict["processInstanceKey"] = process_instance_key
-        if element_instance_key is not UNSET:
-            field_dict["elementInstanceKey"] = element_instance_key
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+
+        error_type = IncidentResultErrorType(d.pop("errorType"))
+
+        error_message = d.pop("errorMessage")
+
+        element_id = lift_element_id(d.pop("elementId"))
+
+        creation_time = isoparse(d.pop("creationTime"))
+
+        state = IncidentResultState(d.pop("state"))
+
         tenant_id = lift_tenant_id(d.pop("tenantId"))
+
+        incident_key = lift_incident_key(d.pop("incidentKey"))
+
+        process_definition_key = lift_process_definition_key(
+            d.pop("processDefinitionKey")
+        )
+
+        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -165,6 +167,8 @@ class IncidentResult:
             else _raw_root_process_instance_key
         )
 
+        element_instance_key = lift_element_instance_key(d.pop("elementInstanceKey"))
+
         def _parse_job_key(data: object) -> None | str:
             if data is None:
                 return data
@@ -178,79 +182,20 @@ class IncidentResult:
             else _raw_job_key
         )
 
-        process_definition_id = (
-            lift_process_definition_id(_val)
-            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        _error_type = d.pop("errorType", UNSET)
-        error_type: IncidentResultErrorType | Unset
-        if isinstance(_error_type, Unset):
-            error_type = UNSET
-        else:
-            error_type = IncidentResultErrorType(_error_type)
-
-        error_message = d.pop("errorMessage", UNSET)
-
-        element_id = (
-            lift_element_id(_val)
-            if (_val := d.pop("elementId", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        _creation_time = d.pop("creationTime", UNSET)
-        creation_time: datetime.datetime | Unset
-        if isinstance(_creation_time, Unset):
-            creation_time = UNSET
-        else:
-            creation_time = isoparse(_creation_time)
-
-        _state = d.pop("state", UNSET)
-        state: IncidentResultState | Unset
-        if isinstance(_state, Unset):
-            state = UNSET
-        else:
-            state = IncidentResultState(_state)
-
-        incident_key = (
-            lift_incident_key(_val)
-            if (_val := d.pop("incidentKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        process_definition_key = (
-            lift_process_definition_key(_val)
-            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        process_instance_key = (
-            lift_process_instance_key(_val)
-            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        element_instance_key = (
-            lift_element_instance_key(_val)
-            if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
         incident_result = cls(
-            tenant_id=tenant_id,
-            root_process_instance_key=root_process_instance_key,
-            job_key=job_key,
             process_definition_id=process_definition_id,
             error_type=error_type,
             error_message=error_message,
             element_id=element_id,
             creation_time=creation_time,
             state=state,
+            tenant_id=tenant_id,
             incident_key=incident_key,
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,
+            root_process_instance_key=root_process_instance_key,
             element_instance_key=element_instance_key,
+            job_key=job_key,
         )
 
         incident_result.additional_properties = d

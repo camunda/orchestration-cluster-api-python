@@ -525,6 +525,21 @@ from camunda_orchestration_sdk import CamundaClient, NullLogger
 client = CamundaClient(logger=NullLogger())
 ```
 
+## Backpressure
+
+The SDK includes built-in adaptive backpressure management that protects the Camunda cluster from overload. When the cluster returns backpressure signals (HTTP 429, 503, or `RESOURCE_EXHAUSTED`), the SDK automatically reduces outbound concurrency. When conditions improve, it gradually recovers — returning to full throughput with no manual intervention.
+
+This is enabled by default with the `BALANCED` profile and requires no configuration. Operations that drain work from the cluster (completing jobs, failing jobs) are never throttled.
+
+| Profile | Behavior |
+|---------|----------|
+| `BALANCED` (default) | Adaptive concurrency gating with AIMD-style permit management and exponential backoff at floor. |
+| `LEGACY` | Observe-only — records severity but never gates or queues requests. |
+
+Set the profile via the `CAMUNDA_SDK_BACKPRESSURE_PROFILE` environment variable.
+
+For detailed algorithm documentation, see [docs/backpressure.md](docs/backpressure.md).
+
 ## Configuration reference
 
 All `CAMUNDA_*` environment variables recognised by the SDK. These can also be passed as keys in the `configuration={...}` dict.
@@ -548,6 +563,7 @@ All `CAMUNDA_*` environment variables recognised by the SDK. These can also be p
 | `CAMUNDA_TOKEN_CACHE_DIR` | — | Directory for OAuth token disk cache. Disabled if unset. |
 | `CAMUNDA_TOKEN_DISK_CACHE_DISABLE` | `false` | Disable OAuth token disk caching. |
 | `CAMUNDA_LOAD_ENVFILE` | — | Load configuration from a `.env` file. Set to `true` (or a file path). |
+| `CAMUNDA_SDK_BACKPRESSURE_PROFILE` | `BALANCED` | Backpressure profile: `BALANCED` (adaptive gating) or `LEGACY` (observe-only). |
 
 <!-- END_CONFIG_REFERENCE -->
 

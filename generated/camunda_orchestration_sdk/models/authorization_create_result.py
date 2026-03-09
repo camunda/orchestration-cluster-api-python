@@ -8,9 +8,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="AuthorizationCreateResult")
 
@@ -19,10 +19,10 @@ T = TypeVar("T", bound="AuthorizationCreateResult")
 class AuthorizationCreateResult:
     """
     Attributes:
-        authorization_key (str | Unset): The key of the created authorization. Example: 2251799813684332.
+        authorization_key (str): The key of the created authorization. Example: 2251799813684332.
     """
 
-    authorization_key: AuthorizationKey | Unset = UNSET
+    authorization_key: AuthorizationKey
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -32,20 +32,18 @@ class AuthorizationCreateResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if authorization_key is not UNSET:
-            field_dict["authorizationKey"] = authorization_key
+        field_dict.update(
+            {
+                "authorizationKey": authorization_key,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        authorization_key = (
-            lift_authorization_key(_val)
-            if (_val := d.pop("authorizationKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        authorization_key = lift_authorization_key(d.pop("authorizationKey"))
 
         authorization_create_result = cls(
             authorization_key=authorization_key,

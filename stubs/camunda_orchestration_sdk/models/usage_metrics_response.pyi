@@ -3,17 +3,17 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.usage_metrics_response_tenants import UsageMetricsResponseTenants
 T = TypeVar("T", bound="UsageMetricsResponse")
 @_attrs_define
 class UsageMetricsResponse:
+    active_tenants: int
     tenants: UsageMetricsResponseTenants
-    active_tenants: int | Unset = UNSET
-    process_instances: int | Unset = UNSET
-    decision_instances: int | Unset = UNSET
-    assignees: int | Unset = UNSET
+    process_instances: int
+    decision_instances: int
+    assignees: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

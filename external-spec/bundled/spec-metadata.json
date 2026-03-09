@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "specHash": "sha256:f0c52e59b3b2e356dbf84097758f8f6fe3c4d623d5393ac5b8f632deb64a53ec",
+  "specHash": "sha256:d8cde0287ea420262805c9e0a17ebd236f813a0586d927d4b08736b6b4ebe0f1",
   "semanticKeys": [
     {
       "name": "AuditLogEntityKey",
@@ -2145,6 +2145,22 @@
       ]
     },
     {
+      "operationId": "getJobWorkerStatistics",
+      "path": "/jobs/statistics/by-workers",
+      "method": "post",
+      "tags": [
+        "Job"
+      ]
+    },
+    {
+      "operationId": "getJobTimeSeriesStatistics",
+      "path": "/jobs/statistics/time-series",
+      "method": "post",
+      "tags": [
+        "Job"
+      ]
+    },
+    {
       "operationId": "searchMappingRule",
       "path": "/mapping-rules/search",
       "method": "post",
@@ -4123,6 +4139,42 @@
       ],
       "summary": "Get job statistics by type",
       "description": "Get statistics about jobs, grouped by job type.\n",
+      "eventuallyConsistent": true,
+      "hasRequestBody": true,
+      "requestBodyUnion": false,
+      "bodyOnly": true,
+      "pathParams": [],
+      "queryParams": [],
+      "requestBodyUnionRefs": [],
+      "optionalTenantIdInBody": false
+    },
+    {
+      "operationId": "getJobWorkerStatistics",
+      "path": "/jobs/statistics/by-workers",
+      "method": "post",
+      "tags": [
+        "Job"
+      ],
+      "summary": "Get job statistics by worker",
+      "description": "Returns aggregated metrics per worker for the given jobType.\n",
+      "eventuallyConsistent": true,
+      "hasRequestBody": true,
+      "requestBodyUnion": false,
+      "bodyOnly": true,
+      "pathParams": [],
+      "queryParams": [],
+      "requestBodyUnionRefs": [],
+      "optionalTenantIdInBody": false
+    },
+    {
+      "operationId": "getJobTimeSeriesStatistics",
+      "path": "/jobs/statistics/time-series",
+      "method": "post",
+      "tags": [
+        "Job"
+      ],
+      "summary": "Get time-series metrics for a job type",
+      "description": "Returns a list of time-bucketed metrics ordered ascending by time.\nThe `from` and `to` fields select the time window of interest.\nEach item in the response corresponds to one time bucket of the requested resolution.\n",
       "eventuallyConsistent": true,
       "hasRequestBody": true,
       "requestBodyUnion": false,
@@ -6175,8 +6227,8 @@
   "integrity": {
     "totalSemanticKeys": 35,
     "totalUnions": 51,
-    "totalOperations": 178,
-    "totalEventuallyConsistent": 77,
+    "totalOperations": 180,
+    "totalEventuallyConsistent": 79,
     "totalDeprecatedEnumSchemas": 2,
     "totalSemanticProviders": 15
   }

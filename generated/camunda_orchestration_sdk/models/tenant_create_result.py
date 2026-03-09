@@ -2,12 +2,12 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import TenantId, lift_tenant_id
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="TenantCreateResult")
 
@@ -16,15 +16,15 @@ T = TypeVar("T", bound="TenantCreateResult")
 class TenantCreateResult:
     """
     Attributes:
-        tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
-        name (str | Unset): The name of the tenant. Example: Customer Service Department.
-        description (str | Unset): The description of the tenant. Example: Customer Service department business
+        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+        name (str): The name of the tenant. Example: Customer Service Department.
+        description (None | str): The description of the tenant. Example: Customer Service department business
             processes.
     """
 
-    tenant_id: TenantId | Unset = UNSET
-    name: str | Unset = UNSET
-    description: str | Unset = UNSET
+    tenant_id: TenantId
+    name: str
+    description: None | str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -34,32 +34,34 @@ class TenantCreateResult:
 
         name = self.name
 
+        description: None | str
         description = self.description
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
-        if name is not UNSET:
-            field_dict["name"] = name
-        if description is not UNSET:
-            field_dict["description"] = description
+        field_dict.update(
+            {
+                "tenantId": tenant_id,
+                "name": name,
+                "description": description,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
 
-        name = d.pop("name", UNSET)
+        name = d.pop("name")
 
-        description = d.pop("description", UNSET)
+        def _parse_description(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        description = _parse_description(d.pop("description"))
 
         tenant_create_result = cls(
             tenant_id=tenant_id,

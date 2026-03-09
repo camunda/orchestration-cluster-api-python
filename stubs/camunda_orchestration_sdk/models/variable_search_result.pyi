@@ -9,14 +9,14 @@ from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="VariableSearchResult")
 @_attrs_define
 class VariableSearchResult:
+    name: str
+    tenant_id: TenantId
+    variable_key: VariableKey
+    scope_key: ScopeKey
+    process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
     value: str | Unset = UNSET
     is_truncated: bool | Unset = UNSET
-    name: str | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    variable_key: VariableKey | Unset = UNSET
-    scope_key: ScopeKey | Unset = UNSET
-    process_instance_key: ProcessInstanceKey | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

@@ -66,6 +66,7 @@ class ProcessInstanceFilter:
         incident_error_hash_code (AdvancedIntegerFilter | int | Unset):
         tags (list[str] | Unset): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or
             `.`; length ≤ 100. Example: ['high-touch', 'remediation'].
+        business_id (AdvancedStringFilter | str | Unset):
         or_ (list[ProcessInstanceFilterFields] | Unset): Defines a list of alternative filter groups combined using OR
             logic. Each object in the array is evaluated independently, and the filter matches if any one of them is
             satisfied.
@@ -129,6 +130,7 @@ class ProcessInstanceFilter:
     has_element_instance_incident: bool | Unset = UNSET
     incident_error_hash_code: AdvancedIntegerFilter | int | Unset = UNSET
     tags: list[str] | Unset = UNSET
+    business_id: AdvancedStringFilter | str | Unset = UNSET
     or_: list[ProcessInstanceFilterFields] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -308,6 +310,14 @@ class ProcessInstanceFilter:
         if not isinstance(self.tags, Unset):
             tags = self.tags
 
+        business_id: dict[str, Any] | str | Unset
+        if isinstance(self.business_id, Unset):
+            business_id = UNSET
+        elif isinstance(self.business_id, AdvancedStringFilter):
+            business_id = self.business_id.to_dict()
+        else:
+            business_id = self.business_id
+
         or_: list[dict[str, Any]] | Unset = UNSET
         if not isinstance(self.or_, Unset):
             or_ = []
@@ -362,6 +372,8 @@ class ProcessInstanceFilter:
             field_dict["incidentErrorHashCode"] = incident_error_hash_code
         if tags is not UNSET:
             field_dict["tags"] = tags
+        if business_id is not UNSET:
+            field_dict["businessId"] = business_id
         if or_ is not UNSET:
             field_dict["$or"] = or_
 
@@ -782,6 +794,23 @@ class ProcessInstanceFilter:
 
         tags = cast(list[str], d.pop("tags", UNSET))
 
+        def _parse_business_id(data: object) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                business_id_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return business_id_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        business_id = _parse_business_id(d.pop("businessId", UNSET))
+
         _or_ = d.pop("$or", UNSET)
         or_: list[ProcessInstanceFilterFields] | Unset = UNSET
         if _or_ is not UNSET:
@@ -814,6 +843,7 @@ class ProcessInstanceFilter:
             has_element_instance_incident=has_element_instance_incident,
             incident_error_hash_code=incident_error_hash_code,
             tags=tags,
+            business_id=business_id,
             or_=or_,
         )
 

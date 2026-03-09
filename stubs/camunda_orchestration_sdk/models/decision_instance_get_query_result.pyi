@@ -5,34 +5,34 @@ import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.decision_definition_type_enum import DecisionDefinitionTypeEnum
 from ..models.decision_instance_state_enum import DecisionInstanceStateEnum
-from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.evaluated_decision_input_item import EvaluatedDecisionInputItem
 from ..models.matched_decision_rule_item import MatchedDecisionRuleItem
 T = TypeVar("T", bound="DecisionInstanceGetQueryResult")
 @_attrs_define
 class DecisionInstanceGetQueryResult:
+    decision_definition_id: DecisionDefinitionId
+    decision_definition_key: DecisionDefinitionKey
+    decision_definition_name: str
+    decision_definition_type: DecisionDefinitionTypeEnum
+    decision_definition_version: int
+    decision_evaluation_instance_key: DecisionEvaluationInstanceKey
+    decision_evaluation_key: DecisionEvaluationKey
+    element_instance_key: None | ElementInstanceKey
+    evaluation_date: datetime.datetime
     evaluation_failure: None | str
-    tenant_id: TenantId
+    process_definition_key: None | ProcessDefinitionKey
+    process_instance_key: None | ProcessInstanceKey
+    result: str
+    root_decision_definition_key: DecisionDefinitionKey
     root_process_instance_key: None | ProcessInstanceKey
+    state: DecisionInstanceStateEnum
+    tenant_id: TenantId
     evaluated_inputs: list[EvaluatedDecisionInputItem]
     matched_rules: list[MatchedDecisionRuleItem]
-    decision_evaluation_instance_key: DecisionEvaluationInstanceKey | Unset = UNSET
-    state: DecisionInstanceStateEnum | Unset = UNSET
-    evaluation_date: datetime.datetime | Unset = UNSET
-    decision_definition_id: DecisionDefinitionId | Unset = UNSET
-    decision_definition_name: str | Unset = UNSET
-    decision_definition_version: int | Unset = UNSET
-    decision_definition_type: DecisionDefinitionTypeEnum | Unset = UNSET
-    result: str | Unset = UNSET
-    decision_evaluation_key: DecisionEvaluationKey | Unset = UNSET
-    process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    process_instance_key: ProcessInstanceKey | Unset = UNSET
-    decision_definition_key: DecisionDefinitionKey | Unset = UNSET
-    element_instance_key: ElementInstanceKey | Unset = UNSET
-    root_decision_definition_key: DecisionDefinitionKey | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

@@ -4,21 +4,21 @@ from camunda_orchestration_sdk.semantic_types import AuthorizationKey
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.authorization_result_resource_type import AuthorizationResultResourceType
 from ..models.owner_type_enum import OwnerTypeEnum
 from ..models.permission_type_enum import PermissionTypeEnum
-from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="AuthorizationResult")
 @_attrs_define
 class AuthorizationResult:
+    owner_id: str
+    owner_type: OwnerTypeEnum
+    resource_type: AuthorizationResultResourceType
+    resource_id: None | str
     resource_property_name: None | str
     permission_types: list[PermissionTypeEnum]
-    owner_id: str | Unset = UNSET
-    owner_type: OwnerTypeEnum | Unset = UNSET
-    resource_type: AuthorizationResultResourceType | Unset = UNSET
-    resource_id: None | str | Unset = UNSET
-    authorization_key: AuthorizationKey | Unset = UNSET
+    authorization_key: AuthorizationKey
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

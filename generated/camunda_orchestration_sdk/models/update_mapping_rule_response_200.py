@@ -4,9 +4,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="UpdateMappingRuleResponse200")
 
@@ -15,16 +15,16 @@ T = TypeVar("T", bound="UpdateMappingRuleResponse200")
 class UpdateMappingRuleResponse200:
     """
     Attributes:
-        claim_name (str | Unset): The name of the claim to map.
-        claim_value (str | Unset): The value of the claim to map.
-        name (str | Unset): The name of the mapping rule.
-        mapping_rule_id (str | Unset): The unique ID of the mapping rule.
+        claim_name (str): The name of the claim to map.
+        claim_value (str): The value of the claim to map.
+        name (str): The name of the mapping rule.
+        mapping_rule_id (str): The unique ID of the mapping rule.
     """
 
-    claim_name: str | Unset = UNSET
-    claim_value: str | Unset = UNSET
-    name: str | Unset = UNSET
-    mapping_rule_id: str | Unset = UNSET
+    claim_name: str
+    claim_value: str
+    name: str
+    mapping_rule_id: str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -40,28 +40,27 @@ class UpdateMappingRuleResponse200:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if claim_name is not UNSET:
-            field_dict["claimName"] = claim_name
-        if claim_value is not UNSET:
-            field_dict["claimValue"] = claim_value
-        if name is not UNSET:
-            field_dict["name"] = name
-        if mapping_rule_id is not UNSET:
-            field_dict["mappingRuleId"] = mapping_rule_id
+        field_dict.update(
+            {
+                "claimName": claim_name,
+                "claimValue": claim_value,
+                "name": name,
+                "mappingRuleId": mapping_rule_id,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        claim_name = d.pop("claimName", UNSET)
+        claim_name = d.pop("claimName")
 
-        claim_value = d.pop("claimValue", UNSET)
+        claim_value = d.pop("claimValue")
 
-        name = d.pop("name", UNSET)
+        name = d.pop("name")
 
-        mapping_rule_id = d.pop("mappingRuleId", UNSET)
+        mapping_rule_id = d.pop("mappingRuleId")
 
         update_mapping_rule_response_200 = cls(
             claim_name=claim_name,

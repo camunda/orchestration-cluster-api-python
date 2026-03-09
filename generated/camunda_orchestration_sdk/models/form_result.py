@@ -9,16 +9,12 @@ from camunda_orchestration_sdk.semantic_types import (
 )
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-
-from ..types import UNSET, Unset, str_any_dict_factory
-
-if TYPE_CHECKING:
-    from ..models.form_result_schema import FormResultSchema
-
 
 T = TypeVar("T", bound="FormResult")
 
@@ -27,19 +23,18 @@ T = TypeVar("T", bound="FormResult")
 class FormResult:
     """
     Attributes:
-        tenant_id (str | Unset): The tenant ID of the form. Example: customer-service.
-        form_id (str | Unset): The user-provided identifier of the form. Example: Form_1nx5hav.
-        schema (FormResultSchema | Unset): The form content.
-        version (int | Unset): The version of the the deployed form.
-        form_key (str | Unset): The assigned key, which acts as a unique identifier for this form. Example:
-            2251799813684365.
+        tenant_id (str): The tenant ID of the form. Example: customer-service.
+        form_id (str): The user-provided identifier of the form. Example: Form_1nx5hav.
+        schema (str): The form schema as a JSON document serialized as a string.
+        version (int): The version of the the deployed form.
+        form_key (str): The assigned key, which acts as a unique identifier for this form. Example: 2251799813684365.
     """
 
-    tenant_id: TenantId | Unset = UNSET
-    form_id: FormId | Unset = UNSET
-    schema: FormResultSchema | Unset = UNSET
-    version: int | Unset = UNSET
-    form_key: FormKey | Unset = UNSET
+    tenant_id: TenantId
+    form_id: FormId
+    schema: str
+    version: int
+    form_key: FormKey
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -49,9 +44,7 @@ class FormResult:
 
         form_id = self.form_id
 
-        schema: dict[str, Any] | Unset = UNSET
-        if not isinstance(self.schema, Unset):
-            schema = self.schema.to_dict()
+        schema = self.schema
 
         version = self.version
 
@@ -59,51 +52,30 @@ class FormResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
-        if form_id is not UNSET:
-            field_dict["formId"] = form_id
-        if schema is not UNSET:
-            field_dict["schema"] = schema
-        if version is not UNSET:
-            field_dict["version"] = version
-        if form_key is not UNSET:
-            field_dict["formKey"] = form_key
+        field_dict.update(
+            {
+                "tenantId": tenant_id,
+                "formId": form_id,
+                "schema": schema,
+                "version": version,
+                "formKey": form_key,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.form_result_schema import FormResultSchema
-
         d = dict(src_dict)
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
 
-        form_id = (
-            lift_form_id(_val)
-            if (_val := d.pop("formId", UNSET)) is not UNSET
-            else UNSET
-        )
+        form_id = lift_form_id(d.pop("formId"))
 
-        _schema = d.pop("schema", UNSET)
-        schema: FormResultSchema | Unset
-        if isinstance(_schema, Unset):
-            schema = UNSET
-        else:
-            schema = FormResultSchema.from_dict(_schema)
+        schema = d.pop("schema")
 
-        version = d.pop("version", UNSET)
+        version = d.pop("version")
 
-        form_key = (
-            lift_form_key(_val)
-            if (_val := d.pop("formKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        form_key = lift_form_key(d.pop("formKey"))
 
         form_result = cls(
             tenant_id=tenant_id,

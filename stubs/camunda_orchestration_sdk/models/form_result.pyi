@@ -4,17 +4,16 @@ from camunda_orchestration_sdk.semantic_types import FormId, FormKey, TenantId
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..types import UNSET, Unset, str_any_dict_factory
-from ..models.form_result_schema import FormResultSchema
 T = TypeVar("T", bound="FormResult")
 @_attrs_define
 class FormResult:
-    tenant_id: TenantId | Unset = UNSET
-    form_id: FormId | Unset = UNSET
-    schema: FormResultSchema | Unset = UNSET
-    version: int | Unset = UNSET
-    form_key: FormKey | Unset = UNSET
+    tenant_id: TenantId
+    form_id: FormId
+    schema: str
+    version: int
+    form_key: FormKey
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

@@ -2,12 +2,12 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import Username, lift_username
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="GetUserResponse200")
 
@@ -16,14 +16,14 @@ T = TypeVar("T", bound="GetUserResponse200")
 class GetUserResponse200:
     """
     Attributes:
-        username (str | Unset): The unique name of a user. Example: swillis.
-        name (str | Unset): The name of the user.
-        email (str | Unset): The email of the user.
+        username (str): The unique name of a user. Example: swillis.
+        name (None | str): The name of the user.
+        email (None | str): The email of the user.
     """
 
-    username: Username | Unset = UNSET
-    name: str | Unset = UNSET
-    email: str | Unset = UNSET
+    username: Username
+    name: None | str
+    email: None | str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -31,34 +31,42 @@ class GetUserResponse200:
     def to_dict(self) -> dict[str, Any]:
         username = self.username
 
+        name: None | str
         name = self.name
 
+        email: None | str
         email = self.email
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if username is not UNSET:
-            field_dict["username"] = username
-        if name is not UNSET:
-            field_dict["name"] = name
-        if email is not UNSET:
-            field_dict["email"] = email
+        field_dict.update(
+            {
+                "username": username,
+                "name": name,
+                "email": email,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        username = (
-            lift_username(_val)
-            if (_val := d.pop("username", UNSET)) is not UNSET
-            else UNSET
-        )
+        username = lift_username(d.pop("username"))
 
-        name = d.pop("name", UNSET)
+        def _parse_name(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
 
-        email = d.pop("email", UNSET)
+        name = _parse_name(d.pop("name"))
+
+        def _parse_email(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        email = _parse_email(d.pop("email"))
 
         get_user_response_200 = cls(
             username=username,

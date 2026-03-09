@@ -2,7 +2,7 @@
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
-SPEC_REF ?= main
+SPEC_REF ?= stable/8.9 # main
 
 BUNDLED_SPEC = external-spec/bundled/rest-api.bundle.json
 

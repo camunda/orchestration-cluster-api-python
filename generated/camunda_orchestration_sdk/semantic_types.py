@@ -30,7 +30,7 @@ def lift_audit_log_key(value: Any) -> AuditLogKey:
         raise TypeError(
             f"AuditLogKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"AuditLogKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -56,7 +56,7 @@ def lift_authorization_key(value: Any) -> AuthorizationKey:
         raise TypeError(
             f"AuthorizationKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"AuthorizationKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -124,7 +124,7 @@ def lift_conditional_evaluation_key(value: Any) -> ConditionalEvaluationKey:
         raise TypeError(
             f"ConditionalEvaluationKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"ConditionalEvaluationKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -156,7 +156,7 @@ def lift_decision_definition_id(value: Any) -> DecisionDefinitionId:
         raise TypeError(
             f"DecisionDefinitionId must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^[A-Za-z0-9_@.+-]+$", value) is None:
+    if re.fullmatch("^[A-Za-z0-9_@.+-]+$", value) is None:
         raise ValueError(
             f"DecisionDefinitionId does not match pattern '^[A-Za-z0-9_@.+-]+$', got {value!r}"
         )
@@ -188,7 +188,7 @@ def lift_decision_definition_key(value: Any) -> DecisionDefinitionKey:
         raise TypeError(
             f"DecisionDefinitionKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"DecisionDefinitionKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -220,7 +220,7 @@ def lift_decision_evaluation_instance_key(value: Any) -> DecisionEvaluationInsta
         raise TypeError(
             f"DecisionEvaluationInstanceKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"DecisionEvaluationInstanceKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -252,7 +252,7 @@ def lift_decision_evaluation_key(value: Any) -> DecisionEvaluationKey:
         raise TypeError(
             f"DecisionEvaluationKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"DecisionEvaluationKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -284,7 +284,7 @@ def lift_decision_instance_key(value: Any) -> DecisionInstanceKey:
         raise TypeError(
             f"DecisionInstanceKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"DecisionInstanceKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -312,7 +312,7 @@ def lift_decision_requirements_key(value: Any) -> DecisionRequirementsKey:
         raise TypeError(
             f"DecisionRequirementsKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"DecisionRequirementsKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -344,7 +344,7 @@ def lift_deployment_key(value: Any) -> DeploymentKey:
         raise TypeError(
             f"DeploymentKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"DeploymentKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -404,7 +404,7 @@ def lift_element_instance_key(value: Any) -> ElementInstanceKey:
         raise TypeError(
             f"ElementInstanceKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"ElementInstanceKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -432,7 +432,7 @@ def lift_end_cursor(value: Any) -> EndCursor:
         raise TypeError(f"EndCursor must be str, got {type(value).__name__}: {value!r}")
     if (
         re.fullmatch(
-            r"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}(?:==)?|[A-Za-z0-9+/]{3}=)?$",
+            "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}(?:==)?|[A-Za-z0-9+/]{3}=)?$",
             value,
         )
         is None
@@ -472,7 +472,7 @@ FormKey = NewType("FormKey", str)
 def lift_form_key(value: Any) -> FormKey:
     if not isinstance(value, str):
         raise TypeError(f"FormKey must be str, got {type(value).__name__}: {value!r}")
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(f"FormKey does not match pattern '^-?[0-9]+$', got {value!r}")
     if len(value) < 1:
         raise ValueError(f"FormKey shorter than minLength 1, got {value!r}")
@@ -516,7 +516,7 @@ def lift_incident_key(value: Any) -> IncidentKey:
         raise TypeError(
             f"IncidentKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"IncidentKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -540,7 +540,7 @@ JobKey = NewType("JobKey", str)
 def lift_job_key(value: Any) -> JobKey:
     if not isinstance(value, str):
         raise TypeError(f"JobKey must be str, got {type(value).__name__}: {value!r}")
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(f"JobKey does not match pattern '^-?[0-9]+$', got {value!r}")
     if len(value) < 1:
         raise ValueError(f"JobKey shorter than minLength 1, got {value!r}")
@@ -564,7 +564,7 @@ def lift_message_key(value: Any) -> MessageKey:
         raise TypeError(
             f"MessageKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"MessageKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -590,7 +590,7 @@ def lift_message_subscription_key(value: Any) -> MessageSubscriptionKey:
         raise TypeError(
             f"MessageSubscriptionKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"MessageSubscriptionKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -622,7 +622,7 @@ def lift_process_definition_id(value: Any) -> ProcessDefinitionId:
         raise TypeError(
             f"ProcessDefinitionId must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^[a-zA-Z_][a-zA-Z0-9_\\-\\.]*$", value) is None:
+    if re.fullmatch("^[a-zA-Z_][a-zA-Z0-9_\\-\\.]*$", value) is None:
         raise ValueError(
             f"ProcessDefinitionId does not match pattern '^[a-zA-Z_][a-zA-Z0-9_\\-\\.]*$', got {value!r}"
         )
@@ -648,7 +648,7 @@ def lift_process_definition_key(value: Any) -> ProcessDefinitionKey:
         raise TypeError(
             f"ProcessDefinitionKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"ProcessDefinitionKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -680,7 +680,7 @@ def lift_process_instance_key(value: Any) -> ProcessInstanceKey:
         raise TypeError(
             f"ProcessInstanceKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"ProcessInstanceKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -706,7 +706,7 @@ ScopeKey = NewType("ScopeKey", str)
 def lift_scope_key(value: Any) -> ScopeKey:
     if not isinstance(value, str):
         raise TypeError(f"ScopeKey must be str, got {type(value).__name__}: {value!r}")
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(f"ScopeKey does not match pattern '^-?[0-9]+$', got {value!r}")
     if len(value) < 1:
         raise ValueError(f"ScopeKey shorter than minLength 1, got {value!r}")
@@ -728,7 +728,7 @@ SignalKey = NewType("SignalKey", str)
 def lift_signal_key(value: Any) -> SignalKey:
     if not isinstance(value, str):
         raise TypeError(f"SignalKey must be str, got {type(value).__name__}: {value!r}")
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"SignalKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -756,7 +756,7 @@ def lift_start_cursor(value: Any) -> StartCursor:
         )
     if (
         re.fullmatch(
-            r"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}(?:==)?|[A-Za-z0-9+/]{3}=)?$",
+            "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}(?:==)?|[A-Za-z0-9+/]{3}=)?$",
             value,
         )
         is None
@@ -780,7 +780,7 @@ Tag = NewType("Tag", str)
 def lift_tag(value: Any) -> Tag:
     if not isinstance(value, str):
         raise TypeError(f"Tag must be str, got {type(value).__name__}: {value!r}")
-    if re.fullmatch(r"^[A-Za-z][A-Za-z0-9_\\-:.]{0,99}$", value) is None:
+    if re.fullmatch("^[A-Za-z][A-Za-z0-9_\\-:.]{0,99}$", value) is None:
         raise ValueError(
             f"Tag does not match pattern '^[A-Za-z][A-Za-z0-9_\\-:.]{0, 99}$', got {value!r}"
         )
@@ -804,7 +804,7 @@ TenantId = NewType("TenantId", str)
 def lift_tenant_id(value: Any) -> TenantId:
     if not isinstance(value, str):
         raise TypeError(f"TenantId must be str, got {type(value).__name__}: {value!r}")
-    if re.fullmatch(r"^(<default>|[A-Za-z0-9_@.+-]+)$", value) is None:
+    if re.fullmatch("^(<default>|[A-Za-z0-9_@.+-]+)$", value) is None:
         raise ValueError(
             f"TenantId does not match pattern '^(<default>|[A-Za-z0-9_@.+-]+)$', got {value!r}"
         )
@@ -830,7 +830,7 @@ def lift_user_task_key(value: Any) -> UserTaskKey:
         raise TypeError(
             f"UserTaskKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"UserTaskKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )
@@ -854,7 +854,7 @@ Username = NewType("Username", str)
 def lift_username(value: Any) -> Username:
     if not isinstance(value, str):
         raise TypeError(f"Username must be str, got {type(value).__name__}: {value!r}")
-    if re.fullmatch(r"^(<default>|[A-Za-z0-9_@.+-]+)$", value) is None:
+    if re.fullmatch("^(<default>|[A-Za-z0-9_@.+-]+)$", value) is None:
         raise ValueError(
             f"Username does not match pattern '^(<default>|[A-Za-z0-9_@.+-]+)$', got {value!r}"
         )
@@ -880,7 +880,7 @@ def lift_variable_key(value: Any) -> VariableKey:
         raise TypeError(
             f"VariableKey must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch(r"^-?[0-9]+$", value) is None:
+    if re.fullmatch("^-?[0-9]+$", value) is None:
         raise ValueError(
             f"VariableKey does not match pattern '^-?[0-9]+$', got {value!r}"
         )

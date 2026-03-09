@@ -4,9 +4,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="UsageMetricsResponseItem")
 
@@ -15,14 +15,14 @@ T = TypeVar("T", bound="UsageMetricsResponseItem")
 class UsageMetricsResponseItem:
     """
     Attributes:
-        process_instances (int | Unset): The amount of created root process instances.
-        decision_instances (int | Unset): The amount of executed decision instances.
-        assignees (int | Unset): The amount of unique active task users.
+        process_instances (int): The amount of created root process instances.
+        decision_instances (int): The amount of executed decision instances.
+        assignees (int): The amount of unique active task users.
     """
 
-    process_instances: int | Unset = UNSET
-    decision_instances: int | Unset = UNSET
-    assignees: int | Unset = UNSET
+    process_instances: int
+    decision_instances: int
+    assignees: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -36,24 +36,24 @@ class UsageMetricsResponseItem:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if process_instances is not UNSET:
-            field_dict["processInstances"] = process_instances
-        if decision_instances is not UNSET:
-            field_dict["decisionInstances"] = decision_instances
-        if assignees is not UNSET:
-            field_dict["assignees"] = assignees
+        field_dict.update(
+            {
+                "processInstances": process_instances,
+                "decisionInstances": decision_instances,
+                "assignees": assignees,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_instances = d.pop("processInstances", UNSET)
+        process_instances = d.pop("processInstances")
 
-        decision_instances = d.pop("decisionInstances", UNSET)
+        decision_instances = d.pop("decisionInstances")
 
-        assignees = d.pop("assignees", UNSET)
+        assignees = d.pop("assignees")
 
         usage_metrics_response_item = cls(
             process_instances=process_instances,

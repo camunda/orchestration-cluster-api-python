@@ -3,6 +3,11 @@ import os
 from pathlib import Path
 import re
 
+# Methods that must bypass backpressure gating (drain work / complete execution).
+_BP_EXEMPT_METHODS: frozenset[str] = frozenset(
+    {"complete_job", "fail_job", "throw_job_error", "complete_user_task"}
+)
+
 
 def to_camel_case(snake_str: str) -> str:
     components = snake_str.split("_")
@@ -233,7 +238,8 @@ def generate_flat_client(package_path: Path) -> None:
                 docstring = ast.get_docstring(sync_func)
                 docstring_str = f'        """{docstring}"""\n' if docstring else ""
 
-                sync_methods.append(f"""
+                if method_name in _BP_EXEMPT_METHODS:
+                    sync_methods.append(f"""
     def {method_name}({sig_str}){return_ann}:
 {docstring_str}        from {import_path} import sync as {method_name}_sync
         _kwargs = locals()
@@ -242,6 +248,27 @@ def generate_flat_client(package_path: Path) -> None:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return {method_name}_sync(**_kwargs)
+""")
+                else:
+                    sync_methods.append(f"""
+    def {method_name}({sig_str}){return_ann}:
+{docstring_str}        from {import_path} import sync as {method_name}_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = {method_name}_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
 """)
 
             if async_func:
@@ -306,7 +333,8 @@ def generate_flat_client(package_path: Path) -> None:
                 docstring = ast.get_docstring(async_func)
                 docstring_str = f'        """{docstring}"""\n' if docstring else ""
 
-                async_methods.append(f"""
+                if method_name in _BP_EXEMPT_METHODS:
+                    async_methods.append(f"""
     async def {method_name}({sig_str}){return_ann}:
 {docstring_str}        from {import_path} import asyncio as {method_name}_asyncio
         _kwargs = locals()
@@ -315,6 +343,27 @@ def generate_flat_client(package_path: Path) -> None:
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
         return await {method_name}_asyncio(**_kwargs)
+""")
+                else:
+                    async_methods.append(f"""
+    async def {method_name}({sig_str}){return_ann}:
+{docstring_str}        from {import_path} import asyncio as {method_name}_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await {method_name}_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
 """)
 
     # Add semantic type import for TYPE_CHECKING block
@@ -368,6 +417,7 @@ def generate_flat_client(package_path: Path) -> None:
     imports_content += "\nfrom .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
     imports_content += "\nfrom .runtime.auth import AuthProvider, BasicAuthProvider, NullAuthProvider, OAuthClientCredentialsAuthProvider, AsyncOAuthClientCredentialsAuthProvider, inject_auth_event_hooks"
     imports_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger, SdkLogger, create_logger"
+    imports_content += "\nfrom .runtime.backpressure import BackpressureManager, AsyncBackpressureManager, is_backpressure_error"
     imports_content += "\nfrom pathlib import Path"
     imports_content += "\nfrom .models.deployment_result import DeploymentResult"
     imports_content += "\nfrom .models.deployment_metadata_result_process_definition import DeploymentMetadataResultProcessDefinition"
@@ -502,6 +552,10 @@ class CamundaClient:
         )
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
+        self._bp = BackpressureManager(
+            profile=self.configuration.CAMUNDA_SDK_BACKPRESSURE_PROFILE,
+            logger=self._sdk_logger,
+        )
 
     def __enter__(self):
         self.client.__enter__()
@@ -639,6 +693,10 @@ class CamundaAsyncClient:
 
         self.client = Client(base_url=self.configuration.CAMUNDA_REST_ADDRESS, **kwargs)
         self._workers = []
+        self._bp = AsyncBackpressureManager(
+            profile=self.configuration.CAMUNDA_SDK_BACKPRESSURE_PROFILE,
+            logger=self._sdk_logger,
+        )
 
     async def __aenter__(self) -> "CamundaAsyncClient":
         await self.client.__aenter__()

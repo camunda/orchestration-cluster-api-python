@@ -22,3 +22,7 @@ website/docs/api/
 
 # Temporary sparse-clone directories left by camunda-schema-bundler
 .tmp-clone-*
+
+# Backpressure matrix test results
+demo/v2/backpressure/results*/
+demo/v2/backpressure/matrix-run.log

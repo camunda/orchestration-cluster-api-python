@@ -5,26 +5,26 @@ import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.incident_result_error_type import IncidentResultErrorType
 from ..models.incident_result_state import IncidentResultState
-from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="IncidentResult")
 @_attrs_define
 class IncidentResult:
+    process_definition_id: ProcessDefinitionId
+    error_type: IncidentResultErrorType
+    error_message: str
+    element_id: ElementId
+    creation_time: datetime.datetime
+    state: IncidentResultState
     tenant_id: TenantId
+    incident_key: IncidentKey
+    process_definition_key: ProcessDefinitionKey
+    process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
+    element_instance_key: ElementInstanceKey
     job_key: None | JobKey
-    process_definition_id: ProcessDefinitionId | Unset = UNSET
-    error_type: IncidentResultErrorType | Unset = UNSET
-    error_message: str | Unset = UNSET
-    element_id: ElementId | Unset = UNSET
-    creation_time: datetime.datetime | Unset = UNSET
-    state: IncidentResultState | Unset = UNSET
-    incident_key: IncidentKey | Unset = UNSET
-    process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    process_instance_key: ProcessInstanceKey | Unset = UNSET
-    element_instance_key: ElementInstanceKey | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

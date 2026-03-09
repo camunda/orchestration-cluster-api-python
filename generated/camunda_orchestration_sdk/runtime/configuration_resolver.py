@@ -17,6 +17,7 @@ CamundaSdkLogLevel = Literal[
     "trace",
     "silly",
 ]
+CamundaBackpressureProfile = Literal["BALANCED", "LEGACY"]
 
 
 class CamundaSdkConfigPartial(TypedDict, total=False):
@@ -44,6 +45,9 @@ class CamundaSdkConfigPartial(TypedDict, total=False):
     CAMUNDA_TOKEN_CACHE_DIR: str
     CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool
 
+    # Backpressure profile
+    CAMUNDA_SDK_BACKPRESSURE_PROFILE: str
+
     # Optional .env file loading
     CAMUNDA_LOAD_ENVFILE: str
 
@@ -64,6 +68,8 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     # Optional OAuth disk cache / tarpit persistence
     "CAMUNDA_TOKEN_CACHE_DIR",
     "CAMUNDA_TOKEN_DISK_CACHE_DISABLE",
+    # Backpressure
+    "CAMUNDA_SDK_BACKPRESSURE_PROFILE",
 )
 
 
@@ -200,6 +206,12 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool = Field(
         default=False,
         description="Disable OAuth token disk caching.",
+    )
+
+    # Backpressure
+    CAMUNDA_SDK_BACKPRESSURE_PROFILE: CamundaBackpressureProfile = Field(
+        default="BALANCED",
+        description="Backpressure profile: BALANCED (adaptive gating, default) or LEGACY (observe-only, no gating).",
     )
 
     @staticmethod

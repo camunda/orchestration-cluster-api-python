@@ -5,9 +5,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="RoleUserResult")
 
@@ -16,10 +16,10 @@ T = TypeVar("T", bound="RoleUserResult")
 class RoleUserResult:
     """
     Attributes:
-        username (str | Unset): The unique name of a user. Example: swillis.
+        username (str): The unique name of a user. Example: swillis.
     """
 
-    username: Username | Unset = UNSET
+    username: Username
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -29,20 +29,18 @@ class RoleUserResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if username is not UNSET:
-            field_dict["username"] = username
+        field_dict.update(
+            {
+                "username": username,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        username = (
-            lift_username(_val)
-            if (_val := d.pop("username", UNSET)) is not UNSET
-            else UNSET
-        )
+        username = lift_username(d.pop("username"))
 
         role_user_result = cls(
             username=username,

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="GroupResult")
 
@@ -16,14 +16,14 @@ class GroupResult:
     """Group search response item.
 
     Attributes:
-        name (str | Unset): The group name.
-        group_id (str | Unset): The group ID.
-        description (str | Unset): The group description.
+        name (str): The group name.
+        group_id (str): The group ID.
+        description (None | str): The group description.
     """
 
-    name: str | Unset = UNSET
-    group_id: str | Unset = UNSET
-    description: str | Unset = UNSET
+    name: str
+    group_id: str
+    description: None | str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -33,28 +33,34 @@ class GroupResult:
 
         group_id = self.group_id
 
+        description: None | str
         description = self.description
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if name is not UNSET:
-            field_dict["name"] = name
-        if group_id is not UNSET:
-            field_dict["groupId"] = group_id
-        if description is not UNSET:
-            field_dict["description"] = description
+        field_dict.update(
+            {
+                "name": name,
+                "groupId": group_id,
+                "description": description,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        name = d.pop("name", UNSET)
+        name = d.pop("name")
 
-        group_id = d.pop("groupId", UNSET)
+        group_id = d.pop("groupId")
 
-        description = d.pop("description", UNSET)
+        def _parse_description(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        description = _parse_description(d.pop("description"))
 
         group_result = cls(
             name=name,

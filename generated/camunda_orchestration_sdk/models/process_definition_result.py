@@ -12,9 +12,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="ProcessDefinitionResult")
 
@@ -23,45 +23,39 @@ T = TypeVar("T", bound="ProcessDefinitionResult")
 class ProcessDefinitionResult:
     """
     Attributes:
-        name (None | str | Unset): Name of this process definition.
-        resource_name (str | Unset): Resource name for this process definition.
-        version (int | Unset): Version of this process definition.
-        version_tag (None | str | Unset): Version tag of this process definition.
-        process_definition_id (str | Unset): Process definition ID of this process definition. Example: new-account-
-            onboarding-workflow.
-        tenant_id (str | Unset): Tenant ID of this process definition. Example: customer-service.
-        process_definition_key (str | Unset): The key for this process definition. Example: 2251799813686749.
-        has_start_form (bool | Unset): Indicates whether the start event of the process has an associated Form Key.
+        name (None | str): Name of this process definition.
+        resource_name (str): Resource name for this process definition.
+        version (int): Version of this process definition.
+        version_tag (None | str): Version tag of this process definition.
+        process_definition_id (str): Process definition ID of this process definition. Example: new-account-onboarding-
+            workflow.
+        tenant_id (str): Tenant ID of this process definition. Example: customer-service.
+        process_definition_key (str): The key for this process definition. Example: 2251799813686749.
+        has_start_form (bool): Indicates whether the start event of the process has an associated Form Key.
     """
 
-    name: None | str | Unset = UNSET
-    resource_name: str | Unset = UNSET
-    version: int | Unset = UNSET
-    version_tag: None | str | Unset = UNSET
-    process_definition_id: ProcessDefinitionId | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    has_start_form: bool | Unset = UNSET
+    name: None | str
+    resource_name: str
+    version: int
+    version_tag: None | str
+    process_definition_id: ProcessDefinitionId
+    tenant_id: TenantId
+    process_definition_key: ProcessDefinitionKey
+    has_start_form: bool
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        name: None | str | Unset
-        if isinstance(self.name, Unset):
-            name = UNSET
-        else:
-            name = self.name
+        name: None | str
+        name = self.name
 
         resource_name = self.resource_name
 
         version = self.version
 
-        version_tag: None | str | Unset
-        if isinstance(self.version_tag, Unset):
-            version_tag = UNSET
-        else:
-            version_tag = self.version_tag
+        version_tag: None | str
+        version_tag = self.version_tag
 
         process_definition_id = self.process_definition_id
 
@@ -73,23 +67,18 @@ class ProcessDefinitionResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if name is not UNSET:
-            field_dict["name"] = name
-        if resource_name is not UNSET:
-            field_dict["resourceName"] = resource_name
-        if version is not UNSET:
-            field_dict["version"] = version
-        if version_tag is not UNSET:
-            field_dict["versionTag"] = version_tag
-        if process_definition_id is not UNSET:
-            field_dict["processDefinitionId"] = process_definition_id
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
-        if process_definition_key is not UNSET:
-            field_dict["processDefinitionKey"] = process_definition_key
-        if has_start_form is not UNSET:
-            field_dict["hasStartForm"] = has_start_form
+        field_dict.update(
+            {
+                "name": name,
+                "resourceName": resource_name,
+                "version": version,
+                "versionTag": version_tag,
+                "processDefinitionId": process_definition_id,
+                "tenantId": tenant_id,
+                "processDefinitionKey": process_definition_key,
+                "hasStartForm": has_start_form,
+            }
+        )
 
         return field_dict
 
@@ -97,47 +86,33 @@ class ProcessDefinitionResult:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
 
-        def _parse_name(data: object) -> None | str | Unset:
+        def _parse_name(data: object) -> None | str:
             if data is None:
                 return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
+            return cast(None | str, data)
 
-        name = _parse_name(d.pop("name", UNSET))
+        name = _parse_name(d.pop("name"))
 
-        resource_name = d.pop("resourceName", UNSET)
+        resource_name = d.pop("resourceName")
 
-        version = d.pop("version", UNSET)
+        version = d.pop("version")
 
-        def _parse_version_tag(data: object) -> None | str | Unset:
+        def _parse_version_tag(data: object) -> None | str:
             if data is None:
                 return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
+            return cast(None | str, data)
 
-        version_tag = _parse_version_tag(d.pop("versionTag", UNSET))
+        version_tag = _parse_version_tag(d.pop("versionTag"))
 
-        process_definition_id = (
-            lift_process_definition_id(_val)
-            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
-            else UNSET
+        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
+
+        process_definition_key = lift_process_definition_key(
+            d.pop("processDefinitionKey")
         )
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        process_definition_key = (
-            lift_process_definition_key(_val)
-            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        has_start_form = d.pop("hasStartForm", UNSET)
+        has_start_form = d.pop("hasStartForm")
 
         process_definition_result = cls(
             name=name,

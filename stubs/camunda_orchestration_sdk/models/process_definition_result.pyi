@@ -4,19 +4,19 @@ from camunda_orchestration_sdk.semantic_types import ProcessDefinitionId, Proces
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="ProcessDefinitionResult")
 @_attrs_define
 class ProcessDefinitionResult:
-    name: None | str | Unset = UNSET
-    resource_name: str | Unset = UNSET
-    version: int | Unset = UNSET
-    version_tag: None | str | Unset = UNSET
-    process_definition_id: ProcessDefinitionId | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    has_start_form: bool | Unset = UNSET
+    name: None | str
+    resource_name: str
+    version: int
+    version_tag: None | str
+    process_definition_id: ProcessDefinitionId
+    tenant_id: TenantId
+    process_definition_key: ProcessDefinitionKey
+    has_start_form: bool
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

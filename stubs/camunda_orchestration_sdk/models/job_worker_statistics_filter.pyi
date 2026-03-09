@@ -1,13 +1,17 @@
 from __future__ import annotations
 
+import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-T = TypeVar("T", bound="FormResultSchema")
+T = TypeVar("T", bound="JobWorkerStatisticsFilter")
 @_attrs_define
-class FormResultSchema:
+class JobWorkerStatisticsFilter:
+    from_: datetime.datetime
+    to: datetime.datetime
+    job_type: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod
