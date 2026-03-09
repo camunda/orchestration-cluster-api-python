@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.13 (2026-03-09)
+
+### Bug Fixes
+
+- Don't send tenant_filter on job activation if not provided by user
+  ([`96d1039`](https://github.com/camunda/orchestration-cluster-api-python/commit/96d103935b5129c6e4868b4d08cf66b8832e0504))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`f90ad47`](https://github.com/camunda/orchestration-cluster-api-python/commit/f90ad47b1e8efd959464a9608f09f92b74793d80))
+
+
 ## v8.9.0-dev.12 (2026-03-09)
 
 ### Chores
