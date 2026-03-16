@@ -451,6 +451,52 @@ The following are keyword-only arguments on `create_job_worker`, not part of `Wo
 | `execution_strategy` | `"auto"` | `"auto"`, `"async"`, `"thread"`, or `"process"`. Controls how the handler is invoked and which context type it receives. |
 | `startup_jitter_max_seconds` | `0` | Maximum random delay (in seconds) before the worker starts polling. When multiple application instances restart simultaneously, this spreads out initial activation requests to avoid saturating the server. A value of `0` (the default) means no delay. |
 
+### Failing a Job
+
+To explicitly fail a job with a custom error message, retry count, and backoff, raise `JobFailure` in your handler:
+
+```python
+from camunda_orchestration_sdk.runtime.job_worker import ConnectedJobContext, JobFailure
+
+async def handle_job(job: ConnectedJobContext) -> dict:
+    if not job.variables.to_dict().get("required_field"):
+        raise JobFailure(
+            message="Missing required field",
+            retries=2,
+            retry_back_off=5000,  # milliseconds
+        )
+    return {"result": "ok"}
+```
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `message` | *(required)* | Error message attached to the failure |
+| `retries` | `None` | Remaining retries. `None` decrements the current retry count by 1 |
+| `retry_back_off` | `0` | Backoff before the next retry, in milliseconds |
+
+If an unhandled exception escapes your handler, the job is automatically failed with the exception message and the retry count decremented by 1.
+
+### Throwing a BPMN Error
+
+To throw a [BPMN error](https://docs.camunda.io/docs/components/modeler/bpmn/error-events/) from a job handler — for example, to trigger an error boundary event — raise `JobError`:
+
+```python
+from camunda_orchestration_sdk.runtime.job_worker import ConnectedJobContext, JobError
+
+async def handle_payment(job: ConnectedJobContext) -> dict:
+    variables = job.variables.to_dict()
+    if variables.get("amount", 0) > 10_000:
+        raise JobError(error_code="AMOUNT_TOO_HIGH", message="Payment exceeds limit")
+    return {"status": "approved"}
+```
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `error_code` | *(required)* | The error code that is matched against BPMN error catch events |
+| `message` | `""` | An optional error message for logging/diagnostics |
+
+The `error_code` must match the error code defined on a BPMN error catch event in your process model. If no catch event matches, the job becomes an incident.
+
 ## Error Handling
 
 The SDK raises typed exceptions for API errors. Each operation has specific exception classes for each HTTP error status code:
