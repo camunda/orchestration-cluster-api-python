@@ -353,8 +353,6 @@ from camunda_orchestration_sdk.runtime.job_worker import ConnectedJobContext
 async def handle_job(job_context: ConnectedJobContext) -> dict:
     variables = job_context.variables.to_dict()
     job_context.log.info(f"Processing job {job_context.job_key}: {variables}")
-    # You can use job_context.client to make API calls:
-    # await job_context.client.send_message(...)
     return {"result": "processed"}
 
 async def main():
@@ -369,6 +367,32 @@ async def main():
         await client.run_workers()
 
 asyncio.run(main())
+```
+
+### Using the Client in a Job Handler
+
+Because `ConnectedJobContext` includes a `client` reference, your handler can make API calls during job execution — for example, publishing a message to trigger another part of the process:
+
+```python
+from camunda_orchestration_sdk.runtime.job_worker import ConnectedJobContext
+from camunda_orchestration_sdk.models.message_publication_request import MessagePublicationRequest
+
+async def handle_order(job: ConnectedJobContext) -> dict:
+    variables = job.variables.to_dict()
+    order_id = variables["orderId"]
+
+    # Publish a message using the client from the job context
+    await job.client.publish_message(
+        data=MessagePublicationRequest(
+            name="order-processed",
+            correlation_key=order_id,
+            time_to_live=60000,
+            variables={"orderId": order_id, "status": "completed"},
+        )
+    )
+
+    job.log.info(f"Published order-processed message for order {order_id}")
+    return {"status": "done"}
 ```
 
 ### Job Logger
