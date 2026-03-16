@@ -418,9 +418,11 @@ Job workers support multiple execution strategies to match your workload type. P
 | Strategy | How it runs your handler | Best for |
 |----------|--------------------------|----------|
 | `"auto"` (default) | Auto-detects: `"async"` for `async def` handlers, `"thread"` for sync handlers | Most use cases — sensible defaults without configuration |
-| `"async"` | Runs on a dedicated `asyncio` event loop | I/O-bound async work (HTTP calls, database queries) |
-| `"thread"` | Runs in a `ThreadPoolExecutor` | Blocking I/O (file system, synchronous HTTP libraries) |
-| `"process"` | Runs in a `ProcessPoolExecutor` | CPU-bound work that needs to escape the GIL (image processing, ML inference) |
+| `"async"` | Runs on a dedicated `asyncio` event loop | I/O-bound async work (HTTP calls, database queries). Best throughput for handlers that call remote systems over HTTP |
+| `"thread"` | Runs in a `ThreadPoolExecutor` | CPU-bound work, blocking I/O (file system, synchronous HTTP libraries) |
+| `"process"` | Runs in a `ProcessPoolExecutor` | Heavy CPU-bound work that needs to escape the GIL (image processing, ML inference) |
+
+> **Choosing between `"async"` and `"thread"`:** If your job handler makes HTTP calls to remote systems (APIs, databases, microservices), `"async"` delivers the best performance — it can multiplex many concurrent jobs on a single thread without blocking. Use `"thread"` when your handler performs CPU-bound computation or calls synchronous libraries that would block the event loop.
 
 **Auto-detection logic:** If your handler is an `async def`, the strategy defaults to `"async"`. If it's a regular `def`, the strategy defaults to `"thread"`. You can override this explicitly:
 
