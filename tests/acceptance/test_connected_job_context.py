@@ -214,6 +214,7 @@ def test_connected_context_create_copies_all_fields(mock_client: MagicMock):
         listener_event_type=JobListenerEventTypeEnum("UNSPECIFIED"),
         tags=[],
         root_process_instance_key=None,
+        user_task=None,
     )
 
     ctx = ConnectedJobContext.create(job, client=mock_client)
@@ -274,6 +275,7 @@ def test_connected_context_has_log(mock_client: MagicMock):
         listener_event_type=JobListenerEventTypeEnum("UNSPECIFIED"),
         tags=[],
         root_process_instance_key=None,
+        user_task=None,
     )
     logger = create_logger()
     ctx = ConnectedJobContext.create(job, client=mock_client, logger=logger)

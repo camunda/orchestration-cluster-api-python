@@ -29,7 +29,6 @@ class AuditLogResult:
     agent_element_id: None | str
     tenant_id: None | TenantId
     result: AuditLogResultEnum
-    annotation: None | str
     category: AuditLogCategoryEnum
     process_definition_id: None | ProcessDefinitionId
     process_definition_key: None | ProcessDefinitionKey

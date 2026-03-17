@@ -14,9 +14,9 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
     from ..models.evaluated_decision_input_item import EvaluatedDecisionInputItem
@@ -31,38 +31,47 @@ class EvaluatedDecisionResult:
     """A decision that was evaluated.
 
     Attributes:
+        decision_definition_id (str): The ID of the decision which was evaluated. Example: new-hire-onboarding-workflow.
+        decision_definition_name (str): The name of the decision which was evaluated.
+        decision_definition_version (int): The version of the decision which was evaluated.
         decision_definition_type (str): The type of the decision which was evaluated.
+        output (str): JSON document that will instantiate the result of the decision which was evaluated.
+        tenant_id (str): The tenant ID of the evaluated decision. Example: customer-service.
         matched_rules (list[MatchedDecisionRuleItem]): The decision rules that matched within this decision evaluation.
         evaluated_inputs (list[EvaluatedDecisionInputItem]): The decision inputs that were evaluated within this
             decision evaluation.
-        decision_definition_id (str | Unset): The ID of the decision which was evaluated. Example: new-hire-onboarding-
-            workflow.
-        decision_definition_name (str | Unset): The name of the decision which was evaluated.
-        decision_definition_version (int | Unset): The version of the decision which was evaluated.
-        output (str | Unset): JSON document that will instantiate the result of the decision which was evaluated.
-        tenant_id (str | Unset): The tenant ID of the evaluated decision. Example: customer-service.
-        decision_definition_key (str | Unset): The unique key identifying the decision which was evaluate. Example:
+        decision_definition_key (str): The unique key identifying the decision which was evaluate. Example:
             2251799813326547.
-        decision_evaluation_instance_key (str | Unset): The unique key identifying this decision evaluation instance.
-            Example: 2251799813684367.
+        decision_evaluation_instance_key (str): The unique key identifying this decision evaluation instance. Example:
+            2251799813684367.
     """
 
+    decision_definition_id: DecisionDefinitionId
+    decision_definition_name: str
+    decision_definition_version: int
     decision_definition_type: str
+    output: str
+    tenant_id: TenantId
     matched_rules: list[MatchedDecisionRuleItem]
     evaluated_inputs: list[EvaluatedDecisionInputItem]
-    decision_definition_id: DecisionDefinitionId | Unset = UNSET
-    decision_definition_name: str | Unset = UNSET
-    decision_definition_version: int | Unset = UNSET
-    output: str | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    decision_definition_key: DecisionDefinitionKey | Unset = UNSET
-    decision_evaluation_instance_key: DecisionEvaluationInstanceKey | Unset = UNSET
+    decision_definition_key: DecisionDefinitionKey
+    decision_evaluation_instance_key: DecisionEvaluationInstanceKey
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        decision_definition_id = self.decision_definition_id
+
+        decision_definition_name = self.decision_definition_name
+
+        decision_definition_version = self.decision_definition_version
+
         decision_definition_type = self.decision_definition_type
+
+        output = self.output
+
+        tenant_id = self.tenant_id
 
         matched_rules: list[dict[str, Any]] = []
         for matched_rules_item_data in self.matched_rules:
@@ -74,16 +83,6 @@ class EvaluatedDecisionResult:
             evaluated_inputs_item = evaluated_inputs_item_data.to_dict()
             evaluated_inputs.append(evaluated_inputs_item)
 
-        decision_definition_id = self.decision_definition_id
-
-        decision_definition_name = self.decision_definition_name
-
-        decision_definition_version = self.decision_definition_version
-
-        output = self.output
-
-        tenant_id = self.tenant_id
-
         decision_definition_key = self.decision_definition_key
 
         decision_evaluation_instance_key = self.decision_evaluation_instance_key
@@ -92,27 +91,18 @@ class EvaluatedDecisionResult:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "decisionDefinitionId": decision_definition_id,
+                "decisionDefinitionName": decision_definition_name,
+                "decisionDefinitionVersion": decision_definition_version,
                 "decisionDefinitionType": decision_definition_type,
+                "output": output,
+                "tenantId": tenant_id,
                 "matchedRules": matched_rules,
                 "evaluatedInputs": evaluated_inputs,
+                "decisionDefinitionKey": decision_definition_key,
+                "decisionEvaluationInstanceKey": decision_evaluation_instance_key,
             }
         )
-        if decision_definition_id is not UNSET:
-            field_dict["decisionDefinitionId"] = decision_definition_id
-        if decision_definition_name is not UNSET:
-            field_dict["decisionDefinitionName"] = decision_definition_name
-        if decision_definition_version is not UNSET:
-            field_dict["decisionDefinitionVersion"] = decision_definition_version
-        if output is not UNSET:
-            field_dict["output"] = output
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
-        if decision_definition_key is not UNSET:
-            field_dict["decisionDefinitionKey"] = decision_definition_key
-        if decision_evaluation_instance_key is not UNSET:
-            field_dict["decisionEvaluationInstanceKey"] = (
-                decision_evaluation_instance_key
-            )
 
         return field_dict
 
@@ -122,7 +112,19 @@ class EvaluatedDecisionResult:
         from ..models.matched_decision_rule_item import MatchedDecisionRuleItem
 
         d = dict(src_dict)
+        decision_definition_id = lift_decision_definition_id(
+            d.pop("decisionDefinitionId")
+        )
+
+        decision_definition_name = d.pop("decisionDefinitionName")
+
+        decision_definition_version = d.pop("decisionDefinitionVersion")
+
         decision_definition_type = d.pop("decisionDefinitionType")
+
+        output = d.pop("output")
+
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
 
         matched_rules: list[MatchedDecisionRuleItem] = []
         _matched_rules = d.pop("matchedRules")
@@ -142,45 +144,23 @@ class EvaluatedDecisionResult:
 
             evaluated_inputs.append(evaluated_inputs_item)
 
-        decision_definition_id = (
-            lift_decision_definition_id(_val)
-            if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET
-            else UNSET
+        decision_definition_key = lift_decision_definition_key(
+            d.pop("decisionDefinitionKey")
         )
 
-        decision_definition_name = d.pop("decisionDefinitionName", UNSET)
-
-        decision_definition_version = d.pop("decisionDefinitionVersion", UNSET)
-
-        output = d.pop("output", UNSET)
-
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        decision_definition_key = (
-            lift_decision_definition_key(_val)
-            if (_val := d.pop("decisionDefinitionKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        decision_evaluation_instance_key = (
-            lift_decision_evaluation_instance_key(_val)
-            if (_val := d.pop("decisionEvaluationInstanceKey", UNSET)) is not UNSET
-            else UNSET
+        decision_evaluation_instance_key = lift_decision_evaluation_instance_key(
+            d.pop("decisionEvaluationInstanceKey")
         )
 
         evaluated_decision_result = cls(
-            decision_definition_type=decision_definition_type,
-            matched_rules=matched_rules,
-            evaluated_inputs=evaluated_inputs,
             decision_definition_id=decision_definition_id,
             decision_definition_name=decision_definition_name,
             decision_definition_version=decision_definition_version,
+            decision_definition_type=decision_definition_type,
             output=output,
             tenant_id=tenant_id,
+            matched_rules=matched_rules,
+            evaluated_inputs=evaluated_inputs,
             decision_definition_key=decision_definition_key,
             decision_evaluation_instance_key=decision_evaluation_instance_key,
         )

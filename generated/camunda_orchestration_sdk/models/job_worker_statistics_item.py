@@ -20,7 +20,7 @@ class JobWorkerStatisticsItem:
     """Statistics for a single worker within a job type.
 
     Attributes:
-        worker (str): The worker identifier. Example: worker-1.
+        worker (str): The name of the worker activating the jobs, mostly used for logging purposes. Example: worker-1.
         created (StatusMetric): Metric for a single job status.
         completed (StatusMetric): Metric for a single job status.
         failed (StatusMetric): Metric for a single job status.

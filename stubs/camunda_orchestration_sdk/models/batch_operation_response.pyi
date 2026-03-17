@@ -5,11 +5,11 @@ import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.batch_operation_response_actor_type import BatchOperationResponseActorType
 from ..models.batch_operation_state_enum import BatchOperationStateEnum
 from ..models.batch_operation_type_enum import BatchOperationTypeEnum
-from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.batch_operation_error import BatchOperationError
 T = TypeVar("T", bound="BatchOperationResponse")
 @_attrs_define
@@ -17,14 +17,14 @@ class BatchOperationResponse:
     batch_operation_key: BatchOperationKey
     state: BatchOperationStateEnum
     batch_operation_type: BatchOperationTypeEnum
+    start_date: datetime.datetime | None
+    end_date: datetime.datetime | None
     actor_type: BatchOperationResponseActorType
     actor_id: None | str
     operations_total_count: int
     operations_failed_count: int
     operations_completed_count: int
     errors: list[BatchOperationError]
-    start_date: datetime.datetime | None | Unset = UNSET
-    end_date: datetime.datetime | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

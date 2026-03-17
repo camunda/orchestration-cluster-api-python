@@ -270,6 +270,7 @@ from .evaluated_decision_result import EvaluatedDecisionResult
 from .expression_evaluation_request import ExpressionEvaluationRequest
 from .expression_evaluation_request_variables import ExpressionEvaluationRequestVariables
 from .expression_evaluation_result import ExpressionEvaluationResult
+from .expression_evaluation_warning_item import ExpressionEvaluationWarningItem
 from .form_result import FormResult
 from .get_user_response_200 import GetUserResponse200
 from .global_job_statistics_query_result import GlobalJobStatisticsQueryResult
@@ -911,6 +912,7 @@ __all__: list[str] = [
     "ExpressionEvaluationRequest",
     "ExpressionEvaluationRequestVariables",
     "ExpressionEvaluationResult",
+    "ExpressionEvaluationWarningItem",
     "FormResult",
     "GetUserResponse200",
     "GlobalJobStatisticsQueryResult",

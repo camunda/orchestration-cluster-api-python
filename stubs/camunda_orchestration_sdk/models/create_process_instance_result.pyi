@@ -4,8 +4,8 @@ from camunda_orchestration_sdk.semantic_types import BusinessId, ProcessDefiniti
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.create_process_instance_result_variables import CreateProcessInstanceResultVariables
 T = TypeVar("T", bound="CreateProcessInstanceResult")
 @_attrs_define
@@ -17,7 +17,7 @@ class CreateProcessInstanceResult:
     process_definition_key: ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
     tags: list[str]
-    business_id: None | BusinessId | Unset = UNSET
+    business_id: None | BusinessId
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

@@ -4,13 +4,16 @@ from camunda_orchestration_sdk.semantic_types import Username
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.camunda_user_result_c8_links import CamundaUserResultC8Links
 from ..models.tenant_result import TenantResult
 T = TypeVar("T", bound="CamundaUserResult")
 @_attrs_define
 class CamundaUserResult:
+    username: None | Username
+    display_name: None | str
+    email: None | str
     authorized_components: list[str]
     tenants: list[TenantResult]
     groups: list[str]
@@ -18,9 +21,6 @@ class CamundaUserResult:
     sales_plan_type: None | str
     c_8_links: CamundaUserResultC8Links
     can_logout: bool
-    username: None | Username | Unset = UNSET
-    display_name: None | str | Unset = UNSET
-    email: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

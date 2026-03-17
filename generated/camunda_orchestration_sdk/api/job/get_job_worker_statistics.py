@@ -58,7 +58,7 @@ def sync_detailed(
 ) -> Response[JobWorkerStatisticsQueryResult | ProblemDetail]:
     """Get job statistics by worker
 
-     Returns aggregated metrics per worker for the given jobType.
+     Get statistics about jobs, grouped by worker, for a given job type.
 
     Args:
         body (JobWorkerStatisticsQuery): Job worker statistics query.
@@ -83,7 +83,7 @@ def sync(
 ) -> JobWorkerStatisticsQueryResult:
     """Get job statistics by worker
 
-     Returns aggregated metrics per worker for the given jobType.
+     Get statistics about jobs, grouped by worker, for a given job type.
 
     Args:
         body (JobWorkerStatisticsQuery): Job worker statistics query.
@@ -133,7 +133,7 @@ async def asyncio_detailed(
 ) -> Response[JobWorkerStatisticsQueryResult | ProblemDetail]:
     """Get job statistics by worker
 
-     Returns aggregated metrics per worker for the given jobType.
+     Get statistics about jobs, grouped by worker, for a given job type.
 
     Args:
         body (JobWorkerStatisticsQuery): Job worker statistics query.
@@ -158,7 +158,7 @@ async def asyncio(
 ) -> JobWorkerStatisticsQueryResult:
     """Get job statistics by worker
 
-     Returns aggregated metrics per worker for the given jobType.
+     Get statistics about jobs, grouped by worker, for a given job type.
 
     Args:
         body (JobWorkerStatisticsQuery): Job worker statistics query.

@@ -2828,6 +2828,17 @@ paths:
 
         Specify the element instance in the `elementInstanceKey` parameter.
 
+        Variable updates can be delayed by listener-related processing; if processing
+        exceeds the
+
+        request timeout, this endpoint can return 504. Other gateway timeout causes
+        are also
+
+        possible. Retry with backoff and inspect listener worker availability and
+        logs when this
+
+        repeats.
+
         '
       parameters:
       - name: elementInstanceKey
@@ -2879,6 +2890,35 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '504':
+          description: 'The request timed out between the gateway and the broker.
+            For these endpoints, this often happens when user task listeners are configured
+            and the corresponding listener job is not completed within the request
+            timeout. Common causes include no available job workers for the listener
+            type, busy or crashed job workers, or delayed job completion. As with
+            any gateway timeout, general timeout causes (for example transient network
+            issues) can also result in a 504 response.
+
+            Troubleshooting: - verify that job workers for the listener type are running
+            and healthy - check worker logs for crashes, retries, and completion failures
+            - check network connectivity between workers, gateway, and broker - retry
+            with backoff after transient failures - fail without retries if a problem
+            persists
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              examples:
+                taskListenerTimeout:
+                  value:
+                    type: about:blank
+                    title: DEADLINE_EXCEEDED
+                    status: 504
+                    detail: Expected to handle request, but request timed out between
+                      gateway and broker
+                    instance: /v2/user-tasks/123/completion
   /expression/evaluation:
     post:
       operationId: evaluateExpression
@@ -3543,8 +3583,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -3755,8 +3795,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -3959,8 +3999,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -4032,8 +4072,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -5025,7 +5065,8 @@ paths:
       - Job
       operationId: getJobWorkerStatistics
       summary: Get job statistics by worker
-      description: 'Returns aggregated metrics per worker for the given jobType.
+      description: 'Get statistics about jobs, grouped by worker, for a given job
+        type.
 
         '
       requestBody:
@@ -5234,8 +5275,8 @@ paths:
                     description: The unique ID of the mapping rule.
                 required:
                 - claimName
-                - mappingRuleId
                 - claimValue
+                - mappingRuleId
                 - name
         '400':
           description: The provided data is not valid.
@@ -5287,8 +5328,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -5370,8 +5411,8 @@ paths:
                     description: The unique ID of the mapping rule.
                 required:
                 - claimName
-                - mappingRuleId
                 - claimValue
+                - mappingRuleId
                 - name
         '400':
           description: The provided data is not valid.
@@ -6718,9 +6759,14 @@ paths:
       - Process instance
       operationId: cancelProcessInstance
       summary: Cancel process instance
-      description: Cancels a running process instance. As a cancellation includes
+      description: 'Cancels a running process instance. As a cancellation includes
         more than just the removal of the process instance resource, the cancellation
-        resource must be posted.
+        resource must be posted. Cancellation can wait on listener-related processing;
+        when that processing does not complete in time, this endpoint can return 504.
+        Other gateway timeout causes are also possible. Retry with backoff and inspect
+        listener worker availability and logs when this repeats.
+
+        '
       parameters:
       - name: processInstanceKey
         in: path
@@ -6769,6 +6815,35 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '504':
+          description: 'The request timed out between the gateway and the broker.
+            For these endpoints, this often happens when user task listeners are configured
+            and the corresponding listener job is not completed within the request
+            timeout. Common causes include no available job workers for the listener
+            type, busy or crashed job workers, or delayed job completion. As with
+            any gateway timeout, general timeout causes (for example transient network
+            issues) can also result in a 504 response.
+
+            Troubleshooting: - verify that job workers for the listener type are running
+            and healthy - check worker logs for crashes, retries, and completion failures
+            - check network connectivity between workers, gateway, and broker - retry
+            with backoff after transient failures - fail without retries if a problem
+            persists
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              examples:
+                taskListenerTimeout:
+                  value:
+                    type: about:blank
+                    title: DEADLINE_EXCEEDED
+                    status: 504
+                    detail: Expected to handle request, but request timed out between
+                      gateway and broker
+                    instance: /v2/user-tasks/123/completion
   /process-instances/{processInstanceKey}/deletion:
     post:
       x-eventually-consistent: false
@@ -7731,8 +7806,8 @@ paths:
               schema:
                 type: object
                 required:
-                - items
                 - page
+                - items
                 properties:
                   items:
                     description: The matching clients.
@@ -8129,8 +8204,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -8333,8 +8408,8 @@ paths:
               schema:
                 type: object
                 required:
-                - items
                 - page
+                - items
                 properties:
                   items:
                     description: The matching users.
@@ -9102,8 +9177,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -9436,8 +9511,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -9599,8 +9674,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -9773,8 +9848,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -10035,8 +10110,8 @@ paths:
               schema:
                 type: object
                 required:
-                - items
                 - page
+                - items
                 properties:
                   items:
                     description: The matching users.
@@ -10378,7 +10453,13 @@ paths:
       - User task
       operationId: updateUserTask
       summary: Update user task
-      description: Update a user task with the given key.
+      description: 'Update a user task with the given key. Updates wait for blocking
+        task listeners on this lifecycle transition. If listener processing is delayed
+        beyond the request timeout, this endpoint can return 504. Other gateway timeout
+        causes are also possible. Retry with backoff and inspect listener worker availability
+        and logs when this repeats.
+
+        '
       parameters:
       - name: userTaskKey
         in: path
@@ -10436,6 +10517,35 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '504':
+          description: 'The request timed out between the gateway and the broker.
+            For these endpoints, this often happens when user task listeners are configured
+            and the corresponding listener job is not completed within the request
+            timeout. Common causes include no available job workers for the listener
+            type, busy or crashed job workers, or delayed job completion. As with
+            any gateway timeout, general timeout causes (for example transient network
+            issues) can also result in a 504 response.
+
+            Troubleshooting: - verify that job workers for the listener type are running
+            and healthy - check worker logs for crashes, retries, and completion failures
+            - check network connectivity between workers, gateway, and broker - retry
+            with backoff after transient failures - fail without retries if a problem
+            persists
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              examples:
+                taskListenerTimeout:
+                  value:
+                    type: about:blank
+                    title: DEADLINE_EXCEEDED
+                    status: 504
+                    detail: Expected to handle request, but request timed out between
+                      gateway and broker
+                    instance: /v2/user-tasks/123/completion
   /user-tasks/{userTaskKey}/assignee:
     delete:
       x-eventually-consistent: false
@@ -10443,7 +10553,13 @@ paths:
       - User task
       operationId: unassignUserTask
       summary: Unassign user task
-      description: Removes the assignee of a task with the given key.
+      description: 'Removes the assignee of a task with the given key. Unassignment
+        waits for blocking task listeners on this lifecycle transition. If listener
+        processing is delayed beyond the request timeout, this endpoint can return
+        504. Other gateway timeout causes are also possible. Retry with backoff and
+        inspect listener worker availability and logs when this repeats.
+
+        '
       parameters:
       - name: userTaskKey
         in: path
@@ -10495,6 +10611,35 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '504':
+          description: 'The request timed out between the gateway and the broker.
+            For these endpoints, this often happens when user task listeners are configured
+            and the corresponding listener job is not completed within the request
+            timeout. Common causes include no available job workers for the listener
+            type, busy or crashed job workers, or delayed job completion. As with
+            any gateway timeout, general timeout causes (for example transient network
+            issues) can also result in a 504 response.
+
+            Troubleshooting: - verify that job workers for the listener type are running
+            and healthy - check worker logs for crashes, retries, and completion failures
+            - check network connectivity between workers, gateway, and broker - retry
+            with backoff after transient failures - fail without retries if a problem
+            persists
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              examples:
+                taskListenerTimeout:
+                  value:
+                    type: about:blank
+                    title: DEADLINE_EXCEEDED
+                    status: 504
+                    detail: Expected to handle request, but request timed out between
+                      gateway and broker
+                    instance: /v2/user-tasks/123/completion
   /user-tasks/{userTaskKey}/assignment:
     post:
       x-eventually-consistent: false
@@ -10502,7 +10647,13 @@ paths:
       - User task
       operationId: assignUserTask
       summary: Assign user task
-      description: Assigns a user task with the given key to the given assignee.
+      description: 'Assigns a user task with the given key to the given assignee.
+        Assignment waits for blocking task listeners on this lifecycle transition.
+        If listener processing is delayed beyond the request timeout, this endpoint
+        can return 504. Other gateway timeout causes are also possible. Retry with
+        backoff and inspect listener worker availability and logs when this repeats.
+
+        '
       parameters:
       - name: userTaskKey
         in: path
@@ -10560,6 +10711,35 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '504':
+          description: 'The request timed out between the gateway and the broker.
+            For these endpoints, this often happens when user task listeners are configured
+            and the corresponding listener job is not completed within the request
+            timeout. Common causes include no available job workers for the listener
+            type, busy or crashed job workers, or delayed job completion. As with
+            any gateway timeout, general timeout causes (for example transient network
+            issues) can also result in a 504 response.
+
+            Troubleshooting: - verify that job workers for the listener type are running
+            and healthy - check worker logs for crashes, retries, and completion failures
+            - check network connectivity between workers, gateway, and broker - retry
+            with backoff after transient failures - fail without retries if a problem
+            persists
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              examples:
+                taskListenerTimeout:
+                  value:
+                    type: about:blank
+                    title: DEADLINE_EXCEEDED
+                    status: 504
+                    detail: Expected to handle request, but request timed out between
+                      gateway and broker
+                    instance: /v2/user-tasks/123/completion
   /user-tasks/{userTaskKey}/audit-logs/search:
     post:
       x-eventually-consistent: true
@@ -10607,7 +10787,13 @@ paths:
       - User task
       operationId: completeUserTask
       summary: Complete user task
-      description: Completes a user task with the given key.
+      description: 'Completes a user task with the given key. Completion waits for
+        blocking task listeners on this lifecycle transition. If listener processing
+        is delayed beyond the request timeout, this endpoint can return 504. Other
+        gateway timeout causes are also possible. Retry with backoff and inspect listener
+        worker availability and logs when this repeats.
+
+        '
       parameters:
       - name: userTaskKey
         in: path
@@ -10665,6 +10851,35 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '504':
+          description: 'The request timed out between the gateway and the broker.
+            For these endpoints, this often happens when user task listeners are configured
+            and the corresponding listener job is not completed within the request
+            timeout. Common causes include no available job workers for the listener
+            type, busy or crashed job workers, or delayed job completion. As with
+            any gateway timeout, general timeout causes (for example transient network
+            issues) can also result in a 504 response.
+
+            Troubleshooting: - verify that job workers for the listener type are running
+            and healthy - check worker logs for crashes, retries, and completion failures
+            - check network connectivity between workers, gateway, and broker - retry
+            with backoff after transient failures - fail without retries if a problem
+            persists
+
+            '
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              examples:
+                taskListenerTimeout:
+                  value:
+                    type: about:blank
+                    title: DEADLINE_EXCEEDED
+                    status: 504
+                    detail: Expected to handle request, but request timed out between
+                      gateway and broker
+                    instance: /v2/user-tasks/123/completion
   /user-tasks/{userTaskKey}/form:
     get:
       x-eventually-consistent: true
@@ -10946,7 +11161,6 @@ components:
       - agentElementId
       - tenantId
       - result
-      - annotation
       - category
       - processDefinitionId
       - processDefinitionKey
@@ -11039,10 +11253,6 @@ components:
           pattern: ^(<default>|[A-Za-z0-9_@.+-]+)$
         result:
           $ref: '#/components/schemas/AuditLogResultEnum'
-        annotation:
-          type: string
-          description: Additional notes about the operation.
-          nullable: true
         category:
           $ref: '#/components/schemas/AuditLogCategoryEnum'
         processDefinitionId:
@@ -11052,7 +11262,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processDefinitionKey:
           description: The key of the process definition.
@@ -11142,8 +11352,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         decisionDefinitionKey:
           description: The key of the decision definition.
@@ -11251,7 +11460,6 @@ components:
           enum:
           - actorId
           - actorType
-          - annotation
           - auditLogKey
           - batchOperationKey
           - batchOperationType
@@ -11450,8 +11658,8 @@ components:
       description: Audit log search response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching audit logs.
@@ -11785,6 +11993,9 @@ components:
       - salesPlanType
       - c8Links
       - canLogout
+      - displayName
+      - email
+      - username
       properties:
         username:
           description: The username of the user.
@@ -12174,8 +12385,8 @@ components:
     AuthorizationSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching authorizations.
@@ -12375,8 +12586,8 @@ components:
       description: The batch operation search query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching batch operations.
@@ -12396,6 +12607,8 @@ components:
       - actorType
       - actorId
       - errors
+      - endDate
+      - startDate
       type: object
       properties:
         batchOperationKey:
@@ -12465,6 +12678,10 @@ components:
           items:
             $ref: '#/components/schemas/BatchOperationError'
     BatchOperationError:
+      required:
+      - message
+      - partitionId
+      - type
       type: object
       properties:
         partitionId:
@@ -12549,8 +12766,8 @@ components:
     BatchOperationItemSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching batch operation items.
@@ -12563,6 +12780,13 @@ components:
       type: object
       required:
       - rootProcessInstanceKey
+      - batchOperationKey
+      - errorMessage
+      - itemKey
+      - operationType
+      - processedDate
+      - processInstanceKey
+      - state
       properties:
         operationType:
           $ref: '#/components/schemas/BatchOperationTypeEnum'
@@ -12612,11 +12836,16 @@ components:
           - CANCELED
           - FAILED
         processedDate:
-          description: the date this item was processed.
+          description: 'The date this item was processed.
+
+            This is `null` if the item has not yet been processed.
+
+            '
+          nullable: true
           type: string
           format: date-time
         errorMessage:
-          description: the error message from the engine in case of a failed operation.
+          description: The error message from the engine in case of a failed operation.
           nullable: true
           type: string
     DecisionInstanceDeletionBatchOperationRequest:
@@ -12959,8 +13188,8 @@ components:
     ClusterVariableResult:
       type: object
       required:
-      - value
       - tenantId
+      - value
       - scope
       - name
       properties:
@@ -12982,11 +13211,11 @@ components:
       description: Cluster variable search response item.
       type: object
       required:
-      - value
-      - isTruncated
-      - scope
-      - name
       - tenantId
+      - scope
+      - value
+      - name
+      - isTruncated
       properties:
         value:
           description: Value of this cluster variable. Can be truncated.
@@ -13129,8 +13358,8 @@ components:
       description: Cluster variable search query response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching cluster variables.
@@ -13150,6 +13379,7 @@ components:
       - replicationFactor
       - gatewayVersion
       - lastCompletedChangeId
+      - clusterId
       properties:
         brokers:
           description: A list of brokers that are part of this cluster.
@@ -13322,6 +13552,9 @@ components:
       minLength: 1
       maxLength: 25
     ProcessInstanceReference:
+      required:
+      - processDefinitionKey
+      - processInstanceKey
       type: object
       properties:
         processDefinitionKey:
@@ -13405,8 +13638,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         name:
           type: string
@@ -13470,8 +13702,8 @@ components:
     DecisionDefinitionSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching decision definitions.
@@ -13500,8 +13732,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         decisionDefinitionKey:
           description: The assigned key, which acts as a unique identifier for this
@@ -13572,8 +13803,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         variables:
           $ref: '#/components/schemas/DecisionEvaluationByIdVariables'
@@ -13633,8 +13863,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         decisionDefinitionKey:
           description: The unique key identifying the decision which was evaluated.
@@ -13698,8 +13927,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         failureMessage:
           description: Message describing why the decision which was evaluated failed.
@@ -13725,6 +13953,13 @@ components:
       - decisionDefinitionType
       - evaluatedInputs
       - matchedRules
+      - decisionDefinitionId
+      - decisionDefinitionKey
+      - decisionDefinitionName
+      - decisionDefinitionVersion
+      - decisionEvaluationInstanceKey
+      - output
+      - tenantId
       x-semantic-provider:
       - decisionEvaluationInstanceKey
       type: object
@@ -13736,8 +13971,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         decisionDefinitionName:
           description: The name of the decision which was evaluated.
@@ -13866,8 +14100,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         decisionDefinitionName:
           type: string
@@ -13949,8 +14182,8 @@ components:
     DecisionInstanceSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching decision instances.
@@ -13986,8 +14219,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         decisionDefinitionKey:
           description: The key of the decision.
@@ -14108,8 +14340,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         decisionDefinitionKey:
           description: The key of the decision.
@@ -14236,26 +14467,30 @@ components:
 
             '
       required:
-      - decisionDefinitionType
       - elementInstanceKey
       - decisionDefinitionId
-      - decisionEvaluationInstanceKey
-      - evaluationFailure
-      - evaluatedInputs
-      - evaluationDate
-      - decisionDefinitionName
-      - matchedRules
-      - decisionDefinitionVersion
-      - tenantId
-      - rootDecisionDefinitionKey
-      - decisionEvaluationKey
-      - processDefinitionKey
-      - decisionDefinitionKey
-      - rootProcessInstanceKey
-      - processInstanceKey
-      - state
       - result
+      - decisionEvaluationInstanceKey
+      - processDefinitionKey
+      - rootProcessInstanceKey
+      - evaluatedInputs
+      - matchedRules
+      - decisionEvaluationKey
+      - decisionDefinitionVersion
+      - decisionDefinitionType
+      - decisionDefinitionName
+      - evaluationFailure
+      - evaluationDate
+      - rootDecisionDefinitionKey
+      - processInstanceKey
+      - tenantId
+      - decisionDefinitionKey
+      - state
     EvaluatedDecisionInputItem:
+      required:
+      - inputId
+      - inputName
+      - inputValue
       type: object
       description: A decision input that was evaluated within this decision evaluation.
       properties:
@@ -14266,12 +14501,15 @@ components:
           type: string
           description: The name of the decision input.
         inputValue:
-          description: The description of the decision input.
+          description: The value of the decision input.
           type: string
     EvaluatedDecisionOutputItem:
       required:
       - ruleId
       - ruleIndex
+      - outputId
+      - outputName
+      - outputValue
       type: object
       description: The evaluated decision outputs.
       properties:
@@ -14296,6 +14534,8 @@ components:
     MatchedDecisionRuleItem:
       required:
       - evaluatedOutputs
+      - ruleId
+      - ruleIndex
       type: object
       description: A decision rule that matched within this decision evaluation.
       properties:
@@ -14454,8 +14694,8 @@ components:
             were parsed
     DecisionRequirementsSearchQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -14581,7 +14821,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processDefinitionVersion:
           type: integer
@@ -14615,6 +14855,14 @@ components:
       x-semantic-provider:
       - decisionDefinitionKey
       - decisionRequirementsKey
+      required:
+      - decisionDefinitionId
+      - decisionDefinitionKey
+      - decisionRequirementsId
+      - decisionRequirementsKey
+      - name
+      - tenantId
+      - version
       properties:
         decisionDefinitionId:
           description: 'The dmn decision ID, as parsed during deployment, together
@@ -14627,8 +14875,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         version:
           type: integer
@@ -14681,6 +14928,13 @@ components:
       type: object
       x-semantic-provider:
       - decisionRequirementsKey
+      required:
+      - decisionRequirementsId
+      - decisionRequirementsKey
+      - decisionRequirementsName
+      - resourceName
+      - tenantId
+      - version
       properties:
         decisionRequirementsId:
           description: The id of the deployed decision requirements.
@@ -14721,6 +14975,12 @@ components:
       type: object
       x-semantic-provider:
       - formKey
+      required:
+      - formId
+      - formKey
+      - resourceName
+      - tenantId
+      - version
       properties:
         formId:
           description: 'The form ID, as parsed during deployment, together with the
@@ -14757,6 +15017,12 @@ components:
       x-semantic-provider:
       - resourceKey
       type: object
+      required:
+      - resourceId
+      - resourceKey
+      - resourceName
+      - tenantId
+      - version
       properties:
         resourceId:
           description: The resource id of the deployed resource.
@@ -14799,6 +15065,7 @@ components:
       type: object
       required:
       - resourceKey
+      - batchOperation
       properties:
         resourceKey:
           description: The system-assigned key for this resource, requested to be
@@ -14981,6 +15248,11 @@ components:
           $ref: '#/components/schemas/DocumentMetadataResponse'
     DocumentCreationFailureDetail:
       type: object
+      required:
+      - detail
+      - fileName
+      - status
+      - title
       properties:
         fileName:
           type: string
@@ -15010,8 +15282,8 @@ components:
           items:
             $ref: '#/components/schemas/DocumentReference'
       required:
-      - createdDocuments
       - failedDocuments
+      - createdDocuments
     DocumentMetadata:
       description: Information about the document.
       type: object
@@ -15036,7 +15308,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processInstanceKey:
           description: The key of the process instance that created the document.
@@ -15083,7 +15355,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processInstanceKey:
           description: The key of the process instance that created the document.
@@ -15176,7 +15448,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         state:
           description: State of element instance as defined set of values.
@@ -15329,8 +15601,8 @@ components:
     ElementInstanceSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching element instances.
@@ -15354,6 +15626,8 @@ components:
       - processInstanceKey
       - processDefinitionKey
       - rootProcessInstanceKey
+      - endDate
+      - incidentKey
       properties:
         processDefinitionId:
           description: The process definition ID associated to this element instance.
@@ -15361,7 +15635,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         startDate:
           description: Date when element instance started.
@@ -15556,8 +15830,17 @@ components:
           type: array
           description: List of warnings generated during expression evaluation
           items:
-            type: string
+            $ref: '#/components/schemas/ExpressionEvaluationWarningItem'
           example: []
+    ExpressionEvaluationWarningItem:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+          description: The warning message
+          example: No function found with name 'random' and 1 parameters
     LikeFilter:
       type: string
       description: 'Checks if the property matches the provided like value.
@@ -15826,9 +16109,9 @@ components:
     CreateGlobalTaskListenerRequest:
       type: object
       required:
-      - type
-      - eventTypes
       - id
+      - eventTypes
+      - type
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -15852,8 +16135,8 @@ components:
     UpdateGlobalTaskListenerRequest:
       type: object
       required:
-      - type
       - eventTypes
+      - type
       properties:
         eventTypes:
           $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
@@ -15875,13 +16158,13 @@ components:
     GlobalTaskListenerResult:
       type: object
       required:
-      - source
       - eventTypes
-      - id
       - type
+      - priority
       - afterNonGlobal
       - retries
-      - priority
+      - source
+      - id
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -16057,8 +16340,8 @@ components:
       description: Global listener search query response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching global listeners.
@@ -16195,8 +16478,8 @@ components:
     GroupSearchQueryResult:
       description: Group search response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -16215,8 +16498,8 @@ components:
       - username
     GroupUserSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -16264,8 +16547,8 @@ components:
       - clientId
     GroupClientSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -16293,8 +16576,8 @@ components:
           - $ref: '#/components/schemas/CursorBackwardPagination'
     GroupMappingRuleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -16306,8 +16589,8 @@ components:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     GroupRoleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -16336,7 +16619,7 @@ components:
       type: string
       x-semantic-type: ProcessDefinitionId
       minLength: 1
-      pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+      pattern: ^[\w_][\w0-9_\-\.]*$
       example: new-account-onboarding-workflow
     ElementId:
       description: The model-defined id of an element.
@@ -16357,8 +16640,7 @@ components:
       x-semantic-type: DecisionDefinitionId
       type: string
       minLength: 1
-      maxLength: 256
-      pattern: ^[A-Za-z0-9_@.+-]+$
+      pattern: ^[\w_][\w0-9_\-\.]*$
       example: new-hire-onboarding-workflow
     GlobalListenerId:
       description: The user-defined id for the global listener
@@ -16661,7 +16943,6 @@ components:
           - processDefinitionId
           - processInstanceKey
           - errorType
-          - errorMessage
           - elementId
           - elementInstanceKey
           - creationTime
@@ -16674,8 +16955,8 @@ components:
       - field
     IncidentSearchQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -16708,7 +16989,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         errorType:
           description: The type of the incident error.
@@ -16846,8 +17127,8 @@ components:
             $ref: '#/components/schemas/IncidentProcessInstanceStatisticsByErrorQuerySortRequest'
     IncidentProcessInstanceStatisticsByErrorQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -16862,6 +17143,10 @@ components:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     IncidentProcessInstanceStatisticsByErrorResult:
       type: object
+      required:
+      - activeInstancesWithErrorCount
+      - errorHashCode
+      - errorMessage
       properties:
         errorHashCode:
           type: integer
@@ -16907,8 +17192,8 @@ components:
       - filter
     IncidentProcessInstanceStatisticsByDefinitionQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -16925,6 +17210,13 @@ components:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     IncidentProcessInstanceStatisticsByDefinitionResult:
       type: object
+      required:
+      - activeInstancesWithErrorCount
+      - processDefinitionId
+      - processDefinitionKey
+      - processDefinitionName
+      - processDefinitionVersion
+      - tenantId
       properties:
         processDefinitionId:
           $ref: '#/components/schemas/ProcessDefinitionId'
@@ -17058,8 +17350,8 @@ components:
       description: Job type statistics query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The list of job type statistics items.
@@ -17135,8 +17427,8 @@ components:
       description: Job worker statistics query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The list of per-worker statistics items.
@@ -17155,7 +17447,8 @@ components:
       - failed
       properties:
         worker:
-          description: The worker identifier.
+          description: The name of the worker activating the jobs, mostly used for
+            logging purposes.
           type: string
           example: worker-1
         created:
@@ -17215,8 +17508,8 @@ components:
       description: Job time-series statistics query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The list of time-bucketed statistics items, ordered ascending
@@ -17298,8 +17591,8 @@ components:
       description: Job error statistics query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The list of per-error statistics items.
@@ -17430,6 +17723,7 @@ components:
       - listenerEventType
       - rootProcessInstanceKey
       - tags
+      - userTask
       properties:
         type:
           description: The type of the job (should match what was requested).
@@ -17441,7 +17735,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processDefinitionVersion:
           description: The version of the job's process definition.
@@ -17548,6 +17842,13 @@ components:
       - candidateGroups
       - candidateUsers
       - changedAttributes
+      - action
+      - assignee
+      - dueDate
+      - followUpDate
+      - formKey
+      - priority
+      - userTaskKey
       type: object
       description: Contains properties of a user task.
       properties:
@@ -17582,6 +17883,7 @@ components:
           type: string
           nullable: true
         formKey:
+          nullable: true
           description: The key of the form associated with the user task.
           format: FormKey
           x-semantic-type: FormKey
@@ -17776,8 +18078,8 @@ components:
     JobSearchQueryResult:
       description: Job search response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -17806,6 +18108,14 @@ components:
       - type
       - worker
       - rootProcessInstanceKey
+      - creationTime
+      - deadline
+      - deniedReason
+      - endTime
+      - errorCode
+      - errorMessage
+      - isDenied
+      - lastUpdateTime
       properties:
         customHeaders:
           $ref: '#/components/schemas/JobSearchResultCustomHeaders'
@@ -17881,7 +18191,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processDefinitionKey:
           description: The process definition key associated with the job.
@@ -17936,11 +18246,13 @@ components:
         creationTime:
           description: When the job was created. Field is present for jobs created
             after 8.9.
+          nullable: true
           type: string
           format: date-time
         lastUpdateTime:
           description: When the job was last updated. Field is present for jobs created
             after 8.9.
+          nullable: true
           type: string
           format: date-time
     JobFailRequest:
@@ -19050,8 +19362,8 @@ components:
           description: The name of the mapping rule.
       required:
       - claimName
-      - mappingRuleId
       - claimValue
+      - mappingRuleId
       - name
     MappingRuleUpdateRequest:
       type: object
@@ -19106,8 +19418,8 @@ components:
           description: The unique ID of the mapping rule.
       required:
       - claimName
-      - mappingRuleId
       - claimValue
+      - mappingRuleId
       - name
     MappingRuleUpdateResult:
       type: object
@@ -19126,13 +19438,13 @@ components:
           description: The unique ID of the mapping rule.
       required:
       - claimName
-      - mappingRuleId
       - claimValue
+      - mappingRuleId
       - name
     MappingRuleSearchQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -19345,8 +19657,8 @@ components:
     MessageSubscriptionSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching message subscriptions.
@@ -19359,6 +19671,17 @@ components:
       type: object
       required:
       - rootProcessInstanceKey
+      - correlationKey
+      - elementId
+      - elementInstanceKey
+      - lastUpdatedDate
+      - messageName
+      - messageSubscriptionKey
+      - messageSubscriptionState
+      - processDefinitionId
+      - processDefinitionKey
+      - processInstanceKey
+      - tenantId
       properties:
         messageSubscriptionKey:
           description: The message subscription key associated with this message subscription.
@@ -19375,9 +19698,10 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processDefinitionKey:
+          nullable: true
           description: The process definition key associated with this message subscription.
           format: ProcessDefinitionKey
           x-semantic-type: ProcessDefinitionKey
@@ -19387,6 +19711,7 @@ components:
           minLength: 1
           maxLength: 25
         processInstanceKey:
+          nullable: true
           description: The process instance key associated with this message subscription.
           format: ProcessInstanceKey
           x-semantic-type: ProcessInstanceKey
@@ -19420,6 +19745,7 @@ components:
           x-semantic-type: ElementId
           example: Activity_106kosb
         elementInstanceKey:
+          nullable: true
           description: The element instance key associated with this message subscription.
           format: ElementInstanceKey
           x-semantic-type: ElementInstanceKey
@@ -19439,6 +19765,7 @@ components:
           type: string
         correlationKey:
           type: string
+          nullable: true
           description: The correlation key of the message subscription.
         tenantId:
           $ref: '#/components/schemas/TenantId'
@@ -19544,8 +19871,8 @@ components:
           - $ref: '#/components/schemas/AdvancedStringFilter'
     CorrelatedMessageSubscriptionSearchQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -19557,9 +19884,24 @@ components:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     CorrelatedMessageSubscriptionResult:
       type: object
+      required:
+      - correlationKey
+      - correlationTime
+      - elementId
+      - messageKey
+      - messageName
+      - partitionId
+      - processDefinitionId
+      - processInstanceKey
+      - subscriptionKey
+      - tenantId
+      - rootProcessInstanceKey
+      - elementInstanceKey
+      - processDefinitionKey
       properties:
         correlationKey:
           description: The correlation key of the message.
+          nullable: true
           type: string
         correlationTime:
           description: The time when the message was correlated.
@@ -19569,7 +19911,12 @@ components:
           description: The element ID that received the message.
           type: string
         elementInstanceKey:
-          description: The element instance key that received the message.
+          nullable: true
+          description: 'The element instance key that received the message.
+
+            It is `null` for start event subscriptions.
+
+            '
           format: ElementInstanceKey
           x-semantic-type: ElementInstanceKey
           example: '2251799813686789'
@@ -19600,7 +19947,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processDefinitionKey:
           description: The process definition key associated with this correlated
@@ -19658,18 +20005,6 @@ components:
           minLength: 1
           maxLength: 256
           pattern: ^(<default>|[A-Za-z0-9_@.+-]+)$
-      required:
-      - correlationKey
-      - correlationTime
-      - elementId
-      - messageKey
-      - messageName
-      - partitionId
-      - processDefinitionId
-      - processInstanceKey
-      - subscriptionKey
-      - tenantId
-      - rootProcessInstanceKey
     CorrelatedMessageSubscriptionSearchQuery:
       type: object
       additionalProperties: false
@@ -20023,8 +20358,8 @@ components:
     ProcessDefinitionSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching process definitions.
@@ -20066,7 +20401,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         tenantId:
           description: Tenant ID of this process definition.
@@ -20111,6 +20446,12 @@ components:
     ProcessElementStatisticsResult:
       description: Process element statistics response.
       type: object
+      required:
+      - active
+      - canceled
+      - completed
+      - elementId
+      - incidents
       properties:
         elementId:
           description: The element ID for which the results are aggregated.
@@ -20144,8 +20485,8 @@ components:
     ProcessDefinitionMessageSubscriptionStatisticsQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching process definition message subscription statistics.
@@ -20156,6 +20497,12 @@ components:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     ProcessDefinitionMessageSubscriptionStatisticsResult:
       type: object
+      required:
+      - activeSubscriptions
+      - processDefinitionId
+      - processDefinitionKey
+      - processInstancesWithActiveSubscriptions
+      - tenantId
       properties:
         processDefinitionId:
           description: The process definition ID associated with this message subscription.
@@ -20163,7 +20510,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         tenantId:
           description: The tenant ID associated with this message subscription.
@@ -20205,8 +20552,8 @@ components:
     ProcessDefinitionInstanceStatisticsQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The process definition instance statistics result.
@@ -20218,6 +20565,13 @@ components:
     ProcessDefinitionInstanceStatisticsResult:
       description: Process definition instance statistics response.
       type: object
+      required:
+      - activeInstancesWithIncidentCount
+      - activeInstancesWithoutIncidentCount
+      - hasMultipleVersions
+      - latestProcessDefinitionName
+      - processDefinitionId
+      - tenantId
       properties:
         processDefinitionId:
           $ref: '#/components/schemas/ProcessDefinitionId'
@@ -20280,7 +20634,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         tenantId:
           description: Tenant ID of this process definition.
@@ -20295,8 +20649,8 @@ components:
       - processDefinitionId
     ProcessDefinitionInstanceVersionStatisticsQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -20316,7 +20670,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processDefinitionKey:
           description: The unique key of the process definition.
@@ -20406,7 +20760,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processDefinitionVersion:
           description: "The version of the process. By default, the latest version\
@@ -20648,6 +21002,7 @@ components:
       - variables
       - processInstanceKey
       - tags
+      - businessId
       type: object
       properties:
         processDefinitionId:
@@ -20662,7 +21017,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
         processDefinitionVersion:
           description: 'The version of the process definition which was used to create
             the process instance.
@@ -20812,7 +21167,19 @@ components:
           - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
         batchOperationId:
-          description: The batch operation id.
+          description: 'The batch operation id.
+
+            **Deprecated**: Use `batchOperationKey` instead. This field will be removed
+            in a future release. If both `batchOperationId` and `batchOperationKey`
+            are provided, the request will be rejected with a 400 error.
+
+            '
+          deprecated: true
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        batchOperationKey:
+          description: The batch operation key.
           oneOf:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
@@ -20898,7 +21265,19 @@ components:
           - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
         batchOperationId:
-          description: The batch operation id.
+          description: 'The batch operation id.
+
+            **Deprecated**: Use `batchOperationKey` instead. This field will be removed
+            in a future release. If both `batchOperationId` and `batchOperationKey`
+            are provided, the request will be rejected with a 400 error.
+
+            '
+          deprecated: true
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        batchOperationKey:
+          description: The batch operation key.
           oneOf:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
@@ -21031,7 +21410,19 @@ components:
           - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
         batchOperationId:
-          description: The batch operation id.
+          description: 'The batch operation id.
+
+            **Deprecated**: Use `batchOperationKey` instead. This field will be removed
+            in a future release. If both `batchOperationId` and `batchOperationKey`
+            are provided, the request will be rejected with a 400 error.
+
+            '
+          deprecated: true
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        batchOperationKey:
+          description: The batch operation key.
           oneOf:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
@@ -21142,7 +21533,19 @@ components:
           - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
         batchOperationId:
-          description: The batch operation id.
+          description: 'The batch operation id.
+
+            **Deprecated**: Use `batchOperationKey` instead. This field will be removed
+            in a future release. If both `batchOperationId` and `batchOperationKey`
+            are provided, the request will be rejected with a 400 error.
+
+            '
+          deprecated: true
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        batchOperationKey:
+          description: The batch operation key.
           oneOf:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
@@ -21206,8 +21609,8 @@ components:
       description: Process instance search response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching process instances.
@@ -21393,6 +21796,12 @@ components:
       type: object
       required:
       - rootProcessInstanceKey
+      - elementId
+      - processDefinitionId
+      - processDefinitionKey
+      - processInstanceKey
+      - sequenceFlowId
+      - tenantId
       properties:
         sequenceFlowId:
           type: string
@@ -21439,7 +21848,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         elementId:
           description: The element id for this sequence flow, as provided in the BPMN
@@ -21968,8 +22377,8 @@ components:
     RoleSearchQueryResult:
       description: Role search response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -21989,8 +22398,8 @@ components:
     RoleUserSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching users.
@@ -22038,8 +22447,8 @@ components:
     RoleClientSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching clients.
@@ -22087,8 +22496,8 @@ components:
     RoleGroupSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching groups.
@@ -22115,8 +22524,8 @@ components:
           - $ref: '#/components/schemas/CursorBackwardPagination'
     RoleMappingRuleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -22339,11 +22748,11 @@ components:
       maxLength: 25
     UsageMetricsResponse:
       required:
-      - assignees
       - processInstances
+      - assignees
+      - tenants
       - activeTenants
       - decisionInstances
-      - tenants
       type: object
       properties:
         activeTenants:
@@ -22568,8 +22977,8 @@ components:
     TenantSearchQueryResult:
       description: Tenant search response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -22588,8 +22997,8 @@ components:
       - username
     TenantUserSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -22638,8 +23047,8 @@ components:
       - clientId
     TenantClientSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -22689,8 +23098,8 @@ components:
     TenantGroupSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching groups.
@@ -22718,8 +23127,8 @@ components:
           - $ref: '#/components/schemas/CursorBackwardPagination'
     TenantRoleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -22731,8 +23140,8 @@ components:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     TenantMappingRuleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -22847,7 +23256,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         creationDate:
           description: The user task creation date.
@@ -22919,8 +23328,8 @@ components:
     UserTaskSearchQueryResult:
       description: User task search query response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -22990,7 +23399,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         creationDate:
           type: string
@@ -23520,8 +23929,8 @@ components:
     UserSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching users.
@@ -23637,8 +24046,8 @@ components:
       description: Variable search query response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching variables.
@@ -23648,6 +24057,15 @@ components:
         page:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     VariableSearchResult:
+      required:
+      - tenantId
+      - value
+      - scopeKey
+      - rootProcessInstanceKey
+      - variableKey
+      - name
+      - isTruncated
+      - processInstanceKey
       description: Variable search response item.
       type: object
       properties:
@@ -23725,24 +24143,17 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
-      required:
-      - rootProcessInstanceKey
-      - processInstanceKey
-      - scopeKey
-      - name
-      - tenantId
-      - variableKey
     VariableResult:
       description: Variable search response item.
       type: object
       required:
-      - value
-      - rootProcessInstanceKey
-      - processInstanceKey
-      - scopeKey
-      - name
       - tenantId
+      - value
+      - scopeKey
+      - rootProcessInstanceKey
       - variableKey
+      - name
+      - processInstanceKey
       properties:
         value:
           description: Full value of this variable.
@@ -24669,8 +25080,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         decisionDefinitionName:
           type: string
@@ -24816,7 +25226,19 @@ components:
           - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
         batchOperationId:
-          description: The batch operation id.
+          description: 'The batch operation id.
+
+            **Deprecated**: Use `batchOperationKey` instead. This field will be removed
+            in a future release. If both `batchOperationId` and `batchOperationKey`
+            are provided, the request will be rejected with a 400 error.
+
+            '
+          deprecated: true
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        batchOperationKey:
+          description: The batch operation key.
           oneOf:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
@@ -24896,8 +25318,8 @@ components:
             $ref: '#/components/schemas/MigrateProcessInstanceMappingInstruction'
           description: The mapping instructions.
       required:
-      - mappingInstructions
       - targetProcessDefinitionKey
+      - mappingInstructions
       title: ProcessInstanceMigrationBatchOperationRequestMigrationPlan
     ClusterVariableSearchQueryRequestFilter:
       description: The cluster variable search filters.
@@ -24954,8 +25376,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         name:
           type: string
@@ -25050,8 +25471,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         decisionDefinitionName:
           type: string
@@ -25173,7 +25593,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         processDefinitionVersion:
           type: integer
@@ -25202,11 +25622,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - processDefinitionKey
-      - resourceName
       - tenantId
       - processDefinitionId
       - processDefinitionVersion
+      - processDefinitionKey
+      - resourceName
       title: DeploymentMetadataResultProcessDefinition
     DeploymentMetadataResultDecisionDefinition:
       nullable: true
@@ -25227,8 +25647,7 @@ components:
           x-semantic-type: DecisionDefinitionId
           type: string
           minLength: 1
-          maxLength: 256
-          pattern: ^[A-Za-z0-9_@.+-]+$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-hire-onboarding-workflow
         version:
           type: integer
@@ -25276,6 +25695,14 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+      required:
+      - tenantId
+      - version
+      - decisionRequirementsId
+      - decisionDefinitionKey
+      - decisionDefinitionId
+      - name
+      - decisionRequirementsKey
       title: DeploymentMetadataResultDecisionDefinition
     DeploymentMetadataResultDecisionRequirements:
       nullable: true
@@ -25318,6 +25745,13 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+      required:
+      - tenantId
+      - version
+      - decisionRequirementsId
+      - resourceName
+      - decisionRequirementsName
+      - decisionRequirementsKey
       title: DeploymentMetadataResultDecisionRequirements
     DeploymentMetadataResultForm:
       nullable: true
@@ -25356,6 +25790,12 @@ components:
           pattern: ^-?[0-9]+$
           minLength: 1
           maxLength: 25
+      required:
+      - tenantId
+      - formKey
+      - formId
+      - version
+      - resourceName
       title: DeploymentMetadataResultForm
     DeploymentMetadataResultResource:
       nullable: true
@@ -25386,6 +25826,12 @@ components:
           - $ref: '#/components/schemas/FormKey'
           - $ref: '#/components/schemas/DecisionDefinitionKey'
           format: ResourceKey
+      required:
+      - tenantId
+      - resourceId
+      - version
+      - resourceName
+      - resourceKey
       title: DeploymentMetadataResultResource
     DeleteResourceResponseBatchOperation:
       nullable: true
@@ -25413,8 +25859,8 @@ components:
         batchOperationType:
           $ref: '#/components/schemas/BatchOperationTypeEnum'
       required:
-      - batchOperationType
       - batchOperationKey
+      - batchOperationType
       title: DeleteResourceResponseBatchOperation
     DocumentMetadataCustomProperties:
       type: object
@@ -25431,7 +25877,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         state:
           description: State of element instance as defined set of values.
@@ -25808,6 +26254,7 @@ components:
           type: string
           nullable: true
         formKey:
+          nullable: true
           description: The key of the form associated with the user task.
           format: FormKey
           x-semantic-type: FormKey
@@ -25833,9 +26280,16 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - candidateGroups
-      - candidateUsers
+      - formKey
+      - action
       - changedAttributes
+      - priority
+      - candidateUsers
+      - assignee
+      - userTaskKey
+      - candidateGroups
+      - dueDate
+      - followUpDate
       title: ActivatedJobResultUserTask
     JobSearchQueryFilter:
       description: The job search filters.
@@ -26251,7 +26705,19 @@ components:
           - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
         batchOperationId:
-          description: The batch operation id.
+          description: 'The batch operation id.
+
+            **Deprecated**: Use `batchOperationKey` instead. This field will be removed
+            in a future release. If both `batchOperationId` and `batchOperationKey`
+            are provided, the request will be rejected with a 400 error.
+
+            '
+          deprecated: true
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        batchOperationKey:
+          description: The batch operation key.
           oneOf:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
@@ -26416,7 +26882,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         tenantId:
           description: Tenant ID of this process definition.
@@ -26528,7 +26994,19 @@ components:
           - $ref: '#/components/schemas/ElementInstanceKeyExactMatch'
           - $ref: '#/components/schemas/AdvancedElementInstanceKeyFilter'
         batchOperationId:
-          description: The batch operation id.
+          description: 'The batch operation id.
+
+            **Deprecated**: Use `batchOperationKey` instead. This field will be removed
+            in a future release. If both `batchOperationId` and `batchOperationKey`
+            are provided, the request will be rejected with a 400 error.
+
+            '
+          deprecated: true
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        batchOperationKey:
+          description: The batch operation key.
           oneOf:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
@@ -26637,9 +27115,9 @@ components:
             type: integer
             format: int64
         required:
-        - decisionInstances
         - processInstances
         - assignees
+        - decisionInstances
       title: UsageMetricsResponseTenants
     TenantSearchQueryRequestFilter:
       description: The tenant search filters.
@@ -26706,7 +27184,7 @@ components:
           type: string
           x-semantic-type: ProcessDefinitionId
           minLength: 1
-          pattern: ^[a-zA-Z_][a-zA-Z0-9_\-\.]*$
+          pattern: ^[\w_][\w0-9_\-\.]*$
           example: new-account-onboarding-workflow
         creationDate:
           description: The user task creation date.

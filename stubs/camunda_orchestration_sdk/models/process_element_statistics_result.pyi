@@ -4,16 +4,16 @@ from camunda_orchestration_sdk.semantic_types import ElementId
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="ProcessElementStatisticsResult")
 @_attrs_define
 class ProcessElementStatisticsResult:
-    element_id: ElementId | Unset = UNSET
-    active: int | Unset = UNSET
-    canceled: int | Unset = UNSET
-    incidents: int | Unset = UNSET
-    completed: int | Unset = UNSET
+    element_id: ElementId
+    active: int
+    canceled: int
+    incidents: int
+    completed: int
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

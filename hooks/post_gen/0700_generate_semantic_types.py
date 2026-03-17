@@ -5,6 +5,20 @@ from typing import Any, Dict, List, cast
 
 import yaml
 
+# Unicode property escapes (ECMAScript) -> Python re equivalents
+_UNICODE_PROPERTY_MAP: Dict[str, str] = {
+    r"\p{L}": r"\w",
+    r"\p{N}": r"0-9",
+}
+
+
+def _convert_unicode_regex(pattern: str) -> str:
+    """Convert Unicode property escapes to Python-compatible regex."""
+    result = pattern
+    for esc, replacement in _UNICODE_PROPERTY_MAP.items():
+        result = result.replace(esc, replacement)
+    return result
+
 
 def _snake(name: str) -> str:
     s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
@@ -54,6 +68,8 @@ def _extract_constraints(
     ]:
         if key in schema:
             constraints[key] = schema[key]
+    if "pattern" in constraints and isinstance(constraints["pattern"], str):
+        constraints["pattern"] = _convert_unicode_regex(constraints["pattern"])
     return constraints
 
 
@@ -215,6 +231,8 @@ def _aliases_from_metadata(metadata_path: Path) -> Dict[str, Dict[str, Any]]:
     for entry in meta.get("semanticKeys", []):
         name = entry["name"]
         constraints = entry.get("constraints", {})
+        if "pattern" in constraints and isinstance(constraints["pattern"], str):
+            constraints["pattern"] = _convert_unicode_regex(constraints["pattern"])
         # Infer base type from constraints or default to string
         base_type = "string"
         if "minimum" in constraints or "maximum" in constraints:

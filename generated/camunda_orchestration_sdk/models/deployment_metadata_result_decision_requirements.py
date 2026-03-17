@@ -10,9 +10,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="DeploymentMetadataResultDecisionRequirements")
 
@@ -22,22 +22,22 @@ class DeploymentMetadataResultDecisionRequirements:
     """Deployed decision requirement definition.
 
     Attributes:
-        decision_requirements_id (str | Unset): The id of the deployed decision requirements.
-        decision_requirements_name (str | Unset): The name of the deployed decision requirements.
-        version (int | Unset): The version of the deployed decision requirements.
-        resource_name (str | Unset): The name of the resource.
-        tenant_id (str | Unset): The tenant ID of the deployed decision requirements. Example: customer-service.
-        decision_requirements_key (str | Unset): The assigned decision requirements key, which acts as a unique
-            identifier for this decision requirements.
+        decision_requirements_id (str): The id of the deployed decision requirements.
+        decision_requirements_name (str): The name of the deployed decision requirements.
+        version (int): The version of the deployed decision requirements.
+        resource_name (str): The name of the resource.
+        tenant_id (str): The tenant ID of the deployed decision requirements. Example: customer-service.
+        decision_requirements_key (str): The assigned decision requirements key, which acts as a unique identifier for
+            this decision requirements.
              Example: 2251799813683346.
     """
 
-    decision_requirements_id: str | Unset = UNSET
-    decision_requirements_name: str | Unset = UNSET
-    version: int | Unset = UNSET
-    resource_name: str | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    decision_requirements_key: DecisionRequirementsKey | Unset = UNSET
+    decision_requirements_id: str
+    decision_requirements_name: str
+    version: int
+    resource_name: str
+    tenant_id: TenantId
+    decision_requirements_key: DecisionRequirementsKey
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -57,43 +57,34 @@ class DeploymentMetadataResultDecisionRequirements:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if decision_requirements_id is not UNSET:
-            field_dict["decisionRequirementsId"] = decision_requirements_id
-        if decision_requirements_name is not UNSET:
-            field_dict["decisionRequirementsName"] = decision_requirements_name
-        if version is not UNSET:
-            field_dict["version"] = version
-        if resource_name is not UNSET:
-            field_dict["resourceName"] = resource_name
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
-        if decision_requirements_key is not UNSET:
-            field_dict["decisionRequirementsKey"] = decision_requirements_key
+        field_dict.update(
+            {
+                "decisionRequirementsId": decision_requirements_id,
+                "decisionRequirementsName": decision_requirements_name,
+                "version": version,
+                "resourceName": resource_name,
+                "tenantId": tenant_id,
+                "decisionRequirementsKey": decision_requirements_key,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        decision_requirements_id = d.pop("decisionRequirementsId", UNSET)
+        decision_requirements_id = d.pop("decisionRequirementsId")
 
-        decision_requirements_name = d.pop("decisionRequirementsName", UNSET)
+        decision_requirements_name = d.pop("decisionRequirementsName")
 
-        version = d.pop("version", UNSET)
+        version = d.pop("version")
 
-        resource_name = d.pop("resourceName", UNSET)
+        resource_name = d.pop("resourceName")
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
 
-        decision_requirements_key = (
-            lift_decision_requirements_key(_val)
-            if (_val := d.pop("decisionRequirementsKey", UNSET)) is not UNSET
-            else UNSET
+        decision_requirements_key = lift_decision_requirements_key(
+            d.pop("decisionRequirementsKey")
         )
 
         deployment_metadata_result_decision_requirements = cls(

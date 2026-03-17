@@ -78,7 +78,6 @@ class AuditLogResult:
             element ID).
         tenant_id (None | str): The tenant ID of the audit log. Example: customer-service.
         result (AuditLogResultEnum): The result status of the operation.
-        annotation (None | str): Additional notes about the operation.
         category (AuditLogCategoryEnum): The category of the audit log operation.
         process_definition_id (None | str): The process definition ID. Example: new-account-onboarding-workflow.
         process_definition_key (None | str): The key of the process definition. Example: 2251799813686749.
@@ -125,7 +124,6 @@ class AuditLogResult:
     agent_element_id: None | str
     tenant_id: None | TenantId
     result: AuditLogResultEnum
-    annotation: None | str
     category: AuditLogCategoryEnum
     process_definition_id: None | ProcessDefinitionId
     process_definition_key: None | ProcessDefinitionKey
@@ -177,9 +175,6 @@ class AuditLogResult:
         tenant_id = self.tenant_id
 
         result = self.result.value
-
-        annotation: None | str
-        annotation = self.annotation
 
         category = self.category.value
 
@@ -252,7 +247,6 @@ class AuditLogResult:
                 "agentElementId": agent_element_id,
                 "tenantId": tenant_id,
                 "result": result,
-                "annotation": annotation,
                 "category": category,
                 "processDefinitionId": process_definition_id,
                 "processDefinitionKey": process_definition_key,
@@ -339,13 +333,6 @@ class AuditLogResult:
         )
 
         result = AuditLogResultEnum(d.pop("result"))
-
-        def _parse_annotation(data: object) -> None | str:
-            if data is None:
-                return data
-            return cast(None | str, data)
-
-        annotation = _parse_annotation(d.pop("annotation"))
 
         category = AuditLogCategoryEnum(d.pop("category"))
 
@@ -587,7 +574,6 @@ class AuditLogResult:
             agent_element_id=agent_element_id,
             tenant_id=tenant_id,
             result=result,
-            annotation=annotation,
             category=category,
             process_definition_id=process_definition_id,
             process_definition_key=process_definition_key,

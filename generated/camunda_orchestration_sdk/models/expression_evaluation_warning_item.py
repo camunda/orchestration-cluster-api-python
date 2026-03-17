@@ -8,40 +8,28 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
-from ..models.batch_operation_error_type import BatchOperationErrorType
-
-T = TypeVar("T", bound="BatchOperationError")
+T = TypeVar("T", bound="ExpressionEvaluationWarningItem")
 
 
 @_attrs_define
-class BatchOperationError:
+class ExpressionEvaluationWarningItem:
     """
     Attributes:
-        partition_id (int): The partition ID where the error occurred.
-        type_ (BatchOperationErrorType): The type of the error that occurred during the batch operation.
-        message (str): The error message that occurred during the batch operation.
+        message (str): The warning message Example: No function found with name 'random' and 1 parameters.
     """
 
-    partition_id: int
-    type_: BatchOperationErrorType
     message: str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        partition_id = self.partition_id
-
-        type_ = self.type_.value
-
         message = self.message
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "partitionId": partition_id,
-                "type": type_,
                 "message": message,
             }
         )
@@ -51,20 +39,14 @@ class BatchOperationError:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        partition_id = d.pop("partitionId")
-
-        type_ = BatchOperationErrorType(d.pop("type"))
-
         message = d.pop("message")
 
-        batch_operation_error = cls(
-            partition_id=partition_id,
-            type_=type_,
+        expression_evaluation_warning_item = cls(
             message=message,
         )
 
-        batch_operation_error.additional_properties = d
-        return batch_operation_error
+        expression_evaluation_warning_item.additional_properties = d
+        return expression_evaluation_warning_item
 
     @property
     def additional_keys(self) -> list[str]:

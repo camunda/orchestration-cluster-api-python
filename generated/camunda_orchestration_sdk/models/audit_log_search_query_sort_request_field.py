@@ -4,7 +4,6 @@ from enum import Enum
 class AuditLogSearchQuerySortRequestField(str, Enum):
     ACTORID = "actorId"
     ACTORTYPE = "actorType"
-    ANNOTATION = "annotation"
     AUDITLOGKEY = "auditLogKey"
     BATCHOPERATIONKEY = "batchOperationKey"
     BATCHOPERATIONTYPE = "batchOperationType"

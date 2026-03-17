@@ -21,11 +21,12 @@ from collections.abc import Mapping
 from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
 from ..models.message_subscription_state_enum import MessageSubscriptionStateEnum
-from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="MessageSubscriptionResult")
 
@@ -34,71 +35,71 @@ T = TypeVar("T", bound="MessageSubscriptionResult")
 class MessageSubscriptionResult:
     """
     Attributes:
+        message_subscription_key (str): The message subscription key associated with this message subscription. Example:
+            2251799813632456.
+        process_definition_id (str): The process definition ID associated with this message subscription. Example: new-
+            account-onboarding-workflow.
+        process_definition_key (None | str): The process definition key associated with this message subscription.
+            Example: 2251799813686749.
+        process_instance_key (None | str): The process instance key associated with this message subscription. Example:
+            2251799813690746.
         root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
             top-level
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
-        message_subscription_key (str | Unset): The message subscription key associated with this message subscription.
-            Example: 2251799813632456.
-        process_definition_id (str | Unset): The process definition ID associated with this message subscription.
-            Example: new-account-onboarding-workflow.
-        process_definition_key (str | Unset): The process definition key associated with this message subscription.
-            Example: 2251799813686749.
-        process_instance_key (str | Unset): The process instance key associated with this message subscription. Example:
-            2251799813690746.
-        element_id (str | Unset): The element ID associated with this message subscription. Example: Activity_106kosb.
-        element_instance_key (str | Unset): The element instance key associated with this message subscription. Example:
+        element_id (str): The element ID associated with this message subscription. Example: Activity_106kosb.
+        element_instance_key (None | str): The element instance key associated with this message subscription. Example:
             2251799813686789.
-        message_subscription_state (MessageSubscriptionStateEnum | Unset): The state of message subscription.
-        last_updated_date (datetime.datetime | Unset): The last updated date of the message subscription.
-        message_name (str | Unset): The name of the message associated with the message subscription.
-        correlation_key (str | Unset): The correlation key of the message subscription.
-        tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
+        message_subscription_state (MessageSubscriptionStateEnum): The state of message subscription.
+        last_updated_date (datetime.datetime): The last updated date of the message subscription.
+        message_name (str): The name of the message associated with the message subscription.
+        correlation_key (None | str): The correlation key of the message subscription.
+        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
     """
 
+    message_subscription_key: MessageSubscriptionKey
+    process_definition_id: ProcessDefinitionId
+    process_definition_key: None | ProcessDefinitionKey
+    process_instance_key: None | ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
-    message_subscription_key: MessageSubscriptionKey | Unset = UNSET
-    process_definition_id: ProcessDefinitionId | Unset = UNSET
-    process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    process_instance_key: ProcessInstanceKey | Unset = UNSET
-    element_id: ElementId | Unset = UNSET
-    element_instance_key: ElementInstanceKey | Unset = UNSET
-    message_subscription_state: MessageSubscriptionStateEnum | Unset = UNSET
-    last_updated_date: datetime.datetime | Unset = UNSET
-    message_name: str | Unset = UNSET
-    correlation_key: str | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
+    element_id: ElementId
+    element_instance_key: None | ElementInstanceKey
+    message_subscription_state: MessageSubscriptionStateEnum
+    last_updated_date: datetime.datetime
+    message_name: str
+    correlation_key: None | str
+    tenant_id: TenantId
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        root_process_instance_key: None | ProcessInstanceKey
-        root_process_instance_key = self.root_process_instance_key
-
         message_subscription_key = self.message_subscription_key
 
         process_definition_id = self.process_definition_id
 
+        process_definition_key: None | ProcessDefinitionKey
         process_definition_key = self.process_definition_key
 
+        process_instance_key: None | ProcessInstanceKey
         process_instance_key = self.process_instance_key
+
+        root_process_instance_key: None | ProcessInstanceKey
+        root_process_instance_key = self.root_process_instance_key
 
         element_id = self.element_id
 
+        element_instance_key: None | ElementInstanceKey
         element_instance_key = self.element_instance_key
 
-        message_subscription_state: str | Unset = UNSET
-        if not isinstance(self.message_subscription_state, Unset):
-            message_subscription_state = self.message_subscription_state.value
+        message_subscription_state = self.message_subscription_state.value
 
-        last_updated_date: str | Unset = UNSET
-        if not isinstance(self.last_updated_date, Unset):
-            last_updated_date = self.last_updated_date.isoformat()
+        last_updated_date = self.last_updated_date.isoformat()
 
         message_name = self.message_name
 
+        correlation_key: None | str
         correlation_key = self.correlation_key
 
         tenant_id = self.tenant_id
@@ -107,37 +108,61 @@ class MessageSubscriptionResult:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "messageSubscriptionKey": message_subscription_key,
+                "processDefinitionId": process_definition_id,
+                "processDefinitionKey": process_definition_key,
+                "processInstanceKey": process_instance_key,
                 "rootProcessInstanceKey": root_process_instance_key,
+                "elementId": element_id,
+                "elementInstanceKey": element_instance_key,
+                "messageSubscriptionState": message_subscription_state,
+                "lastUpdatedDate": last_updated_date,
+                "messageName": message_name,
+                "correlationKey": correlation_key,
+                "tenantId": tenant_id,
             }
         )
-        if message_subscription_key is not UNSET:
-            field_dict["messageSubscriptionKey"] = message_subscription_key
-        if process_definition_id is not UNSET:
-            field_dict["processDefinitionId"] = process_definition_id
-        if process_definition_key is not UNSET:
-            field_dict["processDefinitionKey"] = process_definition_key
-        if process_instance_key is not UNSET:
-            field_dict["processInstanceKey"] = process_instance_key
-        if element_id is not UNSET:
-            field_dict["elementId"] = element_id
-        if element_instance_key is not UNSET:
-            field_dict["elementInstanceKey"] = element_instance_key
-        if message_subscription_state is not UNSET:
-            field_dict["messageSubscriptionState"] = message_subscription_state
-        if last_updated_date is not UNSET:
-            field_dict["lastUpdatedDate"] = last_updated_date
-        if message_name is not UNSET:
-            field_dict["messageName"] = message_name
-        if correlation_key is not UNSET:
-            field_dict["correlationKey"] = correlation_key
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        message_subscription_key = lift_message_subscription_key(
+            d.pop("messageSubscriptionKey")
+        )
+
+        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+
+        def _parse_process_definition_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_process_definition_key = _parse_process_definition_key(
+            d.pop("processDefinitionKey")
+        )
+
+        process_definition_key = (
+            lift_process_definition_key(_raw_process_definition_key)
+            if isinstance(_raw_process_definition_key, str)
+            else _raw_process_definition_key
+        )
+
+        def _parse_process_instance_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_process_instance_key = _parse_process_instance_key(
+            d.pop("processInstanceKey")
+        )
+
+        process_instance_key = (
+            lift_process_instance_key(_raw_process_instance_key)
+            if isinstance(_raw_process_instance_key, str)
+            else _raw_process_instance_key
+        )
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -154,74 +179,46 @@ class MessageSubscriptionResult:
             else _raw_root_process_instance_key
         )
 
-        message_subscription_key = (
-            lift_message_subscription_key(_val)
-            if (_val := d.pop("messageSubscriptionKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        element_id = lift_element_id(d.pop("elementId"))
 
-        process_definition_id = (
-            lift_process_definition_id(_val)
-            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
-            else UNSET
-        )
+        def _parse_element_instance_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
 
-        process_definition_key = (
-            lift_process_definition_key(_val)
-            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        process_instance_key = (
-            lift_process_instance_key(_val)
-            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        element_id = (
-            lift_element_id(_val)
-            if (_val := d.pop("elementId", UNSET)) is not UNSET
-            else UNSET
+        _raw_element_instance_key = _parse_element_instance_key(
+            d.pop("elementInstanceKey")
         )
 
         element_instance_key = (
-            lift_element_instance_key(_val)
-            if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET
-            else UNSET
+            lift_element_instance_key(_raw_element_instance_key)
+            if isinstance(_raw_element_instance_key, str)
+            else _raw_element_instance_key
         )
 
-        _message_subscription_state = d.pop("messageSubscriptionState", UNSET)
-        message_subscription_state: MessageSubscriptionStateEnum | Unset
-        if isinstance(_message_subscription_state, Unset):
-            message_subscription_state = UNSET
-        else:
-            message_subscription_state = MessageSubscriptionStateEnum(
-                _message_subscription_state
-            )
-
-        _last_updated_date = d.pop("lastUpdatedDate", UNSET)
-        last_updated_date: datetime.datetime | Unset
-        if isinstance(_last_updated_date, Unset):
-            last_updated_date = UNSET
-        else:
-            last_updated_date = isoparse(_last_updated_date)
-
-        message_name = d.pop("messageName", UNSET)
-
-        correlation_key = d.pop("correlationKey", UNSET)
-
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
+        message_subscription_state = MessageSubscriptionStateEnum(
+            d.pop("messageSubscriptionState")
         )
+
+        last_updated_date = isoparse(d.pop("lastUpdatedDate"))
+
+        message_name = d.pop("messageName")
+
+        def _parse_correlation_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        correlation_key = _parse_correlation_key(d.pop("correlationKey"))
+
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
 
         message_subscription_result = cls(
-            root_process_instance_key=root_process_instance_key,
             message_subscription_key=message_subscription_key,
             process_definition_id=process_definition_id,
             process_definition_key=process_definition_key,
             process_instance_key=process_instance_key,
+            root_process_instance_key=root_process_instance_key,
             element_id=element_id,
             element_instance_key=element_instance_key,
             message_subscription_state=message_subscription_state,

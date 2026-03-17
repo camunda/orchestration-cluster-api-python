@@ -372,7 +372,6 @@ components:
             - processDefinitionId
             - processInstanceKey
             - errorType
-            - errorMessage
             - elementId
             - elementInstanceKey
             - creationTime
@@ -509,6 +508,10 @@ components:
 
     IncidentProcessInstanceStatisticsByErrorResult:
       type: object
+      required:
+        - activeInstancesWithErrorCount
+        - errorHashCode
+        - errorMessage
       properties:
         errorHashCode:
           type: integer
@@ -573,6 +576,13 @@ components:
 
     IncidentProcessInstanceStatisticsByDefinitionResult:
       type: object
+      required:
+        - activeInstancesWithErrorCount
+        - processDefinitionId
+        - processDefinitionKey
+        - processDefinitionName
+        - processDefinitionVersion
+        - tenantId
       properties:
         processDefinitionId:
           $ref: 'identifiers.yaml#/components/schemas/ProcessDefinitionId'

@@ -4,9 +4,9 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
     from ..models.evaluated_decision_output_item import EvaluatedDecisionOutputItem
@@ -20,39 +20,37 @@ class MatchedDecisionRuleItem:
     """A decision rule that matched within this decision evaluation.
 
     Attributes:
+        rule_id (str): The ID of the matched rule.
+        rule_index (int): The index of the matched rule.
         evaluated_outputs (list[EvaluatedDecisionOutputItem]): The evaluated decision outputs.
-        rule_id (str | Unset): The ID of the matched rule.
-        rule_index (int | Unset): The index of the matched rule.
     """
 
+    rule_id: str
+    rule_index: int
     evaluated_outputs: list[EvaluatedDecisionOutputItem]
-    rule_id: str | Unset = UNSET
-    rule_index: int | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        rule_id = self.rule_id
+
+        rule_index = self.rule_index
+
         evaluated_outputs: list[dict[str, Any]] = []
         for evaluated_outputs_item_data in self.evaluated_outputs:
             evaluated_outputs_item = evaluated_outputs_item_data.to_dict()
             evaluated_outputs.append(evaluated_outputs_item)
 
-        rule_id = self.rule_id
-
-        rule_index = self.rule_index
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "ruleId": rule_id,
+                "ruleIndex": rule_index,
                 "evaluatedOutputs": evaluated_outputs,
             }
         )
-        if rule_id is not UNSET:
-            field_dict["ruleId"] = rule_id
-        if rule_index is not UNSET:
-            field_dict["ruleIndex"] = rule_index
 
         return field_dict
 
@@ -61,6 +59,10 @@ class MatchedDecisionRuleItem:
         from ..models.evaluated_decision_output_item import EvaluatedDecisionOutputItem
 
         d = dict(src_dict)
+        rule_id = d.pop("ruleId")
+
+        rule_index = d.pop("ruleIndex")
+
         evaluated_outputs: list[EvaluatedDecisionOutputItem] = []
         _evaluated_outputs = d.pop("evaluatedOutputs")
         for evaluated_outputs_item_data in _evaluated_outputs:
@@ -70,14 +72,10 @@ class MatchedDecisionRuleItem:
 
             evaluated_outputs.append(evaluated_outputs_item)
 
-        rule_id = d.pop("ruleId", UNSET)
-
-        rule_index = d.pop("ruleIndex", UNSET)
-
         matched_decision_rule_item = cls(
-            evaluated_outputs=evaluated_outputs,
             rule_id=rule_id,
             rule_index=rule_index,
+            evaluated_outputs=evaluated_outputs,
         )
 
         matched_decision_rule_item.additional_properties = d

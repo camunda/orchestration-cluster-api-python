@@ -5,15 +5,16 @@ import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.element_instance_result_state import ElementInstanceResultState
 from ..models.element_instance_result_type import ElementInstanceResultType
-from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="ElementInstanceResult")
 @_attrs_define
 class ElementInstanceResult:
     process_definition_id: ProcessDefinitionId
     start_date: datetime.datetime
+    end_date: datetime.datetime | None
     element_id: ElementId
     element_name: str
     type_: ElementInstanceResultType
@@ -24,8 +25,7 @@ class ElementInstanceResult:
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
-    end_date: datetime.datetime | None | Unset = UNSET
-    incident_key: None | IncidentKey | Unset = UNSET
+    incident_key: None | IncidentKey
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

@@ -80,6 +80,8 @@ make typecheck
 
 **Always Green**: The `main` branch must have **0 errors** from `uv run pyright`. Any change that introduces pyright errors must be fixed before merging. Do not dismiss new errors as "pre-existing" without verifying by checking the baseline. If a change produces errors, fix them — do not leave regressions.
 
+**After pipeline changes**: When modifying hooks, runtime code, or any part of the generation pipeline, always run `make lint` and `make typecheck` and fix any errors before considering the change complete.
+
 ### 6. Clean
 To remove generated artifacts:
 ```bash

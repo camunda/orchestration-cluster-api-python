@@ -648,6 +648,15 @@ class AssignUserTaskConflict(ApiError):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
+class AssignUserTaskGatewayTimeout(ApiError):
+    """Raised when the server returns HTTP 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists"""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
 class AssignUserTaskInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
@@ -855,6 +864,15 @@ class CancelProcessInstanceBadRequest(ApiError):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
+class CancelProcessInstanceGatewayTimeout(ApiError):
+    """Raised when the server returns HTTP 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists"""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
 class CancelProcessInstanceInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
@@ -974,6 +992,15 @@ class CompleteUserTaskBadRequest(ApiError):
 
 class CompleteUserTaskConflict(ApiError):
     """Raised when the server returns HTTP 409. The user task with the given key is in the wrong state currently. More details are provided in the response body."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class CompleteUserTaskGatewayTimeout(ApiError):
+    """Raised when the server returns HTTP 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists"""
 
     parsed: ProblemDetail
 
@@ -1208,6 +1235,15 @@ class CreateDocumentsUnsupportedMediaType(ApiError):
 
 class CreateElementInstanceVariablesBadRequest(ApiError):
     """Raised when the server returns HTTP 400. The provided data is not valid."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class CreateElementInstanceVariablesGatewayTimeout(ApiError):
+    """Raised when the server returns HTTP 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists"""
 
     parsed: ProblemDetail
 
@@ -6417,6 +6453,15 @@ class UnassignUserTaskConflict(ApiError):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
+class UnassignUserTaskGatewayTimeout(ApiError):
+    """Raised when the server returns HTTP 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists"""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
 class UnassignUserTaskInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
@@ -6912,6 +6957,15 @@ class UpdateUserTaskConflict(ApiError):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
+class UpdateUserTaskGatewayTimeout(ApiError):
+    """Raised when the server returns HTTP 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists"""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
 class UpdateUserTaskInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
@@ -7009,6 +7063,7 @@ __all__ = [
     "AssignRoleToUserServiceUnavailable",
     "AssignUserTaskBadRequest",
     "AssignUserTaskConflict",
+    "AssignUserTaskGatewayTimeout",
     "AssignUserTaskInternalServerError",
     "AssignUserTaskNotFound",
     "AssignUserTaskServiceUnavailable",
@@ -7032,6 +7087,7 @@ __all__ = [
     "CancelBatchOperationInternalServerError",
     "CancelBatchOperationNotFound",
     "CancelProcessInstanceBadRequest",
+    "CancelProcessInstanceGatewayTimeout",
     "CancelProcessInstanceInternalServerError",
     "CancelProcessInstanceNotFound",
     "CancelProcessInstanceServiceUnavailable",
@@ -7046,6 +7102,7 @@ __all__ = [
     "CompleteJobServiceUnavailable",
     "CompleteUserTaskBadRequest",
     "CompleteUserTaskConflict",
+    "CompleteUserTaskGatewayTimeout",
     "CompleteUserTaskInternalServerError",
     "CompleteUserTaskNotFound",
     "CompleteUserTaskServiceUnavailable",
@@ -7072,6 +7129,7 @@ __all__ = [
     "CreateDocumentsBadRequest",
     "CreateDocumentsUnsupportedMediaType",
     "CreateElementInstanceVariablesBadRequest",
+    "CreateElementInstanceVariablesGatewayTimeout",
     "CreateElementInstanceVariablesInternalServerError",
     "CreateElementInstanceVariablesServiceUnavailable",
     "CreateGlobalClusterVariableBadRequest",
@@ -7650,6 +7708,7 @@ __all__ = [
     "UnassignUserFromTenantServiceUnavailable",
     "UnassignUserTaskBadRequest",
     "UnassignUserTaskConflict",
+    "UnassignUserTaskGatewayTimeout",
     "UnassignUserTaskInternalServerError",
     "UnassignUserTaskNotFound",
     "UnassignUserTaskServiceUnavailable",
@@ -7706,6 +7765,7 @@ __all__ = [
     "UpdateUserServiceUnavailable",
     "UpdateUserTaskBadRequest",
     "UpdateUserTaskConflict",
+    "UpdateUserTaskGatewayTimeout",
     "UpdateUserTaskInternalServerError",
     "UpdateUserTaskNotFound",
     "UpdateUserTaskServiceUnavailable",

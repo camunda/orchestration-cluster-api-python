@@ -4,19 +4,19 @@ from camunda_orchestration_sdk.semantic_types import ProcessInstanceKey, ScopeKe
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
-from ..types import UNSET, Unset, str_any_dict_factory
 T = TypeVar("T", bound="VariableSearchResult")
 @_attrs_define
 class VariableSearchResult:
+    value: str
+    is_truncated: bool
     name: str
     tenant_id: TenantId
     variable_key: VariableKey
     scope_key: ScopeKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
-    value: str | Unset = UNSET
-    is_truncated: bool | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

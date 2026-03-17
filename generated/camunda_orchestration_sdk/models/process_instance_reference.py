@@ -10,9 +10,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="ProcessInstanceReference")
 
@@ -21,12 +21,12 @@ T = TypeVar("T", bound="ProcessInstanceReference")
 class ProcessInstanceReference:
     """
     Attributes:
-        process_definition_key (str | Unset): The key of the process definition. Example: 2251799813686749.
-        process_instance_key (str | Unset): The key of the created process instance. Example: 2251799813690746.
+        process_definition_key (str): The key of the process definition. Example: 2251799813686749.
+        process_instance_key (str): The key of the created process instance. Example: 2251799813690746.
     """
 
-    process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    process_instance_key: ProcessInstanceKey | Unset = UNSET
+    process_definition_key: ProcessDefinitionKey
+    process_instance_key: ProcessInstanceKey
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -38,28 +38,23 @@ class ProcessInstanceReference:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if process_definition_key is not UNSET:
-            field_dict["processDefinitionKey"] = process_definition_key
-        if process_instance_key is not UNSET:
-            field_dict["processInstanceKey"] = process_instance_key
+        field_dict.update(
+            {
+                "processDefinitionKey": process_definition_key,
+                "processInstanceKey": process_instance_key,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_definition_key = (
-            lift_process_definition_key(_val)
-            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
-            else UNSET
+        process_definition_key = lift_process_definition_key(
+            d.pop("processDefinitionKey")
         )
 
-        process_instance_key = (
-            lift_process_instance_key(_val)
-            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
 
         process_instance_reference = cls(
             process_definition_key=process_definition_key,

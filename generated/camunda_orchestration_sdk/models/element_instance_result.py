@@ -21,12 +21,13 @@ from collections.abc import Mapping
 from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
 from ..models.element_instance_result_state import ElementInstanceResultState
 from ..models.element_instance_result_type import ElementInstanceResultType
-from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="ElementInstanceResult")
 
@@ -38,6 +39,7 @@ class ElementInstanceResult:
         process_definition_id (str): The process definition ID associated to this element instance. Example: new-
             account-onboarding-workflow.
         start_date (datetime.datetime): Date when element instance started.
+        end_date (datetime.datetime | None): Date when element instance finished.
         element_id (str): The element ID for this element instance. Example: Activity_106kosb.
         element_name (str): The element name for this element instance.
         type_ (ElementInstanceResultType): Type of element as defined set of values.
@@ -56,13 +58,12 @@ class ElementInstanceResult:
              Example: 2251799813690746.
         process_definition_key (str): The process definition key associated to this element instance. Example:
             2251799813686749.
-        end_date (datetime.datetime | None | Unset): Date when element instance finished.
-        incident_key (None | str | Unset): Incident key associated with this element instance. Example:
-            2251799813689432.
+        incident_key (None | str): Incident key associated with this element instance. Example: 2251799813689432.
     """
 
     process_definition_id: ProcessDefinitionId
     start_date: datetime.datetime
+    end_date: datetime.datetime | None
     element_id: ElementId
     element_name: str
     type_: ElementInstanceResultType
@@ -73,8 +74,7 @@ class ElementInstanceResult:
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
     process_definition_key: ProcessDefinitionKey
-    end_date: datetime.datetime | None | Unset = UNSET
-    incident_key: None | IncidentKey | Unset = UNSET
+    incident_key: None | IncidentKey
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -83,6 +83,12 @@ class ElementInstanceResult:
         process_definition_id = self.process_definition_id
 
         start_date = self.start_date.isoformat()
+
+        end_date: None | str
+        if isinstance(self.end_date, datetime.datetime):
+            end_date = self.end_date.isoformat()
+        else:
+            end_date = self.end_date
 
         element_id = self.element_id
 
@@ -105,19 +111,8 @@ class ElementInstanceResult:
 
         process_definition_key = self.process_definition_key
 
-        end_date: None | str | Unset
-        if isinstance(self.end_date, Unset):
-            end_date = UNSET
-        elif isinstance(self.end_date, datetime.datetime):
-            end_date = self.end_date.isoformat()
-        else:
-            end_date = self.end_date
-
-        incident_key: None | IncidentKey | Unset
-        if isinstance(self.incident_key, Unset):
-            incident_key = UNSET
-        else:
-            incident_key = self.incident_key
+        incident_key: None | IncidentKey
+        incident_key = self.incident_key
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -125,6 +120,7 @@ class ElementInstanceResult:
             {
                 "processDefinitionId": process_definition_id,
                 "startDate": start_date,
+                "endDate": end_date,
                 "elementId": element_id,
                 "elementName": element_name,
                 "type": type_,
@@ -135,12 +131,9 @@ class ElementInstanceResult:
                 "processInstanceKey": process_instance_key,
                 "rootProcessInstanceKey": root_process_instance_key,
                 "processDefinitionKey": process_definition_key,
+                "incidentKey": incident_key,
             }
         )
-        if end_date is not UNSET:
-            field_dict["endDate"] = end_date
-        if incident_key is not UNSET:
-            field_dict["incidentKey"] = incident_key
 
         return field_dict
 
@@ -150,6 +143,21 @@ class ElementInstanceResult:
         process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
 
         start_date = isoparse(d.pop("startDate"))
+
+        def _parse_end_date(data: object) -> datetime.datetime | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                end_date_type_0 = isoparse(data)
+
+                return end_date_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(datetime.datetime | None, data)
+
+        end_date = _parse_end_date(d.pop("endDate"))
 
         element_id = lift_element_id(d.pop("elementId"))
 
@@ -186,31 +194,12 @@ class ElementInstanceResult:
             d.pop("processDefinitionKey")
         )
 
-        def _parse_end_date(data: object) -> datetime.datetime | None | Unset:
+        def _parse_incident_key(data: object) -> None | str:
             if data is None:
                 return data
-            if isinstance(data, Unset):
-                return data
-            try:
-                if not isinstance(data, str):
-                    raise TypeError()
-                end_date_type_0 = isoparse(data)
+            return cast(None | str, data)
 
-                return end_date_type_0
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(datetime.datetime | None | Unset, data)
-
-        end_date = _parse_end_date(d.pop("endDate", UNSET))
-
-        def _parse_incident_key(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        _raw_incident_key = _parse_incident_key(d.pop("incidentKey", UNSET))
+        _raw_incident_key = _parse_incident_key(d.pop("incidentKey"))
 
         incident_key = (
             lift_incident_key(_raw_incident_key)
@@ -221,6 +210,7 @@ class ElementInstanceResult:
         element_instance_result = cls(
             process_definition_id=process_definition_id,
             start_date=start_date,
+            end_date=end_date,
             element_id=element_id,
             element_name=element_name,
             type_=type_,
@@ -231,7 +221,6 @@ class ElementInstanceResult:
             process_instance_key=process_instance_key,
             root_process_instance_key=root_process_instance_key,
             process_definition_key=process_definition_key,
-            end_date=end_date,
             incident_key=incident_key,
         )
 

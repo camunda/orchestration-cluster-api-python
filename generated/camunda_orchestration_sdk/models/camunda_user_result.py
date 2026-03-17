@@ -5,9 +5,9 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
     from ..models.camunda_user_result_c8_links import CamundaUserResultC8Links
@@ -21,6 +21,9 @@ T = TypeVar("T", bound="CamundaUserResult")
 class CamundaUserResult:
     """
     Attributes:
+        username (None | str): The username of the user. Example: swillis.
+        display_name (None | str): The display name of the user. Example: Samantha Willis.
+        email (None | str): The email of the user. Example: swillis@acme.com.
         authorized_components (list[str]): The web components the user is authorized to use. Example: ['*'].
         tenants (list[TenantResult]): The tenants the user is a member of.
         groups (list[str]): The groups assigned to the user. Example: ['customer-service'].
@@ -28,11 +31,11 @@ class CamundaUserResult:
         sales_plan_type (None | str): The plan of the user.
         c_8_links (CamundaUserResultC8Links): The links to the components in the C8 stack.
         can_logout (bool): Flag for understanding if the user is able to perform logout.
-        username (None | str | Unset): The username of the user. Example: swillis.
-        display_name (None | str | Unset): The display name of the user. Example: Samantha Willis.
-        email (None | str | Unset): The email of the user. Example: swillis@acme.com.
     """
 
+    username: None | Username
+    display_name: None | str
+    email: None | str
     authorized_components: list[str]
     tenants: list[TenantResult]
     groups: list[str]
@@ -40,14 +43,20 @@ class CamundaUserResult:
     sales_plan_type: None | str
     c_8_links: CamundaUserResultC8Links
     can_logout: bool
-    username: None | Username | Unset = UNSET
-    display_name: None | str | Unset = UNSET
-    email: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        username: None | Username
+        username = self.username
+
+        display_name: None | str
+        display_name = self.display_name
+
+        email: None | str
+        email = self.email
+
         authorized_components = self.authorized_components
 
         tenants: list[dict[str, Any]] = []
@@ -66,28 +75,13 @@ class CamundaUserResult:
 
         can_logout = self.can_logout
 
-        username: None | Username | Unset
-        if isinstance(self.username, Unset):
-            username = UNSET
-        else:
-            username = self.username
-
-        display_name: None | str | Unset
-        if isinstance(self.display_name, Unset):
-            display_name = UNSET
-        else:
-            display_name = self.display_name
-
-        email: None | str | Unset
-        if isinstance(self.email, Unset):
-            email = UNSET
-        else:
-            email = self.email
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "username": username,
+                "displayName": display_name,
+                "email": email,
                 "authorizedComponents": authorized_components,
                 "tenants": tenants,
                 "groups": groups,
@@ -97,12 +91,6 @@ class CamundaUserResult:
                 "canLogout": can_logout,
             }
         )
-        if username is not UNSET:
-            field_dict["username"] = username
-        if display_name is not UNSET:
-            field_dict["displayName"] = display_name
-        if email is not UNSET:
-            field_dict["email"] = email
 
         return field_dict
 
@@ -112,6 +100,34 @@ class CamundaUserResult:
         from ..models.tenant_result import TenantResult
 
         d = dict(src_dict)
+
+        def _parse_username(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_username = _parse_username(d.pop("username"))
+
+        username = (
+            lift_username(_raw_username)
+            if isinstance(_raw_username, str)
+            else _raw_username
+        )
+
+        def _parse_display_name(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        display_name = _parse_display_name(d.pop("displayName"))
+
+        def _parse_email(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        email = _parse_email(d.pop("email"))
+
         authorized_components = cast(list[str], d.pop("authorizedComponents"))
 
         tenants: list[TenantResult] = []
@@ -136,40 +152,10 @@ class CamundaUserResult:
 
         can_logout = d.pop("canLogout")
 
-        def _parse_username(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        _raw_username = _parse_username(d.pop("username", UNSET))
-
-        username = (
-            lift_username(_raw_username)
-            if isinstance(_raw_username, str)
-            else _raw_username
-        )
-
-        def _parse_display_name(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        display_name = _parse_display_name(d.pop("displayName", UNSET))
-
-        def _parse_email(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        email = _parse_email(d.pop("email", UNSET))
-
         camunda_user_result = cls(
+            username=username,
+            display_name=display_name,
+            email=email,
             authorized_components=authorized_components,
             tenants=tenants,
             groups=groups,
@@ -177,9 +163,6 @@ class CamundaUserResult:
             sales_plan_type=sales_plan_type,
             c_8_links=c_8_links,
             can_logout=can_logout,
-            username=username,
-            display_name=display_name,
-            email=email,
         )
 
         camunda_user_result.additional_properties = d

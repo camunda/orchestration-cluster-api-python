@@ -4,9 +4,9 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
     from ..models.delete_resource_response_batch_operation import (
@@ -22,8 +22,8 @@ class DeleteResourceResponse:
     """
     Attributes:
         resource_key (str): The system-assigned key for this resource, requested to be deleted.
-        batch_operation (DeleteResourceResponseBatchOperation | None | Unset): The batch operation created for
-            asynchronously deleting the historic data.
+        batch_operation (DeleteResourceResponseBatchOperation | None): The batch operation created for asynchronously
+            deleting the historic data.
 
             This field is only populated when the request `deleteHistory` is set to `true` and the resource
             is a process definition. For other resource types (decisions, forms, generic resources),
@@ -31,7 +31,7 @@ class DeleteResourceResponse:
     """
 
     resource_key: str
-    batch_operation: DeleteResourceResponseBatchOperation | None | Unset = UNSET
+    batch_operation: DeleteResourceResponseBatchOperation | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -44,10 +44,8 @@ class DeleteResourceResponse:
         resource_key: str
         resource_key = self.resource_key
 
-        batch_operation: dict[str, Any] | None | Unset
-        if isinstance(self.batch_operation, Unset):
-            batch_operation = UNSET
-        elif isinstance(self.batch_operation, DeleteResourceResponseBatchOperation):
+        batch_operation: dict[str, Any] | None
+        if isinstance(self.batch_operation, DeleteResourceResponseBatchOperation):
             batch_operation = self.batch_operation.to_dict()
         else:
             batch_operation = self.batch_operation
@@ -57,10 +55,9 @@ class DeleteResourceResponse:
         field_dict.update(
             {
                 "resourceKey": resource_key,
+                "batchOperation": batch_operation,
             }
         )
-        if batch_operation is not UNSET:
-            field_dict["batchOperation"] = batch_operation
 
         return field_dict
 
@@ -79,10 +76,8 @@ class DeleteResourceResponse:
 
         def _parse_batch_operation(
             data: object,
-        ) -> DeleteResourceResponseBatchOperation | None | Unset:
+        ) -> DeleteResourceResponseBatchOperation | None:
             if data is None:
-                return data
-            if isinstance(data, Unset):
                 return data
             try:
                 if not isinstance(data, dict):
@@ -96,9 +91,9 @@ class DeleteResourceResponse:
                 return componentsschemas_delete_resource_response_batch_operation_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(DeleteResourceResponseBatchOperation | None | Unset, data)
+            return cast(DeleteResourceResponseBatchOperation | None, data)
 
-        batch_operation = _parse_batch_operation(d.pop("batchOperation", UNSET))
+        batch_operation = _parse_batch_operation(d.pop("batchOperation"))
 
         delete_resource_response = cls(
             resource_key=resource_key,

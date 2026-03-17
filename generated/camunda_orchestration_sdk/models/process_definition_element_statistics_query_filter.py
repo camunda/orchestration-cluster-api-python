@@ -52,6 +52,9 @@ class ProcessDefinitionElementStatisticsQueryFilter:
         parent_process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The parent process instance key.
         parent_element_instance_key (AdvancedElementInstanceKeyFilter | str | Unset): The parent element instance key.
         batch_operation_id (AdvancedStringFilter | str | Unset): The batch operation id.
+            **Deprecated**: Use `batchOperationKey` instead. This field will be removed in a future release. If both
+            `batchOperationId` and `batchOperationKey` are provided, the request will be rejected with a 400 error.
+        batch_operation_key (AdvancedStringFilter | str | Unset): The batch operation key.
         error_message (AdvancedStringFilter | str | Unset): The error message related to the process.
         has_retries_left (bool | Unset): Whether the process has failed jobs with retries left.
         element_instance_state (AdvancedElementInstanceStateFilter | ElementInstanceStateExactMatch | Unset): The state
@@ -112,6 +115,7 @@ class ProcessDefinitionElementStatisticsQueryFilter:
     parent_process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
     parent_element_instance_key: AdvancedElementInstanceKeyFilter | str | Unset = UNSET
     batch_operation_id: AdvancedStringFilter | str | Unset = UNSET
+    batch_operation_key: AdvancedStringFilter | str | Unset = UNSET
     error_message: AdvancedStringFilter | str | Unset = UNSET
     has_retries_left: bool | Unset = UNSET
     element_instance_state: (
@@ -214,6 +218,14 @@ class ProcessDefinitionElementStatisticsQueryFilter:
         else:
             batch_operation_id = self.batch_operation_id
 
+        batch_operation_key: dict[str, Any] | str | Unset
+        if isinstance(self.batch_operation_key, Unset):
+            batch_operation_key = UNSET
+        elif isinstance(self.batch_operation_key, AdvancedStringFilter):
+            batch_operation_key = self.batch_operation_key.to_dict()
+        else:
+            batch_operation_key = self.batch_operation_key
+
         error_message: dict[str, Any] | str | Unset
         if isinstance(self.error_message, Unset):
             error_message = UNSET
@@ -292,6 +304,8 @@ class ProcessDefinitionElementStatisticsQueryFilter:
             field_dict["parentElementInstanceKey"] = parent_element_instance_key
         if batch_operation_id is not UNSET:
             field_dict["batchOperationId"] = batch_operation_id
+        if batch_operation_key is not UNSET:
+            field_dict["batchOperationKey"] = batch_operation_key
         if error_message is not UNSET:
             field_dict["errorMessage"] = error_message
         if has_retries_left is not UNSET:
@@ -526,6 +540,27 @@ class ProcessDefinitionElementStatisticsQueryFilter:
 
         batch_operation_id = _parse_batch_operation_id(d.pop("batchOperationId", UNSET))
 
+        def _parse_batch_operation_key(
+            data: object,
+        ) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                batch_operation_key_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return batch_operation_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        batch_operation_key = _parse_batch_operation_key(
+            d.pop("batchOperationKey", UNSET)
+        )
+
         def _parse_error_message(data: object) -> AdvancedStringFilter | str | Unset:
             if isinstance(data, Unset):
                 return data
@@ -653,6 +688,7 @@ class ProcessDefinitionElementStatisticsQueryFilter:
             parent_process_instance_key=parent_process_instance_key,
             parent_element_instance_key=parent_element_instance_key,
             batch_operation_id=batch_operation_id,
+            batch_operation_key=batch_operation_key,
             error_message=error_message,
             has_retries_left=has_retries_left,
             element_instance_state=element_instance_state,

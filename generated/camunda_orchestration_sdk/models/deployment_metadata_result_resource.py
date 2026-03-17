@@ -5,9 +5,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="DeploymentMetadataResultResource")
 
@@ -17,18 +17,18 @@ class DeploymentMetadataResultResource:
     """Deployed resource.
 
     Attributes:
-        resource_id (str | Unset): The resource id of the deployed resource.
-        resource_name (str | Unset): The name of the deployed resource.
-        version (int | Unset): The description of the deployed resource.
-        tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
-        resource_key (str | Unset): The assigned key, which acts as a unique identifier for this Resource.
+        resource_id (str): The resource id of the deployed resource.
+        resource_name (str): The name of the deployed resource.
+        version (int): The description of the deployed resource.
+        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+        resource_key (str): The assigned key, which acts as a unique identifier for this Resource.
     """
 
-    resource_id: str | Unset = UNSET
-    resource_name: str | Unset = UNSET
-    version: int | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    resource_key: str | Unset = UNSET
+    resource_id: str
+    resource_name: str
+    version: int
+    tenant_id: TenantId
+    resource_key: str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -42,49 +42,38 @@ class DeploymentMetadataResultResource:
 
         tenant_id = self.tenant_id
 
-        resource_key: str | Unset
-        if isinstance(self.resource_key, Unset):
-            resource_key = UNSET
-        else:
-            resource_key = self.resource_key
+        resource_key: str
+        resource_key = self.resource_key
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if resource_id is not UNSET:
-            field_dict["resourceId"] = resource_id
-        if resource_name is not UNSET:
-            field_dict["resourceName"] = resource_name
-        if version is not UNSET:
-            field_dict["version"] = version
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
-        if resource_key is not UNSET:
-            field_dict["resourceKey"] = resource_key
+        field_dict.update(
+            {
+                "resourceId": resource_id,
+                "resourceName": resource_name,
+                "version": version,
+                "tenantId": tenant_id,
+                "resourceKey": resource_key,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        resource_id = d.pop("resourceId", UNSET)
+        resource_id = d.pop("resourceId")
 
-        resource_name = d.pop("resourceName", UNSET)
+        resource_name = d.pop("resourceName")
 
-        version = d.pop("version", UNSET)
+        version = d.pop("version")
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
 
-        def _parse_resource_key(data: object) -> str | Unset:
-            if isinstance(data, Unset):
-                return data
-            return cast(str | Unset, data)
+        def _parse_resource_key(data: object) -> str:
+            return cast(str, data)
 
-        resource_key = _parse_resource_key(d.pop("resourceKey", UNSET))
+        resource_key = _parse_resource_key(d.pop("resourceKey"))
 
         deployment_metadata_result_resource = cls(
             resource_id=resource_id,

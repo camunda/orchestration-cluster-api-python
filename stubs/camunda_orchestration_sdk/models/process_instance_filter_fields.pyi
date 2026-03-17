@@ -37,6 +37,7 @@ class ProcessInstanceFilterFields:
     parent_process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
     parent_element_instance_key: AdvancedElementInstanceKeyFilter | str | Unset = UNSET
     batch_operation_id: AdvancedStringFilter | str | Unset = UNSET
+    batch_operation_key: AdvancedStringFilter | str | Unset = UNSET
     error_message: AdvancedStringFilter | str | Unset = UNSET
     has_retries_left: bool | Unset = UNSET
     element_instance_state: (

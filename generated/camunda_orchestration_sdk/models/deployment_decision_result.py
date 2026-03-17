@@ -14,9 +14,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="DeploymentDecisionResult")
 
@@ -26,30 +26,29 @@ class DeploymentDecisionResult:
     """A deployed decision.
 
     Attributes:
-        decision_definition_id (str | Unset): The dmn decision ID, as parsed during deployment, together with the
-            version forms a
+        decision_definition_id (str): The dmn decision ID, as parsed during deployment, together with the version forms
+            a
             unique identifier for a specific decision.
              Example: new-hire-onboarding-workflow.
-        version (int | Unset): The assigned decision version.
-        name (str | Unset): The DMN name of the decision, as parsed during deployment.
-        tenant_id (str | Unset): The tenant ID of the deployed decision. Example: customer-service.
-        decision_requirements_id (str | Unset): The dmn ID of the decision requirements graph that this decision is part
-            of, as parsed during deployment.
-        decision_definition_key (str | Unset): The assigned decision key, which acts as a unique identifier for this
-            decision.
+        version (int): The assigned decision version.
+        name (str): The DMN name of the decision, as parsed during deployment.
+        tenant_id (str): The tenant ID of the deployed decision. Example: customer-service.
+        decision_requirements_id (str): The dmn ID of the decision requirements graph that this decision is part of, as
+            parsed during deployment.
+        decision_definition_key (str): The assigned decision key, which acts as a unique identifier for this decision.
              Example: 2251799813326547.
-        decision_requirements_key (str | Unset): The assigned key of the decision requirements graph that this decision
-            is part of.
+        decision_requirements_key (str): The assigned key of the decision requirements graph that this decision is part
+            of.
              Example: 2251799813683346.
     """
 
-    decision_definition_id: DecisionDefinitionId | Unset = UNSET
-    version: int | Unset = UNSET
-    name: str | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    decision_requirements_id: str | Unset = UNSET
-    decision_definition_key: DecisionDefinitionKey | Unset = UNSET
-    decision_requirements_key: DecisionRequirementsKey | Unset = UNSET
+    decision_definition_id: DecisionDefinitionId
+    version: int
+    name: str
+    tenant_id: TenantId
+    decision_requirements_id: str
+    decision_definition_key: DecisionDefinitionKey
+    decision_requirements_key: DecisionRequirementsKey
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -71,55 +70,41 @@ class DeploymentDecisionResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if decision_definition_id is not UNSET:
-            field_dict["decisionDefinitionId"] = decision_definition_id
-        if version is not UNSET:
-            field_dict["version"] = version
-        if name is not UNSET:
-            field_dict["name"] = name
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
-        if decision_requirements_id is not UNSET:
-            field_dict["decisionRequirementsId"] = decision_requirements_id
-        if decision_definition_key is not UNSET:
-            field_dict["decisionDefinitionKey"] = decision_definition_key
-        if decision_requirements_key is not UNSET:
-            field_dict["decisionRequirementsKey"] = decision_requirements_key
+        field_dict.update(
+            {
+                "decisionDefinitionId": decision_definition_id,
+                "version": version,
+                "name": name,
+                "tenantId": tenant_id,
+                "decisionRequirementsId": decision_requirements_id,
+                "decisionDefinitionKey": decision_definition_key,
+                "decisionRequirementsKey": decision_requirements_key,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        decision_definition_id = (
-            lift_decision_definition_id(_val)
-            if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET
-            else UNSET
+        decision_definition_id = lift_decision_definition_id(
+            d.pop("decisionDefinitionId")
         )
 
-        version = d.pop("version", UNSET)
+        version = d.pop("version")
 
-        name = d.pop("name", UNSET)
+        name = d.pop("name")
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
+
+        decision_requirements_id = d.pop("decisionRequirementsId")
+
+        decision_definition_key = lift_decision_definition_key(
+            d.pop("decisionDefinitionKey")
         )
 
-        decision_requirements_id = d.pop("decisionRequirementsId", UNSET)
-
-        decision_definition_key = (
-            lift_decision_definition_key(_val)
-            if (_val := d.pop("decisionDefinitionKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        decision_requirements_key = (
-            lift_decision_requirements_key(_val)
-            if (_val := d.pop("decisionRequirementsKey", UNSET)) is not UNSET
-            else UNSET
+        decision_requirements_key = lift_decision_requirements_key(
+            d.pop("decisionRequirementsKey")
         )
 
         deployment_decision_result = cls(

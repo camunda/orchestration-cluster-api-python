@@ -47,6 +47,9 @@ def _parse_response(
     if response.status_code == 503:
         response_503 = ProblemDetail.from_dict(response.json())
         return response_503
+    if response.status_code == 504:
+        response_504 = ProblemDetail.from_dict(response.json())
+        return response_504
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     else:
@@ -72,7 +75,10 @@ def sync_detailed(
 ) -> Response[Any | ProblemDetail]:
     """Update user task
 
-     Update a user task with the given key.
+     Update a user task with the given key. Updates wait for blocking task listeners on this lifecycle
+    transition. If listener processing is delayed beyond the request timeout, this endpoint can return
+    504. Other gateway timeout causes are also possible. Retry with backoff and inspect listener worker
+    availability and logs when this repeats.
 
     Args:
         user_task_key (str): System-generated key for a user task.
@@ -99,7 +105,10 @@ def sync(
 ) -> None:
     """Update user task
 
-     Update a user task with the given key.
+     Update a user task with the given key. Updates wait for blocking task listeners on this lifecycle
+    transition. If listener processing is delayed beyond the request timeout, this endpoint can return
+    504. Other gateway timeout causes are also possible. Retry with backoff and inspect listener worker
+    availability and logs when this repeats.
 
     Args:
         user_task_key (str): System-generated key for a user task.
@@ -111,6 +120,7 @@ def sync(
         errors.UpdateUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
         errors.UpdateUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UpdateUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UpdateUserTaskGatewayTimeout: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -147,6 +157,12 @@ def sync(
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
             )
+        if response.status_code == 504:
+            raise errors.UpdateUserTaskGatewayTimeout(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+            )
         raise errors.UnexpectedStatus(response.status_code, response.content)
     return None
 
@@ -159,7 +175,10 @@ async def asyncio_detailed(
 ) -> Response[Any | ProblemDetail]:
     """Update user task
 
-     Update a user task with the given key.
+     Update a user task with the given key. Updates wait for blocking task listeners on this lifecycle
+    transition. If listener processing is delayed beyond the request timeout, this endpoint can return
+    504. Other gateway timeout causes are also possible. Retry with backoff and inspect listener worker
+    availability and logs when this repeats.
 
     Args:
         user_task_key (str): System-generated key for a user task.
@@ -186,7 +205,10 @@ async def asyncio(
 ) -> None:
     """Update user task
 
-     Update a user task with the given key.
+     Update a user task with the given key. Updates wait for blocking task listeners on this lifecycle
+    transition. If listener processing is delayed beyond the request timeout, this endpoint can return
+    504. Other gateway timeout causes are also possible. Retry with backoff and inspect listener worker
+    availability and logs when this repeats.
 
     Args:
         user_task_key (str): System-generated key for a user task.
@@ -198,6 +220,7 @@ async def asyncio(
         errors.UpdateUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
         errors.UpdateUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UpdateUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.UpdateUserTaskGatewayTimeout: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -232,6 +255,12 @@ async def asyncio(
             )
         if response.status_code == 503:
             raise errors.UpdateUserTaskServiceUnavailable(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+            )
+        if response.status_code == 504:
+            raise errors.UpdateUserTaskGatewayTimeout(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),

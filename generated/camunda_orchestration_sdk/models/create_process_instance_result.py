@@ -16,9 +16,9 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
     from ..models.create_process_instance_result_variables import (
@@ -48,7 +48,7 @@ class CreateProcessInstanceResult:
              Example: 2251799813690746.
         tags (list[str]): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or `.`;
             length ≤ 100. Example: ['high-touch', 'remediation'].
-        business_id (None | str | Unset): Business id as provided on creation. Example: order-12345.
+        business_id (None | str): Business id as provided on creation. Example: order-12345.
     """
 
     process_definition_id: ProcessDefinitionId
@@ -58,7 +58,7 @@ class CreateProcessInstanceResult:
     process_definition_key: ProcessDefinitionKey
     process_instance_key: ProcessInstanceKey
     tags: list[str]
-    business_id: None | BusinessId | Unset = UNSET
+    business_id: None | BusinessId
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -78,11 +78,8 @@ class CreateProcessInstanceResult:
 
         tags = self.tags
 
-        business_id: None | BusinessId | Unset
-        if isinstance(self.business_id, Unset):
-            business_id = UNSET
-        else:
-            business_id = self.business_id
+        business_id: None | BusinessId
+        business_id = self.business_id
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -95,10 +92,9 @@ class CreateProcessInstanceResult:
                 "processDefinitionKey": process_definition_key,
                 "processInstanceKey": process_instance_key,
                 "tags": tags,
+                "businessId": business_id,
             }
         )
-        if business_id is not UNSET:
-            field_dict["businessId"] = business_id
 
         return field_dict
 
@@ -125,14 +121,12 @@ class CreateProcessInstanceResult:
 
         tags = cast(list[str], d.pop("tags"))
 
-        def _parse_business_id(data: object) -> None | str | Unset:
+        def _parse_business_id(data: object) -> None | str:
             if data is None:
                 return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
+            return cast(None | str, data)
 
-        _raw_business_id = _parse_business_id(d.pop("businessId", UNSET))
+        _raw_business_id = _parse_business_id(d.pop("businessId"))
 
         business_id = (
             lift_business_id(_raw_business_id)

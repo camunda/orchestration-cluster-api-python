@@ -12,9 +12,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="ProcessDefinitionMessageSubscriptionStatisticsResult")
 
@@ -23,22 +23,21 @@ T = TypeVar("T", bound="ProcessDefinitionMessageSubscriptionStatisticsResult")
 class ProcessDefinitionMessageSubscriptionStatisticsResult:
     """
     Attributes:
-        process_definition_id (str | Unset): The process definition ID associated with this message subscription.
-            Example: new-account-onboarding-workflow.
-        tenant_id (str | Unset): The tenant ID associated with this message subscription. Example: customer-service.
-        process_definition_key (str | Unset): The process definition key associated with this message subscription.
-            Example: 2251799813686749.
-        process_instances_with_active_subscriptions (int | Unset): The number of process instances with active message
+        process_definition_id (str): The process definition ID associated with this message subscription. Example: new-
+            account-onboarding-workflow.
+        tenant_id (str): The tenant ID associated with this message subscription. Example: customer-service.
+        process_definition_key (str): The process definition key associated with this message subscription. Example:
+            2251799813686749.
+        process_instances_with_active_subscriptions (int): The number of process instances with active message
             subscriptions.
-        active_subscriptions (int | Unset): The total number of active message subscriptions for this process definition
-            key.
+        active_subscriptions (int): The total number of active message subscriptions for this process definition key.
     """
 
-    process_definition_id: ProcessDefinitionId | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    process_instances_with_active_subscriptions: int | Unset = UNSET
-    active_subscriptions: int | Unset = UNSET
+    process_definition_id: ProcessDefinitionId
+    tenant_id: TenantId
+    process_definition_key: ProcessDefinitionKey
+    process_instances_with_active_subscriptions: int
+    active_subscriptions: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -58,48 +57,34 @@ class ProcessDefinitionMessageSubscriptionStatisticsResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if process_definition_id is not UNSET:
-            field_dict["processDefinitionId"] = process_definition_id
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
-        if process_definition_key is not UNSET:
-            field_dict["processDefinitionKey"] = process_definition_key
-        if process_instances_with_active_subscriptions is not UNSET:
-            field_dict["processInstancesWithActiveSubscriptions"] = (
-                process_instances_with_active_subscriptions
-            )
-        if active_subscriptions is not UNSET:
-            field_dict["activeSubscriptions"] = active_subscriptions
+        field_dict.update(
+            {
+                "processDefinitionId": process_definition_id,
+                "tenantId": tenant_id,
+                "processDefinitionKey": process_definition_key,
+                "processInstancesWithActiveSubscriptions": process_instances_with_active_subscriptions,
+                "activeSubscriptions": active_subscriptions,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_definition_id = (
-            lift_process_definition_id(_val)
-            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
 
-        process_definition_key = (
-            lift_process_definition_key(_val)
-            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
-            else UNSET
+        process_definition_key = lift_process_definition_key(
+            d.pop("processDefinitionKey")
         )
 
         process_instances_with_active_subscriptions = d.pop(
-            "processInstancesWithActiveSubscriptions", UNSET
+            "processInstancesWithActiveSubscriptions"
         )
 
-        active_subscriptions = d.pop("activeSubscriptions", UNSET)
+        active_subscriptions = d.pop("activeSubscriptions")
 
         process_definition_message_subscription_statistics_result = cls(
             process_definition_id=process_definition_id,

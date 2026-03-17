@@ -12,9 +12,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="DeploymentMetadataResultForm")
 
@@ -24,21 +24,20 @@ class DeploymentMetadataResultForm:
     """Deployed form.
 
     Attributes:
-        form_id (str | Unset): The form ID, as parsed during deployment, together with the version forms a
+        form_id (str): The form ID, as parsed during deployment, together with the version forms a
             unique identifier for a specific form.
              Example: Form_1nx5hav.
-        version (int | Unset): The version of the deployed form.
-        resource_name (str | Unset): The name of the resource.
-        tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
-        form_key (str | Unset): The assigned key, which acts as a unique identifier for this form. Example:
-            2251799813684365.
+        version (int): The version of the deployed form.
+        resource_name (str): The name of the resource.
+        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+        form_key (str): The assigned key, which acts as a unique identifier for this form. Example: 2251799813684365.
     """
 
-    form_id: FormId | Unset = UNSET
-    version: int | Unset = UNSET
-    resource_name: str | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    form_key: FormKey | Unset = UNSET
+    form_id: FormId
+    version: int
+    resource_name: str
+    tenant_id: TenantId
+    form_key: FormKey
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -56,44 +55,30 @@ class DeploymentMetadataResultForm:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if form_id is not UNSET:
-            field_dict["formId"] = form_id
-        if version is not UNSET:
-            field_dict["version"] = version
-        if resource_name is not UNSET:
-            field_dict["resourceName"] = resource_name
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
-        if form_key is not UNSET:
-            field_dict["formKey"] = form_key
+        field_dict.update(
+            {
+                "formId": form_id,
+                "version": version,
+                "resourceName": resource_name,
+                "tenantId": tenant_id,
+                "formKey": form_key,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        form_id = (
-            lift_form_id(_val)
-            if (_val := d.pop("formId", UNSET)) is not UNSET
-            else UNSET
-        )
+        form_id = lift_form_id(d.pop("formId"))
 
-        version = d.pop("version", UNSET)
+        version = d.pop("version")
 
-        resource_name = d.pop("resourceName", UNSET)
+        resource_name = d.pop("resourceName")
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
 
-        form_key = (
-            lift_form_key(_val)
-            if (_val := d.pop("formKey", UNSET)) is not UNSET
-            else UNSET
-        )
+        form_key = lift_form_key(d.pop("formKey"))
 
         deployment_metadata_result_form = cls(
             form_id=form_id,

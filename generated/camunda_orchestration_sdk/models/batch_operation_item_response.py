@@ -11,12 +11,13 @@ from collections.abc import Mapping
 from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
 from ..models.batch_operation_item_response_state import BatchOperationItemResponseState
 from ..models.batch_operation_type_enum import BatchOperationTypeEnum
-from ..types import UNSET, Unset, str_any_dict_factory
 
 T = TypeVar("T", bound="BatchOperationItemResponse")
 
@@ -25,40 +26,35 @@ T = TypeVar("T", bound="BatchOperationItemResponse")
 class BatchOperationItemResponse:
     """
     Attributes:
+        operation_type (BatchOperationTypeEnum): The type of the batch operation.
+        batch_operation_key (str): The key (or operate legacy ID) of the batch operation. Example: 2251799813684321.
+        item_key (str): Key of the item, e.g. a process instance key.
+        process_instance_key (str): the process instance key of the processed item. Example: 2251799813690746.
         root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
             top-level
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
-        operation_type (BatchOperationTypeEnum | Unset): The type of the batch operation.
-        batch_operation_key (str | Unset): The key (or operate legacy ID) of the batch operation. Example:
-            2251799813684321.
-        item_key (str | Unset): Key of the item, e.g. a process instance key.
-        process_instance_key (str | Unset): the process instance key of the processed item. Example: 2251799813690746.
-        state (BatchOperationItemResponseState | Unset): State of the item.
-        processed_date (datetime.datetime | Unset): the date this item was processed.
-        error_message (None | str | Unset): the error message from the engine in case of a failed operation.
+        state (BatchOperationItemResponseState): State of the item.
+        processed_date (datetime.datetime | None): The date this item was processed.
+            This is `null` if the item has not yet been processed.
+        error_message (None | str): The error message from the engine in case of a failed operation.
     """
 
+    operation_type: BatchOperationTypeEnum
+    batch_operation_key: BatchOperationKey
+    item_key: str
+    process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
-    operation_type: BatchOperationTypeEnum | Unset = UNSET
-    batch_operation_key: BatchOperationKey | Unset = UNSET
-    item_key: str | Unset = UNSET
-    process_instance_key: ProcessInstanceKey | Unset = UNSET
-    state: BatchOperationItemResponseState | Unset = UNSET
-    processed_date: datetime.datetime | Unset = UNSET
-    error_message: None | str | Unset = UNSET
+    state: BatchOperationItemResponseState
+    processed_date: datetime.datetime | None
+    error_message: None | str
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        root_process_instance_key: None | ProcessInstanceKey
-        root_process_instance_key = self.root_process_instance_key
-
-        operation_type: str | Unset = UNSET
-        if not isinstance(self.operation_type, Unset):
-            operation_type = self.operation_type.value
+        operation_type = self.operation_type.value
 
         batch_operation_key = self.batch_operation_key
 
@@ -66,47 +62,47 @@ class BatchOperationItemResponse:
 
         process_instance_key = self.process_instance_key
 
-        state: str | Unset = UNSET
-        if not isinstance(self.state, Unset):
-            state = self.state.value
+        root_process_instance_key: None | ProcessInstanceKey
+        root_process_instance_key = self.root_process_instance_key
 
-        processed_date: str | Unset = UNSET
-        if not isinstance(self.processed_date, Unset):
+        state = self.state.value
+
+        processed_date: None | str
+        if isinstance(self.processed_date, datetime.datetime):
             processed_date = self.processed_date.isoformat()
-
-        error_message: None | str | Unset
-        if isinstance(self.error_message, Unset):
-            error_message = UNSET
         else:
-            error_message = self.error_message
+            processed_date = self.processed_date
+
+        error_message: None | str
+        error_message = self.error_message
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "operationType": operation_type,
+                "batchOperationKey": batch_operation_key,
+                "itemKey": item_key,
+                "processInstanceKey": process_instance_key,
                 "rootProcessInstanceKey": root_process_instance_key,
+                "state": state,
+                "processedDate": processed_date,
+                "errorMessage": error_message,
             }
         )
-        if operation_type is not UNSET:
-            field_dict["operationType"] = operation_type
-        if batch_operation_key is not UNSET:
-            field_dict["batchOperationKey"] = batch_operation_key
-        if item_key is not UNSET:
-            field_dict["itemKey"] = item_key
-        if process_instance_key is not UNSET:
-            field_dict["processInstanceKey"] = process_instance_key
-        if state is not UNSET:
-            field_dict["state"] = state
-        if processed_date is not UNSET:
-            field_dict["processedDate"] = processed_date
-        if error_message is not UNSET:
-            field_dict["errorMessage"] = error_message
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        operation_type = BatchOperationTypeEnum(d.pop("operationType"))
+
+        batch_operation_key = lift_batch_operation_key(d.pop("batchOperationKey"))
+
+        item_key = d.pop("itemKey")
+
+        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -123,56 +119,36 @@ class BatchOperationItemResponse:
             else _raw_root_process_instance_key
         )
 
-        _operation_type = d.pop("operationType", UNSET)
-        operation_type: BatchOperationTypeEnum | Unset
-        if isinstance(_operation_type, Unset):
-            operation_type = UNSET
-        else:
-            operation_type = BatchOperationTypeEnum(_operation_type)
+        state = BatchOperationItemResponseState(d.pop("state"))
 
-        batch_operation_key = (
-            lift_batch_operation_key(_val)
-            if (_val := d.pop("batchOperationKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        item_key = d.pop("itemKey", UNSET)
-
-        process_instance_key = (
-            lift_process_instance_key(_val)
-            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
-            else UNSET
-        )
-
-        _state = d.pop("state", UNSET)
-        state: BatchOperationItemResponseState | Unset
-        if isinstance(_state, Unset):
-            state = UNSET
-        else:
-            state = BatchOperationItemResponseState(_state)
-
-        _processed_date = d.pop("processedDate", UNSET)
-        processed_date: datetime.datetime | Unset
-        if isinstance(_processed_date, Unset):
-            processed_date = UNSET
-        else:
-            processed_date = isoparse(_processed_date)
-
-        def _parse_error_message(data: object) -> None | str | Unset:
+        def _parse_processed_date(data: object) -> datetime.datetime | None:
             if data is None:
                 return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                processed_date_type_0 = isoparse(data)
 
-        error_message = _parse_error_message(d.pop("errorMessage", UNSET))
+                return processed_date_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(datetime.datetime | None, data)
+
+        processed_date = _parse_processed_date(d.pop("processedDate"))
+
+        def _parse_error_message(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        error_message = _parse_error_message(d.pop("errorMessage"))
 
         batch_operation_item_response = cls(
-            root_process_instance_key=root_process_instance_key,
             operation_type=operation_type,
             batch_operation_key=batch_operation_key,
             item_key=item_key,
             process_instance_key=process_instance_key,
+            root_process_instance_key=root_process_instance_key,
             state=state,
             processed_date=processed_date,
             error_message=error_message,

@@ -61,12 +61,12 @@ class TestDeploymentMetadataFromDict:
         raw = {
             "decisionDefinition": {
                 "decisionDefinitionId": "my-decision",
-                "decisionDefinitionVersion": 1,
+                "version": 1,
+                "name": "My Decision",
                 "decisionDefinitionKey": "789",
                 "decisionRequirementsId": "req-1",
                 "decisionRequirementsKey": "101",
                 "tenantId": "<default>",
-                "resourceName": "decision.dmn",
             },
         }
         meta = DeploymentMetadataResult.from_dict(raw)
@@ -169,12 +169,12 @@ class TestExtendedDeploymentResult:
                     "processDefinition": None,
                     "decisionDefinition": {
                         "decisionDefinitionId": "dec-1",
-                        "decisionDefinitionVersion": 1,
+                        "version": 1,
+                        "name": "Decision 1",
                         "decisionDefinitionKey": "500",
                         "decisionRequirementsId": "req-1",
                         "decisionRequirementsKey": "600",
                         "tenantId": "<default>",
-                        "resourceName": "decision.dmn",
                     },
                     "decisionRequirements": None,
                     "form": None,

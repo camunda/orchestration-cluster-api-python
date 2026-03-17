@@ -14,9 +14,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="VariableSearchResult")
 
@@ -26,6 +26,8 @@ class VariableSearchResult:
     """Variable search response item.
 
     Attributes:
+        value (str): Value of this variable. Can be truncated.
+        is_truncated (bool): Whether the value is truncated or not.
         name (str): Name of this variable.
         tenant_id (str): Tenant ID of this variable. Example: customer-service.
         variable_key (str): The key for this variable. Example: 2251799813683287.
@@ -40,23 +42,25 @@ class VariableSearchResult:
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
-        value (str | Unset): Value of this variable. Can be truncated.
-        is_truncated (bool | Unset): Whether the value is truncated or not.
     """
 
+    value: str
+    is_truncated: bool
     name: str
     tenant_id: TenantId
     variable_key: VariableKey
     scope_key: ScopeKey
     process_instance_key: ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
-    value: str | Unset = UNSET
-    is_truncated: bool | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
+        value = self.value
+
+        is_truncated = self.is_truncated
+
         name = self.name
 
         tenant_id = self.tenant_id
@@ -70,14 +74,12 @@ class VariableSearchResult:
         root_process_instance_key: None | ProcessInstanceKey
         root_process_instance_key = self.root_process_instance_key
 
-        value = self.value
-
-        is_truncated = self.is_truncated
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
+                "value": value,
+                "isTruncated": is_truncated,
                 "name": name,
                 "tenantId": tenant_id,
                 "variableKey": variable_key,
@@ -86,16 +88,16 @@ class VariableSearchResult:
                 "rootProcessInstanceKey": root_process_instance_key,
             }
         )
-        if value is not UNSET:
-            field_dict["value"] = value
-        if is_truncated is not UNSET:
-            field_dict["isTruncated"] = is_truncated
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
+        value = d.pop("value")
+
+        is_truncated = d.pop("isTruncated")
+
         name = d.pop("name")
 
         tenant_id = lift_tenant_id(d.pop("tenantId"))
@@ -121,19 +123,15 @@ class VariableSearchResult:
             else _raw_root_process_instance_key
         )
 
-        value = d.pop("value", UNSET)
-
-        is_truncated = d.pop("isTruncated", UNSET)
-
         variable_search_result = cls(
+            value=value,
+            is_truncated=is_truncated,
             name=name,
             tenant_id=tenant_id,
             variable_key=variable_key,
             scope_key=scope_key,
             process_instance_key=process_instance_key,
             root_process_instance_key=root_process_instance_key,
-            value=value,
-            is_truncated=is_truncated,
         )
 
         variable_search_result.additional_properties = d

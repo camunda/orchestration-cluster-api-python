@@ -20,11 +20,12 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
 from ..models.job_kind_enum import JobKindEnum
 from ..models.job_listener_event_type_enum import JobListenerEventTypeEnum
-from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.activated_job_result_custom_headers import (
@@ -59,6 +60,8 @@ class ActivatedJobResult:
         element_instance_key (str): The element instance key of the task. Example: 2251799813686789.
         kind (JobKindEnum): The job kind. Example: BPMN_ELEMENT.
         listener_event_type (JobListenerEventTypeEnum): The listener event type of the job. Example: UNSPECIFIED.
+        user_task (ActivatedJobResultUserTask | None): User task properties, if the job is a user task.
+            This is `null` if the job is not a user task.
         tags (list[str]): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or `.`;
             length ≤ 100. Example: ['high-touch', 'remediation'].
         root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
@@ -66,8 +69,6 @@ class ActivatedJobResult:
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
-        user_task (ActivatedJobResultUserTask | None | Unset): User task properties, if the job is a user task.
-            This is `null` if the job is not a user task.
     """
 
     type_: str
@@ -86,9 +87,9 @@ class ActivatedJobResult:
     element_instance_key: ElementInstanceKey
     kind: JobKindEnum
     listener_event_type: JobListenerEventTypeEnum
+    user_task: ActivatedJobResultUserTask | None
     tags: list[str]
     root_process_instance_key: None | ProcessInstanceKey
-    user_task: ActivatedJobResultUserTask | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -128,18 +129,16 @@ class ActivatedJobResult:
 
         listener_event_type = self.listener_event_type.value
 
+        user_task: dict[str, Any] | None
+        if isinstance(self.user_task, ActivatedJobResultUserTask):
+            user_task = self.user_task.to_dict()
+        else:
+            user_task = self.user_task
+
         tags = self.tags
 
         root_process_instance_key: None | ProcessInstanceKey
         root_process_instance_key = self.root_process_instance_key
-
-        user_task: dict[str, Any] | None | Unset
-        if isinstance(self.user_task, Unset):
-            user_task = UNSET
-        elif isinstance(self.user_task, ActivatedJobResultUserTask):
-            user_task = self.user_task.to_dict()
-        else:
-            user_task = self.user_task
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -161,12 +160,11 @@ class ActivatedJobResult:
                 "elementInstanceKey": element_instance_key,
                 "kind": kind,
                 "listenerEventType": listener_event_type,
+                "userTask": user_task,
                 "tags": tags,
                 "rootProcessInstanceKey": root_process_instance_key,
             }
         )
-        if user_task is not UNSET:
-            field_dict["userTask"] = user_task
 
         return field_dict
 
@@ -215,6 +213,25 @@ class ActivatedJobResult:
 
         listener_event_type = JobListenerEventTypeEnum(d.pop("listenerEventType"))
 
+        def _parse_user_task(data: object) -> ActivatedJobResultUserTask | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                componentsschemas_activated_job_result_user_task_type_0 = (
+                    ActivatedJobResultUserTask.from_dict(data)
+                )
+
+                return componentsschemas_activated_job_result_user_task_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(ActivatedJobResultUserTask | None, data)
+
+        user_task = _parse_user_task(d.pop("userTask"))
+
         tags = cast(list[str], d.pop("tags"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
@@ -231,27 +248,6 @@ class ActivatedJobResult:
             if isinstance(_raw_root_process_instance_key, str)
             else _raw_root_process_instance_key
         )
-
-        def _parse_user_task(data: object) -> ActivatedJobResultUserTask | None | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            try:
-                if not isinstance(data, dict):
-                    raise TypeError()
-
-                data = cast(dict[str, Any], data)
-                componentsschemas_activated_job_result_user_task_type_0 = (
-                    ActivatedJobResultUserTask.from_dict(data)
-                )
-
-                return componentsschemas_activated_job_result_user_task_type_0
-            except (TypeError, ValueError, AttributeError, KeyError):
-                pass
-            return cast(ActivatedJobResultUserTask | None | Unset, data)
-
-        user_task = _parse_user_task(d.pop("userTask", UNSET))
 
         activated_job_result = cls(
             type_=type_,
@@ -270,9 +266,9 @@ class ActivatedJobResult:
             element_instance_key=element_instance_key,
             kind=kind,
             listener_event_type=listener_event_type,
+            user_task=user_task,
             tags=tags,
             root_process_instance_key=root_process_instance_key,
-            user_task=user_task,
         )
 
         activated_job_result.additional_properties = d

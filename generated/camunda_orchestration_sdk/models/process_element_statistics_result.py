@@ -5,9 +5,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="ProcessElementStatisticsResult")
 
@@ -17,18 +17,18 @@ class ProcessElementStatisticsResult:
     """Process element statistics response.
 
     Attributes:
-        element_id (str | Unset): The element ID for which the results are aggregated. Example: Activity_106kosb.
-        active (int | Unset): The total number of active instances of the element.
-        canceled (int | Unset): The total number of canceled instances of the element.
-        incidents (int | Unset): The total number of incidents for the element.
-        completed (int | Unset): The total number of completed instances of the element.
+        element_id (str): The element ID for which the results are aggregated. Example: Activity_106kosb.
+        active (int): The total number of active instances of the element.
+        canceled (int): The total number of canceled instances of the element.
+        incidents (int): The total number of incidents for the element.
+        completed (int): The total number of completed instances of the element.
     """
 
-    element_id: ElementId | Unset = UNSET
-    active: int | Unset = UNSET
-    canceled: int | Unset = UNSET
-    incidents: int | Unset = UNSET
-    completed: int | Unset = UNSET
+    element_id: ElementId
+    active: int
+    canceled: int
+    incidents: int
+    completed: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -46,36 +46,30 @@ class ProcessElementStatisticsResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if element_id is not UNSET:
-            field_dict["elementId"] = element_id
-        if active is not UNSET:
-            field_dict["active"] = active
-        if canceled is not UNSET:
-            field_dict["canceled"] = canceled
-        if incidents is not UNSET:
-            field_dict["incidents"] = incidents
-        if completed is not UNSET:
-            field_dict["completed"] = completed
+        field_dict.update(
+            {
+                "elementId": element_id,
+                "active": active,
+                "canceled": canceled,
+                "incidents": incidents,
+                "completed": completed,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        element_id = (
-            lift_element_id(_val)
-            if (_val := d.pop("elementId", UNSET)) is not UNSET
-            else UNSET
-        )
+        element_id = lift_element_id(d.pop("elementId"))
 
-        active = d.pop("active", UNSET)
+        active = d.pop("active")
 
-        canceled = d.pop("canceled", UNSET)
+        canceled = d.pop("canceled")
 
-        incidents = d.pop("incidents", UNSET)
+        incidents = d.pop("incidents")
 
-        completed = d.pop("completed", UNSET)
+        completed = d.pop("completed")
 
         process_element_statistics_result = cls(
             element_id=element_id,

@@ -21,13 +21,14 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
+
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
 from ..models.job_kind_enum import JobKindEnum
 from ..models.job_listener_event_type_enum import JobListenerEventTypeEnum
 from ..models.job_state_enum import JobStateEnum
-from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.job_search_result_custom_headers import JobSearchResultCustomHeaders
@@ -41,10 +42,18 @@ class JobSearchResult:
     """
     Attributes:
         custom_headers (JobSearchResultCustomHeaders): A set of custom headers defined during modelling.
+        deadline (datetime.datetime | None): If the job has been activated, when it will next be available to be
+            activated.
+        denied_reason (None | str): The reason provided by the user task listener for denying the work.
         element_id (None | str): The element ID associated with the job. May be missing on job failure. Example:
             Activity_106kosb.
         element_instance_key (str): The element instance key associated with the job. Example: 2251799813686789.
+        end_time (datetime.datetime | None): End date of the job.
+            This is `null` if the job is not in an end state yet.
+        error_code (None | str): The error code provided for a failed job.
+        error_message (None | str): The error message that provides additional context for a failed job.
         has_failed_with_retries_left (bool): Indicates whether the job has failed with retries left.
+        is_denied (bool | None): Indicates whether the user task listener denies the work.
         job_key (str): The key, a unique identifier for the job. Example: 2251799813653498.
         kind (JobKindEnum): The job kind. Example: BPMN_ELEMENT.
         listener_event_type (JobListenerEventTypeEnum): The listener event type of the job. Example: UNSPECIFIED.
@@ -62,24 +71,21 @@ class JobSearchResult:
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
         type_ (str): The type of the job.
         worker (str): The name of the worker of this job.
-        deadline (datetime.datetime | None | Unset): If the job has been activated, when it will next be available to be
-            activated.
-        denied_reason (None | str | Unset): The reason provided by the user task listener for denying the work.
-        end_time (datetime.datetime | None | Unset): End date of the job.
-            This is `null` if the job is not in an end state yet.
-        error_code (None | str | Unset): The error code provided for a failed job.
-        error_message (None | str | Unset): The error message that provides additional context for a failed job.
-        is_denied (bool | None | Unset): Indicates whether the user task listener denies the work.
-        creation_time (datetime.datetime | Unset): When the job was created. Field is present for jobs created after
-            8.9.
-        last_update_time (datetime.datetime | Unset): When the job was last updated. Field is present for jobs created
+        creation_time (datetime.datetime | None): When the job was created. Field is present for jobs created after 8.9.
+        last_update_time (datetime.datetime | None): When the job was last updated. Field is present for jobs created
             after 8.9.
     """
 
     custom_headers: JobSearchResultCustomHeaders
+    deadline: datetime.datetime | None
+    denied_reason: None | str
     element_id: None | ElementId
     element_instance_key: ElementInstanceKey
+    end_time: datetime.datetime | None
+    error_code: None | str
+    error_message: None | str
     has_failed_with_retries_left: bool
+    is_denied: bool | None
     job_key: JobKey
     kind: JobKindEnum
     listener_event_type: JobListenerEventTypeEnum
@@ -92,14 +98,8 @@ class JobSearchResult:
     tenant_id: TenantId
     type_: str
     worker: str
-    deadline: datetime.datetime | None | Unset = UNSET
-    denied_reason: None | str | Unset = UNSET
-    end_time: datetime.datetime | None | Unset = UNSET
-    error_code: None | str | Unset = UNSET
-    error_message: None | str | Unset = UNSET
-    is_denied: bool | None | Unset = UNSET
-    creation_time: datetime.datetime | Unset = UNSET
-    last_update_time: datetime.datetime | Unset = UNSET
+    creation_time: datetime.datetime | None
+    last_update_time: datetime.datetime | None
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -107,12 +107,36 @@ class JobSearchResult:
     def to_dict(self) -> dict[str, Any]:
         custom_headers = self.custom_headers.to_dict()
 
+        deadline: None | str
+        if isinstance(self.deadline, datetime.datetime):
+            deadline = self.deadline.isoformat()
+        else:
+            deadline = self.deadline
+
+        denied_reason: None | str
+        denied_reason = self.denied_reason
+
         element_id: None | ElementId
         element_id = self.element_id
 
         element_instance_key = self.element_instance_key
 
+        end_time: None | str
+        if isinstance(self.end_time, datetime.datetime):
+            end_time = self.end_time.isoformat()
+        else:
+            end_time = self.end_time
+
+        error_code: None | str
+        error_code = self.error_code
+
+        error_message: None | str
+        error_message = self.error_message
+
         has_failed_with_retries_left = self.has_failed_with_retries_left
+
+        is_denied: bool | None
+        is_denied = self.is_denied
 
         job_key = self.job_key
 
@@ -139,62 +163,32 @@ class JobSearchResult:
 
         worker = self.worker
 
-        deadline: None | str | Unset
-        if isinstance(self.deadline, Unset):
-            deadline = UNSET
-        elif isinstance(self.deadline, datetime.datetime):
-            deadline = self.deadline.isoformat()
-        else:
-            deadline = self.deadline
-
-        denied_reason: None | str | Unset
-        if isinstance(self.denied_reason, Unset):
-            denied_reason = UNSET
-        else:
-            denied_reason = self.denied_reason
-
-        end_time: None | str | Unset
-        if isinstance(self.end_time, Unset):
-            end_time = UNSET
-        elif isinstance(self.end_time, datetime.datetime):
-            end_time = self.end_time.isoformat()
-        else:
-            end_time = self.end_time
-
-        error_code: None | str | Unset
-        if isinstance(self.error_code, Unset):
-            error_code = UNSET
-        else:
-            error_code = self.error_code
-
-        error_message: None | str | Unset
-        if isinstance(self.error_message, Unset):
-            error_message = UNSET
-        else:
-            error_message = self.error_message
-
-        is_denied: bool | None | Unset
-        if isinstance(self.is_denied, Unset):
-            is_denied = UNSET
-        else:
-            is_denied = self.is_denied
-
-        creation_time: str | Unset = UNSET
-        if not isinstance(self.creation_time, Unset):
+        creation_time: None | str
+        if isinstance(self.creation_time, datetime.datetime):
             creation_time = self.creation_time.isoformat()
+        else:
+            creation_time = self.creation_time
 
-        last_update_time: str | Unset = UNSET
-        if not isinstance(self.last_update_time, Unset):
+        last_update_time: None | str
+        if isinstance(self.last_update_time, datetime.datetime):
             last_update_time = self.last_update_time.isoformat()
+        else:
+            last_update_time = self.last_update_time
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
                 "customHeaders": custom_headers,
+                "deadline": deadline,
+                "deniedReason": denied_reason,
                 "elementId": element_id,
                 "elementInstanceKey": element_instance_key,
+                "endTime": end_time,
+                "errorCode": error_code,
+                "errorMessage": error_message,
                 "hasFailedWithRetriesLeft": has_failed_with_retries_left,
+                "isDenied": is_denied,
                 "jobKey": job_key,
                 "kind": kind,
                 "listenerEventType": listener_event_type,
@@ -207,24 +201,10 @@ class JobSearchResult:
                 "tenantId": tenant_id,
                 "type": type_,
                 "worker": worker,
+                "creationTime": creation_time,
+                "lastUpdateTime": last_update_time,
             }
         )
-        if deadline is not UNSET:
-            field_dict["deadline"] = deadline
-        if denied_reason is not UNSET:
-            field_dict["deniedReason"] = denied_reason
-        if end_time is not UNSET:
-            field_dict["endTime"] = end_time
-        if error_code is not UNSET:
-            field_dict["errorCode"] = error_code
-        if error_message is not UNSET:
-            field_dict["errorMessage"] = error_message
-        if is_denied is not UNSET:
-            field_dict["isDenied"] = is_denied
-        if creation_time is not UNSET:
-            field_dict["creationTime"] = creation_time
-        if last_update_time is not UNSET:
-            field_dict["lastUpdateTime"] = last_update_time
 
         return field_dict
 
@@ -236,6 +216,28 @@ class JobSearchResult:
 
         d = dict(src_dict)
         custom_headers = JobSearchResultCustomHeaders.from_dict(d.pop("customHeaders"))
+
+        def _parse_deadline(data: object) -> datetime.datetime | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                deadline_type_0 = isoparse(data)
+
+                return deadline_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(datetime.datetime | None, data)
+
+        deadline = _parse_deadline(d.pop("deadline"))
+
+        def _parse_denied_reason(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        denied_reason = _parse_denied_reason(d.pop("deniedReason"))
 
         def _parse_element_id(data: object) -> None | str:
             if data is None:
@@ -252,7 +254,43 @@ class JobSearchResult:
 
         element_instance_key = lift_element_instance_key(d.pop("elementInstanceKey"))
 
+        def _parse_end_time(data: object) -> datetime.datetime | None:
+            if data is None:
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                end_time_type_0 = isoparse(data)
+
+                return end_time_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(datetime.datetime | None, data)
+
+        end_time = _parse_end_time(d.pop("endTime"))
+
+        def _parse_error_code(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        error_code = _parse_error_code(d.pop("errorCode"))
+
+        def _parse_error_message(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        error_message = _parse_error_message(d.pop("errorMessage"))
+
         has_failed_with_retries_left = d.pop("hasFailedWithRetriesLeft")
+
+        def _parse_is_denied(data: object) -> bool | None:
+            if data is None:
+                return data
+            return cast(bool | None, data)
+
+        is_denied = _parse_is_denied(d.pop("isDenied"))
 
         job_key = lift_job_key(d.pop("jobKey"))
 
@@ -293,95 +331,47 @@ class JobSearchResult:
 
         worker = d.pop("worker")
 
-        def _parse_deadline(data: object) -> datetime.datetime | None | Unset:
+        def _parse_creation_time(data: object) -> datetime.datetime | None:
             if data is None:
-                return data
-            if isinstance(data, Unset):
                 return data
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                deadline_type_0 = isoparse(data)
+                creation_time_type_0 = isoparse(data)
 
-                return deadline_type_0
+                return creation_time_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(datetime.datetime | None | Unset, data)
+            return cast(datetime.datetime | None, data)
 
-        deadline = _parse_deadline(d.pop("deadline", UNSET))
+        creation_time = _parse_creation_time(d.pop("creationTime"))
 
-        def _parse_denied_reason(data: object) -> None | str | Unset:
+        def _parse_last_update_time(data: object) -> datetime.datetime | None:
             if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        denied_reason = _parse_denied_reason(d.pop("deniedReason", UNSET))
-
-        def _parse_end_time(data: object) -> datetime.datetime | None | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
                 return data
             try:
                 if not isinstance(data, str):
                     raise TypeError()
-                end_time_type_0 = isoparse(data)
+                last_update_time_type_0 = isoparse(data)
 
-                return end_time_type_0
+                return last_update_time_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(datetime.datetime | None | Unset, data)
+            return cast(datetime.datetime | None, data)
 
-        end_time = _parse_end_time(d.pop("endTime", UNSET))
-
-        def _parse_error_code(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        error_code = _parse_error_code(d.pop("errorCode", UNSET))
-
-        def _parse_error_message(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        error_message = _parse_error_message(d.pop("errorMessage", UNSET))
-
-        def _parse_is_denied(data: object) -> bool | None | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(bool | None | Unset, data)
-
-        is_denied = _parse_is_denied(d.pop("isDenied", UNSET))
-
-        _creation_time = d.pop("creationTime", UNSET)
-        creation_time: datetime.datetime | Unset
-        if isinstance(_creation_time, Unset):
-            creation_time = UNSET
-        else:
-            creation_time = isoparse(_creation_time)
-
-        _last_update_time = d.pop("lastUpdateTime", UNSET)
-        last_update_time: datetime.datetime | Unset
-        if isinstance(_last_update_time, Unset):
-            last_update_time = UNSET
-        else:
-            last_update_time = isoparse(_last_update_time)
+        last_update_time = _parse_last_update_time(d.pop("lastUpdateTime"))
 
         job_search_result = cls(
             custom_headers=custom_headers,
+            deadline=deadline,
+            denied_reason=denied_reason,
             element_id=element_id,
             element_instance_key=element_instance_key,
+            end_time=end_time,
+            error_code=error_code,
+            error_message=error_message,
             has_failed_with_retries_left=has_failed_with_retries_left,
+            is_denied=is_denied,
             job_key=job_key,
             kind=kind,
             listener_event_type=listener_event_type,
@@ -394,12 +384,6 @@ class JobSearchResult:
             tenant_id=tenant_id,
             type_=type_,
             worker=worker,
-            deadline=deadline,
-            denied_reason=denied_reason,
-            end_time=end_time,
-            error_code=error_code,
-            error_message=error_message,
-            is_denied=is_denied,
             creation_time=creation_time,
             last_update_time=last_update_time,
         )

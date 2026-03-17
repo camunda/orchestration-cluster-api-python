@@ -4,9 +4,9 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 if TYPE_CHECKING:
     from ..models.broker_info import BrokerInfo
@@ -21,21 +21,21 @@ class TopologyResponse:
 
     Attributes:
         brokers (list[BrokerInfo]): A list of brokers that are part of this cluster.
+        cluster_id (None | str): The cluster Id.
         cluster_size (int): The number of brokers in the cluster. Example: 3.
         partitions_count (int): The number of partitions are spread across the cluster. Example: 3.
         replication_factor (int): The configured replication factor for this cluster. Example: 3.
         gateway_version (str): The version of the Zeebe Gateway. Example: 8.8.0.
         last_completed_change_id (str): ID of the last completed change Example: -1.
-        cluster_id (None | str | Unset): The cluster Id.
     """
 
     brokers: list[BrokerInfo]
+    cluster_id: None | str
     cluster_size: int
     partitions_count: int
     replication_factor: int
     gateway_version: str
     last_completed_change_id: str
-    cluster_id: None | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -45,6 +45,9 @@ class TopologyResponse:
         for brokers_item_data in self.brokers:
             brokers_item = brokers_item_data.to_dict()
             brokers.append(brokers_item)
+
+        cluster_id: None | str
+        cluster_id = self.cluster_id
 
         cluster_size = self.cluster_size
 
@@ -56,17 +59,12 @@ class TopologyResponse:
 
         last_completed_change_id = self.last_completed_change_id
 
-        cluster_id: None | str | Unset
-        if isinstance(self.cluster_id, Unset):
-            cluster_id = UNSET
-        else:
-            cluster_id = self.cluster_id
-
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
                 "brokers": brokers,
+                "clusterId": cluster_id,
                 "clusterSize": cluster_size,
                 "partitionsCount": partitions_count,
                 "replicationFactor": replication_factor,
@@ -74,8 +72,6 @@ class TopologyResponse:
                 "lastCompletedChangeId": last_completed_change_id,
             }
         )
-        if cluster_id is not UNSET:
-            field_dict["clusterId"] = cluster_id
 
         return field_dict
 
@@ -91,6 +87,13 @@ class TopologyResponse:
 
             brokers.append(brokers_item)
 
+        def _parse_cluster_id(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        cluster_id = _parse_cluster_id(d.pop("clusterId"))
+
         cluster_size = d.pop("clusterSize")
 
         partitions_count = d.pop("partitionsCount")
@@ -101,23 +104,14 @@ class TopologyResponse:
 
         last_completed_change_id = d.pop("lastCompletedChangeId")
 
-        def _parse_cluster_id(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        cluster_id = _parse_cluster_id(d.pop("clusterId", UNSET))
-
         topology_response = cls(
             brokers=brokers,
+            cluster_id=cluster_id,
             cluster_size=cluster_size,
             partitions_count=partitions_count,
             replication_factor=replication_factor,
             gateway_version=gateway_version,
             last_completed_change_id=last_completed_change_id,
-            cluster_id=cluster_id,
         )
 
         topology_response.additional_properties = d

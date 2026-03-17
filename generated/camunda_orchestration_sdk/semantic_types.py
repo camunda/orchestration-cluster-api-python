@@ -156,17 +156,13 @@ def lift_decision_definition_id(value: Any) -> DecisionDefinitionId:
         raise TypeError(
             f"DecisionDefinitionId must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch("^[A-Za-z0-9_@.+-]+$", value) is None:
+    if re.fullmatch("^[\\w_][\\w0-9_\\-\\.]*$", value) is None:
         raise ValueError(
-            f"DecisionDefinitionId does not match pattern '^[A-Za-z0-9_@.+-]+$', got {value!r}"
+            f"DecisionDefinitionId does not match pattern '^[\\w_][\\w0-9_\\-\\.]*$', got {value!r}"
         )
     if len(value) < 1:
         raise ValueError(
             f"DecisionDefinitionId shorter than minLength 1, got {value!r}"
-        )
-    if len(value) > 256:
-        raise ValueError(
-            f"DecisionDefinitionId longer than maxLength 256, got {value!r}"
         )
     return DecisionDefinitionId(value)
 
@@ -622,9 +618,9 @@ def lift_process_definition_id(value: Any) -> ProcessDefinitionId:
         raise TypeError(
             f"ProcessDefinitionId must be str, got {type(value).__name__}: {value!r}"
         )
-    if re.fullmatch("^[a-zA-Z_][a-zA-Z0-9_\\-\\.]*$", value) is None:
+    if re.fullmatch("^[\\w_][\\w0-9_\\-\\.]*$", value) is None:
         raise ValueError(
-            f"ProcessDefinitionId does not match pattern '^[a-zA-Z_][a-zA-Z0-9_\\-\\.]*$', got {value!r}"
+            f"ProcessDefinitionId does not match pattern '^[\\w_][\\w0-9_\\-\\.]*$', got {value!r}"
         )
     if len(value) < 1:
         raise ValueError(f"ProcessDefinitionId shorter than minLength 1, got {value!r}")

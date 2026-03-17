@@ -3,7 +3,6 @@ class IncidentSearchQuerySortRequestField(str, Enum):
     CREATIONTIME = "creationTime"
     ELEMENTID = "elementId"
     ELEMENTINSTANCEKEY = "elementInstanceKey"
-    ERRORMESSAGE = "errorMessage"
     ERRORTYPE = "errorType"
     INCIDENTKEY = "incidentKey"
     JOBKEY = "jobKey"

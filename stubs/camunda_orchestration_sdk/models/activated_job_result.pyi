@@ -4,10 +4,10 @@ from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceK
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
+from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.job_kind_enum import JobKindEnum
 from ..models.job_listener_event_type_enum import JobListenerEventTypeEnum
-from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.activated_job_result_custom_headers import ActivatedJobResultCustomHeaders
 from ..models.activated_job_result_user_task import ActivatedJobResultUserTask
 from ..models.activated_job_result_variables import ActivatedJobResultVariables
@@ -30,9 +30,9 @@ class ActivatedJobResult:
     element_instance_key: ElementInstanceKey
     kind: JobKindEnum
     listener_event_type: JobListenerEventTypeEnum
+    user_task: ActivatedJobResultUserTask | None
     tags: list[str]
     root_process_instance_key: None | ProcessInstanceKey
-    user_task: ActivatedJobResultUserTask | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

@@ -10,9 +10,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
-from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset, str_any_dict_factory
+from ..types import str_any_dict_factory
+from attrs import field as _attrs_field
 
 T = TypeVar("T", bound="ProcessDefinitionInstanceStatisticsResult")
 
@@ -22,25 +22,24 @@ class ProcessDefinitionInstanceStatisticsResult:
     """Process definition instance statistics response.
 
     Attributes:
-        process_definition_id (str | Unset): Id of a process definition, from the model. Only ids of process definitions
-            that are deployed are useful. Example: new-account-onboarding-workflow.
-        tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
-        latest_process_definition_name (None | str | Unset): Name of the latest deployed process definition instance
-            version.
-        has_multiple_versions (bool | Unset): Indicates whether multiple versions of this process definition instance
-            are deployed.
-        active_instances_without_incident_count (int | Unset): Total number of currently active process instances of
-            this definition that do not have incidents.
-        active_instances_with_incident_count (int | Unset): Total number of currently active process instances of this
+        process_definition_id (str): Id of a process definition, from the model. Only ids of process definitions that
+            are deployed are useful. Example: new-account-onboarding-workflow.
+        tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+        latest_process_definition_name (None | str): Name of the latest deployed process definition instance version.
+        has_multiple_versions (bool): Indicates whether multiple versions of this process definition instance are
+            deployed.
+        active_instances_without_incident_count (int): Total number of currently active process instances of this
+            definition that do not have incidents.
+        active_instances_with_incident_count (int): Total number of currently active process instances of this
             definition that have at least one incident.
     """
 
-    process_definition_id: ProcessDefinitionId | Unset = UNSET
-    tenant_id: TenantId | Unset = UNSET
-    latest_process_definition_name: None | str | Unset = UNSET
-    has_multiple_versions: bool | Unset = UNSET
-    active_instances_without_incident_count: int | Unset = UNSET
-    active_instances_with_incident_count: int | Unset = UNSET
+    process_definition_id: ProcessDefinitionId
+    tenant_id: TenantId
+    latest_process_definition_name: None | str
+    has_multiple_versions: bool
+    active_instances_without_incident_count: int
+    active_instances_with_incident_count: int
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -50,11 +49,8 @@ class ProcessDefinitionInstanceStatisticsResult:
 
         tenant_id = self.tenant_id
 
-        latest_process_definition_name: None | str | Unset
-        if isinstance(self.latest_process_definition_name, Unset):
-            latest_process_definition_name = UNSET
-        else:
-            latest_process_definition_name = self.latest_process_definition_name
+        latest_process_definition_name: None | str
+        latest_process_definition_name = self.latest_process_definition_name
 
         has_multiple_versions = self.has_multiple_versions
 
@@ -66,61 +62,42 @@ class ProcessDefinitionInstanceStatisticsResult:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if process_definition_id is not UNSET:
-            field_dict["processDefinitionId"] = process_definition_id
-        if tenant_id is not UNSET:
-            field_dict["tenantId"] = tenant_id
-        if latest_process_definition_name is not UNSET:
-            field_dict["latestProcessDefinitionName"] = latest_process_definition_name
-        if has_multiple_versions is not UNSET:
-            field_dict["hasMultipleVersions"] = has_multiple_versions
-        if active_instances_without_incident_count is not UNSET:
-            field_dict["activeInstancesWithoutIncidentCount"] = (
-                active_instances_without_incident_count
-            )
-        if active_instances_with_incident_count is not UNSET:
-            field_dict["activeInstancesWithIncidentCount"] = (
-                active_instances_with_incident_count
-            )
+        field_dict.update(
+            {
+                "processDefinitionId": process_definition_id,
+                "tenantId": tenant_id,
+                "latestProcessDefinitionName": latest_process_definition_name,
+                "hasMultipleVersions": has_multiple_versions,
+                "activeInstancesWithoutIncidentCount": active_instances_without_incident_count,
+                "activeInstancesWithIncidentCount": active_instances_with_incident_count,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_definition_id = (
-            lift_process_definition_id(_val)
-            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
-            else UNSET
-        )
+        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
 
-        tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
-        )
+        tenant_id = lift_tenant_id(d.pop("tenantId"))
 
-        def _parse_latest_process_definition_name(data: object) -> None | str | Unset:
+        def _parse_latest_process_definition_name(data: object) -> None | str:
             if data is None:
                 return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
+            return cast(None | str, data)
 
         latest_process_definition_name = _parse_latest_process_definition_name(
-            d.pop("latestProcessDefinitionName", UNSET)
+            d.pop("latestProcessDefinitionName")
         )
 
-        has_multiple_versions = d.pop("hasMultipleVersions", UNSET)
+        has_multiple_versions = d.pop("hasMultipleVersions")
 
         active_instances_without_incident_count = d.pop(
-            "activeInstancesWithoutIncidentCount", UNSET
+            "activeInstancesWithoutIncidentCount"
         )
 
-        active_instances_with_incident_count = d.pop(
-            "activeInstancesWithIncidentCount", UNSET
-        )
+        active_instances_with_incident_count = d.pop("activeInstancesWithIncidentCount")
 
         process_definition_instance_statistics_result = cls(
             process_definition_id=process_definition_id,

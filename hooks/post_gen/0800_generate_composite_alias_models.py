@@ -5,6 +5,20 @@ from typing import Any, Dict, Optional, cast
 
 import yaml
 
+# Unicode property escapes (ECMAScript) -> Python re equivalents
+_UNICODE_PROPERTY_MAP: Dict[str, str] = {
+    r"\p{L}": r"\w",
+    r"\p{N}": r"0-9",
+}
+
+
+def _convert_unicode_regex(pattern: str) -> str:
+    """Convert Unicode property escapes to Python-compatible regex."""
+    result = pattern
+    for esc, replacement in _UNICODE_PROPERTY_MAP.items():
+        result = result.replace(esc, replacement)
+    return result
+
 
 def _snake(name: str) -> str:
     s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
@@ -41,7 +55,12 @@ def _emit_array_alias_model(
     if isinstance(semantic_type, str):
         py_item = semantic_type
 
-    pattern = item_schema.get("pattern") if item_type == "string" else None
+    raw_pattern = item_schema.get("pattern") if item_type == "string" else None
+    pattern = (
+        _convert_unicode_regex(raw_pattern)
+        if isinstance(raw_pattern, str)
+        else raw_pattern
+    )
     min_len = item_schema.get("minLength") if item_type == "string" else None
     max_len = item_schema.get("maxLength") if item_type == "string" else None
     enum_vals = (
