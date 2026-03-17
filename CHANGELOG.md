@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.14 (2026-03-17)
+
+### Bug Fixes
+
+- Add note on execution strategy selection
+  ([`5b28380`](https://github.com/camunda/orchestration-cluster-api-python/commit/5b28380de79043636f62cfc69cf8b483b991ff88))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`52e0e9f`](https://github.com/camunda/orchestration-cluster-api-python/commit/52e0e9f45626dbc82285722d47bb3e852a5da8fb))
+
+### Documentation
+
+- Add example of using ConnectedJobContext.client
+  ([`58a5a20`](https://github.com/camunda/orchestration-cluster-api-python/commit/58a5a20755dc0e5e5440fb98bd64372fddc2e4d9))
+
+- Add notes on failing jobs in worker
+  ([`c76b21b`](https://github.com/camunda/orchestration-cluster-api-python/commit/c76b21b5cb8f4bf78bee030a979a10dfcfcf7264))
+
+### Features
+
+- Build from latest stable/8.9
+  ([`1010df7`](https://github.com/camunda/orchestration-cluster-api-python/commit/1010df7856eb72e38f76c739b38a28ce06ebe169))
+
+
 ## v8.9.0-dev.13 (2026-03-09)
 
 ### Bug Fixes
