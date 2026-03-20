@@ -15,6 +15,7 @@ from camunda_orchestration_sdk.runtime.job_worker import (
     ConnectedJobContext,
     JobContext,
     JobWorker,
+    SyncJobContext,
     WorkerConfig,
 )
 from camunda_orchestration_sdk.models.activated_job_result import ActivatedJobResult
@@ -77,21 +78,24 @@ async def test_async_strategy_provides_connected_context(
 
 
 @pytest.mark.asyncio
-async def test_thread_strategy_provides_connected_context(
+async def test_thread_strategy_provides_sync_context(
     mock_client: MagicMock, mock_job_item: MagicMock
 ):
-    """thread strategy should pass ConnectedJobContext with client to the handler."""
+    """thread strategy should pass SyncJobContext with sync client to the handler."""
     received_context = None
 
-    def handler(job: ConnectedJobContext) -> None:
+    def handler(job: SyncJobContext) -> None:
         nonlocal received_context
         received_context = job
 
     worker = JobWorker(mock_client, handler, CONFIG, execution_strategy="thread")
+    # Provide a mock sync client so we don't need real configuration
+    mock_sync_client = MagicMock()
+    worker._sync_client = mock_sync_client  # pyright: ignore[reportPrivateUsage]
     await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
 
-    assert isinstance(received_context, ConnectedJobContext)
-    assert received_context.client is mock_client
+    assert isinstance(received_context, SyncJobContext)
+    assert received_context.client is mock_sync_client
 
 
 @pytest.mark.asyncio
@@ -128,6 +132,7 @@ async def test_process_strategy_provides_plain_context(
 
     assert isinstance(captured_context, JobContext)
     assert not isinstance(captured_context, ConnectedJobContext)
+    assert not isinstance(captured_context, SyncJobContext)
 
 
 @pytest.mark.asyncio
@@ -150,22 +155,23 @@ async def test_auto_strategy_async_callback_provides_connected_context(
 
 
 @pytest.mark.asyncio
-async def test_auto_strategy_sync_callback_provides_connected_context(
+async def test_auto_strategy_sync_callback_provides_sync_context(
     mock_client: MagicMock, mock_job_item: MagicMock
 ):
-    """auto strategy with sync callback → thread → ConnectedJobContext."""
+    """auto strategy with sync callback → thread → SyncJobContext."""
     received_context = None
 
-    def handler(job: ConnectedJobContext) -> None:
+    def handler(job: SyncJobContext) -> None:
         nonlocal received_context
         received_context = job
 
     worker = JobWorker(
         mock_client, handler, CONFIG
     )  # default execution_strategy="auto"
+    worker._sync_client = MagicMock()  # pyright: ignore[reportPrivateUsage]
     await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
 
-    assert isinstance(received_context, ConnectedJobContext)
+    assert isinstance(received_context, SyncJobContext)
 
 
 # ---------------------------------------------------------------------------

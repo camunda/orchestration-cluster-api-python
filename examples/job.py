@@ -13,6 +13,7 @@ from camunda_orchestration_sdk import (
     JobFailRequest,
     JobFailure,
     JobKey,
+    SyncJobContext,
     WorkerConfig,
 )
 
@@ -123,7 +124,7 @@ async def sync_job_worker_callback_example() -> None:
         )
 
         # Sync callbacks run in a thread pool by default
-        def handler(job: ConnectedJobContext) -> dict[str, object]:
+        def handler(job: SyncJobContext) -> dict[str, object]:
             # CPU-bound or blocking I/O work
             return {"result": "computed"}
 

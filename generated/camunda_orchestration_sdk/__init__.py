@@ -92,6 +92,7 @@ __all__: list[str] = [
     "AdvancedUserTaskStateFilterEq",
     "AdvancedUserTaskStateFilterNeq",
     "AdvancedVariableKeyFilter",
+    "AsyncJobContext",
     "AsyncJobHandler",
     "AuditLogActorTypeEnum",
     "AuditLogActorTypeExactMatch",
@@ -609,6 +610,7 @@ __all__: list[str] = [
     "SourceElementInstanceKeyInstruction",
     "StartCursor",
     "StatusMetric",
+    "SyncJobContext",
     "SyncJobHandler",
     "SystemConfigurationResponse",
     "Tag",
@@ -1529,7 +1531,9 @@ from camunda_orchestration_sdk.models import (
 from .types import File
 from .types import Unset
 from .runtime.job_worker import (
+    AsyncJobContext,
     ConnectedJobContext,
+    SyncJobContext,
     JobContext,
     JobError,
     JobFailure,

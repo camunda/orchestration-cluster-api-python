@@ -340,7 +340,11 @@ with CamundaClient() as client:
 
 Job workers long-poll for available jobs, execute a callback, and automatically complete or fail the job based on the return value. Workers are available on `CamundaAsyncClient`.
 
-By default, handlers receive a `ConnectedJobContext` — an extended context that includes a `client` reference back to the `CamundaAsyncClient`, so your handler can make API calls during job execution. If you use the `"process"` execution strategy, handlers receive a plain `JobContext` instead (the client cannot be pickled across process boundaries).
+Handlers receive a context object that includes a `client` reference, so your handler can make API calls during job execution. The context type depends on the execution strategy:
+
+- **Async handlers** → `ConnectedJobContext` with `client: CamundaAsyncClient` (use `await`)
+- **Thread handlers** → `SyncJobContext` with `client: CamundaClient` (call directly)
+- **Process handlers** → plain `JobContext` (no client — cannot be pickled across process boundaries)
 
 ```python
 import asyncio
@@ -367,7 +371,9 @@ asyncio.run(main())
 
 ### Using the Client in a Job Handler
 
-Because `ConnectedJobContext` includes a `client` reference, your handler can make API calls during job execution — for example, publishing a message to trigger another part of the process:
+Because `ConnectedJobContext` and `SyncJobContext` include a `client` reference, your handler can make API calls during job execution — for example, publishing a message to trigger another part of the process.
+
+**Async handlers** (`execution_strategy="async"`) — `await` the client method directly:
 
 ```python
 from camunda_orchestration_sdk import ConnectedJobContext, MessagePublicationRequest
@@ -376,7 +382,6 @@ async def handle_order(job: ConnectedJobContext) -> dict:
     variables = job.variables.to_dict()
     order_id = variables["orderId"]
 
-    # Publish a message using the client from the job context
     await job.client.publish_message(
         data=MessagePublicationRequest(
             name="order-processed",
@@ -389,6 +394,30 @@ async def handle_order(job: ConnectedJobContext) -> dict:
     job.log.info(f"Published order-processed message for order {order_id}")
     return {"status": "done"}
 ```
+
+**Sync (thread) handlers** (`execution_strategy="thread"`) — `job.client` is a sync `CamundaClient`, so call methods directly:
+
+```python
+from camunda_orchestration_sdk import SyncJobContext, MessagePublicationRequest
+
+def handle_order(job: SyncJobContext) -> dict:
+    variables = job.variables.to_dict()
+    order_id = variables["orderId"]
+
+    job.client.publish_message(
+        data=MessagePublicationRequest(
+            name="order-processed",
+            correlation_key=order_id,
+            time_to_live=60000,
+            variables={"orderId": order_id, "status": "completed"},
+        )
+    )
+
+    job.log.info(f"Published order-processed message for order {order_id}")
+    return {"status": "done"}
+```
+
+> **Note:** The SDK automatically provides the right client type for each strategy — async handlers get `CamundaAsyncClient` (use `await`), thread handlers get `CamundaClient` (call directly). You don't need to create or manage these clients yourself.
 
 ### Job Logger
 
@@ -410,22 +439,22 @@ The job logger inherits the SDK's logger configuration (loguru by default, or wh
 
 Job workers support multiple execution strategies to match your workload type. Pass `execution_strategy` as a keyword argument to `create_job_worker`, or let the SDK auto-detect.
 
-| Strategy | How it runs your handler | Best for |
-|----------|--------------------------|----------|
-| `"auto"` (default) | Auto-detects: `"async"` for `async def` handlers, `"thread"` for sync handlers | Most use cases — sensible defaults without configuration |
-| `"async"` | Runs on a dedicated `asyncio` event loop | I/O-bound async work (HTTP calls, database queries). Best throughput for handlers that call remote systems over HTTP |
-| `"thread"` | Runs in a `ThreadPoolExecutor` | CPU-bound work, blocking I/O (file system, synchronous HTTP libraries) |
-| `"process"` | Runs in a `ProcessPoolExecutor` | Heavy CPU-bound work that needs to escape the GIL (image processing, ML inference) |
+| Strategy | How it runs your handler | Context type | Best for |
+|----------|--------------------------|--------------|----------|
+| `"auto"` (default) | Auto-detects: `"async"` for `async def` handlers, `"thread"` for sync handlers | `ConnectedJobContext` or `SyncJobContext` | Most use cases — sensible defaults without configuration |
+| `"async"` | Runs on the main `asyncio` event loop | `ConnectedJobContext` (async client) | I/O-bound async work (HTTP calls, database queries). Best throughput for handlers that call remote systems over HTTP |
+| `"thread"` | Runs in a `ThreadPoolExecutor` | `SyncJobContext` (sync client) | CPU-bound work, blocking I/O (file system, synchronous HTTP libraries) |
+| `"process"` | Runs in a `ProcessPoolExecutor` | `JobContext` (no client) | Heavy CPU-bound work that needs to escape the GIL (image processing, ML inference) |
 
 > **Choosing between `"async"` and `"thread"`:** If your job handler makes HTTP calls to remote systems (APIs, databases, microservices), `"async"` delivers the best performance — it can multiplex many concurrent jobs on a single thread without blocking. Use `"thread"` when your handler performs CPU-bound computation or calls synchronous libraries that would block the event loop.
 
 **Auto-detection logic:** If your handler is an `async def`, the strategy defaults to `"async"`. If it's a regular `def`, the strategy defaults to `"thread"`. You can override this explicitly:
 
 ```python
-from camunda_orchestration_sdk import ConnectedJobContext, JobContext
+from camunda_orchestration_sdk import SyncJobContext, JobContext
 
-# Force thread pool for a sync handler (receives ConnectedJobContext)
-def io_handler(job: ConnectedJobContext) -> dict:
+# Force thread pool for a sync handler (receives SyncJobContext)
+def io_handler(job: SyncJobContext) -> dict:
     return {"done": True}
 
 client.create_job_worker(
@@ -445,10 +474,10 @@ client.create_job_worker(
 )
 ```
 
-**Process strategy caveats:** The `"process"` strategy serialises (pickles) your handler and its context to send them to a worker process. Because the SDK client cannot be pickled, handlers running under this strategy receive a plain `JobContext` (without a `client` attribute) instead of `ConnectedJobContext`. This means:
+**Process strategy caveats:** The `"process"` strategy serialises (pickles) your handler and its context to send them to a worker process. Because the SDK client cannot be pickled, handlers running under this strategy receive a plain `JobContext` (without a `client` attribute) instead of `ConnectedJobContext`/`SyncJobContext`. This means:
 
 - Your handler function and its closure must be picklable (top-level functions work; lambdas and closures over unpicklable objects do not).
-- Your handler must accept `JobContext`, not `ConnectedJobContext` — the type checker enforces this via overloaded signatures on `create_job_worker`.
+- Your handler must accept `JobContext`, not `ConnectedJobContext` or `SyncJobContext` — the type checker enforces this via overloaded signatures on `create_job_worker`.
 - `job.log` degrades to a silent no-op logger in the child process (see [Job Logger](#job-logger)).
 - There is additional overhead per job from serialisation and inter-process communication.
 

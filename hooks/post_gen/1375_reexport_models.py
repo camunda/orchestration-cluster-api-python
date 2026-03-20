@@ -50,7 +50,9 @@ def run(context: dict[str, str]) -> None:
     model_names = _parse_all_names(models_init)
     # User-facing types beyond models: File, worker context/exceptions, handler aliases
     _job_worker_names = [
+        "AsyncJobContext",
         "ConnectedJobContext",
+        "SyncJobContext",
         "JobContext",
         "JobError",
         "JobFailure",

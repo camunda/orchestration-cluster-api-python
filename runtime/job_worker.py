@@ -31,7 +31,7 @@ from camunda_orchestration_sdk.models.job_error_request import JobErrorRequest
 from camunda_orchestration_sdk.types import UNSET
 
 if TYPE_CHECKING:
-    from camunda_orchestration_sdk import CamundaAsyncClient
+    from camunda_orchestration_sdk import CamundaAsyncClient, CamundaClient
 
 _EFFECTIVE_EXECUTION_STRATEGY = Literal["thread", "process", "async"]
 EXECUTION_STRATEGY = _EFFECTIVE_EXECUTION_STRATEGY | Literal["auto"]
@@ -76,14 +76,15 @@ class JobContext(ActivatedJobResult):
 
 @attrs.define
 class ConnectedJobContext(JobContext):
-    """Context for async/thread handlers — includes client reference.
+    """Context for **async** handlers — includes an async client reference.
 
     Extends :class:`JobContext` with a ``client`` attribute that provides
-    access to the Camunda API from within a job handler.  This context is
-    only provided when the execution strategy is ``"async"`` or
-    ``"thread"``; handlers running under the ``"process"`` strategy
-    receive a plain :class:`JobContext` (the client cannot be pickled
-    across process boundaries).
+    access to the Camunda API from within an async job handler.  Use
+    ``await job.client.method(...)`` to call API methods.
+
+    This context is provided when the execution strategy is ``"async"``.
+    For ``"thread"`` handlers, see :class:`SyncJobContext`.
+    For ``"process"`` handlers, see :class:`JobContext`.
     """
 
     client: "CamundaAsyncClient" = attrs.field(kw_only=True, repr=False, eq=False)
@@ -106,18 +107,54 @@ class ConnectedJobContext(JobContext):
         return cls(**init_fields)
 
 
+# Backward-compatible alias
+AsyncJobContext = ConnectedJobContext
+
+
+@attrs.define
+class SyncJobContext(JobContext):
+    """Context for **thread** handlers — includes a sync client reference.
+
+    Extends :class:`JobContext` with a ``client`` attribute that provides
+    access to the Camunda API from within a synchronous (thread) handler.
+    Call ``job.client.method(...)`` directly — no ``await`` needed.
+
+    This context is provided when the execution strategy is ``"thread"``.
+    For ``"async"`` handlers, see :class:`ConnectedJobContext`.
+    For ``"process"`` handlers, see :class:`JobContext`.
+    """
+
+    client: "CamundaClient" = attrs.field(kw_only=True, repr=False, eq=False)
+
+    @classmethod
+    def create(
+        cls,
+        job: ActivatedJobResult,
+        client: "CamundaClient",
+        logger: SdkLogger | None = None,
+    ) -> "SyncJobContext":
+        init_fields = {
+            f.name: getattr(job, f.name)
+            for f in attrs.fields(ActivatedJobResult)
+            if f.init
+        }
+        if logger is not None:
+            init_fields["log"] = logger
+        init_fields["client"] = client
+        return cls(**init_fields)
+
+
 # ---------------------------------------------------------------------------
 # Handler type aliases
 # ---------------------------------------------------------------------------
 
-# Handlers that accept ConnectedJobContext (async / thread strategies).
-# Due to callable contravariance, handlers typed with the broader JobContext
-# parameter are also assignable here.
+# Handlers that accept ConnectedJobContext (async strategy).
 ConnectedAsyncJobHandler = Callable[
     [ConnectedJobContext],
     Coroutine[Any, Any, dict[str, Any] | JobCompletionRequest | None],
 ]
-ConnectedSyncJobHandler = Callable[[ConnectedJobContext], dict[str, Any] | None]
+# Handlers that accept SyncJobContext (thread strategy).
+ConnectedSyncJobHandler = Callable[[SyncJobContext], dict[str, Any] | None]
 ConnectedJobHandler = ConnectedAsyncJobHandler | ConnectedSyncJobHandler
 
 # Handlers that accept only JobContext (process strategy).
@@ -237,6 +274,9 @@ class JobWorker:
         self._strategy = self._determine_strategy()
         self._validate_strategy()
 
+        # Sync client for thread strategy — created lazily on first job
+        self._sync_client: "CamundaClient | None" = None
+
         # Resource pools
         self.thread_pool = ThreadPoolExecutor(max_workers=config.max_concurrent_jobs)
         self.process_pool = ProcessPoolExecutor(max_workers=config.max_concurrent_jobs)
@@ -287,6 +327,22 @@ class JobWorker:
         """Ensure the strategy matches the callback type"""
         # Validation relaxed to allow dynamic exploration.
         pass
+
+    def _get_sync_client(self) -> "CamundaClient":
+        """Lazily create a sync CamundaClient for thread strategy handlers."""
+        if self._sync_client is None:
+            from camunda_orchestration_sdk import CamundaClient as _SyncClient
+            from camunda_orchestration_sdk.runtime.configuration_resolver import (
+                CamundaSdkConfigPartial,
+            )
+
+            self._sync_client = _SyncClient(
+                configuration=cast(
+                    CamundaSdkConfigPartial,
+                    self.client.configuration.model_dump(),
+                ),
+            )
+        return self._sync_client
 
     def _decrement_active_jobs(self):
         with self.lock:
@@ -382,9 +438,13 @@ class JobWorker:
         # Create context with a job-scoped child logger
         job_logger = self.logger.bind(job_key=str(job_item.job_key))
         job_context: JobContext
-        if self._strategy != "process":
+        if self._strategy == "async":
             job_context = ConnectedJobContext.create(
                 job_item, client=self.client, logger=job_logger
+            )
+        elif self._strategy == "thread":
+            job_context = SyncJobContext.create(
+                job_item, client=self._get_sync_client(), logger=job_logger
             )
         else:
             job_context = JobContext.from_job(job_item, logger=job_logger)
@@ -400,16 +460,13 @@ class JobWorker:
                 action: JobAction | None = None
 
                 if self._strategy == "async":
-                    # Run on dedicated worker loop
+                    # Run on the current event loop (same loop as the httpx client)
+                    # so that job.client API calls work without cross-loop errors.
                     try:
                         result = None
                         if is_async_callback:
                             async_callback = cast(AsyncJobHandler, self.callback)
-                            # Schedule on worker loop and wait for result in main loop
-                            future = asyncio.run_coroutine_threadsafe(
-                                async_callback(job_context), self.worker_loop
-                            )
-                            result = await asyncio.wrap_future(future)
+                            result = await async_callback(job_context)
                         else:
                             # Warning: Sync callback on Async strategy blocks the loop!
                             sync_callback = cast(SyncJobHandler, self.callback)

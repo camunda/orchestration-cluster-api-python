@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from .logging import SdkLogger, NullLogger
 from camunda_orchestration_sdk.models.activated_job_result import ActivatedJobResult
 from camunda_orchestration_sdk.models.job_completion_request import JobCompletionRequest
-from camunda_orchestration_sdk import CamundaAsyncClient
+from camunda_orchestration_sdk import CamundaAsyncClient, CamundaClient
 _EFFECTIVE_EXECUTION_STRATEGY = Literal["thread", "process", "async"]
 EXECUTION_STRATEGY = _EFFECTIVE_EXECUTION_STRATEGY | Literal["auto"]
 ActionComplete = Tuple[
@@ -26,11 +26,17 @@ class ConnectedJobContext(JobContext):
     client: "CamundaAsyncClient" = attrs.field(kw_only=True, repr=False, eq=False)
     @classmethod
     def create(cls, job: ActivatedJobResult, client: "CamundaAsyncClient", logger: SdkLogger | None = None) -> "ConnectedJobContext": ...
+AsyncJobContext = ConnectedJobContext
+@attrs.define
+class SyncJobContext(JobContext):
+    client: "CamundaClient" = attrs.field(kw_only=True, repr=False, eq=False)
+    @classmethod
+    def create(cls, job: ActivatedJobResult, client: "CamundaClient", logger: SdkLogger | None = None) -> "SyncJobContext": ...
 ConnectedAsyncJobHandler = Callable[
     [ConnectedJobContext],
     Coroutine[Any, Any, dict[str, Any] | JobCompletionRequest | None],
 ]
-ConnectedSyncJobHandler = Callable[[ConnectedJobContext], dict[str, Any] | None]
+ConnectedSyncJobHandler = Callable[[SyncJobContext], dict[str, Any] | None]
 ConnectedJobHandler = ConnectedAsyncJobHandler | ConnectedSyncJobHandler
 IsolatedAsyncJobHandler = Callable[
     [JobContext], Coroutine[Any, Any, dict[str, Any] | JobCompletionRequest | None]
@@ -59,6 +65,7 @@ class JobWorker:
     def _run_worker_loop(self) -> None: ...
     def _determine_strategy(self) -> _EFFECTIVE_EXECUTION_STRATEGY: ...
     def _validate_strategy(self) -> None: ...
+    def _get_sync_client(self) -> "CamundaClient": ...
     def _decrement_active_jobs(self) -> None: ...
     def start(self) -> None: ...
     async def _start_with_jitter(self, jitter: float) -> None: ...
