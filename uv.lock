@@ -146,7 +146,7 @@ wheels = [
 
 [[package]]
 name = "camunda-orchestration-sdk"
-version = "8.9.0.dev14"
+version = "8.9.0.dev15"
 source = { editable = "." }
 dependencies = [
     { name = "attrs" },
