@@ -2,18 +2,15 @@
 # These examples are type-checked during build to guard against API regressions.
 from __future__ import annotations
 
-from camunda_orchestration_sdk import CamundaClient
-from camunda_orchestration_sdk.models.decision_definition_search_query import (
+from camunda_orchestration_sdk import (
+    CamundaClient,
+    DecisionDefinitionId,
+    DecisionDefinitionKey,
     DecisionDefinitionSearchQuery,
-)
-from camunda_orchestration_sdk.models.decision_evaluation_by_id import (
     DecisionEvaluationByID,
-)
-from camunda_orchestration_sdk.models.decision_evaluation_by_key import (
     DecisionEvaluationByKey,
+    Unset,
 )
-from camunda_orchestration_sdk.semantic_types import DecisionDefinitionId, DecisionDefinitionKey
-from camunda_orchestration_sdk.types import Unset
 
 
 # region EvaluateDecisionByKey

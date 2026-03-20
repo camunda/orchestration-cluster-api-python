@@ -1,18 +1,20 @@
 from __future__ import annotations
 
+import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
-from ..models.job_result_activate_element import JobResultActivateElement
-T = TypeVar("T", bound="JobResultAdHocSubProcessType0")
+T = TypeVar("T", bound="JobResultCorrections")
 @_attrs_define
-class JobResultAdHocSubProcessType0:
-    activate_elements: list[JobResultActivateElement] | Unset = UNSET
-    is_completion_condition_fulfilled: bool | Unset = UNSET
-    is_cancel_remaining_instances: bool | Unset = UNSET
-    type_: str | Unset = UNSET
+class JobResultCorrections:
+    assignee: None | str | Unset = UNSET
+    due_date: datetime.datetime | None | Unset = UNSET
+    follow_up_date: datetime.datetime | None | Unset = UNSET
+    candidate_users: list[str] | None | Unset = UNSET
+    candidate_groups: list[str] | None | Unset = UNSET
+    priority: int | None | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

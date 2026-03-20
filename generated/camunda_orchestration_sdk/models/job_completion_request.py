@@ -9,10 +9,10 @@ from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.job_completion_request_variables import JobCompletionRequestVariables
-    from ..models.job_result_ad_hoc_sub_process_type_0 import (
-        JobResultAdHocSubProcessType0,
+    from ..models.job_result_ad_hoc_sub_process import (
+        JobResultAdHocSubProcess,
     )
-    from ..models.job_result_user_task_type_0 import JobResultUserTaskType0
+    from ..models.job_result_user_task import JobResultUserTask
 
 
 T = TypeVar("T", bound="JobCompletionRequest")
@@ -23,23 +23,21 @@ class JobCompletionRequest:
     """
     Attributes:
         variables (JobCompletionRequestVariables | None | Unset): The variables to complete the job with.
-        result (JobResultAdHocSubProcessType0 | JobResultUserTaskType0 | None | Unset): The result of the completed job
+        result (JobResultAdHocSubProcess | JobResultUserTask | None | Unset): The result of the completed job
             as determined by the worker.
     """
 
     variables: JobCompletionRequestVariables | None | Unset = UNSET
-    result: JobResultAdHocSubProcessType0 | JobResultUserTaskType0 | None | Unset = (
-        UNSET
-    )
+    result: JobResultAdHocSubProcess | JobResultUserTask | None | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.job_completion_request_variables import (
             JobCompletionRequestVariables,
         )
-        from ..models.job_result_ad_hoc_sub_process_type_0 import (
-            JobResultAdHocSubProcessType0,
+        from ..models.job_result_ad_hoc_sub_process import (
+            JobResultAdHocSubProcess,
         )
-        from ..models.job_result_user_task_type_0 import JobResultUserTaskType0
+        from ..models.job_result_user_task import JobResultUserTask
 
         variables: dict[str, Any] | None | Unset
         if isinstance(self.variables, Unset):
@@ -52,9 +50,9 @@ class JobCompletionRequest:
         result: dict[str, Any] | None | Unset
         if isinstance(self.result, Unset):
             result = UNSET
-        elif isinstance(self.result, JobResultUserTaskType0):
+        elif isinstance(self.result, JobResultUserTask):
             result = self.result.to_dict()
-        elif isinstance(self.result, JobResultAdHocSubProcessType0):
+        elif isinstance(self.result, JobResultAdHocSubProcess):
             result = self.result.to_dict()
         else:
             result = self.result
@@ -74,10 +72,10 @@ class JobCompletionRequest:
         from ..models.job_completion_request_variables import (
             JobCompletionRequestVariables,
         )
-        from ..models.job_result_ad_hoc_sub_process_type_0 import (
-            JobResultAdHocSubProcessType0,
+        from ..models.job_result_ad_hoc_sub_process import (
+            JobResultAdHocSubProcess,
         )
-        from ..models.job_result_user_task_type_0 import JobResultUserTaskType0
+        from ..models.job_result_user_task import JobResultUserTask
 
         d = dict(src_dict)
 
@@ -106,7 +104,7 @@ class JobCompletionRequest:
 
         def _parse_result(
             data: object,
-        ) -> JobResultAdHocSubProcessType0 | JobResultUserTaskType0 | None | Unset:
+        ) -> JobResultAdHocSubProcess | JobResultUserTask | None | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
@@ -117,7 +115,7 @@ class JobCompletionRequest:
 
                 data = cast(dict[str, Any], data)
                 componentsschemas_job_result_user_task_type_0 = (
-                    JobResultUserTaskType0.from_dict(data)
+                    JobResultUserTask.from_dict(data)
                 )
 
                 return componentsschemas_job_result_user_task_type_0
@@ -129,14 +127,14 @@ class JobCompletionRequest:
 
                 data = cast(dict[str, Any], data)
                 componentsschemas_job_result_ad_hoc_sub_process_type_0 = (
-                    JobResultAdHocSubProcessType0.from_dict(data)
+                    JobResultAdHocSubProcess.from_dict(data)
                 )
 
                 return componentsschemas_job_result_ad_hoc_sub_process_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
             return cast(
-                JobResultAdHocSubProcessType0 | JobResultUserTaskType0 | None | Unset,
+                JobResultAdHocSubProcess | JobResultUserTask | None | Unset,
                 data,
             )
 

@@ -2,32 +2,18 @@
 # These examples are type-checked during build to guard against API regressions.
 from __future__ import annotations
 
-from camunda_orchestration_sdk import CamundaClient
-from camunda_orchestration_sdk.models.limit_based_pagination import (
+from camunda_orchestration_sdk import (
+    CamundaClient,
     LimitBasedPagination,
-)
-from camunda_orchestration_sdk.models.process_creation_by_id import (
     ProcessCreationById,
-)
-from camunda_orchestration_sdk.models.process_creation_by_key import (
     ProcessCreationByKey,
-)
-from camunda_orchestration_sdk.models.process_instance_search_query_filter import (
-    ProcessInstanceSearchQueryFilter,
-)
-from camunda_orchestration_sdk.models.process_instance_search_query_sort_request import (
-    ProcessInstanceSearchQuerySortRequest,
-)
-from camunda_orchestration_sdk.models.process_instance_search_query_sort_request_field import (
-    ProcessInstanceSearchQuerySortRequestField,
-)
-from camunda_orchestration_sdk.models.process_instance_search_query import (
-    ProcessInstanceSearchQuery,
-)
-from camunda_orchestration_sdk.models.sort_order_enum import SortOrderEnum
-from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
+    ProcessInstanceSearchQuery,
+    ProcessInstanceSearchQueryFilter,
+    ProcessInstanceSearchQuerySortRequest,
+    ProcessInstanceSearchQuerySortRequestField,
+    SortOrderEnum,
 )
 
 

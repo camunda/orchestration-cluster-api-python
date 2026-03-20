@@ -113,8 +113,7 @@ Semantic types make these identifiers **distinct at the type level**. Pyright (a
 Treat semantic types as **opaque identifiers** — receive them from API responses and pass them to subsequent API calls without inspecting or transforming the underlying value:
 
 ```python
-from camunda_orchestration_sdk import CamundaClient
-from camunda_orchestration_sdk.models.process_creation_by_key import ProcessCreationByKey
+from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey
 
 client = CamundaClient()
 
@@ -310,8 +309,7 @@ with CamundaClient() as client:
 The recommended pattern is to obtain keys from a prior API response (e.g. a deployment) and pass them directly — no manual lifting needed:
 
 ```python
-from camunda_orchestration_sdk import CamundaClient
-from camunda_orchestration_sdk.models.process_creation_by_key import ProcessCreationByKey
+from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey
 
 with CamundaClient() as client:
     # Deploy and capture the typed key
@@ -328,8 +326,7 @@ with CamundaClient() as client:
 If you need to restore a key from external storage (database, message queue, config file), wrap the raw string with the semantic type constructor:
 
 ```python
-from camunda_orchestration_sdk import CamundaClient, ProcessDefinitionKey
-from camunda_orchestration_sdk.models.process_creation_by_key import ProcessCreationByKey
+from camunda_orchestration_sdk import CamundaClient, ProcessDefinitionKey, ProcessCreationByKey
 
 with CamundaClient() as client:
     stored_key = "2251799813685249"  # from a DB row or config
@@ -347,8 +344,7 @@ By default, handlers receive a `ConnectedJobContext` — an extended context tha
 
 ```python
 import asyncio
-from camunda_orchestration_sdk import CamundaAsyncClient, WorkerConfig
-from camunda_orchestration_sdk.runtime.job_worker import ConnectedJobContext
+from camunda_orchestration_sdk import CamundaAsyncClient, ConnectedJobContext, WorkerConfig
 
 async def handle_job(job_context: ConnectedJobContext) -> dict:
     variables = job_context.variables.to_dict()
@@ -374,8 +370,7 @@ asyncio.run(main())
 Because `ConnectedJobContext` includes a `client` reference, your handler can make API calls during job execution — for example, publishing a message to trigger another part of the process:
 
 ```python
-from camunda_orchestration_sdk.runtime.job_worker import ConnectedJobContext
-from camunda_orchestration_sdk.models.message_publication_request import MessagePublicationRequest
+from camunda_orchestration_sdk import ConnectedJobContext, MessagePublicationRequest
 
 async def handle_order(job: ConnectedJobContext) -> dict:
     variables = job.variables.to_dict()
@@ -427,7 +422,7 @@ Job workers support multiple execution strategies to match your workload type. P
 **Auto-detection logic:** If your handler is an `async def`, the strategy defaults to `"async"`. If it's a regular `def`, the strategy defaults to `"thread"`. You can override this explicitly:
 
 ```python
-from camunda_orchestration_sdk.runtime.job_worker import ConnectedJobContext, JobContext
+from camunda_orchestration_sdk import ConnectedJobContext, JobContext
 
 # Force thread pool for a sync handler (receives ConnectedJobContext)
 def io_handler(job: ConnectedJobContext) -> dict:
@@ -482,7 +477,7 @@ The following are keyword-only arguments on `create_job_worker`, not part of `Wo
 To explicitly fail a job with a custom error message, retry count, and backoff, raise `JobFailure` in your handler:
 
 ```python
-from camunda_orchestration_sdk.runtime.job_worker import ConnectedJobContext, JobFailure
+from camunda_orchestration_sdk import ConnectedJobContext, JobFailure
 
 async def handle_job(job: ConnectedJobContext) -> dict:
     if not job.variables.to_dict().get("required_field"):
@@ -507,7 +502,7 @@ If an unhandled exception escapes your handler, the job is automatically failed 
 To throw a [BPMN error](https://docs.camunda.io/docs/components/modeler/bpmn/error-events/) from a job handler — for example, to trigger an error boundary event — raise `JobError`:
 
 ```python
-from camunda_orchestration_sdk.runtime.job_worker import ConnectedJobContext, JobError
+from camunda_orchestration_sdk import ConnectedJobContext, JobError
 
 async def handle_payment(job: ConnectedJobContext) -> dict:
     variables = job.variables.to_dict()
@@ -528,8 +523,7 @@ The `error_code` must match the error code defined on a BPMN error catch event i
 The SDK raises typed exceptions for API errors. Each operation has specific exception classes for each HTTP error status code:
 
 ```python
-from camunda_orchestration_sdk import CamundaClient
-from camunda_orchestration_sdk.models.process_creation_by_key import ProcessCreationByKey
+from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey
 from camunda_orchestration_sdk.errors import CreateProcessInstanceBadRequest
 
 with CamundaClient() as client:

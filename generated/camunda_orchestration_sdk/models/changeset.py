@@ -10,35 +10,39 @@ from dateutil.parser import isoparse
 
 from ..types import UNSET, Unset, str_any_dict_factory
 
-T = TypeVar("T", bound="JobResultCorrectionsType0")
+T = TypeVar("T", bound="Changeset")
 
 
 @_attrs_define
-class JobResultCorrectionsType0:
-    """JSON object with attributes that were corrected by the worker.
+class Changeset:
+    """JSON object with changed task attribute values.
 
-    The following attributes can be corrected, additional attributes will be ignored:
+    The following attributes can be adjusted with this endpoint, additional attributes
+    will be ignored:
 
-    * `assignee` - clear by providing an empty String
-    * `dueDate` - clear by providing an empty String
-    * `followUpDate` - clear by providing an empty String
-    * `candidateGroups` - clear by providing an empty list
-    * `candidateUsers` - clear by providing an empty list
+    * `candidateGroups` - reset by providing an empty list
+    * `candidateUsers` - reset by providing an empty list
+    * `dueDate` - reset by providing an empty String
+    * `followUpDate` - reset by providing an empty String
     * `priority` - minimum 0, maximum 100, default 50
 
     Providing any of those attributes with a `null` value or omitting it preserves
     the persisted attribute's value.
 
+    The assignee cannot be adjusted with this endpoint, use the Assign task endpoint.
+    This ensures correct event emission for assignee changes.
+
         Attributes:
-            assignee (None | str | Unset): Assignee of the task.
-            due_date (datetime.datetime | None | Unset): The due date of the task.
-            follow_up_date (datetime.datetime | None | Unset): The follow-up date of the task.
-            candidate_users (list[str] | None | Unset): The list of candidate users of the task.
-            candidate_groups (list[str] | None | Unset): The list of candidate groups of the task.
-            priority (int | None | Unset): The priority of the task.
+            due_date (datetime.datetime | None | Unset): The due date of the task. Reset by providing an empty String.
+            follow_up_date (datetime.datetime | None | Unset): The follow-up date of the task. Reset by providing an empty
+                String.
+            candidate_users (list[str] | None | Unset): The list of candidate users of the task. Reset by providing an empty
+                list.
+            candidate_groups (list[str] | None | Unset): The list of candidate groups of the task. Reset by providing an
+                empty list.
+            priority (int | None | Unset): The priority of the task. Server default: 50.
     """
 
-    assignee: None | str | Unset = UNSET
     due_date: datetime.datetime | None | Unset = UNSET
     follow_up_date: datetime.datetime | None | Unset = UNSET
     candidate_users: list[str] | None | Unset = UNSET
@@ -49,12 +53,6 @@ class JobResultCorrectionsType0:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        assignee: None | str | Unset
-        if isinstance(self.assignee, Unset):
-            assignee = UNSET
-        else:
-            assignee = self.assignee
-
         due_date: None | str | Unset
         if isinstance(self.due_date, Unset):
             due_date = UNSET
@@ -98,8 +96,6 @@ class JobResultCorrectionsType0:
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
-        if assignee is not UNSET:
-            field_dict["assignee"] = assignee
         if due_date is not UNSET:
             field_dict["dueDate"] = due_date
         if follow_up_date is not UNSET:
@@ -116,15 +112,6 @@ class JobResultCorrectionsType0:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-
-        def _parse_assignee(data: object) -> None | str | Unset:
-            if data is None:
-                return data
-            if isinstance(data, Unset):
-                return data
-            return cast(None | str | Unset, data)
-
-        assignee = _parse_assignee(d.pop("assignee", UNSET))
 
         def _parse_due_date(data: object) -> datetime.datetime | None | Unset:
             if data is None:
@@ -203,8 +190,7 @@ class JobResultCorrectionsType0:
 
         priority = _parse_priority(d.pop("priority", UNSET))
 
-        job_result_corrections_type_0 = cls(
-            assignee=assignee,
+        changeset_type_0 = cls(
             due_date=due_date,
             follow_up_date=follow_up_date,
             candidate_users=candidate_users,
@@ -212,8 +198,8 @@ class JobResultCorrectionsType0:
             priority=priority,
         )
 
-        job_result_corrections_type_0.additional_properties = d
-        return job_result_corrections_type_0
+        changeset_type_0.additional_properties = d
+        return changeset_type_0
 
     @property
     def additional_keys(self) -> list[str]:

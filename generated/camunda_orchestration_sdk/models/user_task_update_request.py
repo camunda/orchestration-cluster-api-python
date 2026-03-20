@@ -8,7 +8,7 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.changeset_type_0 import ChangesetType0
+    from ..models.changeset import Changeset
 
 
 T = TypeVar("T", bound="UserTaskUpdateRequest")
@@ -18,7 +18,7 @@ T = TypeVar("T", bound="UserTaskUpdateRequest")
 class UserTaskUpdateRequest:
     """
     Attributes:
-        changeset (ChangesetType0 | None | Unset): JSON object with changed task attribute values.
+        changeset (Changeset | None | Unset): JSON object with changed task attribute values.
 
             The following attributes can be adjusted with this endpoint, additional attributes
             will be ignored:
@@ -38,16 +38,16 @@ class UserTaskUpdateRequest:
             this endpoint invocation. If not provided, it will default to "update".
     """
 
-    changeset: ChangesetType0 | None | Unset = UNSET
+    changeset: Changeset | None | Unset = UNSET
     action: None | str | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.changeset_type_0 import ChangesetType0
+        from ..models.changeset import Changeset
 
         changeset: dict[str, Any] | None | Unset
         if isinstance(self.changeset, Unset):
             changeset = UNSET
-        elif isinstance(self.changeset, ChangesetType0):
+        elif isinstance(self.changeset, Changeset):
             changeset = self.changeset.to_dict()
         else:
             changeset = self.changeset
@@ -70,11 +70,11 @@ class UserTaskUpdateRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.changeset_type_0 import ChangesetType0
+        from ..models.changeset import Changeset
 
         d = dict(src_dict)
 
-        def _parse_changeset(data: object) -> ChangesetType0 | None | Unset:
+        def _parse_changeset(data: object) -> Changeset | None | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
@@ -84,12 +84,12 @@ class UserTaskUpdateRequest:
                     raise TypeError()
 
                 data = cast(dict[str, Any], data)
-                componentsschemas_changeset_type_0 = ChangesetType0.from_dict(data)
+                componentsschemas_changeset_type_0 = Changeset.from_dict(data)
 
                 return componentsschemas_changeset_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(ChangesetType0 | None | Unset, data)
+            return cast(Changeset | None | Unset, data)
 
         changeset = _parse_changeset(d.pop("changeset", UNSET))
 

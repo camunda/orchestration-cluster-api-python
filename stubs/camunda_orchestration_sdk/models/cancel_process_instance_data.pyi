@@ -4,9 +4,9 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from ..types import UNSET, Unset
-T = TypeVar("T", bound="DeleteDecisionInstanceRequestType0")
+T = TypeVar("T", bound="CancelProcessInstanceData")
 @_attrs_define
-class DeleteDecisionInstanceRequestType0:
+class CancelProcessInstanceData:
     operation_reference: int | Unset = UNSET
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

@@ -12,11 +12,11 @@ if TYPE_CHECKING:
     from ..models.job_result_activate_element import JobResultActivateElement
 
 
-T = TypeVar("T", bound="JobResultAdHocSubProcessType0")
+T = TypeVar("T", bound="JobResultAdHocSubProcess")
 
 
 @_attrs_define
-class JobResultAdHocSubProcessType0:
+class JobResultAdHocSubProcess:
     """Job result details for an ad‑hoc sub‑process, including elements to activate and flags indicating completion or
     cancellation behavior.
 

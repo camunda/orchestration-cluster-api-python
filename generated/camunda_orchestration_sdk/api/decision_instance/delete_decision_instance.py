@@ -4,26 +4,24 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.delete_decision_instance_data_type_0 import (
-    DeleteDecisionInstanceDataType0,
-)
+from ...models.delete_decision_instance_data import DeleteDecisionInstanceData
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    decision_instance_key: str,
+    decision_evaluation_key: str,
     *,
-    body: DeleteDecisionInstanceDataType0 | None | Unset = UNSET,
+    body: DeleteDecisionInstanceData | None | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
         "method": "post",
-        "url": "/decision-instances/{decision_instance_key}/deletion".format(
-            decision_instance_key=quote(str(decision_instance_key), safe="")
+        "url": "/decision-instances/{decision_evaluation_key}/deletion".format(
+            decision_evaluation_key=quote(str(decision_evaluation_key), safe="")
         ),
     }
-    if isinstance(body, DeleteDecisionInstanceDataType0):
+    if isinstance(body, DeleteDecisionInstanceData):
         _kwargs["json"] = body.to_dict()
     else:
         _kwargs["json"] = body
@@ -71,19 +69,19 @@ def _build_response(
 
 
 def sync_detailed(
-    decision_instance_key: str,
+    decision_evaluation_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceDataType0 | None | Unset = UNSET,
+    body: DeleteDecisionInstanceData | None | Unset = UNSET,
 ) -> Response[Any | ProblemDetail]:
     """Delete decision instance
 
      Delete all associated decision evaluations based on provided key.
 
     Args:
-        decision_instance_key (str): System-generated key for a deployed decision instance.
-            Example: 22517998136843567.
-        body (DeleteDecisionInstanceDataType0 | None | Unset):
+        decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
+            2251792362345323.
+        body (DeleteDecisionInstanceData | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -92,16 +90,16 @@ def sync_detailed(
     Returns:
         Response[Any | ProblemDetail]
     """
-    kwargs = _get_kwargs(decision_instance_key=decision_instance_key, body=body)
+    kwargs = _get_kwargs(decision_evaluation_key=decision_evaluation_key, body=body)
     response = client.get_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
 
 def sync(
-    decision_instance_key: str,
+    decision_evaluation_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceDataType0 | None | Unset = UNSET,
+    body: DeleteDecisionInstanceData | None | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Delete decision instance
@@ -109,9 +107,9 @@ def sync(
      Delete all associated decision evaluations based on provided key.
 
     Args:
-        decision_instance_key (str): System-generated key for a deployed decision instance.
-            Example: 22517998136843567.
-        body (DeleteDecisionInstanceDataType0 | None | Unset):
+        decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
+            2251792362345323.
+        body (DeleteDecisionInstanceData | None | Unset):
 
     Raises:
         errors.DeleteDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
@@ -124,7 +122,7 @@ def sync(
     Returns:
         None"""
     response = sync_detailed(
-        decision_instance_key=decision_instance_key, client=client, body=body
+        decision_evaluation_key=decision_evaluation_key, client=client, body=body
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
@@ -162,19 +160,19 @@ def sync(
 
 
 async def asyncio_detailed(
-    decision_instance_key: str,
+    decision_evaluation_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceDataType0 | None | Unset = UNSET,
+    body: DeleteDecisionInstanceData | None | Unset = UNSET,
 ) -> Response[Any | ProblemDetail]:
     """Delete decision instance
 
      Delete all associated decision evaluations based on provided key.
 
     Args:
-        decision_instance_key (str): System-generated key for a deployed decision instance.
-            Example: 22517998136843567.
-        body (DeleteDecisionInstanceDataType0 | None | Unset):
+        decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
+            2251792362345323.
+        body (DeleteDecisionInstanceData | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -183,16 +181,16 @@ async def asyncio_detailed(
     Returns:
         Response[Any | ProblemDetail]
     """
-    kwargs = _get_kwargs(decision_instance_key=decision_instance_key, body=body)
+    kwargs = _get_kwargs(decision_evaluation_key=decision_evaluation_key, body=body)
     response = await client.get_async_httpx_client().request(**kwargs)
     return _build_response(client=client, response=response)
 
 
 async def asyncio(
-    decision_instance_key: str,
+    decision_evaluation_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteDecisionInstanceDataType0 | None | Unset = UNSET,
+    body: DeleteDecisionInstanceData | None | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Delete decision instance
@@ -200,9 +198,9 @@ async def asyncio(
      Delete all associated decision evaluations based on provided key.
 
     Args:
-        decision_instance_key (str): System-generated key for a deployed decision instance.
-            Example: 22517998136843567.
-        body (DeleteDecisionInstanceDataType0 | None | Unset):
+        decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
+            2251792362345323.
+        body (DeleteDecisionInstanceData | None | Unset):
 
     Raises:
         errors.DeleteDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
@@ -215,7 +213,7 @@ async def asyncio(
     Returns:
         None"""
     response = await asyncio_detailed(
-        decision_instance_key=decision_instance_key, client=client, body=body
+        decision_evaluation_key=decision_evaluation_key, client=client, body=body
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:

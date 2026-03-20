@@ -6,9 +6,9 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
-T = TypeVar("T", bound="ChangesetType0")
+T = TypeVar("T", bound="Changeset")
 @_attrs_define
-class ChangesetType0:
+class Changeset:
     due_date: datetime.datetime | None | Unset = UNSET
     follow_up_date: datetime.datetime | None | Unset = UNSET
     candidate_users: list[str] | None | Unset = UNSET

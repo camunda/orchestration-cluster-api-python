@@ -9,14 +9,14 @@ from attrs import field as _attrs_field
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
-    from ..models.job_result_corrections_type_0 import JobResultCorrectionsType0
+    from ..models.job_result_corrections import JobResultCorrections
 
 
-T = TypeVar("T", bound="JobResultUserTaskType0")
+T = TypeVar("T", bound="JobResultUserTask")
 
 
 @_attrs_define
-class JobResultUserTaskType0:
+class JobResultUserTask:
     """Job result details for a user task completion, optionally including a denial reason and corrected task properties.
 
     Attributes:
@@ -25,7 +25,7 @@ class JobResultUserTaskType0:
             example, the completion of a task is represented by a job that the worker can complete as denied. As a result,
             the completion request is rejected and the task remains active. Defaults to false.
         denied_reason (None | str | Unset): The reason provided by the user task listener for denying the work.
-        corrections (JobResultCorrectionsType0 | None | Unset): JSON object with attributes that were corrected by the
+        corrections (JobResultCorrections | None | Unset): JSON object with attributes that were corrected by the
             worker.
 
             The following attributes can be corrected, additional attributes will be ignored:
@@ -44,14 +44,14 @@ class JobResultUserTaskType0:
 
     denied: bool | None | Unset = UNSET
     denied_reason: None | str | Unset = UNSET
-    corrections: JobResultCorrectionsType0 | None | Unset = UNSET
+    corrections: JobResultCorrections | None | Unset = UNSET
     type_: str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
 
     def to_dict(self) -> dict[str, Any]:
-        from ..models.job_result_corrections_type_0 import JobResultCorrectionsType0
+        from ..models.job_result_corrections import JobResultCorrections
 
         denied: bool | None | Unset
         if isinstance(self.denied, Unset):
@@ -68,7 +68,7 @@ class JobResultUserTaskType0:
         corrections: dict[str, Any] | None | Unset
         if isinstance(self.corrections, Unset):
             corrections = UNSET
-        elif isinstance(self.corrections, JobResultCorrectionsType0):
+        elif isinstance(self.corrections, JobResultCorrections):
             corrections = self.corrections.to_dict()
         else:
             corrections = self.corrections
@@ -91,7 +91,7 @@ class JobResultUserTaskType0:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.job_result_corrections_type_0 import JobResultCorrectionsType0
+        from ..models.job_result_corrections import JobResultCorrections
 
         d = dict(src_dict)
 
@@ -115,7 +115,7 @@ class JobResultUserTaskType0:
 
         def _parse_corrections(
             data: object,
-        ) -> JobResultCorrectionsType0 | None | Unset:
+        ) -> JobResultCorrections | None | Unset:
             if data is None:
                 return data
             if isinstance(data, Unset):
@@ -126,13 +126,13 @@ class JobResultUserTaskType0:
 
                 data = cast(dict[str, Any], data)
                 componentsschemas_job_result_corrections_type_0 = (
-                    JobResultCorrectionsType0.from_dict(data)
+                    JobResultCorrections.from_dict(data)
                 )
 
                 return componentsschemas_job_result_corrections_type_0
             except (TypeError, ValueError, AttributeError, KeyError):
                 pass
-            return cast(JobResultCorrectionsType0 | None | Unset, data)
+            return cast(JobResultCorrections | None | Unset, data)
 
         corrections = _parse_corrections(d.pop("corrections", UNSET))
 

@@ -7,11 +7,11 @@ from attrs import define as _attrs_define
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="DeleteDecisionInstanceDataType0")
+T = TypeVar("T", bound="CancelProcessInstanceRequest")
 
 
 @_attrs_define
-class DeleteDecisionInstanceDataType0:
+class CancelProcessInstanceRequest:
     """
     Attributes:
         operation_reference (int | Unset): A reference key chosen by the user that will be part of all records resulting
@@ -37,8 +37,8 @@ class DeleteDecisionInstanceDataType0:
         d = dict(src_dict)
         operation_reference = d.pop("operationReference", UNSET)
 
-        delete_decision_instance_data_type_0 = cls(
+        cancel_process_instance_request_type_0 = cls(
             operation_reference=operation_reference,
         )
 
-        return delete_decision_instance_data_type_0
+        return cancel_process_instance_request_type_0

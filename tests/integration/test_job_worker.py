@@ -1,30 +1,22 @@
 import os
-from camunda_orchestration_sdk.models.deployment_process_result import (
-    DeploymentProcessResult,
-)
-from camunda_orchestration_sdk.models.process_creation_by_key import (
-    ProcessCreationByKey,
-)
-from camunda_orchestration_sdk.types import File
-
-from camunda_orchestration_sdk.models.create_deployment_data import CreateDeploymentData
-from camunda_orchestration_sdk.models.process_instance_search_query import (
-    ProcessInstanceSearchQuery,
-)
-from camunda_orchestration_sdk.models.process_instance_search_query_filter import (
-    ProcessInstanceSearchQueryFilter,
-)
-from camunda_orchestration_sdk.models.advanced_process_instance_state_filter import (
-    AdvancedProcessInstanceStateFilter,
-)
-from camunda_orchestration_sdk.models.advanced_process_instance_state_filter_eq import (
-    AdvancedProcessInstanceStateFilterEq,
-)
-from loguru import logger
-import pytest
-from camunda_orchestration_sdk import CamundaAsyncClient
-from camunda_orchestration_sdk.runtime.job_worker import WorkerConfig, JobContext
 from typing import cast
+
+import pytest
+from loguru import logger
+
+from camunda_orchestration_sdk import (
+    AdvancedProcessInstanceStateFilter,
+    AdvancedProcessInstanceStateFilterEq,
+    CamundaAsyncClient,
+    CreateDeploymentData,
+    DeploymentProcessResult,
+    File,
+    JobContext,
+    ProcessCreationByKey,
+    ProcessInstanceSearchQuery,
+    ProcessInstanceSearchQueryFilter,
+    WorkerConfig,
+)
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("CAMUNDA_INTEGRATION") != "1",

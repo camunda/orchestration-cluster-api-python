@@ -23,9 +23,8 @@ class SearchQueryPageResponse:
 
     Attributes:
         total_items (int): Total items matching the criteria.
-        has_more_total_items (bool): Indicates whether there are more items matching the criteria beyond the returned
-            items.
-            This is useful for determining if additional requests are needed to retrieve all results.
+        has_more_total_items (bool): Indicates whether the `totalItems` value has been capped due to system limits. When
+            true, `totalItems` is a lower bound and the actual number of matching items is greater than the reported value.
         start_cursor (None | str): The cursor value for getting the previous page of results. Use this in the `before`
             field of an ensuing request. Example: WzIyNTE3OTk4MTM2ODcxMDJd.
         end_cursor (None | str): The cursor value for getting the next page of results. Use this in the `after` field of

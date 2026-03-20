@@ -31,6 +31,9 @@ def _parse_response(
     if response.status_code == 400:
         response_400 = ProblemDetail.from_dict(response.json())
         return response_400
+    if response.status_code == 409:
+        response_409 = ProblemDetail.from_dict(response.json())
+        return response_409
     if response.status_code == 500:
         response_500 = ProblemDetail.from_dict(response.json())
         return response_500
@@ -110,6 +113,7 @@ def sync(
 
     Raises:
         errors.CreateProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.CreateProcessInstanceConflict: If the response status code is 409. The process instance creation was rejected due to a business ID uniqueness conflict. This can happen only when Business ID Uniqueness Control is enabled and an active root process instance with the provided business ID already exists for the same process definition and tenant.
         errors.CreateProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
         errors.CreateProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.CreateProcessInstanceGatewayTimeout: If the response status code is 504. The process instance creation request timed out in the gateway. This can happen if the `awaitCompletion` request parameter is set to `true` and the created process instance did not complete within the defined request timeout. This often happens when the created instance is not fully automated or contains wait states.
@@ -121,6 +125,12 @@ def sync(
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.CreateProcessInstanceBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+            )
+        if response.status_code == 409:
+            raise errors.CreateProcessInstanceConflict(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
@@ -201,6 +211,7 @@ async def asyncio(
 
     Raises:
         errors.CreateProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.CreateProcessInstanceConflict: If the response status code is 409. The process instance creation was rejected due to a business ID uniqueness conflict. This can happen only when Business ID Uniqueness Control is enabled and an active root process instance with the provided business ID already exists for the same process definition and tenant.
         errors.CreateProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
         errors.CreateProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.CreateProcessInstanceGatewayTimeout: If the response status code is 504. The process instance creation request timed out in the gateway. This can happen if the `awaitCompletion` request parameter is set to `true` and the created process instance did not complete within the defined request timeout. This often happens when the created instance is not fully automated or contains wait states.
@@ -212,6 +223,12 @@ async def asyncio(
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
             raise errors.CreateProcessInstanceBadRequest(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+            )
+        if response.status_code == 409:
+            raise errors.CreateProcessInstanceConflict(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),

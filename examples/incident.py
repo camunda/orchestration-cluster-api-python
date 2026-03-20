@@ -2,12 +2,12 @@
 # These examples are type-checked during build to guard against API regressions.
 from __future__ import annotations
 
-from camunda_orchestration_sdk import CamundaClient
-from camunda_orchestration_sdk.models.incident_search_query import (
+from camunda_orchestration_sdk import (
+    CamundaClient,
+    IncidentKey,
     IncidentSearchQuery,
+    Unset,
 )
-from camunda_orchestration_sdk.semantic_types import IncidentKey
-from camunda_orchestration_sdk.types import Unset
 
 
 # region SearchIncidents

@@ -1,11 +1,9 @@
 import os
 import pytest
 from camunda_orchestration_sdk import CamundaAsyncClient
-from camunda_orchestration_sdk.models.process_instance_search_query import (
-    ProcessInstanceSearchQuery,
-)
-from camunda_orchestration_sdk.models.offset_based_pagination import (
+from camunda_orchestration_sdk.models import (
     OffsetBasedPagination,
+    ProcessInstanceSearchQuery,
 )
 
 pytestmark = pytest.mark.skipif(

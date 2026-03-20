@@ -4,15 +4,13 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.cancel_process_instance_data_type_0 import CancelProcessInstanceDataType0
+from ...models.cancel_process_instance_data import CancelProcessInstanceData
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    process_instance_key: str,
-    *,
-    body: CancelProcessInstanceDataType0 | None | Unset = UNSET,
+    process_instance_key: str, *, body: CancelProcessInstanceData | None | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -21,7 +19,7 @@ def _get_kwargs(
             process_instance_key=quote(str(process_instance_key), safe="")
         ),
     }
-    if isinstance(body, CancelProcessInstanceDataType0):
+    if isinstance(body, CancelProcessInstanceData):
         _kwargs["json"] = body.to_dict()
     else:
         _kwargs["json"] = body
@@ -72,7 +70,7 @@ def sync_detailed(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CancelProcessInstanceDataType0 | None | Unset = UNSET,
+    body: CancelProcessInstanceData | None | Unset = UNSET,
 ) -> Response[Any | ProblemDetail]:
     """Cancel process instance
 
@@ -85,7 +83,7 @@ def sync_detailed(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (CancelProcessInstanceDataType0 | None | Unset):
+        body (CancelProcessInstanceData | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -103,7 +101,7 @@ def sync(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CancelProcessInstanceDataType0 | None | Unset = UNSET,
+    body: CancelProcessInstanceData | None | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Cancel process instance
@@ -117,7 +115,7 @@ def sync(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (CancelProcessInstanceDataType0 | None | Unset):
+        body (CancelProcessInstanceData | None | Unset):
 
     Raises:
         errors.CancelProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
@@ -171,7 +169,7 @@ async def asyncio_detailed(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CancelProcessInstanceDataType0 | None | Unset = UNSET,
+    body: CancelProcessInstanceData | None | Unset = UNSET,
 ) -> Response[Any | ProblemDetail]:
     """Cancel process instance
 
@@ -184,7 +182,7 @@ async def asyncio_detailed(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (CancelProcessInstanceDataType0 | None | Unset):
+        body (CancelProcessInstanceData | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -202,7 +200,7 @@ async def asyncio(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: CancelProcessInstanceDataType0 | None | Unset = UNSET,
+    body: CancelProcessInstanceData | None | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Cancel process instance
@@ -216,7 +214,7 @@ async def asyncio(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (CancelProcessInstanceDataType0 | None | Unset):
+        body (CancelProcessInstanceData | None | Unset):
 
     Raises:
         errors.CancelProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.

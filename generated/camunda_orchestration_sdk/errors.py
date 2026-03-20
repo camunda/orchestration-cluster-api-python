@@ -1449,6 +1449,15 @@ class CreateProcessInstanceBadRequest(ApiError):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
+class CreateProcessInstanceConflict(ApiError):
+    """Raised when the server returns HTTP 409. The process instance creation was rejected due to a business ID uniqueness conflict. This can happen only when Business ID Uniqueness Control is enabled and an active root process instance with the provided business ID already exists for the same process definition and tenant."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
 class CreateProcessInstanceGatewayTimeout(ApiError):
     """Raised when the server returns HTTP 504. The process instance creation request timed out in the gateway. This can happen if the `awaitCompletion` request parameter is set to `true` and the created process instance did not complete within the defined request timeout. This often happens when the created instance is not fully automated or contains wait states."""
 
@@ -7152,6 +7161,7 @@ __all__ = [
     "CreateMappingRuleInternalServerError",
     "CreateMappingRuleNotFound",
     "CreateProcessInstanceBadRequest",
+    "CreateProcessInstanceConflict",
     "CreateProcessInstanceGatewayTimeout",
     "CreateProcessInstanceInternalServerError",
     "CreateProcessInstanceServiceUnavailable",

@@ -2,20 +2,18 @@
 # These examples are type-checked during build to guard against API regressions.
 from __future__ import annotations
 
-from camunda_orchestration_sdk import CamundaAsyncClient, CamundaClient, WorkerConfig
-from camunda_orchestration_sdk.models.job_completion_request import JobCompletionRequest
-from camunda_orchestration_sdk.semantic_types import JobKey
-from camunda_orchestration_sdk.models.job_activation_request import (
-    JobActivationRequest,
-)
-from camunda_orchestration_sdk.models.job_completion_request_variables import (
-    JobCompletionRequestVariables,
-)
-from camunda_orchestration_sdk.models.job_fail_request import JobFailRequest
-from camunda_orchestration_sdk.runtime.job_worker import (
+from camunda_orchestration_sdk import (
+    CamundaAsyncClient,
+    CamundaClient,
     ConnectedJobContext,
+    JobActivationRequest,
+    JobCompletionRequest,
+    JobCompletionRequestVariables,
     JobError,
+    JobFailRequest,
     JobFailure,
+    JobKey,
+    WorkerConfig,
 )
 
 

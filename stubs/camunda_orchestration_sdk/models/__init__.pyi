@@ -153,10 +153,10 @@ from .batch_operation_type_exact_match import BatchOperationTypeExactMatch
 from .broker_info import BrokerInfo
 from .camunda_user_result import CamundaUserResult
 from .camunda_user_result_c8_links import CamundaUserResultC8Links
-from .cancel_process_instance_data_type_0 import CancelProcessInstanceDataType0
-from .cancel_process_instance_request_type_0 import CancelProcessInstanceRequestType0
+from .cancel_process_instance_data import CancelProcessInstanceData
+from .cancel_process_instance_request import CancelProcessInstanceRequest
 from .category_exact_match import CategoryExactMatch
-from .changeset_type_0 import ChangesetType0
+from .changeset import Changeset
 from .clock_pin_request import ClockPinRequest
 from .cluster_variable_result import ClusterVariableResult
 from .cluster_variable_result_base import ClusterVariableResultBase
@@ -219,11 +219,11 @@ from .decision_requirements_search_query_filter import DecisionRequirementsSearc
 from .decision_requirements_search_query_result import DecisionRequirementsSearchQueryResult
 from .decision_requirements_search_query_sort_request import DecisionRequirementsSearchQuerySortRequest
 from .decision_requirements_search_query_sort_request_field import DecisionRequirementsSearchQuerySortRequestField
-from .delete_decision_instance_data_type_0 import DeleteDecisionInstanceDataType0
-from .delete_decision_instance_request_type_0 import DeleteDecisionInstanceRequestType0
-from .delete_process_instance_data_type_0 import DeleteProcessInstanceDataType0
-from .delete_process_instance_request_type_0 import DeleteProcessInstanceRequestType0
-from .delete_resource_request_type_0 import DeleteResourceRequestType0
+from .delete_decision_instance_data import DeleteDecisionInstanceData
+from .delete_decision_instance_request import DeleteDecisionInstanceRequest
+from .delete_process_instance_data import DeleteProcessInstanceData
+from .delete_process_instance_request import DeleteProcessInstanceRequest
+from .delete_resource_request import DeleteResourceRequest
 from .delete_resource_response import DeleteResourceResponse
 from .delete_resource_response_batch_operation import DeleteResourceResponseBatchOperation
 from .deployment_decision_requirements_result import DeploymentDecisionRequirementsResult
@@ -361,9 +361,9 @@ from .job_listener_event_type_exact_match import JobListenerEventTypeExactMatch
 from .job_metrics_configuration_response import JobMetricsConfigurationResponse
 from .job_result_activate_element import JobResultActivateElement
 from .job_result_activate_element_variables import JobResultActivateElementVariables
-from .job_result_ad_hoc_sub_process_type_0 import JobResultAdHocSubProcessType0
-from .job_result_corrections_type_0 import JobResultCorrectionsType0
-from .job_result_user_task_type_0 import JobResultUserTaskType0
+from .job_result_ad_hoc_sub_process import JobResultAdHocSubProcess
+from .job_result_corrections import JobResultCorrections
+from .job_result_user_task import JobResultUserTask
 from .job_search_query import JobSearchQuery
 from .job_search_query_filter import JobSearchQueryFilter
 from .job_search_query_result import JobSearchQueryResult
@@ -795,10 +795,10 @@ __all__: list[str] = [
     "BrokerInfo",
     "CamundaUserResult",
     "CamundaUserResultC8Links",
-    "CancelProcessInstanceDataType0",
-    "CancelProcessInstanceRequestType0",
+    "CancelProcessInstanceData",
+    "CancelProcessInstanceRequest",
     "CategoryExactMatch",
-    "ChangesetType0",
+    "Changeset",
     "ClockPinRequest",
     "ClusterVariableResult",
     "ClusterVariableResultBase",
@@ -861,11 +861,11 @@ __all__: list[str] = [
     "DecisionRequirementsSearchQueryResult",
     "DecisionRequirementsSearchQuerySortRequest",
     "DecisionRequirementsSearchQuerySortRequestField",
-    "DeleteDecisionInstanceDataType0",
-    "DeleteDecisionInstanceRequestType0",
-    "DeleteProcessInstanceDataType0",
-    "DeleteProcessInstanceRequestType0",
-    "DeleteResourceRequestType0",
+    "DeleteDecisionInstanceData",
+    "DeleteDecisionInstanceRequest",
+    "DeleteProcessInstanceData",
+    "DeleteProcessInstanceRequest",
+    "DeleteResourceRequest",
     "DeleteResourceResponse",
     "DeleteResourceResponseBatchOperation",
     "DeploymentDecisionRequirementsResult",
@@ -1003,9 +1003,9 @@ __all__: list[str] = [
     "JobMetricsConfigurationResponse",
     "JobResultActivateElement",
     "JobResultActivateElementVariables",
-    "JobResultAdHocSubProcessType0",
-    "JobResultCorrectionsType0",
-    "JobResultUserTaskType0",
+    "JobResultAdHocSubProcess",
+    "JobResultCorrections",
+    "JobResultUserTask",
     "JobSearchQuery",
     "JobSearchQueryFilter",
     "JobSearchQueryResult",

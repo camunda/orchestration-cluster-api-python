@@ -4,15 +4,13 @@ from urllib.parse import quote
 import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.delete_process_instance_data_type_0 import DeleteProcessInstanceDataType0
+from ...models.delete_process_instance_data import DeleteProcessInstanceData
 from ...models.problem_detail import ProblemDetail
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
-    process_instance_key: str,
-    *,
-    body: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
+    process_instance_key: str, *, body: DeleteProcessInstanceData | None | Unset = UNSET
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
     _kwargs: dict[str, Any] = {
@@ -21,7 +19,7 @@ def _get_kwargs(
             process_instance_key=quote(str(process_instance_key), safe="")
         ),
     }
-    if isinstance(body, DeleteProcessInstanceDataType0):
+    if isinstance(body, DeleteProcessInstanceData):
         _kwargs["json"] = body.to_dict()
     else:
         _kwargs["json"] = body
@@ -75,7 +73,7 @@ def sync_detailed(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
+    body: DeleteProcessInstanceData | None | Unset = UNSET,
 ) -> Response[Any | ProblemDetail]:
     """Delete process instance
 
@@ -84,7 +82,7 @@ def sync_detailed(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (DeleteProcessInstanceDataType0 | None | Unset):
+        body (DeleteProcessInstanceData | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -102,7 +100,7 @@ def sync(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
+    body: DeleteProcessInstanceData | None | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Delete process instance
@@ -112,7 +110,7 @@ def sync(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (DeleteProcessInstanceDataType0 | None | Unset):
+        body (DeleteProcessInstanceData | None | Unset):
 
     Raises:
         errors.DeleteProcessInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
@@ -173,7 +171,7 @@ async def asyncio_detailed(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
+    body: DeleteProcessInstanceData | None | Unset = UNSET,
 ) -> Response[Any | ProblemDetail]:
     """Delete process instance
 
@@ -182,7 +180,7 @@ async def asyncio_detailed(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (DeleteProcessInstanceDataType0 | None | Unset):
+        body (DeleteProcessInstanceData | None | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -200,7 +198,7 @@ async def asyncio(
     process_instance_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: DeleteProcessInstanceDataType0 | None | Unset = UNSET,
+    body: DeleteProcessInstanceData | None | Unset = UNSET,
     **kwargs: Any,
 ) -> None:
     """Delete process instance
@@ -210,7 +208,7 @@ async def asyncio(
     Args:
         process_instance_key (str): System-generated key for a process instance. Example:
             2251799813690746.
-        body (DeleteProcessInstanceDataType0 | None | Unset):
+        body (DeleteProcessInstanceData | None | Unset):
 
     Raises:
         errors.DeleteProcessInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.

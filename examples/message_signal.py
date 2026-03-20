@@ -2,14 +2,10 @@
 # These examples are type-checked during build to guard against API regressions.
 from __future__ import annotations
 
-from camunda_orchestration_sdk import CamundaClient
-from camunda_orchestration_sdk.models.message_correlation_request import (
+from camunda_orchestration_sdk import (
+    CamundaClient,
     MessageCorrelationRequest,
-)
-from camunda_orchestration_sdk.models.message_publication_request import (
     MessagePublicationRequest,
-)
-from camunda_orchestration_sdk.models.signal_broadcast_request import (
     SignalBroadcastRequest,
 )
 

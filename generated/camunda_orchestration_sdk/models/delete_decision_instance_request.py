@@ -7,11 +7,11 @@ from attrs import define as _attrs_define
 
 from ..types import UNSET, Unset
 
-T = TypeVar("T", bound="DeleteDecisionInstanceRequestType0")
+T = TypeVar("T", bound="DeleteDecisionInstanceRequest")
 
 
 @_attrs_define
-class DeleteDecisionInstanceRequestType0:
+class DeleteDecisionInstanceRequest:
     """
     Attributes:
         operation_reference (int | Unset): A reference key chosen by the user that will be part of all records resulting
