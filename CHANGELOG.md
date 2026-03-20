@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.16 (2026-03-20)
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`870beda`](https://github.com/camunda/orchestration-cluster-api-python/commit/870beda220dda8c31e5879b6a21ac2d3cce442ee))
+
+### Features
+
+- Provide sync client to thread strategy handlers via SyncJobContext
+  ([`5df28dd`](https://github.com/camunda/orchestration-cluster-api-python/commit/5df28dd04e529fd1735980368b02d7209505d99d))
+
+
 ## v8.9.0-dev.15 (2026-03-20)
 
 ### Chores
