@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.15 (2026-03-20)
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`ae01c85`](https://github.com/camunda/orchestration-cluster-api-python/commit/ae01c859c0e11e938f2cd39b97165d3fcdcb4729))
+
+### Features
+
+- Enable single import point
+  ([`74711b5`](https://github.com/camunda/orchestration-cluster-api-python/commit/74711b51a3332f450a1a08c4cb346412bd8a70c2))
+
+
 ## v8.9.0-dev.14 (2026-03-17)
 
 ### Bug Fixes
