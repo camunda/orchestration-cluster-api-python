@@ -2,6 +2,30 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.18 (2026-03-23)
+
+### Bug Fixes
+
+- **generator**: Normalize bare $ref responses and fail on warnings
+  ([`041f628`](https://github.com/camunda/orchestration-cluster-api-python/commit/041f628d95fc3e3e6495cae8f03e74080576461c))
+
+### Chores
+
+- **build**: Add example typecheck, README sync, and config reference to generate targets
+  ([`1f98e92`](https://github.com/camunda/orchestration-cluster-api-python/commit/1f98e92776db919b7725271bfec01fe5603d0d62))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`feece5d`](https://github.com/camunda/orchestration-cluster-api-python/commit/feece5dccfc373d798f68d590b171313a128d877))
+
+### Documentation
+
+- Document README examples integration
+  ([`89e5d28`](https://github.com/camunda/orchestration-cluster-api-python/commit/89e5d288dfef0a74238453427b6abf7337c90c9e))
+
+- Update section numbering
+  ([`1686a3b`](https://github.com/camunda/orchestration-cluster-api-python/commit/1686a3bcd855f6df4d1d2dd27215e1a3065cafc1))
+
+
 ## v8.9.0-dev.17 (2026-03-23)
 
 ### Bug Fixes
