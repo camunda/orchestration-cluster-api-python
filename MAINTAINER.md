@@ -17,8 +17,10 @@ Architecture and pipeline documentation for the `camunda-orchestration-sdk` Pyth
 5. **Core generation** – `openapi-python-client` generates the SDK package in `generated/camunda_orchestration_sdk/`.
 6. **Post-generation hooks** (`hooks/post_gen/`) – transform generated code (exceptions, runtime injection, client flattening, typing fixes).
 7. **Lint & format** – `ruff format` + `ruff check --fix`.
-8. **Type-check** – `pyright` in strict mode.
+8. **Type-check** – `pyright` in strict mode (generated code + examples).
 9. **Acceptance tests** – `pytest tests/acceptance/`.
+10. **Sync README snippets** – inject example code into `README.md`.
+11. **Config reference** – regenerate configuration reference table in `README.md`.
 
 Each step is idempotent given identical upstream spec + environment.
 
@@ -33,6 +35,11 @@ Each step is idempotent given identical upstream spec + environment.
 | `make itest` | Full build + integration tests |
 | `make lint` | Lint with ruff |
 | `make typecheck` | Type-check with pyright |
+| `make typecheck-examples` | Type-check examples only |
+| `make sync-readme` | Sync README snippets from examples |
+| `make sync-readme-check` | Verify README snippets are up-to-date (CI gate) |
+| `make config-reference` | Regenerate config reference in README |
+| `make config-reference-check` | Verify config reference is up-to-date (CI gate) |
 | `make clean` | Remove `generated/` |
 | `make clean_spec` | Remove cached spec and bundled output |
 
@@ -209,7 +216,71 @@ Pyright is configured in `pyproject.toml` with `typeCheckingMode = "strict"`.
 
 ---
 
-## 11. Documentation
+## 11. Compilable Examples & README Integration
+
+### Examples Directory
+
+`examples/` contains compilable Python examples organized by API domain:
+
+| File | Domains |
+| --- | --- |
+| `readme.py` | All README-synced examples (client construction, config, job workers, error handling, logging) |
+| `client.py` | Client construction, configuration |
+| `decision.py` | Decision evaluation, search |
+| `deployment.py` | Deploy resources |
+| `incident.py` | Incident resolution, search |
+| `job.py` | Job activation, completion, failure, workers |
+| `message_signal.py` | Message correlation, signal broadcast |
+| `process_instance.py` | Process start, cancel, search |
+| `user_task.py` | User task assignment, completion, search |
+
+Examples use `# region Name` / `# endregion Name` markers to define named regions that can be referenced individually.
+
+### Type-Checking
+
+Examples are type-checked at build time via `uv run pyright examples/`. Pyright runs in strict mode (configured in `pyproject.toml`), which catches type-contract regressions when the upstream spec changes. Examples use per-file overrides (`# pyright: reportUnusedVariable=false`) to suppress warnings that are expected in documentation-only code.
+
+### README Snippet Sync
+
+`scripts/sync-readme-snippets.py` extracts region-tagged code from example files and injects it into `README.md`. It runs as part of `make generate`.
+
+**How it works:**
+
+- Scans all `examples/*.py` files for `# region Name` blocks
+- Finds matching `<!-- snippet:Name -->` markers in `README.md`
+- Replaces the fenced code block following each marker with the extracted code
+- Uses `textwrap.dedent()` to normalize indentation
+
+**Marker format in README.md:**
+
+```markdown
+<!-- snippet:ReadmeSyncClient -->
+```python
+# This content is auto-replaced by the region named ReadmeSyncClient
+```​
+```
+
+**Composite regions:** Use `+` to concatenate multiple regions:
+
+```markdown
+<!-- snippet:ReadmeImport+ReadmeSyncClient -->
+```
+
+This inserts `ReadmeImport` followed by `ReadmeSyncClient` into a single code block, separated by a blank line.
+
+**Naming convention:** Regions wired to the README use a `Readme` prefix (e.g., `ReadmeSyncClient`, `ReadmeJobWorker`). Most README regions live in `examples/readme.py`.
+
+**CI enforcement:** `make sync-readme-check` runs in CI and fails if the README is out of sync. The build runs `make sync-readme` automatically to keep it updated.
+
+### Adding a New README Example
+
+1. Add a `# region ReadmeMyExample` ... `# endregion ReadmeMyExample` block to `examples/readme.py` (or another example file).
+2. Add a `<!-- snippet:ReadmeMyExample -->` marker in `README.md` followed by an empty fenced code block.
+3. Run `make generate-local` — the sync step populates the snippet and pyright verifies the example type-checks.
+
+---
+
+## 12. Documentation
 
 ### README → Docusaurus Pages
 
