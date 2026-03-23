@@ -1,4 +1,4 @@
-.PHONY: install generate clean test itest docs-api docs-md bundle-spec typecheck-examples clean-docs preview-docs sync-readme
+.PHONY: install generate clean test itest docs-api docs-md bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
