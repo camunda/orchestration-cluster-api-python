@@ -151,10 +151,6 @@ jobs:
       - name: Generate SDK
         run: make generate SPEC_REF=${SPEC_REF}
 
-      # If the following task fails, run make config-reference to update the config reference in README and push the changes
-      - name: Check config reference is up-to-date
-        run: make config-reference-check
-
       - name: Check for changes
         id: check_changes
         run: |

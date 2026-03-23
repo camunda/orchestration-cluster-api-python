@@ -22,7 +22,10 @@ generate: clean install bundle-spec
 	uv run ruff format generated/
 	uv run ruff check generated/ --fix
 	uv run pyright
+	uv run pyright examples/
 	uv run pytest -q tests/acceptance
+	uv run python scripts/sync-readme-snippets.py
+	uv run scripts/generate_config_reference.py
 
 # Generate using already-bundled spec (skip fetch, fast local iteration)
 generate-local: clean install
@@ -30,7 +33,10 @@ generate-local: clean install
 	uv run ruff format generated/
 	uv run ruff check generated/ --fix
 	uv run pyright
+	uv run pyright examples/
 	uv run pytest -q tests/acceptance
+	uv run python scripts/sync-readme-snippets.py
+	uv run scripts/generate_config_reference.py
 
 clean:
 	rm -rf generated
