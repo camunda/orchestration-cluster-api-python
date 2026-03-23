@@ -579,6 +579,38 @@ def patch_bundled_spec(spec_path: Path) -> None:
                         )
                         content["application/json"] = {"schema": {}}
 
+    # Fix bare $ref responses (e.g. a 500 response that is just
+    # {"$ref": "#/components/schemas/ProblemDetail"} instead of a proper
+    # Response Object with description + content + schema).
+    for path, methods_val in paths.items():
+        if not isinstance(methods_val, dict):
+            continue
+        methods_dict = cast(dict[str, Any], methods_val)
+        for method, operation_val in methods_dict.items():
+            if not isinstance(operation_val, dict):
+                continue
+            operation = cast(dict[str, Any], operation_val)
+            responses = cast(dict[str, Any], operation.get("responses", {}))
+            for status_code, resp in list(responses.items()):
+                if not isinstance(resp, dict):
+                    continue
+                resp_dict = cast(dict[str, Any], resp)
+                if "$ref" in resp_dict and "content" not in resp_dict:
+                    ref_val = str(resp_dict["$ref"])
+                    if ref_val.startswith("#/components/schemas/"):
+                        print(
+                            f"Fixing bare $ref response for {str(method).upper()} "
+                            f"{path} -> {status_code}: {ref_val}"
+                        )
+                        responses[status_code] = {
+                            "description": "An error occurred.",
+                            "content": {
+                                "application/problem+json": {
+                                    "schema": {"$ref": ref_val}
+                                }
+                            },
+                        }
+
     # Flatten allOf schemas
     print("Flattening allOf schemas...")
     flattener = SpecFlattener(spec)

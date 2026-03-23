@@ -5094,6 +5094,15 @@ class SearchGroupsForbidden(ApiError):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
+class SearchGroupsInternalServerError(ApiError):
+    """Raised when the server returns HTTP 500. An error occurred."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
 class SearchGroupsUnauthorized(ApiError):
     """Raised when the server returns HTTP 401. The request lacks valid authentication credentials."""
 
@@ -7566,6 +7575,7 @@ __all__ = [
     "SearchGroupsForRoleNotFound",
     "SearchGroupsForRoleUnauthorized",
     "SearchGroupsForbidden",
+    "SearchGroupsInternalServerError",
     "SearchGroupsUnauthorized",
     "SearchIncidentsBadRequest",
     "SearchIncidentsForbidden",

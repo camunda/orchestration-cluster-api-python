@@ -240,7 +240,18 @@ def main():
             "none",
         ]
         log(f"Running openapi-python-client with config {effective_config}...")
-        subprocess.run(cmd, check=True)
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+        if result.stdout:
+            print(result.stdout)
+        if result.stderr:
+            print(result.stderr, file=sys.stderr)
+        # Fail the build if the generator emitted any warnings
+        combined_output = (result.stdout or "") + (result.stderr or "")
+        if "WARNING" in combined_output.upper():
+            raise RuntimeError(
+                "openapi-python-client emitted warnings (see above). "
+                "Fix the spec or hooks so generation is warning-free."
+            )
 
         # 3. Post-gen hooks (code transforms)
         post_hooks = load_hooks(post_gen_hooks_dir)

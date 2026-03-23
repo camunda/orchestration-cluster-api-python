@@ -34,6 +34,9 @@ def _parse_response(
     if response.status_code == 403:
         response_403 = ProblemDetail.from_dict(response.json())
         return response_403
+    if response.status_code == 500:
+        response_500 = ProblemDetail.from_dict(response.json())
+        return response_500
     if client.raise_on_unexpected_status:
         raise errors.UnexpectedStatus(response.status_code, response.content)
     else:
@@ -92,6 +95,7 @@ def sync(
         errors.SearchGroupsBadRequest: If the response status code is 400. The provided data is not valid.
         errors.SearchGroupsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
         errors.SearchGroupsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.SearchGroupsInternalServerError: If the response status code is 500. An error occurred.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -112,6 +116,12 @@ def sync(
             )
         if response.status_code == 403:
             raise errors.SearchGroupsForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+            )
+        if response.status_code == 500:
+            raise errors.SearchGroupsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
@@ -162,6 +172,7 @@ async def asyncio(
         errors.SearchGroupsBadRequest: If the response status code is 400. The provided data is not valid.
         errors.SearchGroupsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
         errors.SearchGroupsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.SearchGroupsInternalServerError: If the response status code is 500. An error occurred.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -182,6 +193,12 @@ async def asyncio(
             )
         if response.status_code == 403:
             raise errors.SearchGroupsForbidden(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+            )
+        if response.status_code == 500:
+            raise errors.SearchGroupsInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
