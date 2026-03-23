@@ -103,6 +103,10 @@ jobs:
       - name: Check config reference is up-to-date
         run: make config-reference-check
 
+      # If the following task fails, run make sync-readme to update README snippets and push the changes
+      - name: Check README snippets are up-to-date
+        run: make sync-readme-check
+
       - name: Run linter
         run: make lint
 

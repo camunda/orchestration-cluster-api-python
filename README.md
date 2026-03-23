@@ -75,6 +75,7 @@ The SDK provides two clients with identical API surfaces:
 
 Both clients share the same method names and parameters — the only difference is calling convention:
 
+<!-- snippet:ReadmeSyncClient -->
 ```python
 # Sync
 from camunda_orchestration_sdk import CamundaClient
@@ -83,12 +84,14 @@ with CamundaClient() as client:
     topology = client.get_topology()
 ```
 
+<!-- snippet:ReadmeAsyncClient -->
 ```python
 # Async
 import asyncio
+
 from camunda_orchestration_sdk import CamundaAsyncClient
 
-async def main():
+async def main() -> None:
     async with CamundaAsyncClient() as client:
         topology = await client.get_topology()
 
@@ -112,6 +115,7 @@ Semantic types make these identifiers **distinct at the type level**. Pyright (a
 
 Treat semantic types as **opaque identifiers** — receive them from API responses and pass them to subsequent API calls without inspecting or transforming the underlying value:
 
+<!-- snippet:ReadmeSemanticTypes -->
 ```python
 from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey
 
@@ -162,8 +166,9 @@ Keep configuration out of application code. Let the client read `CAMUNDA_*` vari
 
 If no configuration is present, the SDK defaults to a local Camunda 8 Run-style endpoint at `http://localhost:8080/v2`.
 
+<!-- snippet:ReadmeZeroConfig -->
 ```python
-from camunda_orchestration_sdk import CamundaClient, CamundaAsyncClient
+from camunda_orchestration_sdk import CamundaAsyncClient, CamundaClient
 
 # Zero-config construction: reads CAMUNDA_* from the environment
 client = CamundaClient()
@@ -213,6 +218,7 @@ python your_script.py
 
 You can also enable it via the explicit configuration dict:
 
+<!-- snippet:ReadmeEnvFileLoading -->
 ```python
 from camunda_orchestration_sdk import CamundaClient
 
@@ -223,6 +229,7 @@ client = CamundaClient(configuration={"CAMUNDA_LOAD_ENVFILE": "true"})
 
 Only use `configuration={...}` when you must supply or mutate configuration dynamically (e.g. tests, multi-tenant routing, or ephemeral preview environments). Keys mirror their `CAMUNDA_*` environment names.
 
+<!-- snippet:ReadmeProgrammaticConfig -->
 ```python
 from camunda_orchestration_sdk import CamundaClient
 
@@ -276,6 +283,7 @@ CAMUNDA_BASIC_AUTH_PASSWORD=your-password
 
 Or programmatically:
 
+<!-- snippet:ReadmeBasicAuth -->
 ```python
 from camunda_orchestration_sdk import CamundaClient
 
@@ -293,6 +301,7 @@ client = CamundaClient(
 
 Deploy BPMN, DMN, or Form files from disk:
 
+<!-- snippet:ReadmeDeployResources -->
 ```python
 from camunda_orchestration_sdk import CamundaClient
 
@@ -308,6 +317,7 @@ with CamundaClient() as client:
 
 The recommended pattern is to obtain keys from a prior API response (e.g. a deployment) and pass them directly — no manual lifting needed:
 
+<!-- snippet:ReadmeCreateProcessInstance -->
 ```python
 from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey
 
@@ -325,8 +335,9 @@ with CamundaClient() as client:
 
 If you need to restore a key from external storage (database, message queue, config file), wrap the raw string with the semantic type constructor:
 
+<!-- snippet:ReadmeCreateFromStorage -->
 ```python
-from camunda_orchestration_sdk import CamundaClient, ProcessDefinitionKey, ProcessCreationByKey
+from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey, ProcessDefinitionKey
 
 with CamundaClient() as client:
     stored_key = "2251799813685249"  # from a DB row or config
@@ -346,16 +357,18 @@ Handlers receive a context object that includes a `client` reference, so your ha
 - **Thread handlers** → `SyncJobContext` with `client: CamundaClient` (call directly)
 - **Process handlers** → plain `JobContext` (no client — cannot be pickled across process boundaries)
 
+<!-- snippet:ReadmeJobWorker -->
 ```python
 import asyncio
+
 from camunda_orchestration_sdk import CamundaAsyncClient, ConnectedJobContext, WorkerConfig
 
-async def handle_job(job_context: ConnectedJobContext) -> dict:
+async def handle_job(job_context: ConnectedJobContext) -> dict[str, object]:
     variables = job_context.variables.to_dict()
     job_context.log.info(f"Processing job {job_context.job_key}: {variables}")
     return {"result": "processed"}
 
-async def main():
+async def main() -> None:
     async with CamundaAsyncClient() as client:
         config = WorkerConfig(
             job_type="my-service-task",
@@ -375,10 +388,11 @@ Because `ConnectedJobContext` and `SyncJobContext` include a `client` reference,
 
 **Async handlers** (`execution_strategy="async"`) — `await` the client method directly:
 
+<!-- snippet:ReadmeAsyncHandler -->
 ```python
-from camunda_orchestration_sdk import ConnectedJobContext, MessagePublicationRequest
+from camunda_orchestration_sdk import ConnectedJobContext, DecisionEvaluationByIdVariables, MessagePublicationRequest
 
-async def handle_order(job: ConnectedJobContext) -> dict:
+async def handle_order(job: ConnectedJobContext) -> dict[str, object]:
     variables = job.variables.to_dict()
     order_id = variables["orderId"]
 
@@ -387,7 +401,7 @@ async def handle_order(job: ConnectedJobContext) -> dict:
             name="order-processed",
             correlation_key=order_id,
             time_to_live=60000,
-            variables={"orderId": order_id, "status": "completed"},
+            variables=DecisionEvaluationByIdVariables.from_dict({"orderId": order_id, "status": "completed"}),
         )
     )
 
@@ -397,10 +411,11 @@ async def handle_order(job: ConnectedJobContext) -> dict:
 
 **Sync (thread) handlers** (`execution_strategy="thread"`) — `job.client` is a sync `CamundaClient`, so call methods directly:
 
+<!-- snippet:ReadmeSyncHandler -->
 ```python
-from camunda_orchestration_sdk import SyncJobContext, MessagePublicationRequest
+from camunda_orchestration_sdk import DecisionEvaluationByIdVariables, MessagePublicationRequest, SyncJobContext
 
-def handle_order(job: SyncJobContext) -> dict:
+def handle_order(job: SyncJobContext) -> dict[str, object]:
     variables = job.variables.to_dict()
     order_id = variables["orderId"]
 
@@ -409,7 +424,7 @@ def handle_order(job: SyncJobContext) -> dict:
             name="order-processed",
             correlation_key=order_id,
             time_to_live=60000,
-            variables={"orderId": order_id, "status": "completed"},
+            variables=DecisionEvaluationByIdVariables.from_dict({"orderId": order_id, "status": "completed"}),
         )
     )
 
@@ -505,10 +520,11 @@ The following are keyword-only arguments on `create_job_worker`, not part of `Wo
 
 To explicitly fail a job with a custom error message, retry count, and backoff, raise `JobFailure` in your handler:
 
+<!-- snippet:ReadmeFailJob -->
 ```python
 from camunda_orchestration_sdk import ConnectedJobContext, JobFailure
 
-async def handle_job(job: ConnectedJobContext) -> dict:
+async def handle_job(job: ConnectedJobContext) -> dict[str, object]:
     if not job.variables.to_dict().get("required_field"):
         raise JobFailure(
             message="Missing required field",
@@ -530,10 +546,11 @@ If an unhandled exception escapes your handler, the job is automatically failed 
 
 To throw a [BPMN error](https://docs.camunda.io/docs/components/modeler/bpmn/error-events/) from a job handler — for example, to trigger an error boundary event — raise `JobError`:
 
+<!-- snippet:ReadmeBpmnError -->
 ```python
 from camunda_orchestration_sdk import ConnectedJobContext, JobError
 
-async def handle_payment(job: ConnectedJobContext) -> dict:
+async def handle_payment(job: ConnectedJobContext) -> dict[str, object]:
     variables = job.variables.to_dict()
     if variables.get("amount", 0) > 10_000:
         raise JobError(error_code="AMOUNT_TOO_HIGH", message="Payment exceeds limit")
@@ -551,14 +568,15 @@ The `error_code` must match the error code defined on a BPMN error catch event i
 
 The SDK raises typed exceptions for API errors. Each operation has specific exception classes for each HTTP error status code:
 
+<!-- snippet:ReadmeErrorHandling -->
 ```python
-from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey
+from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey, ProcessDefinitionKey
 from camunda_orchestration_sdk.errors import CreateProcessInstanceBadRequest
 
 with CamundaClient() as client:
     try:
         result = client.create_process_instance(
-            data=ProcessCreationByKey(process_definition_key=99999)
+            data=ProcessCreationByKey(process_definition_key=ProcessDefinitionKey("nonexistent"))
         )
     except CreateProcessInstanceBadRequest as e:
         print(f"Bad request: {e}")
@@ -582,8 +600,10 @@ Pass a `logger=` argument to `CamundaClient` or `CamundaAsyncClient`. The logger
 
 **stdlib `logging`:**
 
+<!-- snippet:ReadmeStdlibLogger -->
 ```python
 import logging
+
 from camunda_orchestration_sdk import CamundaClient
 
 my_logger = logging.getLogger("my_app.camunda")
@@ -594,17 +614,21 @@ client = CamundaClient(logger=my_logger)
 
 **Custom logger object:**
 
+<!-- snippet:ReadmeCustomLogger -->
 ```python
 from camunda_orchestration_sdk import CamundaClient
 
 class MyLogger:
-    def debug(self, msg, *args, **kwargs):
+    def debug(self, msg: object, *args: object, **kwargs: object) -> None:
         print(f"[DEBUG] {msg}")
-    def info(self, msg, *args, **kwargs):
+
+    def info(self, msg: object, *args: object, **kwargs: object) -> None:
         print(f"[INFO] {msg}")
-    def warning(self, msg, *args, **kwargs):
+
+    def warning(self, msg: object, *args: object, **kwargs: object) -> None:
         print(f"[WARN] {msg}")
-    def error(self, msg, *args, **kwargs):
+
+    def error(self, msg: object, *args: object, **kwargs: object) -> None:
         print(f"[ERROR] {msg}")
 
 client = CamundaClient(logger=MyLogger())
@@ -614,6 +638,7 @@ client = CamundaClient(logger=MyLogger())
 
 Pass an instance of `NullLogger` to silence all SDK output:
 
+<!-- snippet:ReadmeDisableLogging -->
 ```python
 from camunda_orchestration_sdk import CamundaClient, NullLogger
 
