@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.17 (2026-03-23)
+
+### Bug Fixes
+
+- Rename ambiguous variable l to line (ruff E741)
+  ([`3479c72`](https://github.com/camunda/orchestration-cluster-api-python/commit/3479c721458f8dd96515a9a15c9a230f97d9aea5))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`bca7a55`](https://github.com/camunda/orchestration-cluster-api-python/commit/bca7a55e1bb889e6e7dcbff2f532295fdc53d713))
+
+### Documentation
+
+- Add compilable README examples with snippet sync
+  ([`fc33531`](https://github.com/camunda/orchestration-cluster-api-python/commit/fc335316c5dfdcc2f9391b7a271e1308b2b99900))
+
+
 ## v8.9.0-dev.16 (2026-03-20)
 
 ### Chores
