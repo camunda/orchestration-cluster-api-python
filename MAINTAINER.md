@@ -345,7 +345,7 @@ make config-reference-check  # Verify up-to-date (CI gate)
 
 ---
 
-## 12. Docusaurus Integration (camunda-docs)
+## 13. Docusaurus Integration (camunda-docs)
 
 The SDK's API reference documentation is published on the [Camunda docs site](https://docs.camunda.io) via an inversion-of-control pattern: a GitHub Actions workflow **in the camunda-docs repo** checks out this SDK, generates documentation, and opens a PR to copy the output into the docs site.
 
@@ -396,7 +396,7 @@ The PR branch is version-scoped (e.g. `update-python-sdk-docs/8.8`), so backport
 
 ---
 
-## 13. Releasing
+## 14. Releasing
 
 Uses [python-semantic-release](https://python-semantic-release.readthedocs.io/) (configured in `pyproject.toml`).
 
@@ -417,7 +417,7 @@ Version is stored in `pyproject.toml` under `project.version`.
 
 ---
 
-## 14. Customizing Generation
+## 15. Customizing Generation
 
 To add a new pipeline step:
 
@@ -447,7 +447,7 @@ Never edit generated files in `generated/` manually—they are overwritten every
 
 ---
 
-## 15. Where Things Live
+## 16. Where Things Live
 
 | What | Path |
 | --- | --- |
@@ -465,12 +465,14 @@ Never edit generated files in `generated/` manually—they are overwritten every
 | Build orchestration | `Makefile` |
 | Spec bundling script | `scripts/bundle-spec.sh` |
 | Config reference generator | `scripts/generate_config_reference.py` |
+| README snippet sync script | `scripts/sync-readme-snippets.py` |
+| Compilable examples | `examples/` |
 | Docker compose | `docker/docker-compose.yaml` |
 | CI workflows | `.github/workflows/` |
 
 ---
 
-## 16. Troubleshooting
+## 17. Troubleshooting
 
 | Issue | Likely Cause | Action |
 | --- | --- | --- |
@@ -486,7 +488,7 @@ Never edit generated files in `generated/` manually—they are overwritten every
 
 ---
 
-## 17. Maintenance Quick Commands
+## 18. Maintenance Quick Commands
 
 | Task | Command |
 | --- | --- |
