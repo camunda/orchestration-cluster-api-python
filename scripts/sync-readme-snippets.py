@@ -173,7 +173,7 @@ def sync_readme(regions: dict[str, str], *, check: bool = False) -> bool:
 
     if changed:
         README_PATH.write_text(new_text, encoding="utf-8", newline="")
-        print(f"README.md updated ({sum(1 for l in out if SNIPPET_MARKER.match(l.strip()))} snippets synced)")
+        print(f"README.md updated ({sum(1 for line in out if SNIPPET_MARKER.match(line.strip()))} snippets synced)")
     else:
         print("README.md is already up to date")
 
