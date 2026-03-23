@@ -3587,8 +3587,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -3799,8 +3799,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -4003,8 +4003,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -4076,8 +4076,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -5278,10 +5278,10 @@ paths:
                     type: string
                     description: The unique ID of the mapping rule.
                 required:
-                - mappingRuleId
                 - claimName
-                - claimValue
                 - name
+                - claimValue
+                - mappingRuleId
         '400':
           description: The provided data is not valid.
           content:
@@ -5332,8 +5332,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -5414,10 +5414,10 @@ paths:
                     type: string
                     description: The unique ID of the mapping rule.
                 required:
-                - mappingRuleId
                 - claimName
-                - claimValue
                 - name
+                - claimValue
+                - mappingRuleId
         '400':
           description: The provided data is not valid.
           content:
@@ -7826,8 +7826,8 @@ paths:
               schema:
                 type: object
                 required:
-                - items
                 - page
+                - items
                 properties:
                   items:
                     description: The matching clients.
@@ -8224,8 +8224,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -8428,8 +8428,8 @@ paths:
               schema:
                 type: object
                 required:
-                - items
                 - page
+                - items
                 properties:
                   items:
                     description: The matching users.
@@ -9197,8 +9197,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -9531,8 +9531,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -9694,8 +9694,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -9868,8 +9868,8 @@ paths:
             application/json:
               schema:
                 required:
-                - items
                 - page
+                - items
                 type: object
                 properties:
                   items:
@@ -10130,8 +10130,8 @@ paths:
               schema:
                 type: object
                 required:
-                - items
                 - page
+                - items
                 properties:
                   items:
                     description: The matching users.
@@ -11678,8 +11678,8 @@ components:
       description: Audit log search response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching audit logs.
@@ -12405,8 +12405,8 @@ components:
     AuthorizationSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching authorizations.
@@ -12606,8 +12606,8 @@ components:
       description: The batch operation search query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching batch operations.
@@ -12786,8 +12786,8 @@ components:
     BatchOperationItemSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching batch operation items.
@@ -13208,10 +13208,10 @@ components:
     ClusterVariableResult:
       type: object
       required:
-      - scope
-      - value
       - tenantId
       - name
+      - scope
+      - value
       properties:
         value:
           description: Full value of this cluster variable.
@@ -13231,10 +13231,10 @@ components:
       description: Cluster variable search response item.
       type: object
       required:
-      - isTruncated
       - scope
-      - tenantId
       - name
+      - isTruncated
+      - tenantId
       - value
       properties:
         value:
@@ -13378,8 +13378,8 @@ components:
       description: Cluster variable search query response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching cluster variables.
@@ -13722,8 +13722,8 @@ components:
     DecisionDefinitionSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching decision definitions.
@@ -14202,8 +14202,8 @@ components:
     DecisionInstanceSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching decision instances.
@@ -14487,25 +14487,25 @@ components:
 
             '
       required:
+      - processInstanceKey
+      - evaluationDate
       - rootDecisionDefinitionKey
+      - processDefinitionKey
       - decisionDefinitionId
       - result
-      - matchedRules
-      - decisionDefinitionName
-      - rootProcessInstanceKey
       - evaluationFailure
-      - processInstanceKey
-      - decisionDefinitionKey
-      - state
       - evaluatedInputs
-      - decisionDefinitionType
-      - elementInstanceKey
-      - processDefinitionKey
-      - tenantId
-      - decisionEvaluationKey
-      - evaluationDate
-      - decisionEvaluationInstanceKey
+      - matchedRules
       - decisionDefinitionVersion
+      - decisionDefinitionType
+      - rootProcessInstanceKey
+      - decisionDefinitionName
+      - decisionDefinitionKey
+      - decisionEvaluationKey
+      - elementInstanceKey
+      - state
+      - tenantId
+      - decisionEvaluationInstanceKey
     EvaluatedDecisionInputItem:
       required:
       - inputId
@@ -14714,8 +14714,8 @@ components:
             were parsed
     DecisionRequirementsSearchQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -15302,8 +15302,8 @@ components:
           items:
             $ref: '#/components/schemas/DocumentReference'
       required:
-      - createdDocuments
       - failedDocuments
+      - createdDocuments
     DocumentMetadata:
       description: Information about the document.
       type: object
@@ -15621,8 +15621,8 @@ components:
     ElementInstanceSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching element instances.
@@ -16129,9 +16129,9 @@ components:
     CreateGlobalTaskListenerRequest:
       type: object
       required:
-      - id
-      - type
       - eventTypes
+      - type
+      - id
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -16155,8 +16155,8 @@ components:
     UpdateGlobalTaskListenerRequest:
       type: object
       required:
-      - type
       - eventTypes
+      - type
       properties:
         eventTypes:
           $ref: '#/components/schemas/GlobalTaskListenerEventTypes'
@@ -16178,13 +16178,13 @@ components:
     GlobalTaskListenerResult:
       type: object
       required:
-      - afterNonGlobal
-      - type
-      - eventTypes
       - priority
-      - id
-      - retries
       - source
+      - afterNonGlobal
+      - retries
+      - id
+      - eventTypes
+      - type
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -16360,8 +16360,8 @@ components:
       description: Global listener search query response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching global listeners.
@@ -16498,8 +16498,8 @@ components:
     GroupSearchQueryResult:
       description: Group search response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -16518,8 +16518,8 @@ components:
       - username
     GroupUserSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -16567,8 +16567,8 @@ components:
       - clientId
     GroupClientSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -16596,8 +16596,8 @@ components:
           - $ref: '#/components/schemas/CursorBackwardPagination'
     GroupMappingRuleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -16609,8 +16609,8 @@ components:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     GroupRoleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -16975,8 +16975,8 @@ components:
       - field
     IncidentSearchQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -17147,8 +17147,8 @@ components:
             $ref: '#/components/schemas/IncidentProcessInstanceStatisticsByErrorQuerySortRequest'
     IncidentProcessInstanceStatisticsByErrorQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -17212,8 +17212,8 @@ components:
       - filter
     IncidentProcessInstanceStatisticsByDefinitionQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -17370,8 +17370,8 @@ components:
       description: Job type statistics query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The list of job type statistics items.
@@ -17447,8 +17447,8 @@ components:
       description: Job worker statistics query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The list of per-worker statistics items.
@@ -17528,8 +17528,8 @@ components:
       description: Job time-series statistics query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The list of time-bucketed statistics items, ordered ascending
@@ -17611,8 +17611,8 @@ components:
       description: Job error statistics query result.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The list of per-error statistics items.
@@ -18098,8 +18098,8 @@ components:
     JobSearchQueryResult:
       description: Job search response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -19381,10 +19381,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - mappingRuleId
       - claimName
-      - claimValue
       - name
+      - claimValue
+      - mappingRuleId
     MappingRuleUpdateRequest:
       type: object
       properties:
@@ -19399,8 +19399,8 @@ components:
           description: The name of the mapping rule.
       required:
       - claimName
-      - claimValue
       - name
+      - claimValue
     MappingRuleCreateUpdateResult:
       type: object
       properties:
@@ -19437,10 +19437,10 @@ components:
           type: string
           description: The unique ID of the mapping rule.
       required:
-      - mappingRuleId
       - claimName
-      - claimValue
       - name
+      - claimValue
+      - mappingRuleId
     MappingRuleUpdateResult:
       type: object
       properties:
@@ -19457,14 +19457,14 @@ components:
           type: string
           description: The unique ID of the mapping rule.
       required:
-      - mappingRuleId
       - claimName
-      - claimValue
       - name
+      - claimValue
+      - mappingRuleId
     MappingRuleSearchQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -19677,8 +19677,8 @@ components:
     MessageSubscriptionSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching message subscriptions.
@@ -19891,8 +19891,8 @@ components:
           - $ref: '#/components/schemas/AdvancedStringFilter'
     CorrelatedMessageSubscriptionSearchQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -20378,8 +20378,8 @@ components:
     ProcessDefinitionSearchQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching process definitions.
@@ -20505,8 +20505,8 @@ components:
     ProcessDefinitionMessageSubscriptionStatisticsQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching process definition message subscription statistics.
@@ -20572,8 +20572,8 @@ components:
     ProcessDefinitionInstanceStatisticsQueryResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The process definition instance statistics result.
@@ -20669,8 +20669,8 @@ components:
       - processDefinitionId
     ProcessDefinitionInstanceVersionStatisticsQueryResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -21629,8 +21629,8 @@ components:
       description: Process instance search response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching process instances.
@@ -22397,8 +22397,8 @@ components:
     RoleSearchQueryResult:
       description: Role search response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -22418,8 +22418,8 @@ components:
     RoleUserSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching users.
@@ -22467,8 +22467,8 @@ components:
     RoleClientSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching clients.
@@ -22516,8 +22516,8 @@ components:
     RoleGroupSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching groups.
@@ -22544,8 +22544,8 @@ components:
           - $ref: '#/components/schemas/CursorBackwardPagination'
     RoleMappingRuleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -22766,11 +22766,11 @@ components:
       maxLength: 25
     UsageMetricsResponse:
       required:
-      - activeTenants
-      - assignees
-      - tenants
       - decisionInstances
+      - activeTenants
+      - tenants
       - processInstances
+      - assignees
       type: object
       properties:
         activeTenants:
@@ -22995,8 +22995,8 @@ components:
     TenantSearchQueryResult:
       description: Tenant search response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -23015,8 +23015,8 @@ components:
       - username
     TenantUserSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -23065,8 +23065,8 @@ components:
       - clientId
     TenantClientSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -23116,8 +23116,8 @@ components:
     TenantGroupSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching groups.
@@ -23145,8 +23145,8 @@ components:
           - $ref: '#/components/schemas/CursorBackwardPagination'
     TenantRoleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -23158,8 +23158,8 @@ components:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     TenantMappingRuleSearchResult:
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -23346,8 +23346,8 @@ components:
     UserTaskSearchQueryResult:
       description: User task search query response.
       required:
-      - items
       - page
+      - items
       type: object
       properties:
         items:
@@ -23947,8 +23947,8 @@ components:
     UserSearchResult:
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching users.
@@ -24064,8 +24064,8 @@ components:
       description: Variable search query response.
       type: object
       required:
-      - items
       - page
+      - items
       properties:
         items:
           description: The matching variables.
@@ -24076,14 +24076,14 @@ components:
           $ref: '#/components/schemas/SearchQueryPageResponse'
     VariableSearchResult:
       required:
-      - variableKey
-      - isTruncated
-      - scopeKey
       - processInstanceKey
-      - tenantId
-      - rootProcessInstanceKey
+      - variableKey
       - name
+      - isTruncated
+      - tenantId
+      - scopeKey
       - value
+      - rootProcessInstanceKey
       description: Variable search response item.
       type: object
       properties:
@@ -24165,13 +24165,13 @@ components:
       description: Variable search response item.
       type: object
       required:
-      - variableKey
-      - scopeKey
       - processInstanceKey
-      - tenantId
-      - rootProcessInstanceKey
+      - variableKey
       - name
+      - tenantId
+      - scopeKey
       - value
+      - rootProcessInstanceKey
       properties:
         value:
           description: Full value of this variable.
@@ -25640,11 +25640,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - processDefinitionVersion
-      - processDefinitionKey
-      - resourceName
       - tenantId
+      - processDefinitionVersion
+      - resourceName
       - processDefinitionId
+      - processDefinitionKey
       title: DeploymentMetadataResultProcessDefinition
     DeploymentMetadataResultDecisionDefinition:
       nullable: true
@@ -25714,12 +25714,12 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - decisionDefinitionId
-      - decisionRequirementsKey
       - decisionRequirementsId
-      - tenantId
       - decisionDefinitionKey
+      - decisionRequirementsKey
       - name
+      - tenantId
+      - decisionDefinitionId
       - version
       title: DeploymentMetadataResultDecisionDefinition
     DeploymentMetadataResultDecisionRequirements:
@@ -25764,12 +25764,12 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - decisionRequirementsKey
       - decisionRequirementsId
+      - decisionRequirementsKey
+      - decisionRequirementsName
       - resourceName
       - tenantId
       - version
-      - decisionRequirementsName
       title: DeploymentMetadataResultDecisionRequirements
     DeploymentMetadataResultForm:
       nullable: true
@@ -25809,11 +25809,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - resourceName
-      - tenantId
       - formId
-      - version
+      - tenantId
+      - resourceName
       - formKey
+      - version
       title: DeploymentMetadataResultForm
     DeploymentMetadataResultResource:
       nullable: true
@@ -25845,11 +25845,11 @@ components:
           - $ref: '#/components/schemas/DecisionDefinitionKey'
           format: ResourceKey
       required:
-      - resourceKey
+      - resourceId
       - resourceName
       - tenantId
       - version
-      - resourceId
+      - resourceKey
       title: DeploymentMetadataResultResource
     DeleteResourceResponseBatchOperation:
       nullable: true
@@ -25877,8 +25877,8 @@ components:
         batchOperationType:
           $ref: '#/components/schemas/BatchOperationTypeEnum'
       required:
-      - batchOperationType
       - batchOperationKey
+      - batchOperationType
       title: DeleteResourceResponseBatchOperation
     DocumentMetadataCustomProperties:
       type: object
@@ -26298,14 +26298,14 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - candidateUsers
-      - changedAttributes
-      - followUpDate
-      - candidateGroups
-      - assignee
-      - userTaskKey
       - priority
+      - candidateUsers
+      - userTaskKey
+      - changedAttributes
+      - candidateGroups
+      - followUpDate
       - formKey
+      - assignee
       - action
       - dueDate
       title: ActivatedJobResultUserTask
@@ -27133,9 +27133,9 @@ components:
             type: integer
             format: int64
         required:
-        - decisionInstances
         - assignees
         - processInstances
+        - decisionInstances
       title: UsageMetricsResponseTenants
     TenantSearchQueryRequestFilter:
       description: The tenant search filters.
