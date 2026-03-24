@@ -25,6 +25,10 @@ Addresses several patterns:
 5. Single-variant isinstance guards in ``to_dict`` that produce
    ``reportUnnecessaryIsInstance`` and ``reportPossiblyUnboundVariable``.
    Fix: replace the guard with a direct ``.to_dict()`` call.
+
+6. Redundant ``isinstance(x, str)`` guards where ``x`` is already typed as
+   ``str`` (occurs for union semantic types like ``ScopeKey``).
+   Fix: replace the ternary with a direct ``lift_*(x)`` call.
 """
 
 from __future__ import annotations
@@ -392,6 +396,36 @@ def _ensure_typing_imports(content: str, needs_cast: bool) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Pattern 6: redundant isinstance(x, str) guard for str-typed union values
+# ---------------------------------------------------------------------------
+
+# Hook 1000 emits single-line ternaries for semantic type lifting:
+#
+#   var = lift_func(raw_var) if isinstance(raw_var, str) else raw_var
+#
+# For union semantic types (e.g. ScopeKey = Union[ProcessInstanceKey,
+# ElementInstanceKey]) where raw_var is already typed as str, pyright reports
+# "Unnecessary isinstance call; 'str' is always an instance of 'str'".
+# Ruff format will later wrap long lines into the multi-line form, but this
+# hook runs before ruff, so we match the single-line form written by hook 1000.
+#
+# Simplified to: var = lift_func(raw_var)
+
+_STR_ISINSTANCE_TERNARY_RE = re.compile(
+    r"^([ \t]+)(\w+) = (lift_\w+)\((\w+)\) if isinstance\(\4, str\) else \4$",
+    re.MULTILINE,
+)
+
+
+def _fix_str_isinstance_ternary(content: str) -> str:
+    """Replace ``x = lift_f(raw) if isinstance(raw, str) else raw`` with ``x = lift_f(raw)``."""
+    return _STR_ISINSTANCE_TERNARY_RE.sub(
+        lambda m: f"{m.group(1)}{m.group(2)} = {m.group(3)}({m.group(4)})",
+        content,
+    )
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
@@ -424,6 +458,7 @@ def run(context: dict[str, str]) -> None:
         content = _fix_list_accumulators(content)
         content = _fix_todict_list_accumulators(content)
         content = _fix_single_variant_isinstance(content)
+        content = _fix_str_isinstance_ternary(content)
         if model_file.name == "tag_set.py":
             content = _fix_tag_set_typing(content)
         needs_cast = added_isinstance_cast and "cast(dict[str, Any], data)" in content

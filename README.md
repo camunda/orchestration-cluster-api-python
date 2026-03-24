@@ -390,7 +390,7 @@ Because `ConnectedJobContext` and `SyncJobContext` include a `client` reference,
 
 <!-- snippet:ReadmeAsyncHandler -->
 ```python
-from camunda_orchestration_sdk import ConnectedJobContext, DecisionEvaluationByIdVariables, MessagePublicationRequest
+from camunda_orchestration_sdk import ConnectedJobContext, MessagePublicationRequest, MessagePublicationRequestVariables
 
 async def handle_order(job: ConnectedJobContext) -> dict[str, object]:
     variables = job.variables.to_dict()
@@ -401,7 +401,7 @@ async def handle_order(job: ConnectedJobContext) -> dict[str, object]:
             name="order-processed",
             correlation_key=order_id,
             time_to_live=60000,
-            variables=DecisionEvaluationByIdVariables.from_dict({"orderId": order_id, "status": "completed"}),
+            variables=MessagePublicationRequestVariables.from_dict({"orderId": order_id, "status": "completed"}),
         )
     )
 
@@ -413,7 +413,7 @@ async def handle_order(job: ConnectedJobContext) -> dict[str, object]:
 
 <!-- snippet:ReadmeSyncHandler -->
 ```python
-from camunda_orchestration_sdk import DecisionEvaluationByIdVariables, MessagePublicationRequest, SyncJobContext
+from camunda_orchestration_sdk import MessagePublicationRequest, MessagePublicationRequestVariables, SyncJobContext
 
 def handle_order(job: SyncJobContext) -> dict[str, object]:
     variables = job.variables.to_dict()
@@ -424,7 +424,7 @@ def handle_order(job: SyncJobContext) -> dict[str, object]:
             name="order-processed",
             correlation_key=order_id,
             time_to_live=60000,
-            variables=DecisionEvaluationByIdVariables.from_dict({"orderId": order_id, "status": "completed"}),
+            variables=MessagePublicationRequestVariables.from_dict({"orderId": order_id, "status": "completed"}),
         )
     )
 

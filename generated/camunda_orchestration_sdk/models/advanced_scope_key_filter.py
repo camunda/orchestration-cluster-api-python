@@ -33,19 +33,35 @@ class AdvancedScopeKeyFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        eq = self.eq
+        eq: str | Unset
+        if isinstance(self.eq, Unset):
+            eq = UNSET
+        else:
+            eq = self.eq
 
-        neq = self.neq
+        neq: str | Unset
+        if isinstance(self.neq, Unset):
+            neq = UNSET
+        else:
+            neq = self.neq
 
         exists = self.exists
 
         in_: list[str] | Unset = UNSET
         if not isinstance(self.in_, Unset):
-            in_ = self.in_
+            in_ = []
+            for in_item_data in self.in_:
+                in_item: str
+                in_item = in_item_data
+                in_.append(in_item)
 
         not_in: list[str] | Unset = UNSET
         if not isinstance(self.not_in, Unset):
-            not_in = self.not_in
+            not_in = []
+            for not_in_item_data in self.not_in:
+                not_in_item: str
+                not_in_item = not_in_item_data
+                not_in.append(not_in_item)
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -66,15 +82,48 @@ class AdvancedScopeKeyFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        eq = d.pop("$eq", UNSET)
 
-        neq = d.pop("$neq", UNSET)
+        def _parse_eq(data: object) -> str | Unset:
+            if isinstance(data, Unset):
+                return data
+            return cast(str | Unset, data)
+
+        eq = _parse_eq(d.pop("$eq", UNSET))
+
+        def _parse_neq(data: object) -> str | Unset:
+            if isinstance(data, Unset):
+                return data
+            return cast(str | Unset, data)
+
+        neq = _parse_neq(d.pop("$neq", UNSET))
 
         exists = d.pop("$exists", UNSET)
 
-        in_ = cast(list[str], d.pop("$in", UNSET))
+        _in_ = d.pop("$in", UNSET)
+        in_: list[str] | Unset = UNSET
+        if _in_ is not UNSET:
+            in_ = []
+            for in_item_data in _in_:
 
-        not_in = cast(list[str], d.pop("$notIn", UNSET))
+                def _parse_in_item(data: object) -> str:
+                    return cast(str, data)
+
+                in_item = _parse_in_item(in_item_data)
+
+                in_.append(in_item)
+
+        _not_in = d.pop("$notIn", UNSET)
+        not_in: list[str] | Unset = UNSET
+        if _not_in is not UNSET:
+            not_in = []
+            for not_in_item_data in _not_in:
+
+                def _parse_not_in_item(data: object) -> str:
+                    return cast(str, data)
+
+                not_in_item = _parse_not_in_item(not_in_item_data)
+
+                not_in.append(not_in_item)
 
         advanced_scope_key_filter = cls(
             eq=eq,

@@ -407,6 +407,7 @@ from .message_correlation_request import MessageCorrelationRequest
 from .message_correlation_request_variables import MessageCorrelationRequestVariables
 from .message_correlation_result import MessageCorrelationResult
 from .message_publication_request import MessagePublicationRequest
+from .message_publication_request_variables import MessagePublicationRequestVariables
 from .message_publication_result import MessagePublicationResult
 from .message_subscription_filter import MessageSubscriptionFilter
 from .message_subscription_result import MessageSubscriptionResult
@@ -538,6 +539,7 @@ from .search_query_request import SearchQueryRequest
 from .search_query_response import SearchQueryResponse
 from .search_roles_for_group_response_200 import SearchRolesForGroupResponse200
 from .search_roles_for_tenant_response_200 import SearchRolesForTenantResponse200
+from .search_user_task_effective_variables_data import SearchUserTaskEffectiveVariablesData
 from .search_user_task_variables_data import SearchUserTaskVariablesData
 from .search_users_for_group_data import SearchUsersForGroupData
 from .search_users_for_group_response_200 import SearchUsersForGroupResponse200
@@ -611,6 +613,8 @@ from .user_task_audit_log_filter import UserTaskAuditLogFilter
 from .user_task_audit_log_search_query_request import UserTaskAuditLogSearchQueryRequest
 from .user_task_completion_request import UserTaskCompletionRequest
 from .user_task_completion_request_variables import UserTaskCompletionRequestVariables
+from .user_task_effective_variable_search_query_request import UserTaskEffectiveVariableSearchQueryRequest
+from .user_task_effective_variable_search_query_request_page import UserTaskEffectiveVariableSearchQueryRequestPage
 from .user_task_filter import UserTaskFilter
 from .user_task_properties import UserTaskProperties
 from .user_task_result import UserTaskResult
@@ -1049,6 +1053,7 @@ __all__: list[str] = [
     "MessageCorrelationRequestVariables",
     "MessageCorrelationResult",
     "MessagePublicationRequest",
+    "MessagePublicationRequestVariables",
     "MessagePublicationResult",
     "MessageSubscriptionFilter",
     "MessageSubscriptionResult",
@@ -1187,6 +1192,7 @@ __all__: list[str] = [
     "SearchUsersForTenantData",
     "SearchUsersForTenantResponse200",
     "SearchUsersResponse200",
+    "SearchUserTaskEffectiveVariablesData",
     "SearchUserTaskVariablesData",
     "SearchVariablesData",
     "SetVariableRequest",
@@ -1252,6 +1258,8 @@ __all__: list[str] = [
     "UserTaskAuditLogSearchQueryRequest",
     "UserTaskCompletionRequest",
     "UserTaskCompletionRequestVariables",
+    "UserTaskEffectiveVariableSearchQueryRequest",
+    "UserTaskEffectiveVariableSearchQueryRequestPage",
     "UserTaskFilter",
     "UserTaskProperties",
     "UserTaskResult",

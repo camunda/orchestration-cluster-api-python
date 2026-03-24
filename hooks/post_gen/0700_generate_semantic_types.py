@@ -73,14 +73,18 @@ def _extract_constraints(
     return constraints
 
 
-def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -> None:
+def _emit_semantic_types_py(
+    out_dir: Path,
+    aliases: Dict[str, Dict[str, Any]],
+    union_aliases: Dict[str, List[str]] | None = None,
+) -> None:
     pkg_dir = out_dir / "camunda_orchestration_sdk"
     pkg_dir.mkdir(parents=True, exist_ok=True)
     target = pkg_dir / "semantic_types.py"
 
     lines: List[str] = []
     lines.append("from __future__ import annotations\n")
-    lines.append("from typing import NewType, Any, Tuple\n")
+    lines.append("from typing import NewType, Any, Tuple, Union\n")
     lines.append("import re\n\n")
 
     # Track all exported names for __all__ and explicit import
@@ -161,6 +165,35 @@ def _emit_semantic_types_py(out_dir: Path, aliases: Dict[str, Dict[str, Any]]) -
         func.append("\t\treturn False, e\n\n")
 
         lines.extend(func)
+
+    # Emit union type aliases (e.g. ScopeKey = ProcessInstanceKey | ElementInstanceKey)
+    if union_aliases:
+        for union_name, branch_names in sorted(union_aliases.items()):
+            func_name = _snake(f"lift_{union_name}")
+            try_func_name = _snake(f"try_lift_{union_name}")
+            all_exported_names.extend([union_name, func_name, try_func_name])
+
+            branch_lift_funcs = [_snake(f"lift_{b}") for b in branch_names]
+
+            lines.append(f"{union_name} = Union[{', '.join(branch_names)}]\n\n")
+
+            lines.append(f"def {func_name}(value: Any) -> {union_name}:\n")
+            for lift_fn in branch_lift_funcs:
+                lines.append("\ttry:\n")
+                lines.append(f"\t\treturn {lift_fn}(value)\n")
+                lines.append("\texcept Exception:\n")
+                lines.append("\t\tpass\n")
+            lines.append(
+                f'\traise ValueError(f"{union_name}: value {{value!r}} does not match any branch ({", ".join(branch_names)})")\n\n'
+            )
+
+            lines.append(
+                f"def {try_func_name}(value: Any) -> Tuple[bool, {union_name} | Exception]:\n"
+            )
+            lines.append("\ttry:\n")
+            lines.append(f"\t\treturn True, {func_name}(value)\n")
+            lines.append("\texcept Exception as e:\n")
+            lines.append("\t\treturn False, e\n\n")
 
     # Add __all__ for explicit export control
     lines.append(f"__all__ = {sorted(all_exported_names)!r}\n")
@@ -244,6 +277,25 @@ def _aliases_from_metadata(metadata_path: Path) -> Dict[str, Dict[str, Any]]:
     return aliases
 
 
+def _semantic_key_unions_from_metadata(
+    metadata_path: Path, semantic_key_names: set[str]
+) -> Dict[str, List[str]]:
+    """Build union aliases dict from spec-metadata.json unions where all branches are semantic keys."""
+    import json as _json
+
+    with open(metadata_path, "r", encoding="utf-8") as f:
+        meta: Dict[str, Any] = _json.load(f)
+    union_aliases: Dict[str, List[str]] = {}
+    for entry in meta.get("unions", []):
+        branches = entry.get("branches", [])
+        if branches and all(
+            b.get("branchType") == "ref" and b.get("ref") in semantic_key_names
+            for b in branches
+        ):
+            union_aliases[entry["name"]] = [b["ref"] for b in branches]
+    return union_aliases
+
+
 def _aliases_from_spec(spec_path: Path) -> Dict[str, Dict[str, Any]]:
     """Fallback: derive aliases by scanning the spec for x-semantic-type."""
     schemas: Dict[str, Any] = {}
@@ -280,9 +332,13 @@ def run(context: dict[str, str]) -> None:
     metadata_path = Path(metadata_path_str) if metadata_path_str else None
 
     aliases: Dict[str, Dict[str, Any]] = {}
+    union_aliases: Dict[str, List[str]] = {}
     if metadata_path and metadata_path.exists():
         print("Using spec-metadata.json for semantic types")
         aliases = _aliases_from_metadata(metadata_path)
+        union_aliases = _semantic_key_unions_from_metadata(
+            metadata_path, set(aliases.keys())
+        )
     else:
         # Fallback: scan spec
         spec_path = Path(context["spec_path"]).resolve()
@@ -291,4 +347,4 @@ def run(context: dict[str, str]) -> None:
         aliases = _aliases_from_spec(bp)
 
     if aliases:
-        _emit_semantic_types_py(out_dir, aliases)
+        _emit_semantic_types_py(out_dir, aliases, union_aliases or None)

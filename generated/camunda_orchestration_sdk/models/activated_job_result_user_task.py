@@ -134,11 +134,7 @@ class ActivatedJobResultUserTask:
 
         _raw_form_key = _parse_form_key(d.pop("formKey"))
 
-        form_key = (
-            lift_form_key(_raw_form_key)
-            if isinstance(_raw_form_key, str)
-            else _raw_form_key
-        )
+        form_key = lift_form_key(_raw_form_key)
 
         def _parse_priority(data: object) -> int | None:
             if data is None:
@@ -154,11 +150,7 @@ class ActivatedJobResultUserTask:
 
         _raw_user_task_key = _parse_user_task_key(d.pop("userTaskKey"))
 
-        user_task_key = (
-            lift_user_task_key(_raw_user_task_key)
-            if isinstance(_raw_user_task_key, str)
-            else _raw_user_task_key
-        )
+        user_task_key = lift_user_task_key(_raw_user_task_key)
 
         activated_job_result_user_task = cls(
             action=action,

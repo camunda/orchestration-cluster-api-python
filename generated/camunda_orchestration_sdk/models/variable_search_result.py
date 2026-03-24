@@ -67,6 +67,7 @@ class VariableSearchResult:
 
         variable_key = self.variable_key
 
+        scope_key: ScopeKey
         scope_key = self.scope_key
 
         process_instance_key = self.process_instance_key
@@ -104,7 +105,12 @@ class VariableSearchResult:
 
         variable_key = lift_variable_key(d.pop("variableKey"))
 
-        scope_key = lift_scope_key(d.pop("scopeKey"))
+        def _parse_scope_key(data: object) -> str:
+            return cast(str, data)
+
+        _raw_scope_key = _parse_scope_key(d.pop("scopeKey"))
+
+        scope_key = lift_scope_key(_raw_scope_key)
 
         process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
 
@@ -117,10 +123,8 @@ class VariableSearchResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = (
-            lift_process_instance_key(_raw_root_process_instance_key)
-            if isinstance(_raw_root_process_instance_key, str)
-            else _raw_root_process_instance_key
+        root_process_instance_key = lift_process_instance_key(
+            _raw_root_process_instance_key
         )
 
         variable_search_result = cls(

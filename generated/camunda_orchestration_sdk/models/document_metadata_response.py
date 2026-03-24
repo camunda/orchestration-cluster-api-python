@@ -126,11 +126,7 @@ class DocumentMetadataResponse:
             d.pop("processDefinitionId")
         )
 
-        process_definition_id = (
-            lift_process_definition_id(_raw_process_definition_id)
-            if isinstance(_raw_process_definition_id, str)
-            else _raw_process_definition_id
-        )
+        process_definition_id = lift_process_definition_id(_raw_process_definition_id)
 
         def _parse_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -141,11 +137,7 @@ class DocumentMetadataResponse:
             d.pop("processInstanceKey")
         )
 
-        process_instance_key = (
-            lift_process_instance_key(_raw_process_instance_key)
-            if isinstance(_raw_process_instance_key, str)
-            else _raw_process_instance_key
-        )
+        process_instance_key = lift_process_instance_key(_raw_process_instance_key)
 
         custom_properties = DocumentMetadataCustomProperties.from_dict(
             d.pop("customProperties")

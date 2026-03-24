@@ -243,10 +243,8 @@ class ActivatedJobResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = (
-            lift_process_instance_key(_raw_root_process_instance_key)
-            if isinstance(_raw_root_process_instance_key, str)
-            else _raw_root_process_instance_key
+        root_process_instance_key = lift_process_instance_key(
+            _raw_root_process_instance_key
         )
 
         activated_job_result = cls(

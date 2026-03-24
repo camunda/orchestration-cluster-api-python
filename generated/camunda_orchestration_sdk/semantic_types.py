@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import NewType, Any, Tuple
+from typing import NewType, Any, Tuple, Union
 import re
 
 AuditLogEntityKey = NewType("AuditLogEntityKey", str)
@@ -696,28 +696,6 @@ def try_lift_process_instance_key(
         return False, e
 
 
-ScopeKey = NewType("ScopeKey", str)
-
-
-def lift_scope_key(value: Any) -> ScopeKey:
-    if not isinstance(value, str):
-        raise TypeError(f"ScopeKey must be str, got {type(value).__name__}: {value!r}")
-    if re.fullmatch("^-?[0-9]+$", value) is None:
-        raise ValueError(f"ScopeKey does not match pattern '^-?[0-9]+$', got {value!r}")
-    if len(value) < 1:
-        raise ValueError(f"ScopeKey shorter than minLength 1, got {value!r}")
-    if len(value) > 25:
-        raise ValueError(f"ScopeKey longer than maxLength 25, got {value!r}")
-    return ScopeKey(value)
-
-
-def try_lift_scope_key(value: Any) -> Tuple[bool, ScopeKey | Exception]:
-    try:
-        return True, lift_scope_key(value)
-    except Exception as e:
-        return False, e
-
-
 SignalKey = NewType("SignalKey", str)
 
 
@@ -894,6 +872,64 @@ def try_lift_variable_key(value: Any) -> Tuple[bool, VariableKey | Exception]:
         return False, e
 
 
+ResourceKey = Union[
+    ProcessDefinitionKey, DecisionRequirementsKey, FormKey, DecisionDefinitionKey
+]
+
+
+def lift_resource_key(value: Any) -> ResourceKey:
+    try:
+        return lift_process_definition_key(value)
+    except Exception:
+        pass
+    try:
+        return lift_decision_requirements_key(value)
+    except Exception:
+        pass
+    try:
+        return lift_form_key(value)
+    except Exception:
+        pass
+    try:
+        return lift_decision_definition_key(value)
+    except Exception:
+        pass
+    raise ValueError(
+        f"ResourceKey: value {value!r} does not match any branch (ProcessDefinitionKey, DecisionRequirementsKey, FormKey, DecisionDefinitionKey)"
+    )
+
+
+def try_lift_resource_key(value: Any) -> Tuple[bool, ResourceKey | Exception]:
+    try:
+        return True, lift_resource_key(value)
+    except Exception as e:
+        return False, e
+
+
+ScopeKey = Union[ProcessInstanceKey, ElementInstanceKey]
+
+
+def lift_scope_key(value: Any) -> ScopeKey:
+    try:
+        return lift_process_instance_key(value)
+    except Exception:
+        pass
+    try:
+        return lift_element_instance_key(value)
+    except Exception:
+        pass
+    raise ValueError(
+        f"ScopeKey: value {value!r} does not match any branch (ProcessInstanceKey, ElementInstanceKey)"
+    )
+
+
+def try_lift_scope_key(value: Any) -> Tuple[bool, ScopeKey | Exception]:
+    try:
+        return True, lift_scope_key(value)
+    except Exception as e:
+        return False, e
+
+
 __all__ = [
     "AuditLogEntityKey",
     "AuditLogKey",
@@ -922,6 +958,7 @@ __all__ = [
     "ProcessDefinitionId",
     "ProcessDefinitionKey",
     "ProcessInstanceKey",
+    "ResourceKey",
     "ScopeKey",
     "SignalKey",
     "StartCursor",
@@ -957,6 +994,7 @@ __all__ = [
     "lift_process_definition_id",
     "lift_process_definition_key",
     "lift_process_instance_key",
+    "lift_resource_key",
     "lift_scope_key",
     "lift_signal_key",
     "lift_start_cursor",
@@ -992,6 +1030,7 @@ __all__ = [
     "try_lift_process_definition_id",
     "try_lift_process_definition_key",
     "try_lift_process_instance_key",
+    "try_lift_resource_key",
     "try_lift_scope_key",
     "try_lift_signal_key",
     "try_lift_start_cursor",

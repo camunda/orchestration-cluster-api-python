@@ -5,7 +5,9 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.problem_detail import ProblemDetail
-from ...models.search_user_task_variables_data import SearchUserTaskVariablesData
+from ...models.search_user_task_effective_variables_data import (
+    SearchUserTaskEffectiveVariablesData,
+)
 from ...models.variable_search_query_result import VariableSearchQueryResult
 from ...types import UNSET, Response, Unset
 
@@ -13,7 +15,7 @@ from ...types import UNSET, Response, Unset
 def _get_kwargs(
     user_task_key: str,
     *,
-    body: SearchUserTaskVariablesData | Unset = UNSET,
+    body: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
     truncate_values: bool | Unset = UNSET,
 ) -> dict[str, Any]:
     headers: dict[str, Any] = {}
@@ -22,7 +24,7 @@ def _get_kwargs(
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
     _kwargs: dict[str, Any] = {
         "method": "post",
-        "url": "/user-tasks/{user_task_key}/variables/search".format(
+        "url": "/user-tasks/{user_task_key}/effective-variables/search".format(
             user_task_key=quote(str(user_task_key), safe="")
         ),
         "params": params,
@@ -67,23 +69,23 @@ def sync_detailed(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUserTaskVariablesData | Unset = UNSET,
+    body: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
     truncate_values: bool | Unset = UNSET,
 ) -> Response[ProblemDetail | VariableSearchQueryResult]:
-    """Search user task variables
+    """Search user task effective variables
 
-     Search for user task variables based on given criteria. This endpoint returns all variable
-    documents visible from the user task's scope, including variables from parent scopes in the
-    scope hierarchy. If the same variable name exists at multiple scope levels, each scope's
-    variable is returned as a separate result. Use the
-    `/user-tasks/{userTaskKey}/effective-variables/search` endpoint to get deduplicated variables
-    where the innermost scope takes precedence. By default, long variable values in the response
-    are truncated.
+     Search for the effective variables of a user task. This endpoint returns deduplicated
+    variables where each variable name appears at most once. When the same variable name exists
+    at multiple scope levels in the scope hierarchy, the value from the innermost scope (closest
+    to the user task) takes precedence. This is useful for retrieving the actual runtime state
+    of variables as seen by the user task. By default, long variable values in the response are
+    truncated.
 
     Args:
         user_task_key (str): System-generated key for a user task.
         truncate_values (bool | Unset):
-        body (SearchUserTaskVariablesData | Unset): User task search query request.
+        body (SearchUserTaskEffectiveVariablesData | Unset): User task effective variable search
+            query request. Uses offset-based pagination only.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -103,28 +105,28 @@ def sync(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUserTaskVariablesData | Unset = UNSET,
+    body: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
     truncate_values: bool | Unset = UNSET,
     **kwargs: Any,
 ) -> VariableSearchQueryResult:
-    """Search user task variables
+    """Search user task effective variables
 
-     Search for user task variables based on given criteria. This endpoint returns all variable
-    documents visible from the user task's scope, including variables from parent scopes in the
-    scope hierarchy. If the same variable name exists at multiple scope levels, each scope's
-    variable is returned as a separate result. Use the
-    `/user-tasks/{userTaskKey}/effective-variables/search` endpoint to get deduplicated variables
-    where the innermost scope takes precedence. By default, long variable values in the response
-    are truncated.
+     Search for the effective variables of a user task. This endpoint returns deduplicated
+    variables where each variable name appears at most once. When the same variable name exists
+    at multiple scope levels in the scope hierarchy, the value from the innermost scope (closest
+    to the user task) takes precedence. This is useful for retrieving the actual runtime state
+    of variables as seen by the user task. By default, long variable values in the response are
+    truncated.
 
     Args:
         user_task_key (str): System-generated key for a user task.
         truncate_values (bool | Unset):
-        body (SearchUserTaskVariablesData | Unset): User task search query request.
+        body (SearchUserTaskEffectiveVariablesData | Unset): User task effective variable search
+            query request. Uses offset-based pagination only.
 
     Raises:
-        errors.SearchUserTaskVariablesBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.SearchUserTaskEffectiveVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.SearchUserTaskEffectiveVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -137,13 +139,13 @@ def sync(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchUserTaskVariablesBadRequest(
+            raise errors.SearchUserTaskEffectiveVariablesBadRequest(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
-            raise errors.SearchUserTaskVariablesInternalServerError(
+            raise errors.SearchUserTaskEffectiveVariablesInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
@@ -157,23 +159,23 @@ async def asyncio_detailed(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUserTaskVariablesData | Unset = UNSET,
+    body: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
     truncate_values: bool | Unset = UNSET,
 ) -> Response[ProblemDetail | VariableSearchQueryResult]:
-    """Search user task variables
+    """Search user task effective variables
 
-     Search for user task variables based on given criteria. This endpoint returns all variable
-    documents visible from the user task's scope, including variables from parent scopes in the
-    scope hierarchy. If the same variable name exists at multiple scope levels, each scope's
-    variable is returned as a separate result. Use the
-    `/user-tasks/{userTaskKey}/effective-variables/search` endpoint to get deduplicated variables
-    where the innermost scope takes precedence. By default, long variable values in the response
-    are truncated.
+     Search for the effective variables of a user task. This endpoint returns deduplicated
+    variables where each variable name appears at most once. When the same variable name exists
+    at multiple scope levels in the scope hierarchy, the value from the innermost scope (closest
+    to the user task) takes precedence. This is useful for retrieving the actual runtime state
+    of variables as seen by the user task. By default, long variable values in the response are
+    truncated.
 
     Args:
         user_task_key (str): System-generated key for a user task.
         truncate_values (bool | Unset):
-        body (SearchUserTaskVariablesData | Unset): User task search query request.
+        body (SearchUserTaskEffectiveVariablesData | Unset): User task effective variable search
+            query request. Uses offset-based pagination only.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -193,28 +195,28 @@ async def asyncio(
     user_task_key: str,
     *,
     client: AuthenticatedClient | Client,
-    body: SearchUserTaskVariablesData | Unset = UNSET,
+    body: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
     truncate_values: bool | Unset = UNSET,
     **kwargs: Any,
 ) -> VariableSearchQueryResult:
-    """Search user task variables
+    """Search user task effective variables
 
-     Search for user task variables based on given criteria. This endpoint returns all variable
-    documents visible from the user task's scope, including variables from parent scopes in the
-    scope hierarchy. If the same variable name exists at multiple scope levels, each scope's
-    variable is returned as a separate result. Use the
-    `/user-tasks/{userTaskKey}/effective-variables/search` endpoint to get deduplicated variables
-    where the innermost scope takes precedence. By default, long variable values in the response
-    are truncated.
+     Search for the effective variables of a user task. This endpoint returns deduplicated
+    variables where each variable name appears at most once. When the same variable name exists
+    at multiple scope levels in the scope hierarchy, the value from the innermost scope (closest
+    to the user task) takes precedence. This is useful for retrieving the actual runtime state
+    of variables as seen by the user task. By default, long variable values in the response are
+    truncated.
 
     Args:
         user_task_key (str): System-generated key for a user task.
         truncate_values (bool | Unset):
-        body (SearchUserTaskVariablesData | Unset): User task search query request.
+        body (SearchUserTaskEffectiveVariablesData | Unset): User task effective variable search
+            query request. Uses offset-based pagination only.
 
     Raises:
-        errors.SearchUserTaskVariablesBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.SearchUserTaskEffectiveVariablesBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.SearchUserTaskEffectiveVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -227,13 +229,13 @@ async def asyncio(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchUserTaskVariablesBadRequest(
+            raise errors.SearchUserTaskEffectiveVariablesBadRequest(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
             )
         if response.status_code == 500:
-            raise errors.SearchUserTaskVariablesInternalServerError(
+            raise errors.SearchUserTaskEffectiveVariablesInternalServerError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),

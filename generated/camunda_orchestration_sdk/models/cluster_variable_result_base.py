@@ -65,11 +65,7 @@ class ClusterVariableResultBase:
 
         _raw_tenant_id = _parse_tenant_id(d.pop("tenantId"))
 
-        tenant_id = (
-            lift_tenant_id(_raw_tenant_id)
-            if isinstance(_raw_tenant_id, str)
-            else _raw_tenant_id
-        )
+        tenant_id = lift_tenant_id(_raw_tenant_id)
 
         cluster_variable_result_base = cls(
             name=name,

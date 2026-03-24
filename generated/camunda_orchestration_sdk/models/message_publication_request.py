@@ -9,8 +9,8 @@ from attrs import define as _attrs_define
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
-    from ..models.decision_evaluation_by_id_variables import (
-        DecisionEvaluationByIdVariables,
+    from ..models.message_publication_request_variables import (
+        MessagePublicationRequestVariables,
     )
 
 
@@ -27,7 +27,7 @@ class MessagePublicationRequest:
         message_id (str | Unset): The unique ID of the message. This is used to ensure only one message with the given
             ID
             will be published during the lifetime of the message (if `timeToLive` is set).
-        variables (DecisionEvaluationByIdVariables | Unset): The message variables as JSON document.
+        variables (MessagePublicationRequestVariables | Unset): The message variables as JSON document.
         tenant_id (str | Unset): The tenant of the message sender. Example: customer-service.
     """
 
@@ -35,7 +35,7 @@ class MessagePublicationRequest:
     correlation_key: str | Unset = UNSET
     time_to_live: int | Unset = UNSET
     message_id: str | Unset = UNSET
-    variables: DecisionEvaluationByIdVariables | Unset = UNSET
+    variables: MessagePublicationRequestVariables | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
 
     def to_dict(self) -> dict[str, Any]:
@@ -75,8 +75,8 @@ class MessagePublicationRequest:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
-        from ..models.decision_evaluation_by_id_variables import (
-            DecisionEvaluationByIdVariables,
+        from ..models.message_publication_request_variables import (
+            MessagePublicationRequestVariables,
         )
 
         d = dict(src_dict)
@@ -89,11 +89,11 @@ class MessagePublicationRequest:
         message_id = d.pop("messageId", UNSET)
 
         _variables = d.pop("variables", UNSET)
-        variables: DecisionEvaluationByIdVariables | Unset
+        variables: MessagePublicationRequestVariables | Unset
         if isinstance(_variables, Unset):
             variables = UNSET
         else:
-            variables = DecisionEvaluationByIdVariables.from_dict(_variables)
+            variables = MessagePublicationRequestVariables.from_dict(_variables)
 
         tenant_id = (
             lift_tenant_id(_val)

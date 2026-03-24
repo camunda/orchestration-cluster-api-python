@@ -203,7 +203,7 @@ def readme_job_worker() -> None:
 
 async def readme_async_handler() -> None:
     # region ReadmeAsyncHandler
-    from camunda_orchestration_sdk import ConnectedJobContext, DecisionEvaluationByIdVariables, MessagePublicationRequest
+    from camunda_orchestration_sdk import ConnectedJobContext, MessagePublicationRequest, MessagePublicationRequestVariables
 
     async def handle_order(job: ConnectedJobContext) -> dict[str, object]:
         variables = job.variables.to_dict()
@@ -214,7 +214,7 @@ async def readme_async_handler() -> None:
                 name="order-processed",
                 correlation_key=order_id,
                 time_to_live=60000,
-                variables=DecisionEvaluationByIdVariables.from_dict({"orderId": order_id, "status": "completed"}),
+                variables=MessagePublicationRequestVariables.from_dict({"orderId": order_id, "status": "completed"}),
             )
         )
 
@@ -225,7 +225,7 @@ async def readme_async_handler() -> None:
 
 def readme_sync_handler() -> None:
     # region ReadmeSyncHandler
-    from camunda_orchestration_sdk import DecisionEvaluationByIdVariables, MessagePublicationRequest, SyncJobContext
+    from camunda_orchestration_sdk import MessagePublicationRequest, MessagePublicationRequestVariables, SyncJobContext
 
     def handle_order(job: SyncJobContext) -> dict[str, object]:
         variables = job.variables.to_dict()
@@ -236,7 +236,7 @@ def readme_sync_handler() -> None:
                 name="order-processed",
                 correlation_key=order_id,
                 time_to_live=60000,
-                variables=DecisionEvaluationByIdVariables.from_dict({"orderId": order_id, "status": "completed"}),
+                variables=MessagePublicationRequestVariables.from_dict({"orderId": order_id, "status": "completed"}),
             )
         )
 

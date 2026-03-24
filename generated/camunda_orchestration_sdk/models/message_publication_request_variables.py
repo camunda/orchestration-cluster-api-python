@@ -8,12 +8,12 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 
-T = TypeVar("T", bound="DecisionEvaluationByIdVariables")
+T = TypeVar("T", bound="MessagePublicationRequestVariables")
 
 
 @_attrs_define
-class DecisionEvaluationByIdVariables:
-    """The decision evaluation variables as JSON document."""
+class MessagePublicationRequestVariables:
+    """The message variables as JSON document."""
 
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -28,10 +28,10 @@ class DecisionEvaluationByIdVariables:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        decision_evaluation_by_id_variables = cls()
+        message_publication_request_variables = cls()
 
-        decision_evaluation_by_id_variables.additional_properties = d
-        return decision_evaluation_by_id_variables
+        message_publication_request_variables.additional_properties = d
+        return message_publication_request_variables
 
     @property
     def additional_keys(self) -> list[str]:

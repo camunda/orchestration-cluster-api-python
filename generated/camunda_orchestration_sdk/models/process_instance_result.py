@@ -209,10 +209,8 @@ class ProcessInstanceResult:
             d.pop("parentProcessInstanceKey")
         )
 
-        parent_process_instance_key = (
-            lift_process_instance_key(_raw_parent_process_instance_key)
-            if isinstance(_raw_parent_process_instance_key, str)
-            else _raw_parent_process_instance_key
+        parent_process_instance_key = lift_process_instance_key(
+            _raw_parent_process_instance_key
         )
 
         def _parse_parent_element_instance_key(data: object) -> None | str:
@@ -224,10 +222,8 @@ class ProcessInstanceResult:
             d.pop("parentElementInstanceKey")
         )
 
-        parent_element_instance_key = (
-            lift_element_instance_key(_raw_parent_element_instance_key)
-            if isinstance(_raw_parent_element_instance_key, str)
-            else _raw_parent_element_instance_key
+        parent_element_instance_key = lift_element_instance_key(
+            _raw_parent_element_instance_key
         )
 
         def _parse_root_process_instance_key(data: object) -> None | str:
@@ -239,10 +235,8 @@ class ProcessInstanceResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = (
-            lift_process_instance_key(_raw_root_process_instance_key)
-            if isinstance(_raw_root_process_instance_key, str)
-            else _raw_root_process_instance_key
+        root_process_instance_key = lift_process_instance_key(
+            _raw_root_process_instance_key
         )
 
         tags = cast(list[str], d.pop("tags"))
@@ -254,11 +248,7 @@ class ProcessInstanceResult:
 
         _raw_business_id = _parse_business_id(d.pop("businessId"))
 
-        business_id = (
-            lift_business_id(_raw_business_id)
-            if isinstance(_raw_business_id, str)
-            else _raw_business_id
-        )
+        business_id = lift_business_id(_raw_business_id)
 
         process_instance_result = cls(
             process_definition_id=process_definition_id,

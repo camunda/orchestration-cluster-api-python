@@ -30,7 +30,7 @@ class DecisionEvaluationByID:
             When using the decision ID, the latest
             deployed version of the decision is used.
              Example: new-hire-onboarding-workflow.
-        variables (DecisionEvaluationByIdVariables | Unset): The message variables as JSON document.
+        variables (DecisionEvaluationByIdVariables | Unset): The decision evaluation variables as JSON document.
         tenant_id (str | Unset): The tenant ID of the decision. Example: customer-service.
     """
 

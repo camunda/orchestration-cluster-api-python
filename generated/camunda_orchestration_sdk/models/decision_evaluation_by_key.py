@@ -27,7 +27,7 @@ class DecisionEvaluationByKey:
     """
     Attributes:
         decision_definition_key (str): System-generated key for a decision definition. Example: 2251799813326547.
-        variables (DecisionEvaluationByIdVariables | Unset): The message variables as JSON document.
+        variables (DecisionEvaluationByIdVariables | Unset): The decision evaluation variables as JSON document.
         tenant_id (str | Unset): The tenant ID of the decision. Example: customer-service.
     """
 

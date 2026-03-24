@@ -95,7 +95,7 @@ def sync(
         errors.SearchGroupsBadRequest: If the response status code is 400. The provided data is not valid.
         errors.SearchGroupsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
         errors.SearchGroupsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchGroupsInternalServerError: If the response status code is 500. An error occurred.
+        errors.SearchGroupsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -172,7 +172,7 @@ async def asyncio(
         errors.SearchGroupsBadRequest: If the response status code is 400. The provided data is not valid.
         errors.SearchGroupsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
         errors.SearchGroupsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchGroupsInternalServerError: If the response status code is 500. An error occurred.
+        errors.SearchGroupsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:

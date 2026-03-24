@@ -77,11 +77,7 @@ class SearchQueryPageResponse:
 
         _raw_start_cursor = _parse_start_cursor(d.pop("startCursor"))
 
-        start_cursor = (
-            lift_start_cursor(_raw_start_cursor)
-            if isinstance(_raw_start_cursor, str)
-            else _raw_start_cursor
-        )
+        start_cursor = lift_start_cursor(_raw_start_cursor)
 
         def _parse_end_cursor(data: object) -> None | str:
             if data is None:
@@ -90,11 +86,7 @@ class SearchQueryPageResponse:
 
         _raw_end_cursor = _parse_end_cursor(d.pop("endCursor"))
 
-        end_cursor = (
-            lift_end_cursor(_raw_end_cursor)
-            if isinstance(_raw_end_cursor, str)
-            else _raw_end_cursor
-        )
+        end_cursor = lift_end_cursor(_raw_end_cursor)
 
         search_query_page_response = cls(
             total_items=total_items,

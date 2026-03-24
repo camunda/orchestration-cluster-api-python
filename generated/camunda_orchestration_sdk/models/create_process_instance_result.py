@@ -128,11 +128,7 @@ class CreateProcessInstanceResult:
 
         _raw_business_id = _parse_business_id(d.pop("businessId"))
 
-        business_id = (
-            lift_business_id(_raw_business_id)
-            if isinstance(_raw_business_id, str)
-            else _raw_business_id
-        )
+        business_id = lift_business_id(_raw_business_id)
 
         create_process_instance_result = cls(
             process_definition_id=process_definition_id,

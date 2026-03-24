@@ -246,11 +246,7 @@ class JobSearchResult:
 
         _raw_element_id = _parse_element_id(d.pop("elementId"))
 
-        element_id = (
-            lift_element_id(_raw_element_id)
-            if isinstance(_raw_element_id, str)
-            else _raw_element_id
-        )
+        element_id = lift_element_id(_raw_element_id)
 
         element_instance_key = lift_element_instance_key(d.pop("elementInstanceKey"))
 
@@ -315,10 +311,8 @@ class JobSearchResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = (
-            lift_process_instance_key(_raw_root_process_instance_key)
-            if isinstance(_raw_root_process_instance_key, str)
-            else _raw_root_process_instance_key
+        root_process_instance_key = lift_process_instance_key(
+            _raw_root_process_instance_key
         )
 
         retries = d.pop("retries")

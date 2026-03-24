@@ -38,6 +38,9 @@ def _parse_response(
     if response.status_code == 404:
         response_404 = ProblemDetail.from_dict(response.json())
         return response_404
+    if response.status_code == 409:
+        response_409 = ProblemDetail.from_dict(response.json())
+        return response_409
     if response.status_code == 500:
         response_500 = ProblemDetail.from_dict(response.json())
         return response_500
@@ -107,6 +110,7 @@ def sync(
     Raises:
         errors.ResolveIncidentBadRequest: If the response status code is 400. The provided data is not valid.
         errors.ResolveIncidentNotFound: If the response status code is 404. The incident with the incidentKey is not found.
+        errors.ResolveIncidentConflict: If the response status code is 409. The incident cannot be resolved due to an invalid state. For example, the associated job may have no retries left.
         errors.ResolveIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
         errors.ResolveIncidentServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
@@ -123,6 +127,12 @@ def sync(
             )
         if response.status_code == 404:
             raise errors.ResolveIncidentNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+            )
+        if response.status_code == 409:
+            raise errors.ResolveIncidentConflict(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
@@ -189,6 +199,7 @@ async def asyncio(
     Raises:
         errors.ResolveIncidentBadRequest: If the response status code is 400. The provided data is not valid.
         errors.ResolveIncidentNotFound: If the response status code is 404. The incident with the incidentKey is not found.
+        errors.ResolveIncidentConflict: If the response status code is 409. The incident cannot be resolved due to an invalid state. For example, the associated job may have no retries left.
         errors.ResolveIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
         errors.ResolveIncidentServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
@@ -207,6 +218,12 @@ async def asyncio(
             )
         if response.status_code == 404:
             raise errors.ResolveIncidentNotFound(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+            )
+        if response.status_code == 409:
+            raise errors.ResolveIncidentConflict(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),

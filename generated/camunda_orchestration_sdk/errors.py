@@ -4383,6 +4383,15 @@ class ResolveIncidentBadRequest(ApiError):
         super().__init__(status_code=status_code, content=content, parsed=parsed)
 
 
+class ResolveIncidentConflict(ApiError):
+    """Raised when the server returns HTTP 409. The incident cannot be resolved due to an invalid state. For example, the associated job may have no retries left."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
 class ResolveIncidentInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
@@ -5095,7 +5104,7 @@ class SearchGroupsForbidden(ApiError):
 
 
 class SearchGroupsInternalServerError(ApiError):
-    """Raised when the server returns HTTP 500. An error occurred."""
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
     parsed: ProblemDetail
 
@@ -5599,6 +5608,24 @@ class SearchUserTaskAuditLogsBadRequest(ApiError):
 
 
 class SearchUserTaskAuditLogsInternalServerError(ApiError):
+    """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class SearchUserTaskEffectiveVariablesBadRequest(ApiError):
+    """Raised when the server returns HTTP 400. The provided data is not valid."""
+
+    parsed: ProblemDetail
+
+    def __init__(self, *, status_code: int, content: bytes, parsed: ProblemDetail):
+        super().__init__(status_code=status_code, content=content, parsed=parsed)
+
+
+class SearchUserTaskEffectiveVariablesInternalServerError(ApiError):
     """Raised when the server returns HTTP 500. An internal error occurred while processing the request."""
 
     parsed: ProblemDetail
@@ -7496,6 +7523,7 @@ __all__ = [
     "ResetClockInternalServerError",
     "ResetClockServiceUnavailable",
     "ResolveIncidentBadRequest",
+    "ResolveIncidentConflict",
     "ResolveIncidentInternalServerError",
     "ResolveIncidentNotFound",
     "ResolveIncidentServiceUnavailable",
@@ -7632,6 +7660,8 @@ __all__ = [
     "SearchTenantsUnauthorized",
     "SearchUserTaskAuditLogsBadRequest",
     "SearchUserTaskAuditLogsInternalServerError",
+    "SearchUserTaskEffectiveVariablesBadRequest",
+    "SearchUserTaskEffectiveVariablesInternalServerError",
     "SearchUserTaskVariablesBadRequest",
     "SearchUserTaskVariablesInternalServerError",
     "SearchUserTasksBadRequest",
