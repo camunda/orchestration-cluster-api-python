@@ -2,6 +2,24 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.20 (2026-03-25)
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`9d2979f`](https://github.com/camunda/orchestration-cluster-api-python/commit/9d2979f703182720f0509869f3bdeb6df26c5bfb))
+
+### Continuous Integration
+
+- Add Dependabot
+  ([`07f1008`](https://github.com/camunda/orchestration-cluster-api-python/commit/07f1008b07cc7745aa1f3481d1456ee80a46af51))
+
+### Features
+
+- Replace per-operation exception classes with per-status exceptions
+  ([`0665ce7`](https://github.com/camunda/orchestration-cluster-api-python/commit/0665ce7fb80fffd7de5fb356c8f5de817a61936f))
+
+
 ## v8.9.0-dev.19 (2026-03-25)
 
 ### Bug Fixes
