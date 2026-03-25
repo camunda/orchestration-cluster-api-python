@@ -28,6 +28,18 @@ from camunda_orchestration_sdk import (
 )
 
 
+# region GetProcessInstance
+def get_process_instance_example() -> None:
+    client = CamundaClient()
+
+    result = client.get_process_instance(
+        process_instance_key=ProcessInstanceKey("123456"),
+    )
+
+    print(f"Process instance: {result.process_definition_id}")
+# endregion GetProcessInstance
+
+
 # region DeleteProcessInstance
 def delete_process_instance_example() -> None:
     client = CamundaClient()

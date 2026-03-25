@@ -319,7 +319,7 @@
     { "file": "extended_operations.py", "region": "DeleteProcessInstance", "label": "Delete a process instance" }
   ],
   "get_process_instance": [
-    { "file": "process_instance.py", "region": "GetProcessInstance", "label": "Get a process instance" }
+    { "file": "extended_operations.py", "region": "GetProcessInstance", "label": "Get a process instance" }
   ],
   "migrate_process_instance": [
     { "file": "extended_operations.py", "region": "MigrateProcessInstance", "label": "Migrate a process instance" }
@@ -483,8 +483,8 @@
   "get_authentication": [
     { "file": "admin_operations.py", "region": "GetAuthentication", "label": "Get authentication info" }
   ],
-  "get_status": [
-    { "file": "admin_operations.py", "region": "GetStatus", "label": "Check cluster status" }
+  "get_topology": [
+    { "file": "admin_operations.py", "region": "GetTopology", "label": "Get cluster topology" }
   ],
   "pin_clock": [
     { "file": "admin_operations.py", "region": "PinClock", "label": "Pin the cluster clock" }

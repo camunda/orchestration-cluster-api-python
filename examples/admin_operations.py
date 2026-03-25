@@ -251,14 +251,14 @@ def get_authentication_example() -> None:
 # endregion GetAuthentication
 
 
-# region GetStatus
-def get_status_example() -> None:
+# region GetTopology
+def get_topology_example() -> None:
     client = CamundaClient()
 
     result = client.get_topology()
 
-    print(f"Status: {result}")
-# endregion GetStatus
+    print(f"Topology: {result}")
+# endregion GetTopology
 
 
 # region PinClock
