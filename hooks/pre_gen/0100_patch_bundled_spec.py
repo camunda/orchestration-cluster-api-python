@@ -640,7 +640,7 @@ def patch_bundled_spec(spec_path: Path) -> None:
         if isinstance(title, str):
             normalized = to_pascal_case(title)
             if normalized != sname and normalized in schema_keys:
-                print(f"Fixing title/key collision: '{title}' on {sname} → {sname}")
+                print(f"Fixing title/key collision: '{title}' on {sname} -> {sname}")
                 s["title"] = sname
 
     # Extract nested properties to fix union issues
