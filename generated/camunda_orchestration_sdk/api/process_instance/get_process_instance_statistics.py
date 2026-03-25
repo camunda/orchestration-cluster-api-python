@@ -93,10 +93,10 @@ def sync(
             2251799813690746.
 
     Raises:
-        errors.GetProcessInstanceStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.GetProcessInstanceStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.GetProcessInstanceStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.GetProcessInstanceStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -104,30 +104,38 @@ def sync(
     response = sync_detailed(process_instance_key=process_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.GetProcessInstanceStatisticsBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
             )
         if response.status_code == 401:
-            raise errors.GetProcessInstanceStatisticsUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
             )
         if response.status_code == 403:
-            raise errors.GetProcessInstanceStatisticsForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
             )
         if response.status_code == 500:
-            raise errors.GetProcessInstanceStatisticsInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_process_instance_statistics",
+        )
     assert response.parsed is not None
     return cast(ProcessInstanceElementStatisticsQueryResult, response.parsed)
 
@@ -167,10 +175,10 @@ async def asyncio(
             2251799813690746.
 
     Raises:
-        errors.GetProcessInstanceStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.GetProcessInstanceStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.GetProcessInstanceStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.GetProcessInstanceStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -180,29 +188,37 @@ async def asyncio(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.GetProcessInstanceStatisticsBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
             )
         if response.status_code == 401:
-            raise errors.GetProcessInstanceStatisticsUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
             )
         if response.status_code == 403:
-            raise errors.GetProcessInstanceStatisticsForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
             )
         if response.status_code == 500:
-            raise errors.GetProcessInstanceStatisticsInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_process_instance_statistics",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_process_instance_statistics",
+        )
     assert response.parsed is not None
     return cast(ProcessInstanceElementStatisticsQueryResult, response.parsed)

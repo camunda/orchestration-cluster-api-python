@@ -100,8 +100,8 @@ def sync(
         body (UserTaskAuditLogSearchQueryRequest | Unset): User task search query request.
 
     Raises:
-        errors.SearchUserTaskAuditLogsBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchUserTaskAuditLogsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -109,18 +109,24 @@ def sync(
     response = sync_detailed(user_task_key=user_task_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchUserTaskAuditLogsBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_user_task_audit_logs",
             )
         if response.status_code == 500:
-            raise errors.SearchUserTaskAuditLogsInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_user_task_audit_logs",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_user_task_audit_logs",
+        )
     assert response.parsed is not None
     return cast(AuditLogSearchQueryResult, response.parsed)
 
@@ -167,8 +173,8 @@ async def asyncio(
         body (UserTaskAuditLogSearchQueryRequest | Unset): User task search query request.
 
     Raises:
-        errors.SearchUserTaskAuditLogsBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchUserTaskAuditLogsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -178,17 +184,23 @@ async def asyncio(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchUserTaskAuditLogsBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_user_task_audit_logs",
             )
         if response.status_code == 500:
-            raise errors.SearchUserTaskAuditLogsInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_user_task_audit_logs",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_user_task_audit_logs",
+        )
     assert response.parsed is not None
     return cast(AuditLogSearchQueryResult, response.parsed)

@@ -142,8 +142,8 @@ def sync(
         body (CreateDocumentsData):
 
     Raises:
-        errors.CreateDocumentsBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.CreateDocumentsUnsupportedMediaType: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnsupportedMediaTypeError: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -151,18 +151,22 @@ def sync(
     response = sync_detailed(client=client, body=body, store_id=store_id)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CreateDocumentsBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_documents",
             )
         if response.status_code == 415:
-            raise errors.CreateDocumentsUnsupportedMediaType(
+            raise errors.UnsupportedMediaTypeError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_documents",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="create_documents"
+        )
     assert response.parsed is not None
     return cast(DocumentCreationBatchResponse, response.parsed)
 
@@ -251,8 +255,8 @@ async def asyncio(
         body (CreateDocumentsData):
 
     Raises:
-        errors.CreateDocumentsBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.CreateDocumentsUnsupportedMediaType: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnsupportedMediaTypeError: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -260,17 +264,21 @@ async def asyncio(
     response = await asyncio_detailed(client=client, body=body, store_id=store_id)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CreateDocumentsBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_documents",
             )
         if response.status_code == 415:
-            raise errors.CreateDocumentsUnsupportedMediaType(
+            raise errors.UnsupportedMediaTypeError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_documents",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="create_documents"
+        )
     assert response.parsed is not None
     return cast(DocumentCreationBatchResponse, response.parsed)

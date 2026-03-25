@@ -92,10 +92,10 @@ def sync(
         body (MappingRuleCreateRequest | Unset):
 
     Raises:
-        errors.CreateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.CreateMappingRuleForbidden: If the response status code is 403. The request to create a mapping rule was denied. More details are provided in the response body.
-        errors.CreateMappingRuleNotFound: If the response status code is 404. The request to create a mapping rule was denied.
-        errors.CreateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.ForbiddenError: If the response status code is 403. The request to create a mapping rule was denied. More details are provided in the response body.
+        errors.NotFoundError: If the response status code is 404. The request to create a mapping rule was denied.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -103,30 +103,36 @@ def sync(
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CreateMappingRuleBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_mapping_rule",
             )
         if response.status_code == 403:
-            raise errors.CreateMappingRuleForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_mapping_rule",
             )
         if response.status_code == 404:
-            raise errors.CreateMappingRuleNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_mapping_rule",
             )
         if response.status_code == 500:
-            raise errors.CreateMappingRuleInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_mapping_rule",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="create_mapping_rule"
+        )
     assert response.parsed is not None
     return cast(CreateMappingRuleResponse201, response.parsed)
 
@@ -169,10 +175,10 @@ async def asyncio(
         body (MappingRuleCreateRequest | Unset):
 
     Raises:
-        errors.CreateMappingRuleBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.CreateMappingRuleForbidden: If the response status code is 403. The request to create a mapping rule was denied. More details are provided in the response body.
-        errors.CreateMappingRuleNotFound: If the response status code is 404. The request to create a mapping rule was denied.
-        errors.CreateMappingRuleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.ForbiddenError: If the response status code is 403. The request to create a mapping rule was denied. More details are provided in the response body.
+        errors.NotFoundError: If the response status code is 404. The request to create a mapping rule was denied.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -180,29 +186,35 @@ async def asyncio(
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CreateMappingRuleBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_mapping_rule",
             )
         if response.status_code == 403:
-            raise errors.CreateMappingRuleForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_mapping_rule",
             )
         if response.status_code == 404:
-            raise errors.CreateMappingRuleNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_mapping_rule",
             )
         if response.status_code == 500:
-            raise errors.CreateMappingRuleInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_mapping_rule",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="create_mapping_rule"
+        )
     assert response.parsed is not None
     return cast(CreateMappingRuleResponse201, response.parsed)

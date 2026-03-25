@@ -100,11 +100,11 @@ def sync(
         body (MessageCorrelationRequest):
 
     Raises:
-        errors.CorrelateMessageBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.CorrelateMessageForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.CorrelateMessageNotFound: If the response status code is 404. Not found
-        errors.CorrelateMessageInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.CorrelateMessageServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. Not found
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -112,36 +112,43 @@ def sync(
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CorrelateMessageBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="correlate_message",
             )
         if response.status_code == 403:
-            raise errors.CorrelateMessageForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="correlate_message",
             )
         if response.status_code == 404:
-            raise errors.CorrelateMessageNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="correlate_message",
             )
         if response.status_code == 500:
-            raise errors.CorrelateMessageInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="correlate_message",
             )
         if response.status_code == 503:
-            raise errors.CorrelateMessageServiceUnavailable(
+            raise errors.ServiceUnavailableError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="correlate_message",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="correlate_message"
+        )
     assert response.parsed is not None
     return cast(MessageCorrelationResult, response.parsed)
 
@@ -190,11 +197,11 @@ async def asyncio(
         body (MessageCorrelationRequest):
 
     Raises:
-        errors.CorrelateMessageBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.CorrelateMessageForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.CorrelateMessageNotFound: If the response status code is 404. Not found
-        errors.CorrelateMessageInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.CorrelateMessageServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. Not found
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -202,35 +209,42 @@ async def asyncio(
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CorrelateMessageBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="correlate_message",
             )
         if response.status_code == 403:
-            raise errors.CorrelateMessageForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="correlate_message",
             )
         if response.status_code == 404:
-            raise errors.CorrelateMessageNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="correlate_message",
             )
         if response.status_code == 500:
-            raise errors.CorrelateMessageInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="correlate_message",
             )
         if response.status_code == 503:
-            raise errors.CorrelateMessageServiceUnavailable(
+            raise errors.ServiceUnavailableError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="correlate_message",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="correlate_message"
+        )
     assert response.parsed is not None
     return cast(MessageCorrelationResult, response.parsed)

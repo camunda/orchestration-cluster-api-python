@@ -878,13 +878,1096 @@ class CamundaClient:
             body (ClockPinRequest):
 
         Raises:
-            errors.PinClockBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.PinClockInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.PinClockServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None
+            None"""
+        from .api.tenant.delete_tenant import sync as delete_tenant_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def assign_group_to_tenant(
+        self, tenant_id: TenantId, group_id: str, **kwargs: Any
+    ) -> None:
+        """Assign a group to a tenant
+
+         Assigns a group to a specified tenant.
+        Group members (users, clients) can then access tenant data and perform authorized actions.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            group_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or group was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.assign_group_to_tenant import (
+            sync as assign_group_to_tenant_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = assign_group_to_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def unassign_role_from_tenant(
+        self, tenant_id: TenantId, role_id: str, **kwargs: Any
+    ) -> None:
+        """Unassign a role from a tenant
+
+         Unassigns a role from a specified tenant.
+        Users, Clients or Groups, that have the role assigned, will no longer have access to the
+        tenant's data - unless they are assigned directly to the tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            role_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or role was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.unassign_role_from_tenant import (
+            sync as unassign_role_from_tenant_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = unassign_role_from_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_group_ids_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: TenantGroupSearchQueryRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> TenantGroupSearchResult:
+        """Search groups for tenant
+
+         Retrieves a filtered and sorted list of groups for a specified tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            body (TenantGroupSearchQueryRequest | Unset):
+
+        Raises:
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            TenantGroupSearchResult"""
+        from .api.tenant.search_group_ids_for_tenant import (
+            sync as search_group_ids_for_tenant_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_group_ids_for_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_users_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: SearchUsersForTenantData | Unset = UNSET,
+        **kwargs: Any,
+    ) -> SearchUsersForTenantResponse200:
+        """Search users for tenant
+
+         Retrieves a filtered and sorted list of users for a specified tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            body (SearchUsersForTenantData | Unset):
+
+        Raises:
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SearchUsersForTenantResponse200"""
+        from .api.tenant.search_users_for_tenant import (
+            sync as search_users_for_tenant_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_users_for_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def unassign_client_from_tenant(
+        self, tenant_id: TenantId, client_id: str, **kwargs: Any
+    ) -> None:
+        """Unassign a client from a tenant
+
+         Unassigns the client from the specified tenant.
+        The client can no longer access tenant data.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            client_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The tenant does not exist or the client was not assigned to it.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.unassign_client_from_tenant import (
+            sync as unassign_client_from_tenant_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = unassign_client_from_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def unassign_user_from_tenant(
+        self, tenant_id: TenantId, username: Username, **kwargs: Any
+    ) -> None:
+        """Unassign a user from a tenant
+
+         Unassigns the user from the specified tenant.
+        The user can no longer access tenant data.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            username (str): The unique name of a user. Example: swillis.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or user was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.unassign_user_from_tenant import (
+            sync as unassign_user_from_tenant_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = unassign_user_from_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_roles_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: RoleSearchQueryRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> SearchRolesForTenantResponse200:
+        """Search roles for tenant
+
+         Retrieves a filtered and sorted list of roles for a specified tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            body (RoleSearchQueryRequest | Unset): Role search request.
+
+        Raises:
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SearchRolesForTenantResponse200"""
+        from .api.tenant.search_roles_for_tenant import (
+            sync as search_roles_for_tenant_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_roles_for_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def unassign_group_from_tenant(
+        self, tenant_id: TenantId, group_id: str, **kwargs: Any
+    ) -> None:
+        """Unassign a group from a tenant
+
+         Unassigns a group from a specified tenant.
+        Members of the group (users, clients) will no longer have access to the tenant's data - except they
+        are assigned directly to the tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            group_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or group was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.unassign_group_from_tenant import (
+            sync as unassign_group_from_tenant_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = unassign_group_from_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_clients_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: SearchClientsForTenantData | Unset = UNSET,
+        **kwargs: Any,
+    ) -> SearchClientsForTenantResponse200:
+        """Search clients for tenant
+
+         Retrieves a filtered and sorted list of clients for a specified tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            body (SearchClientsForTenantData | Unset):
+
+        Raises:
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SearchClientsForTenantResponse200"""
+        from .api.tenant.search_clients_for_tenant import (
+            sync as search_clients_for_tenant_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_clients_for_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_tenants(
+        self, *, data: TenantSearchQueryRequest | Unset = UNSET, **kwargs: Any
+    ) -> TenantSearchQueryResult:
+        """Search tenants
+
+         Retrieves a filtered and sorted list of tenants.
+
+        Args:
+            body (TenantSearchQueryRequest | Unset): Tenant search request
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            TenantSearchQueryResult"""
+        from .api.tenant.search_tenants import sync as search_tenants_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_tenants_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def assign_user_to_tenant(
+        self, tenant_id: TenantId, username: Username, **kwargs: Any
+    ) -> None:
+        """Assign a user to a tenant
+
+         Assign a single user to a specified tenant. The user can then access tenant data and perform
+        authorized actions.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            username (str): The unique name of a user. Example: swillis.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or user was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.assign_user_to_tenant import sync as assign_user_to_tenant_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = assign_user_to_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def assign_role_to_tenant(
+        self, tenant_id: TenantId, role_id: str, **kwargs: Any
+    ) -> None:
+        """Assign a role to a tenant
+
+         Assigns a role to a specified tenant.
+        Users, Clients or Groups, that have the role assigned, will get access to the tenant's data and can
+        perform actions according to their authorizations.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            role_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or role was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.assign_role_to_tenant import sync as assign_role_to_tenant_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = assign_role_to_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_mapping_rules_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: MappingRuleSearchQueryRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> SearchMappingRulesForTenantResponse200:
+        """Search mapping rules for tenant
+
+         Retrieves a filtered and sorted list of MappingRules for a specified tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            body (MappingRuleSearchQueryRequest | Unset):
+
+        Raises:
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SearchMappingRulesForTenantResponse200"""
+        from .api.tenant.search_mapping_rules_for_tenant import (
+            sync as search_mapping_rules_for_tenant_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_mapping_rules_for_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def assign_mapping_rule_to_tenant(
+        self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any
+    ) -> None:
+        """Assign a mapping rule to a tenant
+
+         Assign a single mapping rule to a specified tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            mapping_rule_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.assign_mapping_rule_to_tenant import (
+            sync as assign_mapping_rule_to_tenant_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = assign_mapping_rule_to_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def update_tenant(
+        self, tenant_id: TenantId, *, data: TenantUpdateRequest, **kwargs: Any
+    ) -> TenantUpdateResult:
+        """Update tenant
+
+         Updates an existing tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            body (TenantUpdateRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            TenantUpdateResult"""
+        from .api.tenant.update_tenant import sync as update_tenant_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = update_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def assign_client_to_tenant(
+        self, tenant_id: TenantId, client_id: str, **kwargs: Any
+    ) -> None:
+        """Assign a client to a tenant
+
+         Assign the client to the specified tenant.
+        The client can then access tenant data and perform authorized actions.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            client_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The tenant was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.assign_client_to_tenant import (
+            sync as assign_client_to_tenant_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = assign_client_to_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_tenant(self, tenant_id: TenantId, **kwargs: Any) -> TenantResult:
+        """Get tenant
+
+         Retrieves a single tenant by tenant ID.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Tenant not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            TenantResult"""
+        from .api.tenant.get_tenant import sync as get_tenant_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def create_tenant(
+        self, *, data: TenantCreateRequest, **kwargs: Any
+    ) -> TenantCreateResult:
+        """Create tenant
+
+         Creates a new tenant.
+
+        Args:
+            body (TenantCreateRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The resource was not found.
+            errors.ConflictError: If the response status code is 409. Tenant with this id already exists.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            TenantCreateResult"""
+        from .api.tenant.create_tenant import sync as create_tenant_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = create_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def unassign_mapping_rule_from_tenant(
+        self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any
+    ) -> None:
+        """Unassign a mapping rule from a tenant
+
+         Unassigns a single mapping rule from a specified tenant without deleting the rule.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            mapping_rule_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.unassign_mapping_rule_from_tenant import (
+            sync as unassign_mapping_rule_from_tenant_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = unassign_mapping_rule_from_tenant_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def cancel_batch_operation(
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Cancel Batch operation
+
+         Cancels a running batch operation.
+        This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+        (/batch-operations/{batchOperationKey}).
+
+        Args:
+            batch_operation_key (str): System-generated key for an batch operation. Example:
+                2251799813684321.
+            body (Any | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The batch operation was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.batch_operation.cancel_batch_operation import (
+            sync as cancel_batch_operation_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = cancel_batch_operation_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def resume_batch_operation(
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Resume Batch operation
+
+         Resumes a suspended batch operation.
+        This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+        (/batch-operations/{batchOperationKey}).
+
+        Args:
+            batch_operation_key (str): System-generated key for an batch operation. Example:
+                2251799813684321.
+            body (Any | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The batch operation was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.batch_operation.resume_batch_operation import (
+            sync as resume_batch_operation_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = resume_batch_operation_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def suspend_batch_operation(
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Suspend Batch operation
+
+         Suspends a running batch operation.
+        This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+        (/batch-operations/{batchOperationKey}).
+
+        Args:
+            batch_operation_key (str): System-generated key for an batch operation. Example:
+                2251799813684321.
+            body (Any | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The batch operation was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.batch_operation.suspend_batch_operation import (
+            sync as suspend_batch_operation_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = suspend_batch_operation_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_batch_operations(
+        self, *, data: BatchOperationSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> BatchOperationSearchQueryResult:
+        """Search batch operations
+
+         Search for batch operations based on given criteria.
+
+        Args:
+            body (BatchOperationSearchQuery | Unset): Batch operation search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationSearchQueryResult"""
+        from .api.batch_operation.search_batch_operations import (
+            sync as search_batch_operations_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_batch_operations_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_batch_operation(
+        self, batch_operation_key: BatchOperationKey, **kwargs: Any
+    ) -> BatchOperationResponse:
+        """Get batch operation
+
+         Get batch operation by key.
+
+        Args:
+            batch_operation_key (str): System-generated key for an batch operation. Example:
+                2251799813684321.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The batch operation is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationResponse"""
+        from .api.batch_operation.get_batch_operation import (
+            sync as get_batch_operation_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_batch_operation_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_batch_operation_items(
+        self, *, data: BatchOperationItemSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> BatchOperationItemSearchQueryResult:
+        """Search batch operation items
+
+         Search for batch operation items based on given criteria.
+
+        Args:
+            body (BatchOperationItemSearchQuery | Unset): Batch operation item search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationItemSearchQueryResult"""
+        from .api.batch_operation.search_batch_operation_items import (
+            sync as search_batch_operation_items_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_batch_operation_items_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_topology(self, **kwargs: Any) -> TopologyResponse:
+        """Get cluster topology
+
+         Obtains the current topology of the cluster the gateway is part of.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            TopologyResponse
 
         Examples:
             **Pin the cluster clock:**
@@ -931,8 +2014,11 @@ class CamundaClient:
         in future releases.
 
         Raises:
-            errors.ResetClockInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.ResetClockServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role or group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -1093,10 +2179,11 @@ class CamundaClient:
             body (CorrelatedMessageSubscriptionSearchQuery | Unset):
 
         Raises:
-            errors.SearchCorrelatedMessageSubscriptionsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchCorrelatedMessageSubscriptionsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchCorrelatedMessageSubscriptionsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchCorrelatedMessageSubscriptionsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -1114,12 +2201,18 @@ class CamundaClient:
                         data=CorrelatedMessageSubscriptionSearchQuery(),
                     )
 
-                    if not isinstance(result.items, Unset):
-                        for sub in result.items:
-                            print(f"Correlated subscription: {sub.message_name}")
-        """
-        from .api.message_subscription.search_correlated_message_subscriptions import (
-            sync as search_correlated_message_subscriptions_sync,
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role or mapping rule with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.role.unassign_role_from_mapping_rule import (
+            sync as unassign_role_from_mapping_rule_sync,
         )
 
         _kwargs = locals()
@@ -1139,7 +2232,170 @@ class CamundaClient:
         finally:
             self._bp.release()
 
-    def search_global_task_listeners(
+    def search_roles(
+        self, *, data: RoleSearchQueryRequest | Unset = UNSET, **kwargs: Any
+    ) -> RoleSearchQueryResult:
+        """Search roles
+
+         Search for roles based on given criteria.
+
+        Args:
+            body (RoleSearchQueryRequest | Unset): Role search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            RoleSearchQueryResult"""
+        from .api.role.search_roles import sync as search_roles_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_roles_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def unassign_role_from_client(
+        self, role_id: str, client_id: str, **kwargs: Any
+    ) -> None:
+        """Unassign a role from a client
+
+         Unassigns the specified role from the client. The client will no longer inherit the authorizations
+        associated with this role.
+
+        Args:
+            role_id (str):
+            client_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role or client with the given ID or username was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.role.unassign_role_from_client import (
+            sync as unassign_role_from_client_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = unassign_role_from_client_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def unassign_role_from_user(
+        self, role_id: str, username: Username, **kwargs: Any
+    ) -> None:
+        """Unassign a role from a user
+
+         Unassigns a role from a user. The user will no longer inherit the authorizations associated with
+        this role.
+
+        Args:
+            role_id (str):
+            username (str): The unique name of a user. Example: swillis.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role or user with the given ID or username was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.role.unassign_role_from_user import (
+            sync as unassign_role_from_user_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = unassign_role_from_user_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def create_role(
+        self, *, data: RoleCreateRequest | Unset = UNSET, **kwargs: Any
+    ) -> RoleCreateResult:
+        """Create role
+
+         Create a new role.
+
+        Args:
+            body (RoleCreateRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            RoleCreateResult"""
+        from .api.role.create_role import sync as create_role_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = create_role_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_clients_for_role(
         self,
         *,
         data: GlobalTaskListenerSearchQueryRequest | Unset = UNSET,
@@ -1153,10 +2409,11 @@ class CamundaClient:
             body (GlobalTaskListenerSearchQueryRequest | Unset): Global listener search query request.
 
         Raises:
-            errors.SearchGlobalTaskListenersBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchGlobalTaskListenersUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchGlobalTaskListenersForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchGlobalTaskListenersInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -1211,12 +2468,12 @@ class CamundaClient:
             body (UpdateGlobalTaskListenerRequest):
 
         Raises:
-            errors.UpdateGlobalTaskListenerBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UpdateGlobalTaskListenerUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.UpdateGlobalTaskListenerForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.UpdateGlobalTaskListenerNotFound: If the response status code is 404. The global user task listener was not found.
-            errors.UpdateGlobalTaskListenerInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UpdateGlobalTaskListenerServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role or user with the given ID or username was not found.
+            errors.ConflictError: If the response status code is 409. The role is already assigned to the user with the given ID.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -1238,10 +2495,142 @@ class CamundaClient:
                         ),
                     )
 
-                    print(f"Updated listener: {result.id}")
-        """
-        from .api.global_listener.update_global_task_listener import (
-            sync as update_global_task_listener_sync,
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            RoleGroupSearchResult"""
+        from .api.role.search_groups_for_role import sync as search_groups_for_role_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_groups_for_role_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def update_role(
+        self, role_id: str, *, data: RoleUpdateRequest, **kwargs: Any
+    ) -> RoleUpdateResult:
+        """Update role
+
+         Update a role with the given ID.
+
+        Args:
+            role_id (str):
+            body (RoleUpdateRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The role with the ID is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            RoleUpdateResult"""
+        from .api.role.update_role import sync as update_role_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = update_role_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def assign_role_to_group(self, role_id: str, group_id: str, **kwargs: Any) -> None:
+        """Assign a role to a group
+
+         Assigns the specified role to the group. Every member of the group (user or client) will inherit the
+        authorizations associated with this role.
+
+        Args:
+            role_id (str):
+            group_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role or group with the given ID was not found.
+            errors.ConflictError: If the response status code is 409. The role is already assigned to the group with the given ID.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.role.assign_role_to_group import sync as assign_role_to_group_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = assign_role_to_group_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_mapping_rules_for_role(
+        self,
+        role_id: str,
+        *,
+        data: MappingRuleSearchQueryRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> SearchMappingRulesForRoleResponse200:
+        """Search role mapping rules
+
+         Search mapping rules with assigned role.
+
+        Args:
+            role_id (str):
+            body (MappingRuleSearchQueryRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SearchMappingRulesForRoleResponse200"""
+        from .api.role.search_mapping_rules_for_role import (
+            sync as search_mapping_rules_for_role_sync,
         )
 
         _kwargs = locals()
@@ -1272,12 +2661,12 @@ class CamundaClient:
             body (CreateGlobalTaskListenerRequest):
 
         Raises:
-            errors.CreateGlobalTaskListenerBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.CreateGlobalTaskListenerUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.CreateGlobalTaskListenerForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.CreateGlobalTaskListenerConflict: If the response status code is 409. A global listener with this id already exists.
-            errors.CreateGlobalTaskListenerInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.CreateGlobalTaskListenerServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+            errors.ConflictError: If the response status code is 409. The role was already assigned to the client with the given ID.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -1299,10 +2688,58 @@ class CamundaClient:
                         ),
                     )
 
-                    print(f"Task listener: {result.id}")
-        """
-        from .api.global_listener.create_global_task_listener import (
-            sync as create_global_task_listener_sync,
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The role with the ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.role.delete_role import sync as delete_role_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_role_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def assign_role_to_mapping_rule(
+        self, role_id: str, mapping_rule_id: str, **kwargs: Any
+    ) -> None:
+        """Assign a role to a mapping rule
+
+         Assigns a role to a mapping rule.
+
+        Args:
+            role_id (str):
+            mapping_rule_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role or mapping rule with the given ID was not found.
+            errors.ConflictError: If the response status code is 409. The role is already assigned to the mapping rule with the given ID.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.role.assign_role_to_mapping_rule import (
+            sync as assign_role_to_mapping_rule_sync,
         )
 
         _kwargs = locals()
@@ -1331,12 +2768,10 @@ class CamundaClient:
             id (str): The user-defined id for the global listener Example: GlobalListener_1.
 
         Raises:
-            errors.DeleteGlobalTaskListenerBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.DeleteGlobalTaskListenerUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.DeleteGlobalTaskListenerForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.DeleteGlobalTaskListenerNotFound: If the response status code is 404. The global user task listener was not found.
-            errors.DeleteGlobalTaskListenerInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.DeleteGlobalTaskListenerServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -1350,10 +2785,21 @@ class CamundaClient:
                 def delete_global_task_listener_example() -> None:
                     client = CamundaClient()
 
-                    client.delete_global_task_listener(id=GlobalListenerId("listener-123"))
-        """
-        from .api.global_listener.delete_global_task_listener import (
-            sync as delete_global_task_listener_sync,
+        Args:
+            body (ConditionalEvaluationInstruction):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. The client is not authorized to start process instances for the specified process definition. If a processDefinitionKey is not provided, this indicates that the client is not authorized to start process instances for at least one of the matched process definitions.
+            errors.NotFoundError: If the response status code is 404. The process definition was not found for the given processDefinitionKey.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            EvaluateConditionalResult"""
+        from .api.conditional.evaluate_conditionals import (
+            sync as evaluate_conditionals_sync,
         )
 
         _kwargs = locals()
@@ -1378,16 +2824,48 @@ class CamundaClient:
     ) -> GlobalTaskListenerResult:
         """Get global user task listener
 
-         Get a global user task listener by its id.
+         Obtains the status of the current Camunda license.
+
+        Raises:
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            LicenseResponse"""
+        from .api.license_.get_license import sync as get_license_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_license_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_decision_instances(
+        self, *, data: DecisionInstanceSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> DecisionInstanceSearchQueryResult:
+        """Search decision instances
+
+         Search for decision instances based on given criteria.
 
         Args:
             id (str): The user-defined id for the global listener Example: GlobalListener_1.
 
         Raises:
-            errors.GetGlobalTaskListenerUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetGlobalTaskListenerForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetGlobalTaskListenerNotFound: If the response status code is 404. The global user task listener with the given id was not found.
-            errors.GetGlobalTaskListenerInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -1416,7 +2894,141 @@ class CamundaClient:
             _kwargs["body"] = _kwargs.pop("data")
         self._bp.acquire()
         try:
-            _result = get_global_task_listener_sync(**_kwargs)
+            _result = search_decision_instances_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_decision_instance(
+        self,
+        decision_evaluation_instance_key: DecisionEvaluationInstanceKey,
+        **kwargs: Any,
+    ) -> DecisionInstanceGetQueryResult:
+        """Get decision instance
+
+         Returns a decision instance.
+
+        Args:
+            decision_evaluation_instance_key (str): System-generated key for a decision evaluation
+                instance. Example: 2251799813684367.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DecisionInstanceGetQueryResult"""
+        from .api.decision_instance.get_decision_instance import (
+            sync as get_decision_instance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_decision_instance_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def delete_decision_instance(
+        self,
+        decision_evaluation_key: DecisionEvaluationKey,
+        *,
+        data: DeleteDecisionInstanceData | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Delete decision instance
+
+         Delete all associated decision evaluations based on provided key.
+
+        Args:
+            decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
+                2251792362345323.
+            body (DeleteDecisionInstanceData | None | Unset):
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The decision instance is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.decision_instance.delete_decision_instance import (
+            sync as delete_decision_instance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_decision_instance_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def delete_decision_instances_batch_operation(
+        self, *, data: DecisionInstanceDeletionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Delete decision instances (batch)
+
+         Delete multiple decision instances. This will delete the historic data from secondary storage.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (DecisionInstanceDeletionBatchOperationRequest): The decision instance filter that
+                defines which decision instances should be deleted.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The decision instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.decision_instance.delete_decision_instances_batch_operation import (
+            sync as delete_decision_instances_batch_operation_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_decision_instances_batch_operation_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -1439,11 +3051,11 @@ class CamundaClient:
             variable_key (str): System-generated key for a variable. Example: 2251799813683287.
 
         Raises:
-            errors.GetVariableBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetVariableNotFound: If the response status code is 404. Not found
-            errors.GetVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -1506,10 +3118,10 @@ class CamundaClient:
             body (SearchVariablesData | Unset): Variable search query request.
 
         Raises:
-            errors.SearchVariablesBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchVariablesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchVariablesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -1560,10 +3172,11 @@ class CamundaClient:
             body (ExpressionEvaluationRequest):
 
         Raises:
-            errors.EvaluateExpressionBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.EvaluateExpressionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.EvaluateExpressionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.EvaluateExpressionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Cluster variable not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -2636,10 +4249,10 @@ class CamundaClient:
                 instance filter that defines which process instances should have their incidents resolved.
 
         Raises:
-            errors.ResolveIncidentsBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
-            errors.ResolveIncidentsBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.ResolveIncidentsBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.ResolveIncidentsBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -2694,10 +4307,10 @@ class CamundaClient:
                 2251799813690746.
 
         Raises:
-            errors.GetProcessInstanceSequenceFlowsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetProcessInstanceSequenceFlowsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetProcessInstanceSequenceFlowsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetProcessInstanceSequenceFlowsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -2730,7 +4343,304 @@ class CamundaClient:
             _kwargs["body"] = _kwargs.pop("data")
         self._bp.acquire()
         try:
-            _result = get_process_instance_sequence_flows_sync(**_kwargs)
+            _result = create_global_cluster_variable_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def update_tenant_cluster_variable(
+        self,
+        tenant_id: TenantId,
+        name: str,
+        *,
+        data: UpdateClusterVariableRequest,
+        **kwargs: Any,
+    ) -> ClusterVariableResult:
+        """Update a tenant-scoped cluster variable
+
+         Updates the value of an existing tenant-scoped cluster variable.
+        The variable must exist, otherwise a 404 error is returned.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            name (str):
+            body (UpdateClusterVariableRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Cluster variable not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterVariableResult"""
+        from .api.cluster_variable.update_tenant_cluster_variable import (
+            sync as update_tenant_cluster_variable_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = update_tenant_cluster_variable_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def delete_global_cluster_variable(self, name: str, **kwargs: Any) -> None:
+        """Delete a global-scoped cluster variable
+
+         Delete a global-scoped cluster variable.
+
+        Args:
+            name (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Cluster variable not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.cluster_variable.delete_global_cluster_variable import (
+            sync as delete_global_cluster_variable_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_global_cluster_variable_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def delete_tenant_cluster_variable(
+        self, tenant_id: TenantId, name: str, **kwargs: Any
+    ) -> None:
+        """Delete a tenant-scoped cluster variable
+
+         Delete a tenant-scoped cluster variable.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            name (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Cluster variable not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.cluster_variable.delete_tenant_cluster_variable import (
+            sync as delete_tenant_cluster_variable_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_tenant_cluster_variable_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def update_global_cluster_variable(
+        self, name: str, *, data: UpdateClusterVariableRequest, **kwargs: Any
+    ) -> ClusterVariableResult:
+        """Update a global-scoped cluster variable
+
+         Updates the value of an existing global cluster variable.
+        The variable must exist, otherwise a 404 error is returned.
+
+        Args:
+            name (str):
+            body (UpdateClusterVariableRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Cluster variable not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterVariableResult"""
+        from .api.cluster_variable.update_global_cluster_variable import (
+            sync as update_global_cluster_variable_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = update_global_cluster_variable_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def create_tenant_cluster_variable(
+        self, tenant_id: TenantId, *, data: CreateClusterVariableRequest, **kwargs: Any
+    ) -> ClusterVariableResult:
+        """Create a tenant-scoped cluster variable
+
+         Create a new cluster variable for the given tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            body (CreateClusterVariableRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterVariableResult"""
+        from .api.cluster_variable.create_tenant_cluster_variable import (
+            sync as create_tenant_cluster_variable_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = create_tenant_cluster_variable_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_global_cluster_variable(
+        self, name: str, **kwargs: Any
+    ) -> ClusterVariableResult:
+        """Get a global-scoped cluster variable
+
+         Get a global-scoped cluster variable.
+
+        Args:
+            name (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Cluster variable not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterVariableResult"""
+        from .api.cluster_variable.get_global_cluster_variable import (
+            sync as get_global_cluster_variable_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_global_cluster_variable_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def unassign_mapping_rule_from_group(
+        self, group_id: str, mapping_rule_id: str, **kwargs: Any
+    ) -> None:
+        """Unassign a mapping rule from a group
+
+         Unassigns a mapping rule from a group.
+
+        Args:
+            group_id (str):
+            mapping_rule_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group or mapping rule with the given ID was not found, or the mapping rule is not assigned to this group.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.group.unassign_mapping_rule_from_group import (
+            sync as unassign_mapping_rule_from_group_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = unassign_mapping_rule_from_group_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -2756,11 +4666,11 @@ class CamundaClient:
             body (RoleSearchQueryRequest | Unset): Role search request.
 
         Raises:
-            errors.SearchRolesForGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchRolesForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchRolesForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchRolesForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-            errors.SearchRolesForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -2820,11 +4730,12 @@ class CamundaClient:
             body (MappingRuleSearchQueryRequest | Unset):
 
         Raises:
-            errors.SearchMappingRulesForGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchMappingRulesForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchMappingRulesForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchMappingRulesForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-            errors.SearchMappingRulesForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.ConflictError: If the response status code is 409. The client with the given ID is already assigned to the group.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -2880,11 +4791,11 @@ class CamundaClient:
             body (GroupUpdateRequest):
 
         Raises:
-            errors.UpdateGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UpdateGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.UpdateGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-            errors.UpdateGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UpdateGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group or user with the given ID was not found, or the user is not assigned to this group.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -2938,11 +4849,11 @@ class CamundaClient:
             body (SearchUsersForGroupData | Unset):
 
         Raises:
-            errors.SearchUsersForGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchUsersForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchUsersForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchUsersForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-            errors.SearchUsersForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -2994,10 +4905,10 @@ class CamundaClient:
             group_id (str):
 
         Raises:
-            errors.GetGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-            errors.GetGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -3048,11 +4959,11 @@ class CamundaClient:
             client_id (str):
 
         Raises:
-            errors.UnassignClientFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UnassignClientFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.UnassignClientFromGroupNotFound: If the response status code is 404. The group with the given ID was not found, or the client is not assigned to this group.
-            errors.UnassignClientFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UnassignClientFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found, or the client is not assigned to this group.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -3092,6 +5003,248 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def update_group(
+        self, group_id: str, *, data: GroupUpdateRequest, **kwargs: Any
+    ) -> GroupUpdateResult:
+        """Update group
+
+         Update a group with the given ID.
+
+        Args:
+            group_id (str):
+            body (GroupUpdateRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            GroupUpdateResult"""
+        from .api.group.update_group import sync as update_group_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = update_group_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_groups(
+        self, *, data: GroupSearchQueryRequest | Unset = UNSET, **kwargs: Any
+    ) -> GroupSearchQueryResult:
+        """Search groups
+
+         Search for groups based on given criteria.
+
+        Args:
+            body (GroupSearchQueryRequest | Unset): Group search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            GroupSearchQueryResult"""
+        from .api.group.search_groups import sync as search_groups_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_groups_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def assign_mapping_rule_to_group(
+        self, group_id: str, mapping_rule_id: str, **kwargs: Any
+    ) -> None:
+        """Assign a mapping rule to a group
+
+         Assigns a mapping rule to a group.
+
+        Args:
+            group_id (str):
+            mapping_rule_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group or mapping rule with the given ID was not found.
+            errors.ConflictError: If the response status code is 409. The mapping rule with the given ID is already assigned to the group.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.group.assign_mapping_rule_to_group import (
+            sync as assign_mapping_rule_to_group_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = assign_mapping_rule_to_group_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_mapping_rules_for_group(
+        self,
+        group_id: str,
+        *,
+        data: MappingRuleSearchQueryRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> SearchMappingRulesForGroupResponse200:
+        """Search group mapping rules
+
+         Search mapping rules assigned to a group.
+
+        Args:
+            group_id (str):
+            body (MappingRuleSearchQueryRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SearchMappingRulesForGroupResponse200"""
+        from .api.group.search_mapping_rules_for_group import (
+            sync as search_mapping_rules_for_group_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_mapping_rules_for_group_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def create_group(
+        self, *, data: GroupCreateRequest | Unset = UNSET, **kwargs: Any
+    ) -> GroupCreateResult:
+        """Create group
+
+         Create a new group.
+
+        Args:
+            body (GroupCreateRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            GroupCreateResult"""
+        from .api.group.create_group import sync as create_group_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = create_group_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def delete_group(self, group_id: str, **kwargs: Any) -> None:
+        """Delete group
+
+         Deletes the group with the given ID.
+
+        Args:
+            group_id (str):
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.group.delete_group import sync as delete_group_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_group_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def assign_user_to_group(
         self, group_id: str, username: Username, **kwargs: Any
     ) -> None:
@@ -3105,12 +5258,12 @@ class CamundaClient:
             username (str): The unique name of a user. Example: swillis.
 
         Raises:
-            errors.AssignUserToGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.AssignUserToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.AssignUserToGroupNotFound: If the response status code is 404. The group or user with the given ID or username was not found.
-            errors.AssignUserToGroupConflict: If the response status code is 409. The user with the given ID is already assigned to the group.
-            errors.AssignUserToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.AssignUserToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group or user with the given ID or username was not found.
+            errors.ConflictError: If the response status code is 409. The user with the given ID is already assigned to the group.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -3221,11 +5374,11 @@ class CamundaClient:
             body (SearchClientsForGroupData | Unset):
 
         Raises:
-            errors.SearchClientsForGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchClientsForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchClientsForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchClientsForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-            errors.SearchClientsForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -3282,11 +5435,12 @@ class CamundaClient:
             username (str): The unique name of a user. Example: swillis.
 
         Raises:
-            errors.UnassignUserFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UnassignUserFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.UnassignUserFromGroupNotFound: If the response status code is 404. The group or user with the given ID was not found, or the user is not assigned to this group.
-            errors.UnassignUserFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UnassignUserFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The global user task listener was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -3338,11 +5492,10 @@ class CamundaClient:
             mapping_rule_id (str):
 
         Raises:
-            errors.UnassignMappingRuleFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UnassignMappingRuleFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.UnassignMappingRuleFromGroupNotFound: If the response status code is 404. The group or mapping rule with the given ID was not found, or the mapping rule is not assigned to this group.
-            errors.UnassignMappingRuleFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UnassignMappingRuleFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The global user task listener with the given id was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -3395,12 +5548,12 @@ class CamundaClient:
             client_id (str):
 
         Raises:
-            errors.AssignClientToGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.AssignClientToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.AssignClientToGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-            errors.AssignClientToGroupConflict: If the response status code is 409. The client with the given ID is already assigned to the group.
-            errors.AssignClientToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.AssignClientToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The global user task listener was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -4747,10 +6900,10 @@ class CamundaClient:
             body (ClusterVariableSearchQueryRequest | Unset): Cluster variable search query request.
 
         Raises:
-            errors.SearchClusterVariablesBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchClusterVariablesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchClusterVariablesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchClusterVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -4812,11 +6965,12 @@ class CamundaClient:
             body (UpdateClusterVariableRequest):
 
         Raises:
-            errors.UpdateTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UpdateTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.UpdateTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.UpdateTenantClusterVariableNotFound: If the response status code is 404. Cluster variable not found
-            errors.UpdateTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.ConflictError: If the response status code is 409. A global listener with this id already exists.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -5211,8 +7365,10 @@ class CamundaClient:
             body (CreateDocumentData):
 
         Raises:
-            errors.CreateDocumentBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.CreateDocumentUnsupportedMediaType: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -5257,8 +7413,10 @@ class CamundaClient:
             content_hash (str | Unset):
 
         Raises:
-            errors.GetDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
-            errors.GetDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -7973,10 +10131,10 @@ class CamundaClient:
             body (UserRequest):
 
         Raises:
-            errors.CreateAdminUserBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.CreateAdminUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.CreateAdminUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.CreateAdminUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -8778,9 +10936,9 @@ class CamundaClient:
             body (MessagePublicationRequest):
 
         Raises:
-            errors.PublishMessageBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.PublishMessageInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.PublishMessageServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -8838,11 +10996,11 @@ class CamundaClient:
             body (MessageCorrelationRequest):
 
         Raises:
-            errors.CorrelateMessageBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.CorrelateMessageForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.CorrelateMessageNotFound: If the response status code is 404. Not found
-            errors.CorrelateMessageInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.CorrelateMessageServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -8895,10 +11053,12 @@ class CamundaClient:
             body (DecisionRequirementsSearchQuery | Unset):
 
         Raises:
-            errors.SearchDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.ConflictError: If the response status code is 409. A user with this username already exists.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -8953,11 +11113,10 @@ class CamundaClient:
                 definition. Example: 2251799813683346.
 
         Raises:
-            errors.GetDecisionRequirementsXmlBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetDecisionRequirementsXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetDecisionRequirementsXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetDecisionRequirementsXmlNotFound: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
-            errors.GetDecisionRequirementsXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -9010,11 +11169,10 @@ class CamundaClient:
                 definition. Example: 2251799813683346.
 
         Raises:
-            errors.GetDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetDecisionRequirementsNotFound: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
-            errors.GetDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The user is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -9055,12 +11213,233 @@ class CamundaClient:
         finally:
             self._bp.release()
 
-    def delete_decision_instance(
+    def get_user(self, username: Username, **kwargs: Any) -> GetUserResponse200:
+        """Get user
+
+         Get a user by its username.
+
+        Args:
+            username (str): The unique name of a user. Example: swillis.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The user with the given username was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            GetUserResponse200"""
+        from .api.user.get_user import sync as get_user_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_user_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def update_user(
+        self, username: Username, *, data: UserUpdateRequest, **kwargs: Any
+    ) -> UpdateUserResponse200:
+        """Update user
+
+         Updates a user.
+
+        Args:
+            username (str): The unique name of a user. Example: swillis.
+            body (UserUpdateRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The user was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            UpdateUserResponse200"""
+        from .api.user.update_user import sync as update_user_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = update_user_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_document(
         self,
         decision_evaluation_key: DecisionEvaluationKey,
         *,
         data: DeleteDecisionInstanceData | None | Unset = UNSET,
         **kwargs: Any,
+    ) -> File:
+        """Download document
+
+         Download a document from the Camunda 8 cluster.
+
+        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        production), local (non-production)
+
+        Args:
+            document_id (str): Document Id that uniquely identifies a document.
+            store_id (str | Unset):
+            content_hash (str | Unset):
+
+        Raises:
+            errors.NotFoundError: If the response status code is 404. The document with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            File"""
+        from .api.document.get_document import sync as get_document_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_document_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def create_documents(
+        self, *, data: CreateDocumentsData, store_id: str | Unset = UNSET, **kwargs: Any
+    ) -> DocumentCreationBatchResponse:
+        """Upload multiple documents
+
+         Upload multiple documents to the Camunda 8 cluster.
+
+        The caller must provide a file name for each document, which will be used in case of a multi-status
+        response
+        to identify which documents failed to upload. The file name can be provided in the `Content-
+        Disposition` header
+        of the file part or in the `fileName` field of the metadata. You can add a parallel array of
+        metadata objects. These
+        are matched with the files based on index, and must have the same length as the files array.
+        To pass homogenous metadata for all files, spread the metadata over the metadata array.
+        A filename value provided explicitly via the metadata array in the request overrides the `Content-
+        Disposition` header
+        of the file part.
+
+        In case of a multi-status response, the response body will contain a list of
+        `DocumentBatchProblemDetail` objects,
+        each of which contains the file name of the document that failed to upload and the reason for the
+        failure.
+        The client can choose to retry the whole batch or individual documents based on the response.
+
+        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        production), local (non-production)
+
+        Args:
+            store_id (str | Unset):
+            body (CreateDocumentsData):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnsupportedMediaTypeError: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DocumentCreationBatchResponse"""
+        from .api.document.create_documents import sync as create_documents_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = create_documents_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def create_document_link(
+        self,
+        document_id: DocumentId,
+        *,
+        data: DocumentLinkRequest | Unset = UNSET,
+        store_id: str | Unset = UNSET,
+        content_hash: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> DocumentLink:
+        """Create document link
+
+         Create a link to a document in the Camunda 8 cluster.
+
+        Note that this is currently supported for document stores of type: AWS, GCP
+
+        Args:
+            document_id (str): Document Id that uniquely identifies a document.
+            store_id (str | Unset):
+            content_hash (str | Unset):
+            body (DocumentLinkRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DocumentLink"""
+        from .api.document.create_document_link import sync as create_document_link_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = create_document_link_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def delete_document(
+        self, document_id: DocumentId, *, store_id: str | Unset = UNSET, **kwargs: Any
     ) -> None:
         """Delete decision instance
 
@@ -9072,11 +11451,8 @@ class CamundaClient:
             body (DeleteDecisionInstanceData | None | Unset):
 
         Raises:
-            errors.DeleteDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.DeleteDecisionInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.DeleteDecisionInstanceNotFound: If the response status code is 404. The decision instance is not found.
-            errors.DeleteDecisionInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.DeleteDecisionInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.NotFoundError: If the response status code is 404. The document with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -9129,11 +11505,8 @@ class CamundaClient:
                 instance. Example: 2251799813684367.
 
         Raises:
-            errors.GetDecisionInstanceBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetDecisionInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetDecisionInstanceNotFound: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
-            errors.GetDecisionInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnsupportedMediaTypeError: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -9188,10 +11561,10 @@ class CamundaClient:
                 defines which decision instances should be deleted.
 
         Raises:
-            errors.DeleteDecisionInstancesBatchOperationBadRequest: If the response status code is 400. The decision instance batch operation failed. More details are provided in the response body.
-            errors.DeleteDecisionInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.DeleteDecisionInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.DeleteDecisionInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The audit log with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -9530,8 +11903,10 @@ class CamundaClient:
             body (UserTaskAuditLogSearchQueryRequest | Unset): User task search query request.
 
         Raises:
-            errors.SearchUserTaskAuditLogsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchUserTaskAuditLogsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -9550,12 +11925,52 @@ class CamundaClient:
                         data=UserTaskAuditLogSearchQueryRequest(),
                     )
 
-                    if not isinstance(result.items, Unset):
-                        for log in result.items:
-                            print(f"Audit log: {log.audit_log_key}")
-        """
-        from .api.user_task.search_user_task_audit_logs import (
-            sync as search_user_task_audit_logs_sync,
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            UsageMetricsResponse"""
+        from .api.system.get_usage_metrics import sync as get_usage_metrics_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_usage_metrics_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_system_configuration(self, **kwargs: Any) -> SystemConfigurationResponse:
+        """System configuration (alpha)
+
+         Returns the current system configuration. The response is an envelope
+        that groups settings by feature area.
+
+        This endpoint is an alpha feature and may be subject to change
+        in future releases.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SystemConfigurationResponse"""
+        from .api.system.get_system_configuration import (
+            sync as get_system_configuration_sync,
         )
 
         _kwargs = locals()
@@ -9587,12 +12002,11 @@ class CamundaClient:
             user_task_key (str): System-generated key for a user task.
 
         Raises:
-            errors.UnassignUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UnassignUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
-            errors.UnassignUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
-            errors.UnassignUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UnassignUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-            errors.UnassignUserTaskGatewayTimeout: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The element instance with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -9627,7 +12041,49 @@ class CamundaClient:
         finally:
             self._bp.release()
 
-    def complete_user_task(
+    def get_element_instance(
+        self, element_instance_key: ElementInstanceKey, **kwargs: Any
+    ) -> ElementInstanceResult:
+        """Get element instance
+
+         Returns element instance as JSON.
+
+        Args:
+            element_instance_key (str): System-generated key for a element instance. Example:
+                2251799813686789.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The element instance with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ElementInstanceResult"""
+        from .api.element_instance.get_element_instance import (
+            sync as get_element_instance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_element_instance_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def create_element_instance_variables(
         self,
         user_task_key: UserTaskKey,
         *,
@@ -9646,12 +12102,10 @@ class CamundaClient:
             body (UserTaskCompletionRequest | Unset):
 
         Raises:
-            errors.CompleteUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.CompleteUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
-            errors.CompleteUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
-            errors.CompleteUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.CompleteUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-            errors.CompleteUserTaskGatewayTimeout: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -9758,12 +12212,10 @@ class CamundaClient:
             body (UserTaskUpdateRequest | Unset):
 
         Raises:
-            errors.UpdateUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UpdateUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
-            errors.UpdateUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
-            errors.UpdateUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UpdateUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-            errors.UpdateUserTaskGatewayTimeout: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -9892,12 +12344,12 @@ class CamundaClient:
             body (AdHocSubProcessActivateActivitiesInstruction):
 
         Raises:
-            errors.ActivateAdHocSubProcessActivitiesBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.ActivateAdHocSubProcessActivitiesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.ActivateAdHocSubProcessActivitiesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.ActivateAdHocSubProcessActivitiesNotFound: If the response status code is 404. The ad-hoc sub-process instance is not found or the provided key does not identify an ad-hoc sub-process.
-            errors.ActivateAdHocSubProcessActivitiesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.ActivateAdHocSubProcessActivitiesServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The ad-hoc sub-process instance is not found or the provided key does not identify an ad-hoc sub-process.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -9998,11 +12450,11 @@ class CamundaClient:
             body (JobFailRequest | Unset):
 
         Raises:
-            errors.FailJobBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.FailJobNotFound: If the response status code is 404. The job with the given jobKey is not found. It was completed by another worker, or the process instance itself was canceled.
-            errors.FailJobConflict: If the response status code is 409. The job with the given key is in the wrong state (i.e: not ACTIVATED or ACTIVATABLE). The job was failed by another worker with retries = 0, and the process is now in an incident state.
-            errors.FailJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.FailJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The job with the given jobKey is not found. It was completed by another worker, or the process instance itself was canceled.
+            errors.ConflictError: If the response status code is 409. The job with the given key is in the wrong state (i.e: not ACTIVATED or ACTIVATABLE). The job was failed by another worker with retries = 0, and the process is now in an incident state.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -10045,10 +12497,10 @@ class CamundaClient:
             body (JobTypeStatisticsQuery): Job type statistics query.
 
         Raises:
-            errors.GetJobTypeStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetJobTypeStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetJobTypeStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetJobTypeStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -10102,10 +12554,10 @@ class CamundaClient:
             body (JobActivationRequest):
 
         Raises:
-            errors.ActivateJobsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.ActivateJobsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.ActivateJobsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.ActivateJobsServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -10222,10 +12674,10 @@ class CamundaClient:
             body (JobErrorStatisticsQuery): Job error statistics query.
 
         Raises:
-            errors.GetJobErrorStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetJobErrorStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetJobErrorStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetJobErrorStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -10518,10 +12970,10 @@ class CamundaClient:
             job_type (str | Unset):
 
         Raises:
-            errors.GetGlobalJobStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetGlobalJobStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetGlobalJobStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetGlobalJobStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -10563,6 +13015,158 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def get_job_time_series_statistics(
+        self, *, data: JobTimeSeriesStatisticsQuery, **kwargs: Any
+    ) -> JobTimeSeriesStatisticsQueryResult:
+        """Get time-series metrics for a job type
+
+         Returns a list of time-bucketed metrics ordered ascending by time.
+        The `from` and `to` fields select the time window of interest.
+        Each item in the response corresponds to one time bucket of the requested resolution.
+
+        Args:
+            body (JobTimeSeriesStatisticsQuery): Job time-series statistics query.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            JobTimeSeriesStatisticsQueryResult"""
+        from .api.job.get_job_time_series_statistics import (
+            sync as get_job_time_series_statistics_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_job_time_series_statistics_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_job_type_statistics(
+        self, *, data: JobTypeStatisticsQuery, **kwargs: Any
+    ) -> JobTypeStatisticsQueryResult:
+        """Get job statistics by type
+
+         Get statistics about jobs, grouped by job type.
+
+        Args:
+            body (JobTypeStatisticsQuery): Job type statistics query.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            JobTypeStatisticsQueryResult"""
+        from .api.job.get_job_type_statistics import (
+            sync as get_job_type_statistics_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_job_type_statistics_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_job_worker_statistics(
+        self, *, data: JobWorkerStatisticsQuery, **kwargs: Any
+    ) -> JobWorkerStatisticsQueryResult:
+        """Get job statistics by worker
+
+         Get statistics about jobs, grouped by worker, for a given job type.
+
+        Args:
+            body (JobWorkerStatisticsQuery): Job worker statistics query.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            JobWorkerStatisticsQueryResult"""
+        from .api.job.get_job_worker_statistics import (
+            sync as get_job_worker_statistics_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_job_worker_statistics_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def throw_job_error(
+        self, job_key: JobKey, *, data: JobErrorRequest, **kwargs: Any
+    ) -> None:
+        """Throw error for job
+
+         Reports a business error (i.e. non-technical) that occurs while processing a job.
+
+        Args:
+            job_key (str): System-generated key for a job. Example: 2251799813653498.
+            body (JobErrorRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The job with the given key was not found or is not activated.
+            errors.ConflictError: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.job.throw_job_error import sync as throw_job_error_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return throw_job_error_sync(**_kwargs)
+
     def complete_job(
         self,
         job_key: JobKey,
@@ -10579,11 +13183,11 @@ class CamundaClient:
             body (JobCompletionRequest | Unset):
 
         Raises:
-            errors.CompleteJobBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.CompleteJobNotFound: If the response status code is 404. The job with the given key was not found.
-            errors.CompleteJobConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
-            errors.CompleteJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.CompleteJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The job with the given key was not found.
+            errors.ConflictError: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -10627,11 +13231,11 @@ class CamundaClient:
                 2251799813686789.
 
         Raises:
-            errors.GetElementInstanceBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetElementInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetElementInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetElementInstanceNotFound: If the response status code is 404. The element instance with the given key was not found. More details are provided in the response body.
-            errors.GetElementInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The job with the jobKey is not found.
+            errors.ConflictError: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -10649,10 +13253,17 @@ class CamundaClient:
                         element_instance_key=ElementInstanceKey("123456"),
                     )
 
-                    print(f"Element: {result.element_id}")
-        """
-        from .api.element_instance.get_element_instance import (
-            sync as get_element_instance_sync,
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            IncidentProcessInstanceStatisticsByDefinitionQueryResult"""
+        from .api.incident.get_process_instance_statistics_by_definition import (
+            sync as get_process_instance_statistics_by_definition_sync,
         )
 
         _kwargs = locals()
@@ -11194,11 +13805,11 @@ class CamundaClient:
             body (IncidentResolutionRequest | Unset):
 
         Raises:
-            errors.ResolveIncidentBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.ResolveIncidentNotFound: If the response status code is 404. The incident with the incidentKey is not found.
-            errors.ResolveIncidentConflict: If the response status code is 409. The incident cannot be resolved due to an invalid state. For example, the associated job may have no retries left.
-            errors.ResolveIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.ResolveIncidentServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The incident with the incidentKey is not found.
+            errors.ConflictError: If the response status code is 409. The incident cannot be resolved due to an invalid state. For example, the associated job may have no retries left.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -11244,10 +13855,10 @@ class CamundaClient:
             body (IncidentSearchQuery | Unset):
 
         Raises:
-            errors.SearchIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -11301,10 +13912,10 @@ class CamundaClient:
             body (IncidentProcessInstanceStatisticsByDefinitionQuery):
 
         Raises:
-            errors.GetProcessInstanceStatisticsByDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetProcessInstanceStatisticsByDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetProcessInstanceStatisticsByDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetProcessInstanceStatisticsByDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -11360,11 +13971,11 @@ class CamundaClient:
             incident_key (str): System-generated key for a incident. Example: 2251799813689432.
 
         Raises:
-            errors.GetIncidentBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetIncidentUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetIncidentForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetIncidentNotFound: If the response status code is 404. The incident with the given key was not found.
-            errors.GetIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The incident with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -11416,10 +14027,11 @@ class CamundaClient:
             body (IncidentProcessInstanceStatisticsByErrorQuery | Unset):
 
         Raises:
-            errors.GetProcessInstanceStatisticsByErrorBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetProcessInstanceStatisticsByErrorUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetProcessInstanceStatisticsByErrorForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetProcessInstanceStatisticsByErrorInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -11433,8 +14045,138 @@ class CamundaClient:
                 def get_process_instance_statistics_by_error_example() -> None:
                     client = CamundaClient()
 
-                    result = client.get_process_instance_statistics_by_error(
-                        data=IncidentProcessInstanceStatisticsByErrorQuery(),
+                    definition = client.get_decision_definition(
+                        decision_definition_key=DecisionDefinitionKey("123456")
+                    )
+
+                    print(f"Decision: {definition.decision_definition_id}")
+        """
+        from .api.decision_definition.get_decision_definition import (
+            sync as get_decision_definition_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_decision_definition_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def evaluate_decision(
+        self, *, data: DecisionEvaluationByID | DecisionEvaluationByKey, **kwargs: Any
+    ) -> EvaluateDecisionResult:
+        """Evaluate decision
+
+         Evaluates a decision.
+        You specify the decision to evaluate either by using its unique key (as returned by
+        DeployResource), or using the decision ID. When using the decision ID, the latest deployed
+        version of the decision is used.
+
+        Args:
+            body (DecisionEvaluationByID | DecisionEvaluationByKey):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The decision is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            EvaluateDecisionResult
+
+        Examples:
+            **Evaluate by decision definition key:**
+
+            .. code-block:: python
+
+                def evaluate_decision_by_key_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.evaluate_decision(
+                        data=DecisionEvaluationByKey(
+                            decision_definition_key=DecisionDefinitionKey("123456"),
+                        )
+                    )
+
+                    print(f"Decision key: {result.decision_definition_key}")
+
+            **Evaluate by decision definition ID:**
+
+            .. code-block:: python
+
+                def evaluate_decision_by_id_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.evaluate_decision(
+                        data=DecisionEvaluationByID(
+                            decision_definition_id=DecisionDefinitionId("invoice-classification"),
+                        )
+                    )
+
+                    print(f"Decision key: {result.decision_definition_key}")
+        """
+        from .api.decision_definition.evaluate_decision import (
+            sync as evaluate_decision_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = evaluate_decision_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_decision_definitions(
+        self, *, data: DecisionDefinitionSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> DecisionDefinitionSearchQueryResult:
+        """Search decision definitions
+
+         Search for decision definitions based on given criteria.
+
+        Args:
+            body (DecisionDefinitionSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DecisionDefinitionSearchQueryResult
+
+        Examples:
+            **Search decision definitions:**
+
+            .. code-block:: python
+
+                def search_decision_definitions_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_decision_definitions(
+                        data=DecisionDefinitionSearchQuery()
                     )
 
                     if not isinstance(result.items, Unset):
@@ -11452,7 +14194,2770 @@ class CamundaClient:
             _kwargs["body"] = _kwargs.pop("data")
         self._bp.acquire()
         try:
-            _result = get_process_instance_statistics_by_error_sync(**_kwargs)
+            _result = search_decision_definitions_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_decision_definition_xml(
+        self, decision_definition_key: DecisionDefinitionKey, **kwargs: Any
+    ) -> str:
+        """Get decision definition XML
+
+         Returns decision definition as XML.
+
+        Args:
+            decision_definition_key (str): System-generated key for a decision definition. Example:
+                2251799813326547.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            str"""
+        from .api.decision_definition.get_decision_definition_xml import (
+            sync as get_decision_definition_xml_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_decision_definition_xml_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def evaluate_expression(
+        self, *, data: ExpressionEvaluationRequest, **kwargs: Any
+    ) -> ExpressionEvaluationResult:
+        """Evaluate an expression
+
+         Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
+        variables when a tenant ID is provided.
+
+        Args:
+            body (ExpressionEvaluationRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ExpressionEvaluationResult"""
+        from .api.expression.evaluate_expression import sync as evaluate_expression_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = evaluate_expression_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def unassign_user_task(self, user_task_key: UserTaskKey, **kwargs: Any) -> None:
+        """Unassign user task
+
+         Removes the assignee of a task with the given key. Unassignment waits for blocking task listeners on
+        this lifecycle transition. If listener processing is delayed beyond the request timeout, this
+        endpoint can return 504. Other gateway timeout causes are also possible. Retry with backoff and
+        inspect listener worker availability and logs when this repeats.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
+            errors.ConflictError: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Unassign a user task:**
+
+            .. code-block:: python
+
+                def unassign_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    client.unassign_user_task(user_task_key=UserTaskKey("123456"))
+        """
+        from .api.user_task.unassign_user_task import sync as unassign_user_task_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = unassign_user_task_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_user_task_variables(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: SearchUserTaskVariablesData | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> VariableSearchQueryResult:
+        """Search user task variables
+
+         Search for user task variables based on given criteria. This endpoint returns all variable
+        documents visible from the user task's scope, including variables from parent scopes in the
+        scope hierarchy. If the same variable name exists at multiple scope levels, each scope's
+        variable is returned as a separate result. Use the
+        `/user-tasks/{userTaskKey}/effective-variables/search` endpoint to get deduplicated variables
+        where the innermost scope takes precedence. By default, long variable values in the response
+        are truncated.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+            truncate_values (bool | Unset):
+            body (SearchUserTaskVariablesData | Unset): User task search query request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            VariableSearchQueryResult"""
+        from .api.user_task.search_user_task_variables import (
+            sync as search_user_task_variables_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_user_task_variables_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def assign_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskAssignmentRequest,
+        **kwargs: Any,
+    ) -> None:
+        """Assign user task
+
+         Assigns a user task with the given key to the given assignee. Assignment waits for blocking task
+        listeners on this lifecycle transition. If listener processing is delayed beyond the request
+        timeout, this endpoint can return 504. Other gateway timeout causes are also possible. Retry with
+        backoff and inspect listener worker availability and logs when this repeats.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+            body (UserTaskAssignmentRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
+            errors.ConflictError: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Assign a user task:**
+
+            .. code-block:: python
+
+                def assign_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    client.assign_user_task(
+                        user_task_key=UserTaskKey("123456"),
+                        data=UserTaskAssignmentRequest(
+                            assignee="user@example.com",
+                        ),
+                    )
+        """
+        from .api.user_task.assign_user_task import sync as assign_user_task_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = assign_user_task_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def update_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskUpdateRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Update user task
+
+         Update a user task with the given key. Updates wait for blocking task listeners on this lifecycle
+        transition. If listener processing is delayed beyond the request timeout, this endpoint can return
+        504. Other gateway timeout causes are also possible. Retry with backoff and inspect listener worker
+        availability and logs when this repeats.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+            body (UserTaskUpdateRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
+            errors.ConflictError: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Update a user task:**
+
+            .. code-block:: python
+
+                def update_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    client.update_user_task(
+                        user_task_key=UserTaskKey("123456"),
+                        data=UserTaskUpdateRequest(
+                            changeset=Changeset(
+                                due_date=datetime.datetime(2025, 12, 31, 23, 59, 59),
+                            ),
+                        ),
+                    )
+        """
+        from .api.user_task.update_user_task import sync as update_user_task_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = update_user_task_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_user_task_form(
+        self, user_task_key: UserTaskKey, **kwargs: Any
+    ) -> FormResult:
+        """Get user task form
+
+         Get the form of a user task.
+        Note that this endpoint will only return linked forms. This endpoint does not support embedded
+        forms.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            FormResult"""
+        from .api.user_task.get_user_task_form import sync as get_user_task_form_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_user_task_form_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_user_task(
+        self, user_task_key: UserTaskKey, **kwargs: Any
+    ) -> UserTaskResult:
+        """Get user task
+
+         Get the user task by the user task key.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            UserTaskResult
+
+        Examples:
+            **Get a user task:**
+
+            .. code-block:: python
+
+                def get_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    task = client.get_user_task(user_task_key=UserTaskKey("123456"))
+
+                    print(f"Task: {task.user_task_key}")
+        """
+        from .api.user_task.get_user_task import sync as get_user_task_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_user_task_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_user_task_audit_logs(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskAuditLogSearchQueryRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> AuditLogSearchQueryResult:
+        """Search user task audit logs
+
+         Search for user task audit logs based on given criteria.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+            body (UserTaskAuditLogSearchQueryRequest | Unset): User task search query request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AuditLogSearchQueryResult"""
+        from .api.user_task.search_user_task_audit_logs import (
+            sync as search_user_task_audit_logs_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_user_task_audit_logs_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_user_tasks(
+        self, *, data: UserTaskSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> UserTaskSearchQueryResult:
+        """Search user tasks
+
+         Search for user tasks based on given criteria.
+
+        Args:
+            body (UserTaskSearchQuery | Unset): User task search query request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            UserTaskSearchQueryResult
+
+        Examples:
+            **Search user tasks:**
+
+            .. code-block:: python
+
+                def search_user_tasks_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_user_tasks(
+                        data=UserTaskSearchQuery()
+                    )
+
+                    if not isinstance(result.items, Unset):
+                        for task in result.items:
+                            print(f"Task: {task.user_task_key}")
+        """
+        from .api.user_task.search_user_tasks import sync as search_user_tasks_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_user_tasks_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_user_task_effective_variables(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> VariableSearchQueryResult:
+        """Search user task effective variables
+
+         Search for the effective variables of a user task. This endpoint returns deduplicated
+        variables where each variable name appears at most once. When the same variable name exists
+        at multiple scope levels in the scope hierarchy, the value from the innermost scope (closest
+        to the user task) takes precedence. This is useful for retrieving the actual runtime state
+        of variables as seen by the user task. By default, long variable values in the response are
+        truncated.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+            truncate_values (bool | Unset):
+            body (SearchUserTaskEffectiveVariablesData | Unset): User task effective variable search
+                query request. Uses offset-based pagination only.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            VariableSearchQueryResult"""
+        from .api.user_task.search_user_task_effective_variables import (
+            sync as search_user_task_effective_variables_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_user_task_effective_variables_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def complete_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskCompletionRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Complete user task
+
+         Completes a user task with the given key. Completion waits for blocking task listeners on this
+        lifecycle transition. If listener processing is delayed beyond the request timeout, this endpoint
+        can return 504. Other gateway timeout causes are also possible. Retry with backoff and inspect
+        listener worker availability and logs when this repeats.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+            body (UserTaskCompletionRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
+            errors.ConflictError: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Complete a user task:**
+
+            .. code-block:: python
+
+                def complete_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    variables = UserTaskCompletionRequestVariables()
+                    variables["approved"] = True
+
+                    client.complete_user_task(
+                        user_task_key=UserTaskKey("123456"),
+                        data=UserTaskCompletionRequest(
+                            variables=variables,
+                        ),
+                    )
+        """
+        from .api.user_task.complete_user_task import sync as complete_user_task_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return complete_user_task_sync(**_kwargs)
+
+    def delete_resource(
+        self,
+        resource_key: str,
+        *,
+        data: DeleteResourceRequest | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> DeleteResourceResponse:
+        """Delete resource
+
+         Deletes a deployed resource. This can be a process definition, decision requirements
+        definition, or form definition deployed using the deploy resources endpoint. Specify the
+        resource you want to delete in the `resourceKey` parameter.
+
+        Once a resource has been deleted it cannot be recovered. If the resource needs to be
+        available again, a new deployment of the resource is required.
+
+        By default, only the resource itself is deleted from the runtime state. To also delete the
+        historic data associated with a resource, set the `deleteHistory` flag in the request body
+        to `true`. The historic data is deleted asynchronously via a batch operation. The details of
+        the created batch operation are included in the response. Note that history deletion is only
+        supported for process resources; for other resource types this flag is ignored and no history
+        will be deleted.
+
+        Args:
+            resource_key (str): The system-assigned key for this resource.
+            body (DeleteResourceRequest | None | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The resource is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DeleteResourceResponse
+
+        Examples:
+            **Delete a resource:**
+
+            .. code-block:: python
+
+                def delete_resource_example() -> None:
+                    client = CamundaClient()
+
+                    # Use a resource key from a previous deployment response
+                    client.delete_resource(resource_key="2251799813685249")
+        """
+        from .api.resource.delete_resource import sync as delete_resource_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_resource_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_resource_content(self, resource_key: str, **kwargs: Any) -> str:
+        """Get resource content
+
+         Returns the content of a deployed resource.
+        :::info
+        Currently, this endpoint only supports RPA resources.
+        :::
+
+        Args:
+            resource_key (str): The system-assigned key for this resource.
+
+        Raises:
+            errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            str"""
+        from .api.resource.get_resource_content import sync as get_resource_content_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_resource_content_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def create_deployment(
+        self, *, data: CreateDeploymentData, **kwargs: Any
+    ) -> DeploymentResult:
+        """Deploy resources
+
+         Deploys one or more resources (e.g. processes, decision models, or forms).
+        This is an atomic call, i.e. either all resources are deployed or none of them are.
+
+        Args:
+            body (CreateDeploymentData):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DeploymentResult
+
+        Examples:
+            **Deploy resources from files:**
+
+            .. code-block:: python
+
+                def deploy_resources_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.deploy_resources_from_files(
+                        ["order-process.bpmn", "decision.dmn"]
+                    )
+
+                    print(f"Deployment key: {result.deployment_key}")
+                    for process in result.processes:
+                        print(
+                            f"  Process: {process.process_definition_id} v{process.process_definition_version}"
+                        )
+                    for decision in result.decisions:
+                        print(f"  Decision: {decision.decision_definition_id}")
+
+            **Deploy resources with tenant ID:**
+
+            .. code-block:: python
+
+                def deploy_resources_with_tenant_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.deploy_resources_from_files(
+                        ["order-process.bpmn"],
+                        tenant_id="my-tenant",
+                    )
+
+                    print(f"Deployment key: {result.deployment_key}")
+                    print(f"Tenant: {result.tenant_id}")
+        """
+        from .api.resource.create_deployment import sync as create_deployment_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = create_deployment_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_resource(self, resource_key: str, **kwargs: Any) -> ResourceResult:
+        """Get resource
+
+         Returns a deployed resource.
+        :::info
+        Currently, this endpoint only supports RPA resources.
+        :::
+
+        Args:
+            resource_key (str): The system-assigned key for this resource.
+
+        Raises:
+            errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ResourceResult"""
+        from .api.resource.get_resource import sync as get_resource_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_resource_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def update_authorization(
+        self,
+        authorization_key: AuthorizationKey,
+        *,
+        data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+        **kwargs: Any,
+    ) -> None:
+        """Update authorization
+
+         Update the authorization with the given key.
+
+        Args:
+            authorization_key (str): System-generated key for an authorization. Example:
+                2251799813684332.
+            body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The authorization with the authorizationKey was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.authorization.update_authorization import (
+            sync as update_authorization_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = update_authorization_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def create_authorization(
+        self,
+        *,
+        data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+        **kwargs: Any,
+    ) -> AuthorizationCreateResult:
+        """Create authorization
+
+         Create the authorization.
+
+        Args:
+            body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The owner was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AuthorizationCreateResult"""
+        from .api.authorization.create_authorization import (
+            sync as create_authorization_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = create_authorization_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_authorizations(
+        self, *, data: AuthorizationSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> AuthorizationSearchResult:
+        """Search authorizations
+
+         Search for authorizations based on given criteria.
+
+        Args:
+            body (AuthorizationSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AuthorizationSearchResult"""
+        from .api.authorization.search_authorizations import (
+            sync as search_authorizations_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_authorizations_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_authorization(
+        self, authorization_key: AuthorizationKey, **kwargs: Any
+    ) -> AuthorizationResult:
+        """Get authorization
+
+         Get authorization by the given key.
+
+        Args:
+            authorization_key (str): System-generated key for an authorization. Example:
+                2251799813684332.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The authorization with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AuthorizationResult"""
+        from .api.authorization.get_authorization import sync as get_authorization_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_authorization_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def delete_authorization(
+        self, authorization_key: AuthorizationKey, **kwargs: Any
+    ) -> None:
+        """Delete authorization
+
+         Deletes the authorization with the given key.
+
+        Args:
+            authorization_key (str): System-generated key for an authorization. Example:
+                2251799813684332.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The authorization with the authorizationKey was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.authorization.delete_authorization import (
+            sync as delete_authorization_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_authorization_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_decision_requirements_xml(
+        self, decision_requirements_key: DecisionRequirementsKey, **kwargs: Any
+    ) -> str:
+        """Get decision requirements XML
+
+         Returns decision requirements as XML.
+
+        Args:
+            decision_requirements_key (str): System-generated key for a deployed decision requirements
+                definition. Example: 2251799813683346.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            str"""
+        from .api.decision_requirements.get_decision_requirements_xml import (
+            sync as get_decision_requirements_xml_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_decision_requirements_xml_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_decision_requirements(
+        self, *, data: DecisionRequirementsSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> DecisionRequirementsSearchQueryResult:
+        """Search decision requirements
+
+         Search for decision requirements based on given criteria.
+
+        Args:
+            body (DecisionRequirementsSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DecisionRequirementsSearchQueryResult"""
+        from .api.decision_requirements.search_decision_requirements import (
+            sync as search_decision_requirements_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_decision_requirements_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_decision_requirements(
+        self, decision_requirements_key: DecisionRequirementsKey, **kwargs: Any
+    ) -> DecisionRequirementsResult:
+        """Get decision requirements
+
+         Returns Decision Requirements as JSON.
+
+        Args:
+            decision_requirements_key (str): System-generated key for a deployed decision requirements
+                definition. Example: 2251799813683346.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DecisionRequirementsResult"""
+        from .api.decision_requirements.get_decision_requirements import (
+            sync as get_decision_requirements_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_decision_requirements_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_authentication(self, **kwargs: Any) -> CamundaUserResult:
+        """Get current user
+
+         Retrieves the current authenticated user.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            CamundaUserResult"""
+        from .api.authentication.get_authentication import (
+            sync as get_authentication_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_authentication_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def broadcast_signal(
+        self, *, data: SignalBroadcastRequest, **kwargs: Any
+    ) -> SignalBroadcastResult:
+        """Broadcast signal
+
+         Broadcasts a signal.
+
+        Args:
+            body (SignalBroadcastRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The signal is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SignalBroadcastResult
+
+        Examples:
+            **Broadcast a signal:**
+
+            .. code-block:: python
+
+                def broadcast_signal_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.broadcast_signal(
+                        data=SignalBroadcastRequest(
+                            signal_name="order-cancelled",
+                        )
+                    )
+
+                    print(f"Signal key: {result.signal_key}")
+        """
+        from .api.signal.broadcast_signal import sync as broadcast_signal_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = broadcast_signal_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def update_mapping_rule(
+        self,
+        mapping_rule_id: str,
+        *,
+        data: MappingRuleUpdateRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> UpdateMappingRuleResponse200:
+        """Update mapping rule
+
+         Update a mapping rule.
+
+        Args:
+            mapping_rule_id (str):
+            body (MappingRuleUpdateRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. The request to update a mapping rule was denied. More details are provided in the response body.
+            errors.NotFoundError: If the response status code is 404. The request to update a mapping rule was denied.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            UpdateMappingRuleResponse200"""
+        from .api.mapping_rule.update_mapping_rule import (
+            sync as update_mapping_rule_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = update_mapping_rule_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def delete_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> None:
+        """Delete a mapping rule
+
+         Deletes the mapping rule with the given ID.
+
+        Args:
+            mapping_rule_id (str):
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.mapping_rule.delete_mapping_rule import (
+            sync as delete_mapping_rule_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_mapping_rule_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def create_mapping_rule(
+        self, *, data: MappingRuleCreateRequest | Unset = UNSET, **kwargs: Any
+    ) -> CreateMappingRuleResponse201:
+        """Create mapping rule
+
+         Create a new mapping rule
+
+        Args:
+            body (MappingRuleCreateRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. The request to create a mapping rule was denied. More details are provided in the response body.
+            errors.NotFoundError: If the response status code is 404. The request to create a mapping rule was denied.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            CreateMappingRuleResponse201"""
+        from .api.mapping_rule.create_mapping_rule import (
+            sync as create_mapping_rule_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = create_mapping_rule_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_mapping_rule(
+        self, *, data: MappingRuleSearchQueryRequest | Unset = UNSET, **kwargs: Any
+    ) -> SearchMappingRuleResponse200:
+        """Search mapping rules
+
+         Search for mapping rules based on given criteria.
+
+        Args:
+            body (MappingRuleSearchQueryRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SearchMappingRuleResponse200"""
+        from .api.mapping_rule.search_mapping_rule import (
+            sync as search_mapping_rule_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_mapping_rule_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_mapping_rule(
+        self, mapping_rule_id: str, **kwargs: Any
+    ) -> MappingRuleResult:
+        """Get a mapping rule
+
+         Gets the mapping rule with the given ID.
+
+        Args:
+            mapping_rule_id (str):
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            MappingRuleResult"""
+        from .api.mapping_rule.get_mapping_rule import sync as get_mapping_rule_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_mapping_rule_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_process_instance_sequence_flows(
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
+    ) -> ProcessInstanceSequenceFlowsQueryResult:
+        """Get sequence flows
+
+         Get sequence flows taken by the process instance.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessInstanceSequenceFlowsQueryResult"""
+        from .api.process_instance.get_process_instance_sequence_flows import (
+            sync as get_process_instance_sequence_flows_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_process_instance_sequence_flows_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_process_instance_call_hierarchy(
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
+    ) -> list[Any]:
+        """Get call hierarchy
+
+         Returns the call hierarchy for a given process instance, showing its ancestry up to the root
+        instance.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            list[Any]"""
+        from .api.process_instance.get_process_instance_call_hierarchy import (
+            sync as get_process_instance_call_hierarchy_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_process_instance_call_hierarchy_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def modify_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: ProcessInstanceModificationInstruction,
+        **kwargs: Any,
+    ) -> None:
+        """Modify process instance
+
+         Modifies a running process instance.
+        This request can contain multiple instructions to activate an element of the process or
+        to terminate an active instance of an element.
+
+        Use this to repair a process instance that is stuck on an element or took an unintended path.
+        For example, because an external system is not available or doesn't respond as expected.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (ProcessInstanceModificationInstruction):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.process_instance.modify_process_instance import (
+            sync as modify_process_instance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = modify_process_instance_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_process_instance_statistics(
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
+    ) -> ProcessInstanceElementStatisticsQueryResult:
+        """Get element instance statistics
+
+         Get statistics about elements by the process instance key.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessInstanceElementStatisticsQueryResult"""
+        from .api.process_instance.get_process_instance_statistics import (
+            sync as get_process_instance_statistics_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_process_instance_statistics_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def migrate_process_instances_batch_operation(
+        self, *, data: ProcessInstanceMigrationBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Migrate process instances (batch)
+
+         Migrate multiple process instances.
+        Since only process instances with ACTIVE state can be migrated, any given
+        filters for state are ignored and overridden during this batch operation.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (ProcessInstanceMigrationBatchOperationRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.process_instance.migrate_process_instances_batch_operation import (
+            sync as migrate_process_instances_batch_operation_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = migrate_process_instances_batch_operation_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_process_instance(
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
+    ) -> ProcessInstanceResult:
+        """Get process instance
+
+         Get the process instance by the process instance key.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The process instance with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessInstanceResult"""
+        from .api.process_instance.get_process_instance import (
+            sync as get_process_instance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_process_instance_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def resolve_incidents_batch_operation(
+        self,
+        *,
+        data: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> BatchOperationCreatedResult:
+        """Resolve related incidents (batch)
+
+         Resolves multiple instances of process instances.
+        Since only process instances with ACTIVE state can have unresolved incidents, any given
+        filters for state are ignored and overridden during this batch operation.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (ProcessInstanceIncidentResolutionBatchOperationRequest | Unset): The process
+                instance filter that defines which process instances should have their incidents resolved.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.process_instance.resolve_incidents_batch_operation import (
+            sync as resolve_incidents_batch_operation_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = resolve_incidents_batch_operation_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def modify_process_instances_batch_operation(
+        self, *, data: ProcessInstanceModificationBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Modify process instances (batch)
+
+         Modify multiple process instances.
+        Since only process instances with ACTIVE state can be modified, any given
+        filters for state are ignored and overridden during this batch operation.
+        In contrast to single modification operation, it is not possible to add variable instructions or
+        modify by element key.
+        It is only possible to use the element id of the source and target.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (ProcessInstanceModificationBatchOperationRequest): The process instance filter to
+                define on which process instances tokens should be moved,
+                and new element instances should be activated or terminated.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.process_instance.modify_process_instances_batch_operation import (
+            sync as modify_process_instances_batch_operation_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = modify_process_instances_batch_operation_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def delete_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: DeleteProcessInstanceData | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Delete process instance
+
+         Deletes a process instance. Only instances that are completed or terminated can be deleted.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (DeleteProcessInstanceData | None | Unset):
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.ConflictError: If the response status code is 409. The process instance is not in a completed or terminated state and cannot be deleted.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.process_instance.delete_process_instance import (
+            sync as delete_process_instance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_process_instance_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def delete_process_instances_batch_operation(
+        self, *, data: ProcessInstanceDeletionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Delete process instances (batch)
+
+         Delete multiple process instances. This will delete the historic data from secondary storage.
+        Only process instances in a final state (COMPLETED or TERMINATED) can be deleted.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (ProcessInstanceDeletionBatchOperationRequest): The process instance filter that
+                defines which process instances should be deleted.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.process_instance.delete_process_instances_batch_operation import (
+            sync as delete_process_instances_batch_operation_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = delete_process_instances_batch_operation_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def cancel_process_instances_batch_operation(
+        self, *, data: ProcessInstanceCancellationBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Cancel process instances (batch)
+
+         Cancels multiple running process instances.
+        Since only ACTIVE root instances can be cancelled, any given filters for state and
+        parentProcessInstanceKey are ignored and overridden during this batch operation.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (ProcessInstanceCancellationBatchOperationRequest): The process instance filter that
+                defines which process instances should be canceled.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.process_instance.cancel_process_instances_batch_operation import (
+            sync as cancel_process_instances_batch_operation_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = cancel_process_instances_batch_operation_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def create_process_instance(
+        self, *, data: ProcessCreationById | ProcessCreationByKey, **kwargs: Any
+    ) -> CreateProcessInstanceResult:
+        """Create process instance
+
+         Creates and starts an instance of the specified process.
+        The process definition to use to create the instance can be specified either using its unique key
+        (as returned by Deploy resources), or using the BPMN process id and a version.
+
+        Waits for the completion of the process instance before returning a result
+        when awaitCompletion is enabled.
+
+        Args:
+            body (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
+                instance. The process definition can be specified
+                either by id or by key.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ConflictError: If the response status code is 409. The process instance creation was rejected due to a business ID uniqueness conflict. This can happen only when Business ID Uniqueness Control is enabled and an active root process instance with the provided business ID already exists for the same process definition and tenant.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The process instance creation request timed out in the gateway. This can happen if the `awaitCompletion` request parameter is set to `true` and the created process instance did not complete within the defined request timeout. This often happens when the created instance is not fully automated or contains wait states.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            CreateProcessInstanceResult
+
+        Examples:
+            **Create by process definition key:**
+
+            .. code-block:: python
+
+                def create_process_instance_by_key_example() -> None:
+                    client = CamundaClient()
+
+                    # Deploy a process and obtain the typed key from the response
+                    deployment = client.deploy_resources_from_files(["order-process.bpmn"])
+                    process_key = deployment.processes[0].process_definition_key
+
+                    # Use the typed key directly — no manual string lifting needed
+                    result = client.create_process_instance(
+                        data=ProcessCreationByKey(
+                            process_definition_key=process_key,
+                        )
+                    )
+
+                    print(f"Process instance key: {result.process_instance_key}")
+
+            **Create from a stored key:**
+
+            .. code-block:: python
+
+                def create_process_instance_by_key_from_storage_example() -> None:
+                    client = CamundaClient()
+
+                    # When restoring a key from a database or message queue,
+                    # wrap the raw string with the semantic type constructor:
+                    stored_key = "2251799813685249"  # e.g. from a DB row
+                    result = client.create_process_instance(
+                        data=ProcessCreationByKey(
+                            process_definition_key=ProcessDefinitionKey(stored_key),
+                        )
+                    )
+
+                    print(f"Process instance key: {result.process_instance_key}")
+
+            **Create by process definition ID:**
+
+            .. code-block:: python
+
+                def create_process_instance_by_id_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.create_process_instance(
+                        data=ProcessCreationById(
+                            process_definition_id=ProcessDefinitionId("order-process"),
+                        )
+                    )
+
+                    print(f"Process instance key: {result.process_instance_key}")
+        """
+        from .api.process_instance.create_process_instance import (
+            sync as create_process_instance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = create_process_instance_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def cancel_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: CancelProcessInstanceData | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Cancel process instance
+
+         Cancels a running process instance. As a cancellation includes more than just the removal of the
+        process instance resource, the cancellation resource must be posted. Cancellation can wait on
+        listener-related processing; when that processing does not complete in time, this endpoint can
+        return 504. Other gateway timeout causes are also possible. Retry with backoff and inspect listener
+        worker availability and logs when this repeats.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (CancelProcessInstanceData | None | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Cancel a process instance:**
+
+            .. code-block:: python
+
+                def cancel_process_instance_example() -> None:
+                    client = CamundaClient()
+
+                    # Create a process instance and get its key from the response
+                    created = client.create_process_instance(
+                        data=ProcessCreationById(process_definition_id=ProcessDefinitionId("order-process"))
+                    )
+
+                    # Cancel it using the key from the creation response
+                    client.cancel_process_instance(
+                        process_instance_key=created.process_instance_key,
+                    )
+        """
+        from .api.process_instance.cancel_process_instance import (
+            sync as cancel_process_instance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = cancel_process_instance_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_process_instance_incidents(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: IncidentSearchQuery | Unset = UNSET,
+        **kwargs: Any,
+    ) -> IncidentSearchQueryResult:
+        """Search related incidents
+
+         Search for incidents caused by the process instance or any of its called process or decision
+        instances.
+
+        Although the `processInstanceKey` is provided as a path parameter to indicate the root process
+        instance,
+        you may also include a `processInstanceKey` within the filter object to narrow results to specific
+        child process instances. This is useful, for example, if you want to isolate incidents associated
+        with
+        subprocesses or called processes under the root instance while excluding incidents directly tied to
+        the root.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (IncidentSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The process instance with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            IncidentSearchQueryResult"""
+        from .api.process_instance.search_process_instance_incidents import (
+            sync as search_process_instance_incidents_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_process_instance_incidents_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def migrate_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: ProcessInstanceMigrationInstruction,
+        **kwargs: Any,
+    ) -> None:
+        """Migrate process instance
+
+         Migrates a process instance to a new process definition.
+        This request can contain multiple mapping instructions to define mapping between the active
+        process instance's elements and target process definition elements.
+
+        Use this to upgrade a process instance to a new version of a process or to
+        a different process definition, e.g. to keep your running instances up-to-date with the
+        latest process improvements.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (ProcessInstanceMigrationInstruction): The migration instructions describe how to
+                migrate a process instance from one process definition to another.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.ConflictError: If the response status code is 409. The process instance migration failed. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.process_instance.migrate_process_instance import (
+            sync as migrate_process_instance_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = migrate_process_instance_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_process_instances(
+        self, *, data: ProcessInstanceSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> ProcessInstanceSearchQueryResult:
+        """Search process instances
+
+         Search for process instances based on given criteria.
+
+        Args:
+            body (ProcessInstanceSearchQuery | Unset): Process instance search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessInstanceSearchQueryResult
+
+        Examples:
+            **Search process instances:**
+
+            .. code-block:: python
+
+                def search_process_instances_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_process_instances(
+                        data=ProcessInstanceSearchQuery(
+                            filter_=ProcessInstanceSearchQueryFilter(
+                                process_definition_id="order-process",
+                            ),
+                            sort=[
+                                ProcessInstanceSearchQuerySortRequest(
+                                    field=ProcessInstanceSearchQuerySortRequestField.STARTDATE,
+                                    order=SortOrderEnum.DESC,
+                                )
+                            ],
+                            page=LimitBasedPagination(limit=10),
+                        )
+                    )
+
+                    for instance in result.items:
+                        print(f"{instance.process_instance_key}: {instance.state}")
+                    print(f"Total: {result.page.total_items}")
+        """
+        from .api.process_instance.search_process_instances import (
+            sync as search_process_instances_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_process_instances_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def resolve_process_instance_incidents(
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Resolve related incidents
+
+         Creates a batch operation to resolve multiple incidents of a process instance.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.process_instance.resolve_process_instance_incidents import (
+            sync as resolve_process_instance_incidents_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = resolve_process_instance_incidents_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def pin_clock(self, *, data: ClockPinRequest, **kwargs: Any) -> None:
+        """Pin internal clock (alpha)
+
+         Set a precise, static time for the Zeebe engine's internal clock.
+        When the clock is pinned, it remains at the specified time and does not advance.
+        To change the time, the clock must be pinned again with a new timestamp.
+
+        This endpoint is an alpha feature and may be subject to change
+        in future releases.
+
+        Args:
+            body (ClockPinRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.clock.pin_clock import sync as pin_clock_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = pin_clock_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def reset_clock(self, **kwargs: Any) -> None:
+        """Reset internal clock (alpha)
+
+         Resets the Zeebe engine's internal clock to the current system time, enabling it to tick in real-
+        time.
+        This operation is useful for returning the clock to
+        normal behavior after it has been pinned to a specific time.
+
+        This endpoint is an alpha feature and may be subject to change
+        in future releases.
+
+        Raises:
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.clock.reset_clock import sync as reset_clock_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = reset_clock_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_process_definition_instance_version_statistics(
+        self, *, data: ProcessDefinitionInstanceVersionStatisticsQuery, **kwargs: Any
+    ) -> ProcessDefinitionInstanceVersionStatisticsQueryResult:
+        """Get process instance statistics by version
+
+         Get statistics about process instances, grouped by version for a given process definition.
+        The process definition ID must be provided as a required field in the request body filter.
+
+        Args:
+            body (ProcessDefinitionInstanceVersionStatisticsQuery):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionInstanceVersionStatisticsQueryResult"""
+        from .api.process_definition.get_process_definition_instance_version_statistics import (
+            sync as get_process_definition_instance_version_statistics_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_process_definition_instance_version_statistics_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_process_definition_instance_statistics(
+        self,
+        *,
+        data: ProcessDefinitionInstanceStatisticsQuery | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ProcessDefinitionInstanceStatisticsQueryResult:
+        """Get process instance statistics
+
+         Get statistics about process instances, grouped by process definition and tenant.
+
+        Args:
+            body (ProcessDefinitionInstanceStatisticsQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionInstanceStatisticsQueryResult"""
+        from .api.process_definition.get_process_definition_instance_statistics import (
+            sync as get_process_definition_instance_statistics_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_process_definition_instance_statistics_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_process_definitions(
+        self, *, data: ProcessDefinitionSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> ProcessDefinitionSearchQueryResult:
+        """Search process definitions
+
+         Search for process definitions based on given criteria.
+
+        Args:
+            body (ProcessDefinitionSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionSearchQueryResult"""
+        from .api.process_definition.search_process_definitions import (
+            sync as search_process_definitions_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_process_definitions_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_process_definition_message_subscription_statistics(
+        self,
+        *,
+        data: ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ProcessDefinitionMessageSubscriptionStatisticsQueryResult:
+        """Get message subscription statistics
+
+         Get message subscription statistics, grouped by process definition.
+
+        Args:
+            body (ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionMessageSubscriptionStatisticsQueryResult"""
+        from .api.process_definition.get_process_definition_message_subscription_statistics import (
+            sync as get_process_definition_message_subscription_statistics_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_process_definition_message_subscription_statistics_sync(
+                **_kwargs
+            )
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_start_process_form(
+        self, process_definition_key: ProcessDefinitionKey, **kwargs: Any
+    ) -> FormResult:
+        """Get process start form
+
+         Get the start form of a process.
+        Note that this endpoint will only return linked forms. This endpoint does not support embedded
+        forms.
+
+        Args:
+            process_definition_key (str): System-generated key for a deployed process definition.
+                Example: 2251799813686749.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            FormResult"""
+        from .api.process_definition.get_start_process_form import (
+            sync as get_start_process_form_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_start_process_form_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_process_definition_xml(
+        self, process_definition_key: ProcessDefinitionKey, **kwargs: Any
+    ) -> str:
+        """Get process definition XML
+
+         Returns process definition as XML.
+
+        Args:
+            process_definition_key (str): System-generated key for a deployed process definition.
+                Example: 2251799813686749.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            str"""
+        from .api.process_definition.get_process_definition_xml import (
+            sync as get_process_definition_xml_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_process_definition_xml_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_process_definition(
+        self, process_definition_key: ProcessDefinitionKey, **kwargs: Any
+    ) -> ProcessDefinitionResult:
+        """Get process definition
+
+         Returns process definition as JSON.
+
+        Args:
+            process_definition_key (str): System-generated key for a deployed process definition.
+                Example: 2251799813686749.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionResult"""
+        from .api.process_definition.get_process_definition import (
+            sync as get_process_definition_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_process_definition_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def get_process_definition_statistics(
+        self,
+        process_definition_key: ProcessDefinitionKey,
+        *,
+        data: ProcessDefinitionElementStatisticsQuery | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ProcessDefinitionElementStatisticsQueryResult:
+        """Get process definition statistics
+
+         Get statistics about elements in currently running process instances by process definition key and
+        search filter.
+
+        Args:
+            process_definition_key (str): System-generated key for a deployed process definition.
+                Example: 2251799813686749.
+            body (ProcessDefinitionElementStatisticsQuery | Unset): Process definition element
+                statistics request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionElementStatisticsQueryResult"""
+        from .api.process_definition.get_process_definition_statistics import (
+            sync as get_process_definition_statistics_sync,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_process_definition_statistics_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -11700,13 +17205,1100 @@ class CamundaAsyncClient:
             body (ClockPinRequest):
 
         Raises:
-            errors.PinClockBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.PinClockInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.PinClockServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            None
+            None"""
+        from .api.tenant.delete_tenant import asyncio as delete_tenant_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def assign_group_to_tenant(
+        self, tenant_id: TenantId, group_id: str, **kwargs: Any
+    ) -> None:
+        """Assign a group to a tenant
+
+         Assigns a group to a specified tenant.
+        Group members (users, clients) can then access tenant data and perform authorized actions.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            group_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or group was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.assign_group_to_tenant import (
+            asyncio as assign_group_to_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await assign_group_to_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def unassign_role_from_tenant(
+        self, tenant_id: TenantId, role_id: str, **kwargs: Any
+    ) -> None:
+        """Unassign a role from a tenant
+
+         Unassigns a role from a specified tenant.
+        Users, Clients or Groups, that have the role assigned, will no longer have access to the
+        tenant's data - unless they are assigned directly to the tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            role_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or role was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.unassign_role_from_tenant import (
+            asyncio as unassign_role_from_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await unassign_role_from_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_group_ids_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: TenantGroupSearchQueryRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> TenantGroupSearchResult:
+        """Search groups for tenant
+
+         Retrieves a filtered and sorted list of groups for a specified tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            body (TenantGroupSearchQueryRequest | Unset):
+
+        Raises:
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            TenantGroupSearchResult"""
+        from .api.tenant.search_group_ids_for_tenant import (
+            asyncio as search_group_ids_for_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_group_ids_for_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_users_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: SearchUsersForTenantData | Unset = UNSET,
+        **kwargs: Any,
+    ) -> SearchUsersForTenantResponse200:
+        """Search users for tenant
+
+         Retrieves a filtered and sorted list of users for a specified tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            body (SearchUsersForTenantData | Unset):
+
+        Raises:
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SearchUsersForTenantResponse200"""
+        from .api.tenant.search_users_for_tenant import (
+            asyncio as search_users_for_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_users_for_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def unassign_client_from_tenant(
+        self, tenant_id: TenantId, client_id: str, **kwargs: Any
+    ) -> None:
+        """Unassign a client from a tenant
+
+         Unassigns the client from the specified tenant.
+        The client can no longer access tenant data.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            client_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The tenant does not exist or the client was not assigned to it.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.unassign_client_from_tenant import (
+            asyncio as unassign_client_from_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await unassign_client_from_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def unassign_user_from_tenant(
+        self, tenant_id: TenantId, username: Username, **kwargs: Any
+    ) -> None:
+        """Unassign a user from a tenant
+
+         Unassigns the user from the specified tenant.
+        The user can no longer access tenant data.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            username (str): The unique name of a user. Example: swillis.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or user was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.unassign_user_from_tenant import (
+            asyncio as unassign_user_from_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await unassign_user_from_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_roles_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: RoleSearchQueryRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> SearchRolesForTenantResponse200:
+        """Search roles for tenant
+
+         Retrieves a filtered and sorted list of roles for a specified tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            body (RoleSearchQueryRequest | Unset): Role search request.
+
+        Raises:
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SearchRolesForTenantResponse200"""
+        from .api.tenant.search_roles_for_tenant import (
+            asyncio as search_roles_for_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_roles_for_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def unassign_group_from_tenant(
+        self, tenant_id: TenantId, group_id: str, **kwargs: Any
+    ) -> None:
+        """Unassign a group from a tenant
+
+         Unassigns a group from a specified tenant.
+        Members of the group (users, clients) will no longer have access to the tenant's data - except they
+        are assigned directly to the tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            group_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or group was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.unassign_group_from_tenant import (
+            asyncio as unassign_group_from_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await unassign_group_from_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_clients_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: SearchClientsForTenantData | Unset = UNSET,
+        **kwargs: Any,
+    ) -> SearchClientsForTenantResponse200:
+        """Search clients for tenant
+
+         Retrieves a filtered and sorted list of clients for a specified tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            body (SearchClientsForTenantData | Unset):
+
+        Raises:
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SearchClientsForTenantResponse200"""
+        from .api.tenant.search_clients_for_tenant import (
+            asyncio as search_clients_for_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_clients_for_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_tenants(
+        self, *, data: TenantSearchQueryRequest | Unset = UNSET, **kwargs: Any
+    ) -> TenantSearchQueryResult:
+        """Search tenants
+
+         Retrieves a filtered and sorted list of tenants.
+
+        Args:
+            body (TenantSearchQueryRequest | Unset): Tenant search request
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            TenantSearchQueryResult"""
+        from .api.tenant.search_tenants import asyncio as search_tenants_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_tenants_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def assign_user_to_tenant(
+        self, tenant_id: TenantId, username: Username, **kwargs: Any
+    ) -> None:
+        """Assign a user to a tenant
+
+         Assign a single user to a specified tenant. The user can then access tenant data and perform
+        authorized actions.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            username (str): The unique name of a user. Example: swillis.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or user was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.assign_user_to_tenant import (
+            asyncio as assign_user_to_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await assign_user_to_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def assign_role_to_tenant(
+        self, tenant_id: TenantId, role_id: str, **kwargs: Any
+    ) -> None:
+        """Assign a role to a tenant
+
+         Assigns a role to a specified tenant.
+        Users, Clients or Groups, that have the role assigned, will get access to the tenant's data and can
+        perform actions according to their authorizations.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            role_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or role was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.assign_role_to_tenant import (
+            asyncio as assign_role_to_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await assign_role_to_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_mapping_rules_for_tenant(
+        self,
+        tenant_id: TenantId,
+        *,
+        data: MappingRuleSearchQueryRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> SearchMappingRulesForTenantResponse200:
+        """Search mapping rules for tenant
+
+         Retrieves a filtered and sorted list of MappingRules for a specified tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            body (MappingRuleSearchQueryRequest | Unset):
+
+        Raises:
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SearchMappingRulesForTenantResponse200"""
+        from .api.tenant.search_mapping_rules_for_tenant import (
+            asyncio as search_mapping_rules_for_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_mapping_rules_for_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def assign_mapping_rule_to_tenant(
+        self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any
+    ) -> None:
+        """Assign a mapping rule to a tenant
+
+         Assign a single mapping rule to a specified tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            mapping_rule_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.assign_mapping_rule_to_tenant import (
+            asyncio as assign_mapping_rule_to_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await assign_mapping_rule_to_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def update_tenant(
+        self, tenant_id: TenantId, *, data: TenantUpdateRequest, **kwargs: Any
+    ) -> TenantUpdateResult:
+        """Update tenant
+
+         Updates an existing tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            body (TenantUpdateRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            TenantUpdateResult"""
+        from .api.tenant.update_tenant import asyncio as update_tenant_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await update_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def assign_client_to_tenant(
+        self, tenant_id: TenantId, client_id: str, **kwargs: Any
+    ) -> None:
+        """Assign a client to a tenant
+
+         Assign the client to the specified tenant.
+        The client can then access tenant data and perform authorized actions.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            client_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The tenant was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.assign_client_to_tenant import (
+            asyncio as assign_client_to_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await assign_client_to_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_tenant(self, tenant_id: TenantId, **kwargs: Any) -> TenantResult:
+        """Get tenant
+
+         Retrieves a single tenant by tenant ID.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Tenant not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            TenantResult"""
+        from .api.tenant.get_tenant import asyncio as get_tenant_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def create_tenant(
+        self, *, data: TenantCreateRequest, **kwargs: Any
+    ) -> TenantCreateResult:
+        """Create tenant
+
+         Creates a new tenant.
+
+        Args:
+            body (TenantCreateRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The resource was not found.
+            errors.ConflictError: If the response status code is 409. Tenant with this id already exists.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            TenantCreateResult"""
+        from .api.tenant.create_tenant import asyncio as create_tenant_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await create_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def unassign_mapping_rule_from_tenant(
+        self, tenant_id: TenantId, mapping_rule_id: str, **kwargs: Any
+    ) -> None:
+        """Unassign a mapping rule from a tenant
+
+         Unassigns a single mapping rule from a specified tenant without deleting the rule.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            mapping_rule_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The tenant or mapping rule was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.tenant.unassign_mapping_rule_from_tenant import (
+            asyncio as unassign_mapping_rule_from_tenant_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await unassign_mapping_rule_from_tenant_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def cancel_batch_operation(
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Cancel Batch operation
+
+         Cancels a running batch operation.
+        This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+        (/batch-operations/{batchOperationKey}).
+
+        Args:
+            batch_operation_key (str): System-generated key for an batch operation. Example:
+                2251799813684321.
+            body (Any | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The batch operation was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.batch_operation.cancel_batch_operation import (
+            asyncio as cancel_batch_operation_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await cancel_batch_operation_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def resume_batch_operation(
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Resume Batch operation
+
+         Resumes a suspended batch operation.
+        This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+        (/batch-operations/{batchOperationKey}).
+
+        Args:
+            batch_operation_key (str): System-generated key for an batch operation. Example:
+                2251799813684321.
+            body (Any | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The batch operation was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.batch_operation.resume_batch_operation import (
+            asyncio as resume_batch_operation_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await resume_batch_operation_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def suspend_batch_operation(
+        self,
+        batch_operation_key: BatchOperationKey,
+        *,
+        data: Any | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Suspend Batch operation
+
+         Suspends a running batch operation.
+        This is done asynchronously, the progress can be tracked using the batch operation status endpoint
+        (/batch-operations/{batchOperationKey}).
+
+        Args:
+            batch_operation_key (str): System-generated key for an batch operation. Example:
+                2251799813684321.
+            body (Any | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found. The batch operation was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.batch_operation.suspend_batch_operation import (
+            asyncio as suspend_batch_operation_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await suspend_batch_operation_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_batch_operations(
+        self, *, data: BatchOperationSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> BatchOperationSearchQueryResult:
+        """Search batch operations
+
+         Search for batch operations based on given criteria.
+
+        Args:
+            body (BatchOperationSearchQuery | Unset): Batch operation search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationSearchQueryResult"""
+        from .api.batch_operation.search_batch_operations import (
+            asyncio as search_batch_operations_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_batch_operations_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_batch_operation(
+        self, batch_operation_key: BatchOperationKey, **kwargs: Any
+    ) -> BatchOperationResponse:
+        """Get batch operation
+
+         Get batch operation by key.
+
+        Args:
+            batch_operation_key (str): System-generated key for an batch operation. Example:
+                2251799813684321.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The batch operation is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationResponse"""
+        from .api.batch_operation.get_batch_operation import (
+            asyncio as get_batch_operation_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_batch_operation_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_batch_operation_items(
+        self, *, data: BatchOperationItemSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> BatchOperationItemSearchQueryResult:
+        """Search batch operation items
+
+         Search for batch operation items based on given criteria.
+
+        Args:
+            body (BatchOperationItemSearchQuery | Unset): Batch operation item search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationItemSearchQueryResult"""
+        from .api.batch_operation.search_batch_operation_items import (
+            asyncio as search_batch_operation_items_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_batch_operation_items_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_topology(self, **kwargs: Any) -> TopologyResponse:
+        """Get cluster topology
+
+         Obtains the current topology of the cluster the gateway is part of.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            TopologyResponse
 
         Examples:
             **Pin the cluster clock:**
@@ -11753,8 +18345,11 @@ class CamundaAsyncClient:
         in future releases.
 
         Raises:
-            errors.ResetClockInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.ResetClockServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role or group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -11915,10 +18510,11 @@ class CamundaAsyncClient:
             body (CorrelatedMessageSubscriptionSearchQuery | Unset):
 
         Raises:
-            errors.SearchCorrelatedMessageSubscriptionsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchCorrelatedMessageSubscriptionsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchCorrelatedMessageSubscriptionsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchCorrelatedMessageSubscriptionsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -11961,7 +18557,212 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
-    async def search_global_task_listeners(
+    async def unassign_role_from_mapping_rule(
+        self, role_id: str, mapping_rule_id: str, **kwargs: Any
+    ) -> None:
+        """Unassign a role from a mapping rule
+
+         Unassigns a role from a mapping rule.
+
+        Args:
+            role_id (str):
+            mapping_rule_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role or mapping rule with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.role.unassign_role_from_mapping_rule import (
+            asyncio as unassign_role_from_mapping_rule_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await unassign_role_from_mapping_rule_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_roles(
+        self, *, data: RoleSearchQueryRequest | Unset = UNSET, **kwargs: Any
+    ) -> RoleSearchQueryResult:
+        """Search roles
+
+         Search for roles based on given criteria.
+
+        Args:
+            body (RoleSearchQueryRequest | Unset): Role search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            RoleSearchQueryResult"""
+        from .api.role.search_roles import asyncio as search_roles_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_roles_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def unassign_role_from_client(
+        self, role_id: str, client_id: str, **kwargs: Any
+    ) -> None:
+        """Unassign a role from a client
+
+         Unassigns the specified role from the client. The client will no longer inherit the authorizations
+        associated with this role.
+
+        Args:
+            role_id (str):
+            client_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role or client with the given ID or username was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.role.unassign_role_from_client import (
+            asyncio as unassign_role_from_client_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await unassign_role_from_client_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def unassign_role_from_user(
+        self, role_id: str, username: Username, **kwargs: Any
+    ) -> None:
+        """Unassign a role from a user
+
+         Unassigns a role from a user. The user will no longer inherit the authorizations associated with
+        this role.
+
+        Args:
+            role_id (str):
+            username (str): The unique name of a user. Example: swillis.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role or user with the given ID or username was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.role.unassign_role_from_user import (
+            asyncio as unassign_role_from_user_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await unassign_role_from_user_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def create_role(
+        self, *, data: RoleCreateRequest | Unset = UNSET, **kwargs: Any
+    ) -> RoleCreateResult:
+        """Create role
+
+         Create a new role.
+
+        Args:
+            body (RoleCreateRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            RoleCreateResult"""
+        from .api.role.create_role import asyncio as create_role_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await create_role_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_clients_for_role(
         self,
         *,
         data: GlobalTaskListenerSearchQueryRequest | Unset = UNSET,
@@ -11975,10 +18776,11 @@ class CamundaAsyncClient:
             body (GlobalTaskListenerSearchQueryRequest | Unset): Global listener search query request.
 
         Raises:
-            errors.SearchGlobalTaskListenersBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchGlobalTaskListenersUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchGlobalTaskListenersForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchGlobalTaskListenersInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -12033,12 +18835,12 @@ class CamundaAsyncClient:
             body (UpdateGlobalTaskListenerRequest):
 
         Raises:
-            errors.UpdateGlobalTaskListenerBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UpdateGlobalTaskListenerUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.UpdateGlobalTaskListenerForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.UpdateGlobalTaskListenerNotFound: If the response status code is 404. The global user task listener was not found.
-            errors.UpdateGlobalTaskListenerInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UpdateGlobalTaskListenerServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role or user with the given ID or username was not found.
+            errors.ConflictError: If the response status code is 409. The role is already assigned to the user with the given ID.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -12060,10 +18862,18 @@ class CamundaAsyncClient:
                         ),
                     )
 
-                    print(f"Updated listener: {result.id}")
-        """
-        from .api.global_listener.update_global_task_listener import (
-            asyncio as update_global_task_listener_asyncio,
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            RoleGroupSearchResult"""
+        from .api.role.search_groups_for_role import (
+            asyncio as search_groups_for_role_asyncio,
         )
 
         _kwargs = locals()
@@ -12094,12 +18904,11 @@ class CamundaAsyncClient:
             body (CreateGlobalTaskListenerRequest):
 
         Raises:
-            errors.CreateGlobalTaskListenerBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.CreateGlobalTaskListenerUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.CreateGlobalTaskListenerForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.CreateGlobalTaskListenerConflict: If the response status code is 409. A global listener with this id already exists.
-            errors.CreateGlobalTaskListenerInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.CreateGlobalTaskListenerServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The role with the ID is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -12121,10 +18930,19 @@ class CamundaAsyncClient:
                         ),
                     )
 
-                    print(f"Task listener: {result.id}")
-        """
-        from .api.global_listener.create_global_task_listener import (
-            asyncio as create_global_task_listener_asyncio,
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role or group with the given ID was not found.
+            errors.ConflictError: If the response status code is 409. The role is already assigned to the group with the given ID.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.role.assign_role_to_group import (
+            asyncio as assign_role_to_group_asyncio,
         )
 
         _kwargs = locals()
@@ -12153,12 +18971,11 @@ class CamundaAsyncClient:
             id (str): The user-defined id for the global listener Example: GlobalListener_1.
 
         Raises:
-            errors.DeleteGlobalTaskListenerBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.DeleteGlobalTaskListenerUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.DeleteGlobalTaskListenerForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.DeleteGlobalTaskListenerNotFound: If the response status code is 404. The global user task listener was not found.
-            errors.DeleteGlobalTaskListenerInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.DeleteGlobalTaskListenerServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -12206,10 +19023,12 @@ class CamundaAsyncClient:
             id (str): The user-defined id for the global listener Example: GlobalListener_1.
 
         Raises:
-            errors.GetGlobalTaskListenerUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetGlobalTaskListenerForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetGlobalTaskListenerNotFound: If the response status code is 404. The global user task listener with the given id was not found.
-            errors.GetGlobalTaskListenerInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+            errors.ConflictError: If the response status code is 409. The role was already assigned to the client with the given ID.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -12238,7 +19057,371 @@ class CamundaAsyncClient:
             _kwargs["body"] = _kwargs.pop("data")
         await self._bp.acquire()
         try:
-            _result = await get_global_task_listener_asyncio(**_kwargs)
+            _result = await assign_role_to_client_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def delete_role(self, role_id: str, **kwargs: Any) -> None:
+        """Delete role
+
+         Deletes the role with the given ID.
+
+        Args:
+            role_id (str):
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The role with the ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.role.delete_role import asyncio as delete_role_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_role_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def assign_role_to_mapping_rule(
+        self, role_id: str, mapping_rule_id: str, **kwargs: Any
+    ) -> None:
+        """Assign a role to a mapping rule
+
+         Assigns a role to a mapping rule.
+
+        Args:
+            role_id (str):
+            mapping_rule_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role or mapping rule with the given ID was not found.
+            errors.ConflictError: If the response status code is 409. The role is already assigned to the mapping rule with the given ID.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.role.assign_role_to_mapping_rule import (
+            asyncio as assign_role_to_mapping_rule_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await assign_role_to_mapping_rule_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_role(self, role_id: str, **kwargs: Any) -> RoleResult:
+        """Get role
+
+         Get a role by its ID.
+
+        Args:
+            role_id (str):
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            RoleResult"""
+        from .api.role.get_role import asyncio as get_role_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_role_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def evaluate_conditionals(
+        self, *, data: ConditionalEvaluationInstruction, **kwargs: Any
+    ) -> EvaluateConditionalResult:
+        """Evaluate root level conditional start events
+
+         Evaluates root-level conditional start events for process definitions.
+        If the evaluation is successful, it will return the keys of all created process instances, along
+        with their associated process definition key.
+        Multiple root-level conditional start events of the same process definition can trigger if their
+        conditions evaluate to true.
+
+        Args:
+            body (ConditionalEvaluationInstruction):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. The client is not authorized to start process instances for the specified process definition. If a processDefinitionKey is not provided, this indicates that the client is not authorized to start process instances for at least one of the matched process definitions.
+            errors.NotFoundError: If the response status code is 404. The process definition was not found for the given processDefinitionKey.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            EvaluateConditionalResult"""
+        from .api.conditional.evaluate_conditionals import (
+            asyncio as evaluate_conditionals_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await evaluate_conditionals_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_license(self, **kwargs: Any) -> LicenseResponse:
+        """Get license status
+
+         Obtains the status of the current Camunda license.
+
+        Raises:
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            LicenseResponse"""
+        from .api.license_.get_license import asyncio as get_license_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_license_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_decision_instances(
+        self, *, data: DecisionInstanceSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> DecisionInstanceSearchQueryResult:
+        """Search decision instances
+
+         Search for decision instances based on given criteria.
+
+        Args:
+            body (DecisionInstanceSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DecisionInstanceSearchQueryResult"""
+        from .api.decision_instance.search_decision_instances import (
+            asyncio as search_decision_instances_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_decision_instances_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_decision_instance(
+        self,
+        decision_evaluation_instance_key: DecisionEvaluationInstanceKey,
+        **kwargs: Any,
+    ) -> DecisionInstanceGetQueryResult:
+        """Get decision instance
+
+         Returns a decision instance.
+
+        Args:
+            decision_evaluation_instance_key (str): System-generated key for a decision evaluation
+                instance. Example: 2251799813684367.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DecisionInstanceGetQueryResult"""
+        from .api.decision_instance.get_decision_instance import (
+            asyncio as get_decision_instance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_decision_instance_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def delete_decision_instance(
+        self,
+        decision_evaluation_key: DecisionEvaluationKey,
+        *,
+        data: DeleteDecisionInstanceData | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Delete decision instance
+
+         Delete all associated decision evaluations based on provided key.
+
+        Args:
+            decision_evaluation_key (str): System-generated key for a decision evaluation. Example:
+                2251792362345323.
+            body (DeleteDecisionInstanceData | None | Unset):
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The decision instance is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.decision_instance.delete_decision_instance import (
+            asyncio as delete_decision_instance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_decision_instance_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def delete_decision_instances_batch_operation(
+        self, *, data: DecisionInstanceDeletionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Delete decision instances (batch)
+
+         Delete multiple decision instances. This will delete the historic data from secondary storage.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (DecisionInstanceDeletionBatchOperationRequest): The decision instance filter that
+                defines which decision instances should be deleted.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The decision instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.decision_instance.delete_decision_instances_batch_operation import (
+            asyncio as delete_decision_instances_batch_operation_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_decision_instances_batch_operation_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -12263,11 +19446,11 @@ class CamundaAsyncClient:
             variable_key (str): System-generated key for a variable. Example: 2251799813683287.
 
         Raises:
-            errors.GetVariableBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetVariableNotFound: If the response status code is 404. Not found
-            errors.GetVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -12330,10 +19513,10 @@ class CamundaAsyncClient:
             body (SearchVariablesData | Unset): Variable search query request.
 
         Raises:
-            errors.SearchVariablesBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchVariablesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchVariablesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -12384,10 +19567,11 @@ class CamundaAsyncClient:
             body (ExpressionEvaluationRequest):
 
         Raises:
-            errors.EvaluateExpressionBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.EvaluateExpressionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.EvaluateExpressionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.EvaluateExpressionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Cluster variable not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -13462,10 +20646,10 @@ class CamundaAsyncClient:
                 instance filter that defines which process instances should have their incidents resolved.
 
         Raises:
-            errors.ResolveIncidentsBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
-            errors.ResolveIncidentsBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.ResolveIncidentsBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.ResolveIncidentsBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -13520,10 +20704,10 @@ class CamundaAsyncClient:
                 2251799813690746.
 
         Raises:
-            errors.GetProcessInstanceSequenceFlowsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetProcessInstanceSequenceFlowsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetProcessInstanceSequenceFlowsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetProcessInstanceSequenceFlowsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -13556,7 +20740,304 @@ class CamundaAsyncClient:
             _kwargs["body"] = _kwargs.pop("data")
         await self._bp.acquire()
         try:
-            _result = await get_process_instance_sequence_flows_asyncio(**_kwargs)
+            _result = await create_global_cluster_variable_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def update_tenant_cluster_variable(
+        self,
+        tenant_id: TenantId,
+        name: str,
+        *,
+        data: UpdateClusterVariableRequest,
+        **kwargs: Any,
+    ) -> ClusterVariableResult:
+        """Update a tenant-scoped cluster variable
+
+         Updates the value of an existing tenant-scoped cluster variable.
+        The variable must exist, otherwise a 404 error is returned.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            name (str):
+            body (UpdateClusterVariableRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Cluster variable not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterVariableResult"""
+        from .api.cluster_variable.update_tenant_cluster_variable import (
+            asyncio as update_tenant_cluster_variable_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await update_tenant_cluster_variable_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def delete_global_cluster_variable(self, name: str, **kwargs: Any) -> None:
+        """Delete a global-scoped cluster variable
+
+         Delete a global-scoped cluster variable.
+
+        Args:
+            name (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Cluster variable not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.cluster_variable.delete_global_cluster_variable import (
+            asyncio as delete_global_cluster_variable_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_global_cluster_variable_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def delete_tenant_cluster_variable(
+        self, tenant_id: TenantId, name: str, **kwargs: Any
+    ) -> None:
+        """Delete a tenant-scoped cluster variable
+
+         Delete a tenant-scoped cluster variable.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            name (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Cluster variable not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.cluster_variable.delete_tenant_cluster_variable import (
+            asyncio as delete_tenant_cluster_variable_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_tenant_cluster_variable_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def update_global_cluster_variable(
+        self, name: str, *, data: UpdateClusterVariableRequest, **kwargs: Any
+    ) -> ClusterVariableResult:
+        """Update a global-scoped cluster variable
+
+         Updates the value of an existing global cluster variable.
+        The variable must exist, otherwise a 404 error is returned.
+
+        Args:
+            name (str):
+            body (UpdateClusterVariableRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Cluster variable not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterVariableResult"""
+        from .api.cluster_variable.update_global_cluster_variable import (
+            asyncio as update_global_cluster_variable_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await update_global_cluster_variable_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def create_tenant_cluster_variable(
+        self, tenant_id: TenantId, *, data: CreateClusterVariableRequest, **kwargs: Any
+    ) -> ClusterVariableResult:
+        """Create a tenant-scoped cluster variable
+
+         Create a new cluster variable for the given tenant.
+
+        Args:
+            tenant_id (str): The unique identifier of the tenant. Example: customer-service.
+            body (CreateClusterVariableRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterVariableResult"""
+        from .api.cluster_variable.create_tenant_cluster_variable import (
+            asyncio as create_tenant_cluster_variable_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await create_tenant_cluster_variable_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_global_cluster_variable(
+        self, name: str, **kwargs: Any
+    ) -> ClusterVariableResult:
+        """Get a global-scoped cluster variable
+
+         Get a global-scoped cluster variable.
+
+        Args:
+            name (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Cluster variable not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ClusterVariableResult"""
+        from .api.cluster_variable.get_global_cluster_variable import (
+            asyncio as get_global_cluster_variable_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_global_cluster_variable_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def unassign_mapping_rule_from_group(
+        self, group_id: str, mapping_rule_id: str, **kwargs: Any
+    ) -> None:
+        """Unassign a mapping rule from a group
+
+         Unassigns a mapping rule from a group.
+
+        Args:
+            group_id (str):
+            mapping_rule_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group or mapping rule with the given ID was not found, or the mapping rule is not assigned to this group.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.group.unassign_mapping_rule_from_group import (
+            asyncio as unassign_mapping_rule_from_group_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await unassign_mapping_rule_from_group_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -13582,11 +21063,11 @@ class CamundaAsyncClient:
             body (RoleSearchQueryRequest | Unset): Role search request.
 
         Raises:
-            errors.SearchRolesForGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchRolesForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchRolesForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchRolesForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-            errors.SearchRolesForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -13646,11 +21127,12 @@ class CamundaAsyncClient:
             body (MappingRuleSearchQueryRequest | Unset):
 
         Raises:
-            errors.SearchMappingRulesForGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchMappingRulesForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchMappingRulesForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchMappingRulesForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-            errors.SearchMappingRulesForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.ConflictError: If the response status code is 409. The client with the given ID is already assigned to the group.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -13706,11 +21188,11 @@ class CamundaAsyncClient:
             body (GroupUpdateRequest):
 
         Raises:
-            errors.UpdateGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UpdateGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.UpdateGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-            errors.UpdateGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UpdateGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group or user with the given ID was not found, or the user is not assigned to this group.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -13764,11 +21246,11 @@ class CamundaAsyncClient:
             body (SearchUsersForGroupData | Unset):
 
         Raises:
-            errors.SearchUsersForGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchUsersForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchUsersForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchUsersForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-            errors.SearchUsersForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -13820,10 +21302,10 @@ class CamundaAsyncClient:
             group_id (str):
 
         Raises:
-            errors.GetGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-            errors.GetGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -13874,11 +21356,11 @@ class CamundaAsyncClient:
             client_id (str):
 
         Raises:
-            errors.UnassignClientFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UnassignClientFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.UnassignClientFromGroupNotFound: If the response status code is 404. The group with the given ID was not found, or the client is not assigned to this group.
-            errors.UnassignClientFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UnassignClientFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found, or the client is not assigned to this group.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -13918,6 +21400,248 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def update_group(
+        self, group_id: str, *, data: GroupUpdateRequest, **kwargs: Any
+    ) -> GroupUpdateResult:
+        """Update group
+
+         Update a group with the given ID.
+
+        Args:
+            group_id (str):
+            body (GroupUpdateRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            GroupUpdateResult"""
+        from .api.group.update_group import asyncio as update_group_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await update_group_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_groups(
+        self, *, data: GroupSearchQueryRequest | Unset = UNSET, **kwargs: Any
+    ) -> GroupSearchQueryResult:
+        """Search groups
+
+         Search for groups based on given criteria.
+
+        Args:
+            body (GroupSearchQueryRequest | Unset): Group search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            GroupSearchQueryResult"""
+        from .api.group.search_groups import asyncio as search_groups_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_groups_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def assign_mapping_rule_to_group(
+        self, group_id: str, mapping_rule_id: str, **kwargs: Any
+    ) -> None:
+        """Assign a mapping rule to a group
+
+         Assigns a mapping rule to a group.
+
+        Args:
+            group_id (str):
+            mapping_rule_id (str):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group or mapping rule with the given ID was not found.
+            errors.ConflictError: If the response status code is 409. The mapping rule with the given ID is already assigned to the group.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.group.assign_mapping_rule_to_group import (
+            asyncio as assign_mapping_rule_to_group_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await assign_mapping_rule_to_group_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_mapping_rules_for_group(
+        self,
+        group_id: str,
+        *,
+        data: MappingRuleSearchQueryRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> SearchMappingRulesForGroupResponse200:
+        """Search group mapping rules
+
+         Search mapping rules assigned to a group.
+
+        Args:
+            group_id (str):
+            body (MappingRuleSearchQueryRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SearchMappingRulesForGroupResponse200"""
+        from .api.group.search_mapping_rules_for_group import (
+            asyncio as search_mapping_rules_for_group_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_mapping_rules_for_group_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def create_group(
+        self, *, data: GroupCreateRequest | Unset = UNSET, **kwargs: Any
+    ) -> GroupCreateResult:
+        """Create group
+
+         Create a new group.
+
+        Args:
+            body (GroupCreateRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            GroupCreateResult"""
+        from .api.group.create_group import asyncio as create_group_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await create_group_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def delete_group(self, group_id: str, **kwargs: Any) -> None:
+        """Delete group
+
+         Deletes the group with the given ID.
+
+        Args:
+            group_id (str):
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.group.delete_group import asyncio as delete_group_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_group_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
     async def assign_user_to_group(
         self, group_id: str, username: Username, **kwargs: Any
     ) -> None:
@@ -13931,12 +21655,12 @@ class CamundaAsyncClient:
             username (str): The unique name of a user. Example: swillis.
 
         Raises:
-            errors.AssignUserToGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.AssignUserToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.AssignUserToGroupNotFound: If the response status code is 404. The group or user with the given ID or username was not found.
-            errors.AssignUserToGroupConflict: If the response status code is 409. The user with the given ID is already assigned to the group.
-            errors.AssignUserToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.AssignUserToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group or user with the given ID or username was not found.
+            errors.ConflictError: If the response status code is 409. The user with the given ID is already assigned to the group.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -14049,11 +21773,11 @@ class CamundaAsyncClient:
             body (SearchClientsForGroupData | Unset):
 
         Raises:
-            errors.SearchClientsForGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchClientsForGroupUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchClientsForGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchClientsForGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-            errors.SearchClientsForGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The group with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -14110,11 +21834,12 @@ class CamundaAsyncClient:
             username (str): The unique name of a user. Example: swillis.
 
         Raises:
-            errors.UnassignUserFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UnassignUserFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.UnassignUserFromGroupNotFound: If the response status code is 404. The group or user with the given ID was not found, or the user is not assigned to this group.
-            errors.UnassignUserFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UnassignUserFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The global user task listener was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -14166,11 +21891,10 @@ class CamundaAsyncClient:
             mapping_rule_id (str):
 
         Raises:
-            errors.UnassignMappingRuleFromGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UnassignMappingRuleFromGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.UnassignMappingRuleFromGroupNotFound: If the response status code is 404. The group or mapping rule with the given ID was not found, or the mapping rule is not assigned to this group.
-            errors.UnassignMappingRuleFromGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UnassignMappingRuleFromGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The global user task listener with the given id was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -14223,12 +21947,12 @@ class CamundaAsyncClient:
             client_id (str):
 
         Raises:
-            errors.AssignClientToGroupBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.AssignClientToGroupForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.AssignClientToGroupNotFound: If the response status code is 404. The group with the given ID was not found.
-            errors.AssignClientToGroupConflict: If the response status code is 409. The client with the given ID is already assigned to the group.
-            errors.AssignClientToGroupInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.AssignClientToGroupServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The global user task listener was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -15585,10 +23309,10 @@ class CamundaAsyncClient:
             body (ClusterVariableSearchQueryRequest | Unset): Cluster variable search query request.
 
         Raises:
-            errors.SearchClusterVariablesBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchClusterVariablesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchClusterVariablesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchClusterVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -15650,11 +23374,12 @@ class CamundaAsyncClient:
             body (UpdateClusterVariableRequest):
 
         Raises:
-            errors.UpdateTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UpdateTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.UpdateTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.UpdateTenantClusterVariableNotFound: If the response status code is 404. Cluster variable not found
-            errors.UpdateTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.ConflictError: If the response status code is 409. A global listener with this id already exists.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -16049,8 +23774,10 @@ class CamundaAsyncClient:
             body (CreateDocumentData):
 
         Raises:
-            errors.CreateDocumentBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.CreateDocumentUnsupportedMediaType: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -16095,8 +23822,10 @@ class CamundaAsyncClient:
             content_hash (str | Unset):
 
         Raises:
-            errors.GetDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
-            errors.GetDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -18831,10 +26560,10 @@ class CamundaAsyncClient:
             body (UserRequest):
 
         Raises:
-            errors.CreateAdminUserBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.CreateAdminUserForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.CreateAdminUserInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.CreateAdminUserServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -19638,9 +27367,9 @@ class CamundaAsyncClient:
             body (MessagePublicationRequest):
 
         Raises:
-            errors.PublishMessageBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.PublishMessageInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.PublishMessageServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -19698,11 +27427,11 @@ class CamundaAsyncClient:
             body (MessageCorrelationRequest):
 
         Raises:
-            errors.CorrelateMessageBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.CorrelateMessageForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.CorrelateMessageNotFound: If the response status code is 404. Not found
-            errors.CorrelateMessageInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.CorrelateMessageServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -19755,10 +27484,12 @@ class CamundaAsyncClient:
             body (DecisionRequirementsSearchQuery | Unset):
 
         Raises:
-            errors.SearchDecisionRequirementsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchDecisionRequirementsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchDecisionRequirementsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchDecisionRequirementsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.ConflictError: If the response status code is 409. A user with this username already exists.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -19776,12 +27507,279 @@ class CamundaAsyncClient:
                         data=DecisionRequirementsSearchQuery(),
                     )
 
-                    if not isinstance(result.items, Unset):
-                        for drd in result.items:
-                            print(f"DRD: {drd.decision_requirements_name}")
-        """
-        from .api.decision_requirements.search_decision_requirements import (
-            asyncio as search_decision_requirements_asyncio,
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SearchUsersResponse200"""
+        from .api.user.search_users import asyncio as search_users_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_users_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def delete_user(self, username: Username, **kwargs: Any) -> None:
+        """Delete user
+
+         Deletes a user.
+
+        Args:
+            username (str): The unique name of a user. Example: swillis.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The user is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.user.delete_user import asyncio as delete_user_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_user_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_user(self, username: Username, **kwargs: Any) -> GetUserResponse200:
+        """Get user
+
+         Get a user by its username.
+
+        Args:
+            username (str): The unique name of a user. Example: swillis.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The user with the given username was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            GetUserResponse200"""
+        from .api.user.get_user import asyncio as get_user_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_user_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def update_user(
+        self, username: Username, *, data: UserUpdateRequest, **kwargs: Any
+    ) -> UpdateUserResponse200:
+        """Update user
+
+         Updates a user.
+
+        Args:
+            username (str): The unique name of a user. Example: swillis.
+            body (UserUpdateRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The user was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            UpdateUserResponse200"""
+        from .api.user.update_user import asyncio as update_user_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await update_user_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_document(
+        self,
+        document_id: DocumentId,
+        *,
+        store_id: str | Unset = UNSET,
+        content_hash: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> File:
+        """Download document
+
+         Download a document from the Camunda 8 cluster.
+
+        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        production), local (non-production)
+
+        Args:
+            document_id (str): Document Id that uniquely identifies a document.
+            store_id (str | Unset):
+            content_hash (str | Unset):
+
+        Raises:
+            errors.NotFoundError: If the response status code is 404. The document with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            File"""
+        from .api.document.get_document import asyncio as get_document_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_document_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def create_documents(
+        self, *, data: CreateDocumentsData, store_id: str | Unset = UNSET, **kwargs: Any
+    ) -> DocumentCreationBatchResponse:
+        """Upload multiple documents
+
+         Upload multiple documents to the Camunda 8 cluster.
+
+        The caller must provide a file name for each document, which will be used in case of a multi-status
+        response
+        to identify which documents failed to upload. The file name can be provided in the `Content-
+        Disposition` header
+        of the file part or in the `fileName` field of the metadata. You can add a parallel array of
+        metadata objects. These
+        are matched with the files based on index, and must have the same length as the files array.
+        To pass homogenous metadata for all files, spread the metadata over the metadata array.
+        A filename value provided explicitly via the metadata array in the request overrides the `Content-
+        Disposition` header
+        of the file part.
+
+        In case of a multi-status response, the response body will contain a list of
+        `DocumentBatchProblemDetail` objects,
+        each of which contains the file name of the document that failed to upload and the reason for the
+        failure.
+        The client can choose to retry the whole batch or individual documents based on the response.
+
+        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        production), local (non-production)
+
+        Args:
+            store_id (str | Unset):
+            body (CreateDocumentsData):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnsupportedMediaTypeError: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DocumentCreationBatchResponse"""
+        from .api.document.create_documents import asyncio as create_documents_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await create_documents_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def create_document_link(
+        self,
+        document_id: DocumentId,
+        *,
+        data: DocumentLinkRequest | Unset = UNSET,
+        store_id: str | Unset = UNSET,
+        content_hash: str | Unset = UNSET,
+        **kwargs: Any,
+    ) -> DocumentLink:
+        """Create document link
+
+         Create a link to a document in the Camunda 8 cluster.
+
+        Note that this is currently supported for document stores of type: AWS, GCP
+
+        Args:
+            document_id (str): Document Id that uniquely identifies a document.
+            store_id (str | Unset):
+            content_hash (str | Unset):
+            body (DocumentLinkRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DocumentLink"""
+        from .api.document.create_document_link import (
+            asyncio as create_document_link_asyncio,
         )
 
         _kwargs = locals()
@@ -19813,11 +27811,8 @@ class CamundaAsyncClient:
                 definition. Example: 2251799813683346.
 
         Raises:
-            errors.GetDecisionRequirementsXmlBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetDecisionRequirementsXmlUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetDecisionRequirementsXmlForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetDecisionRequirementsXmlNotFound: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
-            errors.GetDecisionRequirementsXmlInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.NotFoundError: If the response status code is 404. The document with the given ID was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -19932,11 +27927,8 @@ class CamundaAsyncClient:
             body (DeleteDecisionInstanceData | None | Unset):
 
         Raises:
-            errors.DeleteDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.DeleteDecisionInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.DeleteDecisionInstanceNotFound: If the response status code is 404. The decision instance is not found.
-            errors.DeleteDecisionInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.DeleteDecisionInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnsupportedMediaTypeError: If the response status code is 415. The server cannot process the request because the media type (Content-Type) of the request payload is not supported by the server for the requested resource and method.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -19989,11 +27981,10 @@ class CamundaAsyncClient:
                 instance. Example: 2251799813684367.
 
         Raises:
-            errors.GetDecisionInstanceBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetDecisionInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetDecisionInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetDecisionInstanceNotFound: If the response status code is 404. The decision instance with the given key was not found. More details are provided in the response body.
-            errors.GetDecisionInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The audit log with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -20392,8 +28383,10 @@ class CamundaAsyncClient:
             body (UserTaskAuditLogSearchQueryRequest | Unset): User task search query request.
 
         Raises:
-            errors.SearchUserTaskAuditLogsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchUserTaskAuditLogsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -20497,7 +28490,193 @@ class CamundaAsyncClient:
         self,
         user_task_key: UserTaskKey,
         *,
-        data: UserTaskCompletionRequest | Unset = UNSET,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
+        tenant_id: str | Unset = UNSET,
+        with_tenants: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> UsageMetricsResponse:
+        """Get usage metrics
+
+         Retrieve the usage metrics based on given criteria.
+
+        Args:
+            start_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
+            end_time (datetime.datetime):  Example: 2025-06-07T13:14:15Z.
+            tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
+            with_tenants (bool | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            UsageMetricsResponse"""
+        from .api.system.get_usage_metrics import asyncio as get_usage_metrics_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_usage_metrics_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_system_configuration(
+        self, **kwargs: Any
+    ) -> SystemConfigurationResponse:
+        """System configuration (alpha)
+
+         Returns the current system configuration. The response is an envelope
+        that groups settings by feature area.
+
+        This endpoint is an alpha feature and may be subject to change
+        in future releases.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SystemConfigurationResponse"""
+        from .api.system.get_system_configuration import (
+            asyncio as get_system_configuration_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_system_configuration_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_element_instance_incidents(
+        self,
+        element_instance_key: ElementInstanceKey,
+        *,
+        data: IncidentSearchQuery,
+        **kwargs: Any,
+    ) -> IncidentSearchQueryResult:
+        """Search for incidents of a specific element instance
+
+         Search for incidents caused by the specified element instance, including incidents of any child
+        instances created from this element instance.
+
+        Although the `elementInstanceKey` is provided as a path parameter to indicate the root element
+        instance,
+        you may also include an `elementInstanceKey` within the filter object to narrow results to specific
+        child element instances. This is useful, for example, if you want to isolate incidents associated
+        with
+        nested or subordinate elements within the given element instance while excluding incidents directly
+        tied
+        to the root element itself.
+
+        Args:
+            element_instance_key (str): System-generated key for a element instance. Example:
+                2251799813686789.
+            body (IncidentSearchQuery):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The element instance with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            IncidentSearchQueryResult"""
+        from .api.element_instance.search_element_instance_incidents import (
+            asyncio as search_element_instance_incidents_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_element_instance_incidents_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_element_instance(
+        self, element_instance_key: ElementInstanceKey, **kwargs: Any
+    ) -> ElementInstanceResult:
+        """Get element instance
+
+         Returns element instance as JSON.
+
+        Args:
+            element_instance_key (str): System-generated key for a element instance. Example:
+                2251799813686789.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The element instance with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ElementInstanceResult"""
+        from .api.element_instance.get_element_instance import (
+            asyncio as get_element_instance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_element_instance_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def create_element_instance_variables(
+        self,
+        element_instance_key: ElementInstanceKey,
+        *,
+        data: SetVariableRequest,
         **kwargs: Any,
     ) -> None:
         """Complete user task
@@ -20512,12 +28691,10 @@ class CamundaAsyncClient:
             body (UserTaskCompletionRequest | Unset):
 
         Raises:
-            errors.CompleteUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.CompleteUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
-            errors.CompleteUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
-            errors.CompleteUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.CompleteUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-            errors.CompleteUserTaskGatewayTimeout: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -20628,12 +28805,10 @@ class CamundaAsyncClient:
             body (UserTaskUpdateRequest | Unset):
 
         Raises:
-            errors.UpdateUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.UpdateUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
-            errors.UpdateUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
-            errors.UpdateUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.UpdateUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-            errors.UpdateUserTaskGatewayTimeout: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -20762,12 +28937,12 @@ class CamundaAsyncClient:
             body (AdHocSubProcessActivateActivitiesInstruction):
 
         Raises:
-            errors.ActivateAdHocSubProcessActivitiesBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.ActivateAdHocSubProcessActivitiesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.ActivateAdHocSubProcessActivitiesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.ActivateAdHocSubProcessActivitiesNotFound: If the response status code is 404. The ad-hoc sub-process instance is not found or the provided key does not identify an ad-hoc sub-process.
-            errors.ActivateAdHocSubProcessActivitiesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.ActivateAdHocSubProcessActivitiesServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The ad-hoc sub-process instance is not found or the provided key does not identify an ad-hoc sub-process.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -20868,11 +29043,11 @@ class CamundaAsyncClient:
             body (JobFailRequest | Unset):
 
         Raises:
-            errors.FailJobBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.FailJobNotFound: If the response status code is 404. The job with the given jobKey is not found. It was completed by another worker, or the process instance itself was canceled.
-            errors.FailJobConflict: If the response status code is 409. The job with the given key is in the wrong state (i.e: not ACTIVATED or ACTIVATABLE). The job was failed by another worker with retries = 0, and the process is now in an incident state.
-            errors.FailJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.FailJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The job with the given jobKey is not found. It was completed by another worker, or the process instance itself was canceled.
+            errors.ConflictError: If the response status code is 409. The job with the given key is in the wrong state (i.e: not ACTIVATED or ACTIVATABLE). The job was failed by another worker with retries = 0, and the process is now in an incident state.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -20915,10 +29090,10 @@ class CamundaAsyncClient:
             body (JobTypeStatisticsQuery): Job type statistics query.
 
         Raises:
-            errors.GetJobTypeStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetJobTypeStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetJobTypeStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetJobTypeStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -20972,10 +29147,10 @@ class CamundaAsyncClient:
             body (JobActivationRequest):
 
         Raises:
-            errors.ActivateJobsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.ActivateJobsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.ActivateJobsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.ActivateJobsServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -21092,10 +29267,10 @@ class CamundaAsyncClient:
             body (JobErrorStatisticsQuery): Job error statistics query.
 
         Raises:
-            errors.GetJobErrorStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetJobErrorStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetJobErrorStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetJobErrorStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -21388,10 +29563,10 @@ class CamundaAsyncClient:
             job_type (str | Unset):
 
         Raises:
-            errors.GetGlobalJobStatisticsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetGlobalJobStatisticsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetGlobalJobStatisticsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetGlobalJobStatisticsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -21433,6 +29608,158 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
+    async def get_job_time_series_statistics(
+        self, *, data: JobTimeSeriesStatisticsQuery, **kwargs: Any
+    ) -> JobTimeSeriesStatisticsQueryResult:
+        """Get time-series metrics for a job type
+
+         Returns a list of time-bucketed metrics ordered ascending by time.
+        The `from` and `to` fields select the time window of interest.
+        Each item in the response corresponds to one time bucket of the requested resolution.
+
+        Args:
+            body (JobTimeSeriesStatisticsQuery): Job time-series statistics query.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            JobTimeSeriesStatisticsQueryResult"""
+        from .api.job.get_job_time_series_statistics import (
+            asyncio as get_job_time_series_statistics_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_job_time_series_statistics_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_job_type_statistics(
+        self, *, data: JobTypeStatisticsQuery, **kwargs: Any
+    ) -> JobTypeStatisticsQueryResult:
+        """Get job statistics by type
+
+         Get statistics about jobs, grouped by job type.
+
+        Args:
+            body (JobTypeStatisticsQuery): Job type statistics query.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            JobTypeStatisticsQueryResult"""
+        from .api.job.get_job_type_statistics import (
+            asyncio as get_job_type_statistics_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_job_type_statistics_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_job_worker_statistics(
+        self, *, data: JobWorkerStatisticsQuery, **kwargs: Any
+    ) -> JobWorkerStatisticsQueryResult:
+        """Get job statistics by worker
+
+         Get statistics about jobs, grouped by worker, for a given job type.
+
+        Args:
+            body (JobWorkerStatisticsQuery): Job worker statistics query.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            JobWorkerStatisticsQueryResult"""
+        from .api.job.get_job_worker_statistics import (
+            asyncio as get_job_worker_statistics_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_job_worker_statistics_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def throw_job_error(
+        self, job_key: JobKey, *, data: JobErrorRequest, **kwargs: Any
+    ) -> None:
+        """Throw error for job
+
+         Reports a business error (i.e. non-technical) that occurs while processing a job.
+
+        Args:
+            job_key (str): System-generated key for a job. Example: 2251799813653498.
+            body (JobErrorRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The job with the given key was not found or is not activated.
+            errors.ConflictError: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.job.throw_job_error import asyncio as throw_job_error_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await throw_job_error_asyncio(**_kwargs)
+
     async def complete_job(
         self,
         job_key: JobKey,
@@ -21449,11 +29776,11 @@ class CamundaAsyncClient:
             body (JobCompletionRequest | Unset):
 
         Raises:
-            errors.CompleteJobBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.CompleteJobNotFound: If the response status code is 404. The job with the given key was not found.
-            errors.CompleteJobConflict: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
-            errors.CompleteJobInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.CompleteJobServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The job with the given key was not found.
+            errors.ConflictError: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -21497,11 +29824,11 @@ class CamundaAsyncClient:
                 2251799813686789.
 
         Raises:
-            errors.GetElementInstanceBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetElementInstanceUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetElementInstanceForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetElementInstanceNotFound: If the response status code is 404. The element instance with the given key was not found. More details are provided in the response body.
-            errors.GetElementInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The job with the jobKey is not found.
+            errors.ConflictError: If the response status code is 409. The job with the given key is in the wrong state currently. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -21519,10 +29846,17 @@ class CamundaAsyncClient:
                         element_instance_key=ElementInstanceKey("123456"),
                     )
 
-                    print(f"Element: {result.element_id}")
-        """
-        from .api.element_instance.get_element_instance import (
-            asyncio as get_element_instance_asyncio,
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            IncidentProcessInstanceStatisticsByDefinitionQueryResult"""
+        from .api.incident.get_process_instance_statistics_by_definition import (
+            asyncio as get_process_instance_statistics_by_definition_asyncio,
         )
 
         _kwargs = locals()
@@ -22066,11 +30400,11 @@ class CamundaAsyncClient:
             body (IncidentResolutionRequest | Unset):
 
         Raises:
-            errors.ResolveIncidentBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.ResolveIncidentNotFound: If the response status code is 404. The incident with the incidentKey is not found.
-            errors.ResolveIncidentConflict: If the response status code is 409. The incident cannot be resolved due to an invalid state. For example, the associated job may have no retries left.
-            errors.ResolveIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-            errors.ResolveIncidentServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The incident with the incidentKey is not found.
+            errors.ConflictError: If the response status code is 409. The incident cannot be resolved due to an invalid state. For example, the associated job may have no retries left.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -22116,10 +30450,10 @@ class CamundaAsyncClient:
             body (IncidentSearchQuery | Unset):
 
         Raises:
-            errors.SearchIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.SearchIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.SearchIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.SearchIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -22173,10 +30507,10 @@ class CamundaAsyncClient:
             body (IncidentProcessInstanceStatisticsByDefinitionQuery):
 
         Raises:
-            errors.GetProcessInstanceStatisticsByDefinitionBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetProcessInstanceStatisticsByDefinitionUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetProcessInstanceStatisticsByDefinitionForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetProcessInstanceStatisticsByDefinitionInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -22236,11 +30570,11 @@ class CamundaAsyncClient:
             incident_key (str): System-generated key for a incident. Example: 2251799813689432.
 
         Raises:
-            errors.GetIncidentBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetIncidentUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetIncidentForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetIncidentNotFound: If the response status code is 404. The incident with the given key was not found.
-            errors.GetIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The incident with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -22292,10 +30626,11 @@ class CamundaAsyncClient:
             body (IncidentProcessInstanceStatisticsByErrorQuery | Unset):
 
         Raises:
-            errors.GetProcessInstanceStatisticsByErrorBadRequest: If the response status code is 400. The provided data is not valid.
-            errors.GetProcessInstanceStatisticsByErrorUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-            errors.GetProcessInstanceStatisticsByErrorForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-            errors.GetProcessInstanceStatisticsByErrorInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
@@ -22309,8 +30644,138 @@ class CamundaAsyncClient:
                 def get_process_instance_statistics_by_error_example() -> None:
                     client = CamundaClient()
 
-                    result = client.get_process_instance_statistics_by_error(
-                        data=IncidentProcessInstanceStatisticsByErrorQuery(),
+                    definition = client.get_decision_definition(
+                        decision_definition_key=DecisionDefinitionKey("123456")
+                    )
+
+                    print(f"Decision: {definition.decision_definition_id}")
+        """
+        from .api.decision_definition.get_decision_definition import (
+            asyncio as get_decision_definition_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_decision_definition_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def evaluate_decision(
+        self, *, data: DecisionEvaluationByID | DecisionEvaluationByKey, **kwargs: Any
+    ) -> EvaluateDecisionResult:
+        """Evaluate decision
+
+         Evaluates a decision.
+        You specify the decision to evaluate either by using its unique key (as returned by
+        DeployResource), or using the decision ID. When using the decision ID, the latest deployed
+        version of the decision is used.
+
+        Args:
+            body (DecisionEvaluationByID | DecisionEvaluationByKey):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The decision is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            EvaluateDecisionResult
+
+        Examples:
+            **Evaluate by decision definition key:**
+
+            .. code-block:: python
+
+                def evaluate_decision_by_key_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.evaluate_decision(
+                        data=DecisionEvaluationByKey(
+                            decision_definition_key=DecisionDefinitionKey("123456"),
+                        )
+                    )
+
+                    print(f"Decision key: {result.decision_definition_key}")
+
+            **Evaluate by decision definition ID:**
+
+            .. code-block:: python
+
+                def evaluate_decision_by_id_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.evaluate_decision(
+                        data=DecisionEvaluationByID(
+                            decision_definition_id=DecisionDefinitionId("invoice-classification"),
+                        )
+                    )
+
+                    print(f"Decision key: {result.decision_definition_key}")
+        """
+        from .api.decision_definition.evaluate_decision import (
+            asyncio as evaluate_decision_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await evaluate_decision_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_decision_definitions(
+        self, *, data: DecisionDefinitionSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> DecisionDefinitionSearchQueryResult:
+        """Search decision definitions
+
+         Search for decision definitions based on given criteria.
+
+        Args:
+            body (DecisionDefinitionSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DecisionDefinitionSearchQueryResult
+
+        Examples:
+            **Search decision definitions:**
+
+            .. code-block:: python
+
+                def search_decision_definitions_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_decision_definitions(
+                        data=DecisionDefinitionSearchQuery()
                     )
 
                     if not isinstance(result.items, Unset):
@@ -22328,7 +30793,2794 @@ class CamundaAsyncClient:
             _kwargs["body"] = _kwargs.pop("data")
         await self._bp.acquire()
         try:
-            _result = await get_process_instance_statistics_by_error_asyncio(**_kwargs)
+            _result = await search_decision_definitions_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_decision_definition_xml(
+        self, decision_definition_key: DecisionDefinitionKey, **kwargs: Any
+    ) -> str:
+        """Get decision definition XML
+
+         Returns decision definition as XML.
+
+        Args:
+            decision_definition_key (str): System-generated key for a decision definition. Example:
+                2251799813326547.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The decision definition with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            str"""
+        from .api.decision_definition.get_decision_definition_xml import (
+            asyncio as get_decision_definition_xml_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_decision_definition_xml_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def evaluate_expression(
+        self, *, data: ExpressionEvaluationRequest, **kwargs: Any
+    ) -> ExpressionEvaluationResult:
+        """Evaluate an expression
+
+         Evaluates a FEEL expression and returns the result. Supports references to tenant scoped cluster
+        variables when a tenant ID is provided.
+
+        Args:
+            body (ExpressionEvaluationRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ExpressionEvaluationResult"""
+        from .api.expression.evaluate_expression import (
+            asyncio as evaluate_expression_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await evaluate_expression_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def unassign_user_task(
+        self, user_task_key: UserTaskKey, **kwargs: Any
+    ) -> None:
+        """Unassign user task
+
+         Removes the assignee of a task with the given key. Unassignment waits for blocking task listeners on
+        this lifecycle transition. If listener processing is delayed beyond the request timeout, this
+        endpoint can return 504. Other gateway timeout causes are also possible. Retry with backoff and
+        inspect listener worker availability and logs when this repeats.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
+            errors.ConflictError: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Unassign a user task:**
+
+            .. code-block:: python
+
+                def unassign_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    client.unassign_user_task(user_task_key=UserTaskKey("123456"))
+        """
+        from .api.user_task.unassign_user_task import (
+            asyncio as unassign_user_task_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await unassign_user_task_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_user_task_variables(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: SearchUserTaskVariablesData | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> VariableSearchQueryResult:
+        """Search user task variables
+
+         Search for user task variables based on given criteria. This endpoint returns all variable
+        documents visible from the user task's scope, including variables from parent scopes in the
+        scope hierarchy. If the same variable name exists at multiple scope levels, each scope's
+        variable is returned as a separate result. Use the
+        `/user-tasks/{userTaskKey}/effective-variables/search` endpoint to get deduplicated variables
+        where the innermost scope takes precedence. By default, long variable values in the response
+        are truncated.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+            truncate_values (bool | Unset):
+            body (SearchUserTaskVariablesData | Unset): User task search query request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            VariableSearchQueryResult"""
+        from .api.user_task.search_user_task_variables import (
+            asyncio as search_user_task_variables_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_user_task_variables_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def assign_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskAssignmentRequest,
+        **kwargs: Any,
+    ) -> None:
+        """Assign user task
+
+         Assigns a user task with the given key to the given assignee. Assignment waits for blocking task
+        listeners on this lifecycle transition. If listener processing is delayed beyond the request
+        timeout, this endpoint can return 504. Other gateway timeout causes are also possible. Retry with
+        backoff and inspect listener worker availability and logs when this repeats.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+            body (UserTaskAssignmentRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
+            errors.ConflictError: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Assign a user task:**
+
+            .. code-block:: python
+
+                def assign_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    client.assign_user_task(
+                        user_task_key=UserTaskKey("123456"),
+                        data=UserTaskAssignmentRequest(
+                            assignee="user@example.com",
+                        ),
+                    )
+        """
+        from .api.user_task.assign_user_task import asyncio as assign_user_task_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await assign_user_task_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def update_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskUpdateRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Update user task
+
+         Update a user task with the given key. Updates wait for blocking task listeners on this lifecycle
+        transition. If listener processing is delayed beyond the request timeout, this endpoint can return
+        504. Other gateway timeout causes are also possible. Retry with backoff and inspect listener worker
+        availability and logs when this repeats.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+            body (UserTaskUpdateRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
+            errors.ConflictError: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Update a user task:**
+
+            .. code-block:: python
+
+                def update_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    client.update_user_task(
+                        user_task_key=UserTaskKey("123456"),
+                        data=UserTaskUpdateRequest(
+                            changeset=Changeset(
+                                due_date=datetime.datetime(2025, 12, 31, 23, 59, 59),
+                            ),
+                        ),
+                    )
+        """
+        from .api.user_task.update_user_task import asyncio as update_user_task_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await update_user_task_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_user_task_form(
+        self, user_task_key: UserTaskKey, **kwargs: Any
+    ) -> FormResult:
+        """Get user task form
+
+         Get the form of a user task.
+        Note that this endpoint will only return linked forms. This endpoint does not support embedded
+        forms.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            FormResult"""
+        from .api.user_task.get_user_task_form import (
+            asyncio as get_user_task_form_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_user_task_form_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_user_task(
+        self, user_task_key: UserTaskKey, **kwargs: Any
+    ) -> UserTaskResult:
+        """Get user task
+
+         Get the user task by the user task key.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            UserTaskResult
+
+        Examples:
+            **Get a user task:**
+
+            .. code-block:: python
+
+                def get_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    task = client.get_user_task(user_task_key=UserTaskKey("123456"))
+
+                    print(f"Task: {task.user_task_key}")
+        """
+        from .api.user_task.get_user_task import asyncio as get_user_task_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_user_task_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_user_task_audit_logs(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskAuditLogSearchQueryRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> AuditLogSearchQueryResult:
+        """Search user task audit logs
+
+         Search for user task audit logs based on given criteria.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+            body (UserTaskAuditLogSearchQueryRequest | Unset): User task search query request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AuditLogSearchQueryResult"""
+        from .api.user_task.search_user_task_audit_logs import (
+            asyncio as search_user_task_audit_logs_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_user_task_audit_logs_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_user_tasks(
+        self, *, data: UserTaskSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> UserTaskSearchQueryResult:
+        """Search user tasks
+
+         Search for user tasks based on given criteria.
+
+        Args:
+            body (UserTaskSearchQuery | Unset): User task search query request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            UserTaskSearchQueryResult
+
+        Examples:
+            **Search user tasks:**
+
+            .. code-block:: python
+
+                def search_user_tasks_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_user_tasks(
+                        data=UserTaskSearchQuery()
+                    )
+
+                    if not isinstance(result.items, Unset):
+                        for task in result.items:
+                            print(f"Task: {task.user_task_key}")
+        """
+        from .api.user_task.search_user_tasks import (
+            asyncio as search_user_tasks_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_user_tasks_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_user_task_effective_variables(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: SearchUserTaskEffectiveVariablesData | Unset = UNSET,
+        truncate_values: bool | Unset = UNSET,
+        **kwargs: Any,
+    ) -> VariableSearchQueryResult:
+        """Search user task effective variables
+
+         Search for the effective variables of a user task. This endpoint returns deduplicated
+        variables where each variable name appears at most once. When the same variable name exists
+        at multiple scope levels in the scope hierarchy, the value from the innermost scope (closest
+        to the user task) takes precedence. This is useful for retrieving the actual runtime state
+        of variables as seen by the user task. By default, long variable values in the response are
+        truncated.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+            truncate_values (bool | Unset):
+            body (SearchUserTaskEffectiveVariablesData | Unset): User task effective variable search
+                query request. Uses offset-based pagination only.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            VariableSearchQueryResult"""
+        from .api.user_task.search_user_task_effective_variables import (
+            asyncio as search_user_task_effective_variables_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_user_task_effective_variables_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def complete_user_task(
+        self,
+        user_task_key: UserTaskKey,
+        *,
+        data: UserTaskCompletionRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Complete user task
+
+         Completes a user task with the given key. Completion waits for blocking task listeners on this
+        lifecycle transition. If listener processing is delayed beyond the request timeout, this endpoint
+        can return 504. Other gateway timeout causes are also possible. Retry with backoff and inspect
+        listener worker availability and logs when this repeats.
+
+        Args:
+            user_task_key (str): System-generated key for a user task.
+            body (UserTaskCompletionRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
+            errors.ConflictError: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Complete a user task:**
+
+            .. code-block:: python
+
+                def complete_user_task_example() -> None:
+                    client = CamundaClient()
+
+                    variables = UserTaskCompletionRequestVariables()
+                    variables["approved"] = True
+
+                    client.complete_user_task(
+                        user_task_key=UserTaskKey("123456"),
+                        data=UserTaskCompletionRequest(
+                            variables=variables,
+                        ),
+                    )
+        """
+        from .api.user_task.complete_user_task import (
+            asyncio as complete_user_task_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        return await complete_user_task_asyncio(**_kwargs)
+
+    async def delete_resource(
+        self,
+        resource_key: str,
+        *,
+        data: DeleteResourceRequest | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> DeleteResourceResponse:
+        """Delete resource
+
+         Deletes a deployed resource. This can be a process definition, decision requirements
+        definition, or form definition deployed using the deploy resources endpoint. Specify the
+        resource you want to delete in the `resourceKey` parameter.
+
+        Once a resource has been deleted it cannot be recovered. If the resource needs to be
+        available again, a new deployment of the resource is required.
+
+        By default, only the resource itself is deleted from the runtime state. To also delete the
+        historic data associated with a resource, set the `deleteHistory` flag in the request body
+        to `true`. The historic data is deleted asynchronously via a batch operation. The details of
+        the created batch operation are included in the response. Note that history deletion is only
+        supported for process resources; for other resource types this flag is ignored and no history
+        will be deleted.
+
+        Args:
+            resource_key (str): The system-assigned key for this resource.
+            body (DeleteResourceRequest | None | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The resource is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DeleteResourceResponse
+
+        Examples:
+            **Delete a resource:**
+
+            .. code-block:: python
+
+                def delete_resource_example() -> None:
+                    client = CamundaClient()
+
+                    # Use a resource key from a previous deployment response
+                    client.delete_resource(resource_key="2251799813685249")
+        """
+        from .api.resource.delete_resource import asyncio as delete_resource_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_resource_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_resource_content(self, resource_key: str, **kwargs: Any) -> str:
+        """Get resource content
+
+         Returns the content of a deployed resource.
+        :::info
+        Currently, this endpoint only supports RPA resources.
+        :::
+
+        Args:
+            resource_key (str): The system-assigned key for this resource.
+
+        Raises:
+            errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            str"""
+        from .api.resource.get_resource_content import (
+            asyncio as get_resource_content_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_resource_content_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def create_deployment(
+        self, *, data: CreateDeploymentData, **kwargs: Any
+    ) -> DeploymentResult:
+        """Deploy resources
+
+         Deploys one or more resources (e.g. processes, decision models, or forms).
+        This is an atomic call, i.e. either all resources are deployed or none of them are.
+
+        Args:
+            body (CreateDeploymentData):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DeploymentResult
+
+        Examples:
+            **Deploy resources from files:**
+
+            .. code-block:: python
+
+                def deploy_resources_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.deploy_resources_from_files(
+                        ["order-process.bpmn", "decision.dmn"]
+                    )
+
+                    print(f"Deployment key: {result.deployment_key}")
+                    for process in result.processes:
+                        print(
+                            f"  Process: {process.process_definition_id} v{process.process_definition_version}"
+                        )
+                    for decision in result.decisions:
+                        print(f"  Decision: {decision.decision_definition_id}")
+
+            **Deploy resources with tenant ID:**
+
+            .. code-block:: python
+
+                def deploy_resources_with_tenant_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.deploy_resources_from_files(
+                        ["order-process.bpmn"],
+                        tenant_id="my-tenant",
+                    )
+
+                    print(f"Deployment key: {result.deployment_key}")
+                    print(f"Tenant: {result.tenant_id}")
+        """
+        from .api.resource.create_deployment import asyncio as create_deployment_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await create_deployment_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_resource(self, resource_key: str, **kwargs: Any) -> ResourceResult:
+        """Get resource
+
+         Returns a deployed resource.
+        :::info
+        Currently, this endpoint only supports RPA resources.
+        :::
+
+        Args:
+            resource_key (str): The system-assigned key for this resource.
+
+        Raises:
+            errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ResourceResult"""
+        from .api.resource.get_resource import asyncio as get_resource_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_resource_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def update_authorization(
+        self,
+        authorization_key: AuthorizationKey,
+        *,
+        data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+        **kwargs: Any,
+    ) -> None:
+        """Update authorization
+
+         Update the authorization with the given key.
+
+        Args:
+            authorization_key (str): System-generated key for an authorization. Example:
+                2251799813684332.
+            body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The authorization with the authorizationKey was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.authorization.update_authorization import (
+            asyncio as update_authorization_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await update_authorization_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def create_authorization(
+        self,
+        *,
+        data: AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest,
+        **kwargs: Any,
+    ) -> AuthorizationCreateResult:
+        """Create authorization
+
+         Create the authorization.
+
+        Args:
+            body (AuthorizationIdBasedRequest | AuthorizationPropertyBasedRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The owner was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AuthorizationCreateResult"""
+        from .api.authorization.create_authorization import (
+            asyncio as create_authorization_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await create_authorization_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_authorizations(
+        self, *, data: AuthorizationSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> AuthorizationSearchResult:
+        """Search authorizations
+
+         Search for authorizations based on given criteria.
+
+        Args:
+            body (AuthorizationSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AuthorizationSearchResult"""
+        from .api.authorization.search_authorizations import (
+            asyncio as search_authorizations_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_authorizations_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_authorization(
+        self, authorization_key: AuthorizationKey, **kwargs: Any
+    ) -> AuthorizationResult:
+        """Get authorization
+
+         Get authorization by the given key.
+
+        Args:
+            authorization_key (str): System-generated key for an authorization. Example:
+                2251799813684332.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The authorization with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            AuthorizationResult"""
+        from .api.authorization.get_authorization import (
+            asyncio as get_authorization_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_authorization_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def delete_authorization(
+        self, authorization_key: AuthorizationKey, **kwargs: Any
+    ) -> None:
+        """Delete authorization
+
+         Deletes the authorization with the given key.
+
+        Args:
+            authorization_key (str): System-generated key for an authorization. Example:
+                2251799813684332.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The authorization with the authorizationKey was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.authorization.delete_authorization import (
+            asyncio as delete_authorization_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_authorization_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_decision_requirements_xml(
+        self, decision_requirements_key: DecisionRequirementsKey, **kwargs: Any
+    ) -> str:
+        """Get decision requirements XML
+
+         Returns decision requirements as XML.
+
+        Args:
+            decision_requirements_key (str): System-generated key for a deployed decision requirements
+                definition. Example: 2251799813683346.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            str"""
+        from .api.decision_requirements.get_decision_requirements_xml import (
+            asyncio as get_decision_requirements_xml_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_decision_requirements_xml_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_decision_requirements(
+        self, *, data: DecisionRequirementsSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> DecisionRequirementsSearchQueryResult:
+        """Search decision requirements
+
+         Search for decision requirements based on given criteria.
+
+        Args:
+            body (DecisionRequirementsSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DecisionRequirementsSearchQueryResult"""
+        from .api.decision_requirements.search_decision_requirements import (
+            asyncio as search_decision_requirements_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_decision_requirements_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_decision_requirements(
+        self, decision_requirements_key: DecisionRequirementsKey, **kwargs: Any
+    ) -> DecisionRequirementsResult:
+        """Get decision requirements
+
+         Returns Decision Requirements as JSON.
+
+        Args:
+            decision_requirements_key (str): System-generated key for a deployed decision requirements
+                definition. Example: 2251799813683346.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The decision requirements with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            DecisionRequirementsResult"""
+        from .api.decision_requirements.get_decision_requirements import (
+            asyncio as get_decision_requirements_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_decision_requirements_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_authentication(self, **kwargs: Any) -> CamundaUserResult:
+        """Get current user
+
+         Retrieves the current authenticated user.
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            CamundaUserResult"""
+        from .api.authentication.get_authentication import (
+            asyncio as get_authentication_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_authentication_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def broadcast_signal(
+        self, *, data: SignalBroadcastRequest, **kwargs: Any
+    ) -> SignalBroadcastResult:
+        """Broadcast signal
+
+         Broadcasts a signal.
+
+        Args:
+            body (SignalBroadcastRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The signal is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SignalBroadcastResult
+
+        Examples:
+            **Broadcast a signal:**
+
+            .. code-block:: python
+
+                def broadcast_signal_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.broadcast_signal(
+                        data=SignalBroadcastRequest(
+                            signal_name="order-cancelled",
+                        )
+                    )
+
+                    print(f"Signal key: {result.signal_key}")
+        """
+        from .api.signal.broadcast_signal import asyncio as broadcast_signal_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await broadcast_signal_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def update_mapping_rule(
+        self,
+        mapping_rule_id: str,
+        *,
+        data: MappingRuleUpdateRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> UpdateMappingRuleResponse200:
+        """Update mapping rule
+
+         Update a mapping rule.
+
+        Args:
+            mapping_rule_id (str):
+            body (MappingRuleUpdateRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. The request to update a mapping rule was denied. More details are provided in the response body.
+            errors.NotFoundError: If the response status code is 404. The request to update a mapping rule was denied.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            UpdateMappingRuleResponse200"""
+        from .api.mapping_rule.update_mapping_rule import (
+            asyncio as update_mapping_rule_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await update_mapping_rule_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def delete_mapping_rule(self, mapping_rule_id: str, **kwargs: Any) -> None:
+        """Delete a mapping rule
+
+         Deletes the mapping rule with the given ID.
+
+        Args:
+            mapping_rule_id (str):
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.mapping_rule.delete_mapping_rule import (
+            asyncio as delete_mapping_rule_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_mapping_rule_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def create_mapping_rule(
+        self, *, data: MappingRuleCreateRequest | Unset = UNSET, **kwargs: Any
+    ) -> CreateMappingRuleResponse201:
+        """Create mapping rule
+
+         Create a new mapping rule
+
+        Args:
+            body (MappingRuleCreateRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ForbiddenError: If the response status code is 403. The request to create a mapping rule was denied. More details are provided in the response body.
+            errors.NotFoundError: If the response status code is 404. The request to create a mapping rule was denied.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            CreateMappingRuleResponse201"""
+        from .api.mapping_rule.create_mapping_rule import (
+            asyncio as create_mapping_rule_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await create_mapping_rule_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_mapping_rule(
+        self, *, data: MappingRuleSearchQueryRequest | Unset = UNSET, **kwargs: Any
+    ) -> SearchMappingRuleResponse200:
+        """Search mapping rules
+
+         Search for mapping rules based on given criteria.
+
+        Args:
+            body (MappingRuleSearchQueryRequest | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            SearchMappingRuleResponse200"""
+        from .api.mapping_rule.search_mapping_rule import (
+            asyncio as search_mapping_rule_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_mapping_rule_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_mapping_rule(
+        self, mapping_rule_id: str, **kwargs: Any
+    ) -> MappingRuleResult:
+        """Get a mapping rule
+
+         Gets the mapping rule with the given ID.
+
+        Args:
+            mapping_rule_id (str):
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The mapping rule with the mappingRuleId was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            MappingRuleResult"""
+        from .api.mapping_rule.get_mapping_rule import (
+            asyncio as get_mapping_rule_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_mapping_rule_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_process_instance_sequence_flows(
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
+    ) -> ProcessInstanceSequenceFlowsQueryResult:
+        """Get sequence flows
+
+         Get sequence flows taken by the process instance.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessInstanceSequenceFlowsQueryResult"""
+        from .api.process_instance.get_process_instance_sequence_flows import (
+            asyncio as get_process_instance_sequence_flows_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_process_instance_sequence_flows_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_process_instance_call_hierarchy(
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
+    ) -> list[Any]:
+        """Get call hierarchy
+
+         Returns the call hierarchy for a given process instance, showing its ancestry up to the root
+        instance.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            list[Any]"""
+        from .api.process_instance.get_process_instance_call_hierarchy import (
+            asyncio as get_process_instance_call_hierarchy_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_process_instance_call_hierarchy_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def modify_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: ProcessInstanceModificationInstruction,
+        **kwargs: Any,
+    ) -> None:
+        """Modify process instance
+
+         Modifies a running process instance.
+        This request can contain multiple instructions to activate an element of the process or
+        to terminate an active instance of an element.
+
+        Use this to repair a process instance that is stuck on an element or took an unintended path.
+        For example, because an external system is not available or doesn't respond as expected.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (ProcessInstanceModificationInstruction):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.process_instance.modify_process_instance import (
+            asyncio as modify_process_instance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await modify_process_instance_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_process_instance_statistics(
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
+    ) -> ProcessInstanceElementStatisticsQueryResult:
+        """Get element instance statistics
+
+         Get statistics about elements by the process instance key.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessInstanceElementStatisticsQueryResult"""
+        from .api.process_instance.get_process_instance_statistics import (
+            asyncio as get_process_instance_statistics_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_process_instance_statistics_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def migrate_process_instances_batch_operation(
+        self, *, data: ProcessInstanceMigrationBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Migrate process instances (batch)
+
+         Migrate multiple process instances.
+        Since only process instances with ACTIVE state can be migrated, any given
+        filters for state are ignored and overridden during this batch operation.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (ProcessInstanceMigrationBatchOperationRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.process_instance.migrate_process_instances_batch_operation import (
+            asyncio as migrate_process_instances_batch_operation_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await migrate_process_instances_batch_operation_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_process_instance(
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
+    ) -> ProcessInstanceResult:
+        """Get process instance
+
+         Get the process instance by the process instance key.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The process instance with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessInstanceResult"""
+        from .api.process_instance.get_process_instance import (
+            asyncio as get_process_instance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_process_instance_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def resolve_incidents_batch_operation(
+        self,
+        *,
+        data: ProcessInstanceIncidentResolutionBatchOperationRequest | Unset = UNSET,
+        **kwargs: Any,
+    ) -> BatchOperationCreatedResult:
+        """Resolve related incidents (batch)
+
+         Resolves multiple instances of process instances.
+        Since only process instances with ACTIVE state can have unresolved incidents, any given
+        filters for state are ignored and overridden during this batch operation.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (ProcessInstanceIncidentResolutionBatchOperationRequest | Unset): The process
+                instance filter that defines which process instances should have their incidents resolved.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.process_instance.resolve_incidents_batch_operation import (
+            asyncio as resolve_incidents_batch_operation_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await resolve_incidents_batch_operation_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def modify_process_instances_batch_operation(
+        self, *, data: ProcessInstanceModificationBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Modify process instances (batch)
+
+         Modify multiple process instances.
+        Since only process instances with ACTIVE state can be modified, any given
+        filters for state are ignored and overridden during this batch operation.
+        In contrast to single modification operation, it is not possible to add variable instructions or
+        modify by element key.
+        It is only possible to use the element id of the source and target.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (ProcessInstanceModificationBatchOperationRequest): The process instance filter to
+                define on which process instances tokens should be moved,
+                and new element instances should be activated or terminated.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.process_instance.modify_process_instances_batch_operation import (
+            asyncio as modify_process_instances_batch_operation_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await modify_process_instances_batch_operation_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def delete_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: DeleteProcessInstanceData | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Delete process instance
+
+         Deletes a process instance. Only instances that are completed or terminated can be deleted.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (DeleteProcessInstanceData | None | Unset):
+
+        Raises:
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.ConflictError: If the response status code is 409. The process instance is not in a completed or terminated state and cannot be deleted.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.process_instance.delete_process_instance import (
+            asyncio as delete_process_instance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_process_instance_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def delete_process_instances_batch_operation(
+        self, *, data: ProcessInstanceDeletionBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Delete process instances (batch)
+
+         Delete multiple process instances. This will delete the historic data from secondary storage.
+        Only process instances in a final state (COMPLETED or TERMINATED) can be deleted.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (ProcessInstanceDeletionBatchOperationRequest): The process instance filter that
+                defines which process instances should be deleted.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.process_instance.delete_process_instances_batch_operation import (
+            asyncio as delete_process_instances_batch_operation_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await delete_process_instances_batch_operation_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def cancel_process_instances_batch_operation(
+        self, *, data: ProcessInstanceCancellationBatchOperationRequest, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Cancel process instances (batch)
+
+         Cancels multiple running process instances.
+        Since only ACTIVE root instances can be cancelled, any given filters for state and
+        parentProcessInstanceKey are ignored and overridden during this batch operation.
+        This is done asynchronously, the progress can be tracked using the batchOperationKey from the
+        response and the batch operation status endpoint (/batch-operations/{batchOperationKey}).
+
+        Args:
+            body (ProcessInstanceCancellationBatchOperationRequest): The process instance filter that
+                defines which process instances should be canceled.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.process_instance.cancel_process_instances_batch_operation import (
+            asyncio as cancel_process_instances_batch_operation_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await cancel_process_instances_batch_operation_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def create_process_instance(
+        self, *, data: ProcessCreationById | ProcessCreationByKey, **kwargs: Any
+    ) -> CreateProcessInstanceResult:
+        """Create process instance
+
+         Creates and starts an instance of the specified process.
+        The process definition to use to create the instance can be specified either using its unique key
+        (as returned by Deploy resources), or using the BPMN process id and a version.
+
+        Waits for the completion of the process instance before returning a result
+        when awaitCompletion is enabled.
+
+        Args:
+            body (ProcessCreationById | ProcessCreationByKey): Instructions for creating a process
+                instance. The process definition can be specified
+                either by id or by key.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.ConflictError: If the response status code is 409. The process instance creation was rejected due to a business ID uniqueness conflict. This can happen only when Business ID Uniqueness Control is enabled and an active root process instance with the provided business ID already exists for the same process definition and tenant.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The process instance creation request timed out in the gateway. This can happen if the `awaitCompletion` request parameter is set to `true` and the created process instance did not complete within the defined request timeout. This often happens when the created instance is not fully automated or contains wait states.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            CreateProcessInstanceResult
+
+        Examples:
+            **Create by process definition key:**
+
+            .. code-block:: python
+
+                def create_process_instance_by_key_example() -> None:
+                    client = CamundaClient()
+
+                    # Deploy a process and obtain the typed key from the response
+                    deployment = client.deploy_resources_from_files(["order-process.bpmn"])
+                    process_key = deployment.processes[0].process_definition_key
+
+                    # Use the typed key directly — no manual string lifting needed
+                    result = client.create_process_instance(
+                        data=ProcessCreationByKey(
+                            process_definition_key=process_key,
+                        )
+                    )
+
+                    print(f"Process instance key: {result.process_instance_key}")
+
+            **Create from a stored key:**
+
+            .. code-block:: python
+
+                def create_process_instance_by_key_from_storage_example() -> None:
+                    client = CamundaClient()
+
+                    # When restoring a key from a database or message queue,
+                    # wrap the raw string with the semantic type constructor:
+                    stored_key = "2251799813685249"  # e.g. from a DB row
+                    result = client.create_process_instance(
+                        data=ProcessCreationByKey(
+                            process_definition_key=ProcessDefinitionKey(stored_key),
+                        )
+                    )
+
+                    print(f"Process instance key: {result.process_instance_key}")
+
+            **Create by process definition ID:**
+
+            .. code-block:: python
+
+                def create_process_instance_by_id_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.create_process_instance(
+                        data=ProcessCreationById(
+                            process_definition_id=ProcessDefinitionId("order-process"),
+                        )
+                    )
+
+                    print(f"Process instance key: {result.process_instance_key}")
+        """
+        from .api.process_instance.create_process_instance import (
+            asyncio as create_process_instance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await create_process_instance_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def cancel_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: CancelProcessInstanceData | None | Unset = UNSET,
+        **kwargs: Any,
+    ) -> None:
+        """Cancel process instance
+
+         Cancels a running process instance. As a cancellation includes more than just the removal of the
+        process instance resource, the cancellation resource must be posted. Cancellation can wait on
+        listener-related processing; when that processing does not complete in time, this endpoint can
+        return 504. Other gateway timeout causes are also possible. Retry with backoff and inspect listener
+        worker availability and logs when this repeats.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (CancelProcessInstanceData | None | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None
+
+        Examples:
+            **Cancel a process instance:**
+
+            .. code-block:: python
+
+                def cancel_process_instance_example() -> None:
+                    client = CamundaClient()
+
+                    # Create a process instance and get its key from the response
+                    created = client.create_process_instance(
+                        data=ProcessCreationById(process_definition_id=ProcessDefinitionId("order-process"))
+                    )
+
+                    # Cancel it using the key from the creation response
+                    client.cancel_process_instance(
+                        process_instance_key=created.process_instance_key,
+                    )
+        """
+        from .api.process_instance.cancel_process_instance import (
+            asyncio as cancel_process_instance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await cancel_process_instance_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_process_instance_incidents(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: IncidentSearchQuery | Unset = UNSET,
+        **kwargs: Any,
+    ) -> IncidentSearchQueryResult:
+        """Search related incidents
+
+         Search for incidents caused by the process instance or any of its called process or decision
+        instances.
+
+        Although the `processInstanceKey` is provided as a path parameter to indicate the root process
+        instance,
+        you may also include a `processInstanceKey` within the filter object to narrow results to specific
+        child process instances. This is useful, for example, if you want to isolate incidents associated
+        with
+        subprocesses or called processes under the root instance while excluding incidents directly tied to
+        the root.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (IncidentSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The process instance with the given key was not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            IncidentSearchQueryResult"""
+        from .api.process_instance.search_process_instance_incidents import (
+            asyncio as search_process_instance_incidents_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_process_instance_incidents_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def migrate_process_instance(
+        self,
+        process_instance_key: ProcessInstanceKey,
+        *,
+        data: ProcessInstanceMigrationInstruction,
+        **kwargs: Any,
+    ) -> None:
+        """Migrate process instance
+
+         Migrates a process instance to a new process definition.
+        This request can contain multiple mapping instructions to define mapping between the active
+        process instance's elements and target process definition elements.
+
+        Use this to upgrade a process instance to a new version of a process or to
+        a different process definition, e.g. to keep your running instances up-to-date with the
+        latest process improvements.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+            body (ProcessInstanceMigrationInstruction): The migration instructions describe how to
+                migrate a process instance from one process definition to another.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.ConflictError: If the response status code is 409. The process instance migration failed. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.process_instance.migrate_process_instance import (
+            asyncio as migrate_process_instance_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await migrate_process_instance_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_process_instances(
+        self, *, data: ProcessInstanceSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> ProcessInstanceSearchQueryResult:
+        """Search process instances
+
+         Search for process instances based on given criteria.
+
+        Args:
+            body (ProcessInstanceSearchQuery | Unset): Process instance search request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessInstanceSearchQueryResult
+
+        Examples:
+            **Search process instances:**
+
+            .. code-block:: python
+
+                def search_process_instances_example() -> None:
+                    client = CamundaClient()
+
+                    result = client.search_process_instances(
+                        data=ProcessInstanceSearchQuery(
+                            filter_=ProcessInstanceSearchQueryFilter(
+                                process_definition_id="order-process",
+                            ),
+                            sort=[
+                                ProcessInstanceSearchQuerySortRequest(
+                                    field=ProcessInstanceSearchQuerySortRequestField.STARTDATE,
+                                    order=SortOrderEnum.DESC,
+                                )
+                            ],
+                            page=LimitBasedPagination(limit=10),
+                        )
+                    )
+
+                    for instance in result.items:
+                        print(f"{instance.process_instance_key}: {instance.state}")
+                    print(f"Total: {result.page.total_items}")
+        """
+        from .api.process_instance.search_process_instances import (
+            asyncio as search_process_instances_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_process_instances_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def resolve_process_instance_incidents(
+        self, process_instance_key: ProcessInstanceKey, **kwargs: Any
+    ) -> BatchOperationCreatedResult:
+        """Resolve related incidents
+
+         Creates a batch operation to resolve multiple incidents of a process instance.
+
+        Args:
+            process_instance_key (str): System-generated key for a process instance. Example:
+                2251799813690746.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.NotFoundError: If the response status code is 404. The process instance is not found.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            BatchOperationCreatedResult"""
+        from .api.process_instance.resolve_process_instance_incidents import (
+            asyncio as resolve_process_instance_incidents_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await resolve_process_instance_incidents_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def pin_clock(self, *, data: ClockPinRequest, **kwargs: Any) -> None:
+        """Pin internal clock (alpha)
+
+         Set a precise, static time for the Zeebe engine's internal clock.
+        When the clock is pinned, it remains at the specified time and does not advance.
+        To change the time, the clock must be pinned again with a new timestamp.
+
+        This endpoint is an alpha feature and may be subject to change
+        in future releases.
+
+        Args:
+            body (ClockPinRequest):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.clock.pin_clock import asyncio as pin_clock_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await pin_clock_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def reset_clock(self, **kwargs: Any) -> None:
+        """Reset internal clock (alpha)
+
+         Resets the Zeebe engine's internal clock to the current system time, enabling it to tick in real-
+        time.
+        This operation is useful for returning the clock to
+        normal behavior after it has been pinned to a specific time.
+
+        This endpoint is an alpha feature and may be subject to change
+        in future releases.
+
+        Raises:
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.clock.reset_clock import asyncio as reset_clock_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await reset_clock_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_process_definition_instance_version_statistics(
+        self, *, data: ProcessDefinitionInstanceVersionStatisticsQuery, **kwargs: Any
+    ) -> ProcessDefinitionInstanceVersionStatisticsQueryResult:
+        """Get process instance statistics by version
+
+         Get statistics about process instances, grouped by version for a given process definition.
+        The process definition ID must be provided as a required field in the request body filter.
+
+        Args:
+            body (ProcessDefinitionInstanceVersionStatisticsQuery):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionInstanceVersionStatisticsQueryResult"""
+        from .api.process_definition.get_process_definition_instance_version_statistics import (
+            asyncio as get_process_definition_instance_version_statistics_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_process_definition_instance_version_statistics_asyncio(
+                **_kwargs
+            )
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_process_definition_instance_statistics(
+        self,
+        *,
+        data: ProcessDefinitionInstanceStatisticsQuery | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ProcessDefinitionInstanceStatisticsQueryResult:
+        """Get process instance statistics
+
+         Get statistics about process instances, grouped by process definition and tenant.
+
+        Args:
+            body (ProcessDefinitionInstanceStatisticsQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionInstanceStatisticsQueryResult"""
+        from .api.process_definition.get_process_definition_instance_statistics import (
+            asyncio as get_process_definition_instance_statistics_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_process_definition_instance_statistics_asyncio(
+                **_kwargs
+            )
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_process_definitions(
+        self, *, data: ProcessDefinitionSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> ProcessDefinitionSearchQueryResult:
+        """Search process definitions
+
+         Search for process definitions based on given criteria.
+
+        Args:
+            body (ProcessDefinitionSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionSearchQueryResult"""
+        from .api.process_definition.search_process_definitions import (
+            asyncio as search_process_definitions_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_process_definitions_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_process_definition_message_subscription_statistics(
+        self,
+        *,
+        data: ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ProcessDefinitionMessageSubscriptionStatisticsQueryResult:
+        """Get message subscription statistics
+
+         Get message subscription statistics, grouped by process definition.
+
+        Args:
+            body (ProcessDefinitionMessageSubscriptionStatisticsQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionMessageSubscriptionStatisticsQueryResult"""
+        from .api.process_definition.get_process_definition_message_subscription_statistics import (
+            asyncio as get_process_definition_message_subscription_statistics_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = (
+                await get_process_definition_message_subscription_statistics_asyncio(
+                    **_kwargs
+                )
+            )
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_start_process_form(
+        self, process_definition_key: ProcessDefinitionKey, **kwargs: Any
+    ) -> FormResult:
+        """Get process start form
+
+         Get the start form of a process.
+        Note that this endpoint will only return linked forms. This endpoint does not support embedded
+        forms.
+
+        Args:
+            process_definition_key (str): System-generated key for a deployed process definition.
+                Example: 2251799813686749.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. Not found
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            FormResult"""
+        from .api.process_definition.get_start_process_form import (
+            asyncio as get_start_process_form_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_start_process_form_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_process_definition_xml(
+        self, process_definition_key: ProcessDefinitionKey, **kwargs: Any
+    ) -> str:
+        """Get process definition XML
+
+         Returns process definition as XML.
+
+        Args:
+            process_definition_key (str): System-generated key for a deployed process definition.
+                Example: 2251799813686749.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            str"""
+        from .api.process_definition.get_process_definition_xml import (
+            asyncio as get_process_definition_xml_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_process_definition_xml_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_process_definition(
+        self, process_definition_key: ProcessDefinitionKey, **kwargs: Any
+    ) -> ProcessDefinitionResult:
+        """Get process definition
+
+         Returns process definition as JSON.
+
+        Args:
+            process_definition_key (str): System-generated key for a deployed process definition.
+                Example: 2251799813686749.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The process definition with the given key was not found. More details are provided in the response body.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionResult"""
+        from .api.process_definition.get_process_definition import (
+            asyncio as get_process_definition_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_process_definition_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_process_definition_statistics(
+        self,
+        process_definition_key: ProcessDefinitionKey,
+        *,
+        data: ProcessDefinitionElementStatisticsQuery | Unset = UNSET,
+        **kwargs: Any,
+    ) -> ProcessDefinitionElementStatisticsQueryResult:
+        """Get process definition statistics
+
+         Get statistics about elements in currently running process instances by process definition key and
+        search filter.
+
+        Args:
+            process_definition_key (str): System-generated key for a deployed process definition.
+                Example: 2251799813686749.
+            body (ProcessDefinitionElementStatisticsQuery | Unset): Process definition element
+                statistics request.
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ProcessDefinitionElementStatisticsQueryResult"""
+        from .api.process_definition.get_process_definition_statistics import (
+            asyncio as get_process_definition_statistics_asyncio,
+        )
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_process_definition_statistics_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:

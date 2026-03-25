@@ -86,9 +86,9 @@ def sync(
             2251799813684321.
 
     Raises:
-        errors.GetBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.GetBatchOperationNotFound: If the response status code is 404. The batch operation is not found.
-        errors.GetBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.NotFoundError: If the response status code is 404. The batch operation is not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -96,24 +96,29 @@ def sync(
     response = sync_detailed(batch_operation_key=batch_operation_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.GetBatchOperationBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_batch_operation",
             )
         if response.status_code == 404:
-            raise errors.GetBatchOperationNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_batch_operation",
             )
         if response.status_code == 500:
-            raise errors.GetBatchOperationInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_batch_operation",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_batch_operation"
+        )
     assert response.parsed is not None
     return cast(BatchOperationResponse, response.parsed)
 
@@ -153,9 +158,9 @@ async def asyncio(
             2251799813684321.
 
     Raises:
-        errors.GetBatchOperationBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.GetBatchOperationNotFound: If the response status code is 404. The batch operation is not found.
-        errors.GetBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.NotFoundError: If the response status code is 404. The batch operation is not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -165,23 +170,28 @@ async def asyncio(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.GetBatchOperationBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_batch_operation",
             )
         if response.status_code == 404:
-            raise errors.GetBatchOperationNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_batch_operation",
             )
         if response.status_code == 500:
-            raise errors.GetBatchOperationInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_batch_operation",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_batch_operation"
+        )
     assert response.parsed is not None
     return cast(BatchOperationResponse, response.parsed)

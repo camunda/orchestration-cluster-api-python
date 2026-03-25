@@ -94,10 +94,10 @@ def sync(
         body (DecisionInstanceSearchQuery | Unset):
 
     Raises:
-        errors.SearchDecisionInstancesBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchDecisionInstancesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.SearchDecisionInstancesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchDecisionInstancesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -105,30 +105,38 @@ def sync(
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchDecisionInstancesBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_decision_instances",
             )
         if response.status_code == 401:
-            raise errors.SearchDecisionInstancesUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_decision_instances",
             )
         if response.status_code == 403:
-            raise errors.SearchDecisionInstancesForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_decision_instances",
             )
         if response.status_code == 500:
-            raise errors.SearchDecisionInstancesInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_decision_instances",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_decision_instances",
+        )
     assert response.parsed is not None
     return cast(DecisionInstanceSearchQueryResult, response.parsed)
 
@@ -171,10 +179,10 @@ async def asyncio(
         body (DecisionInstanceSearchQuery | Unset):
 
     Raises:
-        errors.SearchDecisionInstancesBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchDecisionInstancesUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.SearchDecisionInstancesForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchDecisionInstancesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -182,29 +190,37 @@ async def asyncio(
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchDecisionInstancesBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_decision_instances",
             )
         if response.status_code == 401:
-            raise errors.SearchDecisionInstancesUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_decision_instances",
             )
         if response.status_code == 403:
-            raise errors.SearchDecisionInstancesForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_decision_instances",
             )
         if response.status_code == 500:
-            raise errors.SearchDecisionInstancesInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_decision_instances",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_decision_instances",
+        )
     assert response.parsed is not None
     return cast(DecisionInstanceSearchQueryResult, response.parsed)

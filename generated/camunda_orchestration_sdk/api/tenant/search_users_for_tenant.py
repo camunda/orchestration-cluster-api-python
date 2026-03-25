@@ -99,7 +99,11 @@ def sync(
         SearchUsersForTenantResponse200"""
     response = sync_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_users_for_tenant",
+        )
     assert response.parsed is not None
     return response.parsed
 
@@ -152,6 +156,10 @@ async def asyncio(
         SearchUsersForTenantResponse200"""
     response = await asyncio_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_users_for_tenant",
+        )
     assert response.parsed is not None
     return response.parsed

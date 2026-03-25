@@ -99,8 +99,8 @@ def sync(
         store_id (str | Unset):
 
     Raises:
-        errors.DeleteDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
-        errors.DeleteDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.NotFoundError: If the response status code is 404. The document with the given ID was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -108,18 +108,22 @@ def sync(
     response = sync_detailed(document_id=document_id, client=client, store_id=store_id)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
-            raise errors.DeleteDocumentNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="delete_document",
             )
         if response.status_code == 500:
-            raise errors.DeleteDocumentInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="delete_document",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="delete_document"
+        )
     return None
 
 
@@ -171,8 +175,8 @@ async def asyncio(
         store_id (str | Unset):
 
     Raises:
-        errors.DeleteDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
-        errors.DeleteDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.NotFoundError: If the response status code is 404. The document with the given ID was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -182,16 +186,20 @@ async def asyncio(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
-            raise errors.DeleteDocumentNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="delete_document",
             )
         if response.status_code == 500:
-            raise errors.DeleteDocumentInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="delete_document",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="delete_document"
+        )
     return None

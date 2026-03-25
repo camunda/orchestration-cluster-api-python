@@ -118,7 +118,7 @@ def sync(
         body (DocumentLinkRequest | Unset):
 
     Raises:
-        errors.CreateDocumentLinkBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -132,12 +132,15 @@ def sync(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CreateDocumentLinkBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_document_link",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="create_document_link"
+        )
     assert response.parsed is not None
     return cast(DocumentLink, response.parsed)
 
@@ -198,7 +201,7 @@ async def asyncio(
         body (DocumentLinkRequest | Unset):
 
     Raises:
-        errors.CreateDocumentLinkBadRequest: If the response status code is 400. The provided data is not valid.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -212,11 +215,14 @@ async def asyncio(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CreateDocumentLinkBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_document_link",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="create_document_link"
+        )
     assert response.parsed is not None
     return cast(DocumentLink, response.parsed)

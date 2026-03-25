@@ -98,10 +98,10 @@ def sync(
         body (GlobalTaskListenerSearchQueryRequest | Unset): Global listener search query request.
 
     Raises:
-        errors.SearchGlobalTaskListenersBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchGlobalTaskListenersUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.SearchGlobalTaskListenersForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchGlobalTaskListenersInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -109,30 +109,38 @@ def sync(
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchGlobalTaskListenersBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_global_task_listeners",
             )
         if response.status_code == 401:
-            raise errors.SearchGlobalTaskListenersUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_global_task_listeners",
             )
         if response.status_code == 403:
-            raise errors.SearchGlobalTaskListenersForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_global_task_listeners",
             )
         if response.status_code == 500:
-            raise errors.SearchGlobalTaskListenersInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_global_task_listeners",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_global_task_listeners",
+        )
     assert response.parsed is not None
     return cast(GlobalTaskListenerSearchQueryResult, response.parsed)
 
@@ -175,10 +183,10 @@ async def asyncio(
         body (GlobalTaskListenerSearchQueryRequest | Unset): Global listener search query request.
 
     Raises:
-        errors.SearchGlobalTaskListenersBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchGlobalTaskListenersUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.SearchGlobalTaskListenersForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchGlobalTaskListenersInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -186,29 +194,37 @@ async def asyncio(
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchGlobalTaskListenersBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_global_task_listeners",
             )
         if response.status_code == 401:
-            raise errors.SearchGlobalTaskListenersUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_global_task_listeners",
             )
         if response.status_code == 403:
-            raise errors.SearchGlobalTaskListenersForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_global_task_listeners",
             )
         if response.status_code == 500:
-            raise errors.SearchGlobalTaskListenersInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_global_task_listeners",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_global_task_listeners",
+        )
     assert response.parsed is not None
     return cast(GlobalTaskListenerSearchQueryResult, response.parsed)

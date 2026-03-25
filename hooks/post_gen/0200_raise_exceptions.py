@@ -7,34 +7,30 @@ from typing import Any, cast
 import yaml
 
 
-def _to_camel_case(snake_str: str) -> str:
-    parts = snake_str.split("_")
-    return "".join(p.title() for p in parts if p)
-
-
-def _status_suffix(code: int) -> str:
+def _status_class_name(code: int) -> str:
+    """Return the per-status exception class name for a given HTTP status code."""
     mapping = {
-        400: "BadRequest",
-        401: "Unauthorized",
-        402: "PaymentRequired",
-        403: "Forbidden",
-        404: "NotFound",
-        405: "MethodNotAllowed",
-        408: "RequestTimeout",
-        409: "Conflict",
-        410: "Gone",
-        412: "PreconditionFailed",
-        413: "PayloadTooLarge",
-        415: "UnsupportedMediaType",
-        422: "UnprocessableEntity",
-        429: "TooManyRequests",
-        500: "InternalServerError",
-        501: "NotImplemented",
-        502: "BadGateway",
-        503: "ServiceUnavailable",
-        504: "GatewayTimeout",
+        400: "BadRequestError",
+        401: "UnauthorizedError",
+        402: "PaymentRequiredError",
+        403: "ForbiddenError",
+        404: "NotFoundError",
+        405: "MethodNotAllowedError",
+        408: "RequestTimeoutError",
+        409: "ConflictError",
+        410: "GoneError",
+        412: "PreconditionFailedError",
+        413: "PayloadTooLargeError",
+        415: "UnsupportedMediaTypeError",
+        422: "UnprocessableEntityError",
+        429: "TooManyRequestsError",
+        500: "InternalServerErrorError",
+        501: "NotImplementedError_",
+        502: "BadGatewayError",
+        503: "ServiceUnavailableError",
+        504: "GatewayTimeoutError",
     }
-    return mapping.get(code, f"Http{code}")
+    return mapping.get(code, f"Http{code}Error")
 
 
 def _is_docstring_stmt(stmt: ast.stmt) -> bool:
@@ -483,7 +479,6 @@ def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
     modified = False
 
     module_stem = Path(file_path).stem
-    endpoint_name = _to_camel_case(module_stem)
     status_type_map = _extract_status_type_map(tree)
     error_codes = sorted([c for c in status_type_map.keys() if not (200 <= c < 300)])
 
@@ -562,7 +557,7 @@ def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
         raise_lines: list[str] = []
         for code in error_codes:
             parsed_type = status_type_map.get(code, "Any")
-            exc_name = f"{endpoint_name}{_status_suffix(code)}"
+            exc_name = _status_class_name(code)
             desc = response_desc.get(code)
             if desc:
                 raise_lines.append(
@@ -582,7 +577,7 @@ def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
             # so it must be indented by 8+ spaces inside the temp() function.
             raise_blocks += (
                 f"        if response.status_code == {code}:\n"
-                f"            raise errors.{exc_name}(status_code=response.status_code, content=response.content, parsed={parsed_expr})\n"
+                f"            raise errors.{exc_name}(status_code=response.status_code, content=response.content, parsed={parsed_expr}, operation_id='{module_stem}')\n"
             )
 
         raise_lines.append(
@@ -609,7 +604,7 @@ def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
 def temp():
     response = {func_call}
     if response.status_code < 200 or response.status_code >= 300:
-{raise_blocks}        raise errors.UnexpectedStatus(response.status_code, response.content)
+{raise_blocks}        raise errors.UnexpectedStatus(response.status_code, response.content, operation_id='{module_stem}')
 {return_stmt}
 """
         temp_func = ast.parse(new_body_code).body[0]

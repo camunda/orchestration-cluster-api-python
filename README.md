@@ -568,20 +568,20 @@ The `error_code` must match the error code defined on a BPMN error catch event i
 
 ## Error Handling
 
-The SDK raises typed exceptions for API errors. Each operation has specific exception classes for each HTTP error status code:
+The SDK raises typed exceptions for API errors. Each HTTP error status code has a corresponding exception class (e.g. `BadRequestError` for 400, `NotFoundError` for 404). Every exception carries the `operation_id` of the method that raised it:
 
 <!-- snippet:ReadmeErrorHandling -->
 ```python
 from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey, ProcessDefinitionKey
-from camunda_orchestration_sdk.errors import CreateProcessInstanceBadRequest
+from camunda_orchestration_sdk.errors import BadRequestError
 
 with CamundaClient() as client:
     try:
         result = client.create_process_instance(
             data=ProcessCreationByKey(process_definition_key=ProcessDefinitionKey("nonexistent"))
         )
-    except CreateProcessInstanceBadRequest as e:
-        print(f"Bad request: {e}")
+    except BadRequestError as e:
+        print(f"Bad request ({e.operation_id}): {e}")
 ```
 
 ## Logging

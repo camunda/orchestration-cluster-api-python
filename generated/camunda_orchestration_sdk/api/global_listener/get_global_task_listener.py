@@ -85,10 +85,10 @@ def sync(
         id (str): The user-defined id for the global listener Example: GlobalListener_1.
 
     Raises:
-        errors.GetGlobalTaskListenerUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.GetGlobalTaskListenerForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.GetGlobalTaskListenerNotFound: If the response status code is 404. The global user task listener with the given id was not found.
-        errors.GetGlobalTaskListenerInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The global user task listener with the given id was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -96,30 +96,38 @@ def sync(
     response = sync_detailed(id=id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
-            raise errors.GetGlobalTaskListenerUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_global_task_listener",
             )
         if response.status_code == 403:
-            raise errors.GetGlobalTaskListenerForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_global_task_listener",
             )
         if response.status_code == 404:
-            raise errors.GetGlobalTaskListenerNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_global_task_listener",
             )
         if response.status_code == 500:
-            raise errors.GetGlobalTaskListenerInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_global_task_listener",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_global_task_listener",
+        )
     assert response.parsed is not None
     return cast(GlobalTaskListenerResult, response.parsed)
 
@@ -157,10 +165,10 @@ async def asyncio(
         id (str): The user-defined id for the global listener Example: GlobalListener_1.
 
     Raises:
-        errors.GetGlobalTaskListenerUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.GetGlobalTaskListenerForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.GetGlobalTaskListenerNotFound: If the response status code is 404. The global user task listener with the given id was not found.
-        errors.GetGlobalTaskListenerInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The global user task listener with the given id was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -168,29 +176,37 @@ async def asyncio(
     response = await asyncio_detailed(id=id, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
-            raise errors.GetGlobalTaskListenerUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_global_task_listener",
             )
         if response.status_code == 403:
-            raise errors.GetGlobalTaskListenerForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_global_task_listener",
             )
         if response.status_code == 404:
-            raise errors.GetGlobalTaskListenerNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_global_task_listener",
             )
         if response.status_code == 500:
-            raise errors.GetGlobalTaskListenerInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_global_task_listener",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_global_task_listener",
+        )
     assert response.parsed is not None
     return cast(GlobalTaskListenerResult, response.parsed)

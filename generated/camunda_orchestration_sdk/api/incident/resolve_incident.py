@@ -108,11 +108,11 @@ def sync(
         body (IncidentResolutionRequest | Unset):
 
     Raises:
-        errors.ResolveIncidentBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.ResolveIncidentNotFound: If the response status code is 404. The incident with the incidentKey is not found.
-        errors.ResolveIncidentConflict: If the response status code is 409. The incident cannot be resolved due to an invalid state. For example, the associated job may have no retries left.
-        errors.ResolveIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.ResolveIncidentServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.NotFoundError: If the response status code is 404. The incident with the incidentKey is not found.
+        errors.ConflictError: If the response status code is 409. The incident cannot be resolved due to an invalid state. For example, the associated job may have no retries left.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -120,36 +120,43 @@ def sync(
     response = sync_detailed(incident_key=incident_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.ResolveIncidentBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_incident",
             )
         if response.status_code == 404:
-            raise errors.ResolveIncidentNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_incident",
             )
         if response.status_code == 409:
-            raise errors.ResolveIncidentConflict(
+            raise errors.ConflictError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_incident",
             )
         if response.status_code == 500:
-            raise errors.ResolveIncidentInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_incident",
             )
         if response.status_code == 503:
-            raise errors.ResolveIncidentServiceUnavailable(
+            raise errors.ServiceUnavailableError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_incident",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="resolve_incident"
+        )
     return None
 
 
@@ -197,11 +204,11 @@ async def asyncio(
         body (IncidentResolutionRequest | Unset):
 
     Raises:
-        errors.ResolveIncidentBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.ResolveIncidentNotFound: If the response status code is 404. The incident with the incidentKey is not found.
-        errors.ResolveIncidentConflict: If the response status code is 409. The incident cannot be resolved due to an invalid state. For example, the associated job may have no retries left.
-        errors.ResolveIncidentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.ResolveIncidentServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.NotFoundError: If the response status code is 404. The incident with the incidentKey is not found.
+        errors.ConflictError: If the response status code is 409. The incident cannot be resolved due to an invalid state. For example, the associated job may have no retries left.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -211,34 +218,41 @@ async def asyncio(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.ResolveIncidentBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_incident",
             )
         if response.status_code == 404:
-            raise errors.ResolveIncidentNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_incident",
             )
         if response.status_code == 409:
-            raise errors.ResolveIncidentConflict(
+            raise errors.ConflictError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_incident",
             )
         if response.status_code == 500:
-            raise errors.ResolveIncidentInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_incident",
             )
         if response.status_code == 503:
-            raise errors.ResolveIncidentServiceUnavailable(
+            raise errors.ServiceUnavailableError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_incident",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="resolve_incident"
+        )
     return None

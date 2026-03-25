@@ -103,10 +103,10 @@ def sync(
         body (CreateClusterVariableRequest):
 
     Raises:
-        errors.CreateTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.CreateTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.CreateTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.CreateTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -114,30 +114,38 @@ def sync(
     response = sync_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CreateTenantClusterVariableBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_tenant_cluster_variable",
             )
         if response.status_code == 401:
-            raise errors.CreateTenantClusterVariableUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_tenant_cluster_variable",
             )
         if response.status_code == 403:
-            raise errors.CreateTenantClusterVariableForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_tenant_cluster_variable",
             )
         if response.status_code == 500:
-            raise errors.CreateTenantClusterVariableInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_tenant_cluster_variable",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="create_tenant_cluster_variable",
+        )
     assert response.parsed is not None
     return cast(ClusterVariableResult, response.parsed)
 
@@ -184,10 +192,10 @@ async def asyncio(
         body (CreateClusterVariableRequest):
 
     Raises:
-        errors.CreateTenantClusterVariableBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.CreateTenantClusterVariableUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.CreateTenantClusterVariableForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.CreateTenantClusterVariableInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -195,29 +203,37 @@ async def asyncio(
     response = await asyncio_detailed(tenant_id=tenant_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CreateTenantClusterVariableBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_tenant_cluster_variable",
             )
         if response.status_code == 401:
-            raise errors.CreateTenantClusterVariableUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_tenant_cluster_variable",
             )
         if response.status_code == 403:
-            raise errors.CreateTenantClusterVariableForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_tenant_cluster_variable",
             )
         if response.status_code == 500:
-            raise errors.CreateTenantClusterVariableInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_tenant_cluster_variable",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="create_tenant_cluster_variable",
+        )
     assert response.parsed is not None
     return cast(ClusterVariableResult, response.parsed)

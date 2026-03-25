@@ -77,8 +77,8 @@ def sync(
     in future releases.
 
     Raises:
-        errors.GetSystemConfigurationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.GetSystemConfigurationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -86,18 +86,24 @@ def sync(
     response = sync_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
-            raise errors.GetSystemConfigurationUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_system_configuration",
             )
         if response.status_code == 500:
-            raise errors.GetSystemConfigurationInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_system_configuration",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_system_configuration",
+        )
     assert response.parsed is not None
     return cast(SystemConfigurationResponse, response.parsed)
 
@@ -137,8 +143,8 @@ async def asyncio(
     in future releases.
 
     Raises:
-        errors.GetSystemConfigurationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.GetSystemConfigurationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -146,17 +152,23 @@ async def asyncio(
     response = await asyncio_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
-            raise errors.GetSystemConfigurationUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_system_configuration",
             )
         if response.status_code == 500:
-            raise errors.GetSystemConfigurationInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_system_configuration",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="get_system_configuration",
+        )
     assert response.parsed is not None
     return cast(SystemConfigurationResponse, response.parsed)

@@ -108,10 +108,10 @@ def sync(
             defines which process instances should be canceled.
 
     Raises:
-        errors.CancelProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
-        errors.CancelProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.CancelProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.CancelProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -119,30 +119,38 @@ def sync(
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CancelProcessInstancesBatchOperationBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="cancel_process_instances_batch_operation",
             )
         if response.status_code == 401:
-            raise errors.CancelProcessInstancesBatchOperationUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="cancel_process_instances_batch_operation",
             )
         if response.status_code == 403:
-            raise errors.CancelProcessInstancesBatchOperationForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="cancel_process_instances_batch_operation",
             )
         if response.status_code == 500:
-            raise errors.CancelProcessInstancesBatchOperationInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="cancel_process_instances_batch_operation",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="cancel_process_instances_batch_operation",
+        )
     assert response.parsed is not None
     return cast(BatchOperationCreatedResult, response.parsed)
 
@@ -195,10 +203,10 @@ async def asyncio(
             defines which process instances should be canceled.
 
     Raises:
-        errors.CancelProcessInstancesBatchOperationBadRequest: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
-        errors.CancelProcessInstancesBatchOperationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.CancelProcessInstancesBatchOperationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.CancelProcessInstancesBatchOperationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The process instance batch operation failed. More details are provided in the response body.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -206,29 +214,37 @@ async def asyncio(
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.CancelProcessInstancesBatchOperationBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="cancel_process_instances_batch_operation",
             )
         if response.status_code == 401:
-            raise errors.CancelProcessInstancesBatchOperationUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="cancel_process_instances_batch_operation",
             )
         if response.status_code == 403:
-            raise errors.CancelProcessInstancesBatchOperationForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="cancel_process_instances_batch_operation",
             )
         if response.status_code == 500:
-            raise errors.CancelProcessInstancesBatchOperationInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="cancel_process_instances_batch_operation",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="cancel_process_instances_batch_operation",
+        )
     assert response.parsed is not None
     return cast(BatchOperationCreatedResult, response.parsed)

@@ -123,11 +123,11 @@ def sync(
             migrate a process instance from one process definition to another.
 
     Raises:
-        errors.MigrateProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.MigrateProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
-        errors.MigrateProcessInstanceConflict: If the response status code is 409. The process instance migration failed. More details are provided in the response body.
-        errors.MigrateProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.MigrateProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.NotFoundError: If the response status code is 404. The process instance is not found.
+        errors.ConflictError: If the response status code is 409. The process instance migration failed. More details are provided in the response body.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -137,36 +137,45 @@ def sync(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.MigrateProcessInstanceBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="migrate_process_instance",
             )
         if response.status_code == 404:
-            raise errors.MigrateProcessInstanceNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="migrate_process_instance",
             )
         if response.status_code == 409:
-            raise errors.MigrateProcessInstanceConflict(
+            raise errors.ConflictError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="migrate_process_instance",
             )
         if response.status_code == 500:
-            raise errors.MigrateProcessInstanceInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="migrate_process_instance",
             )
         if response.status_code == 503:
-            raise errors.MigrateProcessInstanceServiceUnavailable(
+            raise errors.ServiceUnavailableError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="migrate_process_instance",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="migrate_process_instance",
+        )
     return None
 
 
@@ -228,11 +237,11 @@ async def asyncio(
             migrate a process instance from one process definition to another.
 
     Raises:
-        errors.MigrateProcessInstanceBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.MigrateProcessInstanceNotFound: If the response status code is 404. The process instance is not found.
-        errors.MigrateProcessInstanceConflict: If the response status code is 409. The process instance migration failed. More details are provided in the response body.
-        errors.MigrateProcessInstanceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.MigrateProcessInstanceServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.NotFoundError: If the response status code is 404. The process instance is not found.
+        errors.ConflictError: If the response status code is 409. The process instance migration failed. More details are provided in the response body.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -242,34 +251,43 @@ async def asyncio(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.MigrateProcessInstanceBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="migrate_process_instance",
             )
         if response.status_code == 404:
-            raise errors.MigrateProcessInstanceNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="migrate_process_instance",
             )
         if response.status_code == 409:
-            raise errors.MigrateProcessInstanceConflict(
+            raise errors.ConflictError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="migrate_process_instance",
             )
         if response.status_code == 500:
-            raise errors.MigrateProcessInstanceInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="migrate_process_instance",
             )
         if response.status_code == 503:
-            raise errors.MigrateProcessInstanceServiceUnavailable(
+            raise errors.ServiceUnavailableError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="migrate_process_instance",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="migrate_process_instance",
+        )
     return None

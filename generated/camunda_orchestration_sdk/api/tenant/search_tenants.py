@@ -95,11 +95,11 @@ def sync(
         body (TenantSearchQueryRequest | Unset): Tenant search request
 
     Raises:
-        errors.SearchTenantsBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchTenantsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.SearchTenantsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchTenantsNotFound: If the response status code is 404. Not found
-        errors.SearchTenantsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. Not found
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -107,36 +107,43 @@ def sync(
     response = sync_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchTenantsBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_tenants",
             )
         if response.status_code == 401:
-            raise errors.SearchTenantsUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_tenants",
             )
         if response.status_code == 403:
-            raise errors.SearchTenantsForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_tenants",
             )
         if response.status_code == 404:
-            raise errors.SearchTenantsNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_tenants",
             )
         if response.status_code == 500:
-            raise errors.SearchTenantsInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_tenants",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="search_tenants"
+        )
     assert response.parsed is not None
     return cast(TenantSearchQueryResult, response.parsed)
 
@@ -179,11 +186,11 @@ async def asyncio(
         body (TenantSearchQueryRequest | Unset): Tenant search request
 
     Raises:
-        errors.SearchTenantsBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchTenantsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.SearchTenantsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchTenantsNotFound: If the response status code is 404. Not found
-        errors.SearchTenantsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. Not found
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -191,35 +198,42 @@ async def asyncio(
     response = await asyncio_detailed(client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchTenantsBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_tenants",
             )
         if response.status_code == 401:
-            raise errors.SearchTenantsUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_tenants",
             )
         if response.status_code == 403:
-            raise errors.SearchTenantsForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_tenants",
             )
         if response.status_code == 404:
-            raise errors.SearchTenantsNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_tenants",
             )
         if response.status_code == 500:
-            raise errors.SearchTenantsInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_tenants",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="search_tenants"
+        )
     assert response.parsed is not None
     return cast(TenantSearchQueryResult, response.parsed)

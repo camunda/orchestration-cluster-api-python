@@ -284,15 +284,15 @@ async def readme_bpmn_error() -> None:
 def readme_error_handling() -> None:
     # region ReadmeErrorHandling
     from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey, ProcessDefinitionKey
-    from camunda_orchestration_sdk.errors import CreateProcessInstanceBadRequest
+    from camunda_orchestration_sdk.errors import BadRequestError
 
     with CamundaClient() as client:
         try:
             result = client.create_process_instance(
                 data=ProcessCreationByKey(process_definition_key=ProcessDefinitionKey("nonexistent"))
             )
-        except CreateProcessInstanceBadRequest as e:
-            print(f"Bad request: {e}")
+        except BadRequestError as e:
+            print(f"Bad request ({e.operation_id}): {e}")
     # endregion ReadmeErrorHandling
 
 

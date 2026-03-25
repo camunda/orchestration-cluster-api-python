@@ -87,8 +87,8 @@ def sync(
         resource_key (str): The system-assigned key for this resource.
 
     Raises:
-        errors.GetResourceNotFound: If the response status code is 404. A resource with the given key was not found.
-        errors.GetResourceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -96,18 +96,22 @@ def sync(
     response = sync_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
-            raise errors.GetResourceNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_resource",
             )
         if response.status_code == 500:
-            raise errors.GetResourceInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_resource",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_resource"
+        )
     assert response.parsed is not None
     return cast(ResourceResult, response.parsed)
 
@@ -151,8 +155,8 @@ async def asyncio(
         resource_key (str): The system-assigned key for this resource.
 
     Raises:
-        errors.GetResourceNotFound: If the response status code is 404. A resource with the given key was not found.
-        errors.GetResourceInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.NotFoundError: If the response status code is 404. A resource with the given key was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -160,17 +164,21 @@ async def asyncio(
     response = await asyncio_detailed(resource_key=resource_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
-            raise errors.GetResourceNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_resource",
             )
         if response.status_code == 500:
-            raise errors.GetResourceInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_resource",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_resource"
+        )
     assert response.parsed is not None
     return cast(ResourceResult, response.parsed)

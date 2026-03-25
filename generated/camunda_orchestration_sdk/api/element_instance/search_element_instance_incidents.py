@@ -128,11 +128,11 @@ def sync(
         body (IncidentSearchQuery):
 
     Raises:
-        errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404. The element instance with the given key was not found.
-        errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The element instance with the given key was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -142,36 +142,45 @@ def sync(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchElementInstanceIncidentsBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
             )
         if response.status_code == 401:
-            raise errors.SearchElementInstanceIncidentsUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
             )
         if response.status_code == 403:
-            raise errors.SearchElementInstanceIncidentsForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
             )
         if response.status_code == 404:
-            raise errors.SearchElementInstanceIncidentsNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
             )
         if response.status_code == 500:
-            raise errors.SearchElementInstanceIncidentsInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_element_instance_incidents",
+        )
     assert response.parsed is not None
     return cast(IncidentSearchQueryResult, response.parsed)
 
@@ -240,11 +249,11 @@ async def asyncio(
         body (IncidentSearchQuery):
 
     Raises:
-        errors.SearchElementInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchElementInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.SearchElementInstanceIncidentsForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchElementInstanceIncidentsNotFound: If the response status code is 404. The element instance with the given key was not found.
-        errors.SearchElementInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The element instance with the given key was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -254,35 +263,44 @@ async def asyncio(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchElementInstanceIncidentsBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
             )
         if response.status_code == 401:
-            raise errors.SearchElementInstanceIncidentsUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
             )
         if response.status_code == 403:
-            raise errors.SearchElementInstanceIncidentsForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
             )
         if response.status_code == 404:
-            raise errors.SearchElementInstanceIncidentsNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
             )
         if response.status_code == 500:
-            raise errors.SearchElementInstanceIncidentsInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_element_instance_incidents",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_element_instance_incidents",
+        )
     assert response.parsed is not None
     return cast(IncidentSearchQueryResult, response.parsed)

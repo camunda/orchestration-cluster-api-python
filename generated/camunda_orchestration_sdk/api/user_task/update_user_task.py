@@ -115,12 +115,12 @@ def sync(
         body (UserTaskUpdateRequest | Unset):
 
     Raises:
-        errors.UpdateUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.UpdateUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
-        errors.UpdateUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
-        errors.UpdateUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UpdateUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.UpdateUserTaskGatewayTimeout: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
+        errors.ConflictError: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -128,42 +128,50 @@ def sync(
     response = sync_detailed(user_task_key=user_task_key, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.UpdateUserTaskBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_user_task",
             )
         if response.status_code == 404:
-            raise errors.UpdateUserTaskNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_user_task",
             )
         if response.status_code == 409:
-            raise errors.UpdateUserTaskConflict(
+            raise errors.ConflictError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_user_task",
             )
         if response.status_code == 500:
-            raise errors.UpdateUserTaskInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_user_task",
             )
         if response.status_code == 503:
-            raise errors.UpdateUserTaskServiceUnavailable(
+            raise errors.ServiceUnavailableError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_user_task",
             )
         if response.status_code == 504:
-            raise errors.UpdateUserTaskGatewayTimeout(
+            raise errors.GatewayTimeoutError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_user_task",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="update_user_task"
+        )
     return None
 
 
@@ -215,12 +223,12 @@ async def asyncio(
         body (UserTaskUpdateRequest | Unset):
 
     Raises:
-        errors.UpdateUserTaskBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.UpdateUserTaskNotFound: If the response status code is 404. The user task with the given key was not found.
-        errors.UpdateUserTaskConflict: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
-        errors.UpdateUserTaskInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.UpdateUserTaskServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
-        errors.UpdateUserTaskGatewayTimeout: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.NotFoundError: If the response status code is 404. The user task with the given key was not found.
+        errors.ConflictError: If the response status code is 409. The user task with the given key is in the wrong state currently. More details are provided in the response body.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.GatewayTimeoutError: If the response status code is 504. The request timed out between the gateway and the broker. For these endpoints, this often happens when user task listeners are configured and the corresponding listener job is not completed within the request timeout. Common causes include no available job workers for the listener type, busy or crashed job workers, or delayed job completion. As with any gateway timeout, general timeout causes (for example transient network issues) can also result in a 504 response. Troubleshooting: - verify that job workers for the listener type are running and healthy - check worker logs for crashes, retries, and completion failures - check network connectivity between workers, gateway, and broker - retry with backoff after transient failures - fail without retries if a problem persists
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -230,40 +238,48 @@ async def asyncio(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.UpdateUserTaskBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_user_task",
             )
         if response.status_code == 404:
-            raise errors.UpdateUserTaskNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_user_task",
             )
         if response.status_code == 409:
-            raise errors.UpdateUserTaskConflict(
+            raise errors.ConflictError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_user_task",
             )
         if response.status_code == 500:
-            raise errors.UpdateUserTaskInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_user_task",
             )
         if response.status_code == 503:
-            raise errors.UpdateUserTaskServiceUnavailable(
+            raise errors.ServiceUnavailableError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_user_task",
             )
         if response.status_code == 504:
-            raise errors.UpdateUserTaskGatewayTimeout(
+            raise errors.GatewayTimeoutError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="update_user_task",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="update_user_task"
+        )
     return None

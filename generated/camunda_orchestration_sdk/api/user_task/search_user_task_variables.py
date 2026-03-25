@@ -123,8 +123,8 @@ def sync(
         body (SearchUserTaskVariablesData | Unset): User task search query request.
 
     Raises:
-        errors.SearchUserTaskVariablesBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -137,18 +137,24 @@ def sync(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchUserTaskVariablesBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_user_task_variables",
             )
         if response.status_code == 500:
-            raise errors.SearchUserTaskVariablesInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_user_task_variables",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_user_task_variables",
+        )
     assert response.parsed is not None
     return cast(VariableSearchQueryResult, response.parsed)
 
@@ -213,8 +219,8 @@ async def asyncio(
         body (SearchUserTaskVariablesData | Unset): User task search query request.
 
     Raises:
-        errors.SearchUserTaskVariablesBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchUserTaskVariablesInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -227,17 +233,23 @@ async def asyncio(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchUserTaskVariablesBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_user_task_variables",
             )
         if response.status_code == 500:
-            raise errors.SearchUserTaskVariablesInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_user_task_variables",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_user_task_variables",
+        )
     assert response.parsed is not None
     return cast(VariableSearchQueryResult, response.parsed)

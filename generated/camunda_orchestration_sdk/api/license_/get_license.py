@@ -64,7 +64,7 @@ def sync(*, client: AuthenticatedClient | Client, **kwargs: Any) -> LicenseRespo
      Obtains the status of the current Camunda license.
 
     Raises:
-        errors.GetLicenseInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -72,12 +72,15 @@ def sync(*, client: AuthenticatedClient | Client, **kwargs: Any) -> LicenseRespo
     response = sync_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 500:
-            raise errors.GetLicenseInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_license",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_license"
+        )
     assert response.parsed is not None
     return cast(LicenseResponse, response.parsed)
 
@@ -109,7 +112,7 @@ async def asyncio(
      Obtains the status of the current Camunda license.
 
     Raises:
-        errors.GetLicenseInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -117,11 +120,14 @@ async def asyncio(
     response = await asyncio_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 500:
-            raise errors.GetLicenseInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_license",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_license"
+        )
     assert response.parsed is not None
     return cast(LicenseResponse, response.parsed)

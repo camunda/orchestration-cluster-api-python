@@ -92,11 +92,11 @@ def sync(
             2251799813690746.
 
     Raises:
-        errors.ResolveProcessInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.ResolveProcessInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ResolveProcessInstanceIncidentsNotFound: If the response status code is 404. The process instance is not found.
-        errors.ResolveProcessInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.ResolveProcessInstanceIncidentsServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.NotFoundError: If the response status code is 404. The process instance is not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -104,36 +104,45 @@ def sync(
     response = sync_detailed(process_instance_key=process_instance_key, client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.ResolveProcessInstanceIncidentsBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_process_instance_incidents",
             )
         if response.status_code == 401:
-            raise errors.ResolveProcessInstanceIncidentsUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_process_instance_incidents",
             )
         if response.status_code == 404:
-            raise errors.ResolveProcessInstanceIncidentsNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_process_instance_incidents",
             )
         if response.status_code == 500:
-            raise errors.ResolveProcessInstanceIncidentsInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_process_instance_incidents",
             )
         if response.status_code == 503:
-            raise errors.ResolveProcessInstanceIncidentsServiceUnavailable(
+            raise errors.ServiceUnavailableError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_process_instance_incidents",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="resolve_process_instance_incidents",
+        )
     assert response.parsed is not None
     return cast(BatchOperationCreatedResult, response.parsed)
 
@@ -173,11 +182,11 @@ async def asyncio(
             2251799813690746.
 
     Raises:
-        errors.ResolveProcessInstanceIncidentsBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.ResolveProcessInstanceIncidentsUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.ResolveProcessInstanceIncidentsNotFound: If the response status code is 404. The process instance is not found.
-        errors.ResolveProcessInstanceIncidentsInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
-        errors.ResolveProcessInstanceIncidentsServiceUnavailable: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.NotFoundError: If the response status code is 404. The process instance is not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.ServiceUnavailableError: If the response status code is 503. The service is currently unavailable. This may happen only on some requests where the system creates backpressure to prevent the server's compute resources from being exhausted, avoiding more severe failures. In this case, the title of the error object contains `RESOURCE_EXHAUSTED`. Clients are recommended to eventually retry those requests after a backoff period. You can learn more about the backpressure mechanism here: https://docs.camunda.io/docs/components/zeebe/technical-concepts/internal-processing/#handling-backpressure .
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -187,35 +196,44 @@ async def asyncio(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.ResolveProcessInstanceIncidentsBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_process_instance_incidents",
             )
         if response.status_code == 401:
-            raise errors.ResolveProcessInstanceIncidentsUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_process_instance_incidents",
             )
         if response.status_code == 404:
-            raise errors.ResolveProcessInstanceIncidentsNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_process_instance_incidents",
             )
         if response.status_code == 500:
-            raise errors.ResolveProcessInstanceIncidentsInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_process_instance_incidents",
             )
         if response.status_code == 503:
-            raise errors.ResolveProcessInstanceIncidentsServiceUnavailable(
+            raise errors.ServiceUnavailableError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="resolve_process_instance_incidents",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="resolve_process_instance_incidents",
+        )
     assert response.parsed is not None
     return cast(BatchOperationCreatedResult, response.parsed)

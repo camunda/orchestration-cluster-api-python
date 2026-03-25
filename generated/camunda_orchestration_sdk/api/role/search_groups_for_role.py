@@ -107,11 +107,11 @@ def sync(
         body (RoleGroupSearchQueryRequest | Unset):
 
     Raises:
-        errors.SearchGroupsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchGroupsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.SearchGroupsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchGroupsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
-        errors.SearchGroupsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -119,36 +119,45 @@ def sync(
     response = sync_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchGroupsForRoleBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_groups_for_role",
             )
         if response.status_code == 401:
-            raise errors.SearchGroupsForRoleUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_groups_for_role",
             )
         if response.status_code == 403:
-            raise errors.SearchGroupsForRoleForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_groups_for_role",
             )
         if response.status_code == 404:
-            raise errors.SearchGroupsForRoleNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_groups_for_role",
             )
         if response.status_code == 500:
-            raise errors.SearchGroupsForRoleInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_groups_for_role",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_groups_for_role",
+        )
     assert response.parsed is not None
     return cast(RoleGroupSearchResult, response.parsed)
 
@@ -195,11 +204,11 @@ async def asyncio(
         body (RoleGroupSearchQueryRequest | Unset):
 
     Raises:
-        errors.SearchGroupsForRoleBadRequest: If the response status code is 400. The provided data is not valid.
-        errors.SearchGroupsForRoleUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.SearchGroupsForRoleForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.SearchGroupsForRoleNotFound: If the response status code is 404. The role with the given ID was not found.
-        errors.SearchGroupsForRoleInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The role with the given ID was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -207,35 +216,44 @@ async def asyncio(
     response = await asyncio_detailed(role_id=role_id, client=client, body=body)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 400:
-            raise errors.SearchGroupsForRoleBadRequest(
+            raise errors.BadRequestError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_groups_for_role",
             )
         if response.status_code == 401:
-            raise errors.SearchGroupsForRoleUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_groups_for_role",
             )
         if response.status_code == 403:
-            raise errors.SearchGroupsForRoleForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_groups_for_role",
             )
         if response.status_code == 404:
-            raise errors.SearchGroupsForRoleNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_groups_for_role",
             )
         if response.status_code == 500:
-            raise errors.SearchGroupsForRoleInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="search_groups_for_role",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code,
+            response.content,
+            operation_id="search_groups_for_role",
+        )
     assert response.parsed is not None
     return cast(RoleGroupSearchResult, response.parsed)

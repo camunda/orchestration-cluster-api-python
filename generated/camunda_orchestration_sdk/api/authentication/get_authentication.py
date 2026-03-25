@@ -70,9 +70,9 @@ def sync(*, client: AuthenticatedClient, **kwargs: Any) -> CamundaUserResult:
      Retrieves the current authenticated user.
 
     Raises:
-        errors.GetAuthenticationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.GetAuthenticationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.GetAuthenticationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -80,24 +80,29 @@ def sync(*, client: AuthenticatedClient, **kwargs: Any) -> CamundaUserResult:
     response = sync_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
-            raise errors.GetAuthenticationUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_authentication",
             )
         if response.status_code == 403:
-            raise errors.GetAuthenticationForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_authentication",
             )
         if response.status_code == 500:
-            raise errors.GetAuthenticationInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_authentication",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_authentication"
+        )
     assert response.parsed is not None
     return cast(CamundaUserResult, response.parsed)
 
@@ -127,9 +132,9 @@ async def asyncio(*, client: AuthenticatedClient, **kwargs: Any) -> CamundaUserR
      Retrieves the current authenticated user.
 
     Raises:
-        errors.GetAuthenticationUnauthorized: If the response status code is 401. The request lacks valid authentication credentials.
-        errors.GetAuthenticationForbidden: If the response status code is 403. Forbidden. The request is not allowed.
-        errors.GetAuthenticationInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+        errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -137,23 +142,28 @@ async def asyncio(*, client: AuthenticatedClient, **kwargs: Any) -> CamundaUserR
     response = await asyncio_detailed(client=client)
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 401:
-            raise errors.GetAuthenticationUnauthorized(
+            raise errors.UnauthorizedError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_authentication",
             )
         if response.status_code == 403:
-            raise errors.GetAuthenticationForbidden(
+            raise errors.ForbiddenError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_authentication",
             )
         if response.status_code == 500:
-            raise errors.GetAuthenticationInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_authentication",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_authentication"
+        )
     assert response.parsed is not None
     return cast(CamundaUserResult, response.parsed)

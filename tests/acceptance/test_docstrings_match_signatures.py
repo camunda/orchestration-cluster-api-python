@@ -63,15 +63,15 @@ def test_api_wrapper_docstrings_match_rewritten_signature():
     create_pi_fn = cast(Any, create_process_instance_sync)
 
     doc_group = inspect.getdoc(get_group_fn) or ""
-    assert "errors.GetGroupUnauthorized" in doc_group
-    assert "errors.GetGroupForbidden" in doc_group
+    assert "errors.UnauthorizedError" in doc_group
+    assert "errors.ForbiddenError" in doc_group
 
     doc_fail = inspect.getdoc(fail_job_fn) or ""
-    assert "errors.FailJobBadRequest" in doc_fail
-    assert "errors.FailJobNotFound" in doc_fail
+    assert "errors.BadRequestError" in doc_fail
+    assert "errors.NotFoundError" in doc_fail
 
     doc_create_pi = inspect.getdoc(create_pi_fn) or ""
-    assert "errors.CreateProcessInstanceServiceUnavailable" in doc_create_pi
+    assert "errors.ServiceUnavailableError" in doc_create_pi
     assert "backpressure" in doc_create_pi
 
     _assert_value_or_throw_doc(get_group_fn)
@@ -84,16 +84,16 @@ def test_camunda_client_docstrings_match_rewritten_signature():
     from camunda_orchestration_sdk import errors
 
     doc_group = inspect.getdoc(CamundaClient.get_group) or ""
-    assert "errors.GetGroupUnauthorized" in doc_group
+    assert "errors.UnauthorizedError" in doc_group
 
     doc_fail = inspect.getdoc(CamundaClient.fail_job) or ""
-    assert "errors.FailJobBadRequest" in doc_fail
+    assert "errors.BadRequestError" in doc_fail
 
     doc_create_pi = inspect.getdoc(CamundaClient.create_process_instance) or ""
-    assert "errors.CreateProcessInstanceServiceUnavailable" in doc_create_pi
+    assert "errors.ServiceUnavailableError" in doc_create_pi
     assert "backpressure" in doc_create_pi
 
-    exc_doc = inspect.getdoc(errors.CreateProcessInstanceServiceUnavailable) or ""
+    exc_doc = inspect.getdoc(errors.ServiceUnavailableError) or ""
     assert "backpressure" in exc_doc
 
     _assert_value_or_throw_doc(CamundaClient.get_group)

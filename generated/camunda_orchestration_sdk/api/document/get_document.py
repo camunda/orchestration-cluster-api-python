@@ -112,8 +112,8 @@ def sync(
         content_hash (str | Unset):
 
     Raises:
-        errors.GetDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
-        errors.GetDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.NotFoundError: If the response status code is 404. The document with the given ID was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -126,18 +126,22 @@ def sync(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
-            raise errors.GetDocumentNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_document",
             )
         if response.status_code == 500:
-            raise errors.GetDocumentInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_document",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_document"
+        )
     assert response.parsed is not None
     return cast(File, response.parsed)
 
@@ -196,8 +200,8 @@ async def asyncio(
         content_hash (str | Unset):
 
     Raises:
-        errors.GetDocumentNotFound: If the response status code is 404. The document with the given ID was not found.
-        errors.GetDocumentInternalServerError: If the response status code is 500. An internal error occurred while processing the request.
+        errors.NotFoundError: If the response status code is 404. The document with the given ID was not found.
+        errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
     Returns:
@@ -210,17 +214,21 @@ async def asyncio(
     )
     if response.status_code < 200 or response.status_code >= 300:
         if response.status_code == 404:
-            raise errors.GetDocumentNotFound(
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_document",
             )
         if response.status_code == 500:
-            raise errors.GetDocumentInternalServerError(
+            raise errors.InternalServerErrorError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
+                operation_id="get_document",
             )
-        raise errors.UnexpectedStatus(response.status_code, response.content)
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_document"
+        )
     assert response.parsed is not None
     return cast(File, response.parsed)
