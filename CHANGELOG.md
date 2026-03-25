@@ -2,6 +2,41 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.19 (2026-03-25)
+
+### Bug Fixes
+
+- Correct GetStatus region and operation-map entries
+  ([`d874823`](https://github.com/camunda/orchestration-cluster-api-python/commit/d8748237dbc2dead1660feeaed6bf30a23fb743e))
+
+- Preserve isinstance guard for nullable semantic type fields
+  ([`9e7d1dd`](https://github.com/camunda/orchestration-cluster-api-python/commit/9e7d1dd1ef9adaf94a666564b4428d0810d512aa))
+
+### Build System
+
+- Rebuild from upstream stable/8.9 spec, fix ScopeKey union type generation
+  ([`e7f7e5f`](https://github.com/camunda/orchestration-cluster-api-python/commit/e7f7e5fad5d523443f44e91e51e3c6521439a3d6))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`d19eb7e`](https://github.com/camunda/orchestration-cluster-api-python/commit/d19eb7e4b03b3728aae8e760fc5f880276c765af))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`09fa9f0`](https://github.com/camunda/orchestration-cluster-api-python/commit/09fa9f03b367b520cdde93db6f5656c1d46cb3e1))
+
+### Documentation
+
+- Add warning for maintainers to README
+  ([`2e29088`](https://github.com/camunda/orchestration-cluster-api-python/commit/2e29088e12c1dad7a1fbbb12ef65138cb6d2f245))
+
+- Expand SDK code examples to cover all API operations
+  ([`d16a8ed`](https://github.com/camunda/orchestration-cluster-api-python/commit/d16a8edcd45779c424f5b669f527a7372cab476f))
+
+- Update versioning scheme notes
+  ([`93cc504`](https://github.com/camunda/orchestration-cluster-api-python/commit/93cc5047065fb97de2d436aae79791dc4763814e))
+
+
 ## v8.9.0-dev.18 (2026-03-23)
 
 ### Bug Fixes
