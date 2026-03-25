@@ -418,11 +418,24 @@ _STR_ISINSTANCE_TERNARY_RE = re.compile(
 
 
 def _fix_str_isinstance_ternary(content: str) -> str:
-    """Replace ``x = lift_f(raw) if isinstance(raw, str) else raw`` with ``x = lift_f(raw)``."""
-    return _STR_ISINSTANCE_TERNARY_RE.sub(
-        lambda m: f"{m.group(1)}{m.group(2)} = {m.group(3)}({m.group(4)})",
-        content,
-    )
+    """Replace ``x = lift_f(raw) if isinstance(raw, str) else raw`` with ``x = lift_f(raw)``.
+
+    Only strip the guard when the raw variable is always str (non-nullable).
+    If the corresponding ``_parse_*`` function returns ``None | str``, the
+    isinstance guard is necessary to avoid passing None to the lifter.
+    """
+
+    def _replace_if_non_nullable(m: re.Match[str]) -> str:
+        raw_var = m.group(4)  # e.g. _raw_business_id
+        # Derive the parse function name from the raw variable
+        # _raw_business_id -> _parse_business_id
+        parse_fn = raw_var.replace("_raw_", "_parse_", 1)
+        # Check if the parse function returns None (nullable field)
+        if f"def {parse_fn}(data: object) -> None" in content:
+            return m.group(0)  # Keep the isinstance guard
+        return f"{m.group(1)}{m.group(2)} = {m.group(3)}({m.group(4)})"
+
+    return _STR_ISINSTANCE_TERNARY_RE.sub(_replace_if_non_nullable, content)
 
 
 # ---------------------------------------------------------------------------
