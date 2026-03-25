@@ -109,7 +109,11 @@ git checkout -b stable/8.9
 git push origin stable/8.9
 ```
 
-### 2. Prepare Main for Next Dev Cycle
+### 2. Update Dependabot
+
+Add a Dependabot entry for the new stable branch in [.github/dependabot.yml](.github/dependabot.yml). Dependabot does not support wildcard branch patterns, so each `stable/*` branch must be listed explicitly.
+
+### 3. Prepare Main for Next Dev Cycle
 
 Create a commit on `main` with the `server:` prefix to bump the minor version:
 
