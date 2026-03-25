@@ -152,7 +152,11 @@ class CorrelatedMessageSubscriptionResult:
             d.pop("elementInstanceKey")
         )
 
-        element_instance_key = lift_element_instance_key(_raw_element_instance_key)
+        element_instance_key = (
+            lift_element_instance_key(_raw_element_instance_key)
+            if isinstance(_raw_element_instance_key, str)
+            else _raw_element_instance_key
+        )
 
         message_key = lift_message_key(d.pop("messageKey"))
 
@@ -177,8 +181,10 @@ class CorrelatedMessageSubscriptionResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = lift_process_instance_key(
-            _raw_root_process_instance_key
+        root_process_instance_key = (
+            lift_process_instance_key(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
         )
 
         subscription_key = lift_message_subscription_key(d.pop("subscriptionKey"))

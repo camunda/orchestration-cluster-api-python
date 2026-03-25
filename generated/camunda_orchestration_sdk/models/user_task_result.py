@@ -322,8 +322,10 @@ class UserTaskResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = lift_process_instance_key(
-            _raw_root_process_instance_key
+        root_process_instance_key = (
+            lift_process_instance_key(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
         )
 
         def _parse_form_key(data: object) -> None | str:
@@ -333,7 +335,11 @@ class UserTaskResult:
 
         _raw_form_key = _parse_form_key(d.pop("formKey"))
 
-        form_key = lift_form_key(_raw_form_key)
+        form_key = (
+            lift_form_key(_raw_form_key)
+            if isinstance(_raw_form_key, str)
+            else _raw_form_key
+        )
 
         tags = cast(list[str], d.pop("tags"))
 

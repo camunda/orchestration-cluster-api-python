@@ -108,7 +108,11 @@ class CamundaUserResult:
 
         _raw_username = _parse_username(d.pop("username"))
 
-        username = lift_username(_raw_username)
+        username = (
+            lift_username(_raw_username)
+            if isinstance(_raw_username, str)
+            else _raw_username
+        )
 
         def _parse_display_name(data: object) -> None | str:
             if data is None:

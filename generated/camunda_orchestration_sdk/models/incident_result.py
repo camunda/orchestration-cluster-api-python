@@ -161,8 +161,10 @@ class IncidentResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = lift_process_instance_key(
-            _raw_root_process_instance_key
+        root_process_instance_key = (
+            lift_process_instance_key(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
         )
 
         element_instance_key = lift_element_instance_key(d.pop("elementInstanceKey"))
@@ -174,7 +176,11 @@ class IncidentResult:
 
         _raw_job_key = _parse_job_key(d.pop("jobKey"))
 
-        job_key = lift_job_key(_raw_job_key)
+        job_key = (
+            lift_job_key(_raw_job_key)
+            if isinstance(_raw_job_key, str)
+            else _raw_job_key
+        )
 
         incident_result = cls(
             process_definition_id=process_definition_id,

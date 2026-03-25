@@ -291,7 +291,11 @@ class AuditLogResult:
             d.pop("batchOperationKey")
         )
 
-        batch_operation_key = lift_batch_operation_key(_raw_batch_operation_key)
+        batch_operation_key = (
+            lift_batch_operation_key(_raw_batch_operation_key)
+            if isinstance(_raw_batch_operation_key, str)
+            else _raw_batch_operation_key
+        )
 
         batch_operation_type = AuditLogResultBatchOperationType(
             d.pop("batchOperationType")
@@ -322,7 +326,11 @@ class AuditLogResult:
 
         _raw_tenant_id = _parse_tenant_id(d.pop("tenantId"))
 
-        tenant_id = lift_tenant_id(_raw_tenant_id)
+        tenant_id = (
+            lift_tenant_id(_raw_tenant_id)
+            if isinstance(_raw_tenant_id, str)
+            else _raw_tenant_id
+        )
 
         result = AuditLogResultEnum(d.pop("result"))
 
@@ -337,7 +345,11 @@ class AuditLogResult:
             d.pop("processDefinitionId")
         )
 
-        process_definition_id = lift_process_definition_id(_raw_process_definition_id)
+        process_definition_id = (
+            lift_process_definition_id(_raw_process_definition_id)
+            if isinstance(_raw_process_definition_id, str)
+            else _raw_process_definition_id
+        )
 
         def _parse_process_definition_key(data: object) -> None | str:
             if data is None:
@@ -348,8 +360,10 @@ class AuditLogResult:
             d.pop("processDefinitionKey")
         )
 
-        process_definition_key = lift_process_definition_key(
-            _raw_process_definition_key
+        process_definition_key = (
+            lift_process_definition_key(_raw_process_definition_key)
+            if isinstance(_raw_process_definition_key, str)
+            else _raw_process_definition_key
         )
 
         def _parse_process_instance_key(data: object) -> None | str:
@@ -361,7 +375,11 @@ class AuditLogResult:
             d.pop("processInstanceKey")
         )
 
-        process_instance_key = lift_process_instance_key(_raw_process_instance_key)
+        process_instance_key = (
+            lift_process_instance_key(_raw_process_instance_key)
+            if isinstance(_raw_process_instance_key, str)
+            else _raw_process_instance_key
+        )
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -372,8 +390,10 @@ class AuditLogResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = lift_process_instance_key(
-            _raw_root_process_instance_key
+        root_process_instance_key = (
+            lift_process_instance_key(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
         )
 
         def _parse_element_instance_key(data: object) -> None | str:
@@ -385,7 +405,11 @@ class AuditLogResult:
             d.pop("elementInstanceKey")
         )
 
-        element_instance_key = lift_element_instance_key(_raw_element_instance_key)
+        element_instance_key = (
+            lift_element_instance_key(_raw_element_instance_key)
+            if isinstance(_raw_element_instance_key, str)
+            else _raw_element_instance_key
+        )
 
         def _parse_job_key(data: object) -> None | str:
             if data is None:
@@ -394,7 +418,11 @@ class AuditLogResult:
 
         _raw_job_key = _parse_job_key(d.pop("jobKey"))
 
-        job_key = lift_job_key(_raw_job_key)
+        job_key = (
+            lift_job_key(_raw_job_key)
+            if isinstance(_raw_job_key, str)
+            else _raw_job_key
+        )
 
         def _parse_user_task_key(data: object) -> None | str:
             if data is None:
@@ -403,7 +431,11 @@ class AuditLogResult:
 
         _raw_user_task_key = _parse_user_task_key(d.pop("userTaskKey"))
 
-        user_task_key = lift_user_task_key(_raw_user_task_key)
+        user_task_key = (
+            lift_user_task_key(_raw_user_task_key)
+            if isinstance(_raw_user_task_key, str)
+            else _raw_user_task_key
+        )
 
         def _parse_decision_requirements_id(data: object) -> None | str:
             if data is None:
@@ -423,8 +455,10 @@ class AuditLogResult:
             d.pop("decisionRequirementsKey")
         )
 
-        decision_requirements_key = lift_decision_requirements_key(
-            _raw_decision_requirements_key
+        decision_requirements_key = (
+            lift_decision_requirements_key(_raw_decision_requirements_key)
+            if isinstance(_raw_decision_requirements_key, str)
+            else _raw_decision_requirements_key
         )
 
         def _parse_decision_definition_id(data: object) -> None | str:
@@ -436,8 +470,10 @@ class AuditLogResult:
             d.pop("decisionDefinitionId")
         )
 
-        decision_definition_id = lift_decision_definition_id(
-            _raw_decision_definition_id
+        decision_definition_id = (
+            lift_decision_definition_id(_raw_decision_definition_id)
+            if isinstance(_raw_decision_definition_id, str)
+            else _raw_decision_definition_id
         )
 
         def _parse_decision_definition_key(data: object) -> None | str:
@@ -449,8 +485,10 @@ class AuditLogResult:
             d.pop("decisionDefinitionKey")
         )
 
-        decision_definition_key = lift_decision_definition_key(
-            _raw_decision_definition_key
+        decision_definition_key = (
+            lift_decision_definition_key(_raw_decision_definition_key)
+            if isinstance(_raw_decision_definition_key, str)
+            else _raw_decision_definition_key
         )
 
         def _parse_decision_evaluation_key(data: object) -> None | str:
@@ -462,8 +500,10 @@ class AuditLogResult:
             d.pop("decisionEvaluationKey")
         )
 
-        decision_evaluation_key = lift_decision_evaluation_key(
-            _raw_decision_evaluation_key
+        decision_evaluation_key = (
+            lift_decision_evaluation_key(_raw_decision_evaluation_key)
+            if isinstance(_raw_decision_evaluation_key, str)
+            else _raw_decision_evaluation_key
         )
 
         def _parse_deployment_key(data: object) -> None | str:
@@ -473,7 +513,11 @@ class AuditLogResult:
 
         _raw_deployment_key = _parse_deployment_key(d.pop("deploymentKey"))
 
-        deployment_key = lift_deployment_key(_raw_deployment_key)
+        deployment_key = (
+            lift_deployment_key(_raw_deployment_key)
+            if isinstance(_raw_deployment_key, str)
+            else _raw_deployment_key
+        )
 
         def _parse_form_key(data: object) -> None | str:
             if data is None:
@@ -482,7 +526,11 @@ class AuditLogResult:
 
         _raw_form_key = _parse_form_key(d.pop("formKey"))
 
-        form_key = lift_form_key(_raw_form_key)
+        form_key = (
+            lift_form_key(_raw_form_key)
+            if isinstance(_raw_form_key, str)
+            else _raw_form_key
+        )
 
         def _parse_resource_key(data: object) -> str:
             return cast(str, data)
@@ -496,7 +544,11 @@ class AuditLogResult:
 
         _raw_related_entity_key = _parse_related_entity_key(d.pop("relatedEntityKey"))
 
-        related_entity_key = lift_audit_log_entity_key(_raw_related_entity_key)
+        related_entity_key = (
+            lift_audit_log_entity_key(_raw_related_entity_key)
+            if isinstance(_raw_related_entity_key, str)
+            else _raw_related_entity_key
+        )
 
         related_entity_type = AuditLogResultRelatedEntityType(
             d.pop("relatedEntityType")

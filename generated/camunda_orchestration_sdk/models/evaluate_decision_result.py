@@ -171,8 +171,10 @@ class EvaluateDecisionResult:
             d.pop("failedDecisionDefinitionId")
         )
 
-        failed_decision_definition_id = lift_decision_definition_id(
-            _raw_failed_decision_definition_id
+        failed_decision_definition_id = (
+            lift_decision_definition_id(_raw_failed_decision_definition_id)
+            if isinstance(_raw_failed_decision_definition_id, str)
+            else _raw_failed_decision_definition_id
         )
 
         def _parse_failure_message(data: object) -> None | str:

@@ -189,7 +189,11 @@ class DecisionInstanceResult:
             d.pop("elementInstanceKey")
         )
 
-        element_instance_key = lift_element_instance_key(_raw_element_instance_key)
+        element_instance_key = (
+            lift_element_instance_key(_raw_element_instance_key)
+            if isinstance(_raw_element_instance_key, str)
+            else _raw_element_instance_key
+        )
 
         evaluation_date = isoparse(d.pop("evaluationDate"))
 
@@ -209,8 +213,10 @@ class DecisionInstanceResult:
             d.pop("processDefinitionKey")
         )
 
-        process_definition_key = lift_process_definition_key(
-            _raw_process_definition_key
+        process_definition_key = (
+            lift_process_definition_key(_raw_process_definition_key)
+            if isinstance(_raw_process_definition_key, str)
+            else _raw_process_definition_key
         )
 
         def _parse_process_instance_key(data: object) -> None | str:
@@ -222,7 +228,11 @@ class DecisionInstanceResult:
             d.pop("processInstanceKey")
         )
 
-        process_instance_key = lift_process_instance_key(_raw_process_instance_key)
+        process_instance_key = (
+            lift_process_instance_key(_raw_process_instance_key)
+            if isinstance(_raw_process_instance_key, str)
+            else _raw_process_instance_key
+        )
 
         result = d.pop("result")
 
@@ -237,8 +247,10 @@ class DecisionInstanceResult:
             d.pop("rootProcessInstanceKey")
         )
 
-        root_process_instance_key = lift_process_instance_key(
-            _raw_root_process_instance_key
+        root_process_instance_key = (
+            lift_process_instance_key(_raw_root_process_instance_key)
+            if isinstance(_raw_root_process_instance_key, str)
+            else _raw_root_process_instance_key
         )
 
         state = DecisionInstanceStateEnum(d.pop("state"))
