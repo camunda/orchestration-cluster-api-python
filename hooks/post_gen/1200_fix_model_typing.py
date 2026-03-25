@@ -480,7 +480,7 @@ def run(context: dict[str, str]) -> None:
                 patched_isinstance += 1
 
     print(
-        f"Fixed isinstance→cast in {patched_cast} files, from_dict list typing in {patched_list} files, "
+        f"Fixed isinstance->cast in {patched_cast} files, from_dict list typing in {patched_list} files, "
         f"to_dict list typing in {patched_todict} files, single-variant isinstance in {patched_isinstance} files"
     )
 
@@ -517,4 +517,4 @@ def run(context: dict[str, str]) -> None:
             after = re.sub(r"\)\s*$", "]", after)
             init_content = before + after
             init_file.write_text(init_content, encoding="utf-8")
-            print("Fixed __all__ tuple → list[str] in models/__init__.py")
+            print("Fixed __all__ tuple -> list[str] in models/__init__.py")
