@@ -138,7 +138,8 @@ def generate_flat_client(package_path: Path) -> None:
         return {n.id for n in ast.walk(node) if isinstance(n, ast.Name)}
 
     for root, _dirs, files in os.walk(api_dir):
-        for file in files:
+        _dirs.sort()
+        for file in sorted(files):
             if file == "__init__.py" or not file.endswith(".py"):
                 continue
 

@@ -1,4 +1,4 @@
-.PHONY: install generate clean test itest docs-api docs-md bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check
+.PHONY: install generate clean test itest docs-api docs-md bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
@@ -9,7 +9,7 @@ BUNDLED_SPEC = external-spec/bundled/rest-api.bundle.json
 install:
 	mkdir -p generated
 	uv sync
-	uv run pre-commit install
+	bash scripts/setup-hooks.sh
 
 # Fetch & bundle the upstream OpenAPI spec using camunda-schema-bundler.
 # Produces external-spec/bundled/rest-api.bundle.json + spec-metadata.json
@@ -45,6 +45,7 @@ clean_spec:
 	rm -rf .openapi-cache external-spec
 
 itest: generate
+	uv sync --group itest
 	CAMUNDA_INTEGRATION=1 uv run pytest -q tests/integration
 
 test:
@@ -55,6 +56,8 @@ lint:
 
 typecheck:
 	uv run pyright
+
+check: lint typecheck
 
 typecheck-examples:
 	uv run pyright examples/

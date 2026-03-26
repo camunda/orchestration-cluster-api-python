@@ -35,6 +35,7 @@ Each step is idempotent given identical upstream spec + environment.
 | `make itest` | Full build + integration tests |
 | `make lint` | Lint with ruff |
 | `make typecheck` | Type-check with pyright |
+| `make check` | Lint + type-check (run before pushing) |
 | `make typecheck-examples` | Type-check examples only |
 | `make sync-readme` | Sync README snippets from examples |
 | `make sync-readme-check` | Verify README snippets are up-to-date (CI gate) |
@@ -194,10 +195,11 @@ uv run pytest -q tests/unit
 
 ### Integration Tests
 
-Require a running Camunda cluster via Docker:
+Require a running Camunda cluster via Docker and the `itest` dependency group (`fastapi`, `uvicorn`):
 
 ```bash
-cd docker && docker compose up -d
+uv sync --group itest              # install integration test deps (one-time)
+cd docker && docker compose up -d   # start local Camunda cluster
 make itest
 # or: CAMUNDA_INTEGRATION=1 uv run pytest -q tests/integration
 ```
@@ -213,6 +215,22 @@ The `make generate` pipeline enforces three gates after code generation:
 3. **`pyright`** — strict type-checking; build fails on any error
 
 Pyright is configured in `pyproject.toml` with `typeCheckingMode = "strict"`.
+
+### Local pre-push check
+
+Run `make check` to lint and type-check before pushing:
+
+```bash
+make check   # runs: make lint + make typecheck
+```
+
+To install an automatic git pre-push hook that runs `make check`:
+
+```bash
+bash scripts/setup-hooks.sh
+```
+
+This is also run automatically by `make install`. The hook uses the same `ruff` and `pyright` versions as CI (via `uv run`), so local results match CI exactly. Re-run the script at any time to reinstall.
 
 ---
 
@@ -464,6 +482,7 @@ Never edit generated files in `generated/` manually—they are overwritten every
 | Integration tests | `tests/integration/` |
 | Build orchestration | `Makefile` |
 | Spec bundling script | `scripts/bundle-spec.sh` |
+| Pre-push hook setup | `scripts/setup-hooks.sh` |
 | Config reference generator | `scripts/generate_config_reference.py` |
 | README snippet sync script | `scripts/sync-readme-snippets.py` |
 | Compilable examples | `examples/` |
@@ -499,6 +518,8 @@ Never edit generated files in `generated/` manually—they are overwritten every
 | Run integration tests | `make itest` |
 | Lint | `make lint` |
 | Type-check | `make typecheck` |
+| Lint + type-check (pre-push) | `make check` |
+| Install pre-push hook | `bash scripts/setup-hooks.sh` |
 | Generate API docs | `make docs-api` |
 | Preview API docs | `make preview-docs` |
 | Generate config reference | `make config-reference` |
