@@ -51,6 +51,13 @@ class CamundaSdkConfigPartial(TypedDict, total=False):
     # Tenant
     CAMUNDA_TENANT_ID: str
 
+    # Worker defaults
+    CAMUNDA_WORKER_TIMEOUT: str
+    CAMUNDA_WORKER_MAX_CONCURRENT_JOBS: str
+    CAMUNDA_WORKER_REQUEST_TIMEOUT: str
+    CAMUNDA_WORKER_NAME: str
+    CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS: str
+
     # Optional .env file loading
     CAMUNDA_LOAD_ENVFILE: str
 
@@ -75,6 +82,12 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "CAMUNDA_SDK_BACKPRESSURE_PROFILE",
     # Tenant
     "CAMUNDA_TENANT_ID",
+    # Worker defaults
+    "CAMUNDA_WORKER_TIMEOUT",
+    "CAMUNDA_WORKER_MAX_CONCURRENT_JOBS",
+    "CAMUNDA_WORKER_REQUEST_TIMEOUT",
+    "CAMUNDA_WORKER_NAME",
+    "CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS",
 )
 
 
@@ -223,6 +236,28 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_TENANT_ID: str | None = Field(
         default=None,
         description="Default tenant ID applied to all operations that accept a tenant_id parameter.",
+    )
+
+    # Worker defaults
+    CAMUNDA_WORKER_TIMEOUT: int | None = Field(
+        default=None,
+        description="Default job timeout in milliseconds for all workers.",
+    )
+    CAMUNDA_WORKER_MAX_CONCURRENT_JOBS: int | None = Field(
+        default=None,
+        description="Default maximum concurrent jobs per worker.",
+    )
+    CAMUNDA_WORKER_REQUEST_TIMEOUT: int | None = Field(
+        default=None,
+        description="Default long-poll request timeout in milliseconds for all workers.",
+    )
+    CAMUNDA_WORKER_NAME: str | None = Field(
+        default=None,
+        description="Default worker name for all workers.",
+    )
+    CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS: float | None = Field(
+        default=None,
+        description="Default maximum startup jitter in seconds for all workers.",
     )
 
     @staticmethod

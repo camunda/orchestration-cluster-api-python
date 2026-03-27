@@ -423,7 +423,7 @@ def generate_flat_client(package_path: Path) -> None:
         imports_content += "\nfrom typing import TYPE_CHECKING"
 
     imports_content += "\nimport asyncio"
-    imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, ConnectedJobHandler, IsolatedJobHandler, JobHandler"
+    imports_content += "\nfrom .runtime.job_worker import JobWorker, WorkerConfig, ConnectedJobHandler, IsolatedJobHandler, JobHandler, resolve_worker_config"
     imports_content += "\nfrom typing import Literal, overload"
     imports_content += "\nfrom .runtime.configuration_resolver import CamundaSdkConfigPartial, CamundaSdkConfiguration, ConfigurationResolver, read_environment"
     imports_content += "\nfrom .runtime.auth import AuthProvider, BasicAuthProvider, NullAuthProvider, OAuthClientCredentialsAuthProvider, AsyncOAuthClientCredentialsAuthProvider, inject_auth_event_hooks"
@@ -759,15 +759,19 @@ class CamundaAsyncClient:
             return
 
     @overload
-    def create_job_worker(self, config: WorkerConfig, callback: ConnectedJobHandler, auto_start: bool = True, *, execution_strategy: Literal["auto", "async", "thread"] = "auto", startup_jitter_max_seconds: float = 0) -> JobWorker:
+    def create_job_worker(self, config: WorkerConfig, callback: ConnectedJobHandler, auto_start: bool = True, *, execution_strategy: Literal["auto", "async", "thread"] = "auto", startup_jitter_max_seconds: float | None = None) -> JobWorker:
         ...
 
     @overload
-    def create_job_worker(self, config: WorkerConfig, callback: IsolatedJobHandler, auto_start: bool = True, *, execution_strategy: Literal["process"], startup_jitter_max_seconds: float = 0) -> JobWorker:
+    def create_job_worker(self, config: WorkerConfig, callback: IsolatedJobHandler, auto_start: bool = True, *, execution_strategy: Literal["process"], startup_jitter_max_seconds: float | None = None) -> JobWorker:
         ...
 
-    def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True, *, execution_strategy: Literal["auto", "async", "thread", "process"] = "auto", startup_jitter_max_seconds: float = 0) -> JobWorker:
-        worker = JobWorker(self, callback, config, logger=self._sdk_logger, execution_strategy=execution_strategy, startup_jitter_max_seconds=startup_jitter_max_seconds)
+    def create_job_worker(self, config: WorkerConfig, callback: JobHandler, auto_start: bool = True, *, execution_strategy: Literal["auto", "async", "thread", "process"] = "auto", startup_jitter_max_seconds: float | None = None) -> JobWorker:
+        resolved_config = resolve_worker_config(config, self.configuration)
+        effective_jitter = startup_jitter_max_seconds
+        if effective_jitter is None:
+            effective_jitter = self.configuration.CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS or 0
+        worker = JobWorker(self, callback, resolved_config, logger=self._sdk_logger, execution_strategy=execution_strategy, startup_jitter_max_seconds=effective_jitter)
         self._workers.append(worker)
         if auto_start:
             worker.start()

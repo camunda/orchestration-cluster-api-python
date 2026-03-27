@@ -179,16 +179,89 @@ SyncJobHandler = IsolatedSyncJobHandler
 
 @dataclass
 class WorkerConfig:
-    """User-facing configuration"""
+    """User-facing configuration.
+
+    Fields left as ``None`` inherit the global default from
+    ``CAMUNDA_WORKER_*`` environment variables (or the client constructor),
+    falling back to the hardcoded SDK default when neither is set.
+    """
 
     job_type: str
-    """How long the job is reserved for this worker only"""
-    job_timeout_milliseconds: int
-    """Long-poll request timeout in milliseconds. Defaults to 0, which allows the server to set the request timeout"""
-    request_timeout_milliseconds: int = 0
-    max_concurrent_jobs: int = 10  # Max jobs executing at once
+    """Job type to activate and process."""
+    job_timeout_milliseconds: int | None = None
+    """How long the job is reserved for this worker only. Falls back to
+    ``CAMUNDA_WORKER_TIMEOUT`` env var if not set."""
+    request_timeout_milliseconds: int | None = None
+    """Long-poll request timeout in milliseconds. Falls back to
+    ``CAMUNDA_WORKER_REQUEST_TIMEOUT`` env var, then ``0``."""
+    max_concurrent_jobs: int | None = None
+    """Max jobs executing at once. Falls back to
+    ``CAMUNDA_WORKER_MAX_CONCURRENT_JOBS`` env var, then ``10``."""
     fetch_variables: list[str] | None = None
-    worker_name: str = "camunda-python-sdk-worker"
+    worker_name: str | None = None
+    """Worker identifier. Falls back to ``CAMUNDA_WORKER_NAME`` env var,
+    then ``"camunda-python-sdk-worker"``."""
+
+
+def resolve_worker_config(
+    config: WorkerConfig,
+    configuration: Any,
+) -> WorkerConfig:
+    """Return a new WorkerConfig with ``None`` fields filled from *configuration*.
+
+    Precedence: explicit field value > ``CAMUNDA_WORKER_*`` config > hardcoded default.
+    Raises ``ValueError`` if ``job_timeout_milliseconds`` is still unset after merging.
+    """
+
+    job_timeout = config.job_timeout_milliseconds
+    if job_timeout is None:
+        job_timeout = getattr(configuration, "CAMUNDA_WORKER_TIMEOUT", None)
+    if job_timeout is None:
+        raise ValueError(
+            "job_timeout_milliseconds is required: set it on WorkerConfig "
+            "or via CAMUNDA_WORKER_TIMEOUT environment variable."
+        )
+
+    def _pick(explicit: Any, env_attr: str, default: Any) -> Any:
+        if explicit is not None:
+            return explicit
+        env_val = getattr(configuration, env_attr, None)
+        if env_val is not None:
+            return env_val
+        return default
+
+    return WorkerConfig(
+        job_type=config.job_type,
+        job_timeout_milliseconds=job_timeout,
+        request_timeout_milliseconds=_pick(
+            config.request_timeout_milliseconds,
+            "CAMUNDA_WORKER_REQUEST_TIMEOUT",
+            0,
+        ),
+        max_concurrent_jobs=_pick(
+            config.max_concurrent_jobs,
+            "CAMUNDA_WORKER_MAX_CONCURRENT_JOBS",
+            10,
+        ),
+        fetch_variables=config.fetch_variables,
+        worker_name=_pick(
+            config.worker_name,
+            "CAMUNDA_WORKER_NAME",
+            "camunda-python-sdk-worker",
+        ),
+    )
+
+
+@dataclass
+class _ResolvedWorkerConfig:
+    """Internal config with all defaults applied (no Optional sentinels)."""
+
+    job_type: str
+    job_timeout_milliseconds: int
+    request_timeout_milliseconds: int
+    max_concurrent_jobs: int
+    fetch_variables: list[str] | None
+    worker_name: str
 
 
 class JobError(Exception):
@@ -260,8 +333,31 @@ class JobWorker:
         execution_strategy: EXECUTION_STRATEGY = "auto",
         startup_jitter_max_seconds: float = 0,
     ):
+        # Apply hardcoded defaults for any remaining None sentinels.
+        # (env-var defaults are already applied by create_job_worker via
+        # resolve_worker_config; this is the last fallback.)
+        if config.job_timeout_milliseconds is None:
+            raise ValueError(
+                "job_timeout_milliseconds is required: set it on WorkerConfig "
+                "or via CAMUNDA_WORKER_TIMEOUT environment variable."
+            )
+        resolved = _ResolvedWorkerConfig(
+            job_type=config.job_type,
+            job_timeout_milliseconds=config.job_timeout_milliseconds,
+            request_timeout_milliseconds=config.request_timeout_milliseconds
+            if config.request_timeout_milliseconds is not None
+            else 0,
+            max_concurrent_jobs=config.max_concurrent_jobs
+            if config.max_concurrent_jobs is not None
+            else 10,
+            fetch_variables=config.fetch_variables,
+            worker_name=config.worker_name
+            if config.worker_name is not None
+            else "camunda-python-sdk-worker",
+        )
+
         self.callback = callback
-        self.config = config
+        self.config = resolved
         self.client = client
         self._execution_strategy_override = execution_strategy
         self._startup_jitter_max_seconds = startup_jitter_max_seconds
@@ -270,8 +366,8 @@ class JobWorker:
         base_logger = logger if logger is not None else create_logger()
         self.logger = base_logger.bind(
             sdk="camunda_orchestration_sdk",
-            worker=config.worker_name,
-            job_type=config.job_type,
+            worker=resolved.worker_name,
+            job_type=resolved.job_type,
         )
 
         # Execution strategy detection
@@ -282,11 +378,13 @@ class JobWorker:
         self._sync_client: "CamundaClient | None" = None
 
         # Resource pools
-        self.thread_pool = ThreadPoolExecutor(max_workers=config.max_concurrent_jobs)
-        self.process_pool = ProcessPoolExecutor(max_workers=config.max_concurrent_jobs)
+        self.thread_pool = ThreadPoolExecutor(max_workers=resolved.max_concurrent_jobs)
+        self.process_pool = ProcessPoolExecutor(
+            max_workers=resolved.max_concurrent_jobs
+        )
 
         # Semaphore to limit concurrent executions
-        self.semaphore = asyncio.Semaphore(config.max_concurrent_jobs)
+        self.semaphore = asyncio.Semaphore(resolved.max_concurrent_jobs)
 
         self.running = False
         self.polling_task = None
