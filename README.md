@@ -539,6 +539,7 @@ export CAMUNDA_WORKER_TIMEOUT=30000
 export CAMUNDA_WORKER_MAX_CONCURRENT_JOBS=32
 ```
 
+<!-- snippet:ReadmeWorkerDefaultsEnv -->
 ```python
 # No need to set job_timeout_milliseconds on every worker — inherited from env
 client.create_job_worker(
@@ -553,6 +554,7 @@ client.create_job_worker(
 
 Example — set defaults via client constructor:
 
+<!-- snippet:ReadmeWorkerDefaultsClient -->
 ```python
 client = CamundaAsyncClient(configuration={
     "CAMUNDA_WORKER_TIMEOUT": "30000",
@@ -569,6 +571,7 @@ client.create_job_worker(
     config=WorkerConfig(job_type="shipping-service"),
     callback=handle_shipping,
 )
+```
 
 ### Failing a Job
 
@@ -622,6 +625,7 @@ The `error_code` must match the error code defined on a BPMN error catch event i
 
 When a job worker handles a [user task listener](https://docs.camunda.io/docs/components/concepts/user-task-listeners/), it can correct task properties (assignee, due date, candidate groups, etc.) as part of the completion. Return a `JobCompletionRequest` with a `result` containing `JobResultCorrections`:
 
+<!-- snippet:ReadmeJobCorrections -->
 ```python
 from camunda_orchestration_sdk import ConnectedJobContext
 from camunda_orchestration_sdk.models import (
@@ -644,6 +648,7 @@ async def validate_task(job: ConnectedJobContext) -> JobCompletionRequest:
 
 To deny a task completion (reject the work), set `denied=True`:
 
+<!-- snippet:ReadmeJobCorrectionsDenied -->
 ```python
 async def review_task(job: ConnectedJobContext) -> JobCompletionRequest:
     return JobCompletionRequest(

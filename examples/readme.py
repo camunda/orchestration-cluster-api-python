@@ -339,3 +339,101 @@ def readme_disable_logging() -> None:
 
     client = CamundaClient(logger=NullLogger())
     # endregion ReadmeDisableLogging
+
+
+# ---------- Heritable Worker Defaults ----------
+
+
+async def readme_worker_defaults_env() -> None:
+    from camunda_orchestration_sdk import CamundaAsyncClient, ConnectedJobContext, WorkerConfig
+
+    async def handle_payment(job: ConnectedJobContext) -> dict[str, object]:
+        return {"status": "paid"}
+
+    async def handle_notification(job: ConnectedJobContext) -> dict[str, object]:
+        return {"sent": True}
+
+    async with CamundaAsyncClient() as client:
+        # region ReadmeWorkerDefaultsEnv
+        # No need to set job_timeout_milliseconds on every worker — inherited from env
+        client.create_job_worker(
+            config=WorkerConfig(job_type="payment-service"),
+            callback=handle_payment,
+        )
+        client.create_job_worker(
+            config=WorkerConfig(job_type="notification-service"),
+            callback=handle_notification,
+        )
+        # endregion ReadmeWorkerDefaultsEnv
+
+
+async def readme_worker_defaults_client() -> None:
+    from camunda_orchestration_sdk import CamundaAsyncClient, ConnectedJobContext, WorkerConfig
+
+    async def handle_payment(job: ConnectedJobContext) -> dict[str, object]:
+        return {"status": "paid"}
+
+    async def handle_shipping(job: ConnectedJobContext) -> dict[str, object]:
+        return {"shipped": True}
+
+    # region ReadmeWorkerDefaultsClient
+    client = CamundaAsyncClient(configuration={
+        "CAMUNDA_WORKER_TIMEOUT": "30000",
+        "CAMUNDA_WORKER_MAX_CONCURRENT_JOBS": "16",
+        "CAMUNDA_WORKER_NAME": "my-app",
+    })
+
+    # Both workers inherit timeout, concurrency, and name
+    client.create_job_worker(
+        config=WorkerConfig(job_type="payment-service"),
+        callback=handle_payment,
+    )
+    client.create_job_worker(
+        config=WorkerConfig(job_type="shipping-service"),
+        callback=handle_shipping,
+    )
+    # endregion ReadmeWorkerDefaultsClient
+
+
+# ---------- Job Corrections ----------
+
+
+async def readme_job_corrections() -> None:
+    # region ReadmeJobCorrections
+    from camunda_orchestration_sdk import ConnectedJobContext
+    from camunda_orchestration_sdk.models import (
+        JobCompletionRequest,
+        JobResultUserTask,
+        JobResultCorrections,
+    )
+
+    async def validate_task(job: ConnectedJobContext) -> JobCompletionRequest:
+        return JobCompletionRequest(
+            result=JobResultUserTask(
+                type_="userTask",
+                corrections=JobResultCorrections(
+                    assignee="corrected-user",
+                    priority=80,
+                ),
+            ),
+        )
+    # endregion ReadmeJobCorrections
+
+
+async def readme_job_corrections_denied() -> None:
+    from camunda_orchestration_sdk import ConnectedJobContext
+    from camunda_orchestration_sdk.models import (
+        JobCompletionRequest,
+        JobResultUserTask,
+    )
+
+    # region ReadmeJobCorrectionsDenied
+    async def review_task(job: ConnectedJobContext) -> JobCompletionRequest:
+        return JobCompletionRequest(
+            result=JobResultUserTask(
+                type_="userTask",
+                denied=True,
+                denied_reason="Insufficient documentation",
+            ),
+        )
+    # endregion ReadmeJobCorrectionsDenied

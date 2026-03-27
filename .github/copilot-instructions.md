@@ -115,3 +115,27 @@ make clean
 ### Dependencies
 - **Runtime**: `httpx`, `attrs`, `pydantic`, `python-dateutil`, `loguru`, `python-dotenv`, `typing-extensions`.
 - **Development**: `pytest`, `pytest-asyncio`, `pyyaml`, `openapi-python-client`, `jsonref`, `ruff`, `pyright`, `python-semantic-release`, `sphinx`, `sphinx-markdown-builder`, `sphinx-book-theme`, `psutil`, `pydantic-settings`, `fastapi`, `uvicorn`.
+
+## README Code Examples
+
+Code blocks in `README.md` are **injected from compilable example files** — do not edit them inline.
+
+- **Source of truth**: `examples/readme.py` (type-checked by pyright during build)
+- **Sync script**: `scripts/sync-readme-snippets.py`
+- **CI gate**: `python3 scripts/sync-readme-snippets.py --check` (fails if README is out of sync)
+
+### How it works
+
+1. Wrap code in `examples/readme.py` with `# region RegionName` / `# endregion RegionName` tags.
+2. In `README.md`, place `<!-- snippet:RegionName -->` immediately before the fenced code block.
+3. Run `python3 scripts/sync-readme-snippets.py` to update README (or the build does it automatically).
+4. Composite regions: `<!-- snippet:A+B -->` concatenates regions A and B separated by a blank line.
+
+### Adding or updating a README example
+
+1. Add/edit the region-tagged code in `examples/readme.py`.
+2. Add/verify the `<!-- snippet:RegionName -->` marker in `README.md`.
+3. Run `python3 scripts/sync-readme-snippets.py` to sync.
+4. Run `uv run pyright` to confirm the example type-checks.
+
+**Never edit a snippet-marked code block directly in README.md** — it will be overwritten on the next sync.
