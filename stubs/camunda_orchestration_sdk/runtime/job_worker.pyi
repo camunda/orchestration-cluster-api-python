@@ -49,11 +49,20 @@ SyncJobHandler = IsolatedSyncJobHandler
 @dataclass
 class WorkerConfig:
     job_type: str
-    job_timeout_milliseconds: int
-    request_timeout_milliseconds: int = 0
-    max_concurrent_jobs: int = 10
+    job_timeout_milliseconds: int | None = None
+    request_timeout_milliseconds: int | None = None
+    max_concurrent_jobs: int | None = None
     fetch_variables: list[str] | None = None
-    worker_name: str = "camunda-python-sdk-worker"
+    worker_name: str | None = None
+def resolve_worker_config(config: WorkerConfig, configuration: Any) -> WorkerConfig: ...
+@dataclass
+class _ResolvedWorkerConfig:
+    job_type: str
+    job_timeout_milliseconds: int
+    request_timeout_milliseconds: int
+    max_concurrent_jobs: int
+    fetch_variables: list[str] | None
+    worker_name: str
 class JobError(Exception):
     def __init__(self, error_code: str, message: str = "") -> None: ...
 class JobFailure(Exception):

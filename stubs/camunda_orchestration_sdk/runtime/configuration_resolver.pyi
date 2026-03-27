@@ -31,6 +31,11 @@ class CamundaSdkConfigPartial(TypedDict):
     CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool
     CAMUNDA_SDK_BACKPRESSURE_PROFILE: str
     CAMUNDA_TENANT_ID: str
+    CAMUNDA_WORKER_TIMEOUT: str
+    CAMUNDA_WORKER_MAX_CONCURRENT_JOBS: str
+    CAMUNDA_WORKER_REQUEST_TIMEOUT: str
+    CAMUNDA_WORKER_NAME: str
+    CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS: str
     CAMUNDA_LOAD_ENVFILE: str
 CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "ZEEBE_REST_ADDRESS",
@@ -52,6 +57,12 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "CAMUNDA_SDK_BACKPRESSURE_PROFILE",
     # Tenant
     "CAMUNDA_TENANT_ID",
+    # Worker defaults
+    "CAMUNDA_WORKER_TIMEOUT",
+    "CAMUNDA_WORKER_MAX_CONCURRENT_JOBS",
+    "CAMUNDA_WORKER_REQUEST_TIMEOUT",
+    "CAMUNDA_WORKER_NAME",
+    "CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS",
 )
 def _dotenv_values_for(load_envfile: Any) -> dict[str, str]: ...
 def read_environment(environ: Mapping[str, str] | None = None) -> CamundaSdkConfigPartial: ...
@@ -120,6 +131,26 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_TENANT_ID: str | None = Field(
             default=None,
             description="Default tenant ID applied to all operations that accept a tenant_id parameter.",
+        )
+    CAMUNDA_WORKER_TIMEOUT: int | None = Field(
+            default=None,
+            description="Default job timeout in milliseconds for all workers.",
+        )
+    CAMUNDA_WORKER_MAX_CONCURRENT_JOBS: int | None = Field(
+            default=None,
+            description="Default maximum concurrent jobs per worker.",
+        )
+    CAMUNDA_WORKER_REQUEST_TIMEOUT: int | None = Field(
+            default=None,
+            description="Default long-poll request timeout in milliseconds for all workers.",
+        )
+    CAMUNDA_WORKER_NAME: str | None = Field(
+            default=None,
+            description="Default worker name for all workers.",
+        )
+    CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS: float | None = Field(
+            default=None,
+            description="Default maximum startup jitter in seconds for all workers.",
         )
     @staticmethod
     def _normalize_rest_address(value: str) -> str: ...

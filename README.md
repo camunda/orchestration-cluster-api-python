@@ -505,18 +505,70 @@ client.create_job_worker(
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `job_type` | *(required)* | The BPMN service task type to poll for |
-| `job_timeout_milliseconds` | *(required)* | How long the worker has to complete the job |
-| `request_timeout_milliseconds` | `0` | Long-poll request timeout (0 = server default) |
-| `max_concurrent_jobs` | `10` | Maximum jobs executing concurrently |
+| `job_timeout_milliseconds` | env / *(required)* | How long the worker has to complete the job |
+| `request_timeout_milliseconds` | env / `0` | Long-poll request timeout (0 = server default) |
+| `max_concurrent_jobs` | env / `10` | Maximum jobs executing concurrently |
 | `fetch_variables` | `None` | List of variable names to fetch (None = all) |
-| `worker_name` | `"camunda-python-sdk-worker"` | Identifier for this worker in Camunda |
+| `worker_name` | env / `"camunda-python-sdk-worker"` | Identifier for this worker in Camunda |
 
 The following are keyword-only arguments on `create_job_worker`, not part of `WorkerConfig`:
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `execution_strategy` | `"auto"` | `"auto"`, `"async"`, `"thread"`, or `"process"`. Controls how the handler is invoked and which context type it receives. |
-| `startup_jitter_max_seconds` | `0` | Maximum random delay (in seconds) before the worker starts polling. When multiple application instances restart simultaneously, this spreads out initial activation requests to avoid saturating the server. A value of `0` (the default) means no delay. |
+| `startup_jitter_max_seconds` | env / `0` | Maximum random delay (in seconds) before the worker starts polling. When multiple application instances restart simultaneously, this spreads out initial activation requests to avoid saturating the server. A value of `0` (the default) means no delay. |
+
+#### Heritable Worker Defaults
+
+Worker configuration fields marked "env" in the table above can be set globally via environment variables or the client constructor. Individual `WorkerConfig` values take precedence.
+
+| Environment variable | Maps to |
+|---|---|
+| `CAMUNDA_WORKER_TIMEOUT` | `job_timeout_milliseconds` |
+| `CAMUNDA_WORKER_MAX_CONCURRENT_JOBS` | `max_concurrent_jobs` |
+| `CAMUNDA_WORKER_REQUEST_TIMEOUT` | `request_timeout_milliseconds` |
+| `CAMUNDA_WORKER_NAME` | `worker_name` |
+| `CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS` | `startup_jitter_max_seconds` |
+
+**Precedence:** explicit `WorkerConfig` value > environment variable / client constructor > hardcoded default.
+
+Example — set defaults via environment variables:
+
+```bash
+export CAMUNDA_WORKER_TIMEOUT=30000
+export CAMUNDA_WORKER_MAX_CONCURRENT_JOBS=32
+```
+
+```python
+# No need to set job_timeout_milliseconds on every worker — inherited from env
+client.create_job_worker(
+    config=WorkerConfig(job_type="payment-service"),
+    callback=handle_payment,
+)
+client.create_job_worker(
+    config=WorkerConfig(job_type="notification-service"),
+    callback=handle_notification,
+)
+```
+
+Example — set defaults via client constructor:
+
+```python
+client = CamundaAsyncClient(configuration={
+    "CAMUNDA_WORKER_TIMEOUT": "30000",
+    "CAMUNDA_WORKER_MAX_CONCURRENT_JOBS": "16",
+    "CAMUNDA_WORKER_NAME": "my-app",
+})
+
+# Both workers inherit timeout, concurrency, and name
+client.create_job_worker(
+    config=WorkerConfig(job_type="payment-service"),
+    callback=handle_payment,
+)
+client.create_job_worker(
+    config=WorkerConfig(job_type="shipping-service"),
+    callback=handle_shipping,
+)
 
 ### Failing a Job
 
@@ -734,6 +786,11 @@ All `CAMUNDA_*` environment variables recognised by the SDK. These can also be p
 | `CAMUNDA_TOKEN_DISK_CACHE_DISABLE` | `false` | Disable OAuth token disk caching. |
 | `CAMUNDA_SDK_BACKPRESSURE_PROFILE` | `BALANCED` | Backpressure profile: BALANCED (adaptive gating, default) or LEGACY (observe-only, no gating). |
 | `CAMUNDA_TENANT_ID` | — | Default tenant ID applied to all operations that accept a tenant_id parameter. |
+| `CAMUNDA_WORKER_TIMEOUT` | — | Default job timeout in milliseconds for all workers. |
+| `CAMUNDA_WORKER_MAX_CONCURRENT_JOBS` | — | Default maximum concurrent jobs per worker. |
+| `CAMUNDA_WORKER_REQUEST_TIMEOUT` | — | Default long-poll request timeout in milliseconds for all workers. |
+| `CAMUNDA_WORKER_NAME` | — | Default worker name for all workers. |
+| `CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS` | — | Default maximum startup jitter in seconds for all workers. |
 | `CAMUNDA_LOAD_ENVFILE` | — | Load configuration from a `.env` file. Set to `true` (or a file path). |
 
 <!-- END_CONFIG_REFERENCE -->

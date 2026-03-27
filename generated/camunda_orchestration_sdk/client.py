@@ -15,6 +15,7 @@ from .runtime.job_worker import (
     ConnectedJobHandler,
     IsolatedJobHandler,
     JobHandler,
+    resolve_worker_config,
 )
 from typing import Literal, overload
 from .runtime.configuration_resolver import (
@@ -11710,7 +11711,7 @@ class CamundaAsyncClient:
         auto_start: bool = True,
         *,
         execution_strategy: Literal["auto", "async", "thread"] = "auto",
-        startup_jitter_max_seconds: float = 0,
+        startup_jitter_max_seconds: float | None = None,
     ) -> JobWorker: ...
 
     @overload
@@ -11721,7 +11722,7 @@ class CamundaAsyncClient:
         auto_start: bool = True,
         *,
         execution_strategy: Literal["process"],
-        startup_jitter_max_seconds: float = 0,
+        startup_jitter_max_seconds: float | None = None,
     ) -> JobWorker: ...
 
     def create_job_worker(
@@ -11731,15 +11732,21 @@ class CamundaAsyncClient:
         auto_start: bool = True,
         *,
         execution_strategy: Literal["auto", "async", "thread", "process"] = "auto",
-        startup_jitter_max_seconds: float = 0,
+        startup_jitter_max_seconds: float | None = None,
     ) -> JobWorker:
+        resolved_config = resolve_worker_config(config, self.configuration)
+        effective_jitter = startup_jitter_max_seconds
+        if effective_jitter is None:
+            effective_jitter = (
+                self.configuration.CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS or 0
+            )
         worker = JobWorker(
             self,
             callback,
-            config,
+            resolved_config,
             logger=self._sdk_logger,
             execution_strategy=execution_strategy,
-            startup_jitter_max_seconds=startup_jitter_max_seconds,
+            startup_jitter_max_seconds=effective_jitter,
         )
         self._workers.append(worker)
         if auto_start:
