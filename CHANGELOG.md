@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.22 (2026-03-27)
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`1e67a29`](https://github.com/camunda/orchestration-cluster-api-python/commit/1e67a29a563b086f78aa8ee1619b6ed9e0463ae0))
+
+### Features
+
+- Support job corrections in worker framework
+  ([`295a9c3`](https://github.com/camunda/orchestration-cluster-api-python/commit/295a9c3c2dacf474d9d41b26d416a44885141954))
+
+
 ## v8.9.0-dev.21 (2026-03-27)
 
 ### Chores
