@@ -685,6 +685,7 @@ All `CAMUNDA_*` environment variables recognised by the SDK. These can also be p
 | `CAMUNDA_TOKEN_CACHE_DIR` | — | Directory for OAuth token disk cache. Disabled if unset. |
 | `CAMUNDA_TOKEN_DISK_CACHE_DISABLE` | `false` | Disable OAuth token disk caching. |
 | `CAMUNDA_SDK_BACKPRESSURE_PROFILE` | `BALANCED` | Backpressure profile: BALANCED (adaptive gating, default) or LEGACY (observe-only, no gating). |
+| `CAMUNDA_TENANT_ID` | — | Default tenant ID applied to all operations that accept a tenant_id parameter. |
 | `CAMUNDA_LOAD_ENVFILE` | — | Load configuration from a `.env` file. Set to `true` (or a file path). |
 
 <!-- END_CONFIG_REFERENCE -->

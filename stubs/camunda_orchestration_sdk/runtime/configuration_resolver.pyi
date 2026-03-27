@@ -30,6 +30,7 @@ class CamundaSdkConfigPartial(TypedDict):
     CAMUNDA_TOKEN_CACHE_DIR: str
     CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool
     CAMUNDA_SDK_BACKPRESSURE_PROFILE: str
+    CAMUNDA_TENANT_ID: str
     CAMUNDA_LOAD_ENVFILE: str
 CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "ZEEBE_REST_ADDRESS",
@@ -49,6 +50,8 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "CAMUNDA_TOKEN_DISK_CACHE_DISABLE",
     # Backpressure
     "CAMUNDA_SDK_BACKPRESSURE_PROFILE",
+    # Tenant
+    "CAMUNDA_TENANT_ID",
 )
 def _dotenv_values_for(load_envfile: Any) -> dict[str, str]: ...
 def read_environment(environ: Mapping[str, str] | None = None) -> CamundaSdkConfigPartial: ...
@@ -113,6 +116,10 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_SDK_BACKPRESSURE_PROFILE: CamundaBackpressureProfile = Field(
             default="BALANCED",
             description="Backpressure profile: BALANCED (adaptive gating, default) or LEGACY (observe-only, no gating).",
+        )
+    CAMUNDA_TENANT_ID: str | None = Field(
+            default=None,
+            description="Default tenant ID applied to all operations that accept a tenant_id parameter.",
         )
     @staticmethod
     def _normalize_rest_address(value: str) -> str: ...
