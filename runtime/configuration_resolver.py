@@ -48,6 +48,9 @@ class CamundaSdkConfigPartial(TypedDict, total=False):
     # Backpressure profile
     CAMUNDA_SDK_BACKPRESSURE_PROFILE: str
 
+    # Tenant
+    CAMUNDA_TENANT_ID: str
+
     # Optional .env file loading
     CAMUNDA_LOAD_ENVFILE: str
 
@@ -70,6 +73,8 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "CAMUNDA_TOKEN_DISK_CACHE_DISABLE",
     # Backpressure
     "CAMUNDA_SDK_BACKPRESSURE_PROFILE",
+    # Tenant
+    "CAMUNDA_TENANT_ID",
 )
 
 
@@ -212,6 +217,12 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_SDK_BACKPRESSURE_PROFILE: CamundaBackpressureProfile = Field(
         default="BALANCED",
         description="Backpressure profile: BALANCED (adaptive gating, default) or LEGACY (observe-only, no gating).",
+    )
+
+    # Tenant
+    CAMUNDA_TENANT_ID: str | None = Field(
+        default=None,
+        description="Default tenant ID applied to all operations that accept a tenant_id parameter.",
     )
 
     @staticmethod

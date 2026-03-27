@@ -18,6 +18,7 @@ def _clear_camunda_env(monkeypatch: pytest.MonkeyPatch) -> None:  # pyright: ign
         "CAMUNDA_CLIENT_AUTH_CLIENTSECRET",
         "CAMUNDA_BASIC_AUTH_USERNAME",
         "CAMUNDA_BASIC_AUTH_PASSWORD",
+        "CAMUNDA_TENANT_ID",
     ):
         monkeypatch.delenv(key, raising=False)
 
@@ -241,3 +242,33 @@ def test_unrecognized_explicit_config_keys_are_ignored():
     ).resolve()
 
     assert resolved.effective.CAMUNDA_REST_ADDRESS == "http://localhost:8080/v2"
+
+
+def test_tenant_id_defaults_to_none():
+    from camunda_orchestration_sdk import CamundaClient
+
+    client = CamundaClient()
+    assert client.configuration.CAMUNDA_TENANT_ID is None
+
+
+def test_tenant_id_from_environment(monkeypatch: pytest.MonkeyPatch):
+    from camunda_orchestration_sdk import CamundaClient
+
+    monkeypatch.setenv("CAMUNDA_TENANT_ID", "my-tenant")
+    client = CamundaClient()
+    assert client.configuration.CAMUNDA_TENANT_ID == "my-tenant"
+
+
+def test_tenant_id_from_explicit_config():
+    from camunda_orchestration_sdk import CamundaClient
+
+    client = CamundaClient(configuration={"CAMUNDA_TENANT_ID": "explicit-tenant"})
+    assert client.configuration.CAMUNDA_TENANT_ID == "explicit-tenant"
+
+
+def test_tenant_id_explicit_overrides_environment(monkeypatch: pytest.MonkeyPatch):
+    from camunda_orchestration_sdk import CamundaClient
+
+    monkeypatch.setenv("CAMUNDA_TENANT_ID", "env-tenant")
+    client = CamundaClient(configuration={"CAMUNDA_TENANT_ID": "explicit-tenant"})
+    assert client.configuration.CAMUNDA_TENANT_ID == "explicit-tenant"

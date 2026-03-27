@@ -239,6 +239,11 @@ def generate_flat_client(package_path: Path) -> None:
                 docstring = ast.get_docstring(sync_func)
                 docstring_str = f'        """{docstring}"""\n' if docstring else ""
 
+                has_tenant_id = any(arg.arg == "tenant_id" for arg in new_args + new_kwonlyargs)
+                tenant_id_injection = ""
+                if has_tenant_id:
+                    tenant_id_injection = '\n        _tid = _kwargs.get("tenant_id")\n        if (_tid is None or _tid is UNSET) and self.configuration.CAMUNDA_TENANT_ID is not None:\n            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID'
+
                 if method_name in _BP_EXEMPT_METHODS:
                     sync_methods.append(f"""
     def {method_name}({sig_str}){return_ann}:
@@ -247,7 +252,7 @@ def generate_flat_client(package_path: Path) -> None:
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
+            _kwargs["body"] = _kwargs.pop("data"){tenant_id_injection}
         return {method_name}_sync(**_kwargs)
 """)
                 else:
@@ -258,7 +263,7 @@ def generate_flat_client(package_path: Path) -> None:
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
+            _kwargs["body"] = _kwargs.pop("data"){tenant_id_injection}
         self._bp.acquire()
         try:
             _result = {method_name}_sync(**_kwargs)
@@ -334,6 +339,11 @@ def generate_flat_client(package_path: Path) -> None:
                 docstring = ast.get_docstring(async_func)
                 docstring_str = f'        """{docstring}"""\n' if docstring else ""
 
+                has_tenant_id = any(arg.arg == "tenant_id" for arg in new_args + new_kwonlyargs)
+                tenant_id_injection = ""
+                if has_tenant_id:
+                    tenant_id_injection = '\n        _tid = _kwargs.get("tenant_id")\n        if (_tid is None or _tid is UNSET) and self.configuration.CAMUNDA_TENANT_ID is not None:\n            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID'
+
                 if method_name in _BP_EXEMPT_METHODS:
                     async_methods.append(f"""
     async def {method_name}({sig_str}){return_ann}:
@@ -342,7 +352,7 @@ def generate_flat_client(package_path: Path) -> None:
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
+            _kwargs["body"] = _kwargs.pop("data"){tenant_id_injection}
         return await {method_name}_asyncio(**_kwargs)
 """)
                 else:
@@ -353,7 +363,7 @@ def generate_flat_client(package_path: Path) -> None:
         _kwargs.pop("self")
         _kwargs["client"] = self.client
         if "data" in _kwargs:
-            _kwargs["body"] = _kwargs.pop("data")
+            _kwargs["body"] = _kwargs.pop("data"){tenant_id_injection}
         await self._bp.acquire()
         try:
             _result = await {method_name}_asyncio(**_kwargs)
@@ -628,7 +638,8 @@ class CamundaClient:
                 content = f.read()
             resources.append(File(payload=io.BytesIO(content), file_name=os.path.basename(file_path)))
 
-        data = CreateDeploymentData(resources=resources, tenant_id=TenantId(tenant_id) if tenant_id is not None else UNSET)
+        _effective_tenant_id = tenant_id if tenant_id is not None else self.configuration.CAMUNDA_TENANT_ID
+        data = CreateDeploymentData(resources=resources, tenant_id=TenantId(_effective_tenant_id) if _effective_tenant_id is not None else UNSET)
         return ExtendedDeploymentResult(self.create_deployment(data=data))
 
 {new_sync_methods}
@@ -812,7 +823,8 @@ class CamundaAsyncClient:
                 content = f.read()
             resources.append(File(payload=io.BytesIO(content), file_name=os.path.basename(file_path)))
 
-        data = CreateDeploymentData(resources=resources, tenant_id=TenantId(tenant_id) if tenant_id is not None else UNSET)
+        _effective_tenant_id = tenant_id if tenant_id is not None else self.configuration.CAMUNDA_TENANT_ID
+        data = CreateDeploymentData(resources=resources, tenant_id=TenantId(_effective_tenant_id) if _effective_tenant_id is not None else UNSET)
         return ExtendedDeploymentResult(await self.create_deployment(data=data))
 
 {new_async_methods}
