@@ -566,6 +566,54 @@ async def handle_payment(job: ConnectedJobContext) -> dict[str, object]:
 
 The `error_code` must match the error code defined on a BPMN error catch event in your process model. If no catch event matches, the job becomes an incident.
 
+### Job Corrections (User Task Listeners)
+
+When a job worker handles a [user task listener](https://docs.camunda.io/docs/components/concepts/user-task-listeners/), it can correct task properties (assignee, due date, candidate groups, etc.) as part of the completion. Return a `JobCompletionRequest` with a `result` containing `JobResultCorrections`:
+
+```python
+from camunda_orchestration_sdk import ConnectedJobContext
+from camunda_orchestration_sdk.models import (
+    JobCompletionRequest,
+    JobResultUserTask,
+    JobResultCorrections,
+)
+
+async def validate_task(job: ConnectedJobContext) -> JobCompletionRequest:
+    return JobCompletionRequest(
+        result=JobResultUserTask(
+            type_="userTask",
+            corrections=JobResultCorrections(
+                assignee="corrected-user",
+                priority=80,
+            ),
+        ),
+    )
+```
+
+To deny a task completion (reject the work), set `denied=True`:
+
+```python
+async def review_task(job: ConnectedJobContext) -> JobCompletionRequest:
+    return JobCompletionRequest(
+        result=JobResultUserTask(
+            type_="userTask",
+            denied=True,
+            denied_reason="Insufficient documentation",
+        ),
+    )
+```
+
+| Correctable attribute | Type | Clear value |
+|---|---|---|
+| `assignee` | `str` | Empty string `""` |
+| `due_date` | `datetime` | Empty string `""` |
+| `follow_up_date` | `datetime` | Empty string `""` |
+| `candidate_users` | `list[str]` | Empty list `[]` |
+| `candidate_groups` | `list[str]` | Empty list `[]` |
+| `priority` | `int` (0–100) | — |
+
+Omitting an attribute or passing `None` preserves the persisted value. This works with all handler types (async, thread, and process).
+
 ## Error Handling
 
 The SDK raises typed exceptions for API errors. Each HTTP error status code has a corresponding exception class (e.g. `BadRequestError` for 400, `NotFoundError` for 404). Every exception carries the `operation_id` of the method that raised it:

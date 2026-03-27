@@ -154,7 +154,9 @@ ConnectedAsyncJobHandler = Callable[
     Coroutine[Any, Any, dict[str, Any] | JobCompletionRequest | None],
 ]
 # Handlers that accept SyncJobContext (thread strategy).
-ConnectedSyncJobHandler = Callable[[SyncJobContext], dict[str, Any] | None]
+ConnectedSyncJobHandler = Callable[
+    [SyncJobContext], dict[str, Any] | JobCompletionRequest | None
+]
 ConnectedJobHandler = ConnectedAsyncJobHandler | ConnectedSyncJobHandler
 
 # Handlers that accept only JobContext (process strategy).
@@ -162,7 +164,9 @@ ConnectedJobHandler = ConnectedAsyncJobHandler | ConnectedSyncJobHandler
 IsolatedAsyncJobHandler = Callable[
     [JobContext], Coroutine[Any, Any, dict[str, Any] | JobCompletionRequest | None]
 ]
-IsolatedSyncJobHandler = Callable[[JobContext], dict[str, Any] | None]
+IsolatedSyncJobHandler = Callable[
+    [JobContext], dict[str, Any] | JobCompletionRequest | None
+]
 IsolatedJobHandler = IsolatedAsyncJobHandler | IsolatedSyncJobHandler
 
 # Internal union — used by JobWorker internals.

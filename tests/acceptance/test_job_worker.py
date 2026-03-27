@@ -13,6 +13,8 @@ from camunda_orchestration_sdk.models.activated_job_result import (
     ActivatedJobResult,
 )
 from camunda_orchestration_sdk.models.job_completion_request import JobCompletionRequest
+from camunda_orchestration_sdk.models.job_result_user_task import JobResultUserTask
+from camunda_orchestration_sdk.models.job_result_corrections import JobResultCorrections
 from camunda_orchestration_sdk.models.job_activation_result import (
     JobActivationResult,
 )
@@ -71,6 +73,38 @@ async def test_job_completion(mock_client: MagicMock, mock_job_item: JobContext)
     call_args = mock_client.complete_job.call_args
     assert call_args.kwargs["job_key"] == 12345
     assert isinstance(call_args.kwargs["data"], JobCompletionRequest)
+
+
+@pytest.mark.asyncio
+async def test_job_completion_with_corrections(mock_client: MagicMock, mock_job_item: JobContext):
+    """Sync-style handler can return a JobCompletionRequest with corrections."""
+
+    def callback(job: JobContext) -> JobCompletionRequest:
+        return JobCompletionRequest(
+            result=JobResultUserTask(
+                type_="userTask",
+                corrections=JobResultCorrections(
+                    assignee="corrected-user",
+                    priority=80,
+                ),
+            ),
+        )
+
+    config = WorkerConfig(job_type="test", job_timeout_milliseconds=1000)
+    worker = JobWorker(mock_client, callback, config)
+
+    await worker._execute_job(mock_job_item)  # pyright: ignore[reportPrivateUsage]
+
+    mock_client.complete_job.assert_called_once()
+    call_args = mock_client.complete_job.call_args
+    assert call_args.kwargs["job_key"] == 12345
+    data = call_args.kwargs["data"]
+    assert isinstance(data, JobCompletionRequest)
+    assert isinstance(data.result, JobResultUserTask)
+    assert data.result.type_ == "userTask"
+    assert isinstance(data.result.corrections, JobResultCorrections)
+    assert data.result.corrections.assignee == "corrected-user"
+    assert data.result.corrections.priority == 80
 
 
 @pytest.mark.asyncio
