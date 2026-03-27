@@ -2,6 +2,36 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.23 (2026-03-27)
+
+### Build System
+
+- **deps**: Bump actions/configure-pages from 4 to 5
+  ([`ef7a38c`](https://github.com/camunda/orchestration-cluster-api-python/commit/ef7a38c5de824aca783f98e567b87fc91835276e))
+
+- **deps**: Bump actions/setup-python from 5 to 6
+  ([`180b10b`](https://github.com/camunda/orchestration-cluster-api-python/commit/180b10b06bd0d1b07109f3a3a5f9bab52aa295e3))
+
+- **deps**: Bump actions/upload-pages-artifact from 3 to 4
+  ([`9d2ec81`](https://github.com/camunda/orchestration-cluster-api-python/commit/9d2ec812ee2d7830ffccb45ecff54c52b230c4a2))
+
+- **deps**: Bump astral-sh/setup-uv from 5 to 7
+  ([`92b3bb4`](https://github.com/camunda/orchestration-cluster-api-python/commit/92b3bb457b16c3d5d667e1d638d1fc3cb1d13051))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`b614759`](https://github.com/camunda/orchestration-cluster-api-python/commit/b6147593dd36ba00515a99991f7cc02642ae97e4))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`2b45994`](https://github.com/camunda/orchestration-cluster-api-python/commit/2b45994164f029bdac003c63794005e5efda7d31))
+
+### Features
+
+- Heritable worker configuration defaults
+  ([`2bcccc2`](https://github.com/camunda/orchestration-cluster-api-python/commit/2bcccc23a6623fdef7b1580eef9120197e7bf394))
+
+
 ## v8.9.0-dev.22 (2026-03-27)
 
 ### Chores
