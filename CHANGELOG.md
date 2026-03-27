@@ -2,6 +2,31 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.21 (2026-03-27)
+
+### Chores
+
+- Regenerate SDK with transcendent tenant_id support
+  ([`bfc8034`](https://github.com/camunda/orchestration-cluster-api-python/commit/bfc80343a9637cc3c0f86c0a260fdfc3a7e6d837))
+
+- Remove black/pre-commit, split dep groups, fix method ordering
+  ([`e1ae2b6`](https://github.com/camunda/orchestration-cluster-api-python/commit/e1ae2b62329df67357c2299d37516bed32a78b11))
+
+- **generation**: Regenerate SDK with deterministic method ordering
+  ([`4cf18a1`](https://github.com/camunda/orchestration-cluster-api-python/commit/4cf18a1812c6c7106ba90e0c2f4922b3179d28ad))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`963d4de`](https://github.com/camunda/orchestration-cluster-api-python/commit/963d4de7a77d64b81854757ae700e8f768c08a9e))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`8c96417`](https://github.com/camunda/orchestration-cluster-api-python/commit/8c96417bf9f089411939d2f00809f88b74a00b5c))
+
+### Features
+
+- Transcendent tenant_id configuration
+  ([`1e80421`](https://github.com/camunda/orchestration-cluster-api-python/commit/1e8042168ce234ae824c5e18c23492d375010a3d))
+
+
 ## v8.9.0-dev.20 (2026-03-25)
 
 ### Chores
