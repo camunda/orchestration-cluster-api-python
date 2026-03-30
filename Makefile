@@ -24,7 +24,7 @@ generate: clean install bundle-spec
 	uv run pyright
 	uv run pyright examples/
 	uv run pytest -q tests/acceptance
-	uv run python scripts/sync-readme-snippets.py
+	uv run python scripts/sync-readme-snippets.py --check
 	uv run scripts/generate_config_reference.py
 
 # Generate using already-bundled spec (skip fetch, fast local iteration)
@@ -35,7 +35,7 @@ generate-local: clean install
 	uv run pyright
 	uv run pyright examples/
 	uv run pytest -q tests/acceptance
-	uv run python scripts/sync-readme-snippets.py
+	uv run python scripts/sync-readme-snippets.py --check
 	uv run scripts/generate_config_reference.py
 
 clean:
