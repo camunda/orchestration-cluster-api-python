@@ -2,6 +2,7 @@ import ast
 import os
 from pathlib import Path
 import re
+from typing import cast
 
 # Methods that must bypass backpressure gating (drain work / complete execution).
 _BP_EXEMPT_METHODS: frozenset[str] = frozenset(
@@ -56,6 +57,64 @@ def _lift_semantic_annotations(
             semantic_types_used.add(semantic_type)
 
 
+def _synthesize_convenience_func(
+    detailed_func: ast.FunctionDef | ast.AsyncFunctionDef,
+    name: str,
+    *,
+    is_async: bool,
+) -> ast.FunctionDef | ast.AsyncFunctionDef:
+    """Create a synthetic ``sync`` or ``asyncio`` function from a ``*_detailed`` variant.
+
+    The generated function mirrors the detailed variant's signature but returns ``None``
+    and has a docstring copied from the original.
+    """
+    import copy
+
+    func = copy.deepcopy(detailed_func)
+    func.name = name
+    # Return type ??? None
+    func.returns = ast.Constant(value=None)
+
+    # Build the call: sync_detailed(**kwargs) / await asyncio_detailed(**kwargs)
+    call_args: list[ast.keyword] = []
+    for arg in func.args.args + func.args.posonlyargs:
+        call_args.append(ast.keyword(arg=arg.arg, value=ast.Name(id=arg.arg, ctx=ast.Load())))
+    for arg in func.args.kwonlyargs:
+        call_args.append(ast.keyword(arg=arg.arg, value=ast.Name(id=arg.arg, ctx=ast.Load())))
+    if func.args.kwarg:
+        call_args.append(ast.keyword(arg=None, value=ast.Name(id=func.args.kwarg.arg, ctx=ast.Load())))
+
+    inner_call = ast.Call(
+        func=ast.Name(id=detailed_func.name, ctx=ast.Load()),
+        args=[],
+        keywords=call_args,
+    )
+
+    if is_async:
+        call_expr = ast.Expr(value=ast.Await(value=inner_call))
+    else:
+        call_expr = ast.Expr(value=inner_call)
+
+    # Preserve docstring if present, then replace body with just call + return None
+    body: list[ast.stmt] = []
+    if (
+        func.body
+        and isinstance(func.body[0], ast.Expr)
+        and isinstance(func.body[0].value, ast.Constant)
+        and isinstance(func.body[0].value.value, str)
+    ):
+        body.append(func.body[0])  # keep docstring
+    body.append(call_expr)
+
+    func.body = body
+
+    if is_async:
+        return func  # already AsyncFunctionDef
+    else:
+        # Convert to regular FunctionDef if needed (deep copy preserves original type)
+        return func
+
+
 def get_imports_and_signature(
     file_path: Path,
     package_root: Path,
@@ -69,6 +128,9 @@ def get_imports_and_signature(
     sync_func: ast.FunctionDef | None = None
     async_func: ast.AsyncFunctionDef | None = None
 
+    sync_detailed_func: ast.FunctionDef | None = None
+    async_detailed_func: ast.AsyncFunctionDef | None = None
+
     for node in tree.body:
         if isinstance(node, (ast.Import, ast.ImportFrom)):
             imports.append(node)
@@ -76,6 +138,34 @@ def get_imports_and_signature(
             sync_func = node
         elif isinstance(node, ast.AsyncFunctionDef) and node.name == "asyncio":
             async_func = node
+        elif isinstance(node, ast.FunctionDef) and node.name == "sync_detailed":
+            sync_detailed_func = node
+        elif isinstance(node, ast.AsyncFunctionDef) and node.name == "asyncio_detailed":
+            async_detailed_func = node
+
+    # For endpoints that only have *_detailed variants (e.g. body-less 204 responses),
+    # synthesize sync/asyncio functions that delegate to the detailed variant and
+    # return None.  This ensures the flatten-client hook picks them up.
+    synthesized_sync = False
+    synthesized_async = False
+    if sync_func is None and sync_detailed_func is not None:
+        sync_func = cast(ast.FunctionDef, _synthesize_convenience_func(sync_detailed_func, "sync", is_async=False))
+        synthesized_sync = True
+    if async_func is None and async_detailed_func is not None:
+        async_func = cast(ast.AsyncFunctionDef, _synthesize_convenience_func(async_detailed_func, "asyncio", is_async=True))
+        synthesized_async = True
+
+    # Write synthesized convenience functions back to the endpoint module so they
+    # are importable at runtime (the flatten-client does ``from ... import sync``).
+    if synthesized_sync or synthesized_async:
+        append_lines: list[str] = []
+        if synthesized_sync and sync_func is not None:
+            append_lines.append(ast.unparse(sync_func))
+        if synthesized_async and async_func is not None:
+            append_lines.append(ast.unparse(async_func))
+        if append_lines:
+            with open(file_path, "a") as f:
+                f.write("\n\n" + "\n\n".join(append_lines) + "\n")
 
     rel_path = file_path.relative_to(package_root)
     # depth = number of parts in parent directory
