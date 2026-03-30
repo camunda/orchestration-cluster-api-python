@@ -539,5 +539,17 @@
   ],
   "get_global_job_statistics": [
     { "file": "admin_operations.py", "region": "GetGlobalJobStatistics", "label": "Get global job statistics" }
+  ],
+  "create_document": [
+    { "file": "additional_operations.py", "region": "CreateDocument", "label": "Upload a document" }
+  ],
+  "create_documents": [
+    { "file": "additional_operations.py", "region": "CreateDocuments", "label": "Upload multiple documents" }
+  ],
+  "get_document": [
+    { "file": "additional_operations.py", "region": "GetDocument", "label": "Download a document" }
+  ],
+  "search_user_task_effective_variables": [
+    { "file": "additional_operations.py", "region": "SearchUserTaskEffectiveVariables", "label": "Search user task effective variables" }
   ]
 }

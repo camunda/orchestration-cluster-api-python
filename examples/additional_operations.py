@@ -241,3 +241,67 @@ def search_user_task_audit_logs_example() -> None:
         for log in result.items:
             print(f"Audit log: {log.audit_log_key}")
 # endregion SearchUserTaskAuditLogs
+
+
+# region CreateDocument
+def create_document_example() -> None:
+    from camunda_orchestration_sdk import CreateDocumentData, File
+
+    client = CamundaClient()
+
+    result = client.create_document(
+        data=CreateDocumentData(
+            file=File(payload=open("hello.txt", "rb"), file_name="hello.txt"),
+        ),
+    )
+
+    print(f"Document ID: {result.document_id}")
+# endregion CreateDocument
+
+
+# region CreateDocuments
+def create_documents_example() -> None:
+    from camunda_orchestration_sdk import CreateDocumentsData, DocumentMetadata, File
+
+    client = CamundaClient()
+
+    result = client.create_documents(
+        data=CreateDocumentsData(
+            files=[
+                File(payload=open("one.txt", "rb"), file_name="one.txt"),
+                File(payload=open("two.txt", "rb"), file_name="two.txt"),
+            ],
+            metadata_list=[
+                DocumentMetadata.from_dict({"fileName": "one.txt"}),
+                DocumentMetadata.from_dict({"fileName": "two.txt"}),
+            ],
+        ),
+    )
+
+    for doc in result.created_documents:
+        print(f"Created: {doc.document_id}")
+# endregion CreateDocuments
+
+
+# region GetDocument
+def get_document_example() -> None:
+    client = CamundaClient()
+
+    content = client.get_document(document_id=DocumentId("doc-123"))
+
+    print(f"Downloaded {len(content.payload.read())} bytes")
+# endregion GetDocument
+
+
+# region SearchUserTaskEffectiveVariables
+def search_user_task_effective_variables_example() -> None:
+    client = CamundaClient()
+
+    result = client.search_user_task_effective_variables(
+        user_task_key=UserTaskKey("123456"),
+    )
+
+    if not isinstance(result.items, Unset):
+        for var in result.items:
+            print(f"Variable: {var.name}")
+# endregion SearchUserTaskEffectiveVariables
