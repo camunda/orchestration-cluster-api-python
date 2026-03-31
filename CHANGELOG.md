@@ -2,6 +2,22 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.25 (2026-03-31)
+
+### Bug Fixes
+
+- Address PR review comments on synthesized convenience wrappers
+  ([`6198953`](https://github.com/camunda/orchestration-cluster-api-python/commit/61989539013ac246e57772f8e0dbf8e4a1611d6d))
+
+- Expose body-less endpoints (e.g. getStatus) on CamundaClient
+  ([`50d6b8e`](https://github.com/camunda/orchestration-cluster-api-python/commit/50d6b8e39932beff6282b42dc516d35fe4c10366))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`abdb8e0`](https://github.com/camunda/orchestration-cluster-api-python/commit/abdb8e06b1fd87d5a7e68f2d725619570706fd64))
+
+
 ## v8.9.0-dev.24 (2026-03-31)
 
 ### Bug Fixes
