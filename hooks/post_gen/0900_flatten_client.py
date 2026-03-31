@@ -1,8 +1,9 @@
 import ast
+import json
 import os
 from pathlib import Path
 import re
-from typing import cast
+from typing import Any, cast
 
 # Methods that must bypass backpressure gating (drain work / complete execution).
 _BP_EXEMPT_METHODS: frozenset[str] = frozenset(
@@ -409,11 +410,86 @@ def get_imports_and_signature(
     return adjusted_imports, sync_func, async_func
 
 
-def generate_flat_client(package_path: Path) -> None:
+# Template for body tenant injection code.  Handles both attrs model objects
+# (tenant_id attribute, snake_case) and dict-like bodies (tenantId key, camelCase).
+_BODY_TENANT_INJECTION = """
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and ("tenantId" not in _body or _body["tenantId"] is None):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID"""
+
+
+def _compute_body_tenant_ops(spec_path: Path | None) -> set[str]:
+    """Return snake_case method names for operations with optional tenantId in request body.
+
+    These are 'tenant-as-context' operations where the SDK should inject the
+    configured default tenant ID into the body when the caller does not supply one.
+    Path-param tenant IDs (tenant-as-subject) are NOT included — those identify
+    which tenant to operate on and must always be provided explicitly.
+    """
+    if spec_path is None or not spec_path.exists():
+        return set()
+
+    with open(spec_path, "r", encoding="utf-8") as f:
+        if spec_path.suffix == ".json":
+            spec: dict[str, Any] = json.load(f)
+        else:
+            import yaml
+            spec = yaml.safe_load(f)
+
+    def resolve_ref(ref: str) -> dict[str, Any]:
+        parts = ref.lstrip("#/").split("/")
+        node: Any = spec
+        for p in parts:
+            node = node[p]
+        return cast(dict[str, Any], node)
+
+    def has_optional_tenant_id(schema: dict[str, Any], depth: int = 0) -> bool:
+        if depth > 5:
+            return False
+        if "$ref" in schema:
+            return has_optional_tenant_id(resolve_ref(schema["$ref"]), depth + 1)
+        props: dict[str, Any] = schema.get("properties", {})
+        if "tenantId" in props and "tenantId" not in schema.get("required", []):
+            return True
+        variants: list[dict[str, Any]] = schema.get("oneOf", []) + schema.get("anyOf", [])
+        for variant in variants:
+            if has_optional_tenant_id(variant, depth + 1):
+                return True
+        return False
+
+    ops: set[str] = set()
+    paths: dict[str, Any] = spec.get("paths", {})
+    for _path, methods in paths.items():
+        for method, op in methods.items():
+            if method not in ("get", "post", "put", "patch", "delete"):
+                continue
+            op_id: str = op.get("operationId", "")
+            body: dict[str, Any] = op.get("requestBody", {}).get("content", {})
+            for _ct, ct_data in body.items():
+                schema: dict[str, Any] = ct_data.get("schema", {})
+                if has_optional_tenant_id(schema):
+                    # Convert camelCase operationId to snake_case method name
+                    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", op_id)
+                    snake = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
+                    ops.add(snake)
+                    break
+
+    if ops:
+        print(f"[flatten-client] body-tenant-injection ops ({len(ops)}): {sorted(ops)}")
+    return ops
+
+
+def generate_flat_client(package_path: Path, spec_path: Path | None = None) -> None:
     api_dir = package_path / "api"
     if not api_dir.exists():
         print(f"API directory not found at {api_dir}")
         return
+
+    body_tenant_ops = _compute_body_tenant_ops(spec_path)
 
     sync_methods: list[str] = []
     async_methods: list[str] = []
@@ -530,10 +606,10 @@ def generate_flat_client(package_path: Path) -> None:
                 docstring = ast.get_docstring(sync_func)
                 docstring_str = f'        """{docstring}"""\n' if docstring else ""
 
-                has_tenant_id = any(arg.arg == "tenant_id" for arg in new_args + new_kwonlyargs)
-                tenant_id_injection = ""
-                if has_tenant_id:
-                    tenant_id_injection = '\n        _tid = _kwargs.get("tenant_id")\n        if (_tid is None or _tid is UNSET) and self.configuration.CAMUNDA_TENANT_ID is not None:\n            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID'
+                # Body-tenant injection: for operations where tenantId is an optional
+                # field in the request body (tenant-as-context), inject the configured
+                # default tenant ID into the body model when the caller omits it.
+                tenant_id_injection = _BODY_TENANT_INJECTION if method_name in body_tenant_ops else ""
 
                 if method_name in _BP_EXEMPT_METHODS:
                     sync_methods.append(f"""
@@ -630,10 +706,8 @@ def generate_flat_client(package_path: Path) -> None:
                 docstring = ast.get_docstring(async_func)
                 docstring_str = f'        """{docstring}"""\n' if docstring else ""
 
-                has_tenant_id = any(arg.arg == "tenant_id" for arg in new_args + new_kwonlyargs)
-                tenant_id_injection = ""
-                if has_tenant_id:
-                    tenant_id_injection = '\n        _tid = _kwargs.get("tenant_id")\n        if (_tid is None or _tid is UNSET) and self.configuration.CAMUNDA_TENANT_ID is not None:\n            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID'
+                # Body-tenant injection: same logic as sync methods
+                tenant_id_injection = _BODY_TENANT_INJECTION if method_name in body_tenant_ops else ""
 
                 if method_name in _BP_EXEMPT_METHODS:
                     async_methods.append(f"""
@@ -1230,10 +1304,13 @@ def run(context: dict[str, str]) -> None:
     if not package_dir.exists():
         print(f"Could not find package directory in {out_dir}")
         return
-    generate_flat_client(package_dir)
+    spec_path_str = context.get("bundled_spec_path", "")
+    spec_path = Path(spec_path_str) if spec_path_str else None
+    generate_flat_client(package_dir, spec_path)
 
 
 if __name__ == "__main__":
     base_dir = Path(__file__).parent.parent.parent
     package_dir = base_dir / "generated" / "camunda_orchestration_sdk"
-    generate_flat_client(package_dir)
+    spec_path = base_dir / "external-spec" / "bundled" / "rest-api.bundle.json"
+    generate_flat_client(package_dir, spec_path if spec_path.exists() else None)
