@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.24 (2026-03-31)
+
+### Bug Fixes
+
+- Harden README code injection
+  ([`7dcf7e3`](https://github.com/camunda/orchestration-cluster-api-python/commit/7dcf7e304385138e4c5406774d5074fcc11f9172))
+
+### Build System
+
+- **deps**: Bump actions/setup-node from 4 to 6
+  ([`bd62991`](https://github.com/camunda/orchestration-cluster-api-python/commit/bd629915e1a95e48b9788d8484e787bf2c3cbb49))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`21a182d`](https://github.com/camunda/orchestration-cluster-api-python/commit/21a182d4096941fdf3ebb38623945338a22b3124))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`8a934c7`](https://github.com/camunda/orchestration-cluster-api-python/commit/8a934c73e40e27b1d205d2e503732998f646b288))
+
+### Documentation
+
+- Fix examples
+  ([`27cd67e`](https://github.com/camunda/orchestration-cluster-api-python/commit/27cd67e50caa5453a32daea15456e5df5baf9b30))
+
+
 ## v8.9.0-dev.23 (2026-03-27)
 
 ### Build System
