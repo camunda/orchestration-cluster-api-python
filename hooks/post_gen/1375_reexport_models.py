@@ -68,6 +68,7 @@ def run(context: dict[str, str]) -> None:
     extra_imports: dict[str, str] = {
         "File": "from .types import File",
         "Unset": "from .types import Unset",
+        "SPEC_HASH": "from ._spec_hash import SPEC_HASH",
     }
     # Build a single grouped import for all job_worker names
     _jw_import = (

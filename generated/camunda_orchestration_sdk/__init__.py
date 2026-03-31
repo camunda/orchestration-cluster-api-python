@@ -576,6 +576,7 @@ __all__: list[str] = [
     "RoleUserSearchQuerySortRequest",
     "RoleUserSearchQuerySortRequestField",
     "RoleUserSearchResult",
+    "SPEC_HASH",
     "ScopeKey",
     "SearchClientsForGroupData",
     "SearchClientsForGroupResponse200",
@@ -1544,6 +1545,7 @@ from camunda_orchestration_sdk.models import (
 )
 from .types import File
 from .types import Unset
+from ._spec_hash import SPEC_HASH
 from .runtime.job_worker import (
     AsyncJobContext,
     ConnectedJobContext,
