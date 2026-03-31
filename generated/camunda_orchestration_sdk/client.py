@@ -2029,11 +2029,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = create_tenant_cluster_variable_sync(**_kwargs)
@@ -2140,11 +2135,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = delete_tenant_cluster_variable_sync(**_kwargs)
@@ -2257,11 +2247,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = get_tenant_cluster_variable_sync(**_kwargs)
@@ -2452,11 +2437,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = update_tenant_cluster_variable_sync(**_kwargs)
@@ -2519,6 +2499,15 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = evaluate_conditionals_sync(**_kwargs)
@@ -2594,6 +2583,15 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = evaluate_decision_sync(**_kwargs)
@@ -3749,6 +3747,15 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = evaluate_expression_sync(**_kwargs)
@@ -6190,6 +6197,15 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = correlate_message_sync(**_kwargs)
@@ -6250,6 +6266,15 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = publish_message_sync(**_kwargs)
@@ -7081,6 +7106,15 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = create_process_instance_sync(**_kwargs)
@@ -8055,6 +8089,15 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = create_deployment_sync(**_kwargs)
@@ -9295,6 +9338,15 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = broadcast_signal_sync(**_kwargs)
@@ -9408,11 +9460,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = get_usage_metrics_sync(**_kwargs)
@@ -9470,11 +9517,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = assign_client_to_tenant_sync(**_kwargs)
@@ -9532,11 +9574,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = assign_group_to_tenant_sync(**_kwargs)
@@ -9593,11 +9630,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = assign_mapping_rule_to_tenant_sync(**_kwargs)
@@ -9654,11 +9686,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = assign_role_to_tenant_sync(**_kwargs)
@@ -9714,11 +9741,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = assign_user_to_tenant_sync(**_kwargs)
@@ -9825,11 +9847,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = delete_tenant_sync(**_kwargs)
@@ -9880,11 +9897,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = get_tenant_sync(**_kwargs)
@@ -9943,11 +9955,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = search_clients_for_tenant_sync(**_kwargs)
@@ -10007,11 +10014,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = search_group_ids_for_tenant_sync(**_kwargs)
@@ -10071,11 +10073,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = search_mapping_rules_for_tenant_sync(**_kwargs)
@@ -10135,11 +10132,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = search_roles_for_tenant_sync(**_kwargs)
@@ -10254,11 +10246,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = search_users_for_tenant_sync(**_kwargs)
@@ -10316,11 +10303,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = unassign_client_from_tenant_sync(**_kwargs)
@@ -10379,11 +10361,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = unassign_group_from_tenant_sync(**_kwargs)
@@ -10440,11 +10417,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = unassign_mapping_rule_from_tenant_sync(**_kwargs)
@@ -10503,11 +10475,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = unassign_role_from_tenant_sync(**_kwargs)
@@ -10565,11 +10532,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = unassign_user_from_tenant_sync(**_kwargs)
@@ -10624,11 +10586,6 @@ class CamundaClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         self._bp.acquire()
         try:
             _result = update_tenant_sync(**_kwargs)
@@ -13009,11 +12966,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await create_tenant_cluster_variable_asyncio(**_kwargs)
@@ -13120,11 +13072,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await delete_tenant_cluster_variable_asyncio(**_kwargs)
@@ -13237,11 +13184,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await get_tenant_cluster_variable_asyncio(**_kwargs)
@@ -13432,11 +13374,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await update_tenant_cluster_variable_asyncio(**_kwargs)
@@ -13499,6 +13436,15 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await evaluate_conditionals_asyncio(**_kwargs)
@@ -13574,6 +13520,15 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await evaluate_decision_asyncio(**_kwargs)
@@ -14733,6 +14688,15 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await evaluate_expression_asyncio(**_kwargs)
@@ -17182,6 +17146,15 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await correlate_message_asyncio(**_kwargs)
@@ -17242,6 +17215,15 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await publish_message_asyncio(**_kwargs)
@@ -18079,6 +18061,15 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await create_process_instance_asyncio(**_kwargs)
@@ -19053,6 +19044,15 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await create_deployment_asyncio(**_kwargs)
@@ -20305,6 +20305,15 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
+        _body = _kwargs.get("body")
+        if _body is not None and self.configuration.CAMUNDA_TENANT_ID is not None:
+            if hasattr(_body, "tenant_id"):
+                if _body.tenant_id is None or _body.tenant_id is UNSET:
+                    _body.tenant_id = self.configuration.CAMUNDA_TENANT_ID
+            elif isinstance(_body, dict) and (
+                "tenantId" not in _body or _body["tenantId"] is None
+            ):
+                _body["tenantId"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await broadcast_signal_asyncio(**_kwargs)
@@ -20420,11 +20429,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await get_usage_metrics_asyncio(**_kwargs)
@@ -20482,11 +20486,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await assign_client_to_tenant_asyncio(**_kwargs)
@@ -20544,11 +20543,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await assign_group_to_tenant_asyncio(**_kwargs)
@@ -20605,11 +20599,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await assign_mapping_rule_to_tenant_asyncio(**_kwargs)
@@ -20668,11 +20657,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await assign_role_to_tenant_asyncio(**_kwargs)
@@ -20730,11 +20714,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await assign_user_to_tenant_asyncio(**_kwargs)
@@ -20841,11 +20820,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await delete_tenant_asyncio(**_kwargs)
@@ -20896,11 +20870,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await get_tenant_asyncio(**_kwargs)
@@ -20959,11 +20928,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await search_clients_for_tenant_asyncio(**_kwargs)
@@ -21023,11 +20987,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await search_group_ids_for_tenant_asyncio(**_kwargs)
@@ -21087,11 +21046,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await search_mapping_rules_for_tenant_asyncio(**_kwargs)
@@ -21151,11 +21105,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await search_roles_for_tenant_asyncio(**_kwargs)
@@ -21270,11 +21219,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await search_users_for_tenant_asyncio(**_kwargs)
@@ -21332,11 +21276,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await unassign_client_from_tenant_asyncio(**_kwargs)
@@ -21395,11 +21334,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await unassign_group_from_tenant_asyncio(**_kwargs)
@@ -21456,11 +21390,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await unassign_mapping_rule_from_tenant_asyncio(**_kwargs)
@@ -21519,11 +21448,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await unassign_role_from_tenant_asyncio(**_kwargs)
@@ -21581,11 +21505,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await unassign_user_from_tenant_asyncio(**_kwargs)
@@ -21640,11 +21559,6 @@ class CamundaAsyncClient:
         _kwargs["client"] = self.client
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data")
-        _tid = _kwargs.get("tenant_id")
-        if (
-            _tid is None or _tid is UNSET
-        ) and self.configuration.CAMUNDA_TENANT_ID is not None:
-            _kwargs["tenant_id"] = self.configuration.CAMUNDA_TENANT_ID
         await self._bp.acquire()
         try:
             _result = await update_tenant_asyncio(**_kwargs)
