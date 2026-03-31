@@ -437,3 +437,50 @@ async def readme_job_corrections_denied() -> None:
             ),
         )
     # endregion ReadmeJobCorrectionsDenied
+
+
+# ---------- Job Logger ----------
+
+
+async def readme_job_logger() -> None:
+    from camunda_orchestration_sdk import ConnectedJobContext
+
+    # region ReadmeJobLogger
+    async def handler(job: ConnectedJobContext) -> dict[str, object]:
+        job.log.info(f"Starting work on {job.job_key}")
+        # ... do work ...
+        job.log.debug("Work completed successfully")
+        return {"done": True}
+    # endregion ReadmeJobLogger
+
+
+# ---------- Execution Strategies ----------
+
+
+async def readme_execution_strategies() -> None:
+    from camunda_orchestration_sdk import CamundaAsyncClient, WorkerConfig
+
+    async with CamundaAsyncClient() as client:
+        # region ReadmeExecutionStrategies
+        from camunda_orchestration_sdk import SyncJobContext, JobContext
+
+        # Force thread pool for a sync handler (receives SyncJobContext)
+        def io_handler(job: SyncJobContext) -> dict[str, object]:
+            return {"done": True}
+
+        client.create_job_worker(
+            config=WorkerConfig(job_type="io-bound-task", job_timeout_milliseconds=30_000),
+            callback=io_handler,
+            execution_strategy="thread",
+        )
+
+        # Force process pool for CPU-heavy work (receives plain JobContext)
+        def cpu_handler(job: JobContext) -> dict[str, object]:
+            return {"computed": True}
+
+        client.create_job_worker(
+            config=WorkerConfig(job_type="image-processing", job_timeout_milliseconds=120_000),
+            callback=cpu_handler,
+            execution_strategy="process",
+        )
+        # endregion ReadmeExecutionStrategies
