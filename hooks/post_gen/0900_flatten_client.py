@@ -2,6 +2,7 @@ import ast
 import os
 from pathlib import Path
 import re
+from typing import cast
 
 # Methods that must bypass backpressure gating (drain work / complete execution).
 _BP_EXEMPT_METHODS: frozenset[str] = frozenset(
@@ -56,6 +57,255 @@ def _lift_semantic_annotations(
             semantic_types_used.add(semantic_type)
 
 
+def _status_class_name(code: int) -> str:
+    """Return the per-status exception class name for a given HTTP status code."""
+    mapping = {
+        400: "BadRequestError",
+        401: "UnauthorizedError",
+        402: "PaymentRequiredError",
+        403: "ForbiddenError",
+        404: "NotFoundError",
+        405: "MethodNotAllowedError",
+        408: "RequestTimeoutError",
+        409: "ConflictError",
+        410: "GoneError",
+        412: "PreconditionFailedError",
+        413: "PayloadTooLargeError",
+        415: "UnsupportedMediaTypeError",
+        422: "UnprocessableEntityError",
+        429: "TooManyRequestsError",
+        500: "InternalServerErrorError",
+        501: "NotImplementedError_",
+        502: "BadGatewayError",
+        503: "ServiceUnavailableError",
+        504: "GatewayTimeoutError",
+    }
+    return mapping.get(code, f"Http{code}Error")
+
+
+def _extract_documented_status_codes(tree: ast.Module) -> list[int]:
+    """Extract HTTP status codes from the ``_parse_response`` function in an endpoint module.
+
+    Returns a sorted list of integer status codes that appear as ``response.status_code == <int>``
+    comparisons in the function body.
+    """
+    for node in tree.body:
+        if isinstance(node, ast.FunctionDef) and node.name == "_parse_response":
+            codes: list[int] = []
+            for stmt in ast.walk(node):
+                if (
+                    isinstance(stmt, ast.Compare)
+                    and len(stmt.ops) == 1
+                    and isinstance(stmt.ops[0], ast.Eq)
+                    and len(stmt.comparators) == 1
+                    and isinstance(stmt.comparators[0], ast.Constant)
+                    and isinstance(stmt.comparators[0].value, int)
+                    # Only match comparisons against response.status_code
+                    and isinstance(stmt.left, ast.Attribute)
+                    and stmt.left.attr == "status_code"
+                ):
+                    codes.append(stmt.comparators[0].value)
+            return sorted(codes)
+    return []
+
+
+def _synthesize_convenience_func(
+    detailed_func: ast.FunctionDef | ast.AsyncFunctionDef,
+    name: str,
+    *,
+    is_async: bool,
+    operation_id: str,
+    error_status_codes: list[int],
+) -> ast.FunctionDef | ast.AsyncFunctionDef:
+    """Create a synthetic ``sync`` or ``asyncio`` function from a ``*_detailed`` variant.
+
+    The generated function mirrors the detailed variant's signature (plus ``**kwargs: Any``
+    for compatibility with the flatten-client calling convention) but returns ``None``.
+    Non-2xx responses raise per-status typed errors (matching the pattern emitted by
+    ``0200_raise_exceptions.py``) with ``operation_id``, and a fallback ``UnexpectedStatus``
+    for any undocumented status codes.
+    """
+    import copy
+
+    func = copy.deepcopy(detailed_func)
+    func.name = name
+    # Convenience wrappers intentionally declare a None return type; callers needing
+    # the full HTTP response or body should use the corresponding *_detailed function.
+    func.returns = ast.Constant(value=None)
+
+    # Build the call to the *_detailed function using only the original parameters.
+    # We must do this BEFORE adding **kwargs to the signature, because kwargs must
+    # NOT be forwarded to the *_detailed call.
+    call_args: list[ast.keyword] = []
+    for arg in func.args.args + func.args.posonlyargs:
+        call_args.append(ast.keyword(arg=arg.arg, value=ast.Name(id=arg.arg, ctx=ast.Load())))
+    for arg in func.args.kwonlyargs:
+        call_args.append(ast.keyword(arg=arg.arg, value=ast.Name(id=arg.arg, ctx=ast.Load())))
+    # Intentionally skip func.args.kwarg — do not forward **kwargs to *_detailed.
+
+    # Add **kwargs: Any to match the generated convenience-function calling convention.
+    # The kwargs are intentionally NOT forwarded to the *_detailed call.
+    if func.args.kwarg is None:
+        func.args.kwarg = ast.arg(arg="kwargs", annotation=ast.Name(id="Any", ctx=ast.Load()))
+
+    inner_call = ast.Call(
+        func=ast.Name(id=detailed_func.name, ctx=ast.Load()),
+        args=[],
+        keywords=call_args,
+    )
+
+    # Store the response so we can inspect the status code.
+    response_var = ast.Name(id="response", ctx=ast.Store())
+    if is_async:
+        assign_stmt = ast.Assign(
+            targets=[response_var],
+            value=ast.Await(value=inner_call),
+            lineno=0,
+        )
+    else:
+        assign_stmt = ast.Assign(
+            targets=[response_var],
+            value=inner_call,
+            lineno=0,
+        )
+
+    status_attr = ast.Attribute(
+        value=ast.Name(id="response", ctx=ast.Load()),
+        attr="status_code",
+        ctx=ast.Load(),
+    )
+    content_attr = ast.Attribute(
+        value=ast.Name(id="response", ctx=ast.Load()),
+        attr="content",
+        ctx=ast.Load(),
+    )
+
+    # Build per-status typed error branches for documented non-2xx codes,
+    # matching the pattern from 0200_raise_exceptions.py.
+    non_2xx_codes = [c for c in error_status_codes if c < 200 or c >= 300]
+    per_status_branches: list[ast.If] = []
+    for code in non_2xx_codes:
+        cls_name = _status_class_name(code)
+        branch = ast.If(
+            test=ast.Compare(
+                left=status_attr,
+                ops=[ast.Eq()],
+                comparators=[ast.Constant(value=code)],
+            ),
+            body=[
+                ast.Raise(
+                    exc=ast.Call(
+                        func=ast.Attribute(
+                            value=ast.Name(id="errors", ctx=ast.Load()),
+                            attr=cls_name,
+                            ctx=ast.Load(),
+                        ),
+                        args=[],
+                        keywords=[
+                            ast.keyword(arg="status_code", value=status_attr),
+                            ast.keyword(arg="content", value=content_attr),
+                            ast.keyword(
+                                arg="operation_id",
+                                value=ast.Constant(value=operation_id),
+                            ),
+                        ],
+                    ),
+                    cause=None,
+                )
+            ],
+            orelse=[],
+        )
+        per_status_branches.append(branch)
+
+    # Fallback: raise UnexpectedStatus for any other non-2xx code.
+    fallback_raise = ast.Raise(
+        exc=ast.Call(
+            func=ast.Attribute(
+                value=ast.Name(id="errors", ctx=ast.Load()),
+                attr="UnexpectedStatus",
+                ctx=ast.Load(),
+            ),
+            args=[status_attr, content_attr],
+            keywords=[
+                ast.keyword(
+                    arg="operation_id",
+                    value=ast.Constant(value=operation_id),
+                ),
+            ],
+        ),
+        cause=None,
+    )
+
+    # Assemble the if-body: per-status branches + fallback raise
+    if_body: list[ast.stmt] = []
+    for branch in per_status_branches:
+        if_body.append(branch)
+    if_body.append(fallback_raise)
+
+    error_check = ast.If(
+        test=ast.BoolOp(
+            op=ast.Or(),
+            values=[
+                ast.Compare(
+                    left=status_attr,
+                    ops=[ast.Lt()],
+                    comparators=[ast.Constant(value=200)],
+                ),
+                ast.Compare(
+                    left=status_attr,
+                    ops=[ast.GtE()],
+                    comparators=[ast.Constant(value=300)],
+                ),
+            ],
+        ),
+        body=if_body,
+        orelse=[],
+    )
+
+    # Build the Raises: docstring lines for documented error codes.
+    raises_lines: list[str] = []
+    for code in non_2xx_codes:
+        cls_name = _status_class_name(code)
+        raises_lines.append(
+            f"errors.{cls_name}: If the response status code is {code}."
+        )
+    raises_lines.append(
+        "errors.UnexpectedStatus: If the response status code is not documented."
+    )
+    raises_lines.append(
+        "httpx.TimeoutException: If the request takes longer than Client.timeout."
+    )
+
+    # Extract summary from the original docstring (first paragraph).
+    old_docstring = ast.get_docstring(detailed_func) or ""
+    summary = old_docstring.split("\n\n")[0].strip() if old_docstring else name
+
+    raises_block = "\n".join(f"        {r}" for r in raises_lines)
+    new_docstring = (
+        f"{summary}\n\n"
+        f"    Raises:\n"
+        f"{raises_block}\n"
+        f"    Returns:\n"
+        f"        None"
+    )
+
+    # Build function body: docstring + call + error check + return None
+    body: list[ast.stmt] = [
+        ast.Expr(value=ast.Constant(value=new_docstring)),
+        assign_stmt,
+        error_check,
+        ast.Return(value=ast.Constant(value=None)),
+    ]
+
+    func.body = body
+
+    if is_async:
+        return func  # already AsyncFunctionDef
+    else:
+        # Convert to regular FunctionDef if needed (deep copy preserves original type)
+        return func
+
+
 def get_imports_and_signature(
     file_path: Path,
     package_root: Path,
@@ -69,6 +319,9 @@ def get_imports_and_signature(
     sync_func: ast.FunctionDef | None = None
     async_func: ast.AsyncFunctionDef | None = None
 
+    sync_detailed_func: ast.FunctionDef | None = None
+    async_detailed_func: ast.AsyncFunctionDef | None = None
+
     for node in tree.body:
         if isinstance(node, (ast.Import, ast.ImportFrom)):
             imports.append(node)
@@ -76,6 +329,44 @@ def get_imports_and_signature(
             sync_func = node
         elif isinstance(node, ast.AsyncFunctionDef) and node.name == "asyncio":
             async_func = node
+        elif isinstance(node, ast.FunctionDef) and node.name == "sync_detailed":
+            sync_detailed_func = node
+        elif isinstance(node, ast.AsyncFunctionDef) and node.name == "asyncio_detailed":
+            async_detailed_func = node
+
+    # For endpoints that only have *_detailed variants (e.g. body-less 204 responses),
+    # synthesize sync/asyncio functions that delegate to the detailed variant and
+    # return None.  This ensures the flatten-client hook picks them up.
+    synthesized_sync = False
+    synthesized_async = False
+    if sync_func is None and sync_detailed_func is not None:
+        operation_id = file_path.stem  # e.g. "get_status"
+        error_status_codes = _extract_documented_status_codes(tree)
+        sync_func = cast(ast.FunctionDef, _synthesize_convenience_func(
+            sync_detailed_func, "sync", is_async=False,
+            operation_id=operation_id, error_status_codes=error_status_codes,
+        ))
+        synthesized_sync = True
+    if async_func is None and async_detailed_func is not None:
+        operation_id = file_path.stem
+        error_status_codes = _extract_documented_status_codes(tree)
+        async_func = cast(ast.AsyncFunctionDef, _synthesize_convenience_func(
+            async_detailed_func, "asyncio", is_async=True,
+            operation_id=operation_id, error_status_codes=error_status_codes,
+        ))
+        synthesized_async = True
+
+    # Write synthesized convenience functions back to the endpoint module so they
+    # are importable at runtime (the flatten-client does ``from ... import sync``).
+    if synthesized_sync or synthesized_async:
+        append_lines: list[str] = []
+        if synthesized_sync and sync_func is not None:
+            append_lines.append(ast.unparse(sync_func))
+        if synthesized_async and async_func is not None:
+            append_lines.append(ast.unparse(async_func))
+        if append_lines:
+            with open(file_path, "a", encoding="utf-8") as f:
+                f.write("\n\n" + "\n\n".join(append_lines) + "\n")
 
     rel_path = file_path.relative_to(package_root)
     # depth = number of parts in parent directory
