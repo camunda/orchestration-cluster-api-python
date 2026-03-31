@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.26 (2026-03-31)
+
+### Bug Fixes
+
+- Inject default tenant ID into request body, not path params
+  ([`97d8145`](https://github.com/camunda/orchestration-cluster-api-python/commit/97d8145c5c72ecf075cc3d4be441e4de730cf863))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`1b0c57c`](https://github.com/camunda/orchestration-cluster-api-python/commit/1b0c57c7c7a8e1118899202737271d6612059bf2))
+
+
 ## v8.9.0-dev.25 (2026-03-31)
 
 ### Bug Fixes
