@@ -74,7 +74,7 @@ jobs:
       #     echo "BUNDLER_BIN=/tmp/bundler/camunda-schema-bundler-linux-x64" >> "$GITHUB_ENV"
 
       - name: Set up Node.js (for npx camunda-schema-bundler)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
 
@@ -144,7 +144,7 @@ jobs:
       #     echo "BUNDLER_BIN=/tmp/bundler/camunda-schema-bundler-linux-x64" >> "$GITHUB_ENV"
 
       - name: Set up Node.js (for npx camunda-schema-bundler)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
 
