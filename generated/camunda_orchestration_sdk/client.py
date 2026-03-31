@@ -1851,6 +1851,34 @@ class CamundaClient:
         finally:
             self._bp.release()
 
+    def get_status(self, **kwargs: Any) -> None:
+        """Get cluster status
+
+        Raises:
+            errors.ServiceUnavailableError: If the response status code is 503.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.cluster.get_status import sync as get_status_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = get_status_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
     def get_topology(self, **kwargs: Any) -> TopologyResponse:
         """Get cluster topology
 
@@ -12794,6 +12822,34 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await reset_clock_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def get_status(self, **kwargs: Any) -> None:
+        """Get cluster status
+
+        Raises:
+            errors.ServiceUnavailableError: If the response status code is 503.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            None"""
+        from .api.cluster.get_status import asyncio as get_status_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await get_status_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:

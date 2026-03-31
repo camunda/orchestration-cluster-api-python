@@ -91,3 +91,49 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
 
     return _build_response(client=client, response=response)
+
+
+def sync(*, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
+    """Get cluster status
+
+    Raises:
+        errors.ServiceUnavailableError: If the response status code is 503.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
+    response = sync_detailed(client=client)
+    if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 503:
+            raise errors.ServiceUnavailableError(
+                status_code=response.status_code,
+                content=response.content,
+                operation_id="get_status",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_status"
+        )
+    return None
+
+
+async def asyncio(*, client: AuthenticatedClient | Client, **kwargs: Any) -> None:
+    """Get cluster status
+
+    Raises:
+        errors.ServiceUnavailableError: If the response status code is 503.
+        errors.UnexpectedStatus: If the response status code is not documented.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+    Returns:
+        None"""
+    response = await asyncio_detailed(client=client)
+    if response.status_code < 200 or response.status_code >= 300:
+        if response.status_code == 503:
+            raise errors.ServiceUnavailableError(
+                status_code=response.status_code,
+                content=response.content,
+                operation_id="get_status",
+            )
+        raise errors.UnexpectedStatus(
+            response.status_code, response.content, operation_id="get_status"
+        )
+    return None
