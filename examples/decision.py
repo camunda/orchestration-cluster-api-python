@@ -60,6 +60,7 @@ def get_decision_definition_example(decision_definition_key: DecisionDefinitionK
     client = CamundaClient()
 
     definition = client.get_decision_definition(
+        decision_definition_key=decision_definition_key,
     )
 
     print(f"Decision: {definition.decision_definition_id}")
