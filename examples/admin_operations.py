@@ -261,16 +261,6 @@ def get_topology_example() -> None:
 # endregion GetTopology
 
 
-# region GetStatus
-def get_status_example() -> None:
-    client = CamundaClient()
-
-    client.get_status()
-
-    print("Cluster is healthy")
-# endregion GetStatus
-
-
 # region PinClock
 def pin_clock_example() -> None:
     client = CamundaClient()
