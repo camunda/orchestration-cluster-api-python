@@ -2,6 +2,35 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.27 (2026-04-01)
+
+### Build System
+
+- **deps**: Bump actions/checkout from 4 to 6
+  ([`9c8ac02`](https://github.com/camunda/orchestration-cluster-api-python/commit/9c8ac02dc5798fadebf9f211ea933ce29c388a42))
+
+- **deps**: Bump actions/configure-pages from 5 to 6
+  ([`51d40fb`](https://github.com/camunda/orchestration-cluster-api-python/commit/51d40fb86df229af65c098a8ea65b7ed55d3d2d5))
+
+- **deps**: Bump actions/deploy-pages from 4 to 5
+  ([`a83ea27`](https://github.com/camunda/orchestration-cluster-api-python/commit/a83ea2765d46ae6d0b537baddfed062226d3ba5e))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`d6ddf40`](https://github.com/camunda/orchestration-cluster-api-python/commit/d6ddf40e4bfbe64a845f166afd6356dcc0f952d1))
+
+### Features
+
+- Embed specHash from spec-metadata.json in published package
+  ([`d14e039`](https://github.com/camunda/orchestration-cluster-api-python/commit/d14e039d96e600e546d67cad5e50d2711388c635))
+
+### Refactoring
+
+- Harden spec hash emission per review feedback
+  ([`27381c7`](https://github.com/camunda/orchestration-cluster-api-python/commit/27381c7ae1ef98abeff52f31e01232fa8c20e07d))
+
+
 ## v8.9.0-dev.26 (2026-03-31)
 
 ### Bug Fixes
