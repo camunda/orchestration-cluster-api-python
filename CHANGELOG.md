@@ -2,6 +2,48 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.28 (2026-04-01)
+
+### Bug Fixes
+
+- Address PR review comments
+  ([`d97ff72`](https://github.com/camunda/orchestration-cluster-api-python/commit/d97ff728ab815ef02715008cc026720e1f825562))
+
+- Address review feedback on document/variable examples
+  ([`9e2bcba`](https://github.com/camunda/orchestration-cluster-api-python/commit/9e2bcba14e55a7c9065ce9463f5a0a45f4cd8027))
+
+- Pass decision_definition_key in get_decision_definition example
+  ([`fb58542`](https://github.com/camunda/orchestration-cluster-api-python/commit/fb58542f1f8c4e9b689d69816ce1fbe0b61fc8c1))
+
+- Remove get_status example (method not yet on CamundaClient)
+  ([`a2b6f35`](https://github.com/camunda/orchestration-cluster-api-python/commit/a2b6f35ca2e6ab751d1cb8082dd8b7f4e647d1d9))
+
+- Remove unused ProcessDefinitionKey import
+  ([`c7ac5c5`](https://github.com/camunda/orchestration-cluster-api-python/commit/c7ac5c55ef5a1c7ab0cbafbfc0ee20d003f8e1de))
+
+- Restore get_status example (method now available after PR #69 merge)
+  ([`a258701`](https://github.com/camunda/orchestration-cluster-api-python/commit/a2587016e65bb0f6e0844043beed7d80af9fa83d))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`b1c16ee`](https://github.com/camunda/orchestration-cluster-api-python/commit/b1c16eed4f54c97891ae7051b366534d4b69ea6e))
+
+### Documentation
+
+- Add Copilot prompt files
+  ([`9d81076`](https://github.com/camunda/orchestration-cluster-api-python/commit/9d810764f219353fb872fe5c0137c8a33d1b8fe2))
+
+- Add examples for document and effective variable operations
+  ([`1a00a88`](https://github.com/camunda/orchestration-cluster-api-python/commit/1a00a885ae1072825ff532f4f44416bbc08e7615))
+
+- Parameterize SDK examples and add coverage tooling
+  ([`7f541ea`](https://github.com/camunda/orchestration-cluster-api-python/commit/7f541eae22da4431650f7d7508be684bd5789916))
+
+- Sync README snippets
+  ([`3b43d65`](https://github.com/camunda/orchestration-cluster-api-python/commit/3b43d6555cf7c9cfdbf9fc2ccf461e6b63bcc8b7))
+
+
 ## v8.9.0-dev.27 (2026-04-01)
 
 ### Build System
