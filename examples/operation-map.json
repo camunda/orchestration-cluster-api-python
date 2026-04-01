@@ -6,6 +6,13 @@
       "label": "Get cluster topology"
     }
   ],
+  "getStatus": [
+    {
+      "file": "admin_operations.py",
+      "region": "GetStatus",
+      "label": "Check cluster status"
+    }
+  ],
   "createDeployment": [
     {
       "file": "deployment.py",
