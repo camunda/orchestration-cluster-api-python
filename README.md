@@ -680,8 +680,10 @@ The SDK raises typed exceptions for API errors. Each HTTP error status code has 
 
 <!-- snippet-source: examples/readme.py | regions: ReadmeErrorHandling -->
 ```python
-from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey
+from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey, ProcessDefinitionKey
 from camunda_orchestration_sdk.errors import BadRequestError
+
+process_definition_key = ProcessDefinitionKey("2251799813685249")
 
 with CamundaClient() as client:
     try:

@@ -174,21 +174,21 @@ def create_global_task_listener_example() -> None:
 
 
 # region GetGlobalTaskListener
-def get_global_task_listener_example(id: GlobalListenerId) -> None:
+def get_global_task_listener_example(listener_id: GlobalListenerId) -> None:
     client = CamundaClient()
 
-    result = client.get_global_task_listener(id=id)
+    result = client.get_global_task_listener(id=listener_id)
 
     print(f"Task listener: {result.event_types}")
 # endregion GetGlobalTaskListener
 
 
 # region UpdateGlobalTaskListener
-def update_global_task_listener_example(id: GlobalListenerId) -> None:
+def update_global_task_listener_example(listener_id: GlobalListenerId) -> None:
     client = CamundaClient()
 
     result = client.update_global_task_listener(
-        id=id,
+        id=listener_id,
         data=UpdateGlobalTaskListenerRequest(
             event_types=[GlobalTaskListenerEventTypeEnum.COMPLETING],
             type_="updated-task-listener",
@@ -200,10 +200,10 @@ def update_global_task_listener_example(id: GlobalListenerId) -> None:
 
 
 # region DeleteGlobalTaskListener
-def delete_global_task_listener_example(id: GlobalListenerId) -> None:
+def delete_global_task_listener_example(listener_id: GlobalListenerId) -> None:
     client = CamundaClient()
 
-    client.delete_global_task_listener(id=id)
+    client.delete_global_task_listener(id=listener_id)
 # endregion DeleteGlobalTaskListener
 
 

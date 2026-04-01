@@ -7,8 +7,17 @@ Writes missing-examples.json for CI consumption.
 """
 
 import json
+import re
 import sys
 from pathlib import Path
+
+
+def _to_snake_case(name: str) -> str:
+    """Convert camelCase operationId to snake_case method name."""
+    s = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", name)
+    s = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s)
+    return s.lower()
+
 
 root_dir = Path(__file__).resolve().parent.parent
 spec_path = root_dir / "external-spec" / "bundled" / "rest-api.bundle.json"
@@ -21,6 +30,14 @@ if not spec_path.exists():
 
 with open(spec_path) as f:
     spec = json.load(f)
+
+if not map_path.exists():
+    print(f"Operation map not found at {map_path}", file=sys.stderr)
+    print(
+        "Ensure examples/operation-map.json exists and is committed.",
+        file=sys.stderr,
+    )
+    sys.exit(2)
 
 with open(map_path) as f:
     operation_map = json.load(f)
@@ -45,8 +62,8 @@ for path_str, path_item in (spec.get("paths") or {}).items():
             )
 
 map_keys = set(operation_map.keys())
-covered = [op for op in spec_ops if op["operationId"] in map_keys]
-missing = [op for op in spec_ops if op["operationId"] not in map_keys]
+covered = [op for op in spec_ops if _to_snake_case(op["operationId"]) in map_keys]
+missing = [op for op in spec_ops if _to_snake_case(op["operationId"]) not in map_keys]
 
 print(f"Spec operations: {len(spec_ops)}")
 print(f"Covered:         {len(covered)}")
@@ -71,3 +88,6 @@ if missing:
     sys.exit(1)
 else:
     print("\nFull coverage!")
+    missing_path = root_dir / "missing-examples.json"
+    if missing_path.exists():
+        missing_path.unlink()

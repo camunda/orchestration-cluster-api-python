@@ -286,10 +286,12 @@ async def readme_bpmn_error() -> None:
 # ---------- Error Handling ----------
 
 
-def readme_error_handling(process_definition_key: ProcessDefinitionKey) -> None:
+def readme_error_handling() -> None:
     # region ReadmeErrorHandling
-    from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey
+    from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey, ProcessDefinitionKey
     from camunda_orchestration_sdk.errors import BadRequestError
+
+    process_definition_key = ProcessDefinitionKey("2251799813685249")
 
     with CamundaClient() as client:
         try:
