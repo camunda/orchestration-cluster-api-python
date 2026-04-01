@@ -249,11 +249,12 @@ def create_document_example() -> None:
 
     client = CamundaClient()
 
-    result = client.create_document(
-        data=CreateDocumentData(
-            file=File(payload=open("hello.txt", "rb"), file_name="hello.txt"),
-        ),
-    )
+    with open("hello.txt", "rb") as f:
+        result = client.create_document(
+            data=CreateDocumentData(
+                file=File(payload=f, file_name="hello.txt"),
+            ),
+        )
 
     print(f"Document ID: {result.document_id}")
 # endregion CreateDocument
@@ -261,22 +262,28 @@ def create_document_example() -> None:
 
 # region CreateDocuments
 def create_documents_example() -> None:
+    from contextlib import ExitStack
+
     from camunda_orchestration_sdk import CreateDocumentsData, DocumentMetadata, File
 
     client = CamundaClient()
 
-    result = client.create_documents(
-        data=CreateDocumentsData(
-            files=[
-                File(payload=open("one.txt", "rb"), file_name="one.txt"),
-                File(payload=open("two.txt", "rb"), file_name="two.txt"),
-            ],
-            metadata_list=[
-                DocumentMetadata.from_dict({"fileName": "one.txt"}),
-                DocumentMetadata.from_dict({"fileName": "two.txt"}),
-            ],
-        ),
-    )
+    with ExitStack() as stack:
+        f1 = stack.enter_context(open("one.txt", "rb"))
+        f2 = stack.enter_context(open("two.txt", "rb"))
+
+        result = client.create_documents(
+            data=CreateDocumentsData(
+                files=[
+                    File(payload=f1, file_name="one.txt"),
+                    File(payload=f2, file_name="two.txt"),
+                ],
+                metadata_list=[
+                    DocumentMetadata.from_dict({"fileName": "one.txt"}),
+                    DocumentMetadata.from_dict({"fileName": "two.txt"}),
+                ],
+            ),
+        )
 
     for doc in result.created_documents:
         print(f"Created: {doc.document_id}")
@@ -301,7 +308,6 @@ def search_user_task_effective_variables_example() -> None:
         user_task_key=UserTaskKey("123456"),
     )
 
-    if not isinstance(result.items, Unset):
-        for var in result.items:
-            print(f"Variable: {var.name}")
+    for var in result.items:
+        print(f"Variable: {var.name}")
 # endregion SearchUserTaskEffectiveVariables
