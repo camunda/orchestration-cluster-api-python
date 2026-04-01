@@ -36,11 +36,11 @@ def create_authorization_example() -> None:
 
 
 # region GetAuthorization
-def get_authorization_example() -> None:
+def get_authorization_example(authorization_key: AuthorizationKey) -> None:
     client = CamundaClient()
 
     result = client.get_authorization(
-        authorization_key=AuthorizationKey("123456"),
+        authorization_key=authorization_key,
     )
 
     print(f"Resource type: {result.resource_type}")
@@ -62,11 +62,11 @@ def search_authorizations_example() -> None:
 
 
 # region UpdateAuthorization
-def update_authorization_example() -> None:
+def update_authorization_example(authorization_key: AuthorizationKey) -> None:
     client = CamundaClient()
 
     client.update_authorization(
-        authorization_key=AuthorizationKey("123456"),
+        authorization_key=authorization_key,
         data=AuthorizationIdBasedRequest(
             resource_type=AuthorizationIdBasedRequestResourceType.PROCESS_DEFINITION,
             permission_types=[
@@ -83,10 +83,10 @@ def update_authorization_example() -> None:
 
 
 # region DeleteAuthorization
-def delete_authorization_example() -> None:
+def delete_authorization_example(authorization_key: AuthorizationKey) -> None:
     client = CamundaClient()
 
     client.delete_authorization(
-        authorization_key=AuthorizationKey("123456"),
+        authorization_key=authorization_key,
     )
 # endregion DeleteAuthorization

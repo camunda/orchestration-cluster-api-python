@@ -13,12 +13,12 @@ from camunda_orchestration_sdk import (
 
 
 # region CreateUser
-def create_user_example() -> None:
+def create_user_example(username: Username) -> None:
     client = CamundaClient()
 
     result = client.create_user(
         data=UserRequest(
-            username=Username("jdoe"),
+            username=username,
             name="Jane Doe",
             email="jdoe@example.com",
             password="secure-password",
@@ -30,12 +30,12 @@ def create_user_example() -> None:
 
 
 # region CreateAdminUser
-def create_admin_user_example() -> None:
+def create_admin_user_example(username: Username) -> None:
     client = CamundaClient()
 
     result = client.create_admin_user(
         data=UserRequest(
-            username=Username("admin"),
+            username=username,
             name="Admin User",
             email="admin@example.com",
             password="admin-password",
@@ -47,10 +47,10 @@ def create_admin_user_example() -> None:
 
 
 # region GetUser
-def get_user_example() -> None:
+def get_user_example(username: Username) -> None:
     client = CamundaClient()
 
-    result = client.get_user(username=Username("jdoe"))
+    result = client.get_user(username=username)
 
     print(f"User: {result.username}")
 # endregion GetUser
@@ -71,11 +71,11 @@ def search_users_example() -> None:
 
 
 # region UpdateUser
-def update_user_example() -> None:
+def update_user_example(username: Username) -> None:
     client = CamundaClient()
 
     client.update_user(
-        username=Username("jdoe"),
+        username=username,
         data=UserUpdateRequest(
             name="Jane Smith",
             email="jsmith@example.com",
@@ -85,8 +85,8 @@ def update_user_example() -> None:
 
 
 # region DeleteUser
-def delete_user_example() -> None:
+def delete_user_example(username: Username) -> None:
     client = CamundaClient()
 
-    client.delete_user(username=Username("jdoe"))
+    client.delete_user(username=username)
 # endregion DeleteUser

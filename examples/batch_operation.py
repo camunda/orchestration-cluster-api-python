@@ -25,11 +25,11 @@ from camunda_orchestration_sdk import (
 
 
 # region GetBatchOperation
-def get_batch_operation_example() -> None:
+def get_batch_operation_example(batch_operation_key: BatchOperationKey) -> None:
     client = CamundaClient()
 
     result = client.get_batch_operation(
-        batch_operation_key=BatchOperationKey("123456"),
+        batch_operation_key=batch_operation_key,
     )
 
     print(f"Batch operation: {result.batch_operation_key}")
@@ -51,11 +51,11 @@ def search_batch_operations_example() -> None:
 
 
 # region SearchBatchOperationItems
-def search_batch_operation_items_example() -> None:
+def search_batch_operation_items_example(batch_operation_key: BatchOperationKey) -> None:
     client = CamundaClient()
 
     result = client.search_batch_operation_items(
-        batch_operation_key=BatchOperationKey("123456"),
+        batch_operation_key=batch_operation_key,
         data=BatchOperationItemSearchQuery(),
     )
 
@@ -66,31 +66,31 @@ def search_batch_operation_items_example() -> None:
 
 
 # region CancelBatchOperation
-def cancel_batch_operation_example() -> None:
+def cancel_batch_operation_example(batch_operation_key: BatchOperationKey) -> None:
     client = CamundaClient()
 
     client.cancel_batch_operation(
-        batch_operation_key=BatchOperationKey("123456"),
+        batch_operation_key=batch_operation_key,
     )
 # endregion CancelBatchOperation
 
 
 # region SuspendBatchOperation
-def suspend_batch_operation_example() -> None:
+def suspend_batch_operation_example(batch_operation_key: BatchOperationKey) -> None:
     client = CamundaClient()
 
     client.suspend_batch_operation(
-        batch_operation_key=BatchOperationKey("123456"),
+        batch_operation_key=batch_operation_key,
     )
 # endregion SuspendBatchOperation
 
 
 # region ResumeBatchOperation
-def resume_batch_operation_example() -> None:
+def resume_batch_operation_example(batch_operation_key: BatchOperationKey) -> None:
     client = CamundaClient()
 
     client.resume_batch_operation(
-        batch_operation_key=BatchOperationKey("123456"),
+        batch_operation_key=batch_operation_key,
     )
 # endregion ResumeBatchOperation
 
@@ -124,18 +124,18 @@ def delete_process_instances_batch_operation_example() -> None:
 
 
 # region MigrateProcessInstancesBatchOperation
-def migrate_process_instances_batch_operation_example() -> None:
+def migrate_process_instances_batch_operation_example(target_process_definition_key: ProcessDefinitionKey, source_element_id: ElementId, target_element_id: ElementId) -> None:
     client = CamundaClient()
 
     result = client.migrate_process_instances_batch_operation(
         data=ProcessInstanceMigrationBatchOperationRequest(
             filter_=ProcessInstanceCancellationBatchOperationRequestFilter(),
             migration_plan=ProcessInstanceMigrationBatchOperationRequestMigrationPlan(
-                target_process_definition_key=ProcessDefinitionKey("456789"),
+                target_process_definition_key=target_process_definition_key,
                 mapping_instructions=[
                     MigrateProcessInstanceMappingInstruction(
-                        source_element_id=ElementId("task-a"),
-                        target_element_id=ElementId("task-b"),
+                        source_element_id=source_element_id,
+                        target_element_id=target_element_id,
                     ),
                 ],
             ),
@@ -147,7 +147,7 @@ def migrate_process_instances_batch_operation_example() -> None:
 
 
 # region ModifyProcessInstancesBatchOperation
-def modify_process_instances_batch_operation_example() -> None:
+def modify_process_instances_batch_operation_example(source_element_id: ElementId, target_element_id: ElementId) -> None:
     client = CamundaClient()
 
     result = client.modify_process_instances_batch_operation(
@@ -155,8 +155,8 @@ def modify_process_instances_batch_operation_example() -> None:
             filter_=ProcessInstanceCancellationBatchOperationRequestFilter(),
             move_instructions=[
                 ProcessInstanceModificationMoveBatchOperationInstruction(
-                    source_element_id=ElementId("task-a"),
-                    target_element_id=ElementId("task-b"),
+                    source_element_id=source_element_id,
+                    target_element_id=target_element_id,
                 ),
             ],
         ),

@@ -14,12 +14,12 @@ from camunda_orchestration_sdk import (
 
 
 # region EvaluateDecisionByKey
-def evaluate_decision_by_key_example() -> None:
+def evaluate_decision_by_key_example(decision_definition_key: DecisionDefinitionKey) -> None:
     client = CamundaClient()
 
     result = client.evaluate_decision(
         data=DecisionEvaluationByKey(
-            decision_definition_key=DecisionDefinitionKey("123456"),
+            decision_definition_key=decision_definition_key,
         )
     )
 
@@ -28,12 +28,12 @@ def evaluate_decision_by_key_example() -> None:
 
 
 # region EvaluateDecisionById
-def evaluate_decision_by_id_example() -> None:
+def evaluate_decision_by_id_example(decision_definition_id: DecisionDefinitionId) -> None:
     client = CamundaClient()
 
     result = client.evaluate_decision(
         data=DecisionEvaluationByID(
-            decision_definition_id=DecisionDefinitionId("invoice-classification"),
+            decision_definition_id=decision_definition_id,
         )
     )
 
@@ -56,11 +56,10 @@ def search_decision_definitions_example() -> None:
 
 
 # region GetDecisionDefinition
-def get_decision_definition_example() -> None:
+def get_decision_definition_example(decision_definition_key: DecisionDefinitionKey) -> None:
     client = CamundaClient()
 
     definition = client.get_decision_definition(
-        decision_definition_key=DecisionDefinitionKey("123456")
     )
 
     print(f"Decision: {definition.decision_definition_id}")

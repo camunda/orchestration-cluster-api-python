@@ -32,11 +32,11 @@ def search_user_tasks_example() -> None:
 
 
 # region AssignUserTask
-def assign_user_task_example() -> None:
+def assign_user_task_example(user_task_key: UserTaskKey) -> None:
     client = CamundaClient()
 
     client.assign_user_task(
-        user_task_key=UserTaskKey("123456"),
+        user_task_key=user_task_key,
         data=UserTaskAssignmentRequest(
             assignee="user@example.com",
         ),
@@ -45,22 +45,22 @@ def assign_user_task_example() -> None:
 
 
 # region UnassignUserTask
-def unassign_user_task_example() -> None:
+def unassign_user_task_example(user_task_key: UserTaskKey) -> None:
     client = CamundaClient()
 
-    client.unassign_user_task(user_task_key=UserTaskKey("123456"))
+    client.unassign_user_task(user_task_key=user_task_key)
 # endregion UnassignUserTask
 
 
 # region CompleteUserTask
-def complete_user_task_example() -> None:
+def complete_user_task_example(user_task_key: UserTaskKey) -> None:
     client = CamundaClient()
 
     variables = UserTaskCompletionRequestVariables()
     variables["approved"] = True
 
     client.complete_user_task(
-        user_task_key=UserTaskKey("123456"),
+        user_task_key=user_task_key,
         data=UserTaskCompletionRequest(
             variables=variables,
         ),
@@ -69,11 +69,11 @@ def complete_user_task_example() -> None:
 
 
 # region UpdateUserTask
-def update_user_task_example() -> None:
+def update_user_task_example(user_task_key: UserTaskKey) -> None:
     client = CamundaClient()
 
     client.update_user_task(
-        user_task_key=UserTaskKey("123456"),
+        user_task_key=user_task_key,
         data=UserTaskUpdateRequest(
             changeset=Changeset(
                 due_date=datetime.datetime(2025, 12, 31, 23, 59, 59),
@@ -84,10 +84,10 @@ def update_user_task_example() -> None:
 
 
 # region GetUserTask
-def get_user_task_example() -> None:
+def get_user_task_example(user_task_key: UserTaskKey) -> None:
     client = CamundaClient()
 
-    task = client.get_user_task(user_task_key=UserTaskKey("123456"))
+    task = client.get_user_task(user_task_key=user_task_key)
 
     print(f"Task: {task.user_task_key}")
 # endregion GetUserTask

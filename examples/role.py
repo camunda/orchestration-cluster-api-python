@@ -70,23 +70,23 @@ def delete_role_example() -> None:
 
 
 # region AssignRoleToUser
-def assign_role_to_user_example() -> None:
+def assign_role_to_user_example(username: Username) -> None:
     client = CamundaClient()
 
     client.assign_role_to_user(
         role_id="developer",
-        username=Username("jdoe"),
+        username=username,
     )
 # endregion AssignRoleToUser
 
 
 # region UnassignRoleFromUser
-def unassign_role_from_user_example() -> None:
+def unassign_role_from_user_example(username: Username) -> None:
     client = CamundaClient()
 
     client.unassign_role_from_user(
         role_id="developer",
-        username=Username("jdoe"),
+        username=username,
     )
 # endregion UnassignRoleFromUser
 

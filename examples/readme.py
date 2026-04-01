@@ -9,6 +9,11 @@ Edit these examples to update the corresponding README code blocks.
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from camunda_orchestration_sdk import ProcessDefinitionKey
+
 
 # ---------- Using the SDK ----------
 
@@ -281,15 +286,15 @@ async def readme_bpmn_error() -> None:
 # ---------- Error Handling ----------
 
 
-def readme_error_handling() -> None:
+def readme_error_handling(process_definition_key: ProcessDefinitionKey) -> None:
     # region ReadmeErrorHandling
-    from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey, ProcessDefinitionKey
+    from camunda_orchestration_sdk import CamundaClient, ProcessCreationByKey
     from camunda_orchestration_sdk.errors import BadRequestError
 
     with CamundaClient() as client:
         try:
             result = client.create_process_instance(
-                data=ProcessCreationByKey(process_definition_key=ProcessDefinitionKey("nonexistent"))
+                data=ProcessCreationByKey(process_definition_key=process_definition_key)
             )
         except BadRequestError as e:
             print(f"Bad request ({e.operation_id}): {e}")

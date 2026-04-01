@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from camunda_orchestration_sdk import (
     CamundaClient,
+    CreateDocumentData,
+    CreateDocumentsData,
     DecisionDefinitionKey,
     DecisionEvaluationInstanceKey,
     DecisionEvaluationKey,
@@ -12,6 +14,7 @@ from camunda_orchestration_sdk import (
     DecisionRequirementsSearchQuery,
     DocumentId,
     DocumentLinkRequest,
+    File,
     JobChangeset,
     JobErrorRequest,
     JobKey,
@@ -24,11 +27,11 @@ from camunda_orchestration_sdk import (
 
 
 # region GetDecisionDefinitionXml
-def get_decision_definition_xml_example() -> None:
+def get_decision_definition_xml_example(decision_definition_key: DecisionDefinitionKey) -> None:
     client = CamundaClient()
 
     xml = client.get_decision_definition_xml(
-        decision_definition_key=DecisionDefinitionKey("123456"),
+        decision_definition_key=decision_definition_key,
     )
 
     print(f"XML length: {len(xml)}")
@@ -36,11 +39,11 @@ def get_decision_definition_xml_example() -> None:
 
 
 # region GetDecisionInstance
-def get_decision_instance_example() -> None:
+def get_decision_instance_example(decision_evaluation_instance_key: DecisionEvaluationInstanceKey) -> None:
     client = CamundaClient()
 
     result = client.get_decision_instance(
-        decision_evaluation_instance_key=DecisionEvaluationInstanceKey("123456"),
+        decision_evaluation_instance_key=decision_evaluation_instance_key,
     )
 
     print(f"Decision instance: {result.decision_definition_id}")
@@ -62,21 +65,21 @@ def search_decision_instances_example() -> None:
 
 
 # region DeleteDecisionInstance
-def delete_decision_instance_example() -> None:
+def delete_decision_instance_example(decision_evaluation_key: DecisionEvaluationKey) -> None:
     client = CamundaClient()
 
     client.delete_decision_instance(
-        decision_evaluation_key=DecisionEvaluationKey("123456"),
+        decision_evaluation_key=decision_evaluation_key,
     )
 # endregion DeleteDecisionInstance
 
 
 # region GetDecisionRequirements
-def get_decision_requirements_example() -> None:
+def get_decision_requirements_example(decision_requirements_key: DecisionRequirementsKey) -> None:
     client = CamundaClient()
 
     result = client.get_decision_requirements(
-        decision_requirements_key=DecisionRequirementsKey("123456"),
+        decision_requirements_key=decision_requirements_key,
     )
 
     print(f"DRD: {result.decision_requirements_name}")
@@ -84,11 +87,11 @@ def get_decision_requirements_example() -> None:
 
 
 # region GetDecisionRequirementsXml
-def get_decision_requirements_xml_example() -> None:
+def get_decision_requirements_xml_example(decision_requirements_key: DecisionRequirementsKey) -> None:
     client = CamundaClient()
 
     xml = client.get_decision_requirements_xml(
-        decision_requirements_key=DecisionRequirementsKey("123456"),
+        decision_requirements_key=decision_requirements_key,
     )
 
     print(f"XML length: {len(xml)}")
@@ -110,11 +113,11 @@ def search_decision_requirements_example() -> None:
 
 
 # region CreateDocumentLink
-def create_document_link_example() -> None:
+def create_document_link_example(document_id: DocumentId) -> None:
     client = CamundaClient()
 
     result = client.create_document_link(
-        document_id=DocumentId("doc-123"),
+        document_id=document_id,
         data=DocumentLinkRequest(),
     )
 
@@ -123,19 +126,19 @@ def create_document_link_example() -> None:
 
 
 # region DeleteDocument
-def delete_document_example() -> None:
+def delete_document_example(document_id: DocumentId) -> None:
     client = CamundaClient()
 
-    client.delete_document(document_id=DocumentId("doc-123"))
+    client.delete_document(document_id=document_id)
 # endregion DeleteDocument
 
 
 # region ThrowJobError
-def throw_job_error_example() -> None:
+def throw_job_error_example(job_key: JobKey) -> None:
     client = CamundaClient()
 
     client.throw_job_error(
-        job_key=JobKey("123456"),
+        job_key=job_key,
         data=JobErrorRequest(
             error_code="VALIDATION_ERROR",
             error_message="Input validation failed",
@@ -145,11 +148,11 @@ def throw_job_error_example() -> None:
 
 
 # region UpdateJob
-def update_job_example() -> None:
+def update_job_example(job_key: JobKey) -> None:
     client = CamundaClient()
 
     client.update_job(
-        job_key=JobKey("123456"),
+        job_key=job_key,
         data=JobUpdateRequest(
             changeset=JobChangeset(
                 retries=3,
@@ -174,11 +177,11 @@ def search_jobs_example() -> None:
 
 
 # region GetUserTask
-def get_user_task_example() -> None:
+def get_user_task_example(user_task_key: UserTaskKey) -> None:
     client = CamundaClient()
 
     result = client.get_user_task(
-        user_task_key=UserTaskKey("123456"),
+        user_task_key=user_task_key,
     )
 
     print(f"User task: {result.user_task_key}")
@@ -186,13 +189,13 @@ def get_user_task_example() -> None:
 
 
 # region UpdateUserTask
-def update_user_task_example() -> None:
+def update_user_task_example(user_task_key: UserTaskKey) -> None:
     from camunda_orchestration_sdk import Changeset, UserTaskUpdateRequest
 
     client = CamundaClient()
 
     client.update_user_task(
-        user_task_key=UserTaskKey("123456"),
+        user_task_key=user_task_key,
         data=UserTaskUpdateRequest(
             changeset=Changeset(
                 priority=80,
@@ -203,11 +206,11 @@ def update_user_task_example() -> None:
 
 
 # region GetUserTaskForm
-def get_user_task_form_example() -> None:
+def get_user_task_form_example(user_task_key: UserTaskKey) -> None:
     client = CamundaClient()
 
     result = client.get_user_task_form(
-        user_task_key=UserTaskKey("123456"),
+        user_task_key=user_task_key,
     )
 
     print(f"Form: {result.form_key}")
@@ -215,11 +218,11 @@ def get_user_task_form_example() -> None:
 
 
 # region SearchUserTaskVariables
-def search_user_task_variables_example() -> None:
+def search_user_task_variables_example(user_task_key: UserTaskKey) -> None:
     client = CamundaClient()
 
     result = client.search_user_task_variables(
-        user_task_key=UserTaskKey("123456"),
+        user_task_key=user_task_key,
     )
 
     if not isinstance(result.items, Unset):
@@ -229,11 +232,11 @@ def search_user_task_variables_example() -> None:
 
 
 # region SearchUserTaskAuditLogs
-def search_user_task_audit_logs_example() -> None:
+def search_user_task_audit_logs_example(user_task_key: UserTaskKey) -> None:
     client = CamundaClient()
 
     result = client.search_user_task_audit_logs(
-        user_task_key=UserTaskKey("123456"),
+        user_task_key=user_task_key,
         data=UserTaskAuditLogSearchQueryRequest(),
     )
 
@@ -245,16 +248,15 @@ def search_user_task_audit_logs_example() -> None:
 
 # region CreateDocument
 def create_document_example() -> None:
-    from camunda_orchestration_sdk import CreateDocumentData, File
+    import io
 
     client = CamundaClient()
 
-    with open("hello.txt", "rb") as f:
-        result = client.create_document(
-            data=CreateDocumentData(
-                file=File(payload=f, file_name="hello.txt"),
-            ),
-        )
+    result = client.create_document(
+        data=CreateDocumentData(
+            file=File(payload=io.BytesIO(b"hello world"), file_name="example.txt"),
+        ),
+    )
 
     print(f"Document ID: {result.document_id}")
 # endregion CreateDocument
@@ -262,52 +264,44 @@ def create_document_example() -> None:
 
 # region CreateDocuments
 def create_documents_example() -> None:
-    from contextlib import ExitStack
-
-    from camunda_orchestration_sdk import CreateDocumentsData, DocumentMetadata, File
+    import io
 
     client = CamundaClient()
 
-    with ExitStack() as stack:
-        f1 = stack.enter_context(open("one.txt", "rb"))
-        f2 = stack.enter_context(open("two.txt", "rb"))
+    result = client.create_documents(
+        data=CreateDocumentsData(
+            files=[
+                File(payload=io.BytesIO(b"file one"), file_name="one.txt"),
+                File(payload=io.BytesIO(b"file two"), file_name="two.txt"),
+            ],
+        ),
+    )
 
-        result = client.create_documents(
-            data=CreateDocumentsData(
-                files=[
-                    File(payload=f1, file_name="one.txt"),
-                    File(payload=f2, file_name="two.txt"),
-                ],
-                metadata_list=[
-                    DocumentMetadata.from_dict({"fileName": "one.txt"}),
-                    DocumentMetadata.from_dict({"fileName": "two.txt"}),
-                ],
-            ),
-        )
-
-    for doc in result.created_documents:
-        print(f"Created: {doc.document_id}")
+    if not isinstance(result.created_documents, Unset):
+        for doc in result.created_documents:
+            print(f"Created document: {doc.document_id}")
 # endregion CreateDocuments
 
 
 # region GetDocument
-def get_document_example() -> None:
+def get_document_example(document_id: DocumentId) -> None:
     client = CamundaClient()
 
-    content = client.get_document(document_id=DocumentId("doc-123"))
+    result = client.get_document(document_id=document_id)
 
-    print(f"Downloaded {len(content.payload.read())} bytes")
+    print(f"File name: {result.file_name}")
 # endregion GetDocument
 
 
 # region SearchUserTaskEffectiveVariables
-def search_user_task_effective_variables_example() -> None:
+def search_user_task_effective_variables_example(user_task_key: UserTaskKey) -> None:
     client = CamundaClient()
 
     result = client.search_user_task_effective_variables(
-        user_task_key=UserTaskKey("123456"),
+        user_task_key=user_task_key,
     )
 
-    for var in result.items:
-        print(f"Variable: {var.name}")
+    if not isinstance(result.items, Unset):
+        for var in result.items:
+            print(f"Variable: {var.name}")
 # endregion SearchUserTaskEffectiveVariables

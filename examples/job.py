@@ -35,11 +35,11 @@ async def activate_jobs_example() -> None:
 
 
 # region CompleteJob
-def complete_job_example() -> None:
+def complete_job_example(job_key: JobKey) -> None:
     client = CamundaClient()
 
     client.complete_job(
-        job_key=JobKey("2251799813685249"),
+        job_key=job_key,
         data=JobCompletionRequest(
             variables=JobCompletionRequestVariables.from_dict(
                 {"paymentId": "PAY-123", "status": "completed"}
@@ -50,11 +50,11 @@ def complete_job_example() -> None:
 
 
 # region FailJob
-def fail_job_example() -> None:
+def fail_job_example(job_key: JobKey) -> None:
     client = CamundaClient()
 
     client.fail_job(
-        job_key=JobKey("2251799813685249"),
+        job_key=job_key,
         data=JobFailRequest(
             retries=2,
             error_message="Payment gateway timeout",

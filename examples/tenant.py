@@ -17,12 +17,12 @@ from camunda_orchestration_sdk import (
 
 
 # region CreateTenant
-def create_tenant_example() -> None:
+def create_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     result = client.create_tenant(
         data=TenantCreateRequest(
-            tenant_id=TenantId("acme-corp"),
+            tenant_id=tenant_id,
             name="Acme Corporation",
         ),
     )
@@ -32,10 +32,10 @@ def create_tenant_example() -> None:
 
 
 # region GetTenant
-def get_tenant_example() -> None:
+def get_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
-    result = client.get_tenant(tenant_id=TenantId("acme-corp"))
+    result = client.get_tenant(tenant_id=tenant_id)
 
     print(f"Tenant: {result.name}")
 # endregion GetTenant
@@ -56,140 +56,140 @@ def search_tenants_example() -> None:
 
 
 # region UpdateTenant
-def update_tenant_example() -> None:
+def update_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     client.update_tenant(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         data=TenantUpdateRequest(name="Acme Corp International"),
     )
 # endregion UpdateTenant
 
 
 # region DeleteTenant
-def delete_tenant_example() -> None:
+def delete_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
-    client.delete_tenant(tenant_id=TenantId("acme-corp"))
+    client.delete_tenant(tenant_id=tenant_id)
 # endregion DeleteTenant
 
 
 # region AssignUserToTenant
-def assign_user_to_tenant_example() -> None:
+def assign_user_to_tenant_example(tenant_id: TenantId, username: Username) -> None:
     client = CamundaClient()
 
     client.assign_user_to_tenant(
-        tenant_id=TenantId("acme-corp"),
-        username=Username("jdoe"),
+        tenant_id=tenant_id,
+        username=username,
     )
 # endregion AssignUserToTenant
 
 
 # region UnassignUserFromTenant
-def unassign_user_from_tenant_example() -> None:
+def unassign_user_from_tenant_example(tenant_id: TenantId, username: Username) -> None:
     client = CamundaClient()
 
     client.unassign_user_from_tenant(
-        tenant_id=TenantId("acme-corp"),
-        username=Username("jdoe"),
+        tenant_id=tenant_id,
+        username=username,
     )
 # endregion UnassignUserFromTenant
 
 
 # region AssignGroupToTenant
-def assign_group_to_tenant_example() -> None:
+def assign_group_to_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     client.assign_group_to_tenant(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         group_id="engineering",
     )
 # endregion AssignGroupToTenant
 
 
 # region UnassignGroupFromTenant
-def unassign_group_from_tenant_example() -> None:
+def unassign_group_from_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     client.unassign_group_from_tenant(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         group_id="engineering",
     )
 # endregion UnassignGroupFromTenant
 
 
 # region AssignRoleToTenant
-def assign_role_to_tenant_example() -> None:
+def assign_role_to_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     client.assign_role_to_tenant(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         role_id="developer",
     )
 # endregion AssignRoleToTenant
 
 
 # region UnassignRoleFromTenant
-def unassign_role_from_tenant_example() -> None:
+def unassign_role_from_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     client.unassign_role_from_tenant(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         role_id="developer",
     )
 # endregion UnassignRoleFromTenant
 
 
 # region AssignClientToTenant
-def assign_client_to_tenant_example() -> None:
+def assign_client_to_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     client.assign_client_to_tenant(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         client_id="my-service-account",
     )
 # endregion AssignClientToTenant
 
 
 # region UnassignClientFromTenant
-def unassign_client_from_tenant_example() -> None:
+def unassign_client_from_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     client.unassign_client_from_tenant(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         client_id="my-service-account",
     )
 # endregion UnassignClientFromTenant
 
 
 # region AssignMappingRuleToTenant
-def assign_mapping_rule_to_tenant_example() -> None:
+def assign_mapping_rule_to_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     client.assign_mapping_rule_to_tenant(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         mapping_rule_id="rule-123",
     )
 # endregion AssignMappingRuleToTenant
 
 
 # region UnassignMappingRuleFromTenant
-def unassign_mapping_rule_from_tenant_example() -> None:
+def unassign_mapping_rule_from_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     client.unassign_mapping_rule_from_tenant(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         mapping_rule_id="rule-123",
     )
 # endregion UnassignMappingRuleFromTenant
 
 
 # region SearchUsersForTenant
-def search_users_for_tenant_example() -> None:
+def search_users_for_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     result = client.search_users_for_tenant(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
     )
 
     if not isinstance(result.items, Unset):
@@ -199,11 +199,11 @@ def search_users_for_tenant_example() -> None:
 
 
 # region SearchClientsForTenant
-def search_clients_for_tenant_example() -> None:
+def search_clients_for_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     result = client.search_clients_for_tenant(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
     )
 
     if not isinstance(result.items, Unset):
@@ -213,11 +213,11 @@ def search_clients_for_tenant_example() -> None:
 
 
 # region SearchGroupIdsForTenant
-def search_group_ids_for_tenant_example() -> None:
+def search_group_ids_for_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     result = client.search_group_ids_for_tenant(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         data=TenantGroupSearchQueryRequest(),
     )
 
@@ -228,11 +228,11 @@ def search_group_ids_for_tenant_example() -> None:
 
 
 # region SearchRolesForTenant
-def search_roles_for_tenant_example() -> None:
+def search_roles_for_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     result = client.search_roles_for_tenant(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         data=RoleSearchQueryRequest(),
     )
 
@@ -243,11 +243,11 @@ def search_roles_for_tenant_example() -> None:
 
 
 # region SearchMappingRulesForTenant
-def search_mapping_rules_for_tenant_example() -> None:
+def search_mapping_rules_for_tenant_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     result = client.search_mapping_rules_for_tenant(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         data=MappingRuleSearchQueryRequest(),
     )
 

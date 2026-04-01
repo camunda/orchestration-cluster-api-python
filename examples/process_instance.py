@@ -54,12 +54,12 @@ def create_process_instance_by_key_from_storage_example() -> None:
 
 
 # region CreateProcessInstanceById
-def create_process_instance_by_id_example() -> None:
+def create_process_instance_by_id_example(process_definition_id: ProcessDefinitionId) -> None:
     client = CamundaClient()
 
     result = client.create_process_instance(
         data=ProcessCreationById(
-            process_definition_id=ProcessDefinitionId("order-process"),
+            process_definition_id=process_definition_id,
         )
     )
 
@@ -68,12 +68,12 @@ def create_process_instance_by_id_example() -> None:
 
 
 # region CancelProcessInstance
-def cancel_process_instance_example() -> None:
+def cancel_process_instance_example(process_definition_id: ProcessDefinitionId) -> None:
     client = CamundaClient()
 
     # Create a process instance and get its key from the response
     created = client.create_process_instance(
-        data=ProcessCreationById(process_definition_id=ProcessDefinitionId("order-process"))
+        data=ProcessCreationById(process_definition_id=process_definition_id)
     )
 
     # Cancel it using the key from the creation response
