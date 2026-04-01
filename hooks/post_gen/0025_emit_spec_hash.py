@@ -11,21 +11,33 @@ and is included in the published PyPI package automatically.
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 
+_SPEC_HASH_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
+
+
 def run(context: dict[str, str]) -> None:
-    metadata_path = context.get("metadata_path", "")
-    if not metadata_path or not Path(metadata_path).exists():
-        print("[emit-spec-hash] spec-metadata.json not found, skipping")
-        return
+    metadata_path_str = context.get("metadata_path", "")
+    metadata_path = Path(metadata_path_str) if metadata_path_str else None
+
+    if not metadata_path or not metadata_path.exists():
+        raise FileNotFoundError(
+            f"[emit-spec-hash] spec-metadata.json not found at "
+            f"{metadata_path_str!r} — cannot emit SPEC_HASH"
+        )
 
     with open(metadata_path, encoding="utf-8") as f:
         metadata = json.load(f)
 
-    spec_hash: str = metadata.get("specHash", "")
-    if not spec_hash.startswith("sha256:"):
-        print(f"[emit-spec-hash] Unexpected specHash format: {spec_hash}")
+    spec_hash: str = metadata.get("specHash", "") or ""
+
+    if not _SPEC_HASH_RE.match(spec_hash):
+        raise ValueError(
+            f"[emit-spec-hash] specHash is missing or invalid "
+            f"(expected sha256:<64 hex chars>): {spec_hash!r}"
+        )
 
     out_dir = Path(context["out_dir"]) / "camunda_orchestration_sdk"
     output_file = out_dir / "_spec_hash.py"

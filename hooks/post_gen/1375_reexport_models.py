@@ -68,8 +68,12 @@ def run(context: dict[str, str]) -> None:
     extra_imports: dict[str, str] = {
         "File": "from .types import File",
         "Unset": "from .types import Unset",
-        "SPEC_HASH": "from ._spec_hash import SPEC_HASH",
     }
+
+    # Only re-export SPEC_HASH if the backing module exists to avoid import errors
+    spec_hash_path = package_dir / "_spec_hash.py"
+    if spec_hash_path.exists():
+        extra_imports["SPEC_HASH"] = "from ._spec_hash import SPEC_HASH"
     # Build a single grouped import for all job_worker names
     _jw_import = (
         "from .runtime.job_worker import (\n"
