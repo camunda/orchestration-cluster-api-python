@@ -70,23 +70,23 @@ def delete_group_example() -> None:
 
 
 # region AssignUserToGroup
-def assign_user_to_group_example() -> None:
+def assign_user_to_group_example(username: Username) -> None:
     client = CamundaClient()
 
     client.assign_user_to_group(
         group_id="engineering",
-        username=Username("jdoe"),
+        username=username,
     )
 # endregion AssignUserToGroup
 
 
 # region UnassignUserFromGroup
-def unassign_user_from_group_example() -> None:
+def unassign_user_from_group_example(username: Username) -> None:
     client = CamundaClient()
 
     client.unassign_user_from_group(
         group_id="engineering",
-        username=Username("jdoe"),
+        username=username,
     )
 # endregion UnassignUserFromGroup
 

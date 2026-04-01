@@ -88,11 +88,11 @@ def delete_global_cluster_variable_example() -> None:
 
 
 # region GetTenantClusterVariable
-def get_tenant_cluster_variable_example() -> None:
+def get_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     result = client.get_tenant_cluster_variable(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         name="my-variable",
     )
 
@@ -101,11 +101,11 @@ def get_tenant_cluster_variable_example() -> None:
 
 
 # region CreateTenantClusterVariable
-def create_tenant_cluster_variable_example() -> None:
+def create_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     result = client.create_tenant_cluster_variable(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         data=CreateClusterVariableRequest(
             name="my-variable",
             value=CreateClusterVariableRequestValue.from_dict({"key": "tenant-value"}),
@@ -117,11 +117,11 @@ def create_tenant_cluster_variable_example() -> None:
 
 
 # region UpdateTenantClusterVariable
-def update_tenant_cluster_variable_example() -> None:
+def update_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     result = client.update_tenant_cluster_variable(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         name="my-variable",
         data=UpdateClusterVariableRequest(
             value=UpdateClusterVariableRequestValue.from_dict({"key": "updated-tenant-value"}),
@@ -133,11 +133,11 @@ def update_tenant_cluster_variable_example() -> None:
 
 
 # region DeleteTenantClusterVariable
-def delete_tenant_cluster_variable_example() -> None:
+def delete_tenant_cluster_variable_example(tenant_id: TenantId) -> None:
     client = CamundaClient()
 
     client.delete_tenant_cluster_variable(
-        tenant_id=TenantId("acme-corp"),
+        tenant_id=tenant_id,
         name="my-variable",
     )
 # endregion DeleteTenantClusterVariable
@@ -174,21 +174,21 @@ def create_global_task_listener_example() -> None:
 
 
 # region GetGlobalTaskListener
-def get_global_task_listener_example() -> None:
+def get_global_task_listener_example(listener_id: GlobalListenerId) -> None:
     client = CamundaClient()
 
-    result = client.get_global_task_listener(id=GlobalListenerId("listener-123"))
+    result = client.get_global_task_listener(id=listener_id)
 
     print(f"Task listener: {result.event_types}")
 # endregion GetGlobalTaskListener
 
 
 # region UpdateGlobalTaskListener
-def update_global_task_listener_example() -> None:
+def update_global_task_listener_example(listener_id: GlobalListenerId) -> None:
     client = CamundaClient()
 
     result = client.update_global_task_listener(
-        id=GlobalListenerId("listener-123"),
+        id=listener_id,
         data=UpdateGlobalTaskListenerRequest(
             event_types=[GlobalTaskListenerEventTypeEnum.COMPLETING],
             type_="updated-task-listener",
@@ -200,10 +200,10 @@ def update_global_task_listener_example() -> None:
 
 
 # region DeleteGlobalTaskListener
-def delete_global_task_listener_example() -> None:
+def delete_global_task_listener_example(listener_id: GlobalListenerId) -> None:
     client = CamundaClient()
 
-    client.delete_global_task_listener(id=GlobalListenerId("listener-123"))
+    client.delete_global_task_listener(id=listener_id)
 # endregion DeleteGlobalTaskListener
 
 
@@ -259,6 +259,16 @@ def get_topology_example() -> None:
 
     print(f"Topology: {result}")
 # endregion GetTopology
+
+
+# region GetStatus
+def get_status_example() -> None:
+    client = CamundaClient()
+
+    client.get_status()
+
+    print("Cluster is healthy")
+# endregion GetStatus
 
 
 # region PinClock
@@ -371,10 +381,10 @@ def search_correlated_message_subscriptions_example() -> None:
 
 
 # region GetAuditLog
-def get_audit_log_example() -> None:
+def get_audit_log_example(audit_log_key: AuditLogKey) -> None:
     client = CamundaClient()
 
-    result = client.get_audit_log(audit_log_key=AuditLogKey("123456"))
+    result = client.get_audit_log(audit_log_key=audit_log_key)
 
     print(f"Audit log: {result.audit_log_key}")
 # endregion GetAuditLog

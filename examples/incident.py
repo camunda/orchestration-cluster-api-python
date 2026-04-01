@@ -25,18 +25,18 @@ def search_incidents_example() -> None:
 
 
 # region GetIncident
-def get_incident_example() -> None:
+def get_incident_example(incident_key: IncidentKey) -> None:
     client = CamundaClient()
 
-    incident = client.get_incident(incident_key=IncidentKey("123456"))
+    incident = client.get_incident(incident_key=incident_key)
 
     print(f"Incident error type: {incident.error_type}")
 # endregion GetIncident
 
 
 # region ResolveIncident
-def resolve_incident_example() -> None:
+def resolve_incident_example(incident_key: IncidentKey) -> None:
     client = CamundaClient()
 
-    client.resolve_incident(incident_key=IncidentKey("123456"))
+    client.resolve_incident(incident_key=incident_key)
 # endregion ResolveIncident

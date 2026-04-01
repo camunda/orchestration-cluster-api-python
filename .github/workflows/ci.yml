@@ -83,6 +83,10 @@ jobs:
       - name: Run tests (Unit and Integration)
         run: make itest
 
+      - name: Check SDK Example Coverage
+        if: matrix.python-version == '3.12'
+        run: python scripts/check_example_coverage.py
+
   lint:
     runs-on: ubuntu-latest
     steps:
