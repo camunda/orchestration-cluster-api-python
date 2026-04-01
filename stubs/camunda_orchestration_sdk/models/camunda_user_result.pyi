@@ -11,7 +11,7 @@ from ..models.tenant_result import TenantResult
 T = TypeVar("T", bound="CamundaUserResult")
 @_attrs_define
 class CamundaUserResult:
-    username: None | Username
+    username: Username
     display_name: None | str
     email: None | str
     authorized_components: list[str]

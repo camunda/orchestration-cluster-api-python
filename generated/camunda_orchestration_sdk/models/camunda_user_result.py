@@ -21,7 +21,7 @@ T = TypeVar("T", bound="CamundaUserResult")
 class CamundaUserResult:
     """
     Attributes:
-        username (None | str): The username of the user. Example: swillis.
+        username (str): The username of the user. Example: swillis.
         display_name (None | str): The display name of the user. Example: Samantha Willis.
         email (None | str): The email of the user. Example: swillis@acme.com.
         authorized_components (list[str]): The web components the user is authorized to use. Example: ['*'].
@@ -33,7 +33,7 @@ class CamundaUserResult:
         can_logout (bool): Flag for understanding if the user is able to perform logout.
     """
 
-    username: None | Username
+    username: Username
     display_name: None | str
     email: None | str
     authorized_components: list[str]
@@ -48,7 +48,6 @@ class CamundaUserResult:
     )
 
     def to_dict(self) -> dict[str, Any]:
-        username: None | Username
         username = self.username
 
         display_name: None | str
@@ -100,19 +99,7 @@ class CamundaUserResult:
         from ..models.tenant_result import TenantResult
 
         d = dict(src_dict)
-
-        def _parse_username(data: object) -> None | str:
-            if data is None:
-                return data
-            return cast(None | str, data)
-
-        _raw_username = _parse_username(d.pop("username"))
-
-        username = (
-            lift_username(_raw_username)
-            if isinstance(_raw_username, str)
-            else _raw_username
-        )
+        username = lift_username(d.pop("username"))
 
         def _parse_display_name(data: object) -> None | str:
             if data is None:
