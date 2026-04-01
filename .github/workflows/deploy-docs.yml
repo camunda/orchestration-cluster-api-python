@@ -73,7 +73,7 @@ jobs:
       - name: Build Docs
         run: make docs-api
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v4
