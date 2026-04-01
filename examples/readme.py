@@ -9,11 +9,6 @@ Edit these examples to update the corresponding README code blocks.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from camunda_orchestration_sdk import ProcessDefinitionKey
-
 
 # ---------- Using the SDK ----------
 
