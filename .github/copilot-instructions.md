@@ -127,14 +127,17 @@ Code blocks in `README.md` are **injected from compilable example files** — do
 ### How it works
 
 1. Wrap code in `examples/readme.py` with `# region RegionName` / `# endregion RegionName` tags.
-2. In `README.md`, place `<!-- snippet:RegionName -->` immediately before the fenced code block.
+2. In `README.md`, place `<!-- snippet-source: examples/readme.py | regions: RegionName -->` immediately before the fenced code block.
 3. Run `python3 scripts/sync-readme-snippets.py` to update README (or the build does it automatically).
-4. Composite regions: `<!-- snippet:A+B -->` concatenates regions A and B separated by a blank line.
+4. Composite regions: `<!-- snippet-source: examples/readme.py | regions: A+B -->` concatenates regions A and B separated by a blank line.
+5. Exempt blocks: use `<!-- snippet-exempt: reason -->` above a code block to exclude it from injection enforcement (e.g. pseudo-code).
+
+The script auto-upgrades legacy `<!-- snippet:Name -->` markers to the new descriptive format.
 
 ### Adding or updating a README example
 
 1. Add/edit the region-tagged code in `examples/readme.py`.
-2. Add/verify the `<!-- snippet:RegionName -->` marker in `README.md`.
+2. Add/verify the `<!-- snippet-source: examples/readme.py | regions: RegionName -->` marker in `README.md`.
 3. Run `python3 scripts/sync-readme-snippets.py` to sync.
 4. Run `uv run pyright` to confirm the example type-checks.
 
