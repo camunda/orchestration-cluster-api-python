@@ -37,6 +37,13 @@ class CamundaSdkConfigPartial(TypedDict):
     CAMUNDA_WORKER_NAME: str
     CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS: str
     CAMUNDA_LOAD_ENVFILE: str
+    CAMUNDA_MTLS_CERT_PATH: str
+    CAMUNDA_MTLS_KEY_PATH: str
+    CAMUNDA_MTLS_CA_PATH: str
+    CAMUNDA_MTLS_CERT: str
+    CAMUNDA_MTLS_KEY: str
+    CAMUNDA_MTLS_CA: str
+    CAMUNDA_MTLS_KEY_PASSPHRASE: str
 CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "ZEEBE_REST_ADDRESS",
     "CAMUNDA_REST_ADDRESS",
@@ -63,6 +70,14 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "CAMUNDA_WORKER_REQUEST_TIMEOUT",
     "CAMUNDA_WORKER_NAME",
     "CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS",
+    # mTLS
+    "CAMUNDA_MTLS_CERT_PATH",
+    "CAMUNDA_MTLS_KEY_PATH",
+    "CAMUNDA_MTLS_CA_PATH",
+    "CAMUNDA_MTLS_CERT",
+    "CAMUNDA_MTLS_KEY",
+    "CAMUNDA_MTLS_CA",
+    "CAMUNDA_MTLS_KEY_PASSPHRASE",
 )
 def _dotenv_values_for(load_envfile: Any) -> dict[str, str]: ...
 def read_environment(environ: Mapping[str, str] | None = None) -> CamundaSdkConfigPartial: ...
@@ -151,6 +166,34 @@ class CamundaSdkConfiguration(BaseModel):
     CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS: float | None = Field(
             default=None,
             description="Default maximum startup jitter in seconds for all workers.",
+        )
+    CAMUNDA_MTLS_CERT_PATH: str | None = Field(
+            default=None,
+            description="Path to client certificate (PEM) for mTLS.",
+        )
+    CAMUNDA_MTLS_KEY_PATH: str | None = Field(
+            default=None,
+            description="Path to client private key (PEM) for mTLS.",
+        )
+    CAMUNDA_MTLS_CA_PATH: str | None = Field(
+            default=None,
+            description="Path to CA certificate bundle (PEM) for mTLS. Optional.",
+        )
+    CAMUNDA_MTLS_CERT: str | None = Field(
+            default=None,
+            description="Inline PEM client certificate. Overrides CAMUNDA_MTLS_CERT_PATH.",
+        )
+    CAMUNDA_MTLS_KEY: str | None = Field(
+            default=None,
+            description="Inline PEM client private key. Overrides CAMUNDA_MTLS_KEY_PATH.",
+        )
+    CAMUNDA_MTLS_CA: str | None = Field(
+            default=None,
+            description="Inline PEM CA bundle. Overrides CAMUNDA_MTLS_CA_PATH.",
+        )
+    CAMUNDA_MTLS_KEY_PASSPHRASE: str | None = Field(
+            default=None,
+            description="Passphrase for encrypted private key.",
         )
     @staticmethod
     def _normalize_rest_address(value: str) -> str: ...

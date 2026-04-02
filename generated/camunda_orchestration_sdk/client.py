@@ -32,6 +32,7 @@ from .runtime.auth import (
     AsyncOAuthClientCredentialsAuthProvider,
     inject_auth_event_hooks,
 )
+from .runtime.tls import build_ssl_context
 from .runtime.logging import CamundaLogger, SdkLogger, create_logger
 from .runtime.backpressure import (
     BackpressureManager,
@@ -744,6 +745,12 @@ class CamundaClient:
                 "CamundaClient no longer accepts token; use configuration-based auth (CAMUNDA_AUTH_STRATEGY) instead."
             )
 
+        # mTLS: build an ssl.SSLContext from CAMUNDA_MTLS_* config and
+        # inject it as verify_ssl (unless the caller supplied one explicitly).
+        _ssl_ctx = build_ssl_context(self.configuration)
+        if _ssl_ctx is not None and "verify_ssl" not in kwargs:
+            kwargs["verify_ssl"] = _ssl_ctx
+
         if auth_provider is None:
             if self.configuration.CAMUNDA_AUTH_STRATEGY == "NONE":
                 auth_provider = NullAuthProvider()
@@ -755,6 +762,20 @@ class CamundaClient:
             elif self.configuration.CAMUNDA_AUTH_STRATEGY == "OAUTH":
                 httpx_args: dict[str, Any] = kwargs.get("httpx_args") or {}
                 transport: Any = httpx_args.get("transport")
+                # Pass the same TLS verification settings used by the main client
+                # to the OAuth token client via transport, so both behave consistently.
+                if transport is None:
+                    if "verify_ssl" in kwargs:
+                        verify_for_oauth = kwargs["verify_ssl"]
+                    elif _ssl_ctx is not None:
+                        verify_for_oauth = _ssl_ctx
+                    else:
+                        verify_for_oauth = None
+
+                    if verify_for_oauth is not None:
+                        import httpx as _httpx
+
+                        transport = _httpx.HTTPTransport(verify=verify_for_oauth)
                 auth_provider = OAuthClientCredentialsAuthProvider(
                     oauth_url=self.configuration.CAMUNDA_OAUTH_URL,
                     client_id=self.configuration.CAMUNDA_CLIENT_ID or "",
@@ -11684,6 +11705,12 @@ class CamundaAsyncClient:
                 "CamundaAsyncClient no longer accepts token; use configuration-based auth (CAMUNDA_AUTH_STRATEGY) instead."
             )
 
+        # mTLS: build an ssl.SSLContext from CAMUNDA_MTLS_* config and
+        # inject it as verify_ssl (unless the caller supplied one explicitly).
+        _ssl_ctx = build_ssl_context(self.configuration)
+        if _ssl_ctx is not None and "verify_ssl" not in kwargs:
+            kwargs["verify_ssl"] = _ssl_ctx
+
         if auth_provider is None:
             if self.configuration.CAMUNDA_AUTH_STRATEGY == "NONE":
                 auth_provider = NullAuthProvider()
@@ -11695,6 +11722,20 @@ class CamundaAsyncClient:
             elif self.configuration.CAMUNDA_AUTH_STRATEGY == "OAUTH":
                 httpx_args: dict[str, Any] = kwargs.get("httpx_args") or {}
                 transport: Any = httpx_args.get("transport")
+                # Pass the same TLS verification settings used by the main client
+                # to the OAuth token client via transport, so both behave consistently.
+                if transport is None:
+                    if "verify_ssl" in kwargs:
+                        verify_for_oauth = kwargs["verify_ssl"]
+                    elif _ssl_ctx is not None:
+                        verify_for_oauth = _ssl_ctx
+                    else:
+                        verify_for_oauth = None
+
+                    if verify_for_oauth is not None:
+                        import httpx as _httpx
+
+                        transport = _httpx.AsyncHTTPTransport(verify=verify_for_oauth)
                 auth_provider = AsyncOAuthClientCredentialsAuthProvider(
                     oauth_url=self.configuration.CAMUNDA_OAUTH_URL,
                     client_id=self.configuration.CAMUNDA_CLIENT_ID or "",

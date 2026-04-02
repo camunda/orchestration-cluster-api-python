@@ -61,6 +61,15 @@ class CamundaSdkConfigPartial(TypedDict, total=False):
     # Optional .env file loading
     CAMUNDA_LOAD_ENVFILE: str
 
+    # mTLS
+    CAMUNDA_MTLS_CERT_PATH: str
+    CAMUNDA_MTLS_KEY_PATH: str
+    CAMUNDA_MTLS_CA_PATH: str
+    CAMUNDA_MTLS_CERT: str
+    CAMUNDA_MTLS_KEY: str
+    CAMUNDA_MTLS_CA: str
+    CAMUNDA_MTLS_KEY_PASSPHRASE: str
+
 
 CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "ZEEBE_REST_ADDRESS",
@@ -88,6 +97,14 @@ CAMUNDA_SDK_CONFIG_KEYS: tuple[str, ...] = (
     "CAMUNDA_WORKER_REQUEST_TIMEOUT",
     "CAMUNDA_WORKER_NAME",
     "CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS",
+    # mTLS
+    "CAMUNDA_MTLS_CERT_PATH",
+    "CAMUNDA_MTLS_KEY_PATH",
+    "CAMUNDA_MTLS_CA_PATH",
+    "CAMUNDA_MTLS_CERT",
+    "CAMUNDA_MTLS_KEY",
+    "CAMUNDA_MTLS_CA",
+    "CAMUNDA_MTLS_KEY_PASSPHRASE",
 )
 
 
@@ -260,6 +277,36 @@ class CamundaSdkConfiguration(BaseModel):
         description="Default maximum startup jitter in seconds for all workers.",
     )
 
+    # mTLS
+    CAMUNDA_MTLS_CERT_PATH: str | None = Field(
+        default=None,
+        description="Path to client certificate (PEM) for mTLS.",
+    )
+    CAMUNDA_MTLS_KEY_PATH: str | None = Field(
+        default=None,
+        description="Path to client private key (PEM) for mTLS.",
+    )
+    CAMUNDA_MTLS_CA_PATH: str | None = Field(
+        default=None,
+        description="Path to CA certificate bundle (PEM) for mTLS. Optional.",
+    )
+    CAMUNDA_MTLS_CERT: str | None = Field(
+        default=None,
+        description="Inline PEM client certificate. Overrides CAMUNDA_MTLS_CERT_PATH.",
+    )
+    CAMUNDA_MTLS_KEY: str | None = Field(
+        default=None,
+        description="Inline PEM client private key. Overrides CAMUNDA_MTLS_KEY_PATH.",
+    )
+    CAMUNDA_MTLS_CA: str | None = Field(
+        default=None,
+        description="Inline PEM CA bundle. Overrides CAMUNDA_MTLS_CA_PATH.",
+    )
+    CAMUNDA_MTLS_KEY_PASSPHRASE: str | None = Field(
+        default=None,
+        description="Passphrase for encrypted private key.",
+    )
+
     @staticmethod
     def _normalize_rest_address(value: str) -> str:
         value = value.strip()
@@ -303,6 +350,23 @@ class CamundaSdkConfiguration(BaseModel):
                 raise ValueError(
                     "CAMUNDA_CLIENT_SECRET is required when CAMUNDA_AUTH_STRATEGY=OAUTH"
                 )
+
+        # TLS / mTLS validation.
+        # - CA-only is valid (trust a self-signed server cert without client identity).
+        # - Client cert and key must come as a pair.
+        # - A passphrase without a client key is invalid.
+        mtls_cert_provided = bool(self.CAMUNDA_MTLS_CERT or self.CAMUNDA_MTLS_CERT_PATH)
+        mtls_key_provided = bool(self.CAMUNDA_MTLS_KEY or self.CAMUNDA_MTLS_KEY_PATH)
+        if mtls_cert_provided != mtls_key_provided:
+            raise ValueError(
+                "Incomplete mTLS configuration: both certificate "
+                "(CAMUNDA_MTLS_CERT or CAMUNDA_MTLS_CERT_PATH) and key "
+                "(CAMUNDA_MTLS_KEY or CAMUNDA_MTLS_KEY_PATH) must be provided together."
+            )
+        if self.CAMUNDA_MTLS_KEY_PASSPHRASE and not mtls_key_provided:
+            raise ValueError(
+                "CAMUNDA_MTLS_KEY_PASSPHRASE is set but no client key was provided."
+            )
 
         return self
 
