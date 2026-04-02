@@ -116,6 +116,26 @@ make clean
 - **Runtime**: `httpx`, `attrs`, `pydantic`, `python-dateutil`, `loguru`, `python-dotenv`, `typing-extensions`.
 - **Development**: `pytest`, `pytest-asyncio`, `pyyaml`, `openapi-python-client`, `jsonref`, `ruff`, `pyright`, `python-semantic-release`, `sphinx`, `sphinx-markdown-builder`, `sphinx-book-theme`, `psutil`, `pydantic-settings`, `fastapi`, `uvicorn`.
 
+## Bug fix process (red/green refactor)
+
+Every bug fix **must** follow the red/green refactor discipline:
+
+1. **Red** — Write a failing test **first**, before changing any production code. The test must fail for the reason you expect (the bug). Commit this separately or demonstrate the failure clearly in the PR.
+2. **Green** — Apply the minimal production fix that makes the test pass.
+3. **Refactor** (optional) — Clean up while keeping all tests green.
+
+### Test scope: target the defect class, not just the instance
+
+The regression test must be broad enough to detect the **class of defect**, not only the specific instance you are fixing. For example, if the bug is "generated model X has a wrong field type", the test should verify that **all** generated models have correct field types — not just model X.
+
+A test that only covers the exact instance provides weaker protection: the same category of bug can recur in a different model without being caught.
+
+### Why
+
+- The failing test **proves** the test can detect this category of defect.
+- The green step **proves** the fix resolves it.
+- A class-scoped test acts as a durable regression guard against future reintroduction of the same pattern.
+
 ## README Code Examples
 
 Code blocks in `README.md` are **injected from compilable example files** — do not edit them inline.
