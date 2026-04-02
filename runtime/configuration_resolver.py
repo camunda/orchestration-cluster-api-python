@@ -351,22 +351,21 @@ class CamundaSdkConfiguration(BaseModel):
                     "CAMUNDA_CLIENT_SECRET is required when CAMUNDA_AUTH_STRATEGY=OAUTH"
                 )
 
-        # mTLS completeness: if any mTLS field is set, both cert and key
-        # must be provided (CA is optional).
+        # TLS / mTLS validation.
+        # - CA-only is valid (trust a self-signed server cert without client identity).
+        # - Client cert and key must come as a pair.
+        # - A passphrase without a client key is invalid.
         mtls_cert_provided = bool(self.CAMUNDA_MTLS_CERT or self.CAMUNDA_MTLS_CERT_PATH)
         mtls_key_provided = bool(self.CAMUNDA_MTLS_KEY or self.CAMUNDA_MTLS_KEY_PATH)
-        mtls_any = (
-            mtls_cert_provided
-            or mtls_key_provided
-            or self.CAMUNDA_MTLS_CA
-            or self.CAMUNDA_MTLS_CA_PATH
-            or self.CAMUNDA_MTLS_KEY_PASSPHRASE
-        )
-        if mtls_any and not (mtls_cert_provided and mtls_key_provided):
+        if mtls_cert_provided != mtls_key_provided:
             raise ValueError(
                 "Incomplete mTLS configuration: both certificate "
                 "(CAMUNDA_MTLS_CERT or CAMUNDA_MTLS_CERT_PATH) and key "
-                "(CAMUNDA_MTLS_KEY or CAMUNDA_MTLS_KEY_PATH) must be provided."
+                "(CAMUNDA_MTLS_KEY or CAMUNDA_MTLS_KEY_PATH) must be provided together."
+            )
+        if self.CAMUNDA_MTLS_KEY_PASSPHRASE and not mtls_key_provided:
+            raise ValueError(
+                "CAMUNDA_MTLS_KEY_PASSPHRASE is set but no client key was provided."
             )
 
         return self

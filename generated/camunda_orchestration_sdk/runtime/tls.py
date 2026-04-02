@@ -1,7 +1,13 @@
-"""Build an ``ssl.SSLContext`` from the unified mTLS configuration.
+"""Build an ``ssl.SSLContext`` from the unified TLS configuration.
 
 This module is the single place that translates ``CAMUNDA_MTLS_*`` config
 fields into a stdlib ``ssl.SSLContext`` that can be handed to httpx.
+
+It supports three modes:
+
+1. **CA-only** — trust a self-signed server certificate (no client identity).
+2. **Client cert + key** — present a client identity using system CAs.
+3. **Full mTLS** — both a custom CA and a client cert/key pair.
 """
 
 from __future__ import annotations
@@ -16,7 +22,14 @@ if TYPE_CHECKING:
 
 
 def build_ssl_context(config: CamundaSdkConfiguration) -> ssl.SSLContext | None:
-    """Return an ``ssl.SSLContext`` configured for mTLS, or ``None``.
+    """Return an ``ssl.SSLContext`` configured for custom TLS, or ``None``.
+
+    Supports three modes:
+
+    1. **CA-only** — trust a self-signed server certificate without presenting
+       a client identity (set ``CAMUNDA_MTLS_CA`` / ``CAMUNDA_MTLS_CA_PATH``).
+    2. **Client cert + key** — present a client identity using system CAs.
+    3. **Full mTLS** — both a custom CA *and* a client cert/key pair.
 
     Returns ``None`` when no ``CAMUNDA_MTLS_*`` fields are set.
 
@@ -33,19 +46,14 @@ def build_ssl_context(config: CamundaSdkConfiguration) -> ssl.SSLContext | None:
     if not cert_pem and not key_pem and not ca_pem:
         return None
 
-    # The config validator already ensures both cert and key are present
-    # when any mTLS field is set, but we guard here for safety.
-    if not cert_pem or not key_pem:
-        raise ValueError("mTLS requires both a client certificate and a private key.")
-
     ctx = ssl.create_default_context()
 
     if ca_pem:
         ctx.load_verify_locations(cadata=ca_pem)
 
-    # ssl.SSLContext.load_cert_chain only accepts file paths, so if we have
-    # inline PEM we write to temp files that are deleted immediately after loading.
-    _load_cert_chain(ctx, cert_pem, key_pem, passphrase)
+    # Client cert + key pair (for mutual TLS).
+    if cert_pem and key_pem:
+        _load_cert_chain(ctx, cert_pem, key_pem, passphrase)
 
     return ctx
 

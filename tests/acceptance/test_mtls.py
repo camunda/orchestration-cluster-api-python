@@ -143,15 +143,26 @@ class TestMtlsConfigValidation:
                 },
             ).resolve()
 
-    def test_ca_only_raises(self) -> None:
-        with pytest.raises(Exception, match="Incomplete mTLS"):
-            ConfigurationResolver(
-                environment={},
-                explicit_configuration={"CAMUNDA_MTLS_CA": _CA_CERT_PEM},
-            ).resolve()
+    def test_ca_only_accepted(self) -> None:
+        """CA-only config is valid — trust a self-signed server cert."""
+        resolved = ConfigurationResolver(
+            environment={},
+            explicit_configuration={"CAMUNDA_MTLS_CA": _CA_CERT_PEM},
+        ).resolve()
+        assert resolved.effective.CAMUNDA_MTLS_CA == _CA_CERT_PEM
+
+    def test_ca_path_only_accepted(self, cert_dir: dict[str, Path]) -> None:
+        """CA path-only config is valid."""
+        resolved = ConfigurationResolver(
+            environment={},
+            explicit_configuration={
+                "CAMUNDA_MTLS_CA_PATH": str(cert_dir["ca"]),
+            },
+        ).resolve()
+        assert resolved.effective.CAMUNDA_MTLS_CA_PATH == str(cert_dir["ca"])
 
     def test_passphrase_only_raises(self) -> None:
-        with pytest.raises(Exception, match="Incomplete mTLS"):
+        with pytest.raises(Exception, match="no client key"):
             ConfigurationResolver(
                 environment={},
                 explicit_configuration={
@@ -203,6 +214,24 @@ class TestBuildSslContext:
     def test_returns_none_when_no_mtls(self) -> None:
         config = CamundaSdkConfiguration()
         assert build_ssl_context(config) is None
+
+    def test_builds_context_from_ca_only(self) -> None:
+        """CA-only → SSLContext trusting the custom CA, no client cert."""
+        config = CamundaSdkConfiguration(
+            CAMUNDA_MTLS_CA=_CA_CERT_PEM,
+        )
+        ctx = build_ssl_context(config)
+        assert ctx is not None
+        assert isinstance(ctx, ssl.SSLContext)
+
+    def test_builds_context_from_ca_path_only(self, cert_dir: dict[str, Path]) -> None:
+        """CA path-only → SSLContext trusting the custom CA, no client cert."""
+        config = CamundaSdkConfiguration(
+            CAMUNDA_MTLS_CA_PATH=str(cert_dir["ca"]),
+        )
+        ctx = build_ssl_context(config)
+        assert ctx is not None
+        assert isinstance(ctx, ssl.SSLContext)
 
     def test_builds_context_from_inline_cert_key(self) -> None:
         config = CamundaSdkConfiguration(
