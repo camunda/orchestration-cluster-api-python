@@ -2,6 +2,27 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.29 (2026-04-02)
+
+### Bug Fixes
+
+- Consistent TLS for OAuth transport + secure temp file permissions
+  ([`b9631c0`](https://github.com/camunda/orchestration-cluster-api-python/commit/b9631c0288399e621674141e1446baaf3ad4a59d))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`881a0d0`](https://github.com/camunda/orchestration-cluster-api-python/commit/881a0d0dd16f6aab87c9a57289c9933c04f42a1f))
+
+### Features
+
+- Support CA-only TLS (self-signed server certs)
+  ([`a354bbb`](https://github.com/camunda/orchestration-cluster-api-python/commit/a354bbb7dc8d0611615056840b11fbd3370a6b5f))
+
+- Support custom TLS certificates (mTLS)
+  ([`36eb691`](https://github.com/camunda/orchestration-cluster-api-python/commit/36eb691826838d6f4ca921169308e7d1b47ed2cc))
+
+
 ## v8.9.0-dev.28 (2026-04-01)
 
 ### Bug Fixes
