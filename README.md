@@ -801,6 +801,13 @@ All `CAMUNDA_*` environment variables recognised by the SDK. These can also be p
 | `CAMUNDA_WORKER_REQUEST_TIMEOUT` | — | Default long-poll request timeout in milliseconds for all workers. |
 | `CAMUNDA_WORKER_NAME` | — | Default worker name for all workers. |
 | `CAMUNDA_WORKER_STARTUP_JITTER_MAX_SECONDS` | — | Default maximum startup jitter in seconds for all workers. |
+| `CAMUNDA_MTLS_CERT_PATH` | — | Path to client certificate (PEM) for mTLS. |
+| `CAMUNDA_MTLS_KEY_PATH` | — | Path to client private key (PEM) for mTLS. |
+| `CAMUNDA_MTLS_CA_PATH` | — | Path to CA certificate bundle (PEM) for mTLS. Optional. |
+| `CAMUNDA_MTLS_CERT` | — | Inline PEM client certificate. Overrides CAMUNDA_MTLS_CERT_PATH. |
+| `CAMUNDA_MTLS_KEY` | — | Inline PEM client private key. Overrides CAMUNDA_MTLS_KEY_PATH. |
+| `CAMUNDA_MTLS_CA` | — | Inline PEM CA bundle. Overrides CAMUNDA_MTLS_CA_PATH. |
+| `CAMUNDA_MTLS_KEY_PASSPHRASE` | — | Passphrase for encrypted private key. |
 | `CAMUNDA_LOAD_ENVFILE` | — | Load configuration from a `.env` file. Set to `true` (or a file path). |
 
 <!-- END_CONFIG_REFERENCE -->

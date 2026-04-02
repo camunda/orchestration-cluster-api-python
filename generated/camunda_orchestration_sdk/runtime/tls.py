@@ -1,0 +1,96 @@
+"""Build an ``ssl.SSLContext`` from the unified mTLS configuration.
+
+This module is the single place that translates ``CAMUNDA_MTLS_*`` config
+fields into a stdlib ``ssl.SSLContext`` that can be handed to httpx.
+"""
+
+from __future__ import annotations
+
+import ssl
+import tempfile
+from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .configuration_resolver import CamundaSdkConfiguration
+
+
+def build_ssl_context(config: CamundaSdkConfiguration) -> ssl.SSLContext | None:
+    """Return an ``ssl.SSLContext`` configured for mTLS, or ``None``.
+
+    Returns ``None`` when no ``CAMUNDA_MTLS_*`` fields are set.
+
+    Inline PEM values (``CAMUNDA_MTLS_CERT``, ``CAMUNDA_MTLS_KEY``,
+    ``CAMUNDA_MTLS_CA``) take precedence over their ``_PATH`` counterparts.
+    """
+
+    # Resolve cert material — inline takes precedence over path.
+    cert_pem = config.CAMUNDA_MTLS_CERT or _read_path(config.CAMUNDA_MTLS_CERT_PATH)
+    key_pem = config.CAMUNDA_MTLS_KEY or _read_path(config.CAMUNDA_MTLS_KEY_PATH)
+    ca_pem = config.CAMUNDA_MTLS_CA or _read_path(config.CAMUNDA_MTLS_CA_PATH)
+    passphrase = config.CAMUNDA_MTLS_KEY_PASSPHRASE
+
+    if not cert_pem and not key_pem and not ca_pem:
+        return None
+
+    # The config validator already ensures both cert and key are present
+    # when any mTLS field is set, but we guard here for safety.
+    if not cert_pem or not key_pem:
+        raise ValueError("mTLS requires both a client certificate and a private key.")
+
+    ctx = ssl.create_default_context()
+
+    if ca_pem:
+        ctx.load_verify_locations(cadata=ca_pem)
+
+    # ssl.SSLContext.load_cert_chain only accepts file paths, so if we have
+    # inline PEM we write to temp files that are deleted immediately after loading.
+    _load_cert_chain(ctx, cert_pem, key_pem, passphrase)
+
+    return ctx
+
+
+def _read_path(path: str | None) -> str | None:
+    """Read a PEM file and return its contents, or ``None``."""
+    if not path:
+        return None
+    p = Path(path)
+    if not p.exists():
+        raise FileNotFoundError(f"mTLS certificate file not found: {path}")
+    return p.read_text(encoding="utf-8")
+
+
+def _load_cert_chain(
+    ctx: ssl.SSLContext,
+    cert_pem: str,
+    key_pem: str,
+    passphrase: str | None,
+) -> None:
+    """Load a cert+key pair into the SSL context.
+
+    ``ssl.SSLContext.load_cert_chain`` requires file paths, so we write
+    inline PEM material to secure temp files, load them, then clean up.
+    """
+    cert_path = _write_temp_pem(cert_pem)
+    key_path = _write_temp_pem(key_pem)
+    try:
+        ctx.load_cert_chain(
+            certfile=str(cert_path),
+            keyfile=str(key_path),
+            password=passphrase or None,
+        )
+    finally:
+        cert_path.unlink(missing_ok=True)
+        key_path.unlink(missing_ok=True)
+
+
+def _write_temp_pem(pem: str) -> Path:
+    """Write PEM material to a secure temporary file and return its path."""
+    fd = tempfile.NamedTemporaryFile(
+        mode="w", suffix=".pem", delete=False, encoding="utf-8"
+    )
+    try:
+        fd.write(pem)
+    finally:
+        fd.close()
+    return Path(fd.name)
