@@ -93,7 +93,14 @@ def _load_cert_chain(
 
 
 def _write_temp_pem(pem: str) -> Path:
-    """Write PEM material to a secure temporary file and return its path."""
+    """Write PEM material to a secure temporary file and return its path.
+
+    The file is created with owner-read/write only (0o600) to protect
+    private key material on disk.  Callers should unlink the file as
+    soon as it has been loaded.
+    """
+    import os
+
     fd = tempfile.NamedTemporaryFile(
         mode="w", suffix=".pem", delete=False, encoding="utf-8"
     )
@@ -101,4 +108,5 @@ def _write_temp_pem(pem: str) -> Path:
         fd.write(pem)
     finally:
         fd.close()
+    os.chmod(fd.name, 0o600)
     return Path(fd.name)
