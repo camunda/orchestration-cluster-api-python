@@ -823,7 +823,9 @@ This is enabled by default with the `BALANCED` profile and requires no configura
 
 Set the profile via the `CAMUNDA_SDK_BACKPRESSURE_PROFILE` environment variable.
 
+<!-- docs:cut:start -->
 For detailed algorithm documentation, see [docs/backpressure.md](docs/backpressure.md).
+<!-- docs:cut:end -->
 
 ## Configuration reference
 
