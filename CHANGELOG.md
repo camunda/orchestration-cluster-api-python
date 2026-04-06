@@ -2,6 +2,33 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.30 (2026-04-06)
+
+### Bug Fixes
+
+- Broken links in docs synced to camunda-docs
+  ([`467ca24`](https://github.com/camunda/orchestration-cluster-api-python/commit/467ca24eb507d40bf3e672aca25ccb8f92c1e696))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`195f237`](https://github.com/camunda/orchestration-cluster-api-python/commit/195f2373ee2a5d74a15846a0dcd44a67ed03e6e3))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`18e0c2a`](https://github.com/camunda/orchestration-cluster-api-python/commit/18e0c2ae4e3e0bf1c47b74ffb5a15cde5d9edba8))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`5d810fa`](https://github.com/camunda/orchestration-cluster-api-python/commit/5d810fa1100201d96bbcebc48b0b082a511a53a8))
+
+### Documentation
+
+- Require red/green refactor discipline for all bug fixes
+  ([`192e54c`](https://github.com/camunda/orchestration-cluster-api-python/commit/192e54cf3c3274eed56b65e0cc2a0dd5d1d468ed))
+
+- Update snippet format and add README examples section to CONTRIBUTING
+  ([`e3ec9fa`](https://github.com/camunda/orchestration-cluster-api-python/commit/e3ec9fac744a5ae657ab3fef10c986996e9b5579))
+
+
 ## v8.9.0-dev.29 (2026-04-02)
 
 ### Bug Fixes
