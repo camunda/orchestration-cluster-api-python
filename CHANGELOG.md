@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.31 (2026-04-06)
+
+### Bug Fixes
+
+- Improve API reference formatting in generated docs
+  ([`f344e13`](https://github.com/camunda/orchestration-cluster-api-python/commit/f344e137c3db2f4a94efbd7c1580911d535e52a4))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`10cc939`](https://github.com/camunda/orchestration-cluster-api-python/commit/10cc93982acd283364b4c3097360e76f11a13b0e))
+
+
 ## v8.9.0-dev.30 (2026-04-06)
 
 ### Bug Fixes
