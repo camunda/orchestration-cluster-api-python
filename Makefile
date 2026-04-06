@@ -1,4 +1,4 @@
-.PHONY: install generate clean test itest docs-api docs-md bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check
+.PHONY: install generate clean test itest docs-api docs-md docs-link-check bundle-spec typecheck-examples clean-docs preview-docs sync-readme sync-readme-check check
 
 # Git ref/branch/tag/SHA in https://github.com/camunda/camunda.git to fetch the OpenAPI spec from.
 # Override like: `make generate SPEC_REF=45369-fix-spec`
@@ -88,8 +88,13 @@ docs-md:
 	uv run python scripts/postprocess_markdown.py ./public/markdown/
 	mkdir -p public/markdown/python-sdk/api-reference
 	mv public/markdown/*.md public/markdown/python-sdk/api-reference/
-	uv run python scripts/generate_landing_page.py
+	uv run python scripts/generate_landing_page.py --validate-links
 	@echo "Markdown docs: ./public/markdown/"
+
+# Validate that generated docs contain no broken links (fast, no Sphinx needed)
+docs-link-check:
+	uv run python scripts/generate_landing_page.py --output-dir public/markdown-check --validate-links
+	rm -rf public/markdown-check
 
 
 config-reference:

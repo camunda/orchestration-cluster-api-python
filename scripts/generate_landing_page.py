@@ -31,6 +31,7 @@ Usage:
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
 
 # Deployment depth: directory levels from Docusaurus docs/ root to the
@@ -45,6 +46,9 @@ _SECTION_PAGE_DEPTH = 2
 _URL_PATH_OVERRIDES: dict[str, str] = {
     "apis-tools/camunda-api-rest/camunda-api-rest-overview": (
         "apis-tools/orchestration-cluster-api-rest/orchestration-cluster-api-rest-overview"
+    ),
+    "components/modeler/bpmn/error-events": (
+        "components/modeler/bpmn/error-events/error-events"
     ),
 }
 
@@ -212,6 +216,46 @@ def generate_pages(readme_path: Path, output_dir: Path) -> None:
         print(f"Generated category metadata: {category_path}")
 
 
+# ---------------------------------------------------------------------------
+# Link validation
+# ---------------------------------------------------------------------------
+
+# Matches markdown links with relative (non-http, non-anchor) targets.
+_RELATIVE_LINK_RE = re.compile(r"\[([^\]]*)\]\((?!https?://|#|mailto:)([^)]+)\)")
+
+
+def validate_generated_links(output_dir: Path) -> list[str]:
+    """Scan generated markdown for relative links that won't resolve in camunda-docs.
+
+    Valid relative links are either:
+    - ``../`` prefixed (pointing up into the camunda-docs tree)
+    - Simple filenames without directory separators (sibling links within the
+      same generated directory, e.g. ``models.md`` from ``index.md``)
+
+    Repo-relative links containing ``/`` (e.g. ``docs/backpressure.md``) will
+    break when the pages are copied into the camunda-docs site.
+
+    Returns a list of human-readable error strings (empty = all good).
+    """
+    errors: list[str] = []
+    for md_file in sorted(output_dir.rglob("*.md")):
+        content = md_file.read_text(encoding="utf-8")
+        for line_no, line in enumerate(content.splitlines(), start=1):
+            for m in _RELATIVE_LINK_RE.finditer(line):
+                target = m.group(2).split("#")[0]  # strip fragment
+                if not target:
+                    continue  # pure anchor
+                if target.startswith("../"):
+                    continue  # valid cross-directory link
+                if "/" not in target:
+                    continue  # valid sibling link (same directory)
+                rel = md_file.relative_to(output_dir)
+                errors.append(
+                    f"  {rel}:{line_no}: repo-relative link [{m.group(1)}]({m.group(2)})"
+                )
+    return errors
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate Docusaurus pages from README"
@@ -226,16 +270,45 @@ def main() -> None:
         default="public/markdown",
         help="Output directory (default: public/markdown)",
     )
+    parser.add_argument(
+        "--validate-links",
+        action="store_true",
+        help="After generation, validate that no repo-relative links survive.",
+    )
     args = parser.parse_args()
 
     readme_path = Path(args.readme)
     output_dir = Path(args.output_dir)
 
     if not readme_path.exists():
-        print(f"Error: {readme_path} not found", file=__import__("sys").stderr)
+        print(f"Error: {readme_path} not found", file=sys.stderr)
         raise SystemExit(1)
 
     generate_pages(readme_path, output_dir)
+
+    if args.validate_links:
+        errors = validate_generated_links(output_dir)
+        if errors:
+            print(
+                f"\n{len(errors)} broken link(s) found in generated docs:",
+                file=sys.stderr,
+            )
+            for err in errors:
+                print(err, file=sys.stderr)
+            print(
+                "\nRelative links must start with '../' to resolve in camunda-docs.",
+                file=sys.stderr,
+            )
+            print(
+                "Wrap repo-only links in <!-- docs:cut:start/end --> markers,",
+                file=sys.stderr,
+            )
+            print(
+                "or add an entry to _URL_PATH_OVERRIDES if the target path changed.",
+                file=sys.stderr,
+            )
+            raise SystemExit(1)
+        print("Link validation passed — no repo-relative links found.")
 
 
 if __name__ == "__main__":
