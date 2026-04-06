@@ -71,8 +71,8 @@ def sync_detailed(
 ) -> Response[GlobalJobStatisticsQueryResult | ProblemDetail]:
     """Global job statistics
 
-     Returns global aggregated counts for jobs. Optionally filter by the creation time window and/or
-    jobType.
+     Returns global aggregated counts for jobs. Filter by the creation time window (required) and
+    optionally by jobType.
 
     Args:
         from_ (datetime.datetime):
@@ -101,8 +101,8 @@ def sync(
 ) -> GlobalJobStatisticsQueryResult:
     """Global job statistics
 
-     Returns global aggregated counts for jobs. Optionally filter by the creation time window and/or
-    jobType.
+     Returns global aggregated counts for jobs. Filter by the creation time window (required) and
+    optionally by jobType.
 
     Args:
         from_ (datetime.datetime):
@@ -166,8 +166,8 @@ async def asyncio_detailed(
 ) -> Response[GlobalJobStatisticsQueryResult | ProblemDetail]:
     """Global job statistics
 
-     Returns global aggregated counts for jobs. Optionally filter by the creation time window and/or
-    jobType.
+     Returns global aggregated counts for jobs. Filter by the creation time window (required) and
+    optionally by jobType.
 
     Args:
         from_ (datetime.datetime):
@@ -196,8 +196,8 @@ async def asyncio(
 ) -> GlobalJobStatisticsQueryResult:
     """Global job statistics
 
-     Returns global aggregated counts for jobs. Optionally filter by the creation time window and/or
-    jobType.
+     Returns global aggregated counts for jobs. Filter by the creation time window (required) and
+    optionally by jobType.
 
     Args:
         from_ (datetime.datetime):
