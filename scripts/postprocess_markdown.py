@@ -58,11 +58,16 @@ PAGE_METADATA: dict[str, dict[str, str]] = {
 }
 
 
+def _unescape_for_code(text: str) -> str:
+    """Remove Sphinx markdown escapes that are unnecessary inside code blocks."""
+    return text.replace("\\*", "*")
+
+
 def simplify_class_heading(match: re.Match[str]) -> str:
     """Transform class heading: keep simple name, move full signature to code block."""
     hashes = match.group(1)
     class_name = match.group(2)
-    params = match.group(3) or ""
+    params = _unescape_for_code(match.group(3) or "")
 
     if params:
         signature = f"class {class_name}({params})"
@@ -77,8 +82,8 @@ def simplify_method_heading(match: re.Match[str]) -> str:
     hashes = match.group(1)
     async_marker = match.group(2) or ""
     method_name = match.group(3)
-    params = match.group(4)
-    return_type = match.group(5) or ""
+    params = _unescape_for_code(match.group(4))
+    return_type = _unescape_for_code(match.group(5) or "")
 
     async_prefix = "async " if async_marker else ""
     if return_type:
@@ -93,7 +98,7 @@ def simplify_property_heading(match: re.Match[str]) -> str:
     """Transform property heading: keep simple name, move type to code block."""
     hashes = match.group(1)
     prop_name = match.group(2)
-    prop_type = match.group(3)
+    prop_type = _unescape_for_code(match.group(3))
 
     return f"{hashes} {prop_name}\n\n```python\n{prop_name}: {prop_type}\n```"
 
@@ -181,6 +186,10 @@ def postprocess_markdown(content: str) -> str:
     # Promote heading levels for proper Docusaurus TOC hierarchy (H3->H2, H4->H3)
     content = re.sub(r"^### \*class\*", "## *class*", content, flags=re.MULTILINE)
     content = re.sub(r"^#### ", "### ", content, flags=re.MULTILINE)
+
+    # Demote "Examples" headings so they nest under the preceding method
+    # instead of appearing as siblings in the sidebar TOC.
+    content = re.sub(r"^### Examples$", "#### Examples", content, flags=re.MULTILINE)
 
     # Simplify class headings and add signature code block
     content = re.sub(
