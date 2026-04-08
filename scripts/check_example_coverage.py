@@ -91,3 +91,57 @@ else:
     missing_path = root_dir / "missing-examples.json"
     if missing_path.exists():
         missing_path.unlink()
+
+# --- Integrity check: every operation-map entry must resolve ---
+
+REGION_START_PATTERNS = [
+    re.compile(r"^\s*//\s*#region\s+(.+?)\s*$"),
+    re.compile(r"^\s*#region\s+(.+?)\s*$"),
+    re.compile(r"^\s*//\s*<([A-Za-z]\w*)>\s*$"),
+    re.compile(r"^\s*#\s*region\s+(.+?)\s*$"),
+]
+
+
+def extract_regions(content: str) -> set[str]:
+    regions: set[str] = set()
+    for line in content.splitlines():
+        for pattern in REGION_START_PATTERNS:
+            m = pattern.match(line)
+            if m:
+                regions.add(m.group(1).strip())
+    return regions
+
+
+examples_dir = root_dir / "examples"
+integrity_errors: list[str] = []
+file_region_cache: dict[Path, set[str]] = {}
+
+for op_id, entries in operation_map.items():
+    if not isinstance(entries, list):
+        integrity_errors.append(f"{op_id}: value is not a list")
+        continue
+    for entry in entries:
+        if not isinstance(entry.get("file"), str) or not entry["file"]:
+            integrity_errors.append(f"{op_id}: entry missing 'file' field")
+            continue
+        if not isinstance(entry.get("region"), str) or not entry["region"]:
+            integrity_errors.append(f"{op_id}: entry missing 'region' field")
+            continue
+        file_path = examples_dir / entry["file"]
+        if not file_path.exists():
+            integrity_errors.append(f"{op_id}: file not found: {entry['file']}")
+            continue
+        if file_path not in file_region_cache:
+            file_region_cache[file_path] = extract_regions(file_path.read_text())
+        if entry["region"] not in file_region_cache[file_path]:
+            integrity_errors.append(
+                f"{op_id}: region \"{entry['region']}\" not found in {entry['file']}"
+            )
+
+if integrity_errors:
+    print(f"\nIntegrity errors ({len(integrity_errors)}):", file=sys.stderr)
+    for err in integrity_errors:
+        print(f"  - {err}", file=sys.stderr)
+    sys.exit(1)
+else:
+    print("Integrity check passed: all files and regions resolve.")
