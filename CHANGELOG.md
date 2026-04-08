@@ -2,6 +2,35 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.32 (2026-04-08)
+
+### Bug Fixes
+
+- Add isinstance(entry, dict) check before accessing entry fields
+  ([`47cda2c`](https://github.com/camunda/orchestration-cluster-api-python/commit/47cda2c23dedd9c083cbe376a11a85a273f58175))
+
+- Broken links in docs synced to camunda-docs
+  ([`efc1258`](https://github.com/camunda/orchestration-cluster-api-python/commit/efc12586d0521145a4daf0dfdb37c3cab70042aa))
+
+- Shorten discriminant labels for multi-entry operations
+  ([`88a8839`](https://github.com/camunda/orchestration-cluster-api-python/commit/88a88392991fbb01ba13b211948f4fb33099f410))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`a5a7ed9`](https://github.com/camunda/orchestration-cluster-api-python/commit/a5a7ed9561b3e866ca0f5b4b7ee3f930e1f724fe))
+
+### Features
+
+- Add imports field to operation-map entries
+  ([`aeee349`](https://github.com/camunda/orchestration-cluster-api-python/commit/aeee349233b623c0a8f8be3d35962cd0deafe625))
+
+### Refactoring
+
+- Move imports to defaultImports in docusaurus config
+  ([`9504c1a`](https://github.com/camunda/orchestration-cluster-api-python/commit/9504c1ac2f2b61ad419d4d66929ea6e037e46a8f))
+
+
 ## v8.9.0-dev.31 (2026-04-06)
 
 ### Bug Fixes
