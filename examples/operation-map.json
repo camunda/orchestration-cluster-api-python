@@ -19,13 +19,13 @@
         {
             "file": "deployment.py",
             "region": "DeployResources",
-            "label": "Deploy resources from files",
+            "label": "From files",
             "imports": "from camunda_orchestration_sdk import CamundaClient"
         },
         {
             "file": "deployment.py",
             "region": "DeployResourcesWithTenant",
-            "label": "Deploy resources with tenant ID",
+            "label": "With tenant ID",
             "imports": "from camunda_orchestration_sdk import CamundaClient"
         }
     ],
@@ -41,19 +41,19 @@
         {
             "file": "process_instance.py",
             "region": "CreateProcessInstanceByKey",
-            "label": "Create by process definition key",
+            "label": "By key",
             "imports": "from camunda_orchestration_sdk import CamundaClient"
         },
         {
             "file": "process_instance.py",
             "region": "CreateProcessInstanceByKeyFromStorage",
-            "label": "Create from a stored key",
+            "label": "By stored key",
             "imports": "from camunda_orchestration_sdk import CamundaClient"
         },
         {
             "file": "process_instance.py",
             "region": "CreateProcessInstanceById",
-            "label": "Create by process definition ID",
+            "label": "By ID",
             "imports": "from camunda_orchestration_sdk import CamundaClient"
         }
     ],
@@ -101,13 +101,13 @@
         {
             "file": "decision.py",
             "region": "EvaluateDecisionByKey",
-            "label": "Evaluate by decision definition key",
+            "label": "By key",
             "imports": "from camunda_orchestration_sdk import CamundaClient"
         },
         {
             "file": "decision.py",
             "region": "EvaluateDecisionById",
-            "label": "Evaluate by decision definition ID",
+            "label": "By ID",
             "imports": "from camunda_orchestration_sdk import CamundaClient"
         }
     ],
