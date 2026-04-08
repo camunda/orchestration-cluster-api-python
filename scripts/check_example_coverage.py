@@ -121,6 +121,9 @@ for op_id, entries in operation_map.items():
         integrity_errors.append(f"{op_id}: value is not a list")
         continue
     for entry in entries:
+        if not isinstance(entry, dict):
+            integrity_errors.append(f"{op_id}: entry is not an object (got {type(entry).__name__})")
+            continue
         if not isinstance(entry.get("file"), str) or not entry["file"]:
             integrity_errors.append(f"{op_id}: entry missing 'file' field")
             continue
