@@ -132,7 +132,9 @@ for op_id, entries in operation_map.items():
             integrity_errors.append(f"{op_id}: file not found: {entry['file']}")
             continue
         if file_path not in file_region_cache:
-            file_region_cache[file_path] = extract_regions(file_path.read_text())
+            file_region_cache[file_path] = extract_regions(
+                file_path.read_text(encoding="utf-8")
+            )
         if entry["region"] not in file_region_cache[file_path]:
             integrity_errors.append(
                 f"{op_id}: region \"{entry['region']}\" not found in {entry['file']}"
