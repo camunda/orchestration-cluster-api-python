@@ -2578,7 +2578,7 @@ class CamundaClient:
             EvaluateDecisionResult
 
         Examples:
-            **Evaluate by decision definition key:**
+            **By key:**
 
             .. code-block:: python
 
@@ -2593,7 +2593,7 @@ class CamundaClient:
 
                     print(f"Decision key: {result.decision_definition_key}")
 
-            **Evaluate by decision definition ID:**
+            **By ID:**
 
             .. code-block:: python
 
@@ -7134,7 +7134,7 @@ class CamundaClient:
             CreateProcessInstanceResult
 
         Examples:
-            **Create by process definition key:**
+            **By key:**
 
             .. code-block:: python
 
@@ -7154,7 +7154,7 @@ class CamundaClient:
 
                     print(f"Process instance key: {result.process_instance_key}")
 
-            **Create from a stored key:**
+            **By stored key:**
 
             .. code-block:: python
 
@@ -7172,7 +7172,7 @@ class CamundaClient:
 
                     print(f"Process instance key: {result.process_instance_key}")
 
-            **Create by process definition ID:**
+            **By ID:**
 
             .. code-block:: python
 
@@ -8138,7 +8138,7 @@ class CamundaClient:
             DeploymentResult
 
         Examples:
-            **Deploy resources from files:**
+            **From files:**
 
             .. code-block:: python
 
@@ -8157,7 +8157,7 @@ class CamundaClient:
                     for decision in result.decisions:
                         print(f"  Decision: {decision.decision_definition_id}")
 
-            **Deploy resources with tenant ID:**
+            **With tenant ID:**
 
             .. code-block:: python
 
@@ -13621,7 +13621,7 @@ class CamundaAsyncClient:
             EvaluateDecisionResult
 
         Examples:
-            **Evaluate by decision definition key:**
+            **By key:**
 
             .. code-block:: python
 
@@ -13636,7 +13636,7 @@ class CamundaAsyncClient:
 
                     print(f"Decision key: {result.decision_definition_key}")
 
-            **Evaluate by decision definition ID:**
+            **By ID:**
 
             .. code-block:: python
 
@@ -18195,7 +18195,7 @@ class CamundaAsyncClient:
             CreateProcessInstanceResult
 
         Examples:
-            **Create by process definition key:**
+            **By key:**
 
             .. code-block:: python
 
@@ -18215,7 +18215,7 @@ class CamundaAsyncClient:
 
                     print(f"Process instance key: {result.process_instance_key}")
 
-            **Create from a stored key:**
+            **By stored key:**
 
             .. code-block:: python
 
@@ -18233,7 +18233,7 @@ class CamundaAsyncClient:
 
                     print(f"Process instance key: {result.process_instance_key}")
 
-            **Create by process definition ID:**
+            **By ID:**
 
             .. code-block:: python
 
@@ -19199,7 +19199,7 @@ class CamundaAsyncClient:
             DeploymentResult
 
         Examples:
-            **Deploy resources from files:**
+            **From files:**
 
             .. code-block:: python
 
@@ -19218,7 +19218,7 @@ class CamundaAsyncClient:
                     for decision in result.decisions:
                         print(f"  Decision: {decision.decision_definition_id}")
 
-            **Deploy resources with tenant ID:**
+            **With tenant ID:**
 
             .. code-block:: python
 
