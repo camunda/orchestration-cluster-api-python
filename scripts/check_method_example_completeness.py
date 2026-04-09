@@ -112,9 +112,21 @@ if operation_map_path.exists():
     with open(operation_map_path) as f:
         operation_map = json.load(f)
 
+# Build per-file region caches for operation-map validation
+_file_region_cache: dict[str, set[str]] = {}
+
+
+def _get_file_regions(filename: str) -> set[str]:
+    if filename not in _file_region_cache:
+        fp = examples_dir / filename
+        _file_region_cache[filename] = extract_regions(fp) if fp.exists() else set()
+    return _file_region_cache[filename]
+
+
 # ── Step 4: Match methods to example regions ─────────────────────────────────
 
 methods_with_examples: set[str] = set()
+broken_map_refs: list[str] = []
 
 for method in all_methods:
     pascal = _to_pascal_case(method)
@@ -124,9 +136,21 @@ for method in all_methods:
         methods_with_examples.add(method)
         continue
 
-    # Check 2: operationId entry in operation-map.json (snake_case key)
+    # Check 2: operationId entry in operation-map.json with valid file+region
     if method in operation_map:
-        methods_with_examples.add(method)
+        entries = operation_map[method]
+        has_valid = False
+        for entry in entries:
+            file = entry.get("file", "")
+            region = entry.get("region", "")
+            if region in _get_file_regions(file):
+                has_valid = True
+            else:
+                broken_map_refs.append(
+                    f"{method}: file={file!r} region={region!r}"
+                )
+        if has_valid:
+            methods_with_examples.add(method)
         continue
 
 # ── Step 5: Report ───────────────────────────────────────────────────────────
@@ -153,7 +177,17 @@ if missing:
     )
     exit_code = 1
 
+if broken_map_refs:
+    print(
+        f"\n✗ {len(broken_map_refs)} broken operation-map reference(s):",
+        file=sys.stderr,
+    )
+    for ref in broken_map_refs:
+        print(f"  - {ref}", file=sys.stderr)
+    exit_code = 1
+
 if exit_code == 0:
     print("\n✓ All public methods have example regions.")
+    print("✓ All operation-map references resolve.")
 
 sys.exit(exit_code)
