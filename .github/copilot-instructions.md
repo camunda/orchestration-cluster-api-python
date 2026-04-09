@@ -138,6 +138,14 @@ A test that only covers the exact instance provides weaker protection: the same 
 
 ## README Code Examples
 
+### API spec examples: prefer ergonomic helpers
+
+The `examples/operation-map.json` file maps OpenAPI `operationId`s to example regions that are displayed in the Camunda docs API reference (via `docusaurus-plugin-openapi-docs`).
+
+When an ergonomic helper method exists for a generated operation, the operation-map entry **must** point to the helper — not to the raw generated method. Users should see the best developer experience by default.
+
+Example: `create_deployment` maps to `DeployResources` (`deploy_resources_from_files` helper) instead of the raw `create_deployment` (requires manual multipart form construction). This preference is consistent across all three SDK repos (C#, TypeScript, Python).
+
 Code blocks in `README.md` are **injected from compilable example files** — do not edit them inline.
 
 - **Source of truth**: `examples/readme.py` (type-checked by pyright during build)
