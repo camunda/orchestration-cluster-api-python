@@ -87,6 +87,10 @@ jobs:
         if: matrix.python-version == '3.12'
         run: python scripts/check_example_coverage.py
 
+      - name: Check Method Example Completeness
+        if: matrix.python-version == '3.12'
+        run: python scripts/check_method_example_completeness.py
+
   lint:
     runs-on: ubuntu-latest
     steps:
