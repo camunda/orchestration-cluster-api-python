@@ -2,6 +2,27 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.33 (2026-04-09)
+
+### Bug Fixes
+
+- Add missing example regions for hand-written client methods
+  ([`3f010a3`](https://github.com/camunda/orchestration-cluster-api-python/commit/3f010a370a44aa6c57a42fd0053311303276a898))
+
+- Validate operation-map file+region references exist
+  ([`bc86c4d`](https://github.com/camunda/orchestration-cluster-api-python/commit/bc86c4d730ac07c6e049f3646f1c31093e694d59))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`e6d10b5`](https://github.com/camunda/orchestration-cluster-api-python/commit/e6d10b580697dcd5c210a962642ed0aa841f9fee))
+
+### Testing
+
+- Add CI guard for method example completeness
+  ([`71c5f54`](https://github.com/camunda/orchestration-cluster-api-python/commit/71c5f54f39626641e7555ba0cc93b891a8dc59cf))
+
+
 ## v8.9.0-dev.32 (2026-04-08)
 
 ### Bug Fixes
