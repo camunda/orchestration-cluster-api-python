@@ -28,15 +28,16 @@ def _build_semantic_type_map(package_path: Path) -> dict[str, str]:
         tree = ast.parse(f.read())
     mapping: dict[str, str] = {}
     for node in tree.body:
-        if isinstance(node, ast.Assign) and len(node.targets) == 1:
-            target = node.targets[0]
-            if isinstance(target, ast.Name) and isinstance(node.value, ast.Call):
-                call = node.value
-                if isinstance(call.func, ast.Name) and call.func.id == "NewType":
-                    type_name = target.id
+        # Detect class definitions that inherit from str/int/float/bool
+        if isinstance(node, ast.ClassDef):
+            # Check if this class inherits from a base type (str, int, float, bool)
+            for base in node.bases:
+                if isinstance(base, ast.Name) and base.id in {"str", "int", "float", "bool"}:
+                    type_name = node.name
                     s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", type_name)
                     snake = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
                     mapping[snake] = type_name
+                    break
     return mapping
 
 
