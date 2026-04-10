@@ -156,7 +156,7 @@ def _emit_semantic_types_py(
             )
         
         # Call parent class constructor
-        class_def.append(f'\t\treturn super().__new__(cls, value)\n\n')
+        class_def.append('\t\treturn super().__new__(cls, value)\n\n')
         
         lines.extend(class_def)
 
