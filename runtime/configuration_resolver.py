@@ -43,7 +43,7 @@ class CamundaSdkConfigPartial(TypedDict, total=False):
 
     # Optional OAuth disk cache / tarpit persistence
     CAMUNDA_TOKEN_CACHE_DIR: str
-    CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool
+    CAMUNDA_TOKEN_DISK_CACHE_DISABLE: str
 
     # Backpressure profile
     CAMUNDA_SDK_BACKPRESSURE_PROFILE: str
@@ -469,9 +469,14 @@ class ConfigurationResolver:
 
         return ResolvedCamundaSdkConfiguration(
             effective=effective,
-            environment=cast(CamundaSdkConfigPartial, self._environment),
-            explicit=cast(CamundaSdkConfigPartial, self._explicit) if self._explicit is not None else None,
+            environment=self._filter_partial_config(self._environment),
+            explicit=self._filter_partial_config(self._explicit) if self._explicit is not None else None,
         )
+
+    @staticmethod
+    def _filter_partial_config(values: Mapping[str, Any]) -> CamundaSdkConfigPartial:
+        allowed = CamundaSdkConfiguration.model_fields
+        return cast(CamundaSdkConfigPartial, {k: v for k, v in values.items() if k in allowed})
 
     @classmethod
     def _apply_alias_resolution(

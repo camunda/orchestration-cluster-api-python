@@ -75,7 +75,7 @@ class TestConstruction:
     @pytest.mark.parametrize(
         "_type,value",
         STR_KEY_SAMPLES,
-        ids=lambda x: getattr(x, "__name__", str(x)),
+        ids=lambda x: x.__name__ if hasattr(x, "__name__") else str(x),
     )
     def test_constructor_returns_value_for_valid_input(
         self, _type: Callable[..., Any], value: str
@@ -141,7 +141,7 @@ class TestStrSubtype:
     @pytest.mark.parametrize(
         "_type,value",
         STR_KEY_SAMPLES,
-        ids=lambda x: getattr(x, "__name__", str(x)),
+        ids=lambda x: x.__name__ if hasattr(x, "__name__") else str(x),
     )
     def test_isinstance_str(
         self, _type: Callable[..., Any], value: str
@@ -284,7 +284,7 @@ class TestDisjointness:
     @pytest.mark.parametrize(
         "_type,value",
         STR_KEY_SAMPLES,
-        ids=lambda x: getattr(x, "__name__", str(x)),
+        ids=lambda x: x.__name__ if hasattr(x, "__name__") else str(x),
     )
     def test_every_constructed_value_runtime_type_is_semantic_class(
         self, _type: Callable[..., Any], value: str
