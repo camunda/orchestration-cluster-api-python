@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementId, lift_element_id
+from camunda_orchestration_sdk.semantic_types import ElementId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -67,7 +67,7 @@ class JobResultActivateElement:
 
         d = dict(src_dict)
         element_id = (
-            lift_element_id(_val)
+            ElementId(_val)
             if (_val := d.pop("elementId", UNSET)) is not UNSET
             else UNSET
         )

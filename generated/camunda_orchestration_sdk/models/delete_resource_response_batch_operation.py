@@ -1,8 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    BatchOperationKey,
-    lift_batch_operation_key,
-)
+from camunda_orchestration_sdk.semantic_types import BatchOperationKey
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -55,7 +52,7 @@ class DeleteResourceResponseBatchOperation:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        batch_operation_key = lift_batch_operation_key(d.pop("batchOperationKey"))
+        batch_operation_key = BatchOperationKey(d.pop("batchOperationKey"))
 
         batch_operation_type = BatchOperationTypeEnum(d.pop("batchOperationType"))
 

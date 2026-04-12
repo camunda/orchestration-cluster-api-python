@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    SignalKey,
-    TenantId,
-    lift_signal_key,
-    lift_tenant_id,
-)
+from camunda_orchestration_sdk.semantic_types import SignalKey, TenantId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -50,9 +45,9 @@ class SignalBroadcastResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
-        signal_key = lift_signal_key(d.pop("signalKey"))
+        signal_key = SignalKey(d.pop("signalKey"))
 
         signal_broadcast_result = cls(
             tenant_id=tenant_id,

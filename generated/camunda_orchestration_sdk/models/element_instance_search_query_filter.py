@@ -7,13 +7,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionKey,
     ProcessInstanceKey,
     TenantId,
-    lift_element_id,
-    lift_element_instance_key,
-    lift_incident_key,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_tenant_id,
 )
 
 import datetime
@@ -186,7 +179,7 @@ class ElementInstanceSearchQueryFilter:
 
         d = dict(src_dict)
         process_definition_id = (
-            lift_process_definition_id(_val)
+            ProcessDefinitionId(_val)
             if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
             else UNSET
         )
@@ -224,7 +217,7 @@ class ElementInstanceSearchQueryFilter:
             type_ = ElementInstanceSearchQueryFilterType(_type_)
 
         element_id = (
-            lift_element_id(_val)
+            ElementId(_val)
             if (_val := d.pop("elementId", UNSET)) is not UNSET
             else UNSET
         )
@@ -234,31 +227,29 @@ class ElementInstanceSearchQueryFilter:
         has_incident = d.pop("hasIncident", UNSET)
 
         tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
+            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
         )
 
         element_instance_key = (
-            lift_element_instance_key(_val)
+            ElementInstanceKey(_val)
             if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET
             else UNSET
         )
 
         process_instance_key = (
-            lift_process_instance_key(_val)
+            ProcessInstanceKey(_val)
             if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
             else UNSET
         )
 
         process_definition_key = (
-            lift_process_definition_key(_val)
+            ProcessDefinitionKey(_val)
             if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
             else UNSET
         )
 
         incident_key = (
-            lift_incident_key(_val)
+            IncidentKey(_val)
             if (_val := d.pop("incidentKey", UNSET)) is not UNSET
             else UNSET
         )

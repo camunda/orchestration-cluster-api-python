@@ -4,10 +4,6 @@ from camunda_orchestration_sdk.semantic_types import (
     DecisionDefinitionKey,
     DecisionRequirementsKey,
     TenantId,
-    lift_decision_definition_id,
-    lift_decision_definition_key,
-    lift_decision_requirements_key,
-    lift_tenant_id,
 )
 
 from collections.abc import Mapping
@@ -87,23 +83,19 @@ class DeploymentMetadataResultDecisionDefinition:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        decision_definition_id = lift_decision_definition_id(
-            d.pop("decisionDefinitionId")
-        )
+        decision_definition_id = DecisionDefinitionId(d.pop("decisionDefinitionId"))
 
         version = d.pop("version")
 
         name = d.pop("name")
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
         decision_requirements_id = d.pop("decisionRequirementsId")
 
-        decision_definition_key = lift_decision_definition_key(
-            d.pop("decisionDefinitionKey")
-        )
+        decision_definition_key = DecisionDefinitionKey(d.pop("decisionDefinitionKey"))
 
-        decision_requirements_key = lift_decision_requirements_key(
+        decision_requirements_key = DecisionRequirementsKey(
             d.pop("decisionRequirementsKey")
         )
 

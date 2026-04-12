@@ -1,8 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    BatchOperationKey,
-    lift_batch_operation_key,
-)
+from camunda_orchestration_sdk.semantic_types import BatchOperationKey
 
 import datetime
 from collections.abc import Mapping
@@ -123,7 +120,7 @@ class BatchOperationResponse:
         from ..models.batch_operation_error import BatchOperationError
 
         d = dict(src_dict)
-        batch_operation_key = lift_batch_operation_key(d.pop("batchOperationKey"))
+        batch_operation_key = BatchOperationKey(d.pop("batchOperationKey"))
 
         state = BatchOperationStateEnum(d.pop("state"))
 

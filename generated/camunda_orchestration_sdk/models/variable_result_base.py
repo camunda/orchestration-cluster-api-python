@@ -4,10 +4,7 @@ from camunda_orchestration_sdk.semantic_types import (
     ScopeKey,
     TenantId,
     VariableKey,
-    lift_process_instance_key,
     lift_scope_key,
-    lift_tenant_id,
-    lift_variable_key,
 )
 
 from collections.abc import Mapping
@@ -87,9 +84,9 @@ class VariableResultBase:
         d = dict(src_dict)
         name = d.pop("name")
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
-        variable_key = lift_variable_key(d.pop("variableKey"))
+        variable_key = VariableKey(d.pop("variableKey"))
 
         def _parse_scope_key(data: object) -> str:
             return cast(str, data)
@@ -98,7 +95,7 @@ class VariableResultBase:
 
         scope_key = lift_scope_key(_raw_scope_key)
 
-        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -110,7 +107,7 @@ class VariableResultBase:
         )
 
         root_process_instance_key = (
-            lift_process_instance_key(_raw_root_process_instance_key)
+            ProcessInstanceKey(_raw_root_process_instance_key)
             if isinstance(_raw_root_process_instance_key, str)
             else _raw_root_process_instance_key
         )

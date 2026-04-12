@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    DeploymentKey,
-    TenantId,
-    lift_deployment_key,
-    lift_tenant_id,
-)
+from camunda_orchestration_sdk.semantic_types import DeploymentKey, TenantId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -64,9 +59,9 @@ class DeploymentResult:
         from ..models.deployment_metadata_result import DeploymentMetadataResult
 
         d = dict(src_dict)
-        deployment_key = lift_deployment_key(d.pop("deploymentKey"))
+        deployment_key = DeploymentKey(d.pop("deploymentKey"))
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
         deployments: list[DeploymentMetadataResult] = []
         _deployments = d.pop("deployments")

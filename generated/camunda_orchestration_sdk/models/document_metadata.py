@@ -2,8 +2,6 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessInstanceKey,
-    lift_process_definition_id,
-    lift_process_instance_key,
 )
 
 import datetime
@@ -112,13 +110,13 @@ class DocumentMetadata:
         size = d.pop("size", UNSET)
 
         process_definition_id = (
-            lift_process_definition_id(_val)
+            ProcessDefinitionId(_val)
             if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
             else UNSET
         )
 
         process_instance_key = (
-            lift_process_instance_key(_val)
+            ProcessInstanceKey(_val)
             if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
             else UNSET
         )

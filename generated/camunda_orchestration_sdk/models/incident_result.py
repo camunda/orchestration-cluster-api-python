@@ -8,14 +8,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionKey,
     ProcessInstanceKey,
     TenantId,
-    lift_element_id,
-    lift_element_instance_key,
-    lift_incident_key,
-    lift_job_key,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_tenant_id,
 )
 
 import datetime
@@ -130,27 +122,25 @@ class IncidentResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
         error_type = IncidentResultErrorType(d.pop("errorType"))
 
         error_message = d.pop("errorMessage")
 
-        element_id = lift_element_id(d.pop("elementId"))
+        element_id = ElementId(d.pop("elementId"))
 
         creation_time = isoparse(d.pop("creationTime"))
 
         state = IncidentResultState(d.pop("state"))
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
-        incident_key = lift_incident_key(d.pop("incidentKey"))
+        incident_key = IncidentKey(d.pop("incidentKey"))
 
-        process_definition_key = lift_process_definition_key(
-            d.pop("processDefinitionKey")
-        )
+        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
 
-        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -162,12 +152,12 @@ class IncidentResult:
         )
 
         root_process_instance_key = (
-            lift_process_instance_key(_raw_root_process_instance_key)
+            ProcessInstanceKey(_raw_root_process_instance_key)
             if isinstance(_raw_root_process_instance_key, str)
             else _raw_root_process_instance_key
         )
 
-        element_instance_key = lift_element_instance_key(d.pop("elementInstanceKey"))
+        element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
 
         def _parse_job_key(data: object) -> None | str:
             if data is None:
@@ -177,9 +167,7 @@ class IncidentResult:
         _raw_job_key = _parse_job_key(d.pop("jobKey"))
 
         job_key = (
-            lift_job_key(_raw_job_key)
-            if isinstance(_raw_job_key, str)
-            else _raw_job_key
+            JobKey(_raw_job_key) if isinstance(_raw_job_key, str) else _raw_job_key
         )
 
         incident_result = cls(

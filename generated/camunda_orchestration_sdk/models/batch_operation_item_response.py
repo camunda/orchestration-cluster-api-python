@@ -2,8 +2,6 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
     BatchOperationKey,
     ProcessInstanceKey,
-    lift_batch_operation_key,
-    lift_process_instance_key,
 )
 
 import datetime
@@ -98,11 +96,11 @@ class BatchOperationItemResponse:
         d = dict(src_dict)
         operation_type = BatchOperationTypeEnum(d.pop("operationType"))
 
-        batch_operation_key = lift_batch_operation_key(d.pop("batchOperationKey"))
+        batch_operation_key = BatchOperationKey(d.pop("batchOperationKey"))
 
         item_key = d.pop("itemKey")
 
-        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -114,7 +112,7 @@ class BatchOperationItemResponse:
         )
 
         root_process_instance_key = (
-            lift_process_instance_key(_raw_root_process_instance_key)
+            ProcessInstanceKey(_raw_root_process_instance_key)
             if isinstance(_raw_root_process_instance_key, str)
             else _raw_root_process_instance_key
         )

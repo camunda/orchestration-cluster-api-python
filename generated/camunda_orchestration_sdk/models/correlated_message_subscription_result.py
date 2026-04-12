@@ -8,14 +8,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionKey,
     ProcessInstanceKey,
     TenantId,
-    lift_element_id,
-    lift_element_instance_key,
-    lift_message_key,
-    lift_message_subscription_key,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_tenant_id,
 )
 
 import datetime
@@ -141,7 +133,7 @@ class CorrelatedMessageSubscriptionResult:
 
         correlation_time = isoparse(d.pop("correlationTime"))
 
-        element_id = lift_element_id(d.pop("elementId"))
+        element_id = ElementId(d.pop("elementId"))
 
         def _parse_element_instance_key(data: object) -> None | str:
             if data is None:
@@ -153,24 +145,22 @@ class CorrelatedMessageSubscriptionResult:
         )
 
         element_instance_key = (
-            lift_element_instance_key(_raw_element_instance_key)
+            ElementInstanceKey(_raw_element_instance_key)
             if isinstance(_raw_element_instance_key, str)
             else _raw_element_instance_key
         )
 
-        message_key = lift_message_key(d.pop("messageKey"))
+        message_key = MessageKey(d.pop("messageKey"))
 
         message_name = d.pop("messageName")
 
         partition_id = d.pop("partitionId")
 
-        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
-        process_definition_key = lift_process_definition_key(
-            d.pop("processDefinitionKey")
-        )
+        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
 
-        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -182,14 +172,14 @@ class CorrelatedMessageSubscriptionResult:
         )
 
         root_process_instance_key = (
-            lift_process_instance_key(_raw_root_process_instance_key)
+            ProcessInstanceKey(_raw_root_process_instance_key)
             if isinstance(_raw_root_process_instance_key, str)
             else _raw_root_process_instance_key
         )
 
-        subscription_key = lift_message_subscription_key(d.pop("subscriptionKey"))
+        subscription_key = MessageSubscriptionKey(d.pop("subscriptionKey"))
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
         correlated_message_subscription_result = cls(
             correlation_key=correlation_key,

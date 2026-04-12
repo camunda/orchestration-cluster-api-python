@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import DocumentId, lift_document_id
+from camunda_orchestration_sdk.semantic_types import DocumentId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -77,7 +77,7 @@ class DocumentReference:
 
         store_id = d.pop("storeId")
 
-        document_id = lift_document_id(d.pop("documentId"))
+        document_id = DocumentId(d.pop("documentId"))
 
         def _parse_content_hash(data: object) -> None | str:
             if data is None:

@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    EndCursor,
-    StartCursor,
-    lift_end_cursor,
-    lift_start_cursor,
-)
+from camunda_orchestration_sdk.semantic_types import EndCursor, StartCursor
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -78,7 +73,7 @@ class SearchQueryPageResponse:
         _raw_start_cursor = _parse_start_cursor(d.pop("startCursor"))
 
         start_cursor = (
-            lift_start_cursor(_raw_start_cursor)
+            StartCursor(_raw_start_cursor)
             if isinstance(_raw_start_cursor, str)
             else _raw_start_cursor
         )
@@ -91,7 +86,7 @@ class SearchQueryPageResponse:
         _raw_end_cursor = _parse_end_cursor(d.pop("endCursor"))
 
         end_cursor = (
-            lift_end_cursor(_raw_end_cursor)
+            EndCursor(_raw_end_cursor)
             if isinstance(_raw_end_cursor, str)
             else _raw_end_cursor
         )

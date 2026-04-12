@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    DecisionRequirementsKey,
-    TenantId,
-    lift_decision_requirements_key,
-    lift_tenant_id,
-)
+from camunda_orchestration_sdk.semantic_types import DecisionRequirementsKey, TenantId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -81,9 +76,9 @@ class DeploymentMetadataResultDecisionRequirements:
 
         resource_name = d.pop("resourceName")
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
-        decision_requirements_key = lift_decision_requirements_key(
+        decision_requirements_key = DecisionRequirementsKey(
             d.pop("decisionRequirementsKey")
         )
 

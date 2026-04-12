@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import Username, lift_username
+from camunda_orchestration_sdk.semantic_types import Username
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -99,7 +99,7 @@ class CamundaUserResult:
         from ..models.tenant_result import TenantResult
 
         d = dict(src_dict)
-        username = lift_username(d.pop("username"))
+        username = Username(d.pop("username"))
 
         def _parse_display_name(data: object) -> None | str:
             if data is None:

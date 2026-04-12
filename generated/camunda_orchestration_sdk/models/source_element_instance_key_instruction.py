@@ -1,8 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ElementInstanceKey,
-    lift_element_instance_key,
-)
+from camunda_orchestration_sdk.semantic_types import ElementInstanceKey
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -54,7 +51,7 @@ class SourceElementInstanceKeyInstruction:
         d = dict(src_dict)
         source_type = d.pop("sourceType")
 
-        source_element_instance_key = lift_element_instance_key(
+        source_element_instance_key = ElementInstanceKey(
             d.pop("sourceElementInstanceKey")
         )
 

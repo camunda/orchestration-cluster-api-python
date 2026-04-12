@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ConditionalEvaluationKey,
-    TenantId,
-    lift_conditional_evaluation_key,
-    lift_tenant_id,
-)
+from camunda_orchestration_sdk.semantic_types import ConditionalEvaluationKey, TenantId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -66,11 +61,11 @@ class EvaluateConditionalResult:
         from ..models.process_instance_reference import ProcessInstanceReference
 
         d = dict(src_dict)
-        conditional_evaluation_key = lift_conditional_evaluation_key(
+        conditional_evaluation_key = ConditionalEvaluationKey(
             d.pop("conditionalEvaluationKey")
         )
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
         process_instances: list[ProcessInstanceReference] = []
         _process_instances = d.pop("processInstances")

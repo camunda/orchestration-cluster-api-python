@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    DecisionRequirementsKey,
-    TenantId,
-    lift_decision_requirements_key,
-    lift_tenant_id,
-)
+from camunda_orchestration_sdk.semantic_types import DecisionRequirementsKey, TenantId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -80,7 +75,7 @@ class DecisionRequirementsFilter:
         decision_requirements_id = d.pop("decisionRequirementsId", UNSET)
 
         decision_requirements_key = (
-            lift_decision_requirements_key(_val)
+            DecisionRequirementsKey(_val)
             if (_val := d.pop("decisionRequirementsKey", UNSET)) is not UNSET
             else UNSET
         )
@@ -88,9 +83,7 @@ class DecisionRequirementsFilter:
         version = d.pop("version", UNSET)
 
         tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
+            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
         )
 
         resource_name = d.pop("resourceName", UNSET)

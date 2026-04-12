@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import Username, lift_username
+from camunda_orchestration_sdk.semantic_types import Username
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -55,7 +55,7 @@ class UserRequest:
         d = dict(src_dict)
         password = d.pop("password")
 
-        username = lift_username(d.pop("username"))
+        username = Username(d.pop("username"))
 
         name = d.pop("name", UNSET)
 

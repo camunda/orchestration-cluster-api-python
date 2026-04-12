@@ -4,10 +4,6 @@ from camunda_orchestration_sdk.semantic_types import (
     DecisionDefinitionKey,
     DecisionRequirementsKey,
     TenantId,
-    lift_decision_definition_id,
-    lift_decision_definition_key,
-    lift_decision_requirements_key,
-    lift_tenant_id,
 )
 
 from collections.abc import Mapping
@@ -112,7 +108,7 @@ class DecisionDefinitionSearchQueryFilter:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
         decision_definition_id = (
-            lift_decision_definition_id(_val)
+            DecisionDefinitionId(_val)
             if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET
             else UNSET
         )
@@ -126,19 +122,17 @@ class DecisionDefinitionSearchQueryFilter:
         decision_requirements_id = d.pop("decisionRequirementsId", UNSET)
 
         tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
+            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
         )
 
         decision_definition_key = (
-            lift_decision_definition_key(_val)
+            DecisionDefinitionKey(_val)
             if (_val := d.pop("decisionDefinitionKey", UNSET)) is not UNSET
             else UNSET
         )
 
         decision_requirements_key = (
-            lift_decision_requirements_key(_val)
+            DecisionRequirementsKey(_val)
             if (_val := d.pop("decisionRequirementsKey", UNSET)) is not UNSET
             else UNSET
         )

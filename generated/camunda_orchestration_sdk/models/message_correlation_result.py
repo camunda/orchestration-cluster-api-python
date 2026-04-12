@@ -3,9 +3,6 @@ from camunda_orchestration_sdk.semantic_types import (
     MessageKey,
     ProcessInstanceKey,
     TenantId,
-    lift_message_key,
-    lift_process_instance_key,
-    lift_tenant_id,
 )
 
 from collections.abc import Mapping
@@ -60,11 +57,11 @@ class MessageCorrelationResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
-        message_key = lift_message_key(d.pop("messageKey"))
+        message_key = MessageKey(d.pop("messageKey"))
 
-        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 
         message_correlation_result = cls(
             tenant_id=tenant_id,

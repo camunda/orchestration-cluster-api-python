@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    MessageKey,
-    TenantId,
-    lift_message_key,
-    lift_tenant_id,
-)
+from camunda_orchestration_sdk.semantic_types import MessageKey, TenantId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -51,9 +46,9 @@ class MessagePublicationResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
-        message_key = lift_message_key(d.pop("messageKey"))
+        message_key = MessageKey(d.pop("messageKey"))
 
         message_publication_result = cls(
             tenant_id=tenant_id,

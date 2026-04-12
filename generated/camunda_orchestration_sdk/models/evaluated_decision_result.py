@@ -4,10 +4,6 @@ from camunda_orchestration_sdk.semantic_types import (
     DecisionDefinitionKey,
     DecisionEvaluationInstanceKey,
     TenantId,
-    lift_decision_definition_id,
-    lift_decision_definition_key,
-    lift_decision_evaluation_instance_key,
-    lift_tenant_id,
 )
 
 from collections.abc import Mapping
@@ -112,9 +108,7 @@ class EvaluatedDecisionResult:
         from ..models.matched_decision_rule_item import MatchedDecisionRuleItem
 
         d = dict(src_dict)
-        decision_definition_id = lift_decision_definition_id(
-            d.pop("decisionDefinitionId")
-        )
+        decision_definition_id = DecisionDefinitionId(d.pop("decisionDefinitionId"))
 
         decision_definition_name = d.pop("decisionDefinitionName")
 
@@ -124,7 +118,7 @@ class EvaluatedDecisionResult:
 
         output = d.pop("output")
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
         matched_rules: list[MatchedDecisionRuleItem] = []
         _matched_rules = d.pop("matchedRules")
@@ -144,11 +138,9 @@ class EvaluatedDecisionResult:
 
             evaluated_inputs.append(evaluated_inputs_item)
 
-        decision_definition_key = lift_decision_definition_key(
-            d.pop("decisionDefinitionKey")
-        )
+        decision_definition_key = DecisionDefinitionKey(d.pop("decisionDefinitionKey"))
 
-        decision_evaluation_instance_key = lift_decision_evaluation_instance_key(
+        decision_evaluation_instance_key = DecisionEvaluationInstanceKey(
             d.pop("decisionEvaluationInstanceKey")
         )
 

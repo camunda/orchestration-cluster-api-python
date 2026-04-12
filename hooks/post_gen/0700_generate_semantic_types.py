@@ -84,7 +84,7 @@ def _emit_semantic_types_py(
 
     lines: List[str] = []
     lines.append("from __future__ import annotations\n")
-    lines.append("from typing import NewType, Any, Tuple, Union\n")
+    lines.append("from typing import Any, Tuple, Union\n")
     lines.append("import re\n\n")
 
     # Track all exported names for __all__ and explicit import
@@ -100,71 +100,69 @@ def _emit_semantic_types_py(
         }.get(base, "str")
         constraints = info.get("constraints", {})
 
-        lines.append(f"{alias_name} = NewType('{alias_name}', {py_base})\n")
-
-        # Track exported names
-        func_name = _snake(f"lift_{alias_name}")
-        try_func_name = _snake(f"try_lift_{alias_name}")
-        all_exported_names.extend([alias_name, func_name, try_func_name])
-
-        # lifter with validation
-        func: List[str] = []
-        func_name = _snake(f"lift_{alias_name}")
-        func.append(f"def {func_name}(value: Any) -> {alias_name}:\n")
-        func.append(f"\tif not isinstance(value, {py_base}):\n")
-        func.append(
-            f'\t\traise TypeError(f"{alias_name} must be {py_base}, got {{type(value).__name__}}: {{value!r}}")\n'
+        # Class definition with __new__ containing validation
+        class_def: List[str] = []
+        class_def.append(f"class {alias_name}({py_base}):\n")
+        class_def.append(f'\tdef __new__(cls, value: {py_base}) -> "{alias_name}":\n')
+        
+        # Type check (always first)
+        class_def.append(f'\t\tif not isinstance(value, {py_base}):  # pyright: ignore[reportUnnecessaryIsInstance]\n')
+        class_def.append(
+            f'\t\t\traise TypeError(f"{alias_name} must be {py_base}, got {{type(value).__name__}}: {{value!r}}")\n'
         )
+        
+        # Pattern validation
         pattern = constraints.get("pattern")
         if pattern and isinstance(pattern, str):
-            # Use fullmatch to validate the whole value.
-            # pattern!r produces a repr'd string literal with proper escaping;
-            # do NOT combine with the r"" raw-string prefix or backslashes
-            # get doubled (e.g. \- becomes \\- and hyphens stop matching).
-            func.append(f"\tif re.fullmatch({pattern!r}, value) is None:\n")
-            func.append(
-                f'\t\traise ValueError(f"{alias_name} does not match pattern {pattern!r}, got {{value!r}}")\n'
+            class_def.append(f'\t\tif re.fullmatch({pattern!r}, value) is None:\n')
+            class_def.append(f'\t\t\tpat = {pattern!r}\n')
+            class_def.append(
+                f'\t\t\traise ValueError(f"{alias_name} does not match pattern {{pat!r}}, got {{value!r}}")\n'
             )
-        if "minLength" in constraints:
-            func.append(f"\tif len(value) < {int(constraints['minLength'])}:\n")
-            func.append(
-                f'\t\traise ValueError(f"{alias_name} shorter than minLength {int(constraints["minLength"])}, got {{value!r}}")\n'
-            )
-        if "maxLength" in constraints:
-            func.append(f"\tif len(value) > {int(constraints['maxLength'])}:\n")
-            func.append(
-                f'\t\traise ValueError(f"{alias_name} longer than maxLength {int(constraints["maxLength"])}, got {{value!r}}")\n'
-            )
-        if base in {"integer", "number"}:
+        
+        # Length constraints (for string-like types)
+        if py_base == "str":
+            if "minLength" in constraints:
+                min_len = int(constraints["minLength"])
+                class_def.append(f'\t\tif len(value) < {min_len}:\n')
+                class_def.append(
+                    f'\t\t\traise ValueError(f"{alias_name} shorter than minLength {min_len}, got {{value!r}}")\n'
+                )
+            if "maxLength" in constraints:
+                max_len = int(constraints["maxLength"])
+                class_def.append(f'\t\tif len(value) > {max_len}:\n')
+                class_def.append(
+                    f'\t\t\traise ValueError(f"{alias_name} longer than maxLength {max_len}, got {{value!r}}")\n'
+                )
+        
+        # Numeric constraints
+        if py_base in {"int", "float"}:
             if "minimum" in constraints:
-                func.append(f"\tif value < {constraints['minimum']}:\n")
-                func.append(
-                    f'\t\traise ValueError(f"{alias_name} smaller than minimum {constraints["minimum"]}, got {{value!r}}")\n'
+                class_def.append(f'\t\tif value < {constraints["minimum"]}:\n')
+                class_def.append(
+                    f'\t\t\traise ValueError(f"{alias_name} smaller than minimum {constraints["minimum"]}, got {{value!r}}")\n'
                 )
             if "maximum" in constraints:
-                func.append(f"\tif value > {constraints['maximum']}:\n")
-                func.append(
-                    f'\t\traise ValueError(f"{alias_name} larger than maximum {constraints["maximum"]}, got {{value!r}}")\n'
+                class_def.append(f'\t\tif value > {constraints["maximum"]}:\n')
+                class_def.append(
+                    f'\t\t\traise ValueError(f"{alias_name} larger than maximum {constraints["maximum"]}, got {{value!r}}")\n'
                 )
+        
+        # Enum constraints
         if "enum" in constraints and isinstance(constraints["enum"], list):
             enum_vals = constraints["enum"]
-            func.append(f"\tif value not in {enum_vals!r}:\n")
-            func.append(
-                f'\t\traise ValueError(f"{alias_name} must be one of {enum_vals}, got {{value!r}}")\n'
+            class_def.append(f'\t\tif value not in {enum_vals!r}:\n')
+            class_def.append(
+                f'\t\t\traise ValueError(f"{alias_name} must be one of {enum_vals}, got {{value!r}}")\n'
             )
-        func.append(f"\treturn {alias_name}(value)\n\n")
+        
+        # Call parent class constructor
+        class_def.append('\t\treturn super().__new__(cls, value)\n\n')
+        
+        lines.extend(class_def)
 
-        # try_lift variant returning (ok, value_or_error)
-        try_func_name = _snake(f"try_lift_{alias_name}")
-        func.append(
-            f"def {try_func_name}(value: Any) -> Tuple[bool, {alias_name} | Exception]:\n"
-        )
-        func.append("\ttry:\n")
-        func.append(f"\t\treturn True, {func_name}(value)\n")
-        func.append("\texcept Exception as e:\n")
-        func.append("\t\treturn False, e\n\n")
-
-        lines.extend(func)
+        # Track exported names (class only; no lifter functions for concrete types)
+        all_exported_names.append(alias_name)
 
     # Emit union type aliases (e.g. ScopeKey = ProcessInstanceKey | ElementInstanceKey)
     if union_aliases:
@@ -173,14 +171,12 @@ def _emit_semantic_types_py(
             try_func_name = _snake(f"try_lift_{union_name}")
             all_exported_names.extend([union_name, func_name, try_func_name])
 
-            branch_lift_funcs = [_snake(f"lift_{b}") for b in branch_names]
-
             lines.append(f"{union_name} = Union[{', '.join(branch_names)}]\n\n")
 
             lines.append(f"def {func_name}(value: Any) -> {union_name}:\n")
-            for lift_fn in branch_lift_funcs:
+            for branch in branch_names:
                 lines.append("\ttry:\n")
-                lines.append(f"\t\treturn {lift_fn}(value)\n")
+                lines.append(f"\t\treturn {branch}(value)\n")
                 lines.append("\texcept Exception:\n")
                 lines.append("\t\tpass\n")
             lines.append(

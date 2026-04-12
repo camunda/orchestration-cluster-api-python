@@ -6,12 +6,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionKey,
     ProcessInstanceKey,
     UserTaskKey,
-    lift_element_id,
-    lift_element_instance_key,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_user_task_key,
 )
 
 import datetime
@@ -327,7 +321,7 @@ class UserTaskSearchQueryFilter:
         priority = _parse_priority(d.pop("priority", UNSET))
 
         element_id = (
-            lift_element_id(_val)
+            ElementId(_val)
             if (_val := d.pop("elementId", UNSET)) is not UNSET
             else UNSET
         )
@@ -401,7 +395,7 @@ class UserTaskSearchQueryFilter:
         tenant_id = _parse_tenant_id(d.pop("tenantId", UNSET))
 
         process_definition_id = (
-            lift_process_definition_id(_val)
+            ProcessDefinitionId(_val)
             if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
             else UNSET
         )
@@ -521,25 +515,25 @@ class UserTaskSearchQueryFilter:
                 local_variables.append(local_variables_item)
 
         user_task_key = (
-            lift_user_task_key(_val)
+            UserTaskKey(_val)
             if (_val := d.pop("userTaskKey", UNSET)) is not UNSET
             else UNSET
         )
 
         process_definition_key = (
-            lift_process_definition_key(_val)
+            ProcessDefinitionKey(_val)
             if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
             else UNSET
         )
 
         process_instance_key = (
-            lift_process_instance_key(_val)
+            ProcessInstanceKey(_val)
             if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
             else UNSET
         )
 
         element_instance_key = (
-            lift_element_instance_key(_val)
+            ElementInstanceKey(_val)
             if (_val := d.pop("elementInstanceKey", UNSET)) is not UNSET
             else UNSET
         )
