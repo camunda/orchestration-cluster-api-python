@@ -127,7 +127,7 @@ async def test_pagination_cursor_forward() -> None:
 
 @pytest.mark.asyncio
 async def test_pagination_cursor_backward() -> None:
-    """CursorBasedBackwardPagination — fetch first page then go back via startCursor."""
+    """CursorBasedBackwardPagination — fetch a page (offset 1) to get a startCursor, then navigate backward."""
     async with _client() as camunda:
         first = await camunda.search_process_instances(
             data=ProcessInstanceSearchQuery(page=OffsetBasedPagination(from_=1, limit=1))
@@ -858,7 +858,7 @@ async def test_filter_variables_multiple() -> None:
                             name="status", value='"active"'
                         ),
                         VariableValueFilterProperty(
-                            name="amount", value=AdvancedStringFilter(like="1*")
+                            name="category", value=AdvancedStringFilter(like="order*")
                         ),
                     ]
                 )
