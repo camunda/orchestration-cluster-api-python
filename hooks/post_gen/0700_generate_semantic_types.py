@@ -103,10 +103,10 @@ def _emit_semantic_types_py(
         # Class definition with __new__ containing validation
         class_def: List[str] = []
         class_def.append(f"class {alias_name}({py_base}):\n")
-        class_def.append(f'\tdef __new__(cls, value: Any) -> "{alias_name}":\n')
+        class_def.append(f'\tdef __new__(cls, value: {py_base}) -> "{alias_name}":\n')
         
         # Type check (always first)
-        class_def.append(f'\t\tif not isinstance(value, {py_base}):\n')
+        class_def.append(f'\t\tif not isinstance(value, {py_base}):  # pyright: ignore[reportUnnecessaryIsInstance]\n')
         class_def.append(
             f'\t\t\traise TypeError(f"{alias_name} must be {py_base}, got {{type(value).__name__}}: {{value!r}}")\n'
         )
@@ -115,8 +115,9 @@ def _emit_semantic_types_py(
         pattern = constraints.get("pattern")
         if pattern and isinstance(pattern, str):
             class_def.append(f'\t\tif re.fullmatch({pattern!r}, value) is None:\n')
+            class_def.append(f'\t\t\tpat = {pattern!r}\n')
             class_def.append(
-                f'\t\t\traise ValueError(f"{alias_name} does not match pattern {pattern!r}, got {{value!r}}")\n'
+                f'\t\t\traise ValueError(f"{alias_name} does not match pattern {{pat!r}}, got {{value!r}}")\n'
             )
         
         # Length constraints (for string-like types)
@@ -135,7 +136,7 @@ def _emit_semantic_types_py(
                 )
         
         # Numeric constraints
-        if py_base in {"integer", "number"}:
+        if py_base in {"int", "float"}:
             if "minimum" in constraints:
                 class_def.append(f'\t\tif value < {constraints["minimum"]}:\n')
                 class_def.append(
