@@ -2,6 +2,22 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.36 (2026-04-12)
+
+### Bug Fixes
+
+- Address PR #93 review comments
+  ([`130703f`](https://github.com/camunda/orchestration-cluster-api-python/commit/130703fae873d97c3ecc4cc5ae810ffa9685a87f))
+
+- Remove type: ignore suppressions by fixing root type issues
+  ([`e759826`](https://github.com/camunda/orchestration-cluster-api-python/commit/e759826b09853bab086a271f478534eeb065f13c))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`5d7c8d6`](https://github.com/camunda/orchestration-cluster-api-python/commit/5d7c8d6fbe01c0303f556db1c10090be72bd1718))
+
+
 ## v8.9.0-dev.35 (2026-04-12)
 
 ### Bug Fixes
