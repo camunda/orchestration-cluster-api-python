@@ -328,9 +328,9 @@ def run_sync() -> None:
                 break
             bp = client._bp.get_state()
             metrics.bp_severity = str(bp["severity"])
-            metrics.permits_max = bp["permits_max"]  # type: ignore[assignment]
-            metrics.permits_current = bp["permits_current"]  # type: ignore[assignment]
-            metrics.waiters = bp["waiters"]  # type: ignore[assignment]
+            metrics.permits_max = bp["permits_max"]
+            metrics.permits_current = bp["permits_current"]
+            metrics.waiters = bp["waiters"]
             metrics.compute_throughput()
             time.sleep(0.05)
 
@@ -450,9 +450,9 @@ def run_async_or_thread() -> None:
                         return
                     bp = client._bp.get_state()
                     metrics.bp_severity = str(bp["severity"])
-                    metrics.permits_max = bp["permits_max"]  # type: ignore[assignment]
-                    metrics.permits_current = bp["permits_current"]  # type: ignore[assignment]
-                    metrics.waiters = bp["waiters"]  # type: ignore[assignment]
+                    metrics.permits_max = bp["permits_max"]
+                    metrics.permits_current = bp["permits_current"]
+                    metrics.waiters = bp["waiters"]
                     metrics.compute_throughput()
                     await asyncio.sleep(0.05)
 
@@ -485,7 +485,7 @@ def run_async_or_thread() -> None:
 
             bp = client._bp.get_state()
             metrics.bp_severity = str(bp["severity"])
-            metrics.permits_max = bp["permits_max"]  # type: ignore[assignment]
+            metrics.permits_max = bp["permits_max"]
 
     asyncio.run(_run())
 

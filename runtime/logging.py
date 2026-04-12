@@ -10,7 +10,7 @@ silently disabled.
 
 from __future__ import annotations
 
-from typing import Any, Protocol, runtime_checkable
+from typing import Any, Protocol, cast, runtime_checkable
 
 
 @runtime_checkable
@@ -51,7 +51,7 @@ def _get_default_logger() -> CamundaLogger:
     try:
         from loguru import logger
 
-        return logger  # type: ignore[return-value]
+        return cast(CamundaLogger, logger)
     except ImportError:
         return NullLogger()
 
@@ -71,17 +71,17 @@ class SdkLogger:
     def _fmt(self, msg: str) -> str:
         return f"[{self._prefix}] {msg}" if self._prefix else msg
 
-    def debug(self, msg: str) -> None:
-        self._logger.debug(self._fmt(msg))
+    def debug(self, msg: str, *args: Any, **kwargs: Any) -> None:
+        self._logger.debug(self._fmt(msg), *args, **kwargs)
 
-    def info(self, msg: str) -> None:
-        self._logger.info(self._fmt(msg))
+    def info(self, msg: str, *args: Any, **kwargs: Any) -> None:
+        self._logger.info(self._fmt(msg), *args, **kwargs)
 
-    def warning(self, msg: str) -> None:
-        self._logger.warning(self._fmt(msg))
+    def warning(self, msg: str, *args: Any, **kwargs: Any) -> None:
+        self._logger.warning(self._fmt(msg), *args, **kwargs)
 
-    def error(self, msg: str) -> None:
-        self._logger.error(self._fmt(msg))
+    def error(self, msg: str, *args: Any, **kwargs: Any) -> None:
+        self._logger.error(self._fmt(msg), *args, **kwargs)
 
     def trace(self, msg: str) -> None:
         trace_fn = getattr(self._logger, "trace", None)
@@ -99,7 +99,7 @@ class SdkLogger:
         """
         native_bind = getattr(self._logger, "bind", None)
         if callable(native_bind):
-            return SdkLogger(native_bind(**kwargs))  # type: ignore[arg-type]
+            return SdkLogger(cast(CamundaLogger, native_bind(**kwargs)))
         ctx = " ".join(f"{k}={v}" for k, v in kwargs.items())
         new_prefix = f"{self._prefix} {ctx}".strip() if self._prefix else ctx
         return SdkLogger(self._logger, new_prefix)
@@ -125,4 +125,4 @@ def create_logger(logger: CamundaLogger | None = None) -> SdkLogger:
     """
     if logger is None:
         return SdkLogger(_get_default_logger())
-    return SdkLogger(logger)  # type: ignore[arg-type]
+    return SdkLogger(logger)

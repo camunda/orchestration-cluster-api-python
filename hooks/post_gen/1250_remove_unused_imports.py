@@ -67,9 +67,9 @@ def _find_unused_imports(source: str, *, is_init: bool = False) -> set[str]:
             used_names.add(node.id)
         elif isinstance(node, ast.Attribute):
             # ``foo.bar`` — ``foo`` counts as used.
-            inner = node
+            inner: ast.expr = node
             while isinstance(inner, ast.Attribute):
-                inner = inner.value  # type: ignore[assignment]
+                inner = inner.value
             if isinstance(inner, ast.Name):
                 used_names.add(inner.id)
         elif isinstance(node, ast.Constant) and isinstance(node.value, str):

@@ -162,7 +162,7 @@ class TestBackpressureManagerBalanced:
         severe_max = bp.get_state()["permits_max"]
         assert severe_max is not None
         assert soft_max is not None
-        assert severe_max < soft_max  # type: ignore[operator]
+        assert severe_max < soft_max
 
     def test_recovery_additive_then_multiplicative(self):
         bp, clk = self._make()
@@ -177,7 +177,7 @@ class TestBackpressureManagerBalanced:
         # Should have recovered (severity decayed to healthy, permits increased)
         assert state["severity"] == "healthy"
         assert state["permits_max"] is not None
-        assert state["permits_max"] > max_after_signal  # type: ignore[operator]
+        assert state["permits_max"] > max_after_signal
 
     def test_sustained_healthy_returns_unlimited(self):
         bp, clk = self._make()
@@ -205,7 +205,7 @@ class TestBackpressureManagerBalanced:
         assert cap is not None
 
         # Fill up permits
-        for _ in range(int(cap)):  # type: ignore[arg-type]
+        for _ in range(int(cap)):
             bp.acquire()
 
         # Next acquire should block — run in a thread with timeout
@@ -265,7 +265,7 @@ class TestBackpressureQueueFull:
         assert cap is not None
 
         # Fill permits so the next acquire must wait
-        for _ in range(int(cap)):  # type: ignore[arg-type]
+        for _ in range(int(cap)):
             bp.acquire()
 
         # Simulate saturated waiter queue
@@ -276,7 +276,7 @@ class TestBackpressureQueueFull:
 
         # Cleanup
         bp._waiters = 0  # pyright: ignore[reportPrivateUsage]
-        for _ in range(int(cap)):  # type: ignore[arg-type]
+        for _ in range(int(cap)):
             bp.release()
 
 
@@ -322,7 +322,7 @@ class TestAsyncBackpressureManager:
         assert cap is not None
 
         # Fill permits
-        for _ in range(int(cap)):  # type: ignore[arg-type]
+        for _ in range(int(cap)):
             await bp.acquire()
 
         # Release one and re-acquire
