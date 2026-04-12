@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    FormKey,
-    UserTaskKey,
-    lift_form_key,
-    lift_user_task_key,
-)
+from camunda_orchestration_sdk.semantic_types import FormKey, UserTaskKey
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -134,9 +129,7 @@ class UserTaskProperties:
         _raw_form_key = _parse_form_key(d.pop("formKey"))
 
         form_key = (
-            lift_form_key(_raw_form_key)
-            if isinstance(_raw_form_key, str)
-            else _raw_form_key
+            FormKey(_raw_form_key) if isinstance(_raw_form_key, str) else _raw_form_key
         )
 
         def _parse_priority(data: object) -> int | None:
@@ -154,7 +147,7 @@ class UserTaskProperties:
         _raw_user_task_key = _parse_user_task_key(d.pop("userTaskKey"))
 
         user_task_key = (
-            lift_user_task_key(_raw_user_task_key)
+            UserTaskKey(_raw_user_task_key)
             if isinstance(_raw_user_task_key, str)
             else _raw_user_task_key
         )

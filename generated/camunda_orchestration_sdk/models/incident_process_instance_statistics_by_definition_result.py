@@ -3,9 +3,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
     TenantId,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_tenant_id,
 )
 
 from collections.abc import Mapping
@@ -74,17 +71,15 @@ class IncidentProcessInstanceStatisticsByDefinitionResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
-        process_definition_key = lift_process_definition_key(
-            d.pop("processDefinitionKey")
-        )
+        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
 
         process_definition_name = d.pop("processDefinitionName")
 
         process_definition_version = d.pop("processDefinitionVersion")
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
         active_instances_with_error_count = d.pop("activeInstancesWithErrorCount")
 

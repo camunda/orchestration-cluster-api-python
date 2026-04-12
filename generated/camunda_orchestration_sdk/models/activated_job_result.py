@@ -7,13 +7,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionKey,
     ProcessInstanceKey,
     TenantId,
-    lift_element_id,
-    lift_element_instance_key,
-    lift_job_key,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_tenant_id,
 )
 
 from collections.abc import Mapping
@@ -179,11 +172,11 @@ class ActivatedJobResult:
         d = dict(src_dict)
         type_ = d.pop("type")
 
-        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
         process_definition_version = d.pop("processDefinitionVersion")
 
-        element_id = lift_element_id(d.pop("elementId"))
+        element_id = ElementId(d.pop("elementId"))
 
         custom_headers = ActivatedJobResultCustomHeaders.from_dict(
             d.pop("customHeaders")
@@ -197,17 +190,15 @@ class ActivatedJobResult:
 
         variables = ActivatedJobResultVariables.from_dict(d.pop("variables"))
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
-        job_key = lift_job_key(d.pop("jobKey"))
+        job_key = JobKey(d.pop("jobKey"))
 
-        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 
-        process_definition_key = lift_process_definition_key(
-            d.pop("processDefinitionKey")
-        )
+        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
 
-        element_instance_key = lift_element_instance_key(d.pop("elementInstanceKey"))
+        element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
 
         kind = JobKindEnum(d.pop("kind"))
 
@@ -244,7 +235,7 @@ class ActivatedJobResult:
         )
 
         root_process_instance_key = (
-            lift_process_instance_key(_raw_root_process_instance_key)
+            ProcessInstanceKey(_raw_root_process_instance_key)
             if isinstance(_raw_root_process_instance_key, str)
             else _raw_root_process_instance_key
         )

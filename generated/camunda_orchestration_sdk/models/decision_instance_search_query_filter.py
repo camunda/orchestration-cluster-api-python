@@ -5,11 +5,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionKey,
     ProcessInstanceKey,
     TenantId,
-    lift_decision_definition_id,
-    lift_decision_evaluation_key,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_tenant_id,
 )
 
 import datetime
@@ -345,7 +340,7 @@ class DecisionInstanceSearchQueryFilter:
         evaluation_date = _parse_evaluation_date(d.pop("evaluationDate", UNSET))
 
         decision_definition_id = (
-            lift_decision_definition_id(_val)
+            DecisionDefinitionId(_val)
             if (_val := d.pop("decisionDefinitionId", UNSET)) is not UNSET
             else UNSET
         )
@@ -364,25 +359,23 @@ class DecisionInstanceSearchQueryFilter:
             )
 
         tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
+            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
         )
 
         decision_evaluation_key = (
-            lift_decision_evaluation_key(_val)
+            DecisionEvaluationKey(_val)
             if (_val := d.pop("decisionEvaluationKey", UNSET)) is not UNSET
             else UNSET
         )
 
         process_definition_key = (
-            lift_process_definition_key(_val)
+            ProcessDefinitionKey(_val)
             if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
             else UNSET
         )
 
         process_instance_key = (
-            lift_process_instance_key(_val)
+            ProcessInstanceKey(_val)
             if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
             else UNSET
         )

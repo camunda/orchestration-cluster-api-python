@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import TenantId, lift_tenant_id
+from camunda_orchestration_sdk.semantic_types import TenantId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -80,7 +80,7 @@ class ClusterVariableSearchResult:
         _raw_tenant_id = _parse_tenant_id(d.pop("tenantId"))
 
         tenant_id = (
-            lift_tenant_id(_raw_tenant_id)
+            TenantId(_raw_tenant_id)
             if isinstance(_raw_tenant_id, str)
             else _raw_tenant_id
         )

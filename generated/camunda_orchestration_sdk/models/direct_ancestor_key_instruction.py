@@ -1,8 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ElementInstanceKey,
-    lift_element_instance_key,
-)
+from camunda_orchestration_sdk.semantic_types import ElementInstanceKey
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -51,7 +48,7 @@ class DirectAncestorKeyInstruction:
         d = dict(src_dict)
         ancestor_scope_type = d.pop("ancestorScopeType")
 
-        ancestor_element_instance_key = lift_element_instance_key(
+        ancestor_element_instance_key = ElementInstanceKey(
             d.pop("ancestorElementInstanceKey")
         )
 

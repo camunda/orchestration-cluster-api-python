@@ -2,8 +2,6 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionKey,
     ProcessInstanceKey,
-    lift_process_definition_key,
-    lift_process_instance_key,
 )
 
 from collections.abc import Mapping
@@ -56,11 +54,9 @@ class ProcessInstanceCallHierarchyEntry:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 
-        process_definition_key = lift_process_definition_key(
-            d.pop("processDefinitionKey")
-        )
+        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
 
         process_definition_name = d.pop("processDefinitionName")
 

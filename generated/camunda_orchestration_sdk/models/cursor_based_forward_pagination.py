@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import EndCursor, lift_end_cursor
+from camunda_orchestration_sdk.semantic_types import EndCursor
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -47,7 +47,7 @@ class CursorBasedForwardPagination:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        after = lift_end_cursor(d.pop("after"))
+        after = EndCursor(d.pop("after"))
 
         limit = d.pop("limit", UNSET)
 

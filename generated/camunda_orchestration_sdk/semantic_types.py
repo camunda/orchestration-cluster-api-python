@@ -12,19 +12,6 @@ class AuditLogEntityKey(str):
         return super().__new__(cls, value)
 
 
-def lift_audit_log_entity_key(value: Any) -> AuditLogEntityKey:
-    return AuditLogEntityKey(value)
-
-
-def try_lift_audit_log_entity_key(
-    value: Any,
-) -> Tuple[bool, AuditLogEntityKey | Exception]:
-    try:
-        return True, lift_audit_log_entity_key(value)
-    except Exception as e:
-        return False, e
-
-
 class AuditLogKey(str):
     def __new__(cls, value: str) -> "AuditLogKey":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -41,17 +28,6 @@ class AuditLogKey(str):
         if len(value) > 25:
             raise ValueError(f"AuditLogKey longer than maxLength 25, got {value!r}")
         return super().__new__(cls, value)
-
-
-def lift_audit_log_key(value: Any) -> AuditLogKey:
-    return AuditLogKey(value)
-
-
-def try_lift_audit_log_key(value: Any) -> Tuple[bool, AuditLogKey | Exception]:
-    try:
-        return True, lift_audit_log_key(value)
-    except Exception as e:
-        return False, e
 
 
 class AuthorizationKey(str):
@@ -76,17 +52,6 @@ class AuthorizationKey(str):
         return super().__new__(cls, value)
 
 
-def lift_authorization_key(value: Any) -> AuthorizationKey:
-    return AuthorizationKey(value)
-
-
-def try_lift_authorization_key(value: Any) -> Tuple[bool, AuthorizationKey | Exception]:
-    try:
-        return True, lift_authorization_key(value)
-    except Exception as e:
-        return False, e
-
-
 class BatchOperationKey(str):
     def __new__(cls, value: str) -> "BatchOperationKey":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -94,19 +59,6 @@ class BatchOperationKey(str):
                 f"BatchOperationKey must be str, got {type(value).__name__}: {value!r}"
             )
         return super().__new__(cls, value)
-
-
-def lift_batch_operation_key(value: Any) -> BatchOperationKey:
-    return BatchOperationKey(value)
-
-
-def try_lift_batch_operation_key(
-    value: Any,
-) -> Tuple[bool, BatchOperationKey | Exception]:
-    try:
-        return True, lift_batch_operation_key(value)
-    except Exception as e:
-        return False, e
 
 
 class BusinessId(str):
@@ -120,17 +72,6 @@ class BusinessId(str):
         if len(value) > 256:
             raise ValueError(f"BusinessId longer than maxLength 256, got {value!r}")
         return super().__new__(cls, value)
-
-
-def lift_business_id(value: Any) -> BusinessId:
-    return BusinessId(value)
-
-
-def try_lift_business_id(value: Any) -> Tuple[bool, BusinessId | Exception]:
-    try:
-        return True, lift_business_id(value)
-    except Exception as e:
-        return False, e
 
 
 class ConditionalEvaluationKey(str):
@@ -155,19 +96,6 @@ class ConditionalEvaluationKey(str):
         return super().__new__(cls, value)
 
 
-def lift_conditional_evaluation_key(value: Any) -> ConditionalEvaluationKey:
-    return ConditionalEvaluationKey(value)
-
-
-def try_lift_conditional_evaluation_key(
-    value: Any,
-) -> Tuple[bool, ConditionalEvaluationKey | Exception]:
-    try:
-        return True, lift_conditional_evaluation_key(value)
-    except Exception as e:
-        return False, e
-
-
 class DecisionDefinitionId(str):
     def __new__(cls, value: str) -> "DecisionDefinitionId":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -184,19 +112,6 @@ class DecisionDefinitionId(str):
                 f"DecisionDefinitionId shorter than minLength 1, got {value!r}"
             )
         return super().__new__(cls, value)
-
-
-def lift_decision_definition_id(value: Any) -> DecisionDefinitionId:
-    return DecisionDefinitionId(value)
-
-
-def try_lift_decision_definition_id(
-    value: Any,
-) -> Tuple[bool, DecisionDefinitionId | Exception]:
-    try:
-        return True, lift_decision_definition_id(value)
-    except Exception as e:
-        return False, e
 
 
 class DecisionDefinitionKey(str):
@@ -221,19 +136,6 @@ class DecisionDefinitionKey(str):
         return super().__new__(cls, value)
 
 
-def lift_decision_definition_key(value: Any) -> DecisionDefinitionKey:
-    return DecisionDefinitionKey(value)
-
-
-def try_lift_decision_definition_key(
-    value: Any,
-) -> Tuple[bool, DecisionDefinitionKey | Exception]:
-    try:
-        return True, lift_decision_definition_key(value)
-    except Exception as e:
-        return False, e
-
-
 class DecisionEvaluationInstanceKey(str):
     def __new__(cls, value: str) -> "DecisionEvaluationInstanceKey":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -254,19 +156,6 @@ class DecisionEvaluationInstanceKey(str):
                 f"DecisionEvaluationInstanceKey longer than maxLength 25, got {value!r}"
             )
         return super().__new__(cls, value)
-
-
-def lift_decision_evaluation_instance_key(value: Any) -> DecisionEvaluationInstanceKey:
-    return DecisionEvaluationInstanceKey(value)
-
-
-def try_lift_decision_evaluation_instance_key(
-    value: Any,
-) -> Tuple[bool, DecisionEvaluationInstanceKey | Exception]:
-    try:
-        return True, lift_decision_evaluation_instance_key(value)
-    except Exception as e:
-        return False, e
 
 
 class DecisionEvaluationKey(str):
@@ -291,19 +180,6 @@ class DecisionEvaluationKey(str):
         return super().__new__(cls, value)
 
 
-def lift_decision_evaluation_key(value: Any) -> DecisionEvaluationKey:
-    return DecisionEvaluationKey(value)
-
-
-def try_lift_decision_evaluation_key(
-    value: Any,
-) -> Tuple[bool, DecisionEvaluationKey | Exception]:
-    try:
-        return True, lift_decision_evaluation_key(value)
-    except Exception as e:
-        return False, e
-
-
 class DecisionInstanceKey(str):
     def __new__(cls, value: str) -> "DecisionInstanceKey":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -324,19 +200,6 @@ class DecisionInstanceKey(str):
                 f"DecisionInstanceKey longer than maxLength 25, got {value!r}"
             )
         return super().__new__(cls, value)
-
-
-def lift_decision_instance_key(value: Any) -> DecisionInstanceKey:
-    return DecisionInstanceKey(value)
-
-
-def try_lift_decision_instance_key(
-    value: Any,
-) -> Tuple[bool, DecisionInstanceKey | Exception]:
-    try:
-        return True, lift_decision_instance_key(value)
-    except Exception as e:
-        return False, e
 
 
 class DecisionRequirementsKey(str):
@@ -361,19 +224,6 @@ class DecisionRequirementsKey(str):
         return super().__new__(cls, value)
 
 
-def lift_decision_requirements_key(value: Any) -> DecisionRequirementsKey:
-    return DecisionRequirementsKey(value)
-
-
-def try_lift_decision_requirements_key(
-    value: Any,
-) -> Tuple[bool, DecisionRequirementsKey | Exception]:
-    try:
-        return True, lift_decision_requirements_key(value)
-    except Exception as e:
-        return False, e
-
-
 class DeploymentKey(str):
     def __new__(cls, value: str) -> "DeploymentKey":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -392,17 +242,6 @@ class DeploymentKey(str):
         return super().__new__(cls, value)
 
 
-def lift_deployment_key(value: Any) -> DeploymentKey:
-    return DeploymentKey(value)
-
-
-def try_lift_deployment_key(value: Any) -> Tuple[bool, DeploymentKey | Exception]:
-    try:
-        return True, lift_deployment_key(value)
-    except Exception as e:
-        return False, e
-
-
 class DocumentId(str):
     def __new__(cls, value: str) -> "DocumentId":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -412,17 +251,6 @@ class DocumentId(str):
         return super().__new__(cls, value)
 
 
-def lift_document_id(value: Any) -> DocumentId:
-    return DocumentId(value)
-
-
-def try_lift_document_id(value: Any) -> Tuple[bool, DocumentId | Exception]:
-    try:
-        return True, lift_document_id(value)
-    except Exception as e:
-        return False, e
-
-
 class ElementId(str):
     def __new__(cls, value: str) -> "ElementId":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -430,17 +258,6 @@ class ElementId(str):
                 f"ElementId must be str, got {type(value).__name__}: {value!r}"
             )
         return super().__new__(cls, value)
-
-
-def lift_element_id(value: Any) -> ElementId:
-    return ElementId(value)
-
-
-def try_lift_element_id(value: Any) -> Tuple[bool, ElementId | Exception]:
-    try:
-        return True, lift_element_id(value)
-    except Exception as e:
-        return False, e
 
 
 class ElementInstanceKey(str):
@@ -465,19 +282,6 @@ class ElementInstanceKey(str):
         return super().__new__(cls, value)
 
 
-def lift_element_instance_key(value: Any) -> ElementInstanceKey:
-    return ElementInstanceKey(value)
-
-
-def try_lift_element_instance_key(
-    value: Any,
-) -> Tuple[bool, ElementInstanceKey | Exception]:
-    try:
-        return True, lift_element_instance_key(value)
-    except Exception as e:
-        return False, e
-
-
 class EndCursor(str):
     def __new__(cls, value: str) -> "EndCursor":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -498,17 +302,6 @@ class EndCursor(str):
         return super().__new__(cls, value)
 
 
-def lift_end_cursor(value: Any) -> EndCursor:
-    return EndCursor(value)
-
-
-def try_lift_end_cursor(value: Any) -> Tuple[bool, EndCursor | Exception]:
-    try:
-        return True, lift_end_cursor(value)
-    except Exception as e:
-        return False, e
-
-
 class FormId(str):
     def __new__(cls, value: str) -> "FormId":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -516,17 +309,6 @@ class FormId(str):
                 f"FormId must be str, got {type(value).__name__}: {value!r}"
             )
         return super().__new__(cls, value)
-
-
-def lift_form_id(value: Any) -> FormId:
-    return FormId(value)
-
-
-def try_lift_form_id(value: Any) -> Tuple[bool, FormId | Exception]:
-    try:
-        return True, lift_form_id(value)
-    except Exception as e:
-        return False, e
 
 
 class FormKey(str):
@@ -545,17 +327,6 @@ class FormKey(str):
         return super().__new__(cls, value)
 
 
-def lift_form_key(value: Any) -> FormKey:
-    return FormKey(value)
-
-
-def try_lift_form_key(value: Any) -> Tuple[bool, FormKey | Exception]:
-    try:
-        return True, lift_form_key(value)
-    except Exception as e:
-        return False, e
-
-
 class GlobalListenerId(str):
     def __new__(cls, value: str) -> "GlobalListenerId":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -563,19 +334,6 @@ class GlobalListenerId(str):
                 f"GlobalListenerId must be str, got {type(value).__name__}: {value!r}"
             )
         return super().__new__(cls, value)
-
-
-def lift_global_listener_id(value: Any) -> GlobalListenerId:
-    return GlobalListenerId(value)
-
-
-def try_lift_global_listener_id(
-    value: Any,
-) -> Tuple[bool, GlobalListenerId | Exception]:
-    try:
-        return True, lift_global_listener_id(value)
-    except Exception as e:
-        return False, e
 
 
 class IncidentKey(str):
@@ -596,17 +354,6 @@ class IncidentKey(str):
         return super().__new__(cls, value)
 
 
-def lift_incident_key(value: Any) -> IncidentKey:
-    return IncidentKey(value)
-
-
-def try_lift_incident_key(value: Any) -> Tuple[bool, IncidentKey | Exception]:
-    try:
-        return True, lift_incident_key(value)
-    except Exception as e:
-        return False, e
-
-
 class JobKey(str):
     def __new__(cls, value: str) -> "JobKey":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -621,17 +368,6 @@ class JobKey(str):
         if len(value) > 25:
             raise ValueError(f"JobKey longer than maxLength 25, got {value!r}")
         return super().__new__(cls, value)
-
-
-def lift_job_key(value: Any) -> JobKey:
-    return JobKey(value)
-
-
-def try_lift_job_key(value: Any) -> Tuple[bool, JobKey | Exception]:
-    try:
-        return True, lift_job_key(value)
-    except Exception as e:
-        return False, e
 
 
 class MessageKey(str):
@@ -650,17 +386,6 @@ class MessageKey(str):
         if len(value) > 25:
             raise ValueError(f"MessageKey longer than maxLength 25, got {value!r}")
         return super().__new__(cls, value)
-
-
-def lift_message_key(value: Any) -> MessageKey:
-    return MessageKey(value)
-
-
-def try_lift_message_key(value: Any) -> Tuple[bool, MessageKey | Exception]:
-    try:
-        return True, lift_message_key(value)
-    except Exception as e:
-        return False, e
 
 
 class MessageSubscriptionKey(str):
@@ -685,19 +410,6 @@ class MessageSubscriptionKey(str):
         return super().__new__(cls, value)
 
 
-def lift_message_subscription_key(value: Any) -> MessageSubscriptionKey:
-    return MessageSubscriptionKey(value)
-
-
-def try_lift_message_subscription_key(
-    value: Any,
-) -> Tuple[bool, MessageSubscriptionKey | Exception]:
-    try:
-        return True, lift_message_subscription_key(value)
-    except Exception as e:
-        return False, e
-
-
 class ProcessDefinitionId(str):
     def __new__(cls, value: str) -> "ProcessDefinitionId":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -714,19 +426,6 @@ class ProcessDefinitionId(str):
                 f"ProcessDefinitionId shorter than minLength 1, got {value!r}"
             )
         return super().__new__(cls, value)
-
-
-def lift_process_definition_id(value: Any) -> ProcessDefinitionId:
-    return ProcessDefinitionId(value)
-
-
-def try_lift_process_definition_id(
-    value: Any,
-) -> Tuple[bool, ProcessDefinitionId | Exception]:
-    try:
-        return True, lift_process_definition_id(value)
-    except Exception as e:
-        return False, e
 
 
 class ProcessDefinitionKey(str):
@@ -751,19 +450,6 @@ class ProcessDefinitionKey(str):
         return super().__new__(cls, value)
 
 
-def lift_process_definition_key(value: Any) -> ProcessDefinitionKey:
-    return ProcessDefinitionKey(value)
-
-
-def try_lift_process_definition_key(
-    value: Any,
-) -> Tuple[bool, ProcessDefinitionKey | Exception]:
-    try:
-        return True, lift_process_definition_key(value)
-    except Exception as e:
-        return False, e
-
-
 class ProcessInstanceKey(str):
     def __new__(cls, value: str) -> "ProcessInstanceKey":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -786,19 +472,6 @@ class ProcessInstanceKey(str):
         return super().__new__(cls, value)
 
 
-def lift_process_instance_key(value: Any) -> ProcessInstanceKey:
-    return ProcessInstanceKey(value)
-
-
-def try_lift_process_instance_key(
-    value: Any,
-) -> Tuple[bool, ProcessInstanceKey | Exception]:
-    try:
-        return True, lift_process_instance_key(value)
-    except Exception as e:
-        return False, e
-
-
 class SignalKey(str):
     def __new__(cls, value: str) -> "SignalKey":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -813,17 +486,6 @@ class SignalKey(str):
         if len(value) > 25:
             raise ValueError(f"SignalKey longer than maxLength 25, got {value!r}")
         return super().__new__(cls, value)
-
-
-def lift_signal_key(value: Any) -> SignalKey:
-    return SignalKey(value)
-
-
-def try_lift_signal_key(value: Any) -> Tuple[bool, SignalKey | Exception]:
-    try:
-        return True, lift_signal_key(value)
-    except Exception as e:
-        return False, e
 
 
 class StartCursor(str):
@@ -848,17 +510,6 @@ class StartCursor(str):
         return super().__new__(cls, value)
 
 
-def lift_start_cursor(value: Any) -> StartCursor:
-    return StartCursor(value)
-
-
-def try_lift_start_cursor(value: Any) -> Tuple[bool, StartCursor | Exception]:
-    try:
-        return True, lift_start_cursor(value)
-    except Exception as e:
-        return False, e
-
-
 class Tag(str):
     def __new__(cls, value: str) -> "Tag":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -871,17 +522,6 @@ class Tag(str):
         if len(value) > 100:
             raise ValueError(f"Tag longer than maxLength 100, got {value!r}")
         return super().__new__(cls, value)
-
-
-def lift_tag(value: Any) -> Tag:
-    return Tag(value)
-
-
-def try_lift_tag(value: Any) -> Tuple[bool, Tag | Exception]:
-    try:
-        return True, lift_tag(value)
-    except Exception as e:
-        return False, e
 
 
 class TenantId(str):
@@ -898,17 +538,6 @@ class TenantId(str):
         if len(value) > 256:
             raise ValueError(f"TenantId longer than maxLength 256, got {value!r}")
         return super().__new__(cls, value)
-
-
-def lift_tenant_id(value: Any) -> TenantId:
-    return TenantId(value)
-
-
-def try_lift_tenant_id(value: Any) -> Tuple[bool, TenantId | Exception]:
-    try:
-        return True, lift_tenant_id(value)
-    except Exception as e:
-        return False, e
 
 
 class UserTaskKey(str):
@@ -929,17 +558,6 @@ class UserTaskKey(str):
         return super().__new__(cls, value)
 
 
-def lift_user_task_key(value: Any) -> UserTaskKey:
-    return UserTaskKey(value)
-
-
-def try_lift_user_task_key(value: Any) -> Tuple[bool, UserTaskKey | Exception]:
-    try:
-        return True, lift_user_task_key(value)
-    except Exception as e:
-        return False, e
-
-
 class Username(str):
     def __new__(cls, value: str) -> "Username":
         if not isinstance(value, str):  # pyright: ignore[reportUnnecessaryIsInstance]
@@ -954,17 +572,6 @@ class Username(str):
         if len(value) > 256:
             raise ValueError(f"Username longer than maxLength 256, got {value!r}")
         return super().__new__(cls, value)
-
-
-def lift_username(value: Any) -> Username:
-    return Username(value)
-
-
-def try_lift_username(value: Any) -> Tuple[bool, Username | Exception]:
-    try:
-        return True, lift_username(value)
-    except Exception as e:
-        return False, e
 
 
 class VariableKey(str):
@@ -985,17 +592,6 @@ class VariableKey(str):
         return super().__new__(cls, value)
 
 
-def lift_variable_key(value: Any) -> VariableKey:
-    return VariableKey(value)
-
-
-def try_lift_variable_key(value: Any) -> Tuple[bool, VariableKey | Exception]:
-    try:
-        return True, lift_variable_key(value)
-    except Exception as e:
-        return False, e
-
-
 ResourceKey = Union[
     ProcessDefinitionKey, DecisionRequirementsKey, FormKey, DecisionDefinitionKey
 ]
@@ -1003,19 +599,19 @@ ResourceKey = Union[
 
 def lift_resource_key(value: Any) -> ResourceKey:
     try:
-        return lift_process_definition_key(value)
+        return ProcessDefinitionKey(value)
     except Exception:
         pass
     try:
-        return lift_decision_requirements_key(value)
+        return DecisionRequirementsKey(value)
     except Exception:
         pass
     try:
-        return lift_form_key(value)
+        return FormKey(value)
     except Exception:
         pass
     try:
-        return lift_decision_definition_key(value)
+        return DecisionDefinitionKey(value)
     except Exception:
         pass
     raise ValueError(
@@ -1035,11 +631,11 @@ ScopeKey = Union[ProcessInstanceKey, ElementInstanceKey]
 
 def lift_scope_key(value: Any) -> ScopeKey:
     try:
-        return lift_process_instance_key(value)
+        return ProcessInstanceKey(value)
     except Exception:
         pass
     try:
-        return lift_element_instance_key(value)
+        return ElementInstanceKey(value)
     except Exception:
         pass
     raise ValueError(
@@ -1091,76 +687,8 @@ __all__ = [
     "UserTaskKey",
     "Username",
     "VariableKey",
-    "lift_audit_log_entity_key",
-    "lift_audit_log_key",
-    "lift_authorization_key",
-    "lift_batch_operation_key",
-    "lift_business_id",
-    "lift_conditional_evaluation_key",
-    "lift_decision_definition_id",
-    "lift_decision_definition_key",
-    "lift_decision_evaluation_instance_key",
-    "lift_decision_evaluation_key",
-    "lift_decision_instance_key",
-    "lift_decision_requirements_key",
-    "lift_deployment_key",
-    "lift_document_id",
-    "lift_element_id",
-    "lift_element_instance_key",
-    "lift_end_cursor",
-    "lift_form_id",
-    "lift_form_key",
-    "lift_global_listener_id",
-    "lift_incident_key",
-    "lift_job_key",
-    "lift_message_key",
-    "lift_message_subscription_key",
-    "lift_process_definition_id",
-    "lift_process_definition_key",
-    "lift_process_instance_key",
     "lift_resource_key",
     "lift_scope_key",
-    "lift_signal_key",
-    "lift_start_cursor",
-    "lift_tag",
-    "lift_tenant_id",
-    "lift_user_task_key",
-    "lift_username",
-    "lift_variable_key",
-    "try_lift_audit_log_entity_key",
-    "try_lift_audit_log_key",
-    "try_lift_authorization_key",
-    "try_lift_batch_operation_key",
-    "try_lift_business_id",
-    "try_lift_conditional_evaluation_key",
-    "try_lift_decision_definition_id",
-    "try_lift_decision_definition_key",
-    "try_lift_decision_evaluation_instance_key",
-    "try_lift_decision_evaluation_key",
-    "try_lift_decision_instance_key",
-    "try_lift_decision_requirements_key",
-    "try_lift_deployment_key",
-    "try_lift_document_id",
-    "try_lift_element_id",
-    "try_lift_element_instance_key",
-    "try_lift_end_cursor",
-    "try_lift_form_id",
-    "try_lift_form_key",
-    "try_lift_global_listener_id",
-    "try_lift_incident_key",
-    "try_lift_job_key",
-    "try_lift_message_key",
-    "try_lift_message_subscription_key",
-    "try_lift_process_definition_id",
-    "try_lift_process_definition_key",
-    "try_lift_process_instance_key",
     "try_lift_resource_key",
     "try_lift_scope_key",
-    "try_lift_signal_key",
-    "try_lift_start_cursor",
-    "try_lift_tag",
-    "try_lift_tenant_id",
-    "try_lift_user_task_key",
-    "try_lift_username",
-    "try_lift_variable_key",
 ]

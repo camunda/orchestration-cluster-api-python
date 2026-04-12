@@ -8,14 +8,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionKey,
     ProcessInstanceKey,
     TenantId,
-    lift_decision_definition_id,
-    lift_decision_definition_key,
-    lift_decision_evaluation_instance_key,
-    lift_decision_evaluation_key,
-    lift_element_instance_key,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_tenant_id,
 )
 
 import datetime
@@ -156,13 +148,9 @@ class DecisionInstanceResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        decision_definition_id = lift_decision_definition_id(
-            d.pop("decisionDefinitionId")
-        )
+        decision_definition_id = DecisionDefinitionId(d.pop("decisionDefinitionId"))
 
-        decision_definition_key = lift_decision_definition_key(
-            d.pop("decisionDefinitionKey")
-        )
+        decision_definition_key = DecisionDefinitionKey(d.pop("decisionDefinitionKey"))
 
         decision_definition_name = d.pop("decisionDefinitionName")
 
@@ -172,13 +160,11 @@ class DecisionInstanceResult:
 
         decision_definition_version = d.pop("decisionDefinitionVersion")
 
-        decision_evaluation_instance_key = lift_decision_evaluation_instance_key(
+        decision_evaluation_instance_key = DecisionEvaluationInstanceKey(
             d.pop("decisionEvaluationInstanceKey")
         )
 
-        decision_evaluation_key = lift_decision_evaluation_key(
-            d.pop("decisionEvaluationKey")
-        )
+        decision_evaluation_key = DecisionEvaluationKey(d.pop("decisionEvaluationKey"))
 
         def _parse_element_instance_key(data: object) -> None | str:
             if data is None:
@@ -190,7 +176,7 @@ class DecisionInstanceResult:
         )
 
         element_instance_key = (
-            lift_element_instance_key(_raw_element_instance_key)
+            ElementInstanceKey(_raw_element_instance_key)
             if isinstance(_raw_element_instance_key, str)
             else _raw_element_instance_key
         )
@@ -214,7 +200,7 @@ class DecisionInstanceResult:
         )
 
         process_definition_key = (
-            lift_process_definition_key(_raw_process_definition_key)
+            ProcessDefinitionKey(_raw_process_definition_key)
             if isinstance(_raw_process_definition_key, str)
             else _raw_process_definition_key
         )
@@ -229,7 +215,7 @@ class DecisionInstanceResult:
         )
 
         process_instance_key = (
-            lift_process_instance_key(_raw_process_instance_key)
+            ProcessInstanceKey(_raw_process_instance_key)
             if isinstance(_raw_process_instance_key, str)
             else _raw_process_instance_key
         )
@@ -248,14 +234,14 @@ class DecisionInstanceResult:
         )
 
         root_process_instance_key = (
-            lift_process_instance_key(_raw_root_process_instance_key)
+            ProcessInstanceKey(_raw_root_process_instance_key)
             if isinstance(_raw_root_process_instance_key, str)
             else _raw_root_process_instance_key
         )
 
         state = DecisionInstanceStateEnum(d.pop("state"))
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
         decision_instance_result = cls(
             decision_definition_id=decision_definition_id,

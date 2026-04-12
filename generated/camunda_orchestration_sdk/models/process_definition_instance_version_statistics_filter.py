@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ProcessDefinitionId,
-    TenantId,
-    lift_process_definition_id,
-    lift_tenant_id,
-)
+from camunda_orchestration_sdk.semantic_types import ProcessDefinitionId, TenantId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -53,12 +48,10 @@ class ProcessDefinitionInstanceVersionStatisticsFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
         tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
+            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
         )
 
         process_definition_instance_version_statistics_filter = cls(

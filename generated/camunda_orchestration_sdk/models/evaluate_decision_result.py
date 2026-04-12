@@ -6,12 +6,6 @@ from camunda_orchestration_sdk.semantic_types import (
     DecisionInstanceKey,
     DecisionRequirementsKey,
     TenantId,
-    lift_decision_definition_id,
-    lift_decision_definition_key,
-    lift_decision_evaluation_key,
-    lift_decision_instance_key,
-    lift_decision_requirements_key,
-    lift_tenant_id,
 )
 
 from collections.abc import Mapping
@@ -129,27 +123,21 @@ class EvaluateDecisionResult:
         from ..models.evaluated_decision_result import EvaluatedDecisionResult
 
         d = dict(src_dict)
-        decision_definition_id = lift_decision_definition_id(
-            d.pop("decisionDefinitionId")
-        )
+        decision_definition_id = DecisionDefinitionId(d.pop("decisionDefinitionId"))
 
-        decision_definition_key = lift_decision_definition_key(
-            d.pop("decisionDefinitionKey")
-        )
+        decision_definition_key = DecisionDefinitionKey(d.pop("decisionDefinitionKey"))
 
         decision_definition_name = d.pop("decisionDefinitionName")
 
         decision_definition_version = d.pop("decisionDefinitionVersion")
 
-        decision_evaluation_key = lift_decision_evaluation_key(
-            d.pop("decisionEvaluationKey")
-        )
+        decision_evaluation_key = DecisionEvaluationKey(d.pop("decisionEvaluationKey"))
 
-        decision_instance_key = lift_decision_instance_key(d.pop("decisionInstanceKey"))
+        decision_instance_key = DecisionInstanceKey(d.pop("decisionInstanceKey"))
 
         decision_requirements_id = d.pop("decisionRequirementsId")
 
-        decision_requirements_key = lift_decision_requirements_key(
+        decision_requirements_key = DecisionRequirementsKey(
             d.pop("decisionRequirementsKey")
         )
 
@@ -172,7 +160,7 @@ class EvaluateDecisionResult:
         )
 
         failed_decision_definition_id = (
-            lift_decision_definition_id(_raw_failed_decision_definition_id)
+            DecisionDefinitionId(_raw_failed_decision_definition_id)
             if isinstance(_raw_failed_decision_definition_id, str)
             else _raw_failed_decision_definition_id
         )
@@ -186,7 +174,7 @@ class EvaluateDecisionResult:
 
         output = d.pop("output")
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
         evaluate_decision_result = cls(
             decision_definition_id=decision_definition_id,

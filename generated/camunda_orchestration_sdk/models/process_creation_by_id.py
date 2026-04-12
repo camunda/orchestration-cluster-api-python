@@ -3,9 +3,6 @@ from camunda_orchestration_sdk.semantic_types import (
     BusinessId,
     ProcessDefinitionId,
     TenantId,
-    lift_business_id,
-    lift_process_definition_id,
-    lift_tenant_id,
 )
 
 from collections.abc import Mapping
@@ -182,7 +179,7 @@ class ProcessCreationById:
         )
 
         d = dict(src_dict)
-        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
         process_definition_version = d.pop("processDefinitionVersion", UNSET)
 
@@ -196,9 +193,7 @@ class ProcessCreationById:
             )
 
         tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
+            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
         )
 
         operation_reference = d.pop("operationReference", UNSET)
@@ -242,7 +237,7 @@ class ProcessCreationById:
         tags = cast(list[str], d.pop("tags", UNSET))
 
         business_id = (
-            lift_business_id(_val)
+            BusinessId(_val)
             if (_val := d.pop("businessId", UNSET)) is not UNSET
             else UNSET
         )

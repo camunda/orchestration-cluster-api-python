@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import TenantId, lift_tenant_id
+from camunda_orchestration_sdk.semantic_types import TenantId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -46,9 +46,7 @@ class TenantSearchQueryRequestFilter:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
         tenant_id = (
-            lift_tenant_id(_val)
-            if (_val := d.pop("tenantId", UNSET)) is not UNSET
-            else UNSET
+            TenantId(_val) if (_val := d.pop("tenantId", UNSET)) is not UNSET else UNSET
         )
 
         name = d.pop("name", UNSET)

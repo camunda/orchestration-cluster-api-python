@@ -5,11 +5,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionKey,
     ProcessInstanceKey,
     TenantId,
-    lift_business_id,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_tenant_id,
 )
 
 from collections.abc import Mapping
@@ -105,19 +100,17 @@ class CreateProcessInstanceResult:
         )
 
         d = dict(src_dict)
-        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
         process_definition_version = d.pop("processDefinitionVersion")
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
         variables = CreateProcessInstanceResultVariables.from_dict(d.pop("variables"))
 
-        process_definition_key = lift_process_definition_key(
-            d.pop("processDefinitionKey")
-        )
+        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
 
-        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 
         tags = cast(list[str], d.pop("tags"))
 
@@ -129,7 +122,7 @@ class CreateProcessInstanceResult:
         _raw_business_id = _parse_business_id(d.pop("businessId"))
 
         business_id = (
-            lift_business_id(_raw_business_id)
+            BusinessId(_raw_business_id)
             if isinstance(_raw_business_id, str)
             else _raw_business_id
         )

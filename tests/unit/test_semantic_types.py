@@ -3,17 +3,15 @@ Behavioral regression tests for semantic types.
 
 These tests document the contract that users depend on when constructing,
 serialising, deserialising, and comparing semantic-typed values.  They must
-pass identically regardless of the underlying implementation strategy
-(NewType, class-based, or any future approach).
+pass identically regardless of the underlying implementation strategy.
 
 The tests are grouped into classes that each target a specific concern:
-    - Construction & validation (lifter + direct constructor)
+    - Construction & validation
     - str-subtype contract (isinstance, str operations)
     - JSON serialisation round-trip
     - Equality and hashing
     - Disjointness between semantic key types
     - Model from_dict / to_dict round-trip
-    - try_lift variants
     - Copy / pickle safety
 """
 
@@ -30,51 +28,39 @@ from camunda_orchestration_sdk.semantic_types import (
     DecisionDefinitionKey,
     ElementInstanceKey,
     JobKey,
+    ProcessDefinitionId,
     ProcessDefinitionKey,
     ProcessInstanceKey,
+    TenantId,
     UserTaskKey,
     VariableKey,
-    lift_decision_definition_key,
-    lift_element_instance_key,
-    lift_job_key,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_tenant_id,
-    lift_user_task_key,
-    lift_variable_key,
-    try_lift_process_definition_key,
-    try_lift_process_instance_key,
 )
-
-# Type alias for a lifter function: takes Any, returns str
-Lifter = Callable[[Any], str]
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-# Representative sample of (lifter, newtype_alias, valid_value) triples covering
+# Representative sample of (constructor, valid_value) pairs covering
 # every constraint category: pattern+minLen+maxLen, pattern-only, enum, unconstrained.
-STR_KEY_SAMPLES: list[tuple[Lifter, Callable[..., Any], str]] = [
-    (lift_process_definition_key, ProcessDefinitionKey, "12345"),
-    (lift_process_instance_key, ProcessInstanceKey, "67890"),
-    (lift_decision_definition_key, DecisionDefinitionKey, "111"),
-    (lift_element_instance_key, ElementInstanceKey, "222"),
-    (lift_job_key, JobKey, "333"),
-    (lift_user_task_key, UserTaskKey, "444"),
-    (lift_variable_key, VariableKey, "555"),
+STR_KEY_SAMPLES: list[tuple[type, str]] = [
+    (ProcessDefinitionKey, "12345"),
+    (ProcessInstanceKey, "67890"),
+    (DecisionDefinitionKey, "111"),
+    (ElementInstanceKey, "222"),
+    (JobKey, "333"),
+    (UserTaskKey, "444"),
+    (VariableKey, "555"),
 ]
 
-# All key-type lifters that share the numeric-string pattern ^-?[0-9]+$
-NUMERIC_KEY_LIFTERS: list[Lifter] = [
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_decision_definition_key,
-    lift_element_instance_key,
-    lift_job_key,
-    lift_user_task_key,
-    lift_variable_key,
+# All key types that share the numeric-string pattern ^-?[0-9]+$
+NUMERIC_KEY_TYPES: list[type] = [
+    ProcessDefinitionKey,
+    ProcessInstanceKey,
+    DecisionDefinitionKey,
+    ElementInstanceKey,
+    JobKey,
+    UserTaskKey,
+    VariableKey,
 ]
 
 
@@ -84,62 +70,62 @@ NUMERIC_KEY_LIFTERS: list[Lifter] = [
 
 
 class TestConstruction:
-    """Lifters accept valid input and reject invalid input."""
+    """Constructors accept valid input and reject invalid input."""
 
     @pytest.mark.parametrize(
-        "lifter,_type,value",
+        "_type,value",
         STR_KEY_SAMPLES,
         ids=lambda x: x.__name__ if callable(x) else str(x),  # type: ignore[union-attr]
     )
-    def test_lifter_returns_value_for_valid_input(
-        self, lifter: Lifter, _type: Callable[..., Any], value: str
+    def test_constructor_returns_value_for_valid_input(
+        self, _type: Callable[..., Any], value: str
     ) -> None:
-        result = lifter(value)
+        result = _type(value)
         assert result == value
 
     @pytest.mark.parametrize(
-        "lifter", NUMERIC_KEY_LIFTERS, ids=lambda fn: fn.__name__
+        "_type", NUMERIC_KEY_TYPES, ids=lambda t: t.__name__
     )
-    def test_lifter_rejects_non_numeric_string(self, lifter: Lifter) -> None:
+    def test_constructor_rejects_non_numeric_string(self, _type: type) -> None:
         with pytest.raises(ValueError, match="does not match pattern"):
-            lifter("not-a-number")
+            _type("not-a-number")
 
     @pytest.mark.parametrize(
-        "lifter", NUMERIC_KEY_LIFTERS, ids=lambda fn: fn.__name__
+        "_type", NUMERIC_KEY_TYPES, ids=lambda t: t.__name__
     )
-    def test_lifter_rejects_non_str_type(self, lifter: Lifter) -> None:
+    def test_constructor_rejects_non_str_type(self, _type: type) -> None:
         with pytest.raises(TypeError, match="must be str"):
-            lifter(12345)
+            _type(12345)
 
     @pytest.mark.parametrize(
-        "lifter", NUMERIC_KEY_LIFTERS, ids=lambda fn: fn.__name__
+        "_type", NUMERIC_KEY_TYPES, ids=lambda t: t.__name__
     )
-    def test_lifter_rejects_empty_string(self, lifter: Lifter) -> None:
+    def test_constructor_rejects_empty_string(self, _type: type) -> None:
         with pytest.raises(ValueError):
-            lifter("")
+            _type("")
 
-    def test_lifter_rejects_string_exceeding_max_length(self) -> None:
+    def test_constructor_rejects_string_exceeding_max_length(self) -> None:
         with pytest.raises(ValueError, match="longer than maxLength"):
-            lift_process_definition_key("1" * 26)
+            ProcessDefinitionKey("1" * 26)
 
-    def test_lifter_accepts_negative_numeric_key(self) -> None:
-        result = lift_process_definition_key("-42")
+    def test_constructor_accepts_negative_numeric_key(self) -> None:
+        result = ProcessDefinitionKey("-42")
         assert result == "-42"
 
     def test_process_definition_id_pattern_validation(self) -> None:
-        val = lift_process_definition_id("my_process_v1")
+        val = ProcessDefinitionId("my_process_v1")
         assert val == "my_process_v1"
 
     def test_process_definition_id_rejects_leading_special_char(self) -> None:
         with pytest.raises(ValueError, match="does not match pattern"):
-            lift_process_definition_id("!invalid")
+            ProcessDefinitionId("!invalid")
 
     def test_tenant_id_accepts_default(self) -> None:
-        val = lift_tenant_id("<default>")
+        val = TenantId("<default>")
         assert val == "<default>"
 
     def test_tenant_id_accepts_alphanumeric(self) -> None:
-        val = lift_tenant_id("my_tenant-1")
+        val = TenantId("my_tenant-1")
         assert val == "my_tenant-1"
 
 
@@ -153,38 +139,38 @@ class TestStrSubtype:
     passes them to standard library functions, HTTP clients, etc."""
 
     @pytest.mark.parametrize(
-        "lifter,_type,value",
+        "_type,value",
         STR_KEY_SAMPLES,
         ids=lambda x: x.__name__ if callable(x) else str(x),  # type: ignore[union-attr]
     )
     def test_isinstance_str(
-        self, lifter: Lifter, _type: Callable[..., Any], value: str
+        self, _type: Callable[..., Any], value: str
     ) -> None:
-        result = lifter(value)
+        result = _type(value)
         assert isinstance(result, str)
 
     def test_str_builtin_returns_same_value(self) -> None:
-        key = lift_process_definition_key("12345")
+        key = ProcessDefinitionKey("12345")
         assert str(key) == "12345"
 
     def test_string_concatenation(self) -> None:
-        key = lift_process_definition_key("100")
+        key = ProcessDefinitionKey("100")
         assert "key=" + key == "key=100"
 
     def test_string_slicing(self) -> None:
-        key = lift_process_definition_key("12345")
+        key = ProcessDefinitionKey("12345")
         assert key[:3] == "123"
 
     def test_string_format(self) -> None:
-        key = lift_process_definition_key("42")
+        key = ProcessDefinitionKey("42")
         assert f"Process {key}" == "Process 42"
 
     def test_len(self) -> None:
-        key = lift_process_definition_key("12345")
+        key = ProcessDefinitionKey("12345")
         assert len(key) == 5
 
     def test_in_operator(self) -> None:
-        key = lift_process_definition_key("12345")
+        key = ProcessDefinitionKey("12345")
         assert "234" in key
 
 
@@ -198,25 +184,25 @@ class TestJsonSerialisation:
     data loss, since they flow through REST API request/response bodies."""
 
     def test_json_dumps_produces_plain_string(self) -> None:
-        key = lift_process_definition_key("12345")
+        key = ProcessDefinitionKey("12345")
         assert json.dumps(key) == '"12345"'
 
     def test_json_dumps_in_dict(self) -> None:
-        key = lift_process_definition_key("12345")
+        key = ProcessDefinitionKey("12345")
         payload: dict[str, Any] = {"processDefinitionKey": key, "count": 1}
         result: dict[str, Any] = json.loads(json.dumps(payload))
         assert result == {"processDefinitionKey": "12345", "count": 1}
 
     def test_json_dumps_in_list(self) -> None:
-        keys = [lift_process_definition_key("1"), lift_process_definition_key("2")]
+        keys = [ProcessDefinitionKey("1"), ProcessDefinitionKey("2")]
         result: list[str] = json.loads(json.dumps(keys))
         assert result == ["1", "2"]
 
     def test_json_round_trip_preserves_value(self) -> None:
-        original = lift_process_definition_key("9876543210")
+        original = ProcessDefinitionKey("9876543210")
         serialised = json.dumps({"key": original})
         deserialised: dict[str, Any] = json.loads(serialised)
-        reconstructed = lift_process_definition_key(deserialised["key"])
+        reconstructed = ProcessDefinitionKey(deserialised["key"])
         assert reconstructed == original
 
 
@@ -230,33 +216,33 @@ class TestEqualityAndHashing:
     dict keys / set members."""
 
     def test_equal_to_plain_str(self) -> None:
-        key = lift_process_definition_key("100")
+        key = ProcessDefinitionKey("100")
         assert key == "100"
         assert "100" == key
 
     def test_equal_to_same_semantic_type(self) -> None:
-        a = lift_process_definition_key("100")
-        b = lift_process_definition_key("100")
+        a = ProcessDefinitionKey("100")
+        b = ProcessDefinitionKey("100")
         assert a == b
 
     def test_not_equal_to_different_value(self) -> None:
-        a = lift_process_definition_key("100")
-        b = lift_process_definition_key("200")
+        a = ProcessDefinitionKey("100")
+        b = ProcessDefinitionKey("200")
         assert a != b
 
     def test_hash_consistent_with_str(self) -> None:
-        key = lift_process_definition_key("100")
+        key = ProcessDefinitionKey("100")
         assert hash(key) == hash("100")
 
     def test_usable_as_dict_key(self) -> None:
-        key = lift_process_definition_key("100")
+        key = ProcessDefinitionKey("100")
         d: dict[str, str] = {key: "found"}
         assert d["100"] == "found"
         assert d[key] == "found"
 
     def test_usable_in_set(self) -> None:
-        a = lift_process_definition_key("100")
-        b = lift_process_definition_key("100")
+        a = ProcessDefinitionKey("100")
+        b = ProcessDefinitionKey("100")
         s = {a, b}
         assert len(s) == 1
         assert "100" in s
@@ -274,55 +260,53 @@ class TestDisjointness:
     distinguish between, say, a ProcessDefinitionKey("100") and a
     ProcessInstanceKey("100").
 
-    With NewType the runtime type is plain ``str`` for all, so they are
-    indistinguishable at runtime.  If the implementation changes to
-    class-based types, some of these assertions will flip -- that is the
-    intended regression signal.
+    With class-based types (each inheriting from ``str``) the runtime
+    ``type()`` returns the semantic class rather than plain ``str``, and
+    ``isinstance`` checks against the class work correctly.  Because the
+    classes inherit ``str.__eq__`` and ``str.__hash__`` without override,
+    two different semantic types wrapping the same string value are still
+    equal and share a hash at runtime.
     """
 
     def test_different_key_types_same_value_are_equal_at_runtime(self) -> None:
-        """NewType does not create distinct runtime types, so two
-        different semantic keys wrapping the same value compare equal."""
-        pdk = lift_process_definition_key("100")
-        pik = lift_process_instance_key("100")
-        assert pdk == pik  # both are just "100"
+        """Class-based types inherit str.__eq__, so two different semantic
+        keys wrapping the same value still compare equal at runtime."""
+        pdk = ProcessDefinitionKey("100")
+        pik = ProcessInstanceKey("100")
+        assert pdk == pik  # both compare as "100" via str.__eq__
 
-    def test_runtime_type_is_str(self) -> None:
-        """With NewType, type() returns str -- not the semantic type."""
-        pdk = lift_process_definition_key("100")
-        assert type(pdk) is str
+    def test_runtime_type_is_semantic_class(self) -> None:
+        """With class-based types, type() returns the semantic class, not plain str."""
+        pdk = ProcessDefinitionKey("100")
+        assert type(pdk) is ProcessDefinitionKey
+        assert isinstance(pdk, str)  # still a str subclass
 
     @pytest.mark.parametrize(
-        "lifter,_type,value",
+        "_type,value",
         STR_KEY_SAMPLES,
         ids=lambda x: x.__name__ if callable(x) else str(x),  # type: ignore[union-attr]
     )
-    def test_every_lifted_value_runtime_type_is_str(
-        self, lifter: Lifter, _type: Callable[..., Any], value: str
+    def test_every_constructed_value_runtime_type_is_semantic_class(
+        self, _type: Callable[..., Any], value: str
     ) -> None:
-        result = lifter(value)
-        assert type(result) is str
+        result = _type(value)
+        assert type(result) is _type
+        assert isinstance(result, str)  # still a str subclass
 
-    def test_cannot_isinstance_distinguish_key_types(self) -> None:
-        """With NewType there is no class to use with isinstance -- the
-        NewType alias is erased at runtime.  Attempting to use it with
-        isinstance raises TypeError because NewType aliases are not
-        classes.
-
-        If the implementation switches to class-based types, isinstance
-        WILL work and this test must be updated to reflect the new
-        contract.
+    def test_can_isinstance_distinguish_key_types(self) -> None:
+        """With class-based types, isinstance checks against the semantic
+        class work correctly -- each type is a real class, not a NewType alias.
         """
-        pdk = lift_process_definition_key("100")
-        # NewType aliases are callables, not classes; isinstance raises TypeError
-        with pytest.raises(TypeError):
-            isinstance(pdk, ProcessDefinitionKey)  # type: ignore[arg-type]
+        pdk = ProcessDefinitionKey("100")
+        assert isinstance(pdk, ProcessDefinitionKey)
+        pik = ProcessInstanceKey("100")
+        assert not isinstance(pik, ProcessDefinitionKey)
 
     def test_different_key_types_share_hash(self) -> None:
         """Because they are all plain str, different semantic types with
         the same value have the same hash and are fungible as dict keys."""
-        pdk = lift_process_definition_key("100")
-        pik = lift_process_instance_key("100")
+        pdk = ProcessDefinitionKey("100")
+        pik = ProcessInstanceKey("100")
         assert hash(pdk) == hash(pik)
         d: dict[str, str] = {pdk: "from-pdk"}
         assert d[pik] == "from-pdk"  # same bucket
@@ -330,8 +314,8 @@ class TestDisjointness:
     def test_set_collapses_different_key_types_same_value(self) -> None:
         """A set containing the same string from two different semantic
         types collapses to a single element."""
-        pdk = lift_process_definition_key("100")
-        pik = lift_process_instance_key("100")
+        pdk = ProcessDefinitionKey("100")
+        pik = ProcessInstanceKey("100")
         s = {pdk, pik}
         assert len(s) == 1
 
@@ -342,7 +326,7 @@ class TestDisjointness:
 
 
 class TestModelRoundTrip:
-    """Models that use semantic types must correctly lift values in
+    """Models that use semantic types must correctly construct values in
     from_dict and emit plain strings in to_dict, enabling a full
     JSON <-> model round-trip."""
 
@@ -390,7 +374,7 @@ class TestModelRoundTrip:
         assert reconstructed == original
 
     def test_from_dict_validates_semantic_fields(self) -> None:
-        """from_dict calls lifters which validate -- bad input must raise."""
+        """from_dict constructs semantic types, which validate -- bad input must raise."""
         from camunda_orchestration_sdk.models.process_instance_call_hierarchy_entry import (
             ProcessInstanceCallHierarchyEntry,
         )
@@ -413,37 +397,7 @@ class TestModelRoundTrip:
 
 
 # ===================================================================
-# 7 · try_lift variants
-# ===================================================================
-
-
-class TestTryLift:
-    """try_lift_* returns (True, value) on success and (False, exception)
-    on failure, allowing callers to handle errors without try/except."""
-
-    def test_try_lift_success(self) -> None:
-        ok, val = try_lift_process_definition_key("12345")
-        assert ok is True
-        assert val == "12345"
-
-    def test_try_lift_failure_returns_false_and_exception(self) -> None:
-        ok, err = try_lift_process_definition_key("not-a-number")
-        assert ok is False
-        assert isinstance(err, ValueError)
-
-    def test_try_lift_type_error(self) -> None:
-        ok, err = try_lift_process_definition_key(999)
-        assert ok is False
-        assert isinstance(err, TypeError)
-
-    def test_try_lift_process_instance_key_success(self) -> None:
-        ok, val = try_lift_process_instance_key("42")
-        assert ok is True
-        assert val == "42"
-
-
-# ===================================================================
-# 8 · Copy / pickle safety
+# 7 · Copy / pickle safety
 # ===================================================================
 
 
@@ -452,18 +406,18 @@ class TestCopyAndPickle:
     between threads or caching them."""
 
     def test_copy(self) -> None:
-        key = lift_process_definition_key("100")
+        key = ProcessDefinitionKey("100")
         copied = copy.copy(key)
         assert copied == key
         assert copied == "100"
 
     def test_deepcopy(self) -> None:
-        key = lift_process_definition_key("100")
+        key = ProcessDefinitionKey("100")
         copied = copy.deepcopy(key)
         assert copied == key
 
     def test_pickle_round_trip(self) -> None:
-        key = lift_process_definition_key("100")
+        key = ProcessDefinitionKey("100")
         pickled = pickle.dumps(key)
         unpickled: str = pickle.loads(pickled)  # noqa: S301
         assert unpickled == key

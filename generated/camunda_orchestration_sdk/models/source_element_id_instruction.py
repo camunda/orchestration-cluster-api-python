@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementId, lift_element_id
+from camunda_orchestration_sdk.semantic_types import ElementId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -52,7 +52,7 @@ class SourceElementIdInstruction:
         d = dict(src_dict)
         source_type = d.pop("sourceType")
 
-        source_element_id = lift_element_id(d.pop("sourceElementId"))
+        source_element_id = ElementId(d.pop("sourceElementId"))
 
         source_element_id_instruction = cls(
             source_type=source_type,

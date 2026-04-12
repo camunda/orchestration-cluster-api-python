@@ -1,12 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    FormId,
-    FormKey,
-    TenantId,
-    lift_form_id,
-    lift_form_key,
-    lift_tenant_id,
-)
+from camunda_orchestration_sdk.semantic_types import FormId, FormKey, TenantId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -70,15 +63,15 @@ class DeploymentFormResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        form_id = lift_form_id(d.pop("formId"))
+        form_id = FormId(d.pop("formId"))
 
         version = d.pop("version")
 
         resource_name = d.pop("resourceName")
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
-        form_key = lift_form_key(d.pop("formKey"))
+        form_key = FormKey(d.pop("formKey"))
 
         deployment_form_result = cls(
             form_id=form_id,

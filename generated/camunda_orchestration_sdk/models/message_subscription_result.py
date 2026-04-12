@@ -7,13 +7,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionKey,
     ProcessInstanceKey,
     TenantId,
-    lift_element_id,
-    lift_element_instance_key,
-    lift_message_subscription_key,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_tenant_id,
 )
 
 import datetime
@@ -128,11 +121,11 @@ class MessageSubscriptionResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        message_subscription_key = lift_message_subscription_key(
+        message_subscription_key = MessageSubscriptionKey(
             d.pop("messageSubscriptionKey")
         )
 
-        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
         def _parse_process_definition_key(data: object) -> None | str:
             if data is None:
@@ -144,7 +137,7 @@ class MessageSubscriptionResult:
         )
 
         process_definition_key = (
-            lift_process_definition_key(_raw_process_definition_key)
+            ProcessDefinitionKey(_raw_process_definition_key)
             if isinstance(_raw_process_definition_key, str)
             else _raw_process_definition_key
         )
@@ -159,7 +152,7 @@ class MessageSubscriptionResult:
         )
 
         process_instance_key = (
-            lift_process_instance_key(_raw_process_instance_key)
+            ProcessInstanceKey(_raw_process_instance_key)
             if isinstance(_raw_process_instance_key, str)
             else _raw_process_instance_key
         )
@@ -174,12 +167,12 @@ class MessageSubscriptionResult:
         )
 
         root_process_instance_key = (
-            lift_process_instance_key(_raw_root_process_instance_key)
+            ProcessInstanceKey(_raw_root_process_instance_key)
             if isinstance(_raw_root_process_instance_key, str)
             else _raw_root_process_instance_key
         )
 
-        element_id = lift_element_id(d.pop("elementId"))
+        element_id = ElementId(d.pop("elementId"))
 
         def _parse_element_instance_key(data: object) -> None | str:
             if data is None:
@@ -191,7 +184,7 @@ class MessageSubscriptionResult:
         )
 
         element_instance_key = (
-            lift_element_instance_key(_raw_element_instance_key)
+            ElementInstanceKey(_raw_element_instance_key)
             if isinstance(_raw_element_instance_key, str)
             else _raw_element_instance_key
         )
@@ -211,7 +204,7 @@ class MessageSubscriptionResult:
 
         correlation_key = _parse_correlation_key(d.pop("correlationKey"))
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
         message_subscription_result = cls(
             message_subscription_key=message_subscription_key,

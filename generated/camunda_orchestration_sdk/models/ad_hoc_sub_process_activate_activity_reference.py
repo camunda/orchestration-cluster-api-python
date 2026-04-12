@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementId, lift_element_id
+from camunda_orchestration_sdk.semantic_types import ElementId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -59,7 +59,7 @@ class AdHocSubProcessActivateActivityReference:
         )
 
         d = dict(src_dict)
-        element_id = lift_element_id(d.pop("elementId"))
+        element_id = ElementId(d.pop("elementId"))
 
         _variables = d.pop("variables", UNSET)
         variables: AdHocSubProcessActivateActivityReferenceVariables | Unset

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementId, lift_element_id
+from camunda_orchestration_sdk.semantic_types import ElementId
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -49,7 +49,7 @@ class ProcessInstanceCreationTerminateInstruction:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        after_element_id = lift_element_id(d.pop("afterElementId"))
+        after_element_id = ElementId(d.pop("afterElementId"))
 
         type_ = d.pop("type", UNSET)
 

@@ -161,28 +161,8 @@ def _emit_semantic_types_py(
         
         lines.extend(class_def)
 
-        # Track exported names
-        func_name = _snake(f"lift_{alias_name}")
-        try_func_name = _snake(f"try_lift_{alias_name}")
-        all_exported_names.extend([alias_name, func_name, try_func_name])
-
-        # Thin lifter function (validation now in class __new__)
-        func: List[str] = []
-        func_name = _snake(f"lift_{alias_name}")
-        func.append(f"def {func_name}(value: Any) -> {alias_name}:\n")
-        func.append(f"\treturn {alias_name}(value)\n\n")
-
-        # try_lift variant returning (ok, value_or_error)
-        try_func_name = _snake(f"try_lift_{alias_name}")
-        func.append(
-            f"def {try_func_name}(value: Any) -> Tuple[bool, {alias_name} | Exception]:\n"
-        )
-        func.append("\ttry:\n")
-        func.append(f"\t\treturn True, {func_name}(value)\n")
-        func.append("\texcept Exception as e:\n")
-        func.append("\t\treturn False, e\n\n")
-
-        lines.extend(func)
+        # Track exported names (class only; no lifter functions for concrete types)
+        all_exported_names.append(alias_name)
 
     # Emit union type aliases (e.g. ScopeKey = ProcessInstanceKey | ElementInstanceKey)
     if union_aliases:
@@ -191,14 +171,12 @@ def _emit_semantic_types_py(
             try_func_name = _snake(f"try_lift_{union_name}")
             all_exported_names.extend([union_name, func_name, try_func_name])
 
-            branch_lift_funcs = [_snake(f"lift_{b}") for b in branch_names]
-
             lines.append(f"{union_name} = Union[{', '.join(branch_names)}]\n\n")
 
             lines.append(f"def {func_name}(value: Any) -> {union_name}:\n")
-            for lift_fn in branch_lift_funcs:
+            for branch in branch_names:
                 lines.append("\ttry:\n")
-                lines.append(f"\t\treturn {lift_fn}(value)\n")
+                lines.append(f"\t\treturn {branch}(value)\n")
                 lines.append("\texcept Exception:\n")
                 lines.append("\t\tpass\n")
             lines.append(

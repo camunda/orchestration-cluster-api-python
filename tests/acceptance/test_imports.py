@@ -12,10 +12,9 @@ def test_api_client_constructible():
     client = Client(base_url="http://localhost")
 
     assert client is not None
-    # lifter smoke
-    assert hasattr(semantic_types, "lift_element_instance_key")
-    assert semantic_types.lift_process_definition_key("123") == "123"
+    # semantic type constructor smoke
     assert hasattr(semantic_types, "ProcessDefinitionId")
+    assert semantic_types.ProcessDefinitionKey("123") == "123"
 
 
 def test_camunda_client_constructible():

@@ -40,7 +40,7 @@ def _extract_semantic_mappings(data: Any, mappings: Dict[str, str]) -> None:
             _extract_semantic_mappings(item, mappings)
 
 
-def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> None:
+def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str], union_type_names: set[str] | None = None) -> None:
     if not file_path.exists():
         return
 
@@ -76,13 +76,15 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
     if not fields_to_patch:
         return
 
-    # 2. Build explicit import for only the semantic types used in this file
+    # 2. Build explicit import for only the semantic types used in this file.
+    # Union types are not callable classes -- use lift_<name> for those.
+    _union_names = union_type_names or set()
     types_needed: set[str] = set()
-    lifters_needed: set[str] = set()
     for _json_prop, _py_prop, semantic_type in fields_to_patch:
         types_needed.add(semantic_type)
-        lifters_needed.add(_snake(f"lift_{semantic_type}"))
-    all_names = sorted(types_needed | lifters_needed)
+        if semantic_type in _union_names:
+            types_needed.add(_snake(f"lift_{semantic_type}"))
+    all_names = sorted(types_needed)
     import_line = (
         f"from camunda_orchestration_sdk.semantic_types import {', '.join(all_names)}"
     )
@@ -103,7 +105,8 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
 
     # 3. Apply patches
     for json_prop, py_prop, semantic_type in fields_to_patch:
-        lifter_name = _snake(f"lift_{semantic_type}")
+        # Union types are not callable; use the lift_* function for them.
+        constructor = _snake(f"lift_{semantic_type}") if semantic_type in _union_names else semantic_type
 
         # Patch type hint
         type_hint_pattern = re.compile(
@@ -128,7 +131,7 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
         # Note: json_prop in the regex needs to be escaped if it contains special chars, but usually it doesn't.
         pop_pattern = re.compile(rf'(\s+){py_prop} = (d\.pop\("{json_prop}"[^)]*\))')
 
-        def pop_replacer(match: re.Match[str]) -> str:
+        def pop_replacer(match: re.Match[str], _ctor: str = constructor) -> str:
             indent = match.group(1)
             pop_call = match.group(2)
 
@@ -139,14 +142,14 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
             if default_match:
                 default_val = default_match.group(1)
                 # Use walrus operator to capture value and check against default
-                return f"{indent}{py_prop} = {lifter_name}(_val) if (_val := {pop_call}) is not {default_val} else {default_val}"
+                return f"{indent}{py_prop} = {_ctor}(_val) if (_val := {pop_call}) is not {default_val} else {default_val}"
 
-            return f"{indent}{py_prop} = {lifter_name}({pop_call})"
+            return f"{indent}{py_prop} = {_ctor}({pop_call})"
 
-        # Check if already lifted to avoid double patching
+        # Check if already patched to avoid double patching
         if (
-            f"{lifter_name}(d.pop" not in content
-            and f"{lifter_name}(_val)" not in content
+            f"{constructor}(d.pop" not in content
+            and f"{constructor}(_val)" not in content
         ):
             content = pop_pattern.sub(pop_replacer, content)
 
@@ -163,13 +166,13 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
             re.DOTALL,
         )
         parse_match = parse_call_pattern.search(content)
-        if parse_match and f"{lifter_name}(_raw_{py_prop}" not in content:
+        if parse_match and f"{constructor}(_raw_{py_prop}" not in content:
             indent = parse_match.group(1)
             parse_call = parse_match.group(2)
             raw_var = f"_raw_{py_prop}"
             replacement = (
                 f"{indent}{raw_var} = {parse_call}\n"
-                f"{indent}{py_prop} = {lifter_name}({raw_var}) if isinstance({raw_var}, str) else {raw_var}"
+                f"{indent}{py_prop} = {constructor}({raw_var}) if isinstance({raw_var}, str) else {raw_var}"
             )
             content = content.replace(parse_match.group(0), replacement, 1)
 
@@ -179,6 +182,8 @@ def _patch_model_file(file_path: Path, semantic_mappings: Dict[str, str]) -> Non
 
 
 def run(context: dict[str, str]) -> None:
+    import json as _json
+
     # spec_path = Path(context["spec_path"]).resolve()
     out_dir = Path(context["out_dir"]).resolve()
 
@@ -205,8 +210,23 @@ def run(context: dict[str, str]) -> None:
 
     print(f"Found {len(semantic_mappings)} semantic property mappings.")
 
+    # Load union type names from spec-metadata so we know which semantic types
+    # are Union aliases (not callable classes) and need a lift_* function instead.
+    union_type_names: set[str] = set()
+    metadata_path_str = context.get("metadata_path", "")
+    if metadata_path_str:
+        metadata_path = Path(metadata_path_str)
+        if metadata_path.exists():
+            try:
+                with open(metadata_path, "r", encoding="utf-8") as f:
+                    meta = _json.load(f)
+                for entry in meta.get("unions", []):
+                    union_type_names.add(entry["name"])
+            except Exception as e:
+                print(f"Warning: Failed to load metadata for union type detection: {e}")
+
     # 2. Iterate over ALL model files
     for model_file in models_dir.glob("*.py"):
         if model_file.name == "__init__.py":
             continue
-        _patch_model_file(model_file, semantic_mappings)
+        _patch_model_file(model_file, semantic_mappings, union_type_names)

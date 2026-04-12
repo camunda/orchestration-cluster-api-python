@@ -1,10 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ElementId,
-    ElementInstanceKey,
-    lift_element_id,
-    lift_element_instance_key,
-)
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -81,7 +76,7 @@ class ProcessInstanceModificationActivateInstruction:
         )
 
         d = dict(src_dict)
-        element_id = lift_element_id(d.pop("elementId"))
+        element_id = ElementId(d.pop("elementId"))
 
         _variable_instructions = d.pop("variableInstructions", UNSET)
         variable_instructions: (
@@ -99,7 +94,7 @@ class ProcessInstanceModificationActivateInstruction:
                 variable_instructions.append(variable_instructions_item)
 
         ancestor_element_instance_key = (
-            lift_element_instance_key(_val)
+            ElementInstanceKey(_val)
             if (_val := d.pop("ancestorElementInstanceKey", UNSET)) is not UNSET
             else UNSET
         )

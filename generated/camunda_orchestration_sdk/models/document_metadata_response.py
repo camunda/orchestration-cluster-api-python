@@ -2,8 +2,6 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessInstanceKey,
-    lift_process_definition_id,
-    lift_process_instance_key,
 )
 
 import datetime
@@ -127,7 +125,7 @@ class DocumentMetadataResponse:
         )
 
         process_definition_id = (
-            lift_process_definition_id(_raw_process_definition_id)
+            ProcessDefinitionId(_raw_process_definition_id)
             if isinstance(_raw_process_definition_id, str)
             else _raw_process_definition_id
         )
@@ -142,7 +140,7 @@ class DocumentMetadataResponse:
         )
 
         process_instance_key = (
-            lift_process_instance_key(_raw_process_instance_key)
+            ProcessInstanceKey(_raw_process_instance_key)
             if isinstance(_raw_process_instance_key, str)
             else _raw_process_instance_key
         )

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import ElementId, lift_element_id
+from camunda_orchestration_sdk.semantic_types import ElementId
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar, cast
@@ -165,7 +165,7 @@ class ProcessInstanceModificationMoveInstruction:
             d.pop("sourceElementInstruction")
         )
 
-        target_element_id = lift_element_id(d.pop("targetElementId"))
+        target_element_id = ElementId(d.pop("targetElementId"))
 
         def _parse_ancestor_scope_instruction(
             data: object,

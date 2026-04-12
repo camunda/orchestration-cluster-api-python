@@ -1,8 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    ProcessDefinitionKey,
-    lift_process_definition_key,
-)
+from camunda_orchestration_sdk.semantic_types import ProcessDefinitionKey
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, TypeVar
@@ -62,7 +59,7 @@ class ProcessInstanceMigrationBatchOperationPlan:
         )
 
         d = dict(src_dict)
-        target_process_definition_key = lift_process_definition_key(
+        target_process_definition_key = ProcessDefinitionKey(
             d.pop("targetProcessDefinitionKey")
         )
 

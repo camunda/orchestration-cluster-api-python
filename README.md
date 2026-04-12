@@ -403,7 +403,7 @@ with CamundaClient() as client:
     print(f"Process instance key: {result.process_instance_key}")
 ```
 
-**Note on lifters:** The SDK exports `lift_*` functions (e.g., `lift_process_definition_key`) for compatibility, but they are optional. The type constructor itself includes all validation, so you can always use `ProcessDefinitionKey(value)` directly.
+**Migrating from pre-release versions:** Early pre-release builds exported `lift_*` helper functions (e.g., `lift_process_definition_key`). These have been removed — use the type constructor directly instead: `ProcessDefinitionKey(value)`. The constructor performs the same validation and is the single API surface for semantic types.
 
 ## Job Workers
 

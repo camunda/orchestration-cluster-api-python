@@ -1,8 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import (
-    AuthorizationKey,
-    lift_authorization_key,
-)
+from camunda_orchestration_sdk.semantic_types import AuthorizationKey
 
 from collections.abc import Mapping
 from typing import Any, TypeVar, cast
@@ -113,7 +110,7 @@ class AuthorizationResult:
 
             permission_types.append(permission_types_item)
 
-        authorization_key = lift_authorization_key(d.pop("authorizationKey"))
+        authorization_key = AuthorizationKey(d.pop("authorizationKey"))
 
         authorization_result = cls(
             owner_id=owner_id,

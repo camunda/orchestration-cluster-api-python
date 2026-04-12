@@ -6,12 +6,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionKey,
     ProcessInstanceKey,
     TenantId,
-    lift_business_id,
-    lift_element_instance_key,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_tenant_id,
 )
 
 import datetime
@@ -149,7 +143,7 @@ class ProcessInstanceResult:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
         def _parse_process_definition_name(data: object) -> None | str:
             if data is None:
@@ -192,13 +186,11 @@ class ProcessInstanceResult:
 
         has_incident = d.pop("hasIncident")
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
-        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 
-        process_definition_key = lift_process_definition_key(
-            d.pop("processDefinitionKey")
-        )
+        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
 
         def _parse_parent_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -210,7 +202,7 @@ class ProcessInstanceResult:
         )
 
         parent_process_instance_key = (
-            lift_process_instance_key(_raw_parent_process_instance_key)
+            ProcessInstanceKey(_raw_parent_process_instance_key)
             if isinstance(_raw_parent_process_instance_key, str)
             else _raw_parent_process_instance_key
         )
@@ -225,7 +217,7 @@ class ProcessInstanceResult:
         )
 
         parent_element_instance_key = (
-            lift_element_instance_key(_raw_parent_element_instance_key)
+            ElementInstanceKey(_raw_parent_element_instance_key)
             if isinstance(_raw_parent_element_instance_key, str)
             else _raw_parent_element_instance_key
         )
@@ -240,7 +232,7 @@ class ProcessInstanceResult:
         )
 
         root_process_instance_key = (
-            lift_process_instance_key(_raw_root_process_instance_key)
+            ProcessInstanceKey(_raw_root_process_instance_key)
             if isinstance(_raw_root_process_instance_key, str)
             else _raw_root_process_instance_key
         )
@@ -255,7 +247,7 @@ class ProcessInstanceResult:
         _raw_business_id = _parse_business_id(d.pop("businessId"))
 
         business_id = (
-            lift_business_id(_raw_business_id)
+            BusinessId(_raw_business_id)
             if isinstance(_raw_business_id, str)
             else _raw_business_id
         )

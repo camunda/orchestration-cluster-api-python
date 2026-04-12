@@ -8,14 +8,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessInstanceKey,
     TenantId,
     UserTaskKey,
-    lift_element_id,
-    lift_element_instance_key,
-    lift_form_key,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_tenant_id,
-    lift_user_task_key,
 )
 
 import datetime
@@ -224,13 +216,13 @@ class UserTaskResult:
 
         assignee = _parse_assignee(d.pop("assignee"))
 
-        element_id = lift_element_id(d.pop("elementId"))
+        element_id = ElementId(d.pop("elementId"))
 
         candidate_groups = cast(list[str], d.pop("candidateGroups"))
 
         candidate_users = cast(list[str], d.pop("candidateUsers"))
 
-        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
         creation_date = isoparse(d.pop("creationDate"))
 
@@ -279,7 +271,7 @@ class UserTaskResult:
 
         due_date = _parse_due_date(d.pop("dueDate"))
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
         def _parse_external_form_reference(data: object) -> None | str:
             if data is None:
@@ -296,9 +288,9 @@ class UserTaskResult:
 
         priority = d.pop("priority")
 
-        user_task_key = lift_user_task_key(d.pop("userTaskKey"))
+        user_task_key = UserTaskKey(d.pop("userTaskKey"))
 
-        element_instance_key = lift_element_instance_key(d.pop("elementInstanceKey"))
+        element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
 
         def _parse_process_name(data: object) -> None | str:
             if data is None:
@@ -307,11 +299,9 @@ class UserTaskResult:
 
         process_name = _parse_process_name(d.pop("processName"))
 
-        process_definition_key = lift_process_definition_key(
-            d.pop("processDefinitionKey")
-        )
+        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
 
-        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -323,7 +313,7 @@ class UserTaskResult:
         )
 
         root_process_instance_key = (
-            lift_process_instance_key(_raw_root_process_instance_key)
+            ProcessInstanceKey(_raw_root_process_instance_key)
             if isinstance(_raw_root_process_instance_key, str)
             else _raw_root_process_instance_key
         )
@@ -336,9 +326,7 @@ class UserTaskResult:
         _raw_form_key = _parse_form_key(d.pop("formKey"))
 
         form_key = (
-            lift_form_key(_raw_form_key)
-            if isinstance(_raw_form_key, str)
-            else _raw_form_key
+            FormKey(_raw_form_key) if isinstance(_raw_form_key, str) else _raw_form_key
         )
 
         tags = cast(list[str], d.pop("tags"))

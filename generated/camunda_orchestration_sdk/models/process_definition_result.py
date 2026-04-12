@@ -3,9 +3,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionId,
     ProcessDefinitionKey,
     TenantId,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_tenant_id,
 )
 
 from collections.abc import Mapping
@@ -104,13 +101,11 @@ class ProcessDefinitionResult:
 
         version_tag = _parse_version_tag(d.pop("versionTag"))
 
-        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
-        process_definition_key = lift_process_definition_key(
-            d.pop("processDefinitionKey")
-        )
+        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
 
         has_start_form = d.pop("hasStartForm")
 

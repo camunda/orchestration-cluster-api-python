@@ -1,5 +1,5 @@
 from __future__ import annotations
-from camunda_orchestration_sdk.semantic_types import StartCursor, lift_start_cursor
+from camunda_orchestration_sdk.semantic_types import StartCursor
 
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -47,7 +47,7 @@ class CursorBasedBackwardPagination:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        before = lift_start_cursor(d.pop("before"))
+        before = StartCursor(d.pop("before"))
 
         limit = d.pop("limit", UNSET)
 

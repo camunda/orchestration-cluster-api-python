@@ -7,13 +7,6 @@ from camunda_orchestration_sdk.semantic_types import (
     ProcessDefinitionKey,
     ProcessInstanceKey,
     TenantId,
-    lift_element_id,
-    lift_element_instance_key,
-    lift_job_key,
-    lift_process_definition_id,
-    lift_process_definition_key,
-    lift_process_instance_key,
-    lift_tenant_id,
 )
 
 import datetime
@@ -247,12 +240,12 @@ class JobSearchResult:
         _raw_element_id = _parse_element_id(d.pop("elementId"))
 
         element_id = (
-            lift_element_id(_raw_element_id)
+            ElementId(_raw_element_id)
             if isinstance(_raw_element_id, str)
             else _raw_element_id
         )
 
-        element_instance_key = lift_element_instance_key(d.pop("elementInstanceKey"))
+        element_instance_key = ElementInstanceKey(d.pop("elementInstanceKey"))
 
         def _parse_end_time(data: object) -> datetime.datetime | None:
             if data is None:
@@ -292,19 +285,17 @@ class JobSearchResult:
 
         is_denied = _parse_is_denied(d.pop("isDenied"))
 
-        job_key = lift_job_key(d.pop("jobKey"))
+        job_key = JobKey(d.pop("jobKey"))
 
         kind = JobKindEnum(d.pop("kind"))
 
         listener_event_type = JobListenerEventTypeEnum(d.pop("listenerEventType"))
 
-        process_definition_id = lift_process_definition_id(d.pop("processDefinitionId"))
+        process_definition_id = ProcessDefinitionId(d.pop("processDefinitionId"))
 
-        process_definition_key = lift_process_definition_key(
-            d.pop("processDefinitionKey")
-        )
+        process_definition_key = ProcessDefinitionKey(d.pop("processDefinitionKey"))
 
-        process_instance_key = lift_process_instance_key(d.pop("processInstanceKey"))
+        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
@@ -316,7 +307,7 @@ class JobSearchResult:
         )
 
         root_process_instance_key = (
-            lift_process_instance_key(_raw_root_process_instance_key)
+            ProcessInstanceKey(_raw_root_process_instance_key)
             if isinstance(_raw_root_process_instance_key, str)
             else _raw_root_process_instance_key
         )
@@ -325,7 +316,7 @@ class JobSearchResult:
 
         state = JobStateEnum(d.pop("state"))
 
-        tenant_id = lift_tenant_id(d.pop("tenantId"))
+        tenant_id = TenantId(d.pop("tenantId"))
 
         type_ = d.pop("type")
 
