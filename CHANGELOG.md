@@ -2,6 +2,30 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.35 (2026-04-12)
+
+### Bug Fixes
+
+- Address PR #92 review comments
+  ([`6b59d7c`](https://github.com/camunda/orchestration-cluster-api-python/commit/6b59d7ccd40a1dfe3c48d46317aef1ee941eb3e1))
+
+- Remove all type: ignore comments from integration tests
+  ([`5ae5017`](https://github.com/camunda/orchestration-cluster-api-python/commit/5ae501755c46fd672fd56fde300ba77796e95b97))
+
+- Replace invalid AdvancedStringFilter(gte=) with like= in variables test
+  ([`79cd1d3`](https://github.com/camunda/orchestration-cluster-api-python/commit/79cd1d3bce1269423c7d385364ec60308af0f534))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`245b587`](https://github.com/camunda/orchestration-cluster-api-python/commit/245b5873a7c939a115e16dbdd6fa4b4e30ccc935))
+
+### Testing
+
+- Integration test suite for search_process_instances filter and pagination shapes
+  ([`0f9807a`](https://github.com/camunda/orchestration-cluster-api-python/commit/0f9807a17369692d206ca4117987cc7d2513bf91))
+
+
 ## v8.9.0-dev.34 (2026-04-12)
 
 ### Bug Fixes
