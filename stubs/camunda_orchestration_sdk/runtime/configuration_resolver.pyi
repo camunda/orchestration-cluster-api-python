@@ -28,7 +28,7 @@ class CamundaSdkConfigPartial(TypedDict):
     CAMUNDA_CLIENT_AUTH_CLIENTSECRET: str
     CAMUNDA_SDK_LOG_LEVEL: CamundaSdkLogLevel
     CAMUNDA_TOKEN_CACHE_DIR: str
-    CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool
+    CAMUNDA_TOKEN_DISK_CACHE_DISABLE: str
     CAMUNDA_SDK_BACKPRESSURE_PROFILE: str
     CAMUNDA_TENANT_ID: str
     CAMUNDA_WORKER_TIMEOUT: str
@@ -214,6 +214,8 @@ class ConfigurationResolver:
         | Mapping[str, Any]
         | None = None) -> None: ...
     def resolve(self) -> ResolvedCamundaSdkConfiguration: ...
+    @staticmethod
+    def _filter_partial_config(values: Mapping[str, Any]) -> CamundaSdkConfigPartial: ...
     @classmethod
     def _apply_alias_resolution(cls, merged: dict[str, Any], environment: Mapping[str, Any], explicit: Mapping[str, Any] | None) -> dict[str, Any]: ...
     @staticmethod

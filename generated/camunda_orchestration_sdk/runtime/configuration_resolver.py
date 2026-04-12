@@ -470,13 +470,17 @@ class ConfigurationResolver:
         return ResolvedCamundaSdkConfiguration(
             effective=effective,
             environment=self._filter_partial_config(self._environment),
-            explicit=self._filter_partial_config(self._explicit) if self._explicit is not None else None,
+            explicit=self._filter_partial_config(self._explicit)
+            if self._explicit is not None
+            else None,
         )
 
     @staticmethod
     def _filter_partial_config(values: Mapping[str, Any]) -> CamundaSdkConfigPartial:
         allowed = CamundaSdkConfiguration.model_fields
-        return cast(CamundaSdkConfigPartial, {k: v for k, v in values.items() if k in allowed})
+        return cast(
+            CamundaSdkConfigPartial, {k: v for k, v in values.items() if k in allowed}
+        )
 
     @classmethod
     def _apply_alias_resolution(
