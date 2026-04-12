@@ -37,11 +37,11 @@ from camunda_orchestration_sdk.models import (
     ProcessInstanceSearchQuerySortRequest,
     ProcessInstanceSearchQuerySortRequestField,
     ProcessInstanceStateEnum,
+    ProcessInstanceSearchQueryResult,
     ProcessInstanceStateExactMatch,
     SortOrderEnum,
     VariableValueFilterProperty,
 )
-from camunda_orchestration_sdk.semantic_types import EndCursor, StartCursor
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("CAMUNDA_INTEGRATION") != "1",
@@ -53,10 +53,8 @@ def _client() -> CamundaAsyncClient:
     return CamundaAsyncClient()
 
 
-def _assert_valid_response(resp: object) -> None:
-    assert resp is not None
-    assert hasattr(resp, "items")
-    assert isinstance(resp.items, list)  # type: ignore[union-attr]
+def _assert_valid_response(resp: ProcessInstanceSearchQueryResult) -> None:
+    assert isinstance(resp.items, list)
 
 
 # =============================================================================
@@ -116,9 +114,9 @@ async def test_pagination_cursor_forward() -> None:
             data=ProcessInstanceSearchQuery(page=LimitBasedPagination(limit=1))
         )
         _assert_valid_response(first)
-        if first.page is None or not hasattr(first.page, "end_cursor"):  # type: ignore[union-attr]
+        if first.page.end_cursor is None:
             pytest.skip("No endCursor in response — cannot test forward cursor pagination")
-        cursor = EndCursor(first.page.end_cursor)  # type: ignore[union-attr]
+        cursor = first.page.end_cursor
         resp = await camunda.search_process_instances(
             data=ProcessInstanceSearchQuery(
                 page=CursorBasedForwardPagination(after=cursor, limit=5)
@@ -135,9 +133,9 @@ async def test_pagination_cursor_backward() -> None:
             data=ProcessInstanceSearchQuery(page=OffsetBasedPagination(from_=1, limit=1))
         )
         _assert_valid_response(first)
-        if first.page is None or not hasattr(first.page, "start_cursor"):  # type: ignore[union-attr]
+        if first.page.start_cursor is None:
             pytest.skip("No startCursor in response — cannot test backward cursor pagination")
-        cursor = StartCursor(first.page.start_cursor)  # type: ignore[union-attr]
+        cursor = first.page.start_cursor
         resp = await camunda.search_process_instances(
             data=ProcessInstanceSearchQuery(
                 page=CursorBasedBackwardPagination(before=cursor, limit=5)
