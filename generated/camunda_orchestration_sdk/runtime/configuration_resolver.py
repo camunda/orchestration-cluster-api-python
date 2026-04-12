@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import Any, Mapping, TypedDict, Literal
+from typing import Any, Mapping, TypedDict, Literal, cast
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
@@ -43,7 +43,7 @@ class CamundaSdkConfigPartial(TypedDict, total=False):
 
     # Optional OAuth disk cache / tarpit persistence
     CAMUNDA_TOKEN_CACHE_DIR: str
-    CAMUNDA_TOKEN_DISK_CACHE_DISABLE: bool
+    CAMUNDA_TOKEN_DISK_CACHE_DISABLE: str
 
     # Backpressure profile
     CAMUNDA_SDK_BACKPRESSURE_PROFILE: str
@@ -168,7 +168,7 @@ def read_environment(
     for key in CAMUNDA_SDK_CONFIG_KEYS:
         if key in env:
             out[key] = env[key]
-    return out  # type: ignore[return-value]
+    return cast(CamundaSdkConfigPartial, out)
 
 
 class CamundaSdkConfiguration(BaseModel):
@@ -469,9 +469,14 @@ class ConfigurationResolver:
 
         return ResolvedCamundaSdkConfiguration(
             effective=effective,
-            environment=self._environment,  # type: ignore
-            explicit=self._explicit,  # type: ignore
+            environment=self._filter_partial_config(self._environment),
+            explicit=self._filter_partial_config(self._explicit) if self._explicit is not None else None,
         )
+
+    @staticmethod
+    def _filter_partial_config(values: Mapping[str, Any]) -> CamundaSdkConfigPartial:
+        allowed = CamundaSdkConfiguration.model_fields
+        return cast(CamundaSdkConfigPartial, {k: v for k, v in values.items() if k in allowed})
 
     @classmethod
     def _apply_alias_resolution(

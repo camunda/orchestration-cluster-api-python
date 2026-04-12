@@ -16,12 +16,21 @@ import asyncio
 import math
 import threading
 import time as _time_module
-from typing import Literal, Protocol
+from typing import Literal, Protocol, TypedDict
 
 from .logging import SdkLogger
 
 BackpressureSeverity = Literal["healthy", "soft", "severe"]
 BackpressureProfile = Literal["BALANCED", "LEGACY"]
+
+
+class BackpressureState(TypedDict):
+    severity: BackpressureSeverity
+    consecutive: int
+    permits_max: int | None
+    permits_current: int
+    waiters: int
+    backoff_ms: int
 
 
 class _Clock(Protocol):
@@ -130,7 +139,7 @@ class BackpressureManager:
     def severity(self) -> BackpressureSeverity:
         return self._severity
 
-    def get_state(self) -> dict[str, object]:
+    def get_state(self) -> BackpressureState:
         with self._lock:
             return {
                 "severity": self._severity,
@@ -389,7 +398,7 @@ class AsyncBackpressureManager:
     def severity(self) -> BackpressureSeverity:
         return self._severity
 
-    def get_state(self) -> dict[str, object]:
+    def get_state(self) -> BackpressureState:
         # Lock-free read of approximate state (acceptable for observability).
         return {
             "severity": self._severity,

@@ -354,9 +354,9 @@ def _run_client_sync(
                 break
             bp = client._bp.get_state()
             metrics.bp_severity = str(bp["severity"])
-            metrics.permits_max = bp["permits_max"]  # type: ignore[assignment]
-            metrics.permits_current = bp["permits_current"]  # type: ignore[assignment]
-            metrics.waiters = bp["waiters"]  # type: ignore[assignment]
+            metrics.permits_max = bp["permits_max"]
+            metrics.permits_current = bp["permits_current"]
+            metrics.waiters = bp["waiters"]
             metrics.compute_throughput()
             time.sleep(0.05)
 
@@ -375,7 +375,7 @@ def _run_client_sync(
 
     bp = client._bp.get_state()
     metrics.bp_severity = str(bp["severity"])
-    metrics.permits_max = bp["permits_max"]  # type: ignore[assignment]
+    metrics.permits_max = bp["permits_max"]
 
     return metrics
 
@@ -496,9 +496,9 @@ def _run_client_async_or_thread(
                         return
                     bp = client._bp.get_state()
                     metrics.bp_severity = str(bp["severity"])
-                    metrics.permits_max = bp["permits_max"]  # type: ignore[assignment]
-                    metrics.permits_current = bp["permits_current"]  # type: ignore[assignment]
-                    metrics.waiters = bp["waiters"]  # type: ignore[assignment]
+                    metrics.permits_max = bp["permits_max"]
+                    metrics.permits_current = bp["permits_current"]
+                    metrics.waiters = bp["waiters"]
                     metrics.compute_throughput()
                     await asyncio.sleep(0.05)
 
@@ -533,7 +533,7 @@ def _run_client_async_or_thread(
             # Final state
             bp = client._bp.get_state()
             metrics.bp_severity = str(bp["severity"])
-            metrics.permits_max = bp["permits_max"]  # type: ignore[assignment]
+            metrics.permits_max = bp["permits_max"]
 
     asyncio.run(_run())
 
@@ -1135,9 +1135,9 @@ def _run_shared_async(
                     bp = client._bp.get_state()
                     for m in all_metrics:
                         m.bp_severity = str(bp["severity"])
-                        m.permits_max = bp["permits_max"]  # type: ignore[assignment]
-                        m.permits_current = bp["permits_current"]  # type: ignore[assignment]
-                        m.waiters = bp["waiters"]  # type: ignore[assignment]
+                        m.permits_max = bp["permits_max"]
+                        m.permits_current = bp["permits_current"]
+                        m.waiters = bp["waiters"]
                         m.compute_throughput()
                     await asyncio.sleep(0.05)
 
@@ -1175,7 +1175,7 @@ def _run_shared_async(
             bp = client._bp.get_state()
             for m in all_metrics:
                 m.bp_severity = str(bp["severity"])
-                m.permits_max = bp["permits_max"]  # type: ignore[assignment]
+                m.permits_max = bp["permits_max"]
                 m.end_time = time.time()
                 m.compute_throughput()
 
