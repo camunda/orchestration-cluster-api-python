@@ -860,7 +860,7 @@ async def test_filter_variables_multiple() -> None:
                             name="status", value='"active"'
                         ),
                         VariableValueFilterProperty(
-                            name="amount", value=AdvancedStringFilter(gte="100")  # type: ignore[arg-type]
+                            name="amount", value=AdvancedStringFilter(like="1*")
                         ),
                     ]
                 )
