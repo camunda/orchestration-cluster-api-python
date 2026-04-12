@@ -2,6 +2,49 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.34 (2026-04-12)
+
+### Bug Fixes
+
+- Remove unnecessary f-string prefix
+  ([`671108e`](https://github.com/camunda/orchestration-cluster-api-python/commit/671108e0536e142ba42ca0b0f460aeb463dd400d))
+
+### Chores
+
+- Address review comments
+  ([`9baab86`](https://github.com/camunda/orchestration-cluster-api-python/commit/9baab86dd7dcdbe6acc4ccd82afa5ea9ea70fee1))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`ae0445e`](https://github.com/camunda/orchestration-cluster-api-python/commit/ae0445e2f2489252ce9e710c271023a2fe84e5fb))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`a7705df`](https://github.com/camunda/orchestration-cluster-api-python/commit/a7705df3a222e31ce6d845f2a1a3edc5bf6170a2))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`17f1acb`](https://github.com/camunda/orchestration-cluster-api-python/commit/17f1acb8966fca0730fdcefdf1d87ce103fc2482))
+
+### Documentation
+
+- Add 'prefer ergonomic helpers' guideline to copilot-instructions
+  ([`a1f4e6b`](https://github.com/camunda/orchestration-cluster-api-python/commit/a1f4e6b4ce22399cb9f63bacf365f562a13e7749))
+
+- Update semantic types section to reflect class-based implementation
+  ([`5e4e05f`](https://github.com/camunda/orchestration-cluster-api-python/commit/5e4e05f749835e814c2d0666876c3b71ff639ccb))
+
+### Refactoring
+
+- Make semantic types class-based with built-in validation
+  ([`3f0844f`](https://github.com/camunda/orchestration-cluster-api-python/commit/3f0844fb116407dfa2ad744c1bafb07df387d384))
+
+- Remove lift_* helpers — class constructors are the single API surface
+  ([`d41ead0`](https://github.com/camunda/orchestration-cluster-api-python/commit/d41ead07b3456cca5de7029fe17ca5a63a413efb))
+
+### Testing
+
+- Add semantic types behavioral regression guard
+  ([`c4dbe22`](https://github.com/camunda/orchestration-cluster-api-python/commit/c4dbe225d530412cb23202d62eb5d32b48031988))
+
+
 ## v8.9.0-dev.33 (2026-04-09)
 
 ### Bug Fixes
