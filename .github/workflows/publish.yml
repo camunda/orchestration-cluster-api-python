@@ -215,18 +215,18 @@ jobs:
       - name: Validate version matches stable branch
         if: steps.check_release.outputs.release_needed == 'true' && startsWith(github.ref_name, 'stable/')
         run: |
-          # Extract expected version prefix from branch name (e.g., stable/8.8 -> 8.8)
-          BRANCH_VERSION=$(echo "${{ github.ref_name }}" | sed 's|stable/||')
+          # Extract expected major from branch name (e.g., stable/9 -> 9)
+          BRANCH_MAJOR=$(echo "${{ github.ref_name }}" | sed 's|stable/||')
           NEW_VERSION="${{ steps.check_release.outputs.new_version }}"
 
-          if [[ ! "$NEW_VERSION" =~ ^${BRANCH_VERSION}\. ]]; then
-            echo "::error::Version $NEW_VERSION doesn't match branch constraint ${BRANCH_VERSION}.x"
-            echo "This can happen if a 'server:' or 'server-major:' commit was pushed to a stable branch."
-            echo "Stable branches should only receive patch releases (fix:, feat:, perf:, revert:)."
+          if [[ ! "$NEW_VERSION" =~ ^${BRANCH_MAJOR}\. ]]; then
+            echo "::error::Version $NEW_VERSION doesn't match branch constraint ${BRANCH_MAJOR}.x"
+            echo "Stable branches should only receive patch and minor releases."
+            echo "Use a BREAKING CHANGE footer on main to bump the major version."
             exit 1
           fi
 
-          echo "Version $NEW_VERSION matches branch constraint ${BRANCH_VERSION}.x"
+          echo "Version $NEW_VERSION matches branch constraint ${BRANCH_MAJOR}.x"
 
       - name: Create release
         if: steps.check_release.outputs.release_needed == 'true'
@@ -258,10 +258,10 @@ jobs:
               echo "" >> $GITHUB_STEP_SUMMARY
               echo "Install with: \`pip install camunda-orchestration-sdk --pre\`" >> $GITHUB_STEP_SUMMARY
             else
-              STABLE_VERSION=$(echo "${{ github.ref_name }}" | sed 's|stable/||')
+              STABLE_MAJOR=$(echo "${{ github.ref_name }}" | sed 's|stable/||')
               echo "**Type:** Stable release" >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
-              echo "Install with: \`pip install \"camunda-orchestration-sdk~=${STABLE_VERSION}.0\"\`" >> $GITHUB_STEP_SUMMARY
+              echo "Install with: \`pip install \"camunda-orchestration-sdk>=${STABLE_MAJOR}.0.0,<$((STABLE_MAJOR+1)).0.0\"\`" >> $GITHUB_STEP_SUMMARY
             fi
           else
             echo "### No Release Needed" >> $GITHUB_STEP_SUMMARY

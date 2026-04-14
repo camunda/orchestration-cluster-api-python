@@ -4,42 +4,44 @@ This document describes the branching strategy, release streams, and publishing 
 
 ## Overview
 
-The SDK follows a multi-stream release model that aligns with Camunda server versions:
+The SDK follows a multi-stream release model:
 
 | Branch | PyPI Index | Purpose |
 |--------|------------|---------|
 | `main` | `--pre` (dev) | Development stream, dev pre-releases |
-| `stable/<major>.<minor>` | Default | Stable releases for specific Camunda versions |
+| `stable/<major>` (current) | Default | Stable releases |
+| `stable/<major>` (older) | Default | Maintenance releases |
 
 ## Branch Model
 
 ### `main` Branch
 
 - **Purpose**: Active development targeting the next Camunda release
-- **Publishes to**: PyPI as dev pre-releases (e.g., `8.9.0.dev1`, `8.9.0.dev2`)
+- **Publishes to**: PyPI as dev pre-releases (e.g., `10.0.0.dev1`, `10.0.0.dev2`)
 - **Installation**: `pip install camunda-orchestration-sdk --pre`
 
-### `stable/<major>.<minor>` Branches
+### `stable/<major>` Branches
 
-- **Purpose**: Maintenance releases for specific Camunda versions
-- **Examples**: `stable/8.8`, `stable/8.9`
+- **Purpose**: Stable/maintenance releases for specific SDK major versions
+- **Examples**: `stable/9`, `stable/10`
 - **Publishes to**: PyPI with version-specific releases
-- **Installation**: `pip install camunda-orchestration-sdk==8.8.*`
+- **Installation**: `pip install "camunda-orchestration-sdk>=9.0.0,<10.0.0"`
+
+SDK major version tracks Camunda server minor (server 8.9 → SDK 9.x, server 8.10 → SDK 10.x).
 
 ## Version Numbering
 
-This SDK uses a **modified semantic versioning** scheme aligned with Camunda server versions:
+This SDK uses standard semantic versioning:
 
 | Commit Type | Version Bump | Example |
 |-------------|--------------|---------|
-| `fix:`, `feat:`, `perf:`, `revert:` | Patch | `8.8.0` → `8.8.1` |
-| `server:` | Minor | `8.8.x` → `8.9.0` |
-| `server-major:` | Major | `8.x.y` → `9.0.0` |
+| `fix:`, `perf:`, `revert:` | Patch | `9.0.0` → `9.0.1` |
+| `feat:` | Minor | `9.0.x` → `9.1.0` |
+| `BREAKING CHANGE` footer | Major | `9.x.y` → `10.0.0` |
 
-This means:
-- **Patch versions** contain bug fixes, new features, and improvements
-- **Minor versions** align with Camunda server minor releases
-- **Major versions** align with Camunda server major releases
+- `chore:`, `docs:`, `ci:`, `style:`, `refactor:`, `test:`, `build:` commits produce no release.
+
+> **Important**: Use a `BREAKING CHANGE:` footer in the commit body — not the `feat!:` shorthand. The `!` convention may not be recognized depending on the parser version.
 
 ## Installation Guide
 
@@ -51,14 +53,11 @@ pip install camunda-orchestration-sdk
 
 ### Specific Version Line
 
-Pin to a specific Camunda version:
+Pin to a specific SDK major version:
 
 ```bash
-# Pin to 8.8.x releases
-pip install "camunda-orchestration-sdk>=8.8.0,<8.9.0"
-
-# Or use compatible release operator
-pip install "camunda-orchestration-sdk~=8.8.0"
+# Pin to 9.x releases
+pip install "camunda-orchestration-sdk>=9.0.0,<10.0.0"
 ```
 
 ### Dev Pre-releases
@@ -95,45 +94,62 @@ Triggered on push to `stable/**`:
 6. Publish to PyPI
 7. Create GitHub release
 
-## Creating a New Stable Branch
+## Creating a New Stable Branch (Releasing a New Major Version)
 
-When a new Camunda minor version is released:
+When a new Camunda server minor ships (e.g. 8.10), the SDK bumps its major (e.g. 9 → 10). Follow these steps **in order**:
 
-### 1. Create the New Stable Branch
-
-```bash
-# From main branch
-git checkout main
-git pull origin main
-git checkout -b stable/8.9
-git push origin stable/8.9
-```
-
-### 2. Update Dependabot
-
-Add a Dependabot entry for the new stable branch in [.github/dependabot.yml](.github/dependabot.yml). Dependabot does not support wildcard branch patterns, so each `stable/*` branch must be listed explicitly.
-
-### 3. Prepare Main for Next Dev Cycle
-
-Create a commit on `main` with the `server:` prefix to bump the minor version:
+### 1. Push a Breaking-Change Commit on `main`
 
 ```bash
 git checkout main
-git commit --allow-empty -m "server: prepare for 8.10 development"
-git push origin main
+git commit --allow-empty -m "feat: release SDK 10 for Camunda server 8.10
+
+BREAKING CHANGE: SDK major version bumped from 9 to 10 to track Camunda server 8.10"
+git push
 ```
+
+### 2. Wait for Main CI
+
+Wait for CI to complete and publish the first dev pre-release (e.g. `10.0.0.dev1`).
+
+### 3. Create and Push the Stable Branch
+
+```bash
+git checkout -b stable/10
+git push -u origin stable/10
+```
+
+CI runs automatically on push and publishes the first stable release (e.g. `10.0.0`).
+
+### 4. Bump `main` to the Next Major
+
+```bash
+git checkout main
+git commit --allow-empty -m "feat: begin SDK 11 development for Camunda server 8.11
+
+BREAKING CHANGE: SDK major version bumped from 10 to 11"
+git push
+```
+
+This ensures main publishes `11.0.0.devN` while `stable/10` publishes `10.x.y`.
+
+### 5. Update Dependabot
+
+Add Dependabot entries for the new stable branch in [.github/dependabot.yml](.github/dependabot.yml) (pip, github-actions). Dependabot does not support wildcard branch patterns, so each `stable/*` branch must be listed explicitly.
+
+> **Important**: Use a `BREAKING CHANGE:` footer in the commit body — not the `feat!:` shorthand.
 
 ## Hotfix Process
 
 ### For Current Stable Line
 
 1. Create fix on `main`
-2. Cherry-pick to the relevant `stable/<major>.<minor>` branch
+2. Cherry-pick to the relevant `stable/<major>` branch
 3. Push triggers automatic release
 
 ### For Previous Stable Lines
 
-1. Checkout the relevant `stable/<major>.<minor>` branch
+1. Checkout the relevant `stable/<major>` branch
 2. Apply fix directly
 3. Push triggers automatic release
 
@@ -153,7 +169,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/):
 
 | Type | Description | Version Impact |
 |------|-------------|----------------|
-| `feat` | New feature | Patch |
+| `feat` | New feature | Minor |
 | `fix` | Bug fix | Patch |
 | `perf` | Performance improvement | Patch |
 | `revert` | Revert previous commit | Patch |
@@ -162,8 +178,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/):
 | `refactor` | Code refactoring | No release |
 | `test` | Test additions/changes | No release |
 | `chore` | Maintenance tasks | No release |
-| `server` | Camunda server minor bump | Minor |
-| `server-major` | Camunda server major bump | Major |
+| `BREAKING CHANGE` footer | Breaking API change | Major |
 
 ## CI/CD Configuration
 

@@ -77,7 +77,10 @@ upload_to_pypi = false
 upload_to_release = true
 tag_format = "v{version}"
 
-# Branch configuration for multi-stream releases
+# Branch configuration
+# - main: alpha prereleases (dev pre-releases on PyPI)
+# - stable/<major>: stable releases
+# SDK major tracks Camunda server minor (server 8.9 → SDK 9.x).
 [tool.semantic_release.branches.main]
 match = "main"
 prerelease = true
@@ -87,10 +90,10 @@ prerelease_token = "dev"
 match = "^stable/.*$"
 prerelease = false
 
-# Commit parsing rules - modified semver aligned with Camunda versions
-# Patch: fix, feat, perf, revert (features are patches in this scheme)
-# Minor: server (Camunda server minor bump)
-# Major: server-major (Camunda server major bump)
+# Standard semantic versioning:
+# Patch: fix, perf, revert
+# Minor: feat
+# Major: BREAKING CHANGE footer
 [tool.semantic_release.commit_parser_options]
 allowed_tags = [
     "build",
@@ -104,9 +107,6 @@ allowed_tags = [
     "refactor",
     "test",
     "revert",
-    "server",
-    "server-major",
 ]
-minor_tags = ["server"]
-major_tags = ["server-major"]
-patch_tags = ["fix", "feat", "perf", "revert"]
+minor_tags = ["feat"]
+patch_tags = ["fix", "perf", "revert"]
