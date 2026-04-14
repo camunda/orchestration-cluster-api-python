@@ -422,7 +422,7 @@ Uses [python-semantic-release](https://python-semantic-release.readthedocs.io/) 
 
 | Branch | Publishes | Example versions |
 | --- | --- | --- |
-| `main` | Dev pre-releases | `10.0.0.dev1`, `10.0.0.dev2`, … |
+| `main` | Dev pre-releases | `10.0.0-dev.1`, `10.0.0-dev.2`, … |
 | `stable/<major>` (current) | Stable releases | `9.0.0`, `9.0.1`, `9.1.0`, … |
 | `stable/<major>` (older) | Maintenance releases | `8.0.1`, `8.0.2`, … |
 
@@ -440,22 +440,24 @@ Version is stored in `pyproject.toml` under `project.version`.
 
 ### PSR limitation: major bumps on prerelease branches
 
-`python-semantic-release` **does not apply major version bumps on prerelease branches**. On `main` (a prerelease branch), a `BREAKING CHANGE` commit is correctly parsed by the `AngularCommitParser` (it reports `bump: major`), but PSR suppresses the major bump and only increments the dev counter. For example, if the current version is `9.0.0.dev5`, a `BREAKING CHANGE` commit produces `9.0.0.dev6` — not `10.0.0.dev1`.
+`python-semantic-release` **does not apply major version bumps on prerelease branches**. On `main` (a prerelease branch), a `BREAKING CHANGE` commit is correctly parsed by the `AngularCommitParser` (it reports `bump: major`), but PSR suppresses the major bump and only increments the dev counter. For example, if the current version is `9.0.0-dev.5`, a `BREAKING CHANGE` commit produces `9.0.0-dev.6` — not `10.0.0-dev.1`.
 
 This means you **cannot** use a `BREAKING CHANGE` commit to jump from one major to the next on `main`. Instead, you must manually stamp the version in `pyproject.toml` and create a matching git tag. PSR then increments from that stamped version going forward.
 
 **Example** — bumping main from 9.x to 10.x:
 
 ```bash
-# 1. Edit pyproject.toml: set version = "10.0.0.dev0"
+# 1. Edit pyproject.toml: set version = "10.0.0-dev.0"
 # 2. Commit and tag:
 git add pyproject.toml
-git commit -m "chore(release): 10.0.0.dev0 [skip ci]"
-git tag v10.0.0.dev0
+git commit -m "chore(release): 10.0.0-dev.0 [skip ci]"
+git tag v10.0.0-dev.0
 git push && git push --tags
 ```
 
-After this, PSR will publish `10.0.0.dev1`, `10.0.0.dev2`, etc. on subsequent pushes to `main`.
+After this, PSR will publish `10.0.0-dev.1`, `10.0.0-dev.2`, etc. on subsequent pushes to `main`.
+
+> **Tag format**: PSR uses SemVer-style prerelease tags (`v10.0.0-dev.0`), **not** PEP 440 format (`v10.0.0.dev0`). Using the wrong format causes PSR to ignore the tag and fall back to the previous version.
 
 This limitation does **not** affect stable branches (`prerelease = false`), where major bumps from `BREAKING CHANGE` commits work as expected.
 

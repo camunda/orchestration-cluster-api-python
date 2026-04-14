@@ -17,7 +17,7 @@ The SDK follows a multi-stream release model:
 ### `main` Branch
 
 - **Purpose**: Active development targeting the next Camunda release
-- **Publishes to**: PyPI as dev pre-releases (e.g., `10.0.0.dev1`, `10.0.0.dev2`)
+- **Publishes to**: PyPI as dev pre-releases (e.g., `10.0.0-dev.1`, `10.0.0-dev.2`)
 - **Installation**: `pip install camunda-orchestration-sdk --pre`
 
 ### `stable/<major>` Branches
@@ -104,23 +104,28 @@ When a new Camunda server minor ships (e.g. 8.10), the SDK bumps its major (e.g.
 
 ```bash
 git checkout main
-# Edit pyproject.toml: set version = "10.0.0.dev0"
+# Edit pyproject.toml: set version = "10.0.0-dev.0"
 git add pyproject.toml
-git commit -m "chore(release): 10.0.0.dev0 [skip ci]"
-git tag v10.0.0.dev0
+git commit -m "chore(release): 10.0.0-dev.0 [skip ci]"
+git tag v10.0.0-dev.0
 git push && git push --tags
 ```
 
 ### 2. Wait for Main CI
 
-Wait for CI to complete and publish the first dev pre-release (e.g. `10.0.0.dev1`).
+Wait for CI to complete and publish the first dev pre-release (e.g. `10.0.0-dev.1`).
 
-### 3. Create and Push the Stable Branch
+### 3. Create the Stable Branch and Trigger the First Release
 
 ```bash
 git checkout -b stable/10
+git commit --allow-empty -m "feat: release SDK 10 for Camunda server 8.10
+
+BREAKING CHANGE: SDK major version bumped from 9 to 10 to track Camunda server 8.10"
 git push -u origin stable/10
 ```
+
+The `BREAKING CHANGE` footer is required because all the bump-triggering commits are before the latest dev tag on `main`. This commit gives PSR something to compute from: it sees `BREAKING CHANGE` after `v9.0.0-dev.N` → major bump → `10.0.0` on a non-prerelease branch.
 
 CI runs automatically on push and publishes the first stable release (e.g. `10.0.0`).
 
@@ -135,13 +140,13 @@ git tag v11.0.0.dev0
 git push && git push --tags
 ```
 
-This ensures main publishes `11.0.0.devN` while `stable/10` publishes `10.x.y`.
+This ensures main publishes `11.0.0-dev.N` while `stable/10` publishes `10.x.y`.
 
 ### 5. Update Dependabot
 
 Add Dependabot entries for the new stable branch in [.github/dependabot.yml](.github/dependabot.yml) (pip, github-actions). Dependabot does not support wildcard branch patterns, so each `stable/*` branch must be listed explicitly.
 
-> **Important**: Use a `BREAKING CHANGE:` footer in the commit body — not the `feat!:` shorthand.
+> **Important**: PSR uses SemVer-style prerelease tags (`vX.Y.Z-dev.N`), **not** PEP 440 format (`vX.Y.Z.devN`). Using the wrong format will cause PSR to ignore the tag.
 
 ## Hotfix Process
 
