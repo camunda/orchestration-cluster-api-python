@@ -98,14 +98,17 @@ Triggered on push to `stable/**`:
 
 When a new Camunda server minor ships (e.g. 8.10), the SDK bumps its major (e.g. 9 → 10). Follow these steps **in order**:
 
-### 1. Push a Breaking-Change Commit on `main`
+### 1. Stamp the New Major Version on `main`
+
+> **Why not a `BREAKING CHANGE` commit?** `python-semantic-release` does not apply major bumps on prerelease branches — it only increments the dev counter. You must manually stamp the version and tag. See MAINTAINER.md § 14 for details.
 
 ```bash
 git checkout main
-git commit --allow-empty -m "feat: release SDK 10 for Camunda server 8.10
-
-BREAKING CHANGE: SDK major version bumped from 9 to 10 to track Camunda server 8.10"
-git push
+# Edit pyproject.toml: set version = "10.0.0.dev0"
+git add pyproject.toml
+git commit -m "chore(release): 10.0.0.dev0 [skip ci]"
+git tag v10.0.0.dev0
+git push && git push --tags
 ```
 
 ### 2. Wait for Main CI
@@ -125,10 +128,11 @@ CI runs automatically on push and publishes the first stable release (e.g. `10.0
 
 ```bash
 git checkout main
-git commit --allow-empty -m "feat: begin SDK 11 development for Camunda server 8.11
-
-BREAKING CHANGE: SDK major version bumped from 10 to 11"
-git push
+# Edit pyproject.toml: set version = "11.0.0.dev0"
+git add pyproject.toml
+git commit -m "chore(release): 11.0.0.dev0 [skip ci]"
+git tag v11.0.0.dev0
+git push && git push --tags
 ```
 
 This ensures main publishes `11.0.0.devN` while `stable/10` publishes `10.x.y`.
