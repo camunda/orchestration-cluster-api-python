@@ -2,6 +2,23 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.38 (2026-04-14)
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`af77cf4`](https://github.com/camunda/orchestration-cluster-api-python/commit/af77cf43cfa6f263c6516d33ebf13379f373c282))
+
+### Features
+
+- Release SDK 9 for Camunda server 8.9
+  ([`0e4ce04`](https://github.com/camunda/orchestration-cluster-api-python/commit/0e4ce041b20072e0f3aad72a90f7d8dc2b473087))
+
+### Breaking Changes
+
+- SDK major version bumped from 8 to 9 to track Camunda server 8.9
+
+
 ## v8.9.0-dev.37 (2026-04-14)
 
 ### Chores
