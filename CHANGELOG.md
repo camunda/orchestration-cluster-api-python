@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v8.9.0-dev.39 (2026-04-14)
+
+### Bug Fixes
+
+- **ci**: Pull --rebase before pushing generated changes
+  ([`536ad6d`](https://github.com/camunda/orchestration-cluster-api-python/commit/536ad6d96f36b1d481c71bb6305406b6cf0e4c1d))
+
+### Chores
+
+- **generation**: Update generated SDK [skip ci]
+  ([`c217701`](https://github.com/camunda/orchestration-cluster-api-python/commit/c217701b2683aa4fe068a87633d4911dd1fc60a6))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`17c8ccc`](https://github.com/camunda/orchestration-cluster-api-python/commit/17c8ccc73ded31367623268e60674ded7d8e740a))
+
+### Continuous Integration
+
+- Add dependabot entries for stable/9
+  ([`509f372`](https://github.com/camunda/orchestration-cluster-api-python/commit/509f3728cf96974d389bfc6a45e8f53b31543939))
+
+### Documentation
+
+- Document PSR major-bump limitation in MAINTAINER.md and RELEASE.md
+  ([`01cb5ed`](https://github.com/camunda/orchestration-cluster-api-python/commit/01cb5ed5dd08df193e9142daa15f80694ca52962))
+
+
 ## v8.9.0-dev.38 (2026-04-14)
 
 ### Chores
