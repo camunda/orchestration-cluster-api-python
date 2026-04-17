@@ -221,9 +221,32 @@ jobs:
           NEW_VERSION="${{ steps.check_release.outputs.new_version }}"
 
           if [[ ! "$NEW_VERSION" =~ ^${BRANCH_MAJOR}\. ]]; then
-            echo "::error::Version $NEW_VERSION doesn't match branch constraint ${BRANCH_MAJOR}.x"
-            echo "Stable branches should only receive patch and minor releases."
-            echo "Use a BREAKING CHANGE footer on main to bump the major version."
+            # Find the latest non-prerelease tag PSR used as baseline.
+            LATEST_STABLE_TAG=$(git tag --list 'v*' --merged HEAD \
+              | grep -v -- '-dev' \
+              | grep -v -- '.dev' \
+              | sort -V \
+              | tail -1 || true)
+
+            echo "::error::Computed version $NEW_VERSION does not match branch constraint ${BRANCH_MAJOR}.x"
+            echo ""
+            echo "python-semantic-release computes the next stable version from the latest"
+            echo "non-prerelease tag reachable from HEAD. Prerelease tags (vX.Y.Z-dev.N) are ignored."
+            echo ""
+            echo "Latest non-prerelease tag PSR used as baseline: ${LATEST_STABLE_TAG:-<none found>}"
+            echo ""
+            echo "Likely causes:"
+            echo "  1. No seed tag exists for the previous major (expected v$((BRANCH_MAJOR-1)).x.y)."
+            echo "     → Create one at the last v${BRANCH_MAJOR}.0.0-dev.N commit and push it:"
+            echo "         git tag v$((BRANCH_MAJOR-1)).0.0 <commit>"
+            echo "         git push origin v$((BRANCH_MAJOR-1)).0.0"
+            echo "     Then re-run this workflow."
+            echo ""
+            echo "  2. Legacy non-prerelease tags from an unrelated previous package are"
+            echo "     shadowing the seed. Delete them (after confirming with maintainers):"
+            echo "         git push origin :refs/tags/<old-tag>"
+            echo ""
+            echo "See RELEASE.md → 'Creating a New Stable Branch' for the full procedure."
             exit 1
           fi
 
