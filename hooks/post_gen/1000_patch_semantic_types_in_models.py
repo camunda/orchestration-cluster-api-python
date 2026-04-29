@@ -1,8 +1,16 @@
 import re
+import sys
 from pathlib import Path
 from typing import Any, Dict, cast
 
 import yaml
+
+# Ensure sibling modules are importable
+_hooks_dir = str(Path(__file__).resolve().parent)
+if _hooks_dir not in sys.path:
+    sys.path.insert(0, _hooks_dir)
+
+from _identifier_guard import safe_py_identifier
 
 
 def _snake(name: str) -> str:
@@ -29,6 +37,7 @@ def _extract_semantic_mappings(data: Any, mappings: Dict[str, str]) -> None:
                         prop_schema_dict = cast(dict[str, Any], prop_schema)
                         semantic_type = prop_schema_dict.get("x-semantic-type")
                         if isinstance(semantic_type, str):
+                            safe_py_identifier(semantic_type, "x-semantic-type")
                             mappings[prop_name] = semantic_type
                     # Recurse into properties
                     _extract_semantic_mappings(prop_schema, mappings)

@@ -9,8 +9,16 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from pathlib import Path
 from typing import Any
+
+# Ensure sibling modules are importable
+_hooks_dir = str(Path(__file__).resolve().parent)
+if _hooks_dir not in sys.path:
+    sys.path.insert(0, _hooks_dir)
+
+from _identifier_guard import safe_version_string, safe_py_identifier
 
 
 def _snake(name: str) -> str:
@@ -29,6 +37,11 @@ def _patch_enum_file(
 
     content = file_path.read_text(encoding="utf-8")
     original = content
+
+    # Validate all spec-controlled values before any interpolation
+    for m in deprecated_members:
+        safe_py_identifier(m["name"], "deprecated enum member name")
+        safe_version_string(m["deprecatedInVersion"], "deprecatedInVersion")
 
     deprecated_map = {m["name"]: m["deprecatedInVersion"] for m in deprecated_members}
 

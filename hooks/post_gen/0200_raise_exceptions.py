@@ -1,10 +1,18 @@
 import ast
 import os
 import re
+import sys
 from pathlib import Path
 from typing import Any, cast
 
 import yaml
+
+# Ensure sibling modules are importable
+_hooks_dir = str(Path(__file__).resolve().parent)
+if _hooks_dir not in sys.path:
+    sys.path.insert(0, _hooks_dir)
+
+from _identifier_guard import safe_py_identifier
 
 
 def _status_class_name(code: int) -> str:
@@ -479,6 +487,7 @@ def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
     modified = False
 
     module_stem = Path(file_path).stem
+    safe_py_identifier(module_stem, "API endpoint module name")
     status_type_map = _extract_status_type_map(tree)
     error_codes = sorted([c for c in status_type_map.keys() if not (200 <= c < 300)])
 

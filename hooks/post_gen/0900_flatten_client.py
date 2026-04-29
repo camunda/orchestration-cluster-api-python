@@ -3,7 +3,15 @@ import json
 import os
 from pathlib import Path
 import re
+import sys
 from typing import Any, cast
+
+# Ensure sibling modules are importable
+_hooks_dir = str(Path(__file__).resolve().parent)
+if _hooks_dir not in sys.path:
+    sys.path.insert(0, _hooks_dir)
+
+from _identifier_guard import safe_docstring, safe_dotted_import_path, safe_py_identifier
 
 # Methods that must bypass backpressure gating (drain work / complete execution).
 _BP_EXEMPT_METHODS: frozenset[str] = frozenset(
@@ -542,6 +550,8 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None) -> N
             module_name = file[:-3]
             import_path = f".{'.'.join(rel_path.parts)}.{module_name}"
             method_name = module_name
+            safe_py_identifier(method_name, "endpoint method name")
+            safe_dotted_import_path(import_path, "endpoint import path")
 
             # Lift path parameter annotations from str to semantic types
             for func in [f for f in [sync_func, async_func] if f is not None]:
@@ -605,7 +615,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None) -> N
                     f" -> {ast.unparse(sync_func.returns)}" if sync_func.returns else ""
                 )
                 docstring = ast.get_docstring(sync_func)
-                docstring_str = f'        """{docstring}"""\n' if docstring else ""
+                docstring_str = f'        """{safe_docstring(docstring)}"""\n' if docstring else ""
 
                 # Body-tenant injection: for operations where tenantId is an optional
                 # field in the request body (tenant-as-context), inject the configured
@@ -705,7 +715,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None) -> N
                     else ""
                 )
                 docstring = ast.get_docstring(async_func)
-                docstring_str = f'        """{docstring}"""\n' if docstring else ""
+                docstring_str = f'        """{safe_docstring(docstring)}"""\n' if docstring else ""
 
                 # Body-tenant injection: same logic as sync methods
                 tenant_id_injection = _BODY_TENANT_INJECTION if method_name in body_tenant_ops else ""
