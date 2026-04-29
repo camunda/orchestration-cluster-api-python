@@ -11,7 +11,7 @@ _hooks_dir = str(Path(__file__).resolve().parent)
 if _hooks_dir not in sys.path:
     sys.path.insert(0, _hooks_dir)
 
-from _identifier_guard import safe_docstring, safe_dotted_import_path, safe_py_identifier
+from _identifier_guard import safe_docstring, safe_dotted_import_path, safe_py_identifier  # noqa: E402
 
 # Methods that must bypass backpressure gating (drain work / complete execution).
 _BP_EXEMPT_METHODS: frozenset[str] = frozenset(
