@@ -18,7 +18,7 @@ import re
 _IDENTIFIER_RE = re.compile(r"\A[A-Za-z_][A-Za-z0-9_]*\Z")
 
 
-def safe_py_identifier(value: str, context: str = "") -> str:
+def safe_py_identifier(value: object, context: str = "") -> str:
     """Validate that *value* is a safe Python identifier.
 
     Raises ``ValueError`` if the value contains characters that could
@@ -64,7 +64,7 @@ def safe_docstring(value: str | None) -> str:
     return result
 
 
-def safe_version_string(value: str, context: str = "") -> str:
+def safe_version_string(value: object, context: str = "") -> str:
     """Validate that *value* is a safe version string (digits, dots, hyphens, alphanums).
 
     Used for deprecatedInVersion and similar spec-metadata values that are
@@ -103,7 +103,7 @@ def safe_numeric_value(value: object, context: str = "") -> int | float:
     )
 
 
-def safe_dotted_import_path(value: str, context: str = "") -> str:
+def safe_dotted_import_path(value: object, context: str = "") -> str:
     """Validate that *value* is a safe dotted Python import path.
 
     Each segment between dots must be a valid Python identifier.
