@@ -79,7 +79,7 @@ def load_hooks(hooks_dir: Path) -> list[Callable[[dict[str, str]], None]]:
     # Make sibling modules (e.g. _identifier_guard) importable by all hooks.
     hooks_dir_str = str(hooks_dir.resolve())
     if hooks_dir_str not in sys.path:
-        sys.path.insert(0, hooks_dir_str)
+        sys.path.append(hooks_dir_str)
     for hook_file in sorted(hooks_dir.glob("*.py")):
         spec = importlib.util.spec_from_file_location(hook_file.stem, hook_file)
         if spec and spec.loader:
