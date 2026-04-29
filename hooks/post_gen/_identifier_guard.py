@@ -10,6 +10,7 @@ values cannot escape their syntactic context in generated Python source.
 from __future__ import annotations
 
 import keyword
+import math
 import re
 
 # Use \Z (not $) to anchor at end-of-string.  $ allows a trailing \n
@@ -92,6 +93,10 @@ def safe_numeric_value(value: object, context: str = "") -> int | float:
             f"Spec-controlled value is boolean, expected numeric{ctx}: {value!r}"
         )
     if isinstance(value, (int, float)):
+        if not math.isfinite(value):
+            raise ValueError(
+                f"Spec-controlled value is non-finite, expected finite numeric{ctx}: {value!r}"
+            )
         return value
     raise ValueError(
         f"Spec-controlled value is not numeric{ctx}: {value!r}"

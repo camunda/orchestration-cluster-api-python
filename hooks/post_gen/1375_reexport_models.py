@@ -11,15 +11,9 @@ from __future__ import annotations
 
 import ast
 import re
-import sys
 from pathlib import Path
 
-# Ensure sibling modules are importable
-_hooks_dir = str(Path(__file__).resolve().parent)
-if _hooks_dir not in sys.path:
-    sys.path.insert(0, _hooks_dir)
-
-from _identifier_guard import safe_py_identifier  # noqa: E402
+from _identifier_guard import safe_py_identifier
 
 
 def _parse_all_names(init_path: Path) -> list[str]:
