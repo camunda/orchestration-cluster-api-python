@@ -11,7 +11,7 @@ _hooks_dir = str(Path(__file__).resolve().parent)
 if _hooks_dir not in sys.path:
     sys.path.insert(0, _hooks_dir)
 
-from _identifier_guard import safe_py_identifier, safe_py_identifiers, safe_numeric_value
+from _identifier_guard import safe_py_identifier, safe_py_identifiers, safe_numeric_value  # noqa: E402
 
 # Unicode property escapes (ECMAScript) -> Python re equivalents
 _UNICODE_PROPERTY_MAP: Dict[str, str] = {
