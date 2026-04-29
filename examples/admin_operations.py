@@ -335,7 +335,7 @@ def get_resource_content_example() -> None:
 
     content = client.get_resource_content(resource_key="123456")
 
-    print(f"Content length: {len(content)}")
+    print(f"Content: {content}")
 # endregion GetResourceContent
 
 
