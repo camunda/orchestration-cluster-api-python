@@ -6,6 +6,7 @@ that could escape their syntactic context in generated Python source (CWE-94).
 
 from __future__ import annotations
 
+import ast
 import importlib.util
 from pathlib import Path
 
@@ -202,6 +203,9 @@ class TestSafeNumericValue:
             (False, "boolean False"),
             (None, "None"),
             ([1], "list"),
+            (float("nan"), "NaN"),
+            (float("inf"), "positive infinity"),
+            (float("-inf"), "negative infinity"),
         ],
     )
     def test_rejects_non_numeric(self, value: object, description: str) -> None:
@@ -261,8 +265,13 @@ class TestNoHookInterpolatesUnsafeIdentifiers:
     @pytest.mark.parametrize("hook_file", HOOKS_REQUIRING_GUARD)
     def test_hook_imports_identifier_guard(self, hook_file: str) -> None:
         hook_path = Path(__file__).resolve().parents[2] / "hooks" / "post_gen" / hook_file
-        content = hook_path.read_text(encoding="utf-8")
-        assert "from _identifier_guard import" in content, (
+        source = hook_path.read_text(encoding="utf-8")
+        tree = ast.parse(source, filename=hook_file)
+        has_import = any(
+            isinstance(node, ast.ImportFrom) and node.module == "_identifier_guard"
+            for node in ast.walk(tree)
+        )
+        assert has_import, (
             f"{hook_file} does not import from _identifier_guard — "
             f"spec-controlled strings may be interpolated into Python source without validation"
         )

@@ -9,16 +9,10 @@ from __future__ import annotations
 
 import json
 import re
-import sys
 from pathlib import Path
 from typing import Any
 
-# Ensure sibling modules are importable
-_hooks_dir = str(Path(__file__).resolve().parent)
-if _hooks_dir not in sys.path:
-    sys.path.insert(0, _hooks_dir)
-
-from _identifier_guard import safe_version_string, safe_py_identifier  # noqa: E402
+from _identifier_guard import safe_version_string, safe_py_identifier
 
 
 def _snake(name: str) -> str:
