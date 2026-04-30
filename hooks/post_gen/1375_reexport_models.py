@@ -13,6 +13,8 @@ import ast
 import re
 from pathlib import Path
 
+from _identifier_guard import safe_py_identifier
+
 
 def _parse_all_names(init_path: Path) -> list[str]:
     """Extract the names listed in ``__all__`` from a Python file."""
@@ -86,6 +88,10 @@ def run(context: dict[str, str]) -> None:
     if not model_names:
         print("Warning: no model names found in models/__init__.py __all__")
         return
+
+    # Validate all model names before interpolation into import statements
+    for name in model_names:
+        safe_py_identifier(name, "model re-export name")
 
     init_text = init_file.read_text(encoding="utf-8")
 

@@ -5,6 +5,8 @@ from typing import Any, Dict, Optional, cast
 
 import yaml
 
+from _identifier_guard import safe_py_identifier
+
 # Unicode property escapes (ECMAScript) -> Python re equivalents
 _UNICODE_PROPERTY_MAP: Dict[str, str] = {
     r"\p{L}": r"\w",
@@ -41,6 +43,9 @@ def _emit_array_alias_model(
 ) -> None:
     filename = models_dir / f"{_snake(alias)}.py"
 
+    # Validate spec-controlled identifiers before interpolation into Python source
+    safe_py_identifier(alias, "composite alias schema name")
+
     # Determine python base type for item
     item_type = item_schema.get("type", "string")
     py_item = {
@@ -53,6 +58,7 @@ def _emit_array_alias_model(
     # Use semantic type if available (e.g. Tag instead of str)
     semantic_type = item_schema.get("x-semantic-type")
     if isinstance(semantic_type, str):
+        safe_py_identifier(semantic_type, "x-semantic-type")
         py_item = semantic_type
 
     raw_pattern = item_schema.get("pattern") if item_type == "string" else None
