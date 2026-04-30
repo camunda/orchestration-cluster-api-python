@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, UserTaskKey
+from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, UserTaskKey
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -10,6 +10,9 @@ from ..models.user_task_state_exact_match import UserTaskStateExactMatch
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
 from ..models.advanced_integer_filter import AdvancedIntegerFilter
+from ..models.advanced_process_definition_id_filter import AdvancedProcessDefinitionIdFilter
+from ..models.advanced_process_definition_key_filter import AdvancedProcessDefinitionKeyFilter
+from ..models.advanced_process_instance_key_filter import AdvancedProcessInstanceKeyFilter
 from ..models.advanced_string_filter import AdvancedStringFilter
 from ..models.advanced_user_task_state_filter import AdvancedUserTaskStateFilter
 from ..models.variable_value_filter_property import VariableValueFilterProperty
@@ -24,7 +27,7 @@ class UserTaskSearchQueryFilter:
     candidate_group: AdvancedStringFilter | str | Unset = UNSET
     candidate_user: AdvancedStringFilter | str | Unset = UNSET
     tenant_id: AdvancedStringFilter | str | Unset = UNSET
-    process_definition_id: ProcessDefinitionId | Unset = UNSET
+    process_definition_id: AdvancedProcessDefinitionIdFilter | str | Unset = UNSET
     creation_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     completion_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     follow_up_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
@@ -32,8 +35,8 @@ class UserTaskSearchQueryFilter:
     process_instance_variables: list[VariableValueFilterProperty] | Unset = UNSET
     local_variables: list[VariableValueFilterProperty] | Unset = UNSET
     user_task_key: UserTaskKey | Unset = UNSET
-    process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    process_instance_key: ProcessInstanceKey | Unset = UNSET
+    process_definition_key: AdvancedProcessDefinitionKeyFilter | str | Unset = UNSET
+    process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     tags: list[str] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)

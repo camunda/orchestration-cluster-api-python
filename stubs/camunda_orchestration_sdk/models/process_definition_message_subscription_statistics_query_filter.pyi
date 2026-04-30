@@ -6,11 +6,14 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 from ..models.message_subscription_state_exact_match import MessageSubscriptionStateExactMatch
+from ..models.message_subscription_type_exact_match import MessageSubscriptionTypeExactMatch
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
 from ..models.advanced_element_instance_key_filter import AdvancedElementInstanceKeyFilter
+from ..models.advanced_integer_filter import AdvancedIntegerFilter
 from ..models.advanced_message_subscription_key_filter import AdvancedMessageSubscriptionKeyFilter
 from ..models.advanced_message_subscription_state_filter import AdvancedMessageSubscriptionStateFilter
+from ..models.advanced_message_subscription_type_filter import AdvancedMessageSubscriptionTypeFilter
 from ..models.advanced_process_definition_key_filter import AdvancedProcessDefinitionKeyFilter
 from ..models.advanced_process_instance_key_filter import AdvancedProcessInstanceKeyFilter
 from ..models.advanced_string_filter import AdvancedStringFilter
@@ -32,6 +35,15 @@ class ProcessDefinitionMessageSubscriptionStatisticsQueryFilter:
     message_name: AdvancedStringFilter | str | Unset = UNSET
     correlation_key: AdvancedStringFilter | str | Unset = UNSET
     tenant_id: AdvancedStringFilter | str | Unset = UNSET
+    message_subscription_type: (
+            AdvancedMessageSubscriptionTypeFilter
+            | MessageSubscriptionTypeExactMatch
+            | Unset
+        ) = UNSET
+    process_definition_name: AdvancedStringFilter | str | Unset = UNSET
+    process_definition_version: AdvancedIntegerFilter | int | Unset = UNSET
+    tool_name: AdvancedStringFilter | str | Unset = UNSET
+    inbound_connector_type: AdvancedStringFilter | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...
     @classmethod

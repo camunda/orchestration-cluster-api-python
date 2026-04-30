@@ -8,6 +8,8 @@ from attrs import define as _attrs_define
 from ..types import str_any_dict_factory
 from attrs import field as _attrs_field
 from ..models.message_subscription_state_enum import MessageSubscriptionStateEnum
+from ..models.message_subscription_type_enum import MessageSubscriptionTypeEnum
+from ..models.message_subscription_result_extension_properties import MessageSubscriptionResultExtensionProperties
 T = TypeVar("T", bound="MessageSubscriptionResult")
 @_attrs_define
 class MessageSubscriptionResult:
@@ -22,6 +24,12 @@ class MessageSubscriptionResult:
     last_updated_date: datetime.datetime
     message_name: str
     correlation_key: None | str
+    message_subscription_type: MessageSubscriptionTypeEnum
+    extension_properties: MessageSubscriptionResultExtensionProperties
+    process_definition_name: None | str
+    process_definition_version: int | None
+    tool_name: None | str
+    inbound_connector_type: None | str
     tenant_id: TenantId
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=str_any_dict_factory)
     def to_dict(self) -> dict[str, Any]: ...

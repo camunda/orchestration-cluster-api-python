@@ -11,7 +11,7 @@ from camunda_orchestration_sdk.semantic_types import (
 
 import datetime
 from collections.abc import Mapping
-from typing import Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 
@@ -20,6 +20,13 @@ from attrs import field as _attrs_field
 from dateutil.parser import isoparse
 
 from ..models.message_subscription_state_enum import MessageSubscriptionStateEnum
+from ..models.message_subscription_type_enum import MessageSubscriptionTypeEnum
+
+if TYPE_CHECKING:
+    from ..models.message_subscription_result_extension_properties import (
+        MessageSubscriptionResultExtensionProperties,
+    )
+
 
 T = TypeVar("T", bound="MessageSubscriptionResult")
 
@@ -34,20 +41,38 @@ class MessageSubscriptionResult:
             account-onboarding-workflow.
         process_definition_key (None | str): The process definition key associated with this message subscription.
             Example: 2251799813686749.
-        process_instance_key (None | str): The process instance key associated with this message subscription. Example:
-            2251799813690746.
+        process_instance_key (None | str): The process instance key associated with this message subscription.
+            Only populated for intermediate event entities.
+             Example: 2251799813690746.
         root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
             top-level
             ancestor in the process instance hierarchy. This field is only present for data
             belonging to process instance hierarchies created in version 8.9 or later.
              Example: 2251799813690746.
         element_id (str): The element ID associated with this message subscription. Example: Activity_106kosb.
-        element_instance_key (None | str): The element instance key associated with this message subscription. Example:
-            2251799813686789.
+        element_instance_key (None | str): The element instance key associated with this message subscription.
+            Only populated for intermediate event entities.
+             Example: 2251799813686789.
         message_subscription_state (MessageSubscriptionStateEnum): The state of message subscription.
         last_updated_date (datetime.datetime): The last updated date of the message subscription.
         message_name (str): The name of the message associated with the message subscription.
         correlation_key (None | str): The correlation key of the message subscription.
+        message_subscription_type (MessageSubscriptionTypeEnum): The type of message subscription.
+            `START_EVENT` is definition-scoped (process start events). Always has a value; only
+            captured from Camunda 8.10 onwards.
+            `PROCESS_EVENT` is instance-scoped (intermediate catch events). Pre-8.10 entries have
+            no value stored; the API returns `PROCESS_EVENT` as a default for those entries.
+        extension_properties (MessageSubscriptionResultExtensionProperties): The `zeebe:properties` extension properties
+            extracted from the BPMN element associated
+            with this subscription. Empty object when no properties are defined.
+        process_definition_name (None | str): The name of the process definition associated with this message
+            subscription.
+        process_definition_version (int | None): The version of the process definition associated with this message
+            subscription.
+        tool_name (None | str): Tool name extracted from the `io.camunda.tool:name` zeebe:property.
+            Null when the property is absent.
+        inbound_connector_type (None | str): Inbound connector type extracted from the `inbound.type` zeebe:property.
+            Null when the property is absent.
         tenant_id (str): The unique identifier of the tenant. Example: customer-service.
     """
 
@@ -62,6 +87,12 @@ class MessageSubscriptionResult:
     last_updated_date: datetime.datetime
     message_name: str
     correlation_key: None | str
+    message_subscription_type: MessageSubscriptionTypeEnum
+    extension_properties: MessageSubscriptionResultExtensionProperties
+    process_definition_name: None | str
+    process_definition_version: int | None
+    tool_name: None | str
+    inbound_connector_type: None | str
     tenant_id: TenantId
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
@@ -95,6 +126,22 @@ class MessageSubscriptionResult:
         correlation_key: None | str
         correlation_key = self.correlation_key
 
+        message_subscription_type = self.message_subscription_type.value
+
+        extension_properties = self.extension_properties.to_dict()
+
+        process_definition_name: None | str
+        process_definition_name = self.process_definition_name
+
+        process_definition_version: int | None
+        process_definition_version = self.process_definition_version
+
+        tool_name: None | str
+        tool_name = self.tool_name
+
+        inbound_connector_type: None | str
+        inbound_connector_type = self.inbound_connector_type
+
         tenant_id = self.tenant_id
 
         field_dict: dict[str, Any] = {}
@@ -112,6 +159,12 @@ class MessageSubscriptionResult:
                 "lastUpdatedDate": last_updated_date,
                 "messageName": message_name,
                 "correlationKey": correlation_key,
+                "messageSubscriptionType": message_subscription_type,
+                "extensionProperties": extension_properties,
+                "processDefinitionName": process_definition_name,
+                "processDefinitionVersion": process_definition_version,
+                "toolName": tool_name,
+                "inboundConnectorType": inbound_connector_type,
                 "tenantId": tenant_id,
             }
         )
@@ -120,6 +173,10 @@ class MessageSubscriptionResult:
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        from ..models.message_subscription_result_extension_properties import (
+            MessageSubscriptionResultExtensionProperties,
+        )
+
         d = dict(src_dict)
         message_subscription_key = MessageSubscriptionKey(
             d.pop("messageSubscriptionKey")
@@ -204,6 +261,48 @@ class MessageSubscriptionResult:
 
         correlation_key = _parse_correlation_key(d.pop("correlationKey"))
 
+        message_subscription_type = MessageSubscriptionTypeEnum(
+            d.pop("messageSubscriptionType")
+        )
+
+        extension_properties = MessageSubscriptionResultExtensionProperties.from_dict(
+            d.pop("extensionProperties")
+        )
+
+        def _parse_process_definition_name(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        process_definition_name = _parse_process_definition_name(
+            d.pop("processDefinitionName")
+        )
+
+        def _parse_process_definition_version(data: object) -> int | None:
+            if data is None:
+                return data
+            return cast(int | None, data)
+
+        process_definition_version = _parse_process_definition_version(
+            d.pop("processDefinitionVersion")
+        )
+
+        def _parse_tool_name(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        tool_name = _parse_tool_name(d.pop("toolName"))
+
+        def _parse_inbound_connector_type(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        inbound_connector_type = _parse_inbound_connector_type(
+            d.pop("inboundConnectorType")
+        )
+
         tenant_id = TenantId(d.pop("tenantId"))
 
         message_subscription_result = cls(
@@ -218,6 +317,12 @@ class MessageSubscriptionResult:
             last_updated_date=last_updated_date,
             message_name=message_name,
             correlation_key=correlation_key,
+            message_subscription_type=message_subscription_type,
+            extension_properties=extension_properties,
+            process_definition_name=process_definition_name,
+            process_definition_version=process_definition_version,
+            tool_name=tool_name,
+            inbound_connector_type=inbound_connector_type,
             tenant_id=tenant_id,
         )
 

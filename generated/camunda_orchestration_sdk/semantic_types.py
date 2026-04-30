@@ -142,18 +142,18 @@ class DecisionEvaluationInstanceKey(str):
             raise TypeError(
                 f"DecisionEvaluationInstanceKey must be str, got {type(value).__name__}: {value!r}"
             )
-        if re.fullmatch("^-?[0-9]+$", value) is None:
-            pat = "^-?[0-9]+$"
+        if re.fullmatch("^[0-9]+-[0-9]+$", value) is None:
+            pat = "^[0-9]+-[0-9]+$"
             raise ValueError(
                 f"DecisionEvaluationInstanceKey does not match pattern {pat!r}, got {value!r}"
             )
-        if len(value) < 1:
+        if len(value) < 3:
             raise ValueError(
-                f"DecisionEvaluationInstanceKey shorter than minLength 1, got {value!r}"
+                f"DecisionEvaluationInstanceKey shorter than minLength 3, got {value!r}"
             )
-        if len(value) > 25:
+        if len(value) > 30:
             raise ValueError(
-                f"DecisionEvaluationInstanceKey longer than maxLength 25, got {value!r}"
+                f"DecisionEvaluationInstanceKey longer than maxLength 30, got {value!r}"
             )
         return super().__new__(cls, value)
 

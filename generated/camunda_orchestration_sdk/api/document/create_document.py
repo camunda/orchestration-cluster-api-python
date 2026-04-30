@@ -66,7 +66,7 @@ def sync_detailed(
 
      Upload a document to the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:
@@ -98,7 +98,7 @@ def sync(
 
      Upload a document to the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:
@@ -149,7 +149,7 @@ async def asyncio_detailed(
 
      Upload a document to the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:
@@ -181,7 +181,7 @@ async def asyncio(
 
      Upload a document to the Camunda 8 cluster.
 
-    Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+    Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
     production), local (non-production)
 
     Args:

@@ -27,7 +27,11 @@ class BatchOperationItemResponse:
         operation_type (BatchOperationTypeEnum): The type of the batch operation.
         batch_operation_key (str): The key (or operate legacy ID) of the batch operation. Example: 2251799813684321.
         item_key (str): Key of the item, e.g. a process instance key.
-        process_instance_key (str): the process instance key of the processed item. Example: 2251799813690746.
+        process_instance_key (None | str): The process instance key of the processed item. Null for batch-op types whose
+            targets
+            are not process instances (e.g. DELETE_DECISION_INSTANCE, DELETE_DECISION_DEFINITION,
+            DELETE_PROCESS_DEFINITION).
+             Example: 2251799813690746.
         root_process_instance_key (None | str): The key of the root process instance. The root process instance is the
             top-level
             ancestor in the process instance hierarchy. This field is only present for data
@@ -42,7 +46,7 @@ class BatchOperationItemResponse:
     operation_type: BatchOperationTypeEnum
     batch_operation_key: BatchOperationKey
     item_key: str
-    process_instance_key: ProcessInstanceKey
+    process_instance_key: None | ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
     state: BatchOperationItemResponseState
     processed_date: datetime.datetime | None
@@ -58,6 +62,7 @@ class BatchOperationItemResponse:
 
         item_key = self.item_key
 
+        process_instance_key: None | ProcessInstanceKey
         process_instance_key = self.process_instance_key
 
         root_process_instance_key: None | ProcessInstanceKey
@@ -100,7 +105,20 @@ class BatchOperationItemResponse:
 
         item_key = d.pop("itemKey")
 
-        process_instance_key = ProcessInstanceKey(d.pop("processInstanceKey"))
+        def _parse_process_instance_key(data: object) -> None | str:
+            if data is None:
+                return data
+            return cast(None | str, data)
+
+        _raw_process_instance_key = _parse_process_instance_key(
+            d.pop("processInstanceKey")
+        )
+
+        process_instance_key = (
+            ProcessInstanceKey(_raw_process_instance_key)
+            if isinstance(_raw_process_instance_key, str)
+            else _raw_process_instance_key
+        )
 
         def _parse_root_process_instance_key(data: object) -> None | str:
             if data is None:
