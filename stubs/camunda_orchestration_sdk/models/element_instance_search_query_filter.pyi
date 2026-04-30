@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from camunda_orchestration_sdk.semantic_types import ElementId, ElementInstanceKey, IncidentKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
+from camunda_orchestration_sdk.semantic_types import ElementInstanceKey, IncidentKey, ProcessDefinitionId, ProcessDefinitionKey, ProcessInstanceKey, TenantId
 import datetime
 from collections.abc import Mapping
 from typing import Any, TypeVar
@@ -10,7 +10,9 @@ from ..models.element_instance_search_query_filter_type import ElementInstanceSe
 from ..models.element_instance_state_exact_match import ElementInstanceStateExactMatch
 from ..types import UNSET, Unset, str_any_dict_factory
 from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
+from ..models.advanced_element_id_filter import AdvancedElementIdFilter
 from ..models.advanced_element_instance_state_filter import AdvancedElementInstanceStateFilter
+from ..models.advanced_string_filter import AdvancedStringFilter
 T = TypeVar("T", bound="ElementInstanceSearchQueryFilter")
 @_attrs_define
 class ElementInstanceSearchQueryFilter:
@@ -19,8 +21,8 @@ class ElementInstanceSearchQueryFilter:
             AdvancedElementInstanceStateFilter | ElementInstanceStateExactMatch | Unset
         ) = UNSET
     type_: ElementInstanceSearchQueryFilterType | Unset = UNSET
-    element_id: ElementId | Unset = UNSET
-    element_name: str | Unset = UNSET
+    element_id: AdvancedElementIdFilter | str | Unset = UNSET
+    element_name: AdvancedStringFilter | str | Unset = UNSET
     has_incident: bool | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET

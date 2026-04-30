@@ -1,6 +1,5 @@
 from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
-    ElementId,
     ElementInstanceKey,
     IncidentKey,
     ProcessDefinitionId,
@@ -23,9 +22,11 @@ from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
     from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
+    from ..models.advanced_element_id_filter import AdvancedElementIdFilter
     from ..models.advanced_element_instance_state_filter import (
         AdvancedElementInstanceStateFilter,
     )
+    from ..models.advanced_string_filter import AdvancedStringFilter
 
 
 T = TypeVar("T", bound="ElementInstanceFilter")
@@ -41,9 +42,9 @@ class ElementInstanceFilter:
         state (AdvancedElementInstanceStateFilter | ElementInstanceStateExactMatch | Unset): State of element instance
             as defined set of values.
         type_ (ElementInstanceFilterType | Unset): Type of element as defined set of values.
-        element_id (str | Unset): The element ID for this element instance. Example: Activity_106kosb.
-        element_name (str | Unset): The element name. This only works for data created with 8.8 and onwards. Instances
-            from prior versions don't contain this data and cannot be found.
+        element_id (AdvancedElementIdFilter | str | Unset): The element ID for this element instance.
+        element_name (AdvancedStringFilter | str | Unset): The element name. This only works for data created with 8.8
+            and onwards. Instances from prior versions don't contain this data and cannot be found.
         has_incident (bool | Unset): Shows whether this element instance has an incident related to.
         tenant_id (str | Unset): The unique identifier of the tenant. Example: customer-service.
         element_instance_key (str | Unset): The assigned key, which acts as a unique identifier for this element
@@ -66,8 +67,8 @@ class ElementInstanceFilter:
         AdvancedElementInstanceStateFilter | ElementInstanceStateExactMatch | Unset
     ) = UNSET
     type_: ElementInstanceFilterType | Unset = UNSET
-    element_id: ElementId | Unset = UNSET
-    element_name: str | Unset = UNSET
+    element_id: AdvancedElementIdFilter | str | Unset = UNSET
+    element_name: AdvancedStringFilter | str | Unset = UNSET
     has_incident: bool | Unset = UNSET
     tenant_id: TenantId | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
@@ -82,6 +83,9 @@ class ElementInstanceFilter:
     )
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.advanced_element_id_filter import AdvancedElementIdFilter
+        from ..models.advanced_string_filter import AdvancedStringFilter
+
         process_definition_id = self.process_definition_id
 
         state: dict[str, Any] | str | Unset
@@ -96,9 +100,21 @@ class ElementInstanceFilter:
         if not isinstance(self.type_, Unset):
             type_ = self.type_.value
 
-        element_id = self.element_id
+        element_id: dict[str, Any] | str | Unset
+        if isinstance(self.element_id, Unset):
+            element_id = UNSET
+        elif isinstance(self.element_id, AdvancedElementIdFilter):
+            element_id = self.element_id.to_dict()
+        else:
+            element_id = self.element_id
 
-        element_name = self.element_name
+        element_name: dict[str, Any] | str | Unset
+        if isinstance(self.element_name, Unset):
+            element_name = UNSET
+        elif isinstance(self.element_name, AdvancedStringFilter):
+            element_name = self.element_name.to_dict()
+        else:
+            element_name = self.element_name
 
         has_incident = self.has_incident
 
@@ -171,9 +187,11 @@ class ElementInstanceFilter:
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
+        from ..models.advanced_element_id_filter import AdvancedElementIdFilter
         from ..models.advanced_element_instance_state_filter import (
             AdvancedElementInstanceStateFilter,
         )
+        from ..models.advanced_string_filter import AdvancedStringFilter
 
         d = dict(src_dict)
         process_definition_id = (
@@ -214,13 +232,39 @@ class ElementInstanceFilter:
         else:
             type_ = ElementInstanceFilterType(_type_)
 
-        element_id = (
-            ElementId(_val)
-            if (_val := d.pop("elementId", UNSET)) is not UNSET
-            else UNSET
-        )
+        def _parse_element_id(data: object) -> AdvancedElementIdFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
 
-        element_name = d.pop("elementName", UNSET)
+                data = cast(dict[str, Any], data)
+                element_id_type_1 = AdvancedElementIdFilter.from_dict(data)
+
+                return element_id_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedElementIdFilter | str | Unset, data)
+
+        element_id = _parse_element_id(d.pop("elementId", UNSET))
+
+        def _parse_element_name(data: object) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                element_name_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return element_name_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        element_name = _parse_element_name(d.pop("elementName", UNSET))
 
         has_incident = d.pop("hasIncident", UNSET)
 

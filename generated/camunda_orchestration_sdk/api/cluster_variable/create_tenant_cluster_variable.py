@@ -41,6 +41,9 @@ def _parse_response(
     if response.status_code == 403:
         response_403 = ProblemDetail.from_dict(response.json())
         return response_403
+    if response.status_code == 404:
+        response_404 = ProblemDetail.from_dict(response.json())
+        return response_404
     if response.status_code == 500:
         response_500 = ProblemDetail.from_dict(response.json())
         return response_500
@@ -106,6 +109,7 @@ def sync(
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
         errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The tenant with the given ID was not found.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -129,6 +133,13 @@ def sync(
             )
         if response.status_code == 403:
             raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_tenant_cluster_variable",
+            )
+        if response.status_code == 404:
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),
@@ -195,6 +206,7 @@ async def asyncio(
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
         errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
         errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+        errors.NotFoundError: If the response status code is 404. The tenant with the given ID was not found.
         errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
         errors.UnexpectedStatus: If the response status code is not documented.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -218,6 +230,13 @@ async def asyncio(
             )
         if response.status_code == 403:
             raise errors.ForbiddenError(
+                status_code=response.status_code,
+                content=response.content,
+                parsed=cast(ProblemDetail, response.parsed),
+                operation_id="create_tenant_cluster_variable",
+            )
+        if response.status_code == 404:
+            raise errors.NotFoundError(
                 status_code=response.status_code,
                 content=response.content,
                 parsed=cast(ProblemDetail, response.parsed),

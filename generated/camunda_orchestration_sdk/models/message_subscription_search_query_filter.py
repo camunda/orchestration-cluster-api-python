@@ -11,6 +11,9 @@ from dateutil.parser import isoparse
 from ..models.message_subscription_state_exact_match import (
     MessageSubscriptionStateExactMatch,
 )
+from ..models.message_subscription_type_exact_match import (
+    MessageSubscriptionTypeExactMatch,
+)
 from ..types import UNSET, Unset, str_any_dict_factory
 
 if TYPE_CHECKING:
@@ -18,11 +21,15 @@ if TYPE_CHECKING:
     from ..models.advanced_element_instance_key_filter import (
         AdvancedElementInstanceKeyFilter,
     )
+    from ..models.advanced_integer_filter import AdvancedIntegerFilter
     from ..models.advanced_message_subscription_key_filter import (
         AdvancedMessageSubscriptionKeyFilter,
     )
     from ..models.advanced_message_subscription_state_filter import (
         AdvancedMessageSubscriptionStateFilter,
+    )
+    from ..models.advanced_message_subscription_type_filter import (
+        AdvancedMessageSubscriptionTypeFilter,
     )
     from ..models.advanced_process_definition_key_filter import (
         AdvancedProcessDefinitionKeyFilter,
@@ -60,6 +67,18 @@ class MessageSubscriptionSearchQueryFilter:
             subscription.
         correlation_key (AdvancedStringFilter | str | Unset): The correlation key of the message subscription.
         tenant_id (AdvancedStringFilter | str | Unset): The unique external tenant ID.
+        message_subscription_type (AdvancedMessageSubscriptionTypeFilter | MessageSubscriptionTypeExactMatch | Unset):
+            The type of message subscription to filter by. When omitted, both
+            `START_EVENT` and `PROCESS_EVENT` are returned. Only available for data
+            created with Camunda 8.10 or later.
+        process_definition_name (AdvancedStringFilter | str | Unset): The name of the process definition associated with
+            this message subscription.
+        process_definition_version (AdvancedIntegerFilter | int | Unset): The version of the process definition
+            associated with this message subscription.
+        tool_name (AdvancedStringFilter | str | Unset): Filter by tool name extracted from the `io.camunda.tool:name`
+            zeebe:property.
+        inbound_connector_type (AdvancedStringFilter | str | Unset): Filter by inbound connector type extracted from the
+            `inbound.type` zeebe:property.
     """
 
     message_subscription_key: AdvancedMessageSubscriptionKeyFilter | str | Unset = UNSET
@@ -77,6 +96,15 @@ class MessageSubscriptionSearchQueryFilter:
     message_name: AdvancedStringFilter | str | Unset = UNSET
     correlation_key: AdvancedStringFilter | str | Unset = UNSET
     tenant_id: AdvancedStringFilter | str | Unset = UNSET
+    message_subscription_type: (
+        AdvancedMessageSubscriptionTypeFilter
+        | MessageSubscriptionTypeExactMatch
+        | Unset
+    ) = UNSET
+    process_definition_name: AdvancedStringFilter | str | Unset = UNSET
+    process_definition_version: AdvancedIntegerFilter | int | Unset = UNSET
+    tool_name: AdvancedStringFilter | str | Unset = UNSET
+    inbound_connector_type: AdvancedStringFilter | str | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
         init=False, factory=str_any_dict_factory
     )
@@ -85,6 +113,7 @@ class MessageSubscriptionSearchQueryFilter:
         from ..models.advanced_element_instance_key_filter import (
             AdvancedElementInstanceKeyFilter,
         )
+        from ..models.advanced_integer_filter import AdvancedIntegerFilter
         from ..models.advanced_message_subscription_key_filter import (
             AdvancedMessageSubscriptionKeyFilter,
         )
@@ -190,6 +219,48 @@ class MessageSubscriptionSearchQueryFilter:
         else:
             tenant_id = self.tenant_id
 
+        message_subscription_type: dict[str, Any] | str | Unset
+        if isinstance(self.message_subscription_type, Unset):
+            message_subscription_type = UNSET
+        elif isinstance(
+            self.message_subscription_type, MessageSubscriptionTypeExactMatch
+        ):
+            message_subscription_type = self.message_subscription_type.value
+        else:
+            message_subscription_type = self.message_subscription_type.to_dict()
+
+        process_definition_name: dict[str, Any] | str | Unset
+        if isinstance(self.process_definition_name, Unset):
+            process_definition_name = UNSET
+        elif isinstance(self.process_definition_name, AdvancedStringFilter):
+            process_definition_name = self.process_definition_name.to_dict()
+        else:
+            process_definition_name = self.process_definition_name
+
+        process_definition_version: dict[str, Any] | int | Unset
+        if isinstance(self.process_definition_version, Unset):
+            process_definition_version = UNSET
+        elif isinstance(self.process_definition_version, AdvancedIntegerFilter):
+            process_definition_version = self.process_definition_version.to_dict()
+        else:
+            process_definition_version = self.process_definition_version
+
+        tool_name: dict[str, Any] | str | Unset
+        if isinstance(self.tool_name, Unset):
+            tool_name = UNSET
+        elif isinstance(self.tool_name, AdvancedStringFilter):
+            tool_name = self.tool_name.to_dict()
+        else:
+            tool_name = self.tool_name
+
+        inbound_connector_type: dict[str, Any] | str | Unset
+        if isinstance(self.inbound_connector_type, Unset):
+            inbound_connector_type = UNSET
+        elif isinstance(self.inbound_connector_type, AdvancedStringFilter):
+            inbound_connector_type = self.inbound_connector_type.to_dict()
+        else:
+            inbound_connector_type = self.inbound_connector_type
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -215,6 +286,16 @@ class MessageSubscriptionSearchQueryFilter:
             field_dict["correlationKey"] = correlation_key
         if tenant_id is not UNSET:
             field_dict["tenantId"] = tenant_id
+        if message_subscription_type is not UNSET:
+            field_dict["messageSubscriptionType"] = message_subscription_type
+        if process_definition_name is not UNSET:
+            field_dict["processDefinitionName"] = process_definition_name
+        if process_definition_version is not UNSET:
+            field_dict["processDefinitionVersion"] = process_definition_version
+        if tool_name is not UNSET:
+            field_dict["toolName"] = tool_name
+        if inbound_connector_type is not UNSET:
+            field_dict["inboundConnectorType"] = inbound_connector_type
 
         return field_dict
 
@@ -224,11 +305,15 @@ class MessageSubscriptionSearchQueryFilter:
         from ..models.advanced_element_instance_key_filter import (
             AdvancedElementInstanceKeyFilter,
         )
+        from ..models.advanced_integer_filter import AdvancedIntegerFilter
         from ..models.advanced_message_subscription_key_filter import (
             AdvancedMessageSubscriptionKeyFilter,
         )
         from ..models.advanced_message_subscription_state_filter import (
             AdvancedMessageSubscriptionStateFilter,
+        )
+        from ..models.advanced_message_subscription_type_filter import (
+            AdvancedMessageSubscriptionTypeFilter,
         )
         from ..models.advanced_process_definition_key_filter import (
             AdvancedProcessDefinitionKeyFilter,
@@ -477,6 +562,121 @@ class MessageSubscriptionSearchQueryFilter:
 
         tenant_id = _parse_tenant_id(d.pop("tenantId", UNSET))
 
+        def _parse_message_subscription_type(
+            data: object,
+        ) -> (
+            AdvancedMessageSubscriptionTypeFilter
+            | MessageSubscriptionTypeExactMatch
+            | Unset
+        ):
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, str):
+                    raise TypeError()
+                message_subscription_type_type_0 = MessageSubscriptionTypeExactMatch(
+                    data
+                )
+
+                return message_subscription_type_type_0
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            if not isinstance(data, dict):
+                raise TypeError()
+
+            data = cast(dict[str, Any], data)
+            message_subscription_type_type_1 = (
+                AdvancedMessageSubscriptionTypeFilter.from_dict(data)
+            )
+
+            return message_subscription_type_type_1
+
+        message_subscription_type = _parse_message_subscription_type(
+            d.pop("messageSubscriptionType", UNSET)
+        )
+
+        def _parse_process_definition_name(
+            data: object,
+        ) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                process_definition_name_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return process_definition_name_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        process_definition_name = _parse_process_definition_name(
+            d.pop("processDefinitionName", UNSET)
+        )
+
+        def _parse_process_definition_version(
+            data: object,
+        ) -> AdvancedIntegerFilter | int | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                process_definition_version_type_1 = AdvancedIntegerFilter.from_dict(
+                    data
+                )
+
+                return process_definition_version_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedIntegerFilter | int | Unset, data)
+
+        process_definition_version = _parse_process_definition_version(
+            d.pop("processDefinitionVersion", UNSET)
+        )
+
+        def _parse_tool_name(data: object) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                tool_name_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return tool_name_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        tool_name = _parse_tool_name(d.pop("toolName", UNSET))
+
+        def _parse_inbound_connector_type(
+            data: object,
+        ) -> AdvancedStringFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                inbound_connector_type_type_1 = AdvancedStringFilter.from_dict(data)
+
+                return inbound_connector_type_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedStringFilter | str | Unset, data)
+
+        inbound_connector_type = _parse_inbound_connector_type(
+            d.pop("inboundConnectorType", UNSET)
+        )
+
         message_subscription_search_query_filter = cls(
             message_subscription_key=message_subscription_key,
             process_definition_key=process_definition_key,
@@ -489,6 +689,11 @@ class MessageSubscriptionSearchQueryFilter:
             message_name=message_name,
             correlation_key=correlation_key,
             tenant_id=tenant_id,
+            message_subscription_type=message_subscription_type,
+            process_definition_name=process_definition_name,
+            process_definition_version=process_definition_version,
+            tool_name=tool_name,
+            inbound_connector_type=inbound_connector_type,
         )
 
         message_subscription_search_query_filter.additional_properties = d

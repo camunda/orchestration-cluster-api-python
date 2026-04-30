@@ -39,7 +39,7 @@ class EvaluatedDecisionResult:
         decision_definition_key (str): The unique key identifying the decision which was evaluate. Example:
             2251799813326547.
         decision_evaluation_instance_key (str): The unique key identifying this decision evaluation instance. Example:
-            2251799813684367.
+            2251799813684367-1.
     """
 
     decision_definition_id: DecisionDefinitionId

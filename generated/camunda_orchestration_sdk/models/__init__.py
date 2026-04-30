@@ -66,6 +66,7 @@ from .advanced_decision_requirements_key_filter import (
     AdvancedDecisionRequirementsKeyFilter,
 )
 from .advanced_deployment_key_filter import AdvancedDeploymentKeyFilter
+from .advanced_element_id_filter import AdvancedElementIdFilter
 from .advanced_element_instance_key_filter import AdvancedElementInstanceKeyFilter
 from .advanced_element_instance_state_filter import AdvancedElementInstanceStateFilter
 from .advanced_element_instance_state_filter_eq import (
@@ -127,9 +128,19 @@ from .advanced_message_subscription_state_filter_eq import (
 from .advanced_message_subscription_state_filter_neq import (
     AdvancedMessageSubscriptionStateFilterNeq,
 )
+from .advanced_message_subscription_type_filter import (
+    AdvancedMessageSubscriptionTypeFilter,
+)
+from .advanced_message_subscription_type_filter_eq import (
+    AdvancedMessageSubscriptionTypeFilterEq,
+)
+from .advanced_message_subscription_type_filter_neq import (
+    AdvancedMessageSubscriptionTypeFilterNeq,
+)
 from .advanced_operation_type_filter import AdvancedOperationTypeFilter
 from .advanced_operation_type_filter_eq import AdvancedOperationTypeFilterEq
 from .advanced_operation_type_filter_neq import AdvancedOperationTypeFilterNeq
+from .advanced_process_definition_id_filter import AdvancedProcessDefinitionIdFilter
 from .advanced_process_definition_key_filter import AdvancedProcessDefinitionKeyFilter
 from .advanced_process_instance_key_filter import AdvancedProcessInstanceKeyFilter
 from .advanced_process_instance_state_filter import AdvancedProcessInstanceStateFilter
@@ -615,6 +626,9 @@ from .message_publication_request_variables import MessagePublicationRequestVari
 from .message_publication_result import MessagePublicationResult
 from .message_subscription_filter import MessageSubscriptionFilter
 from .message_subscription_result import MessageSubscriptionResult
+from .message_subscription_result_extension_properties import (
+    MessageSubscriptionResultExtensionProperties,
+)
 from .message_subscription_search_query import MessageSubscriptionSearchQuery
 from .message_subscription_search_query_filter import (
     MessageSubscriptionSearchQueryFilter,
@@ -630,6 +644,8 @@ from .message_subscription_search_query_sort_request_field import (
 )
 from .message_subscription_state_enum import MessageSubscriptionStateEnum
 from .message_subscription_state_exact_match import MessageSubscriptionStateExactMatch
+from .message_subscription_type_enum import MessageSubscriptionTypeEnum
+from .message_subscription_type_exact_match import MessageSubscriptionTypeExactMatch
 from .migrate_process_instance_mapping_instruction import (
     MigrateProcessInstanceMappingInstruction,
 )
@@ -803,7 +819,15 @@ from .process_instance_sequence_flows_query_result import (
 )
 from .process_instance_state_enum import ProcessInstanceStateEnum
 from .process_instance_state_exact_match import ProcessInstanceStateExactMatch
+from .resource_filter import ResourceFilter
 from .resource_result import ResourceResult
+from .resource_search_query import ResourceSearchQuery
+from .resource_search_query_filter import ResourceSearchQueryFilter
+from .resource_search_query_result import ResourceSearchQueryResult
+from .resource_search_query_sort_request import ResourceSearchQuerySortRequest
+from .resource_search_query_sort_request_field import (
+    ResourceSearchQuerySortRequestField,
+)
 from .resource_type_enum import ResourceTypeEnum
 from .role_client_result import RoleClientResult
 from .role_client_search_query_request import RoleClientSearchQueryRequest
@@ -1023,6 +1047,7 @@ __all__: list[str] = [
     "AdvancedDecisionInstanceStateFilterNeq",
     "AdvancedDecisionRequirementsKeyFilter",
     "AdvancedDeploymentKeyFilter",
+    "AdvancedElementIdFilter",
     "AdvancedElementInstanceKeyFilter",
     "AdvancedElementInstanceStateFilter",
     "AdvancedElementInstanceStateFilterEq",
@@ -1058,9 +1083,13 @@ __all__: list[str] = [
     "AdvancedMessageSubscriptionStateFilter",
     "AdvancedMessageSubscriptionStateFilterEq",
     "AdvancedMessageSubscriptionStateFilterNeq",
+    "AdvancedMessageSubscriptionTypeFilter",
+    "AdvancedMessageSubscriptionTypeFilterEq",
+    "AdvancedMessageSubscriptionTypeFilterNeq",
     "AdvancedOperationTypeFilter",
     "AdvancedOperationTypeFilterEq",
     "AdvancedOperationTypeFilterNeq",
+    "AdvancedProcessDefinitionIdFilter",
     "AdvancedProcessDefinitionKeyFilter",
     "AdvancedProcessInstanceKeyFilter",
     "AdvancedProcessInstanceStateFilter",
@@ -1400,6 +1429,7 @@ __all__: list[str] = [
     "MessagePublicationResult",
     "MessageSubscriptionFilter",
     "MessageSubscriptionResult",
+    "MessageSubscriptionResultExtensionProperties",
     "MessageSubscriptionSearchQuery",
     "MessageSubscriptionSearchQueryFilter",
     "MessageSubscriptionSearchQueryResult",
@@ -1407,6 +1437,8 @@ __all__: list[str] = [
     "MessageSubscriptionSearchQuerySortRequestField",
     "MessageSubscriptionStateEnum",
     "MessageSubscriptionStateExactMatch",
+    "MessageSubscriptionTypeEnum",
+    "MessageSubscriptionTypeExactMatch",
     "MigrateProcessInstanceMappingInstruction",
     "ModifyProcessInstanceVariableInstruction",
     "ModifyProcessInstanceVariableInstructionVariables",
@@ -1484,7 +1516,13 @@ __all__: list[str] = [
     "ProcessInstanceSequenceFlowsQueryResult",
     "ProcessInstanceStateEnum",
     "ProcessInstanceStateExactMatch",
+    "ResourceFilter",
     "ResourceResult",
+    "ResourceSearchQuery",
+    "ResourceSearchQueryFilter",
+    "ResourceSearchQueryResult",
+    "ResourceSearchQuerySortRequest",
+    "ResourceSearchQuerySortRequestField",
     "ResourceTypeEnum",
     "RoleClientResult",
     "RoleClientSearchQueryRequest",
