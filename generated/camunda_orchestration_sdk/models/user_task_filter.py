@@ -2,9 +2,6 @@ from __future__ import annotations
 from camunda_orchestration_sdk.semantic_types import (
     ElementId,
     ElementInstanceKey,
-    ProcessDefinitionId,
-    ProcessDefinitionKey,
-    ProcessInstanceKey,
     UserTaskKey,
 )
 
@@ -22,6 +19,15 @@ from ..types import UNSET, Unset, str_any_dict_factory
 if TYPE_CHECKING:
     from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
     from ..models.advanced_integer_filter import AdvancedIntegerFilter
+    from ..models.advanced_process_definition_id_filter import (
+        AdvancedProcessDefinitionIdFilter,
+    )
+    from ..models.advanced_process_definition_key_filter import (
+        AdvancedProcessDefinitionKeyFilter,
+    )
+    from ..models.advanced_process_instance_key_filter import (
+        AdvancedProcessInstanceKeyFilter,
+    )
     from ..models.advanced_string_filter import AdvancedStringFilter
     from ..models.advanced_user_task_state_filter import AdvancedUserTaskStateFilter
     from ..models.variable_value_filter_property import VariableValueFilterProperty
@@ -44,7 +50,7 @@ class UserTaskFilter:
         candidate_group (AdvancedStringFilter | str | Unset): The candidate group for this user task.
         candidate_user (AdvancedStringFilter | str | Unset): The candidate user for this user task.
         tenant_id (AdvancedStringFilter | str | Unset): Tenant ID of this user task.
-        process_definition_id (str | Unset): The ID of the process definition. Example: new-account-onboarding-workflow.
+        process_definition_id (AdvancedProcessDefinitionIdFilter | str | Unset): The ID of the process definition.
         creation_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The user task creation date.
         completion_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The user task completion date.
         follow_up_date (AdvancedDateTimeFilter | datetime.datetime | Unset): The user task follow-up date.
@@ -52,8 +58,8 @@ class UserTaskFilter:
         process_instance_variables (list[VariableValueFilterProperty] | Unset): The variables of the process instance.
         local_variables (list[VariableValueFilterProperty] | Unset): The local variables of the user task.
         user_task_key (str | Unset): The key for this user task.
-        process_definition_key (str | Unset): The key of the process definition. Example: 2251799813686749.
-        process_instance_key (str | Unset): The key of the process instance. Example: 2251799813690746.
+        process_definition_key (AdvancedProcessDefinitionKeyFilter | str | Unset): The key of the process definition.
+        process_instance_key (AdvancedProcessInstanceKeyFilter | str | Unset): The key of the process instance.
         element_instance_key (str | Unset): The key of the element instance. Example: 2251799813686789.
         tags (list[str] | Unset): List of tags. Tags need to start with a letter; then alphanumerics, `_`, `-`, `:`, or
             `.`; length ≤ 100. Example: ['high-touch', 'remediation'].
@@ -67,7 +73,7 @@ class UserTaskFilter:
     candidate_group: AdvancedStringFilter | str | Unset = UNSET
     candidate_user: AdvancedStringFilter | str | Unset = UNSET
     tenant_id: AdvancedStringFilter | str | Unset = UNSET
-    process_definition_id: ProcessDefinitionId | Unset = UNSET
+    process_definition_id: AdvancedProcessDefinitionIdFilter | str | Unset = UNSET
     creation_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     completion_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
     follow_up_date: AdvancedDateTimeFilter | datetime.datetime | Unset = UNSET
@@ -75,8 +81,8 @@ class UserTaskFilter:
     process_instance_variables: list[VariableValueFilterProperty] | Unset = UNSET
     local_variables: list[VariableValueFilterProperty] | Unset = UNSET
     user_task_key: UserTaskKey | Unset = UNSET
-    process_definition_key: ProcessDefinitionKey | Unset = UNSET
-    process_instance_key: ProcessInstanceKey | Unset = UNSET
+    process_definition_key: AdvancedProcessDefinitionKeyFilter | str | Unset = UNSET
+    process_instance_key: AdvancedProcessInstanceKeyFilter | str | Unset = UNSET
     element_instance_key: ElementInstanceKey | Unset = UNSET
     tags: list[str] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(
@@ -85,6 +91,15 @@ class UserTaskFilter:
 
     def to_dict(self) -> dict[str, Any]:
         from ..models.advanced_integer_filter import AdvancedIntegerFilter
+        from ..models.advanced_process_definition_id_filter import (
+            AdvancedProcessDefinitionIdFilter,
+        )
+        from ..models.advanced_process_definition_key_filter import (
+            AdvancedProcessDefinitionKeyFilter,
+        )
+        from ..models.advanced_process_instance_key_filter import (
+            AdvancedProcessInstanceKeyFilter,
+        )
         from ..models.advanced_string_filter import AdvancedStringFilter
 
         state: dict[str, Any] | str | Unset
@@ -145,7 +160,13 @@ class UserTaskFilter:
         else:
             tenant_id = self.tenant_id
 
-        process_definition_id = self.process_definition_id
+        process_definition_id: dict[str, Any] | str | Unset
+        if isinstance(self.process_definition_id, Unset):
+            process_definition_id = UNSET
+        elif isinstance(self.process_definition_id, AdvancedProcessDefinitionIdFilter):
+            process_definition_id = self.process_definition_id.to_dict()
+        else:
+            process_definition_id = self.process_definition_id
 
         creation_date: dict[str, Any] | str | Unset
         if isinstance(self.creation_date, Unset):
@@ -197,9 +218,23 @@ class UserTaskFilter:
 
         user_task_key = self.user_task_key
 
-        process_definition_key = self.process_definition_key
+        process_definition_key: dict[str, Any] | str | Unset
+        if isinstance(self.process_definition_key, Unset):
+            process_definition_key = UNSET
+        elif isinstance(
+            self.process_definition_key, AdvancedProcessDefinitionKeyFilter
+        ):
+            process_definition_key = self.process_definition_key.to_dict()
+        else:
+            process_definition_key = self.process_definition_key
 
-        process_instance_key = self.process_instance_key
+        process_instance_key: dict[str, Any] | str | Unset
+        if isinstance(self.process_instance_key, Unset):
+            process_instance_key = UNSET
+        elif isinstance(self.process_instance_key, AdvancedProcessInstanceKeyFilter):
+            process_instance_key = self.process_instance_key.to_dict()
+        else:
+            process_instance_key = self.process_instance_key
 
         element_instance_key = self.element_instance_key
 
@@ -257,6 +292,15 @@ class UserTaskFilter:
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.advanced_date_time_filter import AdvancedDateTimeFilter
         from ..models.advanced_integer_filter import AdvancedIntegerFilter
+        from ..models.advanced_process_definition_id_filter import (
+            AdvancedProcessDefinitionIdFilter,
+        )
+        from ..models.advanced_process_definition_key_filter import (
+            AdvancedProcessDefinitionKeyFilter,
+        )
+        from ..models.advanced_process_instance_key_filter import (
+            AdvancedProcessInstanceKeyFilter,
+        )
         from ..models.advanced_string_filter import AdvancedStringFilter
         from ..models.advanced_user_task_state_filter import AdvancedUserTaskStateFilter
         from ..models.variable_value_filter_property import VariableValueFilterProperty
@@ -394,10 +438,27 @@ class UserTaskFilter:
 
         tenant_id = _parse_tenant_id(d.pop("tenantId", UNSET))
 
-        process_definition_id = (
-            ProcessDefinitionId(_val)
-            if (_val := d.pop("processDefinitionId", UNSET)) is not UNSET
-            else UNSET
+        def _parse_process_definition_id(
+            data: object,
+        ) -> AdvancedProcessDefinitionIdFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                process_definition_id_type_1 = (
+                    AdvancedProcessDefinitionIdFilter.from_dict(data)
+                )
+
+                return process_definition_id_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedProcessDefinitionIdFilter | str | Unset, data)
+
+        process_definition_id = _parse_process_definition_id(
+            d.pop("processDefinitionId", UNSET)
         )
 
         def _parse_creation_date(
@@ -520,16 +581,50 @@ class UserTaskFilter:
             else UNSET
         )
 
-        process_definition_key = (
-            ProcessDefinitionKey(_val)
-            if (_val := d.pop("processDefinitionKey", UNSET)) is not UNSET
-            else UNSET
+        def _parse_process_definition_key(
+            data: object,
+        ) -> AdvancedProcessDefinitionKeyFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                process_definition_key_type_1 = (
+                    AdvancedProcessDefinitionKeyFilter.from_dict(data)
+                )
+
+                return process_definition_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedProcessDefinitionKeyFilter | str | Unset, data)
+
+        process_definition_key = _parse_process_definition_key(
+            d.pop("processDefinitionKey", UNSET)
         )
 
-        process_instance_key = (
-            ProcessInstanceKey(_val)
-            if (_val := d.pop("processInstanceKey", UNSET)) is not UNSET
-            else UNSET
+        def _parse_process_instance_key(
+            data: object,
+        ) -> AdvancedProcessInstanceKeyFilter | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+
+                data = cast(dict[str, Any], data)
+                process_instance_key_type_1 = (
+                    AdvancedProcessInstanceKeyFilter.from_dict(data)
+                )
+
+                return process_instance_key_type_1
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(AdvancedProcessInstanceKeyFilter | str | Unset, data)
+
+        process_instance_key = _parse_process_instance_key(
+            d.pop("processInstanceKey", UNSET)
         )
 
         element_instance_key = (

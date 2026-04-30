@@ -67,8 +67,11 @@ def sync_detailed(
      Returns a decision instance.
 
     Args:
-        decision_evaluation_instance_key (str): System-generated key for a decision evaluation
-            instance. Example: 2251799813684367.
+        decision_evaluation_instance_key (str): System-generated identifier for a decision
+            evaluation instance. It is composed of the
+            parent decision evaluation key and the 1-based index of the evaluated decision within
+            that evaluation, joined by a hyphen (format: `<decisionEvaluationKey>-<index>`).
+             Example: 2251799813684367-1.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -95,8 +98,11 @@ def sync(
      Returns a decision instance.
 
     Args:
-        decision_evaluation_instance_key (str): System-generated key for a decision evaluation
-            instance. Example: 2251799813684367.
+        decision_evaluation_instance_key (str): System-generated identifier for a decision
+            evaluation instance. It is composed of the
+            parent decision evaluation key and the 1-based index of the evaluated decision within
+            that evaluation, joined by a hyphen (format: `<decisionEvaluationKey>-<index>`).
+             Example: 2251799813684367-1.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -162,8 +168,11 @@ async def asyncio_detailed(
      Returns a decision instance.
 
     Args:
-        decision_evaluation_instance_key (str): System-generated key for a decision evaluation
-            instance. Example: 2251799813684367.
+        decision_evaluation_instance_key (str): System-generated identifier for a decision
+            evaluation instance. It is composed of the
+            parent decision evaluation key and the 1-based index of the evaluated decision within
+            that evaluation, joined by a hyphen (format: `<decisionEvaluationKey>-<index>`).
+             Example: 2251799813684367-1.
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -190,8 +199,11 @@ async def asyncio(
      Returns a decision instance.
 
     Args:
-        decision_evaluation_instance_key (str): System-generated key for a decision evaluation
-            instance. Example: 2251799813684367.
+        decision_evaluation_instance_key (str): System-generated identifier for a decision
+            evaluation instance. It is composed of the
+            parent decision evaluation key and the 1-based index of the evaluated decision within
+            that evaluation, joined by a hyphen (format: `<decisionEvaluationKey>-<index>`).
+             Example: 2251799813684367-1.
 
     Raises:
         errors.BadRequestError: If the response status code is 400. The provided data is not valid.

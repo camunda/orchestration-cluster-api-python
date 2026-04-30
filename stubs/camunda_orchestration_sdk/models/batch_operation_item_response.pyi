@@ -15,7 +15,7 @@ class BatchOperationItemResponse:
     operation_type: BatchOperationTypeEnum
     batch_operation_key: BatchOperationKey
     item_key: str
-    process_instance_key: ProcessInstanceKey
+    process_instance_key: None | ProcessInstanceKey
     root_process_instance_key: None | ProcessInstanceKey
     state: BatchOperationItemResponseState
     processed_date: datetime.datetime | None

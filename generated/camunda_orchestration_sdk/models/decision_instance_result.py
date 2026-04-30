@@ -36,8 +36,11 @@ class DecisionInstanceResult:
         decision_definition_type (DecisionDefinitionTypeEnum): The type of the decision. UNSPECIFIED is deprecated and
             should not be used anymore, for removal in 8.10
         decision_definition_version (int): The version of the decision.
-        decision_evaluation_instance_key (str): System-generated key for a decision evaluation instance. Example:
-            2251799813684367.
+        decision_evaluation_instance_key (str): System-generated identifier for a decision evaluation instance. It is
+            composed of the
+            parent decision evaluation key and the 1-based index of the evaluated decision within
+            that evaluation, joined by a hyphen (format: `<decisionEvaluationKey>-<index>`).
+             Example: 2251799813684367-1.
         decision_evaluation_key (str): The key of the decision evaluation where this instance was created. Example:
             2251792362345323.
         element_instance_key (None | str): The key of the element instance this decision instance is linked to. Example:

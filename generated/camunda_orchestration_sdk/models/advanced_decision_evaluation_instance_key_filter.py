@@ -16,8 +16,8 @@ class AdvancedDecisionEvaluationInstanceKeyFilter:
     """Advanced DecisionEvaluationInstanceKey filter.
 
     Attributes:
-        eq (str | Unset): Checks for equality with the provided value. Example: 2251799813684367.
-        neq (str | Unset): Checks for inequality with the provided value. Example: 2251799813684367.
+        eq (str | Unset): Checks for equality with the provided value. Example: 2251799813684367-1.
+        neq (str | Unset): Checks for inequality with the provided value. Example: 2251799813684367-1.
         exists (bool | Unset): Checks if the current property exists.
         in_ (list[str] | Unset): Checks if the property matches any of the provided values.
         not_in (list[str] | Unset): Checks if the property matches none of the provided values.

@@ -279,6 +279,8 @@ if TYPE_CHECKING:
         ProcessInstanceSequenceFlowsQueryResult,
     )
     from .models.resource_result import ResourceResult
+    from .models.resource_search_query import ResourceSearchQuery
+    from .models.resource_search_query_result import ResourceSearchQueryResult
     from .models.role_create_request import RoleCreateRequest
     from .models.role_create_result import RoleCreateResult
     from .models.role_group_search_query_request import RoleGroupSearchQueryRequest
@@ -2030,6 +2032,7 @@ class CamundaClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The tenant with the given ID was not found.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -2939,8 +2942,11 @@ class CamundaClient:
          Returns a decision instance.
 
         Args:
-            decision_evaluation_instance_key (str): System-generated key for a decision evaluation
-                instance. Example: 2251799813684367.
+            decision_evaluation_instance_key (str): System-generated identifier for a decision
+                evaluation instance. It is composed of the
+                parent decision evaluation key and the 1-based index of the evaluated decision within
+                that evaluation, joined by a hyphen (format: `<decisionEvaluationKey>-<index>`).
+                 Example: 2251799813684367-1.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -3228,7 +3234,7 @@ class CamundaClient:
 
          Upload a document to the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -3294,7 +3300,7 @@ class CamundaClient:
 
          Create a link to a document in the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP
 
         Args:
             document_id (str): Document Id that uniquely identifies a document.
@@ -3368,7 +3374,7 @@ class CamundaClient:
         failure.
         The client can choose to retry the whole batch or individual documents based on the response.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -3432,7 +3438,7 @@ class CamundaClient:
 
          Delete a document from the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -3488,7 +3494,7 @@ class CamundaClient:
 
          Download a document from the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -6444,6 +6450,18 @@ class CamundaClient:
 
          Search for message subscriptions based on given criteria.
 
+        By default, both start and intermediate event subscriptions are returned. Use the
+        `messageSubscriptionType` filter to restrict results to a single type.
+
+        **Version notes:**
+        - Start event subscriptions are only captured for deployments made with 8.10 or later.
+        - The `messageSubscriptionType` field is only populated for data created
+          with Camunda 8.10 or later. For pre-8.10 data, intermediate event entries have no
+          `messageSubscriptionType` value stored. For convenience, the API returns `PROCESS_EVENT`
+          as a default for such search results, though.
+        - Searching for intermediate event subscriptions **including legacy data** can be achieved
+          by filtering for `messageSubscriptionType` not matching `START_EVENT`.
+
         Args:
             body (MessageSubscriptionSearchQuery | Unset):
 
@@ -8272,7 +8290,9 @@ class CamundaClient:
 
          Returns a deployed resource.
         :::info
-        Currently, this endpoint only supports RPA resources.
+        This endpoint does not return BPMN process definitions, DMN decision definitions, or form
+        resources. To query BPMN process definitions or DMN decision definitions, use their
+        respective APIs.
         :::
 
         Args:
@@ -8317,7 +8337,7 @@ class CamundaClient:
         finally:
             self._bp.release()
 
-    def get_resource_content(self, resource_key: str, **kwargs: Any) -> str:
+    def get_resource_content(self, resource_key: str, **kwargs: Any) -> File:
         """Get resource content
 
          Returns the content of a deployed resource.
@@ -8334,7 +8354,7 @@ class CamundaClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            str
+            File
 
         Examples:
             **Get resource content:**
@@ -8346,7 +8366,7 @@ class CamundaClient:
 
                     content = client.get_resource_content(resource_key="123456")
 
-                    print(f"Content length: {len(content)}")
+                    print(f"Content: {content}")
         """
         from .api.resource.get_resource_content import sync as get_resource_content_sync
 
@@ -8358,6 +8378,49 @@ class CamundaClient:
         self._bp.acquire()
         try:
             _result = get_resource_content_sync(**_kwargs)
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
+
+    def search_resources(
+        self, *, data: ResourceSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> ResourceSearchQueryResult:
+        """Search resources
+
+         Search for deployed resources based on given criteria.
+        :::info
+        This endpoint does not return BPMN process definitions, DMN decision definitions, or form
+        resources. To query BPMN process definitions or DMN decision definitions, use their
+        respective search APIs.
+        :::
+
+        Args:
+            body (ResourceSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ResourceSearchQueryResult"""
+        from .api.resource.search_resources import sync as search_resources_sync
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        self._bp.acquire()
+        try:
+            _result = search_resources_sync(**_kwargs)
             self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:
@@ -13073,6 +13136,7 @@ class CamundaAsyncClient:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
             errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
             errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.NotFoundError: If the response status code is 404. The tenant with the given ID was not found.
             errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
@@ -13982,8 +14046,11 @@ class CamundaAsyncClient:
          Returns a decision instance.
 
         Args:
-            decision_evaluation_instance_key (str): System-generated key for a decision evaluation
-                instance. Example: 2251799813684367.
+            decision_evaluation_instance_key (str): System-generated identifier for a decision
+                evaluation instance. It is composed of the
+                parent decision evaluation key and the 1-based index of the evaluated decision within
+                that evaluation, joined by a hyphen (format: `<decisionEvaluationKey>-<index>`).
+                 Example: 2251799813684367-1.
 
         Raises:
             errors.BadRequestError: If the response status code is 400. The provided data is not valid.
@@ -14271,7 +14338,7 @@ class CamundaAsyncClient:
 
          Upload a document to the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -14337,7 +14404,7 @@ class CamundaAsyncClient:
 
          Create a link to a document in the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP
 
         Args:
             document_id (str): Document Id that uniquely identifies a document.
@@ -14413,7 +14480,7 @@ class CamundaAsyncClient:
         failure.
         The client can choose to retry the whole batch or individual documents based on the response.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -14477,7 +14544,7 @@ class CamundaAsyncClient:
 
          Delete a document from the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -14533,7 +14600,7 @@ class CamundaAsyncClient:
 
          Download a document from the Camunda 8 cluster.
 
-        Note that this is currently supported for document stores of type: AWS, GCP, in-memory (non-
+        Note that this is currently supported for document stores of type: AWS, Azure, GCP, in-memory (non-
         production), local (non-production)
 
         Args:
@@ -17499,6 +17566,18 @@ class CamundaAsyncClient:
 
          Search for message subscriptions based on given criteria.
 
+        By default, both start and intermediate event subscriptions are returned. Use the
+        `messageSubscriptionType` filter to restrict results to a single type.
+
+        **Version notes:**
+        - Start event subscriptions are only captured for deployments made with 8.10 or later.
+        - The `messageSubscriptionType` field is only populated for data created
+          with Camunda 8.10 or later. For pre-8.10 data, intermediate event entries have no
+          `messageSubscriptionType` value stored. For convenience, the API returns `PROCESS_EVENT`
+          as a default for such search results, though.
+        - Searching for intermediate event subscriptions **including legacy data** can be achieved
+          by filtering for `messageSubscriptionType` not matching `START_EVENT`.
+
         Args:
             body (MessageSubscriptionSearchQuery | Unset):
 
@@ -19333,7 +19412,9 @@ class CamundaAsyncClient:
 
          Returns a deployed resource.
         :::info
-        Currently, this endpoint only supports RPA resources.
+        This endpoint does not return BPMN process definitions, DMN decision definitions, or form
+        resources. To query BPMN process definitions or DMN decision definitions, use their
+        respective APIs.
         :::
 
         Args:
@@ -19378,7 +19459,7 @@ class CamundaAsyncClient:
         finally:
             await self._bp.release()
 
-    async def get_resource_content(self, resource_key: str, **kwargs: Any) -> str:
+    async def get_resource_content(self, resource_key: str, **kwargs: Any) -> File:
         """Get resource content
 
          Returns the content of a deployed resource.
@@ -19395,7 +19476,7 @@ class CamundaAsyncClient:
             errors.UnexpectedStatus: If the response status code is not documented.
             httpx.TimeoutException: If the request takes longer than Client.timeout.
         Returns:
-            str
+            File
 
         Examples:
             **Get resource content:**
@@ -19407,7 +19488,7 @@ class CamundaAsyncClient:
 
                     content = client.get_resource_content(resource_key="123456")
 
-                    print(f"Content length: {len(content)}")
+                    print(f"Content: {content}")
         """
         from .api.resource.get_resource_content import (
             asyncio as get_resource_content_asyncio,
@@ -19421,6 +19502,49 @@ class CamundaAsyncClient:
         await self._bp.acquire()
         try:
             _result = await get_resource_content_asyncio(**_kwargs)
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
+
+    async def search_resources(
+        self, *, data: ResourceSearchQuery | Unset = UNSET, **kwargs: Any
+    ) -> ResourceSearchQueryResult:
+        """Search resources
+
+         Search for deployed resources based on given criteria.
+        :::info
+        This endpoint does not return BPMN process definitions, DMN decision definitions, or form
+        resources. To query BPMN process definitions or DMN decision definitions, use their
+        respective search APIs.
+        :::
+
+        Args:
+            body (ResourceSearchQuery | Unset):
+
+        Raises:
+            errors.BadRequestError: If the response status code is 400. The provided data is not valid.
+            errors.UnauthorizedError: If the response status code is 401. The request lacks valid authentication credentials.
+            errors.ForbiddenError: If the response status code is 403. Forbidden. The request is not allowed.
+            errors.InternalServerErrorError: If the response status code is 500. An internal error occurred while processing the request.
+            errors.UnexpectedStatus: If the response status code is not documented.
+            httpx.TimeoutException: If the request takes longer than Client.timeout.
+        Returns:
+            ResourceSearchQueryResult"""
+        from .api.resource.search_resources import asyncio as search_resources_asyncio
+
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data")
+        await self._bp.acquire()
+        try:
+            _result = await search_resources_asyncio(**_kwargs)
             await self._bp.record_healthy_hint()
             return _result
         except Exception as _exc:

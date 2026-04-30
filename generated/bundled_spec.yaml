@@ -106,6 +106,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: An internal error occurred while processing the request.
+      x-added-in-version: '8.9'
   /audit-logs/{auditLogKey}:
     get:
       x-eventually-consistent: true
@@ -156,6 +157,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /authentication/me:
     get:
       x-eventually-consistent: false
@@ -195,6 +197,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /authorizations:
     post:
       x-eventually-consistent: false
@@ -264,6 +267,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /authorizations/search:
     post:
       x-eventually-consistent: true
@@ -312,6 +316,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /authorizations/{authorizationKey}:
     put:
       x-eventually-consistent: false
@@ -372,6 +377,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     get:
       x-eventually-consistent: true
       tags:
@@ -421,6 +427,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -474,6 +481,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /batch-operation-items/search:
     post:
       x-eventually-consistent: true
@@ -507,6 +515,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /batch-operations/search:
     post:
       x-eventually-consistent: true
@@ -540,6 +549,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /batch-operations/{batchOperationKey}:
     get:
       x-eventually-consistent: true
@@ -580,6 +590,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /batch-operations/{batchOperationKey}/cancellation:
     post:
       x-eventually-consistent: false
@@ -633,6 +644,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /batch-operations/{batchOperationKey}/resumption:
     post:
       x-eventually-consistent: false
@@ -700,6 +712,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /batch-operations/{batchOperationKey}/suspension:
     post:
       x-eventually-consistent: false
@@ -767,6 +780,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /clock:
     put:
       x-eventually-consistent: false
@@ -821,6 +835,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /clock/reset:
     post:
       x-eventually-consistent: false
@@ -864,6 +879,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /cluster-variables/global:
     post:
       operationId: createGlobalClusterVariable
@@ -913,6 +929,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /cluster-variables/global/{name}:
     get:
       operationId: getGlobalClusterVariable
@@ -969,6 +986,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
     put:
       operationId: updateGlobalClusterVariable
       x-eventually-consistent: false
@@ -1034,6 +1052,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
     delete:
       operationId: deleteGlobalClusterVariable
       x-eventually-consistent: false
@@ -1085,6 +1104,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /cluster-variables/search:
     post:
       tags:
@@ -1142,6 +1162,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /cluster-variables/tenants/{tenantId}:
     post:
       operationId: createTenantClusterVariable
@@ -1192,12 +1213,19 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+        '404':
+          description: The tenant with the given ID was not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
         '500':
           description: An internal error occurred while processing the request.
           content:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /cluster-variables/tenants/{tenantId}/{name}:
     get:
       operationId: getTenantClusterVariable
@@ -1260,6 +1288,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
     put:
       operationId: updateTenantClusterVariable
       x-eventually-consistent: false
@@ -1331,6 +1360,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
     delete:
       operationId: deleteTenantClusterVariable
       x-eventually-consistent: false
@@ -1388,6 +1418,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /conditionals/evaluation:
     post:
       x-eventually-consistent: false
@@ -1485,6 +1516,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /correlated-message-subscriptions/search:
     post:
       x-eventually-consistent: true
@@ -1534,6 +1566,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /decision-definitions/evaluation:
     post:
       x-eventually-consistent: false
@@ -1608,6 +1641,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /decision-definitions/search:
     post:
       x-eventually-consistent: true
@@ -1657,6 +1691,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /decision-definitions/{decisionDefinitionKey}:
     get:
       x-eventually-consistent: true
@@ -1717,6 +1752,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /decision-definitions/{decisionDefinitionKey}/xml:
     get:
       x-eventually-consistent: true
@@ -1777,6 +1813,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /decision-instances/search:
     post:
       x-eventually-consistent: true
@@ -1826,6 +1863,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /decision-instances/{decisionEvaluationInstanceKey}:
     get:
       x-eventually-consistent: true
@@ -1886,6 +1924,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /decision-instances/{decisionEvaluationKey}/deletion:
     post:
       x-eventually-consistent: false
@@ -1952,6 +1991,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /decision-instances/deletion:
     post:
       x-eventually-consistent: false
@@ -2010,6 +2050,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /decision-requirements/search:
     post:
       x-eventually-consistent: true
@@ -2059,6 +2100,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /decision-requirements/{decisionRequirementsKey}:
     get:
       x-eventually-consistent: true
@@ -2119,6 +2161,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /decision-requirements/{decisionRequirementsKey}/xml:
     get:
       x-eventually-consistent: true
@@ -2179,6 +2222,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /deployments:
     post:
       x-eventually-consistent: false
@@ -2226,6 +2270,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /documents:
     post:
       x-eventually-consistent: false
@@ -2236,8 +2281,8 @@ paths:
       description: 'Upload a document to the Camunda 8 cluster.
 
 
-        Note that this is currently supported for document stores of type: AWS, GCP,
-        in-memory (non-production), local (non-production)
+        Note that this is currently supported for document stores of type: AWS, Azure,
+        GCP, in-memory (non-production), local (non-production)
 
         '
       parameters:
@@ -2292,6 +2337,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /documents/batch:
     post:
       x-eventually-consistent: false
@@ -2333,8 +2379,8 @@ paths:
         on the response.
 
 
-        Note that this is currently supported for document stores of type: AWS, GCP,
-        in-memory (non-production), local (non-production)
+        Note that this is currently supported for document stores of type: AWS, Azure,
+        GCP, in-memory (non-production), local (non-production)
 
         '
       parameters:
@@ -2389,6 +2435,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.7'
   /documents/{documentId}:
     get:
       x-eventually-consistent: false
@@ -2399,8 +2446,8 @@ paths:
       description: 'Download a document from the Camunda 8 cluster.
 
 
-        Note that this is currently supported for document stores of type: AWS, GCP,
-        in-memory (non-production), local (non-production)
+        Note that this is currently supported for document stores of type: AWS, Azure,
+        GCP, in-memory (non-production), local (non-production)
 
         '
       parameters:
@@ -2447,6 +2494,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
     delete:
       x-eventually-consistent: false
       tags:
@@ -2456,8 +2504,8 @@ paths:
       description: 'Delete a document from the Camunda 8 cluster.
 
 
-        Note that this is currently supported for document stores of type: AWS, GCP,
-        in-memory (non-production), local (non-production)
+        Note that this is currently supported for document stores of type: AWS, Azure,
+        GCP, in-memory (non-production), local (non-production)
 
         '
       parameters:
@@ -2488,6 +2536,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /documents/{documentId}/links:
     post:
       x-eventually-consistent: false
@@ -2498,7 +2547,8 @@ paths:
       description: 'Create a link to a document in the Camunda 8 cluster.
 
 
-        Note that this is currently supported for document stores of type: AWS, GCP
+        Note that this is currently supported for document stores of type: AWS, Azure,
+        GCP
 
         '
       parameters:
@@ -2544,6 +2594,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.7'
   /element-instances/ad-hoc-activities/{adHocSubProcessInstanceKey}/activation:
     post:
       x-eventually-consistent: false
@@ -2626,6 +2677,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /element-instances/search:
     post:
       x-eventually-consistent: true
@@ -2675,6 +2727,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /element-instances/{elementInstanceKey}:
     get:
       x-eventually-consistent: true
@@ -2736,6 +2789,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /element-instances/{elementInstanceKey}/incidents/search:
     post:
       x-eventually-consistent: true
@@ -2816,6 +2870,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /element-instances/{elementInstanceKey}/variables:
     put:
       x-eventually-consistent: false
@@ -2919,6 +2974,7 @@ paths:
                     detail: Expected to handle request, but request timed out between
                       gateway and broker
                     instance: /v2/user-tasks/123/completion
+      x-added-in-version: '8.6'
   /expression/evaluation:
     post:
       operationId: evaluateExpression
@@ -2969,6 +3025,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /global-task-listeners:
     post:
       x-eventually-consistent: false
@@ -3038,6 +3095,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /global-task-listeners/{id}:
     get:
       x-eventually-consistent: true
@@ -3088,6 +3146,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
     put:
       x-eventually-consistent: false
       tags:
@@ -3163,6 +3222,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
     delete:
       x-eventually-consistent: false
       tags:
@@ -3228,6 +3288,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /global-task-listeners/search:
     post:
       x-eventually-consistent: true
@@ -3276,6 +3337,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /groups:
     post:
       x-eventually-consistent: false
@@ -3338,6 +3400,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /groups/search:
     post:
       x-eventually-consistent: true
@@ -3387,6 +3450,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /groups/{groupId}:
     get:
       x-eventually-consistent: true
@@ -3437,6 +3501,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     put:
       x-eventually-consistent: false
       tags:
@@ -3506,6 +3571,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -3559,6 +3625,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /groups/{groupId}/clients/search:
     post:
       x-eventually-consistent: true
@@ -3632,6 +3699,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /groups/{groupId}/clients/{clientId}:
     put:
       x-eventually-consistent: false
@@ -3704,6 +3772,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -3771,6 +3840,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /groups/{groupId}/mapping-rules/search:
     post:
       x-eventually-consistent: true
@@ -3844,6 +3914,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /groups/{groupId}/mapping-rules/{mappingRuleId}:
     put:
       x-eventually-consistent: false
@@ -3913,6 +3984,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -3975,6 +4047,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /groups/{groupId}/roles/search:
     post:
       x-eventually-consistent: true
@@ -4048,6 +4121,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /groups/{groupId}/users/search:
     post:
       x-eventually-consistent: true
@@ -4121,6 +4195,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /groups/{groupId}/users/{username}:
     put:
       x-eventually-consistent: false
@@ -4193,6 +4268,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -4260,6 +4336,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /incidents/search:
     post:
       x-eventually-consistent: true
@@ -4311,6 +4388,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /incidents/{incidentKey}:
     get:
       x-eventually-consistent: true
@@ -4370,6 +4448,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /incidents/{incidentKey}/resolution:
     post:
       x-eventually-consistent: false
@@ -4441,6 +4520,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /incidents/statistics/process-instances-by-definition:
     post:
       x-eventually-consistent: true
@@ -4503,6 +4583,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /incidents/statistics/process-instances-by-error:
     post:
       x-eventually-consistent: true
@@ -4562,6 +4643,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /jobs/activation:
     post:
       x-eventually-consistent: false
@@ -4622,6 +4704,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /jobs/search:
     post:
       x-eventually-consistent: true
@@ -4671,6 +4754,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /jobs/{jobKey}:
     patch:
       x-eventually-consistent: false
@@ -4736,6 +4820,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /jobs/{jobKey}/completion:
     post:
       x-eventually-consistent: false
@@ -4804,6 +4889,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /jobs/{jobKey}/error:
     post:
       x-eventually-consistent: false
@@ -4874,6 +4960,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /jobs/{jobKey}/failure:
     post:
       x-eventually-consistent: false
@@ -4945,6 +5032,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /jobs/statistics/global:
     get:
       x-eventually-consistent: true
@@ -5021,6 +5109,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /jobs/statistics/by-types:
     post:
       x-eventually-consistent: true
@@ -5072,6 +5161,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /jobs/statistics/by-workers:
     post:
       x-eventually-consistent: true
@@ -5124,6 +5214,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /jobs/statistics/time-series:
     post:
       x-eventually-consistent: true
@@ -5180,6 +5271,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /jobs/statistics/errors:
     post:
       x-eventually-consistent: true
@@ -5231,6 +5323,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /license:
     get:
       x-eventually-consistent: false
@@ -5252,6 +5345,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /mapping-rules:
     post:
       x-eventually-consistent: false
@@ -5320,6 +5414,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /mapping-rules/search:
     post:
       x-eventually-consistent: true
@@ -5381,6 +5476,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /mapping-rules/{mappingRuleId}:
     put:
       x-eventually-consistent: false
@@ -5470,6 +5566,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -5525,6 +5622,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     get:
       x-eventually-consistent: true
       tags:
@@ -5570,6 +5668,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /message-subscriptions/search:
     post:
       x-eventually-consistent: true
@@ -5577,7 +5676,17 @@ paths:
       - Message subscription
       operationId: searchMessageSubscriptions
       summary: Search message subscriptions
-      description: Search for message subscriptions based on given criteria.
+      description: "Search for message subscriptions based on given criteria.\n\n\
+        By default, both start and intermediate event subscriptions are returned.\
+        \ Use the\n`messageSubscriptionType` filter to restrict results to a single\
+        \ type.\n\n**Version notes:**\n- Start event subscriptions are only captured\
+        \ for deployments made with 8.10 or later.\n- The `messageSubscriptionType`\
+        \ field is only populated for data created\n  with Camunda 8.10 or later.\
+        \ For pre-8.10 data, intermediate event entries have no\n  `messageSubscriptionType`\
+        \ value stored. For convenience, the API returns `PROCESS_EVENT`\n  as a default\
+        \ for such search results, though.\n- Searching for intermediate event subscriptions\
+        \ **including legacy data** can be achieved\n  by filtering for `messageSubscriptionType`\
+        \ not matching `START_EVENT`.\n"
       requestBody:
         required: false
         content:
@@ -5619,6 +5728,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /messages/correlation:
     post:
       x-eventually-consistent: false
@@ -5687,6 +5797,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /messages/publication:
     post:
       x-eventually-consistent: false
@@ -5745,6 +5856,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /process-definitions/search:
     post:
       x-eventually-consistent: true
@@ -5794,6 +5906,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /process-definitions/statistics/message-subscriptions:
     post:
       x-eventually-consistent: true
@@ -5845,6 +5958,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /process-definitions/statistics/process-instances:
     post:
       x-eventually-consistent: true
@@ -5897,6 +6011,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /process-definitions/{processDefinitionKey}:
     get:
       x-eventually-consistent: true
@@ -5959,6 +6074,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /process-definitions/{processDefinitionKey}/form:
     get:
       x-eventually-consistent: true
@@ -6022,6 +6138,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /process-definitions/{processDefinitionKey}/statistics/element-instances:
     post:
       x-eventually-consistent: true
@@ -6080,6 +6197,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /process-definitions/{processDefinitionKey}/xml:
     get:
       x-eventually-consistent: true
@@ -6149,6 +6267,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /process-definitions/statistics/process-instances-by-version:
     post:
       x-eventually-consistent: true
@@ -6204,6 +6323,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /process-instances:
     post:
       x-eventually-consistent: false
@@ -6307,6 +6427,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /process-instances/cancellation:
     post:
       x-eventually-consistent: false
@@ -6369,6 +6490,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /process-instances/deletion:
     post:
       x-eventually-consistent: false
@@ -6429,6 +6551,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /process-instances/incident-resolution:
     post:
       x-eventually-consistent: false
@@ -6491,6 +6614,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /process-instances/migration:
     post:
       x-eventually-consistent: false
@@ -6552,6 +6676,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /process-instances/modification:
     post:
       x-eventually-consistent: false
@@ -6618,6 +6743,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /process-instances/search:
     post:
       x-eventually-consistent: true
@@ -6667,6 +6793,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /process-instances/{processInstanceKey}:
     get:
       x-eventually-consistent: true
@@ -6723,6 +6850,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /process-instances/{processInstanceKey}/call-hierarchy:
     get:
       x-eventually-consistent: true
@@ -6782,6 +6910,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /process-instances/{processInstanceKey}/cancellation:
     post:
       x-eventually-consistent: false
@@ -6874,6 +7003,7 @@ paths:
                     detail: Expected to handle request, but request timed out between
                       gateway and broker
                     instance: /v2/user-tasks/123/completion
+      x-added-in-version: '8.6'
   /process-instances/{processInstanceKey}/deletion:
     post:
       x-eventually-consistent: false
@@ -6948,6 +7078,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /process-instances/{processInstanceKey}/incident-resolution:
     post:
       x-eventually-consistent: false
@@ -7013,6 +7144,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /process-instances/{processInstanceKey}/incidents/search:
     post:
       x-eventually-consistent: true
@@ -7092,6 +7224,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /process-instances/{processInstanceKey}/migration:
     post:
       x-eventually-consistent: false
@@ -7172,6 +7305,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /process-instances/{processInstanceKey}/modification:
     post:
       x-eventually-consistent: false
@@ -7242,6 +7376,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /process-instances/{processInstanceKey}/sequence-flows:
     get:
       x-eventually-consistent: true
@@ -7293,6 +7428,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /process-instances/{processInstanceKey}/statistics/element-instances:
     get:
       x-eventually-consistent: true
@@ -7344,9 +7480,74 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
+  /resources/search:
+    post:
+      x-eventually-consistent: true
+      tags:
+      - Resource
+      operationId: searchResources
+      summary: Search resources
+      description: 'Search for deployed resources based on given criteria.
+
+        :::info
+
+        This endpoint does not return BPMN process definitions, DMN decision definitions,
+        or form
+
+        resources. To query BPMN process definitions or DMN decision definitions,
+        use their
+
+        respective search APIs.
+
+        :::
+
+        '
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceSearchQuery'
+      responses:
+        '200':
+          description: The resource search result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceSearchQueryResult'
+        '400':
+          description: The provided data is not valid.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '401':
+          description: The request lacks valid authentication credentials.
+          headers:
+            WWW-Authenticate:
+              schema:
+                type: string
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '403':
+          description: Forbidden. The request is not allowed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        '500':
+          description: An internal error occurred while processing the request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.10'
   /resources/{resourceKey}:
     get:
-      x-eventually-consistent: false
+      x-eventually-consistent: true
       tags:
       - Resource
       operationId: getResource
@@ -7355,7 +7556,13 @@ paths:
 
         :::info
 
-        Currently, this endpoint only supports RPA resources.
+        This endpoint does not return BPMN process definitions, DMN decision definitions,
+        or form
+
+        resources. To query BPMN process definitions or DMN decision definitions,
+        use their
+
+        respective APIs.
 
         :::
 
@@ -7386,9 +7593,10 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.7'
   /resources/{resourceKey}/content:
     get:
-      x-eventually-consistent: false
+      x-eventually-consistent: true
       tags:
       - Resource
       operationId: getResourceContent
@@ -7413,9 +7621,10 @@ paths:
         '200':
           description: The resource content is successfully returned.
           content:
-            application/json:
+            application/octet-stream:
               schema:
                 type: string
+                format: binary
         '404':
           description: A resource with the given key was not found.
           content:
@@ -7428,6 +7637,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.7'
   /resources/{resourceKey}/deletion:
     post:
       x-eventually-consistent: false
@@ -7524,6 +7734,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /roles:
     post:
       x-eventually-consistent: false
@@ -7586,6 +7797,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /roles/search:
     post:
       x-eventually-consistent: true
@@ -7635,6 +7847,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /roles/{roleId}:
     get:
       x-eventually-consistent: true
@@ -7685,6 +7898,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     put:
       x-eventually-consistent: false
       tags:
@@ -7754,6 +7968,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -7807,6 +8022,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /roles/{roleId}/clients/search:
     post:
       x-eventually-consistent: true
@@ -7880,6 +8096,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /roles/{roleId}/clients/{clientId}:
     put:
       x-eventually-consistent: false
@@ -7950,6 +8167,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -8012,6 +8230,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /roles/{roleId}/groups/search:
     post:
       x-eventually-consistent: true
@@ -8074,6 +8293,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /roles/{roleId}/groups/{groupId}:
     put:
       x-eventually-consistent: false
@@ -8143,6 +8363,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -8206,6 +8427,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /roles/{roleId}/mapping-rules/search:
     post:
       x-eventually-consistent: true
@@ -8279,6 +8501,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /roles/{roleId}/mapping-rules/{mappingRuleId}:
     put:
       x-eventually-consistent: false
@@ -8348,6 +8571,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -8409,6 +8633,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /roles/{roleId}/users/search:
     post:
       x-eventually-consistent: true
@@ -8482,6 +8707,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /roles/{roleId}/users/{username}:
     put:
       x-eventually-consistent: false
@@ -8551,6 +8777,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -8613,6 +8840,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /setup/user:
     post:
       x-eventually-consistent: false
@@ -8668,6 +8896,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /signals/broadcast:
     post:
       x-eventually-consistent: false
@@ -8721,6 +8950,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /status:
     get:
       x-eventually-consistent: false
@@ -8737,6 +8967,7 @@ paths:
         '503':
           description: The cluster is DOWN and does not have any partition with a
             healthy leader.
+      x-added-in-version: '8.8'
   /system/usage-metrics:
     get:
       x-eventually-consistent: true
@@ -8836,6 +9067,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /system/configuration:
     get:
       tags:
@@ -8886,6 +9118,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /tenants:
     post:
       x-eventually-consistent: false
@@ -8947,6 +9180,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /tenants/search:
     post:
       x-eventually-consistent: true
@@ -9002,6 +9236,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /tenants/{tenantId}:
     get:
       x-eventually-consistent: true
@@ -9058,6 +9293,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     put:
       x-eventually-consistent: false
       tags:
@@ -9123,6 +9359,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -9178,6 +9415,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /tenants/{tenantId}/clients/search:
     post:
       x-eventually-consistent: true
@@ -9218,6 +9456,7 @@ paths:
                       $ref: '#/components/schemas/TenantClientResult'
                   page:
                     $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-added-in-version: '8.8'
   /tenants/{tenantId}/clients/{clientId}:
     put:
       x-eventually-consistent: false
@@ -9284,6 +9523,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -9350,6 +9590,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /tenants/{tenantId}/groups/search:
     post:
       x-eventually-consistent: true
@@ -9379,6 +9620,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TenantGroupSearchResult'
+      x-added-in-version: '8.8'
   /tenants/{tenantId}/groups/{groupId}:
     put:
       x-eventually-consistent: false
@@ -9446,6 +9688,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -9512,6 +9755,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /tenants/{tenantId}/mapping-rules/search:
     post:
       x-eventually-consistent: true
@@ -9552,6 +9796,7 @@ paths:
                       $ref: '#/components/schemas/MappingRuleResult'
                   page:
                     $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-added-in-version: '8.8'
   /tenants/{tenantId}/mapping-rules/{mappingRuleId}:
     put:
       x-eventually-consistent: false
@@ -9614,6 +9859,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -9676,6 +9922,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /tenants/{tenantId}/roles/search:
     post:
       x-eventually-consistent: true
@@ -9715,6 +9962,7 @@ paths:
                       $ref: '#/components/schemas/RoleResult'
                   page:
                     $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-added-in-version: '8.8'
   /tenants/{tenantId}/roles/{roleId}:
     put:
       x-eventually-consistent: false
@@ -9782,6 +10030,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -9850,6 +10099,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /tenants/{tenantId}/users/search:
     post:
       x-eventually-consistent: true
@@ -9889,6 +10139,7 @@ paths:
                       $ref: '#/components/schemas/TenantUserResult'
                   page:
                     $ref: '#/components/schemas/SearchQueryPageResponse'
+      x-added-in-version: '8.8'
   /tenants/{tenantId}/users/{username}:
     put:
       x-eventually-consistent: false
@@ -9952,6 +10203,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -10017,6 +10269,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /topology:
     get:
       x-eventually-consistent: false
@@ -10050,6 +10303,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.5'
   /users:
     post:
       x-eventually-consistent: false
@@ -10119,6 +10373,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /users/search:
     post:
       x-eventually-consistent: true
@@ -10178,6 +10433,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /users/{username}:
     get:
       x-eventually-consistent: true
@@ -10243,6 +10499,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     put:
       x-eventually-consistent: false
       tags:
@@ -10323,6 +10580,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     delete:
       x-eventually-consistent: false
       tags:
@@ -10372,6 +10630,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /user-tasks/search:
     post:
       x-eventually-consistent: true
@@ -10421,6 +10680,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.6'
   /user-tasks/{userTaskKey}:
     get:
       x-eventually-consistent: true
@@ -10477,6 +10737,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
     patch:
       x-eventually-consistent: false
       tags:
@@ -10576,6 +10837,7 @@ paths:
                     detail: Expected to handle request, but request timed out between
                       gateway and broker
                     instance: /v2/user-tasks/123/completion
+      x-added-in-version: '8.5'
   /user-tasks/{userTaskKey}/assignee:
     delete:
       x-eventually-consistent: false
@@ -10670,6 +10932,7 @@ paths:
                     detail: Expected to handle request, but request timed out between
                       gateway and broker
                     instance: /v2/user-tasks/123/completion
+      x-added-in-version: '8.5'
   /user-tasks/{userTaskKey}/assignment:
     post:
       x-eventually-consistent: false
@@ -10770,6 +11033,7 @@ paths:
                     detail: Expected to handle request, but request timed out between
                       gateway and broker
                     instance: /v2/user-tasks/123/completion
+      x-added-in-version: '8.5'
   /user-tasks/{userTaskKey}/audit-logs/search:
     post:
       x-eventually-consistent: true
@@ -10810,6 +11074,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.9'
   /user-tasks/{userTaskKey}/completion:
     post:
       x-eventually-consistent: false
@@ -10910,6 +11175,7 @@ paths:
                     detail: Expected to handle request, but request timed out between
                       gateway and broker
                     instance: /v2/user-tasks/123/completion
+      x-added-in-version: '8.5'
   /user-tasks/{userTaskKey}/effective-variables/search:
     post:
       x-eventually-consistent: true
@@ -10974,6 +11240,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /user-tasks/{userTaskKey}/form:
     get:
       x-eventually-consistent: true
@@ -11037,6 +11304,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /user-tasks/{userTaskKey}/variables/search:
     post:
       x-eventually-consistent: true
@@ -11103,6 +11371,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /variables/search:
     post:
       x-eventually-consistent: true
@@ -11176,6 +11445,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
   /variables/{variableKey}:
     get:
       x-eventually-consistent: true
@@ -11240,6 +11510,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+      x-added-in-version: '8.8'
 components:
   securitySchemes:
     BearerAuth:
@@ -12904,7 +13175,15 @@ components:
           description: Key of the item, e.g. a process instance key.
           type: string
         processInstanceKey:
-          description: the process instance key of the processed item.
+          description: 'The process instance key of the processed item. Null for batch-op
+            types whose targets
+
+            are not process instances (e.g. DELETE_DECISION_INSTANCE, DELETE_DECISION_DEFINITION,
+
+            DELETE_PROCESS_DEFINITION).
+
+            '
+          nullable: true
           format: ProcessInstanceKey
           x-semantic-type: ProcessInstanceKey
           example: '2251799813690746'
@@ -13315,11 +13594,11 @@ components:
       description: Cluster variable search response item.
       type: object
       required:
-      - scope
+      - isTruncated
+      - value
       - name
       - tenantId
-      - value
-      - isTruncated
+      - scope
       properties:
         value:
           description: Value of this cluster variable. Can be truncated.
@@ -14126,11 +14405,11 @@ components:
           description: The unique key identifying this decision evaluation instance.
           format: DecisionEvaluationInstanceKey
           x-semantic-type: DecisionEvaluationInstanceKey
-          example: '2251799813684367'
           type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
+          pattern: ^[0-9]+-[0-9]+$
+          minLength: 3
+          maxLength: 30
+          example: 2251799813684367-1
     DecisionInstanceSearchQuerySortRequest:
       type: object
       properties:
@@ -14571,25 +14850,25 @@ components:
 
             '
       required:
-      - evaluationDate
-      - tenantId
-      - evaluatedInputs
-      - processDefinitionKey
-      - decisionDefinitionVersion
-      - decisionEvaluationInstanceKey
-      - decisionDefinitionId
-      - decisionDefinitionKey
-      - result
-      - elementInstanceKey
       - rootDecisionDefinitionKey
-      - state
-      - decisionDefinitionName
-      - decisionEvaluationKey
-      - rootProcessInstanceKey
       - evaluationFailure
-      - matchedRules
+      - evaluationDate
       - decisionDefinitionType
+      - decisionEvaluationInstanceKey
+      - state
+      - decisionEvaluationKey
+      - decisionDefinitionId
+      - result
+      - decisionDefinitionKey
+      - processDefinitionKey
+      - elementInstanceKey
+      - rootProcessInstanceKey
+      - decisionDefinitionName
+      - tenantId
+      - decisionDefinitionVersion
       - processInstanceKey
+      - matchedRules
+      - evaluatedInputs
     EvaluatedDecisionInputItem:
       required:
       - inputId
@@ -15322,6 +15601,99 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ResourceKey'
+    ResourceSearchQuerySortRequest:
+      type: object
+      properties:
+        field:
+          description: The field to sort by.
+          type: string
+          enum:
+          - resourceKey
+          - resourceName
+          - resourceId
+          - version
+          - versionTag
+          - deploymentKey
+          - tenantId
+        order:
+          $ref: '#/components/schemas/SortOrderEnum'
+      required:
+      - field
+    ResourceSearchQuery:
+      type: object
+      additionalProperties: false
+      properties:
+        sort:
+          description: Sort field criteria.
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceSearchQuerySortRequest'
+        filter:
+          $ref: '#/components/schemas/ResourceSearchQueryFilter'
+        page:
+          description: Pagination criteria.
+          x-polymorphic-schema: true
+          oneOf:
+          - $ref: '#/components/schemas/LimitPagination'
+          - $ref: '#/components/schemas/OffsetPagination'
+          - $ref: '#/components/schemas/CursorForwardPagination'
+          - $ref: '#/components/schemas/CursorBackwardPagination'
+    ResourceFilter:
+      description: Resource search filter.
+      type: object
+      properties:
+        resourceKey:
+          description: The key for this resource.
+          oneOf:
+          - $ref: '#/components/schemas/ResourceKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedResourceKeyFilter'
+        resourceName:
+          description: Resource name of this resource.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        resourceId:
+          description: Resource ID of this resource.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        version:
+          description: Version of this resource.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionVersionExactMatch'
+          - $ref: '#/components/schemas/AdvancedIntegerFilter'
+        versionTag:
+          description: Version tag of this resource.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        deploymentKey:
+          description: Deployment key of this resource.
+          oneOf:
+          - $ref: '#/components/schemas/DeploymentKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedDeploymentKeyFilter'
+        tenantId:
+          description: Tenant ID of this resource.
+          example: customer-service
+          format: TenantId
+          type: string
+          x-semantic-type: TenantId
+          minLength: 1
+          maxLength: 256
+          pattern: ^(<default>|[A-Za-z0-9_@.+-]+)$
+    ResourceSearchQueryResult:
+      type: object
+      required:
+      - page
+      - items
+      properties:
+        items:
+          description: The matching resources.
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceResult'
+        page:
+          $ref: '#/components/schemas/SearchQueryPageResponse'
     DocumentReference:
       type: object
       required:
@@ -15386,8 +15758,8 @@ components:
           items:
             $ref: '#/components/schemas/DocumentReference'
       required:
-      - createdDocuments
       - failedDocuments
+      - createdDocuments
     DocumentMetadata:
       description: Information about the document.
       type: object
@@ -15592,17 +15964,18 @@ components:
           - UNKNOWN
         elementId:
           description: The element ID for this element instance.
-          format: ElementId
-          type: string
-          x-semantic-type: ElementId
-          example: Activity_106kosb
+          oneOf:
+          - $ref: '#/components/schemas/ElementIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedElementIdFilter'
         elementName:
-          type: string
           description: 'The element name. This only works for data created with 8.8
             and onwards. Instances from prior versions don''t contain this data and
             cannot be found.
 
             '
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
         hasIncident:
           type: boolean
           description: Shows whether this element instance has an incident related
@@ -16214,8 +16587,8 @@ components:
     CreateGlobalTaskListenerRequest:
       type: object
       required:
-      - id
       - eventTypes
+      - id
       - type
       properties:
         id:
@@ -16263,13 +16636,13 @@ components:
     GlobalTaskListenerResult:
       type: object
       required:
-      - retries
-      - type
-      - source
-      - priority
       - id
-      - afterNonGlobal
+      - retries
       - eventTypes
+      - type
+      - priority
+      - source
+      - afterNonGlobal
       properties:
         id:
           $ref: '#/components/schemas/GlobalListenerId'
@@ -16815,6 +17188,84 @@ components:
       minLength: 1
       maxLength: 256
       example: order-12345
+    ElementIdFilterProperty:
+      description: ElementId property with full advanced search capabilities.
+      oneOf:
+      - $ref: '#/components/schemas/ElementIdExactMatch'
+      - $ref: '#/components/schemas/AdvancedElementIdFilter'
+    AdvancedElementIdFilter:
+      title: AdvancedElementIdFilter
+      description: Advanced ElementId filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          format: ElementId
+          type: string
+          x-semantic-type: ElementId
+          example: Activity_106kosb
+        $neq:
+          description: Checks for inequality with the provided value.
+          format: ElementId
+          type: string
+          x-semantic-type: ElementId
+          example: Activity_106kosb
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/ElementId'
+        $notIn:
+          description: Checks if the property matches none of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/ElementId'
+        $like:
+          $ref: '#/components/schemas/LikeFilter'
+    ProcessDefinitionIdFilterProperty:
+      description: ProcessDefinitionId property with full advanced search capabilities.
+      oneOf:
+      - $ref: '#/components/schemas/ProcessDefinitionIdExactMatch'
+      - $ref: '#/components/schemas/AdvancedProcessDefinitionIdFilter'
+    AdvancedProcessDefinitionIdFilter:
+      title: AdvancedProcessDefinitionIdFilter
+      description: Advanced ProcessDefinitionId filter.
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          format: ProcessDefinitionId
+          type: string
+          x-semantic-type: ProcessDefinitionId
+          minLength: 1
+          pattern: ^[\w_][\w0-9_\-\.]*$
+          example: new-account-onboarding-workflow
+        $neq:
+          description: Checks for inequality with the provided value.
+          format: ProcessDefinitionId
+          type: string
+          x-semantic-type: ProcessDefinitionId
+          minLength: 1
+          pattern: ^[\w_][\w0-9_\-\.]*$
+          example: new-account-onboarding-workflow
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessDefinitionId'
+        $notIn:
+          description: Checks if the property matches none of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/ProcessDefinitionId'
+        $like:
+          $ref: '#/components/schemas/LikeFilter'
     IncidentSearchQuery:
       additionalProperties: false
       type: object
@@ -18613,6 +19064,7 @@ components:
       type: string
       enum:
       - ASSIGNING
+      - BEFORE_ALL
       - CANCELING
       - COMPLETING
       - CREATING
@@ -18674,6 +19126,7 @@ components:
           type: string
           enum:
           - ASSIGNING
+          - BEFORE_ALL
           - CANCELING
           - COMPLETING
           - CREATING
@@ -18687,6 +19140,7 @@ components:
           type: string
           enum:
           - ASSIGNING
+          - BEFORE_ALL
           - CANCELING
           - COMPLETING
           - CREATING
@@ -18849,14 +19303,22 @@ components:
       minLength: 1
       maxLength: 25
     DecisionEvaluationInstanceKey:
-      description: System-generated key for a decision evaluation instance.
+      description: 'System-generated identifier for a decision evaluation instance.
+        It is composed of the
+
+        parent decision evaluation key and the 1-based index of the evaluated decision
+        within
+
+        that evaluation, joined by a hyphen (format: `<decisionEvaluationKey>-<index>`).
+
+        '
       format: DecisionEvaluationInstanceKey
       x-semantic-type: DecisionEvaluationInstanceKey
-      example: '2251799813684367'
       type: string
-      pattern: ^-?[0-9]+$
-      minLength: 1
-      maxLength: 25
+      pattern: ^[0-9]+-[0-9]+$
+      minLength: 3
+      maxLength: 30
+      example: 2251799813684367-1
     DecisionEvaluationKey:
       description: System-generated key for a decision evaluation.
       format: DecisionEvaluationKey
@@ -19216,20 +19678,20 @@ components:
           description: Checks for equality with the provided value.
           format: DecisionEvaluationInstanceKey
           x-semantic-type: DecisionEvaluationInstanceKey
-          example: '2251799813684367'
           type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
+          pattern: ^[0-9]+-[0-9]+$
+          minLength: 3
+          maxLength: 30
+          example: 2251799813684367-1
         $neq:
           description: Checks for inequality with the provided value.
           format: DecisionEvaluationInstanceKey
           x-semantic-type: DecisionEvaluationInstanceKey
-          example: '2251799813684367'
           type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
+          pattern: ^[0-9]+-[0-9]+$
+          minLength: 3
+          maxLength: 30
+          example: 2251799813684367-1
         $exists:
           description: Checks if the current property exists.
           type: boolean
@@ -19466,10 +19928,10 @@ components:
           type: string
           description: The name of the mapping rule.
       required:
-      - mappingRuleId
-      - name
-      - claimName
       - claimValue
+      - mappingRuleId
+      - claimName
+      - name
     MappingRuleUpdateRequest:
       type: object
       properties:
@@ -19779,14 +20241,20 @@ components:
       - correlationKey
       - elementId
       - elementInstanceKey
+      - extensionProperties
+      - inboundConnectorType
       - lastUpdatedDate
       - messageName
       - messageSubscriptionKey
       - messageSubscriptionState
+      - messageSubscriptionType
       - processDefinitionId
       - processDefinitionKey
+      - processDefinitionName
+      - processDefinitionVersion
       - processInstanceKey
       - tenantId
+      - toolName
       properties:
         messageSubscriptionKey:
           description: The message subscription key associated with this message subscription.
@@ -19817,7 +20285,11 @@ components:
           maxLength: 25
         processInstanceKey:
           nullable: true
-          description: The process instance key associated with this message subscription.
+          description: 'The process instance key associated with this message subscription.
+
+            Only populated for intermediate event entities.
+
+            '
           format: ProcessInstanceKey
           x-semantic-type: ProcessInstanceKey
           example: '2251799813690746'
@@ -19851,7 +20323,11 @@ components:
           example: Activity_106kosb
         elementInstanceKey:
           nullable: true
-          description: The element instance key associated with this message subscription.
+          description: 'The element instance key associated with this message subscription.
+
+            Only populated for intermediate event entities.
+
+            '
           format: ElementInstanceKey
           x-semantic-type: ElementInstanceKey
           example: '2251799813686789'
@@ -19872,6 +20348,37 @@ components:
           type: string
           nullable: true
           description: The correlation key of the message subscription.
+        messageSubscriptionType:
+          $ref: '#/components/schemas/MessageSubscriptionTypeEnum'
+        extensionProperties:
+          $ref: '#/components/schemas/MessageSubscriptionResultExtensionProperties'
+        processDefinitionName:
+          type: string
+          nullable: true
+          description: The name of the process definition associated with this message
+            subscription.
+        processDefinitionVersion:
+          type: integer
+          format: int32
+          nullable: true
+          description: The version of the process definition associated with this
+            message subscription.
+        toolName:
+          type: string
+          nullable: true
+          description: 'Tool name extracted from the `io.camunda.tool:name` zeebe:property.
+
+            Null when the property is absent.
+
+            '
+        inboundConnectorType:
+          type: string
+          nullable: true
+          description: 'Inbound connector type extracted from the `inbound.type` zeebe:property.
+
+            Null when the property is absent.
+
+            '
         tenantId:
           $ref: '#/components/schemas/TenantId'
     MessageSubscriptionSearchQuerySortRequest:
@@ -19883,14 +20390,19 @@ components:
           enum:
           - messageSubscriptionKey
           - processDefinitionId
+          - processDefinitionName
+          - processDefinitionVersion
           - processInstanceKey
           - elementId
           - elementInstanceKey
           - messageSubscriptionState
+          - messageSubscriptionType
           - lastUpdatedDate
           - messageName
           - correlationKey
           - tenantId
+          - toolName
+          - inboundConnectorType
         order:
           $ref: '#/components/schemas/SortOrderEnum'
       required:
@@ -19971,6 +20483,42 @@ components:
           - $ref: '#/components/schemas/AdvancedStringFilter'
         tenantId:
           description: The unique external tenant ID.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        messageSubscriptionType:
+          description: 'The type of message subscription to filter by. When omitted,
+            both
+
+            `START_EVENT` and `PROCESS_EVENT` are returned. Only available for data
+
+            created with Camunda 8.10 or later.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/MessageSubscriptionTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedMessageSubscriptionTypeFilter'
+        processDefinitionName:
+          description: The name of the process definition associated with this message
+            subscription.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        processDefinitionVersion:
+          description: The version of the process definition associated with this
+            message subscription.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionVersionExactMatch'
+          - $ref: '#/components/schemas/AdvancedIntegerFilter'
+        toolName:
+          description: Filter by tool name extracted from the `io.camunda.tool:name`
+            zeebe:property.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        inboundConnectorType:
+          description: Filter by inbound connector type extracted from the `inbound.type`
+            zeebe:property.
           oneOf:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
@@ -20160,6 +20708,24 @@ components:
       - CREATED
       - DELETED
       - MIGRATED
+    MessageSubscriptionTypeEnum:
+      description: 'The type of message subscription.
+
+        `START_EVENT` is definition-scoped (process start events). Always has a value;
+        only
+
+        captured from Camunda 8.10 onwards.
+
+        `PROCESS_EVENT` is instance-scoped (intermediate catch events). Pre-8.10 entries
+        have
+
+        no value stored; the API returns `PROCESS_EVENT` as a default for those entries.
+
+        '
+      type: string
+      enum:
+      - START_EVENT
+      - PROCESS_EVENT
     CorrelatedMessageSubscriptionFilter:
       description: Correlated message subscriptions search filter.
       type: object
@@ -20228,6 +20794,38 @@ components:
           oneOf:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
+    MessageSubscriptionTypeFilterProperty:
+      description: MessageSubscriptionTypeEnum with full advanced search capabilities.
+      oneOf:
+      - $ref: '#/components/schemas/MessageSubscriptionTypeExactMatch'
+      - $ref: '#/components/schemas/AdvancedMessageSubscriptionTypeFilter'
+    AdvancedMessageSubscriptionTypeFilter:
+      title: AdvancedMessageSubscriptionTypeFilter
+      description: Advanced MessageSubscriptionTypeEnum filter
+      type: object
+      properties:
+        $eq:
+          description: Checks for equality with the provided value.
+          type: string
+          enum:
+          - START_EVENT
+          - PROCESS_EVENT
+        $neq:
+          description: Checks for inequality with the provided value.
+          type: string
+          enum:
+          - START_EVENT
+          - PROCESS_EVENT
+        $exists:
+          description: Checks if the current property exists.
+          type: boolean
+        $in:
+          description: Checks if the property matches any of the provided values.
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageSubscriptionTypeEnum'
+        $like:
+          $ref: '#/components/schemas/LikeFilter'
     MessageSubscriptionStateFilterProperty:
       description: MessageSubscriptionStateEnum with full advanced search capabilities.
       oneOf:
@@ -22851,11 +23449,11 @@ components:
       maxLength: 25
     UsageMetricsResponse:
       required:
-      - assignees
       - activeTenants
       - processInstances
       - decisionInstances
       - tenants
+      - assignees
       type: object
       properties:
         activeTenants:
@@ -23355,12 +23953,9 @@ components:
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionId:
           description: The ID of the process definition.
-          format: ProcessDefinitionId
-          type: string
-          x-semantic-type: ProcessDefinitionId
-          minLength: 1
-          pattern: ^[\w_][\w0-9_\-\.]*$
-          example: new-account-onboarding-workflow
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessDefinitionIdFilter'
         creationDate:
           description: The user task creation date.
           oneOf:
@@ -23401,22 +23996,14 @@ components:
           maxLength: 25
         processDefinitionKey:
           description: The key of the process definition.
-          format: ProcessDefinitionKey
-          x-semantic-type: ProcessDefinitionKey
-          example: '2251799813686749'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessDefinitionKeyFilter'
         processInstanceKey:
           description: The key of the process instance.
-          format: ProcessInstanceKey
-          x-semantic-type: ProcessInstanceKey
-          example: '2251799813690746'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
+          oneOf:
+          - $ref: '#/components/schemas/ProcessInstanceKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessInstanceKeyFilter'
         elementInstanceKey:
           description: The key of the element instance.
           format: ElementInstanceKey
@@ -24179,13 +24766,13 @@ components:
     VariableSearchResult:
       required:
       - scopeKey
-      - variableKey
+      - isTruncated
       - rootProcessInstanceKey
+      - value
+      - variableKey
       - processInstanceKey
       - name
       - tenantId
-      - value
-      - isTruncated
       description: Variable search response item.
       type: object
       properties:
@@ -24268,12 +24855,12 @@ components:
       type: object
       required:
       - scopeKey
-      - variableKey
       - rootProcessInstanceKey
+      - value
+      - variableKey
       - processInstanceKey
       - name
       - tenantId
-      - value
       properties:
         value:
           description: Full value of this variable.
@@ -24665,6 +25252,22 @@ components:
       - updating
       - completing
       - canceling
+    ElementIdExactMatch:
+      type: string
+      title: ElementIdExactMatch
+      description: Matches the value exactly.
+      format: ElementId
+      x-semantic-type: ElementId
+      example: Activity_106kosb
+    ProcessDefinitionIdExactMatch:
+      type: string
+      title: ProcessDefinitionIdExactMatch
+      description: Matches the value exactly.
+      format: ProcessDefinitionId
+      x-semantic-type: ProcessDefinitionId
+      minLength: 1
+      pattern: ^[\w_][\w0-9_\-\.]*$
+      example: new-account-onboarding-workflow
     IncidentErrorTypeExactMatch:
       type: string
       title: IncidentErrorTypeExactMatch
@@ -24713,6 +25316,7 @@ components:
       example: UNSPECIFIED
       enum:
       - ASSIGNING
+      - BEFORE_ALL
       - CANCELING
       - COMPLETING
       - CREATING
@@ -24810,10 +25414,10 @@ components:
       description: Matches the value exactly.
       format: DecisionEvaluationInstanceKey
       x-semantic-type: DecisionEvaluationInstanceKey
-      example: '2251799813684367'
-      pattern: ^-?[0-9]+$
-      minLength: 1
-      maxLength: 25
+      pattern: ^[0-9]+-[0-9]+$
+      minLength: 3
+      maxLength: 30
+      example: 2251799813684367-1
     AuditLogKeyExactMatch:
       type: string
       title: AuditLogKeyExactMatch
@@ -24854,6 +25458,13 @@ components:
       pattern: ^-?[0-9]+$
       minLength: 1
       maxLength: 25
+    MessageSubscriptionTypeExactMatch:
+      type: string
+      title: MessageSubscriptionTypeExactMatch
+      description: Matches the value exactly.
+      enum:
+      - START_EVENT
+      - PROCESS_EVENT
     MessageSubscriptionStateExactMatch:
       type: string
       title: MessageSubscriptionStateExactMatch
@@ -25438,8 +26049,8 @@ components:
             $ref: '#/components/schemas/MigrateProcessInstanceMappingInstruction'
           description: The mapping instructions.
       required:
-      - mappingInstructions
       - targetProcessDefinitionKey
+      - mappingInstructions
       title: ProcessInstanceMigrationBatchOperationRequestMigrationPlan
     ClusterVariableSearchQueryRequestFilter:
       description: The cluster variable search filters.
@@ -25742,11 +26353,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - tenantId
-      - processDefinitionVersion
-      - processDefinitionId
       - processDefinitionKey
       - resourceName
+      - tenantId
+      - processDefinitionId
+      - processDefinitionVersion
       title: DeploymentMetadataResultProcessDefinition
     DeploymentMetadataResultDecisionDefinition:
       nullable: true
@@ -25816,13 +26427,13 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - decisionRequirementsId
-      - name
-      - decisionDefinitionKey
-      - tenantId
       - version
+      - tenantId
+      - decisionRequirementsId
       - decisionRequirementsKey
+      - name
       - decisionDefinitionId
+      - decisionDefinitionKey
       title: DeploymentMetadataResultDecisionDefinition
     DeploymentMetadataResultDecisionRequirements:
       nullable: true
@@ -25866,11 +26477,11 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - decisionRequirementsId
-      - tenantId
       - version
       - decisionRequirementsName
+      - decisionRequirementsId
       - decisionRequirementsKey
+      - tenantId
       - resourceName
       title: DeploymentMetadataResultDecisionRequirements
     DeploymentMetadataResultForm:
@@ -25911,10 +26522,10 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - formKey
-      - tenantId
       - version
       - formId
+      - formKey
+      - tenantId
       - resourceName
       title: DeploymentMetadataResultForm
     DeploymentMetadataResultResource:
@@ -25947,11 +26558,11 @@ components:
           - $ref: '#/components/schemas/DecisionDefinitionKey'
           format: ResourceKey
       required:
-      - resourceId
-      - resourceKey
-      - tenantId
       - version
       - resourceName
+      - resourceId
+      - tenantId
+      - resourceKey
       title: DeploymentMetadataResultResource
     DeleteResourceResponseBatchOperation:
       nullable: true
@@ -25982,6 +26593,50 @@ components:
       - batchOperationType
       - batchOperationKey
       title: DeleteResourceResponseBatchOperation
+    ResourceSearchQueryFilter:
+      description: The resource search filters.
+      type: object
+      properties:
+        resourceKey:
+          description: The key for this resource.
+          oneOf:
+          - $ref: '#/components/schemas/ResourceKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedResourceKeyFilter'
+        resourceName:
+          description: Resource name of this resource.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        resourceId:
+          description: Resource ID of this resource.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        version:
+          description: Version of this resource.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionVersionExactMatch'
+          - $ref: '#/components/schemas/AdvancedIntegerFilter'
+        versionTag:
+          description: Version tag of this resource.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        deploymentKey:
+          description: Deployment key of this resource.
+          oneOf:
+          - $ref: '#/components/schemas/DeploymentKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedDeploymentKeyFilter'
+        tenantId:
+          description: Tenant ID of this resource.
+          example: customer-service
+          format: TenantId
+          type: string
+          x-semantic-type: TenantId
+          minLength: 1
+          maxLength: 256
+          pattern: ^(<default>|[A-Za-z0-9_@.+-]+)$
+      title: ResourceSearchQueryFilter
     DocumentMetadataCustomProperties:
       type: object
       description: Custom properties of the document.
@@ -26037,17 +26692,18 @@ components:
           - UNKNOWN
         elementId:
           description: The element ID for this element instance.
-          format: ElementId
-          type: string
-          x-semantic-type: ElementId
-          example: Activity_106kosb
+          oneOf:
+          - $ref: '#/components/schemas/ElementIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedElementIdFilter'
         elementName:
-          type: string
           description: 'The element name. This only works for data created with 8.8
             and onwards. Instances from prior versions don''t contain this data and
             cannot be found.
 
             '
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
         hasIncident:
           type: boolean
           description: Shows whether this element instance has an incident related
@@ -26400,16 +27056,16 @@ components:
           minLength: 1
           maxLength: 25
       required:
-      - candidateUsers
-      - formKey
-      - dueDate
-      - changedAttributes
-      - assignee
       - candidateGroups
-      - priority
-      - userTaskKey
       - action
+      - assignee
+      - dueDate
       - followUpDate
+      - userTaskKey
+      - candidateUsers
+      - priority
+      - formKey
+      - changedAttributes
       title: ActivatedJobResultUserTask
     JobSearchQueryFilter:
       description: The job search filters.
@@ -26590,6 +27246,17 @@ components:
       additionalProperties: true
       type: object
       title: MessagePublicationRequestVariables
+    MessageSubscriptionResultExtensionProperties:
+      type: object
+      additionalProperties:
+        type: string
+      description: 'The `zeebe:properties` extension properties extracted from the
+        BPMN element associated
+
+        with this subscription. Empty object when no properties are defined.
+
+        '
+      title: MessageSubscriptionResultExtensionProperties
     MessageSubscriptionSearchQueryFilter:
       description: The incident search filters.
       type: object
@@ -26647,6 +27314,42 @@ components:
           - $ref: '#/components/schemas/AdvancedStringFilter'
         tenantId:
           description: The unique external tenant ID.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        messageSubscriptionType:
+          description: 'The type of message subscription to filter by. When omitted,
+            both
+
+            `START_EVENT` and `PROCESS_EVENT` are returned. Only available for data
+
+            created with Camunda 8.10 or later.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/MessageSubscriptionTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedMessageSubscriptionTypeFilter'
+        processDefinitionName:
+          description: The name of the process definition associated with this message
+            subscription.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        processDefinitionVersion:
+          description: The version of the process definition associated with this
+            message subscription.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionVersionExactMatch'
+          - $ref: '#/components/schemas/AdvancedIntegerFilter'
+        toolName:
+          description: Filter by tool name extracted from the `io.camunda.tool:name`
+            zeebe:property.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        inboundConnectorType:
+          description: Filter by inbound connector type extracted from the `inbound.type`
+            zeebe:property.
           oneOf:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
@@ -26963,6 +27666,42 @@ components:
           oneOf:
           - $ref: '#/components/schemas/NameExactMatch'
           - $ref: '#/components/schemas/AdvancedStringFilter'
+        messageSubscriptionType:
+          description: 'The type of message subscription to filter by. When omitted,
+            both
+
+            `START_EVENT` and `PROCESS_EVENT` are returned. Only available for data
+
+            created with Camunda 8.10 or later.
+
+            '
+          oneOf:
+          - $ref: '#/components/schemas/MessageSubscriptionTypeExactMatch'
+          - $ref: '#/components/schemas/AdvancedMessageSubscriptionTypeFilter'
+        processDefinitionName:
+          description: The name of the process definition associated with this message
+            subscription.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        processDefinitionVersion:
+          description: The version of the process definition associated with this
+            message subscription.
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionVersionExactMatch'
+          - $ref: '#/components/schemas/AdvancedIntegerFilter'
+        toolName:
+          description: Filter by tool name extracted from the `io.camunda.tool:name`
+            zeebe:property.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
+        inboundConnectorType:
+          description: Filter by inbound connector type extracted from the `inbound.type`
+            zeebe:property.
+          oneOf:
+          - $ref: '#/components/schemas/NameExactMatch'
+          - $ref: '#/components/schemas/AdvancedStringFilter'
       title: ProcessDefinitionMessageSubscriptionStatisticsQueryFilter
     ProcessDefinitionInstanceStatisticsQueryPage:
       description: Search cursor pagination.
@@ -27240,9 +27979,9 @@ components:
             type: integer
             format: int64
         required:
+        - processInstances
         - decisionInstances
         - assignees
-        - processInstances
       title: UsageMetricsResponseTenants
     TenantSearchQueryRequestFilter:
       description: The tenant search filters.
@@ -27305,12 +28044,9 @@ components:
           - $ref: '#/components/schemas/AdvancedStringFilter'
         processDefinitionId:
           description: The ID of the process definition.
-          format: ProcessDefinitionId
-          type: string
-          x-semantic-type: ProcessDefinitionId
-          minLength: 1
-          pattern: ^[\w_][\w0-9_\-\.]*$
-          example: new-account-onboarding-workflow
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionIdExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessDefinitionIdFilter'
         creationDate:
           description: The user task creation date.
           oneOf:
@@ -27351,22 +28087,14 @@ components:
           maxLength: 25
         processDefinitionKey:
           description: The key of the process definition.
-          format: ProcessDefinitionKey
-          x-semantic-type: ProcessDefinitionKey
-          example: '2251799813686749'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
+          oneOf:
+          - $ref: '#/components/schemas/ProcessDefinitionKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessDefinitionKeyFilter'
         processInstanceKey:
           description: The key of the process instance.
-          format: ProcessInstanceKey
-          x-semantic-type: ProcessInstanceKey
-          example: '2251799813690746'
-          type: string
-          pattern: ^-?[0-9]+$
-          minLength: 1
-          maxLength: 25
+          oneOf:
+          - $ref: '#/components/schemas/ProcessInstanceKeyExactMatch'
+          - $ref: '#/components/schemas/AdvancedProcessInstanceKeyFilter'
         elementInstanceKey:
           description: The key of the element instance.
           format: ElementInstanceKey

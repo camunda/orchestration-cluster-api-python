@@ -55,7 +55,9 @@ def sync_detailed(
 
      Returns a deployed resource.
     :::info
-    Currently, this endpoint only supports RPA resources.
+    This endpoint does not return BPMN process definitions, DMN decision definitions, or form
+    resources. To query BPMN process definitions or DMN decision definitions, use their
+    respective APIs.
     :::
 
     Args:
@@ -80,7 +82,9 @@ def sync(
 
      Returns a deployed resource.
     :::info
-    Currently, this endpoint only supports RPA resources.
+    This endpoint does not return BPMN process definitions, DMN decision definitions, or form
+    resources. To query BPMN process definitions or DMN decision definitions, use their
+    respective APIs.
     :::
 
     Args:
@@ -123,7 +127,9 @@ async def asyncio_detailed(
 
      Returns a deployed resource.
     :::info
-    Currently, this endpoint only supports RPA resources.
+    This endpoint does not return BPMN process definitions, DMN decision definitions, or form
+    resources. To query BPMN process definitions or DMN decision definitions, use their
+    respective APIs.
     :::
 
     Args:
@@ -148,7 +154,9 @@ async def asyncio(
 
      Returns a deployed resource.
     :::info
-    Currently, this endpoint only supports RPA resources.
+    This endpoint does not return BPMN process definitions, DMN decision definitions, or form
+    resources. To query BPMN process definitions or DMN decision definitions, use their
+    respective APIs.
     :::
 
     Args:
