@@ -4,6 +4,8 @@ from typing import Any, Dict, cast
 
 import yaml
 
+from _identifier_guard import safe_py_identifier
+
 
 def _snake(name: str) -> str:
     s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
@@ -29,6 +31,7 @@ def _extract_semantic_mappings(data: Any, mappings: Dict[str, str]) -> None:
                         prop_schema_dict = cast(dict[str, Any], prop_schema)
                         semantic_type = prop_schema_dict.get("x-semantic-type")
                         if isinstance(semantic_type, str):
+                            safe_py_identifier(semantic_type, "x-semantic-type")
                             mappings[prop_name] = semantic_type
                     # Recurse into properties
                     _extract_semantic_mappings(prop_schema, mappings)

@@ -12,6 +12,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+from _identifier_guard import safe_version_string, safe_py_identifier
+
 
 def _snake(name: str) -> str:
     s1 = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", name)
@@ -29,6 +31,11 @@ def _patch_enum_file(
 
     content = file_path.read_text(encoding="utf-8")
     original = content
+
+    # Validate all spec-controlled values before any interpolation
+    for m in deprecated_members:
+        safe_py_identifier(m["name"], "deprecated enum member name")
+        safe_version_string(m["deprecatedInVersion"], "deprecatedInVersion")
 
     deprecated_map = {m["name"]: m["deprecatedInVersion"] for m in deprecated_members}
 

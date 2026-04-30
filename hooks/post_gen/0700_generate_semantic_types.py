@@ -5,6 +5,8 @@ from typing import Any, Dict, List, cast
 
 import yaml
 
+from _identifier_guard import safe_py_identifier, safe_py_identifiers, safe_numeric_value
+
 # Unicode property escapes (ECMAScript) -> Python re equivalents
 _UNICODE_PROPERTY_MAP: Dict[str, str] = {
     r"\p{L}": r"\w",
@@ -91,6 +93,7 @@ def _emit_semantic_types_py(
     all_exported_names: List[str] = []
 
     for alias_name, info in sorted(aliases.items()):
+        safe_py_identifier(alias_name, "semantic type alias name")
         base = info.get("type", "string")
         py_base = {
             "string": "str",
@@ -138,14 +141,16 @@ def _emit_semantic_types_py(
         # Numeric constraints
         if py_base in {"int", "float"}:
             if "minimum" in constraints:
-                class_def.append(f'\t\tif value < {constraints["minimum"]}:\n')
+                min_val = safe_numeric_value(constraints["minimum"], "minimum")
+                class_def.append(f'\t\tif value < {min_val}:\n')
                 class_def.append(
-                    f'\t\t\traise ValueError(f"{alias_name} smaller than minimum {constraints["minimum"]}, got {{value!r}}")\n'
+                    f'\t\t\traise ValueError(f"{alias_name} smaller than minimum {min_val}, got {{value!r}}")\n'
                 )
             if "maximum" in constraints:
-                class_def.append(f'\t\tif value > {constraints["maximum"]}:\n')
+                max_val = safe_numeric_value(constraints["maximum"], "maximum")
+                class_def.append(f'\t\tif value > {max_val}:\n')
                 class_def.append(
-                    f'\t\t\traise ValueError(f"{alias_name} larger than maximum {constraints["maximum"]}, got {{value!r}}")\n'
+                    f'\t\t\traise ValueError(f"{alias_name} larger than maximum {max_val}, got {{value!r}}")\n'
                 )
         
         # Enum constraints
@@ -167,6 +172,8 @@ def _emit_semantic_types_py(
     # Emit union type aliases (e.g. ScopeKey = ProcessInstanceKey | ElementInstanceKey)
     if union_aliases:
         for union_name, branch_names in sorted(union_aliases.items()):
+            safe_py_identifier(union_name, "union alias name")
+            safe_py_identifiers(branch_names, "union branch name")
             func_name = _snake(f"lift_{union_name}")
             try_func_name = _snake(f"try_lift_{union_name}")
             all_exported_names.extend([union_name, func_name, try_func_name])

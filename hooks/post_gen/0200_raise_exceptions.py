@@ -6,6 +6,8 @@ from typing import Any, cast
 
 import yaml
 
+from _identifier_guard import safe_py_identifier
+
 
 def _status_class_name(code: int) -> str:
     """Return the per-status exception class name for a given HTTP status code."""
@@ -479,6 +481,7 @@ def modify_api_file(file_path: Path, *, spec: dict[str, Any]) -> None:
     modified = False
 
     module_stem = Path(file_path).stem
+    safe_py_identifier(module_stem, "API endpoint module name")
     status_type_map = _extract_status_type_map(tree)
     error_codes = sorted([c for c in status_type_map.keys() if not (200 <= c < 300)])
 
