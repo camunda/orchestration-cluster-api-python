@@ -20,10 +20,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      # Default is main. Temporary override options:
+      # Default is stable/8.9 for this branch (pinned to Camunda 8.9 spec).
+      # Temporary override options:
       # - Repo variable: SPEC_REF_OVERRIDE
       # - Manual run: workflow_dispatch input spec_ref
-      SPEC_REF: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'main' }}
+      SPEC_REF: ${{ (github.event_name == 'workflow_dispatch' && github.event.inputs.spec_ref) || vars.SPEC_REF_OVERRIDE || 'stable/8.9' }}
       SPEC_REF_OVERRIDE_ACK: ${{ vars.SPEC_REF_OVERRIDE_ACK || '' }}
       SPEC_REF_OVERRIDE_EXPIRES: ${{ vars.SPEC_REF_OVERRIDE_EXPIRES || '' }}
     strategy:
@@ -37,7 +38,9 @@ jobs:
           set -euo pipefail
           echo "SPEC_REF=${SPEC_REF}"
 
-          if [[ "${SPEC_REF}" != "main" ]]; then
+          # stable/8.9 is the expected default for this branch — only guard
+          # if someone overrides it to something else via SPEC_REF_OVERRIDE.
+          if [[ "${SPEC_REF}" != "stable/8.9" ]]; then
             if [[ "${SPEC_REF_OVERRIDE_ACK}" != "true" ]]; then
               echo "::error::SPEC_REF is overridden but SPEC_REF_OVERRIDE_ACK is not 'true'. Set the repo variable to acknowledge this is temporary."
               exit 1
