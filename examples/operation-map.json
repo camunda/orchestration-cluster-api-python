@@ -1217,6 +1217,13 @@
             "label": "Get resource content"
         }
     ],
+    "search_resources": [
+        {
+            "file": "admin_operations.py",
+            "region": "SearchResources",
+            "label": "Search resources"
+        }
+    ],
     "get_usage_metrics": [
         {
             "file": "admin_operations.py",

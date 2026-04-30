@@ -31,6 +31,7 @@ from camunda_orchestration_sdk import (
     JobWorkerStatisticsFilter,
     JobWorkerStatisticsQuery,
     MessageSubscriptionSearchQuery,
+    ResourceSearchQuery,
     TenantId,
     Unset,
     UpdateClusterVariableRequest,
@@ -335,8 +336,22 @@ def get_resource_content_example() -> None:
 
     content = client.get_resource_content(resource_key="123456")
 
-    print(f"Content length: {len(content)}")
+    print(f"Content: {content}")
 # endregion GetResourceContent
+
+
+# region SearchResources
+def search_resources_example() -> None:
+    client = CamundaClient()
+
+    result = client.search_resources(
+        data=ResourceSearchQuery(),
+    )
+
+    if not isinstance(result.items, Unset):
+        for resource in result.items:
+            print(f"Resource: {resource.resource_name}")
+# endregion SearchResources
 
 
 # region GetUsageMetrics
