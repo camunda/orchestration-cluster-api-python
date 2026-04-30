@@ -2,6 +2,39 @@
 
 <!-- version list -->
 
+## v9.0.1 (2026-04-30)
+
+### Bug Fixes
+
+- Guard spec-controlled identifiers against code injection (SFD-214)
+  ([`8c323a7`](https://github.com/camunda/orchestration-cluster-api-python/commit/8c323a7cfb13fc3880716eccaf5aa5576f5e9abc))
+
+- Use File.file_name instead of len(File) in example (pyright)
+  ([`d4ec11f`](https://github.com/camunda/orchestration-cluster-api-python/commit/d4ec11f1623445e08697bea8212a84fc5102a644))
+
+### Chores
+
+- Address PR review comments
+  ([`4593aa5`](https://github.com/camunda/orchestration-cluster-api-python/commit/4593aa5e24f5d5d9bb44471b08606d2339bde24e))
+
+- Append hooks dir to sys.path instead of prepending
+  ([`12b36e6`](https://github.com/camunda/orchestration-cluster-api-python/commit/12b36e6bd887de32526d3c7524e77046cebb4ce4))
+
+- Fix ruff lint errors (E402 noqa, unused import)
+  ([`ec1ac60`](https://github.com/camunda/orchestration-cluster-api-python/commit/ec1ac609a35d3e89384b240fd78543f5ec16b400))
+
+- Widen guard param types to object for pyright compatibility
+  ([`566b3cd`](https://github.com/camunda/orchestration-cluster-api-python/commit/566b3cd1d1450371dcb86e4bd532ae0205442ab6))
+
+- **generation**: Update generated SDK [skip ci]
+  ([`e7b47ba`](https://github.com/camunda/orchestration-cluster-api-python/commit/e7b47ba33330b328d5a470b85ae1eb25f78267d0))
+
+### Continuous Integration
+
+- Pin SPEC_REF default to stable/8.9 for stable/9 branch
+  ([`3abf3d1`](https://github.com/camunda/orchestration-cluster-api-python/commit/3abf3d12f95c9b23334fb4e39e9dc04924a269dd))
+
+
 ## v9.0.0 (2026-04-17)
 
 ### Chores
