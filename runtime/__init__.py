@@ -21,6 +21,12 @@ from .backpressure import (
     is_backpressure_error,
     is_backpressure_response,
 )
+from .eventual import (
+    ConsistencyOptions,
+    EventualConsistencyTimeoutError,
+    eventual_poll,
+    eventual_poll_async,
+)
 from .logging import (
     CamundaLogger,
     NullLogger,
@@ -37,11 +43,15 @@ __all__ = [
     "BackpressureQueueFull",
     "BasicAuthProvider",
     "CamundaLogger",
+    "ConsistencyOptions",
     "EXEMPT_METHODS",
+    "EventualConsistencyTimeoutError",
     "NullAuthProvider",
     "NullLogger",
     "OAuthClientCredentialsAuthProvider",
     "create_logger",
+    "eventual_poll",
+    "eventual_poll_async",
     "inject_auth_event_hooks",
     "is_backpressure_error",
     "is_backpressure_response",
