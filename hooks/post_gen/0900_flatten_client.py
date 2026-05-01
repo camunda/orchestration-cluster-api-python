@@ -486,13 +486,42 @@ def _compute_body_tenant_ops(spec_path: Path | None) -> set[str]:
     return ops
 
 
-def generate_flat_client(package_path: Path, spec_path: Path | None = None) -> None:
+def _compute_eventual_ops(metadata_path: Path | None) -> dict[str, bool]:
+    """Return a mapping of snake_case method name → is_get for eventually-consistent operations.
+
+    Reads the ``operations`` array from ``spec-metadata.json`` and selects
+    entries where ``eventuallyConsistent`` is ``true``.
+    """
+    if metadata_path is None or not metadata_path.exists():
+        return {}
+
+    with open(metadata_path, "r", encoding="utf-8") as f:
+        metadata: dict[str, Any] = json.load(f)
+
+    ops: dict[str, bool] = {}
+    for op in metadata.get("operations", []):
+        if not op.get("eventuallyConsistent", False):
+            continue
+        op_id: str = op.get("operationId", "")
+        method: str = op.get("method", "").lower()
+        # Convert camelCase operationId to snake_case method name
+        s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", op_id)
+        snake = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1).lower()
+        ops[snake] = method == "get"
+
+    if ops:
+        print(f"[flatten-client] eventually-consistent ops ({len(ops)}): {sorted(ops.keys())}")
+    return ops
+
+
+def generate_flat_client(package_path: Path, spec_path: Path | None = None, metadata_path: Path | None = None) -> None:
     api_dir = package_path / "api"
     if not api_dir.exists():
         print(f"API directory not found at {api_dir}")
         return
 
     body_tenant_ops = _compute_body_tenant_ops(spec_path)
+    eventual_ops = _compute_eventual_ops(metadata_path)
 
     sync_methods: list[str] = []
     async_methods: list[str] = []
@@ -616,6 +645,19 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None) -> N
                 # default tenant ID into the body model when the caller omits it.
                 tenant_id_injection = _BODY_TENANT_INJECTION if method_name in body_tenant_ops else ""
 
+                # Eventual consistency: add optional consistency parameter
+                is_eventual = method_name in eventual_ops
+                if is_eventual:
+                    # Insert consistency param before **kwargs
+                    # Find the **kwargs position and insert before it
+                    if arg_strs[-1].startswith("**"):
+                        kwargs_param = arg_strs.pop()
+                        arg_strs.append("consistency: ConsistencyOptions | None = None")
+                        arg_strs.append(kwargs_param)
+                    else:
+                        arg_strs.append("consistency: ConsistencyOptions | None = None")
+                    sig_str = ", ".join(arg_strs)
+
                 if method_name in _BP_EXEMPT_METHODS:
                     sync_methods.append(f"""
     def {method_name}({sig_str}){return_ann}:
@@ -626,6 +668,43 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None) -> N
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data"){tenant_id_injection}
         return {method_name}_sync(**_kwargs)
+""")
+                elif is_eventual:
+                    is_get_str = "True" if eventual_ops[method_name] else "False"
+                    sync_methods.append(f"""
+    def {method_name}({sig_str}){return_ann}:
+{docstring_str}        from {import_path} import sync as {method_name}_sync
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data"){tenant_id_injection}
+        def _invoke():
+            return {method_name}_sync(**_kwargs)
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            self._bp.acquire()
+            try:
+                _result = eventual_poll("{method_name}", {is_get_str}, _invoke, consistency)
+                self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    self._bp.record_backpressure()
+                raise
+            finally:
+                self._bp.release()
+        self._bp.acquire()
+        try:
+            _result = _invoke()
+            self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                self._bp.record_backpressure()
+            raise
+        finally:
+            self._bp.release()
 """)
                 else:
                     sync_methods.append(f"""
@@ -714,6 +793,17 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None) -> N
                 # Body-tenant injection: same logic as sync methods
                 tenant_id_injection = _BODY_TENANT_INJECTION if method_name in body_tenant_ops else ""
 
+                # Eventual consistency: add optional consistency parameter
+                is_eventual = method_name in eventual_ops
+                if is_eventual:
+                    if arg_strs[-1].startswith("**"):
+                        kwargs_param = arg_strs.pop()
+                        arg_strs.append("consistency: ConsistencyOptions | None = None")
+                        arg_strs.append(kwargs_param)
+                    else:
+                        arg_strs.append("consistency: ConsistencyOptions | None = None")
+                    sig_str = ", ".join(arg_strs)
+
                 if method_name in _BP_EXEMPT_METHODS:
                     async_methods.append(f"""
     async def {method_name}({sig_str}){return_ann}:
@@ -724,6 +814,43 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None) -> N
         if "data" in _kwargs:
             _kwargs["body"] = _kwargs.pop("data"){tenant_id_injection}
         return await {method_name}_asyncio(**_kwargs)
+""")
+                elif is_eventual:
+                    is_get_str = "True" if eventual_ops[method_name] else "False"
+                    async_methods.append(f"""
+    async def {method_name}({sig_str}){return_ann}:
+{docstring_str}        from {import_path} import asyncio as {method_name}_asyncio
+        _kwargs = locals()
+        _kwargs.pop("self")
+        _kwargs.pop("consistency", None)
+        _kwargs["client"] = self.client
+        if "data" in _kwargs:
+            _kwargs["body"] = _kwargs.pop("data"){tenant_id_injection}
+        async def _invoke():
+            return await {method_name}_asyncio(**_kwargs)
+        if consistency is not None and consistency.wait_up_to_ms > 0:
+            await self._bp.acquire()
+            try:
+                _result = await eventual_poll_async("{method_name}", {is_get_str}, _invoke, consistency)
+                await self._bp.record_healthy_hint()
+                return _result
+            except Exception as _exc:
+                if is_backpressure_error(_exc):
+                    await self._bp.record_backpressure()
+                raise
+            finally:
+                await self._bp.release()
+        await self._bp.acquire()
+        try:
+            _result = await _invoke()
+            await self._bp.record_healthy_hint()
+            return _result
+        except Exception as _exc:
+            if is_backpressure_error(_exc):
+                await self._bp.record_backpressure()
+            raise
+        finally:
+            await self._bp.release()
 """)
                 else:
                     async_methods.append(f"""
@@ -800,6 +927,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None) -> N
     imports_content += "\nfrom .runtime.tls import build_ssl_context"
     imports_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger, SdkLogger, create_logger"
     imports_content += "\nfrom .runtime.backpressure import BackpressureManager, AsyncBackpressureManager, is_backpressure_error"
+    imports_content += "\nfrom .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError, eventual_poll, eventual_poll_async"
     imports_content += "\nfrom pathlib import Path"
     imports_content += "\nfrom .models.deployment_result import DeploymentResult"
     imports_content += "\nfrom .models.deployment_metadata_result_process_definition import DeploymentMetadataResultProcessDefinition"
@@ -1335,6 +1463,17 @@ class CamundaAsyncClient:
         if "from .runtime.logging import CamundaLogger, NullLogger" not in init_content:
             init_content += "\nfrom .runtime.logging import CamundaLogger, NullLogger"
 
+        if "from .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError" not in init_content:
+            init_content += "\nfrom .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError"
+
+        init_content = _ensure_all_tuple_exports(
+            init_content,
+            [
+                "ConsistencyOptions",
+                "EventualConsistencyTimeoutError",
+            ],
+        )
+
         with open(init_file, "w") as f:
             f.write(init_content)
         print(
@@ -1350,11 +1489,18 @@ def run(context: dict[str, str]) -> None:
         return
     spec_path_str = context.get("bundled_spec_path", "")
     spec_path = Path(spec_path_str) if spec_path_str else None
-    generate_flat_client(package_dir, spec_path)
+    metadata_path_str = context.get("metadata_path", "")
+    metadata_path = Path(metadata_path_str) if metadata_path_str else None
+    generate_flat_client(package_dir, spec_path, metadata_path)
 
 
 if __name__ == "__main__":
     base_dir = Path(__file__).parent.parent.parent
     package_dir = base_dir / "generated" / "camunda_orchestration_sdk"
     spec_path = base_dir / "external-spec" / "bundled" / "rest-api.bundle.json"
-    generate_flat_client(package_dir, spec_path if spec_path.exists() else None)
+    metadata_path = base_dir / "external-spec" / "bundled" / "spec-metadata.json"
+    generate_flat_client(
+        package_dir,
+        spec_path if spec_path.exists() else None,
+        metadata_path if metadata_path.exists() else None,
+    )

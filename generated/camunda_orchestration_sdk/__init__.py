@@ -198,6 +198,7 @@ __all__: list[str] = [
     "ConnectedJobContext",
     "ConnectedJobHandler",
     "ConnectedSyncJobHandler",
+    "ConsistencyOptions",
     "CorrelatedMessageSubscriptionFilter",
     "CorrelatedMessageSubscriptionResult",
     "CorrelatedMessageSubscriptionSearchQuery",
@@ -305,6 +306,7 @@ __all__: list[str] = [
     "EvaluatedDecisionInputItem",
     "EvaluatedDecisionOutputItem",
     "EvaluatedDecisionResult",
+    "EventualConsistencyTimeoutError",
     "ExpressionEvaluationRequest",
     "ExpressionEvaluationRequestVariables",
     "ExpressionEvaluationResult",
@@ -773,6 +775,7 @@ from camunda_orchestration_sdk.semantic_types import (
 
 from .runtime.job_worker import WorkerConfig
 from .runtime.logging import CamundaLogger, NullLogger
+from .runtime.eventual import ConsistencyOptions, EventualConsistencyTimeoutError
 
 from camunda_orchestration_sdk.models import (
     ActivatedJobResult,

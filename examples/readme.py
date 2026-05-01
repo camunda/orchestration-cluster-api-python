@@ -486,3 +486,67 @@ async def readme_execution_strategies() -> None:
             execution_strategy="process",
         )
         # endregion ReadmeExecutionStrategies
+
+
+# ---------- Eventual Consistency ----------
+
+
+def readme_eventual_consistency() -> None:
+    # region ReadmeEventualConsistency
+    from camunda_orchestration_sdk import CamundaClient
+    from camunda_orchestration_sdk.models import (
+        ProcessInstanceSearchQuery,
+        ProcessInstanceSearchQueryFilter,
+    )
+    from camunda_orchestration_sdk.runtime.eventual import (
+        ConsistencyOptions,
+        EventualConsistencyTimeoutError,
+    )
+
+    with CamundaClient() as client:
+        try:
+            result = client.search_process_instances(
+                data=ProcessInstanceSearchQuery(
+                    filter_=ProcessInstanceSearchQueryFilter(
+                        process_definition_id="order-process",
+                    ),
+                ),
+                # Opt in to transparent polling. Default predicate accepts the
+                # first response whose `items` list is non-empty.
+                consistency=ConsistencyOptions(
+                    wait_up_to_ms=5000,
+                    poll_interval_ms=200,
+                ),
+            )
+            for instance in result.items:
+                print(instance.process_instance_key)
+        except EventualConsistencyTimeoutError as exc:
+            print(f"Timed out after {exc.elapsed_ms}ms ({exc.attempts} attempts)")
+    # endregion ReadmeEventualConsistency
+
+
+def readme_eventual_consistency_predicate() -> None:
+    # region ReadmeEventualConsistencyPredicate
+    from camunda_orchestration_sdk import CamundaClient
+    from camunda_orchestration_sdk.models import (
+        ProcessInstanceSearchQuery,
+        ProcessInstanceSearchQueryFilter,
+    )
+    from camunda_orchestration_sdk.runtime.eventual import ConsistencyOptions
+
+    with CamundaClient() as client:
+        # Wait until at least 3 instances are visible.
+        result = client.search_process_instances(
+            data=ProcessInstanceSearchQuery(
+                filter_=ProcessInstanceSearchQueryFilter(
+                    process_definition_id="order-process",
+                ),
+            ),
+            consistency=ConsistencyOptions(
+                wait_up_to_ms=10_000,
+                poll_interval_ms=250,
+                predicate=lambda r: len(r.items) >= 3,
+            ),
+        )
+        print(f"Got {len(result.items)} instances")
+    # endregion ReadmeEventualConsistencyPredicate
