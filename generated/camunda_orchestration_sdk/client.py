@@ -966,6 +966,7 @@ class CamundaClient:
     def get_audit_log(
         self,
         audit_log_key: AuditLogKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> AuditLogResult:
@@ -1296,6 +1297,7 @@ class CamundaClient:
     def get_authorization(
         self,
         authorization_key: AuthorizationKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> AuthorizationResult:
@@ -1591,6 +1593,7 @@ class CamundaClient:
     def get_batch_operation(
         self,
         batch_operation_key: BatchOperationKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> BatchOperationResponse:
@@ -2376,7 +2379,7 @@ class CamundaClient:
             self._bp.release()
 
     def get_global_cluster_variable(
-        self, name: str, consistency: ConsistencyOptions | None = None, **kwargs: Any
+        self, name: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any
     ) -> ClusterVariableResult:
         """Get a global-scoped cluster variable
 
@@ -2456,6 +2459,7 @@ class CamundaClient:
         self,
         tenant_id: TenantId,
         name: str,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ClusterVariableResult:
@@ -2909,6 +2913,7 @@ class CamundaClient:
     def get_decision_definition(
         self,
         decision_definition_key: DecisionDefinitionKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> DecisionDefinitionResult:
@@ -2992,6 +2997,7 @@ class CamundaClient:
     def get_decision_definition_xml(
         self,
         decision_definition_key: DecisionDefinitionKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> str:
@@ -3283,6 +3289,7 @@ class CamundaClient:
     def get_decision_instance(
         self,
         decision_evaluation_instance_key: DecisionEvaluationInstanceKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> DecisionInstanceGetQueryResult:
@@ -3453,6 +3460,7 @@ class CamundaClient:
     def get_decision_requirements(
         self,
         decision_requirements_key: DecisionRequirementsKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> DecisionRequirementsResult:
@@ -3536,6 +3544,7 @@ class CamundaClient:
     def get_decision_requirements_xml(
         self,
         decision_requirements_key: DecisionRequirementsKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> str:
@@ -4099,6 +4108,7 @@ class CamundaClient:
     def get_element_instance(
         self,
         element_instance_key: ElementInstanceKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ElementInstanceResult:
@@ -4544,7 +4554,7 @@ class CamundaClient:
             self._bp.release()
 
     def get_global_task_listener(
-        self, id: str, consistency: ConsistencyOptions | None = None, **kwargs: Any
+        self, id: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any
     ) -> GlobalTaskListenerResult:
         """Get global user task listener
 
@@ -5044,6 +5054,7 @@ class CamundaClient:
     def get_group(
         self,
         group_id: str,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> GroupResult:
@@ -5783,6 +5794,7 @@ class CamundaClient:
     def get_incident(
         self,
         incident_key: IncidentKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> IncidentResult:
@@ -7126,6 +7138,7 @@ class CamundaClient:
     def get_mapping_rule(
         self,
         mapping_rule_id: str,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> MappingRuleResult:
@@ -7677,6 +7690,7 @@ class CamundaClient:
     def get_process_definition(
         self,
         process_definition_key: ProcessDefinitionKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessDefinitionResult:
@@ -8124,6 +8138,7 @@ class CamundaClient:
     def get_process_definition_xml(
         self,
         process_definition_key: ProcessDefinitionKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> str:
@@ -8207,6 +8222,7 @@ class CamundaClient:
     def get_start_process_form(
         self,
         process_definition_key: ProcessDefinitionKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> FormResult:
@@ -8742,6 +8758,7 @@ class CamundaClient:
     def get_process_instance(
         self,
         process_instance_key: ProcessInstanceKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessInstanceResult:
@@ -8825,6 +8842,7 @@ class CamundaClient:
     def get_process_instance_call_hierarchy(
         self,
         process_instance_key: ProcessInstanceKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> list[Any]:
@@ -8914,6 +8932,7 @@ class CamundaClient:
     def get_process_instance_sequence_flows(
         self,
         process_instance_key: ProcessInstanceKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessInstanceSequenceFlowsQueryResult:
@@ -9002,6 +9021,7 @@ class CamundaClient:
     def get_process_instance_statistics(
         self,
         process_instance_key: ProcessInstanceKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessInstanceElementStatisticsQueryResult:
@@ -9841,6 +9861,7 @@ class CamundaClient:
     def get_resource(
         self,
         resource_key: str,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ResourceResult:
@@ -9921,6 +9942,7 @@ class CamundaClient:
     def get_resource_content(
         self,
         resource_key: str,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> File:
@@ -10408,7 +10430,11 @@ class CamundaClient:
             self._bp.release()
 
     def get_role(
-        self, role_id: str, consistency: ConsistencyOptions | None = None, **kwargs: Any
+        self,
+        role_id: str,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
     ) -> RoleResult:
         """Get role
 
@@ -11844,6 +11870,7 @@ class CamundaClient:
     def get_tenant(
         self,
         tenant_id: TenantId,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> TenantResult:
@@ -12871,6 +12898,7 @@ class CamundaClient:
     def get_user(
         self,
         username: Username,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> GetUserResponse200:
@@ -13208,6 +13236,7 @@ class CamundaClient:
     def get_user_task(
         self,
         user_task_key: UserTaskKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> UserTaskResult:
@@ -13286,6 +13315,7 @@ class CamundaClient:
     def get_user_task_form(
         self,
         user_task_key: UserTaskKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> FormResult:
@@ -13845,6 +13875,7 @@ class CamundaClient:
     def get_variable(
         self,
         variable_key: VariableKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> VariableResult:
@@ -14343,6 +14374,7 @@ class CamundaAsyncClient:
     async def get_audit_log(
         self,
         audit_log_key: AuditLogKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> AuditLogResult:
@@ -14390,7 +14422,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -14474,7 +14506,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -14675,6 +14707,7 @@ class CamundaAsyncClient:
     async def get_authorization(
         self,
         authorization_key: AuthorizationKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> AuthorizationResult:
@@ -14726,7 +14759,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -14810,7 +14843,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -14972,6 +15005,7 @@ class CamundaAsyncClient:
     async def get_batch_operation(
         self,
         batch_operation_key: BatchOperationKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> BatchOperationResponse:
@@ -15022,7 +15056,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -15167,7 +15201,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -15253,7 +15287,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -15757,7 +15791,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def get_global_cluster_variable(
-        self, name: str, consistency: ConsistencyOptions | None = None, **kwargs: Any
+        self, name: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any
     ) -> ClusterVariableResult:
         """Get a global-scoped cluster variable
 
@@ -15805,7 +15839,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -15837,6 +15871,7 @@ class CamundaAsyncClient:
         self,
         tenant_id: TenantId,
         name: str,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ClusterVariableResult:
@@ -15890,7 +15925,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -15975,7 +16010,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -16290,6 +16325,7 @@ class CamundaAsyncClient:
     async def get_decision_definition(
         self,
         decision_definition_key: DecisionDefinitionKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> DecisionDefinitionResult:
@@ -16342,7 +16378,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -16373,6 +16409,7 @@ class CamundaAsyncClient:
     async def get_decision_definition_xml(
         self,
         decision_definition_key: DecisionDefinitionKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> str:
@@ -16425,7 +16462,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -16509,7 +16546,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -16664,6 +16701,7 @@ class CamundaAsyncClient:
     async def get_decision_instance(
         self,
         decision_evaluation_instance_key: DecisionEvaluationInstanceKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> DecisionInstanceGetQueryResult:
@@ -16719,7 +16757,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -16803,7 +16841,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -16834,6 +16872,7 @@ class CamundaAsyncClient:
     async def get_decision_requirements(
         self,
         decision_requirements_key: DecisionRequirementsKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> DecisionRequirementsResult:
@@ -16886,7 +16925,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -16917,6 +16956,7 @@ class CamundaAsyncClient:
     async def get_decision_requirements_xml(
         self,
         decision_requirements_key: DecisionRequirementsKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> str:
@@ -16969,7 +17009,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -17057,7 +17097,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -17482,6 +17522,7 @@ class CamundaAsyncClient:
     async def get_element_instance(
         self,
         element_instance_key: ElementInstanceKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ElementInstanceResult:
@@ -17534,7 +17575,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -17633,7 +17674,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -17721,7 +17762,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -17929,7 +17970,7 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def get_global_task_listener(
-        self, id: str, consistency: ConsistencyOptions | None = None, **kwargs: Any
+        self, id: str, *, consistency: ConsistencyOptions | None = None, **kwargs: Any
     ) -> GlobalTaskListenerResult:
         """Get global user task listener
 
@@ -17976,7 +18017,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -18060,7 +18101,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -18431,6 +18472,7 @@ class CamundaAsyncClient:
     async def get_group(
         self,
         group_id: str,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> GroupResult:
@@ -18477,7 +18519,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -18564,7 +18606,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -18646,7 +18688,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -18734,7 +18776,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -18826,7 +18868,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -18913,7 +18955,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -19170,6 +19212,7 @@ class CamundaAsyncClient:
     async def get_incident(
         self,
         incident_key: IncidentKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> IncidentResult:
@@ -19217,7 +19260,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -19309,7 +19352,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -19398,7 +19441,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -19540,7 +19583,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -19785,7 +19828,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -19875,7 +19918,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -19967,7 +20010,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -20055,7 +20098,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -20145,7 +20188,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -20227,7 +20270,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -20515,6 +20558,7 @@ class CamundaAsyncClient:
     async def get_mapping_rule(
         self,
         mapping_rule_id: str,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> MappingRuleResult:
@@ -20562,7 +20606,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -20646,7 +20690,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -20933,7 +20977,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -21033,7 +21077,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -21068,6 +21112,7 @@ class CamundaAsyncClient:
     async def get_process_definition(
         self,
         process_definition_key: ProcessDefinitionKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessDefinitionResult:
@@ -21120,7 +21165,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -21204,7 +21249,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -21299,7 +21344,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -21389,7 +21434,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -21482,7 +21527,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -21517,6 +21562,7 @@ class CamundaAsyncClient:
     async def get_process_definition_xml(
         self,
         process_definition_key: ProcessDefinitionKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> str:
@@ -21569,7 +21615,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -21600,6 +21646,7 @@ class CamundaAsyncClient:
     async def get_start_process_form(
         self,
         process_definition_key: ProcessDefinitionKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> FormResult:
@@ -21654,7 +21701,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -21738,7 +21785,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -22135,6 +22182,7 @@ class CamundaAsyncClient:
     async def get_process_instance(
         self,
         process_instance_key: ProcessInstanceKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessInstanceResult:
@@ -22187,7 +22235,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -22218,6 +22266,7 @@ class CamundaAsyncClient:
     async def get_process_instance_call_hierarchy(
         self,
         process_instance_key: ProcessInstanceKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> list[Any]:
@@ -22272,7 +22321,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -22307,6 +22356,7 @@ class CamundaAsyncClient:
     async def get_process_instance_sequence_flows(
         self,
         process_instance_key: ProcessInstanceKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessInstanceSequenceFlowsQueryResult:
@@ -22360,7 +22410,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -22395,6 +22445,7 @@ class CamundaAsyncClient:
     async def get_process_instance_statistics(
         self,
         process_instance_key: ProcessInstanceKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ProcessInstanceElementStatisticsQueryResult:
@@ -22448,7 +22499,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -22955,7 +23006,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -23054,7 +23105,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -23234,6 +23285,7 @@ class CamundaAsyncClient:
     async def get_resource(
         self,
         resource_key: str,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> ResourceResult:
@@ -23283,7 +23335,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -23314,6 +23366,7 @@ class CamundaAsyncClient:
     async def get_resource_content(
         self,
         resource_key: str,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> File:
@@ -23363,7 +23416,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -23450,7 +23503,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -23809,7 +23862,11 @@ class CamundaAsyncClient:
             await self._bp.release()
 
     async def get_role(
-        self, role_id: str, consistency: ConsistencyOptions | None = None, **kwargs: Any
+        self,
+        role_id: str,
+        *,
+        consistency: ConsistencyOptions | None = None,
+        **kwargs: Any,
     ) -> RoleResult:
         """Get role
 
@@ -23854,7 +23911,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -23941,7 +23998,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -24029,7 +24086,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -24117,7 +24174,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -24203,7 +24260,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -24290,7 +24347,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -24833,7 +24890,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -25255,6 +25312,7 @@ class CamundaAsyncClient:
     async def get_tenant(
         self,
         tenant_id: TenantId,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> TenantResult:
@@ -25302,7 +25360,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -25384,7 +25442,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -25467,7 +25525,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -25554,7 +25612,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -25641,7 +25699,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -25724,7 +25782,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -25806,7 +25864,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -26284,6 +26342,7 @@ class CamundaAsyncClient:
     async def get_user(
         self,
         username: Username,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> GetUserResponse200:
@@ -26330,7 +26389,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -26412,7 +26471,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -26623,6 +26682,7 @@ class CamundaAsyncClient:
     async def get_user_task(
         self,
         user_task_key: UserTaskKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> UserTaskResult:
@@ -26670,7 +26730,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -26701,6 +26761,7 @@ class CamundaAsyncClient:
     async def get_user_task_form(
         self,
         user_task_key: UserTaskKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> FormResult:
@@ -26754,7 +26815,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -26839,7 +26900,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -26935,7 +26996,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -27031,7 +27092,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -27115,7 +27176,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -27268,6 +27329,7 @@ class CamundaAsyncClient:
     async def get_variable(
         self,
         variable_key: VariableKey,
+        *,
         consistency: ConsistencyOptions | None = None,
         **kwargs: Any,
     ) -> VariableResult:
@@ -27321,7 +27383,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
@@ -27411,7 +27473,7 @@ class CamundaAsyncClient:
 
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
 
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()

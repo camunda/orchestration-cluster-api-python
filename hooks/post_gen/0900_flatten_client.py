@@ -510,7 +510,7 @@ def _compute_eventual_ops(metadata_path: Path | None) -> dict[str, bool]:
         ops[snake] = method == "get"
 
     if ops:
-        print(f"[flatten-client] eventually-consistent ops ({len(ops)}): {sorted(ops.keys())}")
+        print(f"[flatten-client] eventually-consistent ops: {len(ops)}")
     return ops
 
 
@@ -645,16 +645,23 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
                 # default tenant ID into the body model when the caller omits it.
                 tenant_id_injection = _BODY_TENANT_INJECTION if method_name in body_tenant_ops else ""
 
-                # Eventual consistency: add optional consistency parameter
+                # Eventual consistency: add optional keyword-only consistency parameter
                 is_eventual = method_name in eventual_ops
                 if is_eventual:
-                    # Insert consistency param before **kwargs
-                    # Find the **kwargs position and insert before it
+                    # Insert consistency param before **kwargs, ensuring it is
+                    # keyword-only by inserting a bare ``*`` marker if the
+                    # signature does not already contain one.
                     if arg_strs[-1].startswith("**"):
                         kwargs_param = arg_strs.pop()
+                        if "*" not in arg_strs and not any(
+                            a.startswith("*") for a in arg_strs
+                        ):
+                            arg_strs.append("*")
                         arg_strs.append("consistency: ConsistencyOptions | None = None")
                         arg_strs.append(kwargs_param)
                     else:
+                        if not any(a.startswith("*") for a in arg_strs):
+                            arg_strs.append("*")
                         arg_strs.append("consistency: ConsistencyOptions | None = None")
                     sig_str = ", ".join(arg_strs)
 
@@ -796,14 +803,18 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
                 # Body-tenant injection: same logic as sync methods
                 tenant_id_injection = _BODY_TENANT_INJECTION if method_name in body_tenant_ops else ""
 
-                # Eventual consistency: add optional consistency parameter
+                # Eventual consistency: add optional keyword-only consistency parameter
                 is_eventual = method_name in eventual_ops
                 if is_eventual:
                     if arg_strs[-1].startswith("**"):
                         kwargs_param = arg_strs.pop()
+                        if not any(a.startswith("*") for a in arg_strs):
+                            arg_strs.append("*")
                         arg_strs.append("consistency: ConsistencyOptions | None = None")
                         arg_strs.append(kwargs_param)
                     else:
+                        if not any(a.startswith("*") for a in arg_strs):
+                            arg_strs.append("*")
                         arg_strs.append("consistency: ConsistencyOptions | None = None")
                     sig_str = ", ".join(arg_strs)
 
@@ -833,7 +844,7 @@ def generate_flat_client(package_path: Path, spec_path: Path | None = None, meta
             return await {method_name}_asyncio(**_kwargs)
         def _on_retry(status: int) -> None:
             if status == 429:
-                asyncio.ensure_future(self._bp.record_backpressure())
+                asyncio.create_task(self._bp.record_backpressure())
         if consistency is not None and consistency.wait_up_to_ms > 0:
             await self._bp.acquire()
             try:

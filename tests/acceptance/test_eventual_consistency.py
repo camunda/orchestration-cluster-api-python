@@ -435,7 +435,7 @@ class TestGeneratedClientHasConsistencyParam:
         client_path = (
             importlib.resources.files(camunda_orchestration_sdk) / "client.py"
         )
-        return client_path.read_text()
+        return client_path.read_text(encoding="utf-8")
 
     def _get_eventual_methods(self) -> set[str]:
         """Read spec-metadata.json and return the set of eventually consistent
@@ -511,15 +511,51 @@ class TestGeneratedClientHasConsistencyParam:
         )
 
     def test_consistency_import_in_client(self):
-        """Generated client.py must import ConsistencyOptions."""
+        """Generated client.py must import ConsistencyOptions from the runtime."""
+        import re
+
         source = self._get_client_source()
-        assert "ConsistencyOptions" in source, (
-            "client.py does not import ConsistencyOptions"
+        # Match the actual import line, not a docstring/type-comment mention.
+        pattern = (
+            r"^from \.runtime\.eventual import [^\n]*\bConsistencyOptions\b"
+        )
+        assert re.search(pattern, source, re.MULTILINE), (
+            "client.py does not import ConsistencyOptions from .runtime.eventual"
         )
 
     def test_eventual_poll_import_in_client(self):
-        """Generated client.py must import eventual_poll functions."""
+        """Generated client.py must import eventual_poll/eventual_poll_async."""
+        import re
+
         source = self._get_client_source()
-        assert "eventual_poll" in source, (
-            "client.py does not import eventual_poll"
+        for symbol in ("eventual_poll", "eventual_poll_async"):
+            pattern = rf"^from \.runtime\.eventual import [^\n]*\b{symbol}\b"
+            assert re.search(pattern, source, re.MULTILINE), (
+                f"client.py does not import {symbol} from .runtime.eventual"
+            )
+
+    def test_eventual_keyword_only(self):
+        """The ``consistency`` parameter must be keyword-only on every
+        eventually consistent method (i.e. preceded by ``*`` or another
+        keyword-only marker in the signature)."""
+        import re
+
+        source = self._get_client_source()
+        # Find every method signature carrying a consistency parameter and
+        # verify a bare ``*`` (or ``*args``) appears before it.
+        sig_pattern = re.compile(
+            r"def (\w+)\(([^)]*consistency:\s*ConsistencyOptions[^)]*)\)",
+            re.DOTALL,
+        )
+        violations: list[str] = []
+        for match in sig_pattern.finditer(source):
+            name = match.group(1)
+            params = match.group(2)
+            head, _sep, _tail = params.partition("consistency:")
+            # Look for a `*` token (bare or `*args`) in the params before
+            # `consistency`. A bare `*` or `*name` introduces kw-only args.
+            if not re.search(r"(^|,)\s*\*", head):
+                violations.append(name)
+        assert not violations, (
+            f"'consistency' is not keyword-only on: {sorted(set(violations))}"
         )
