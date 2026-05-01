@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from typing import Any
 
 import pytest
 
@@ -83,7 +83,9 @@ class TestConsistencyOptions:
         assert opts.predicate is None
 
     def test_custom_predicate(self):
-        pred: Callable[[Any], bool] = lambda x: x == 42
+        def pred(x: Any) -> bool:
+            return x == 42
+
         opts = ConsistencyOptions(wait_up_to_ms=1000, predicate=pred)
         assert opts.predicate is pred
 
